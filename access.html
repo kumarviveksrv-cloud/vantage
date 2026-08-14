@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#050410">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background-image:linear-gradient(rgba(99,102,241,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.03) 1px,transparent 1px);background-size:48px 48px;position:relative;overflow:hidden}
+    body::after{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,0.08) 0%,transparent 65%);pointer-events:none}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+    .orb{width:72px;height:72px;margin:0 auto 24px;animation:float 3s ease-in-out infinite;position:relative;z-index:1}
+    .brand-name{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;text-align:center;color:#f4f3ff;position:relative;z-index:1}
+    .sub{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,0.45);text-align:center;margin-top:6px;position:relative;z-index:1}
+    .tagline{font-size:15px;color:rgba(244,243,255,0.4);text-align:center;margin-top:10px;margin-bottom:40px;position:relative;z-index:1}
+    .card{background:#0d0b1e;border:1px solid rgba(99,102,241,0.18);border-radius:16px;padding:36px 32px;width:100%;max-width:400px;text-align:center;position:relative;z-index:1}
+    .card::before{content:'';position:absolute;inset:-1px;border-radius:16px;background:linear-gradient(135deg,rgba(99,102,241,0.12),transparent 60%);z-index:-1;pointer-events:none}
+    .card h2{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px;color:#f4f3ff}
+    .card p{font-size:13px;color:rgba(244,243,255,0.45);margin-bottom:28px;line-height:1.6}
+    .input-wrap{position:relative;margin-bottom:16px}
+    input[type=password]{width:100%;padding:14px 16px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.2);border-radius:10px;color:#f4f3ff;font-family:'JetBrains Mono',monospace;font-size:15px;outline:none;letter-spacing:.15em;transition:border .2s}
+    input[type=password]:focus{border-color:rgba(99,102,241,0.55);box-shadow:0 0 0 3px rgba(99,102,241,0.08)}
+    input[type=password]::placeholder{letter-spacing:.05em;color:rgba(165,180,252,0.3);font-size:13px}
+    .btn{display:block;width:100%;padding:14px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;letter-spacing:.01em;box-shadow:0 4px 20px rgba(99,102,241,0.4)}
+    .btn:hover{opacity:0.88}
+    .btn:active{opacity:0.75}
+    .error{font-family:'JetBrains Mono',monospace;font-size:11px;color:#FF6B6B;margin-top:10px;min-height:16px;letter-spacing:.04em}
+    .shake{animation:shake .4s ease}
+    .note{margin-top:20px;background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.18);border-radius:10px;padding:12px 14px;font-size:12px;color:rgba(244,243,255,0.4);line-height:1.5;text-align:left}
+    .note strong{color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:4px}
+    .back-link{margin-top:20px;font-size:12px;color:rgba(244,243,255,0.25);font-family:'JetBrains Mono',monospace;text-align:center;position:relative;z-index:1}
+    .back-link a{color:rgba(165,180,252,0.6);text-decoration:none;transition:color .2s}
+    .back-link a:hover{color:#a5b4fc}
+    .footer{margin-top:32px;font-size:11px;color:rgba(244,243,255,0.12);font-family:'JetBrains Mono',monospace;position:relative;z-index:1}
+  </style>
+</head>
+<body>
+
+  <div class="orb">
+    <svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" width="72" height="72">
+      <circle cx="36" cy="36" r="33" fill="none" stroke="#6366f1" stroke-width="0.5" stroke-opacity="0.3" stroke-dasharray="4 8" style="animation:spin 14s linear infinite;transform-origin:36px 36px"/>
+      <circle cx="36" cy="36" r="22" fill="rgba(99,102,241,0.08)"/>
+      <polygon points="36,14 56,48 16,48" fill="none" stroke="#6366f1" stroke-width="1" stroke-opacity="0.6"/>
+      <circle cx="27" cy="32" r="3.5" fill="#6366f1" style="animation:pulse 2s ease-in-out infinite"/>
+      <circle cx="45" cy="32" r="3.5" fill="#a5b4fc" style="animation:pulse 2s ease-in-out .3s infinite"/>
+      <line x1="24" y1="42" x2="48" y2="42" stroke="#6366f1" stroke-width="1.2" stroke-opacity="0.4"/>
+    </svg>
+  </div>
+
+  <div class="brand-name">Virorah</div>
+  <div class="sub">Vantage</div>
+  <div class="tagline">People decisions are financial decisions. Act like it.</div>
+
+  <div class="card">
+    <h2>Sign In</h2>
+    <p>Enter your access code to step into Vantage — HR intelligence built for Indian professionals who lead in the language of business.</p>
+    <div class="input-wrap">
+      <input type="password" id="pwd" placeholder="Enter access code" autocomplete="off" />
+    </div>
+    <button class="btn" id="enter-btn" onclick="checkAccess()">Enter Vantage</button>
+    <div class="error" id="err"></div>
+    <div class="note">
+      <strong>MERIDIAN Inside</strong>
+      Seven parameters. Your state, industry, org type, seniority, and more — calibrating every tool result to your exact professional reality, not generic advice.
+    </div>
+  </div>
+
+  <div class="back-link">Not signed up yet? <a href="index.html">See what's inside &rarr;</a></div>
+  <div class="footer">Virorah Private Limited &nbsp;&middot;&nbsp; Confidential &nbsp;&middot;&nbsp; 2026</div>
+
+  <script>
+    var PASS = 'virorah2026';
+    var BASE = 'https://kumarviveksrv-cloud.github.io/vantage/';
+
+    if (sessionStorage.getItem('sr_access') === 'true') {
+      window.location.href = BASE + 'dashboard.html';
+    }
+
+    var input = document.getElementById('pwd');
+    var errEl = document.getElementById('err');
+    var card = document.querySelector('.card');
+
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') checkAccess();
+    });
+
+    input.focus();
+
+    function checkAccess() {
+      var val = input.value.trim();
+      if (val === PASS) {
+        sessionStorage.setItem('sr_access', 'true');
+        document.getElementById('enter-btn').innerText = 'Entering...';
+        setTimeout(function() {
+          window.location.href = BASE + 'dashboard.html';
+        }, 600);
+      } else {
+        errEl.innerText = 'Incorrect access code. Try again.';
+        card.classList.remove('shake');
+        void card.offsetWidth;
+        card.classList.add('shake');
+        input.value = '';
+        input.focus();
+        setTimeout(function() { errEl.innerText = ''; }, 3000);
+      }
+    }
+  </script>
+
+</body>
+</html>
