@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conversation Simulator — Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
+    body{display:flex}
+    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.25);--grey:rgba(244,243,255,0.45);--dim:rgba(244,243,255,0.25)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(99,102,241,0.4)}70%{box-shadow:0 0 0 20px rgba(99,102,241,0)}100%{box-shadow:0 0 0 0 rgba(99,102,241,0)}}
+    @keyframes micPulseRed{0%{box-shadow:0 0 0 0 rgba(255,77,109,0.4)}70%{box-shadow:0 0 0 20px rgba(255,77,109,0)}100%{box-shadow:0 0 0 0 rgba(255,77,109,0)}}
+    @keyframes waveBar{0%,100%{height:4px}50%{height:20px}}
+
+    .sidebar{width:220px;flex-shrink:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto}
+    .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px}
+    .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
+    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.5);margin-top:2px}
+    .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.6);padding:4px 10px;margin:16px 0 6px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.65);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
+    .nav-item:hover{background:rgba(99,102,241,0.08);color:#f4f3ff;border-color:rgba(99,102,241,0.15)}
+    .nav-item.active{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.30);color:#c4b5fd;font-weight:500}
+    .nav-item .icon{font-size:16px;flex-shrink:0}
+    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.20)}
+    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .meridian-chip .val{font-size:11px;color:var(--grey)}
+
+    .main{flex:1;overflow:hidden;height:100vh;display:flex;flex-direction:column}
+    .page-header{padding:24px 32px 0;flex-shrink:0;animation:fadeIn .3s ease}
+    .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
+    .breadcrumb a{color:var(--dim);text-decoration:none}
+    .breadcrumb a:hover{color:var(--muted)}
+    .page-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:700;margin-bottom:4px;color:#f4f3ff}
+    .page-sub{font-size:13px;color:var(--grey);margin-bottom:20px}
+    .setup-scroll{flex:1;overflow-y:auto;padding:0 32px 32px}
+
+    .intake-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:16px;animation:fadeIn .3s ease}
+    .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:block}
+    .form-section{margin-bottom:22px}
+    .roles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .role-btn{background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;color:var(--grey);font-size:12px;font-family:'Plus Jakarta Sans',sans-serif}
+    .role-btn:hover{border-color:rgba(99,102,241,0.3);color:#f4f3ff;background:rgba(99,102,241,0.08)}
+    .role-btn.selected{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.45);color:#c4b5fd;font-weight:500}
+    .role-icon{font-size:18px;display:block;margin-bottom:4px}
+    textarea{width:100%;padding:14px 16px;background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:1.6;resize:vertical;outline:none;transition:border .2s}
+    textarea:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
+    textarea::placeholder{color:rgba(165,180,252,0.25)}
+    .difficulty-wrap{display:flex;gap:10px}
+    .diff-btn{flex:1;padding:12px;background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;text-align:center;font-size:13px;color:var(--grey);font-family:'Plus Jakarta Sans',sans-serif}
+    .diff-standard.selected{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.4);color:#c4b5fd}
+    .diff-challenging.selected{background:rgba(255,77,109,0.08);border-color:rgba(255,77,109,0.3);color:#FF4D6D}
+    .submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.35)}
+    .submit-btn:hover{opacity:.88}
+    .submit-btn:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
+
+    .chat-header{padding:16px 32px;border-bottom:1px solid rgba(99,102,241,0.1);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+    .chat-header-left .role-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+    .chat-header-left .role-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
+    .chat-header-right{display:flex;gap:10px;align-items:center}
+    .hdr-btn{padding:8px 16px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s}
+    .hdr-btn-outline{background:transparent;color:var(--grey);border:1px solid rgba(244,243,255,0.1)}
+    .hdr-btn-outline:hover{border-color:rgba(244,243,255,0.2);color:#f4f3ff}
+    .hdr-btn-danger{background:rgba(255,77,109,0.08);color:#FF4D6D;border:1px solid rgba(255,77,109,0.2)}
+    .voice-toggle{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;cursor:pointer;transition:all .2s;border:1px solid rgba(244,243,255,0.1);background:transparent;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--grey)}
+    .voice-toggle.active{background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.3);color:var(--muted)}
+    .voice-toggle-dot{width:8px;height:8px;border-radius:50%;background:rgba(244,243,255,0.2);transition:all .2s}
+    .voice-toggle.active .voice-toggle-dot{background:var(--accent);box-shadow:0 0 6px rgba(99,102,241,0.6)}
+
+    .messages{flex:1;overflow-y:auto;padding:24px 32px;display:flex;flex-direction:column;gap:16px}
+    .msg{display:flex;gap:12px;animation:msgIn .25s ease}
+    .msg-them{justify-content:flex-start}
+    .msg-you{justify-content:flex-end}
+    .msg-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+    .avatar-them{background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.25)}
+    .avatar-you{background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.25)}
+    .msg-bubble{max-width:68%;padding:13px 16px;border-radius:14px;font-size:13px;line-height:1.6}
+    .bubble-them{background:var(--card);border:1px solid var(--border);color:rgba(244,243,255,0.8);border-radius:4px 14px 14px 14px}
+    .bubble-you{background:rgba(99,102,241,0.14);border:1px solid rgba(99,102,241,0.25);color:#f4f3ff;border-radius:14px 4px 14px 14px}
+    .msg-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+    .typing{display:flex;gap:4px;align-items:center;padding:4px 0}
+    .typing span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse .8s ease-in-out infinite}
+    .typing span:nth-child(2){animation-delay:.15s}
+    .typing span:nth-child(3){animation-delay:.3s}
+
+    .chat-input-wrap{padding:16px 32px;border-top:1px solid rgba(99,102,241,0.1);display:flex;gap:12px;flex-shrink:0}
+    .chat-input{flex:1;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;outline:none;resize:none;line-height:1.5;max-height:120px;transition:border .2s}
+    .chat-input:focus{border-color:rgba(99,102,241,0.45)}
+    .chat-input::placeholder{color:rgba(165,180,252,0.25)}
+    .send-btn{padding:12px 20px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;transition:opacity .2s;flex-shrink:0;box-shadow:0 4px 16px rgba(99,102,241,0.3)}
+    .send-btn:hover{opacity:.88}
+    .send-btn:disabled{opacity:.3;cursor:not-allowed}
+
+    .voice-input-wrap{padding:20px 32px;border-top:1px solid rgba(99,102,241,0.1);display:flex;flex-direction:column;align-items:center;gap:16px;flex-shrink:0}
+    .voice-status{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.08em;text-align:center;min-height:16px;transition:all .2s}
+    .voice-status.listening{color:#FF4D6D}
+    .voice-status.thinking{color:#FFB547}
+    .voice-status.speaking{color:var(--muted)}
+    .mic-btn{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--violet));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:28px;transition:all .25s;flex-shrink:0;box-shadow:0 4px 20px rgba(99,102,241,0.4)}
+    .mic-btn:hover{opacity:.88;transform:scale(1.05)}
+    .mic-btn.listening{background:#FF4D6D;box-shadow:0 4px 20px rgba(255,77,109,0.4);animation:micPulseRed 1s ease-in-out infinite}
+    .mic-btn.speaking{background:rgba(99,102,241,0.3);animation:micPulse 1.5s ease-in-out infinite;cursor:default;box-shadow:none}
+    .mic-btn.thinking{background:rgba(255,181,71,0.3);cursor:default;box-shadow:none}
+    .voice-transcript{font-size:13px;color:var(--grey);text-align:center;max-width:500px;min-height:20px;font-style:italic;transition:all .2s}
+    .wave-bars{display:flex;align-items:center;gap:3px;height:24px}
+    .wave-bar{width:3px;background:#FF4D6D;border-radius:2px;animation:waveBar .6s ease-in-out infinite}
+    .wave-bar:nth-child(2){animation-delay:.1s}
+    .wave-bar:nth-child(3){animation-delay:.2s}
+    .wave-bar:nth-child(4){animation-delay:.3s}
+    .wave-bar:nth-child(5){animation-delay:.4s}
+    .voice-hint{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;text-align:center}
+
+    .loading-center{flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center}
+    .loading-orb-wrap{width:64px;height:64px;margin-bottom:24px}
+    .loading-orb-wrap svg{animation:spin 2s linear infinite}
+
+    .debrief-scroll{flex:1;overflow-y:auto;padding:0 32px 32px}
+    .debrief-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;animation:fadeIn .4s ease}
+    .debrief-section-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:600;margin-bottom:14px;color:#f4f3ff}
+    .debrief-item{display:flex;gap:10px;margin-bottom:12px}
+    .debrief-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0}
+    .debrief-item-text{font-size:13px;color:var(--grey);line-height:1.6}
+    .highlight-card{background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:20px;margin-bottom:16px}
+    .highlight-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+    .highlight-text{font-size:13px;color:rgba(244,243,255,0.7);line-height:1.6}
+    .prep-brief{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:24px}
+    .prep-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+    .prep-text{font-size:13px;color:var(--grey);line-height:1.8;white-space:pre-wrap}
+    .action-row{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+    .btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
+    .btn-primary:hover{opacity:.88}
+    .btn-ghost{padding:14px 28px;background:transparent;color:var(--grey);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;border:1px solid rgba(244,243,255,0.08);border-radius:10px;cursor:pointer;transition:all .2s}
+    .btn-ghost:hover{border-color:rgba(244,243,255,0.15);color:#f4f3ff}
+    .btn-indigo-outline{padding:14px 28px;background:transparent;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;border:1px solid rgba(99,102,241,0.35);border-radius:10px;cursor:pointer;transition:all .2s}
+    .btn-indigo-outline:hover{background:rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.5)}
+
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
+    @media(max-width:768px){.sidebar{display:none}.roles-grid{grid-template-columns:repeat(2,1fr)}.main{overflow:hidden}}
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">
+      <div class="logo-dot"></div>
+      <div>
+        <div class="logo-name">Virorah</div>
+        <div class="logo-sub">Vantage</div>
+      </div>
+    </div>
+    <div class="nav-section">Core Tools</div>
+    <a href="dashboard.html" class="nav-item"><span class="icon">&#x229E;</span> Dashboard</a>
+    <a href="er-case-navigator.html" class="nav-item"><span class="icon">&#x26A1;</span> ER Case Navigator</a>
+    <a href="conversation-simulator.html" class="nav-item active"><span class="icon">&#x1F3AD;</span> Conversation Simulator</a>
+    <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">&#x1F4CA;</span> HR Data Storyteller</a>
+    <a href="policy-compass.html" class="nav-item"><span class="icon">&#x1F9ED;</span> Policy Compass</a>
+    <a href="stakeholder-influence.html" class="nav-item"><span class="icon">&#x1F3AF;</span> Stakeholder Influence</a>
+    <div class="nav-section">Intelligence</div>
+    <a href="aria.html" class="nav-item"><span class="icon">&#x2736;</span> ARIA</a>
+    <a href="case-library.html" class="nav-item"><span class="icon">&#x25CE;</span> Case Library</a>
+    <a href="debrief.html" class="nav-item"><span class="icon">&#x1F4CB;</span> The Debrief</a>
+    <div class="nav-section">Account</div>
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">&#x1F512;</span> Data &amp; Privacy</a>
+    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()"><span class="icon">&#x21A9;</span> Sign out</a>
+    <div class="meridian-chip">
+      <div class="label">MERIDIAN Active</div>
+      <div class="val" id="meridian-chip-val">Loading...</div>
+    </div>
+  </div>
+
+  <div class="main" id="main-panel">
+
+    <!-- SETUP VIEW -->
+    <div id="setup-view" style="display:flex;flex-direction:column;height:100%">
+      <div class="page-header">
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> · Conversation Simulator</div>
+        <div class="page-title">&#x1F3AD; Conversation Simulator</div>
+        <div class="page-sub">Let's make sure you've already had it once before it counts.</div>
+      </div>
+      <div class="setup-scroll">
+        <div style="background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:14px;padding:22px 26px;margin-bottom:16px;animation:fadeIn .3s ease">
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;line-height:1.4;margin-bottom:12px">The real conversation is coming.</div>
+          <div style="font-size:13px;color:rgba(244,243,255,0.5);line-height:1.75">Pick the person you need to face. Describe what's at stake. Then have the conversation — text or voice — in a space where there are <strong style="color:rgba(244,243,255,0.8)">no consequences for getting it wrong</strong>. The coaching debrief after tells you exactly what to do differently when it counts. Set the difficulty to Challenging if you want it to push you.</div>
+        </div>
+        <div class="intake-card">
+          <div class="form-section">
+            <label class="form-label">Who are you speaking with?</label>
+            <div class="roles-grid">
+              <div class="role-btn" onclick="selectRole(this,'Direct report')"><span class="role-icon">&#x1F464;</span>Direct report</div>
+              <div class="role-btn" onclick="selectRole(this,'Your manager')"><span class="role-icon">&#x1F446;</span>Your manager</div>
+              <div class="role-btn" onclick="selectRole(this,'Skip-level leader')"><span class="role-icon">&#x1F3E2;</span>Skip-level leader</div>
+              <div class="role-btn" onclick="selectRole(this,'Peer / colleague')"><span class="role-icon">&#x1F91D;</span>Peer / colleague</div>
+              <div class="role-btn" onclick="selectRole(this,'CHRO / HR Head')"><span class="role-icon">&#x1F451;</span>CHRO / HR Head</div>
+              <div class="role-btn" onclick="selectRole(this,'CFO / Finance head')"><span class="role-icon">&#x1F4B0;</span>CFO / Finance head</div>
+              <div class="role-btn" onclick="selectRole(this,'CEO / Founder')"><span class="role-icon">&#x26A1;</span>CEO / Founder</div>
+              <div class="role-btn" onclick="selectRole(this,'Employee on PIP')"><span class="role-icon">&#x1F4CB;</span>Employee on PIP</div>
+              <div class="role-btn" onclick="selectRole(this,'Legal counsel')"><span class="role-icon">&#x2696;&#xFE0F;</span>Legal counsel</div>
+            </div>
+          </div>
+          <div class="form-section">
+            <label class="form-label">What's the conversation about?</label>
+            <textarea id="scenario" placeholder='e.g. "My direct report has been underperforming for 3 months. Two informal chats, nothing changed. His manager wants a PIP — I need to have that conversation tomorrow and he&apos;s going to be defensive about it." Just write it the way it&apos;s sitting in your head.' rows="4"></textarea>
+          </div>
+          <div class="form-section">
+            <label class="form-label">What does success look like for you?</label>
+            <textarea id="objective" placeholder='e.g. "He understands why the PIP is happening, agrees to the 60-day plan, and doesn&apos;t go to HR to complain afterwards." One or two sentences is enough.' rows="3"></textarea>
+          </div>
+          <div class="form-section">
+            <label class="form-label">Difficulty level</label>
+            <div class="difficulty-wrap">
+              <div class="diff-btn diff-standard selected" onclick="selectDiff(this,'standard')">
+                <div style="font-size:18px;margin-bottom:4px">&#x1F610;</div>
+                <div style="font-weight:600">Realistic</div>
+                <div style="font-size:11px;color:rgba(244,243,255,0.35);margin-top:3px">Pushes back but stays professional</div>
+              </div>
+              <div class="diff-btn diff-challenging" onclick="selectDiff(this,'challenging')">
+                <div style="font-size:18px;margin-bottom:4px">&#x1F624;</div>
+                <div style="font-weight:600">Challenging</div>
+                <div style="font-size:11px;color:rgba(244,243,255,0.35);margin-top:3px">Defensive, emotional, resistant</div>
+              </div>
+            </div>
+          </div>
+          <button class="submit-btn" id="start-btn" onclick="startSimulation()" disabled>Begin Practice &#x2192;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT VIEW -->
+    <div id="chat-view" style="display:none;flex-direction:column;height:100%">
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <div class="role-tag">You are speaking with</div>
+          <div class="role-name" id="chat-role-name">&#8212;</div>
+        </div>
+        <div class="chat-header-right">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim)" id="exchange-indicator">0 / 8 exchanges</span>
+          <div class="voice-toggle" id="voice-toggle" onclick="toggleVoiceMode()">
+            <div class="voice-toggle-dot"></div>
+            <span id="voice-toggle-label">&#x1F3A4; Switch to Voice</span>
+          </div>
+          <button class="hdr-btn hdr-btn-outline" onclick="endPractice()">End Practice &amp; Get Debrief</button>
+        </div>
+      </div>
+      <div class="messages" id="messages-container"></div>
+      <div class="chat-input-wrap" id="text-input-wrap">
+        <textarea class="chat-input" id="chat-input" placeholder="Type your response... (or switch to voice mode above)" rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()">Send &#x2192;</button>
+      </div>
+      <div class="voice-input-wrap" id="voice-input-wrap" style="display:none">
+        <div class="voice-status" id="voice-status">Tap the mic to speak</div>
+        <div id="wave-bars" style="display:none" class="wave-bars">
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div><div class="wave-bar"></div>
+        </div>
+        <button class="mic-btn" id="mic-btn" onclick="handleMicClick()">&#x1F3A4;</button>
+        <div class="voice-transcript" id="voice-transcript"></div>
+        <div class="voice-hint">Tap to speak &middot; Tap again to stop early &middot; Responses play automatically</div>
+      </div>
+    </div>
+
+    <!-- LOADING VIEW -->
+    <div id="loading-view" style="display:none;flex-direction:column;height:100%">
+      <div class="loading-center">
+        <div class="loading-orb-wrap">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/>
+            <circle cx="32" cy="32" r="28" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="44 132" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div id="loading-text" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#a5b4fc;letter-spacing:.08em">PREPARING YOUR PRACTICE...</div>
+      </div>
+    </div>
+
+    <!-- DEBRIEF VIEW -->
+    <div id="debrief-view" style="display:none;flex-direction:column;height:100%">
+      <div class="page-header">
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> · <a href="conversation-simulator.html">Conversation Simulator</a> · Coaching Debrief</div>
+        <div class="page-title">Coaching Debrief</div>
+        <div class="page-sub">Here's what happened in your practice session.</div>
+      </div>
+      <div class="debrief-scroll">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+          <div class="debrief-card">
+            <div class="debrief-section-title">&#x2705; What worked</div>
+            <div id="what-worked"></div>
+          </div>
+          <div class="debrief-card">
+            <div class="debrief-section-title">&#x1F3AF; What to improve</div>
+            <div id="what-improve"></div>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-label">The moment that would have changed everything</div>
+          <div class="highlight-text" id="inflection-point">&#8212;</div>
+        </div>
+        <div class="highlight-card" style="background:linear-gradient(135deg,rgba(255,181,71,0.07),rgba(255,181,71,0.02));border-color:rgba(255,181,71,0.2)">
+          <div class="highlight-label" style="color:#FFB547">One technique to try in the real conversation</div>
+          <div class="highlight-text" id="technique">&#8212;</div>
+        </div>
+        <div class="prep-brief">
+          <div class="prep-label">Preparation Brief &#8212; Read this before the real conversation</div>
+          <div class="prep-text" id="prep-brief-text">&#8212;</div>
+        </div>
+        <div class="action-row">
+          <button class="btn-primary" onclick="practiceAgain()">Practice Again</button>
+          <button class="btn-indigo-outline" onclick="openInCaseNavigator()">Open in Case Navigator &#x2192;</button>
+          <button class="btn-ghost" onclick="newScenario()">New Scenario</button>
+          <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+    var BASE = 'https://kumarviveksrv-cloud.github.io/vantage/';
+    var selectedRole = '';
+    var selectedDiff = 'standard';
+    var conversationHistory = [];
+    var exchangeCount = 0;
+    var MAX_EXCHANGES = 8;
+    var currentScenario = '';
+    var currentObjective = '';
+    var voiceMode = false;
+    var isListening = false;
+    var isSpeaking = false;
+    var recognition = null;
+    var voices = [];
+
+    if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; }
+
+    var meridianRaw = sessionStorage.getItem('sr_meridian');
+    var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
+    document.getElementById('meridian-chip-val').innerText = (meridian.state || 'Not set') + ' \xb7 ' + (meridian.industry || 'Not set');
+
+    var practiceCtx = sessionStorage.getItem('sr_practice_context');
+    if (practiceCtx) {
+      try { var ctx = JSON.parse(practiceCtx); if (ctx.narrative) document.getElementById('scenario').value = 'Context from ER case: ' + ctx.narrative; sessionStorage.removeItem('sr_practice_context'); } catch(e) {}
+    }
+
+    document.getElementById('scenario').addEventListener('input', checkStart);
+    document.getElementById('objective').addEventListener('input', checkStart);
+    window.speechSynthesis.onvoiceschanged = function() { voices = window.speechSynthesis.getVoices(); };
+    setTimeout(function(){ voices = window.speechSynthesis.getVoices(); }, 500);
+
+    function selectRole(el, role) { document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('selected'); }); el.classList.add('selected'); selectedRole = role; checkStart(); }
+    function selectDiff(el, diff) { document.querySelectorAll('.diff-btn').forEach(function(b){ b.classList.remove('selected'); }); el.classList.add('selected'); selectedDiff = diff; }
+    function checkStart() { var s = document.getElementById('scenario').value.trim(); var o = document.getElementById('objective').value.trim(); document.getElementById('start-btn').disabled = !(selectedRole && s.length > 20 && o.length > 10); }
+
+    function showView(view) {
+      ['setup-view','chat-view','loading-view','debrief-view'].forEach(function(v){ document.getElementById(v).style.display = 'none'; });
+      document.getElementById(view).style.display = 'flex';
+      document.getElementById(view).style.flexDirection = 'column';
+    }
+
+    function toggleVoiceMode() {
+      voiceMode = !voiceMode;
+      var toggle = document.getElementById('voice-toggle');
+      var label = document.getElementById('voice-toggle-label');
+      if (voiceMode) { toggle.classList.add('active'); label.innerText = '\u2328\uFE0F Switch to Text'; document.getElementById('text-input-wrap').style.display = 'none'; document.getElementById('voice-input-wrap').style.display = 'flex'; setVoiceStatus('Tap the mic to speak', ''); }
+      else { toggle.classList.remove('active'); label.innerText = '\uD83C\uDFA4 Switch to Voice'; document.getElementById('text-input-wrap').style.display = 'flex'; document.getElementById('voice-input-wrap').style.display = 'none'; stopListening(); }
+    }
+
+    function setVoiceStatus(text, state) {
+      var el = document.getElementById('voice-status'); el.innerText = text; el.className = 'voice-status' + (state ? ' ' + state : '');
+      document.getElementById('wave-bars').style.display = state === 'listening' ? 'flex' : 'none';
+      var micBtn = document.getElementById('mic-btn'); micBtn.className = 'mic-btn' + (state ? ' ' + state : '');
+      if (state === 'listening') micBtn.innerText = '\u23F9';
+      else if (state === 'thinking') micBtn.innerText = '\uD83D\uDCAD';
+      else if (state === 'speaking') micBtn.innerText = '\uD83D\uDD0A';
+      else micBtn.innerText = '\uD83C\uDFA4';
+    }
+
+    function initRecognition() {
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) { alert('Voice recognition requires Chrome.'); return null; }
+      var r = new SR(); r.continuous = false; r.interimResults = true; r.lang = 'en-US'; r.maxAlternatives = 3;
+      r.onstart = function() { isListening = true; setVoiceStatus('Listening... speak now', 'listening'); document.getElementById('voice-transcript').innerText = ''; };
+      r.onresult = function(event) {
+        var interim = '', final = '';
+        for (var i = event.resultIndex; i < event.results.length; i++) { if (event.results[i].isFinal) final += event.results[i][0].transcript; else interim += event.results[i][0].transcript; }
+        document.getElementById('voice-transcript').innerText = final || interim;
+        if (final) { isListening = false; sendVoiceMessage(final.trim()); }
+      };
+      r.onerror = function(e) { isListening = false; if (e.error !== 'no-speech') setVoiceStatus('Mic error: ' + e.error + '. Tap to retry.', ''); else setVoiceStatus('No speech detected. Tap to try again.', ''); };
+      r.onend = function() { isListening = false; if (!isSpeaking) setVoiceStatus('Tap the mic to speak', ''); };
+      return r;
+    }
+
+    function handleMicClick() { if (isSpeaking) { window.speechSynthesis.cancel(); isSpeaking = false; setVoiceStatus('Tap the mic to speak',''); return; } if (isListening) { stopListening(); return; } startListening(); }
+    function startListening() { recognition = initRecognition(); if (!recognition) return; try { recognition.start(); } catch(e) { console.error(e); } }
+    function stopListening() { if (recognition) { try { recognition.stop(); } catch(e) {} } isListening = false; setVoiceStatus('Tap the mic to speak', ''); }
+
+    function speak(text, onEnd) {
+      window.speechSynthesis.cancel(); isSpeaking = true; setVoiceStatus('Speaking...', 'speaking');
+      var clean = text.replace(/\*\*/g,'').replace(/#{1,6}\s/g,'').replace(/`/g,'').replace(/_/g,'');
+      var utterance = new SpeechSynthesisUtterance(clean);
+      utterance.lang = 'en-US'; utterance.rate = 0.92; utterance.pitch = 1;
+      if (voices.length > 0) { var preferred = voices.find(function(v){ return v.lang === 'en-US'; }) || voices.find(function(v){ return v.lang.startsWith('en'); }); if (preferred) utterance.voice = preferred; }
+      utterance.onend = function() { isSpeaking = false; setVoiceStatus('Tap the mic to respond', ''); if (onEnd) onEnd(); };
+      utterance.onerror = function() { isSpeaking = false; setVoiceStatus('Tap the mic to speak', ''); };
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function addMessage(role, text, isTypingIndicator) {
+      var container = document.getElementById('messages-container');
+      var div = document.createElement('div');
+      div.className = 'msg ' + (role === 'you' ? 'msg-you' : 'msg-them');
+      var avatar = role === 'you' ? '<div class="msg-avatar avatar-you">\uD83E\uDDD1</div>' : '<div class="msg-avatar avatar-them">\uD83C\uDFAD</div>';
+      var label = role === 'you' ? 'You' : selectedRole;
+      if (isTypingIndicator) {
+        div.id = 'typing-indicator';
+        div.innerHTML = avatar + '<div><div class="msg-label">' + label + '</div><div class="msg-bubble bubble-them"><div class="typing"><span></span><span></span><span></span></div></div></div>';
+      } else {
+        div.innerHTML = (role !== 'you' ? avatar : '') + '<div><div class="msg-label">' + label + '</div><div class="msg-bubble ' + (role === 'you' ? 'bubble-you' : 'bubble-them') + '">' + text + '</div></div>' + (role === 'you' ? avatar : '');
+      }
+      container.appendChild(div); container.scrollTop = container.scrollHeight; return div;
+    }
+
+    function removeTyping() { var t = document.getElementById('typing-indicator'); if (t) t.remove(); }
+    function updateExchangeCounter() { document.getElementById('exchange-indicator').innerText = exchangeCount + ' / ' + MAX_EXCHANGES + ' exchanges'; }
+
+    async function startSimulation() {
+      currentScenario = document.getElementById('scenario').value.trim();
+      currentObjective = document.getElementById('objective').value.trim();
+      document.getElementById('chat-role-name').innerText = selectedRole;
+      conversationHistory = []; exchangeCount = 0; document.getElementById('messages-container').innerHTML = '';
+      showView('loading-view'); document.getElementById('loading-text').innerText = 'SETTING THE SCENE...';
+      conversationHistory.push({ role: 'user', content: '[START] Open the conversation naturally as the ' + selectedRole + '. One or two sentences. Do not wait for me to start.' });
+      try {
+        var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tool:'practice', scenario:currentScenario, objective:currentObjective, stakeholderRole:selectedRole, difficulty:selectedDiff, history:conversationHistory, meridian:meridian }) });
+        var data = await res.json();
+        if (data.success) { var response = data.data.response; conversationHistory.push({ role:'assistant', content:response }); showView('chat-view'); addMessage('them', response); updateExchangeCounter(); if (voiceMode) speak(response); }
+        else { alert('Error starting: ' + (data.error || 'Unknown')); showView('setup-view'); }
+      } catch(err) { alert('Connection error: ' + err.message); showView('setup-view'); }
+    }
+
+    async function sendMessage() { var input = document.getElementById('chat-input'); var text = input.value.trim(); if (!text) return; input.value = ''; await processUserMessage(text); }
+    async function sendVoiceMessage(text) { if (!text || text.length < 2) { setVoiceStatus('Tap the mic to speak', ''); return; } document.getElementById('voice-transcript').innerText = ''; setVoiceStatus('Thinking...', 'thinking'); await processUserMessage(text); }
+
+    async function processUserMessage(text) {
+      if (exchangeCount >= MAX_EXCHANGES) { endPractice(); return; }
+      document.getElementById('send-btn') && (document.getElementById('send-btn').disabled = true);
+      addMessage('you', text); conversationHistory.push({ role:'user', content:text }); exchangeCount++; updateExchangeCounter(); addMessage('them', '', true);
+      try {
+        var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tool:'practice', scenario:currentScenario, objective:currentObjective, stakeholderRole:selectedRole, difficulty:selectedDiff, history:conversationHistory, meridian:meridian }) });
+        var data = await res.json(); removeTyping();
+        if (data.success) {
+          var response = data.data.response; conversationHistory.push({ role:'assistant', content:response }); addMessage('them', response);
+          if (voiceMode) { speak(response, function() { if (exchangeCount < MAX_EXCHANGES) setTimeout(startListening, 300); }); }
+          if (exchangeCount >= MAX_EXCHANGES) { var info = document.createElement('div'); info.style.cssText = 'text-align:center;font-family:JetBrains Mono,monospace;font-size:11px;color:rgba(244,243,255,0.25);padding:8px 0'; info.innerText = 'Max exchanges reached. Click "End Practice" for your debrief.'; document.getElementById('messages-container').appendChild(info); }
+        } else { alert('Error: ' + (data.error || 'Unknown')); if (voiceMode) setVoiceStatus('Error. Tap to try again.', ''); }
+      } catch(err) { removeTyping(); alert('Connection error: ' + err.message); if (voiceMode) setVoiceStatus('Connection error. Tap to retry.', ''); }
+      document.getElementById('send-btn') && (document.getElementById('send-btn').disabled = false);
+    }
+
+    async function endPractice() {
+      window.speechSynthesis.cancel(); stopListening(); showView('loading-view'); document.getElementById('loading-text').innerText = 'GENERATING YOUR DEBRIEF...';
+      try {
+        var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tool:'practice', scenario:currentScenario, objective:currentObjective, stakeholderRole:selectedRole, difficulty:selectedDiff, history:conversationHistory, meridian:meridian, requestDebrief:true }) });
+        var data = await res.json();
+        if (data.success) renderDebrief(data.data); else { alert('Debrief error: ' + (data.error || 'Unknown')); showView('chat-view'); }
+      } catch(err) { alert('Connection error: ' + err.message); showView('chat-view'); }
+    }
+
+    function renderDebrief(r) {
+      document.getElementById('what-worked').innerHTML = (r.whatWorked||[]).map(function(w){ return '<div class="debrief-item"><div class="debrief-dot"></div><div class="debrief-item-text">'+w+'</div></div>'; }).join('');
+      document.getElementById('what-improve').innerHTML = (r.whatToImprove||[]).map(function(w){ return '<div class="debrief-item"><div class="debrief-dot" style="background:#FFB547"></div><div class="debrief-item-text">'+w+'</div></div>'; }).join('');
+      document.getElementById('inflection-point').innerText = r.inflectionPoint || '\u2014';
+      document.getElementById('technique').innerText = r.techniqueForNextTime || '\u2014';
+      document.getElementById('prep-brief-text').innerText = r.preparationBrief || '\u2014';
+      showView('debrief-view');
+    }
+
+    function openInCaseNavigator() { sessionStorage.setItem('sr_case_from_practice', JSON.stringify({ scenario:currentScenario, role:selectedRole })); window.location.href = BASE + 'er-case-navigator.html'; }
+    function practiceAgain() { conversationHistory = []; exchangeCount = 0; document.getElementById('messages-container').innerHTML = ''; startSimulation(); }
+    function newScenario() { window.speechSynthesis.cancel(); stopListening(); document.getElementById('scenario').value = ''; document.getElementById('objective').value = ''; document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('selected'); }); selectedRole = ''; document.getElementById('start-btn').disabled = true; showView('setup-view'); }
+  </script>
+  <script src="sidebar-shared.js"></script>
+</body>
+</html>
