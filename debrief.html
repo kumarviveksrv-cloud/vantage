@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Debrief — Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
+    body{display:flex}
+    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.25);--grey:rgba(244,243,255,0.45);--dim:rgba(244,243,255,0.25)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+    .sidebar{width:220px;flex-shrink:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto}
+    .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
+    .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
+    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.5);margin-top:2px}
+    .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.6);padding:4px 10px;margin:16px 0 6px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.65);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
+    .nav-item:hover{background:rgba(99,102,241,0.08);color:#f4f3ff;border-color:rgba(99,102,241,0.15)}
+    .nav-item.active{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.30);color:#c4b5fd;font-weight:500}
+    .nav-item .icon{font-size:16px;flex-shrink:0}
+    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.20)}
+    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .meridian-chip .val{font-size:11px;color:var(--grey)}
+
+    .main{flex:1;overflow-y:auto;height:100vh;padding:28px 32px;background-image:linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px);background-size:48px 48px}
+    .page-header{margin-bottom:32px;animation:fadeIn .3s ease}
+    .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
+    .breadcrumb a{color:var(--dim);text-decoration:none}.breadcrumb a:hover{color:var(--muted)}
+    .page-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:700;margin-bottom:4px;color:#f4f3ff}
+    .page-sub{font-size:13px;color:var(--grey)}
+
+    /* LOADING */
+    .loading-state{text-align:center;padding:80px 20px;animation:fadeIn .3s ease}
+    .loading-orb{width:64px;height:64px;margin:0 auto 24px}
+    .loading-orb svg{animation:spin 2s linear infinite}
+    .loading-text{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.08em}
+
+    /* EMPTY */
+    .empty-state{text-align:center;padding:80px 20px;animation:fadeIn .4s ease}
+    .empty-icon{font-size:48px;margin-bottom:16px}
+    .empty-title{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;margin-bottom:10px;color:#f4f3ff}
+    .empty-sub{font-size:13px;color:var(--grey);line-height:1.7;max-width:420px;margin:0 auto 28px}
+    .month-label{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);padding:6px 14px;border-radius:20px;margin-bottom:20px}
+
+    /* DEBRIEF CONTENT */
+    .debrief-content{animation:fadeIn .4s ease}
+
+    .debrief-hero{background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.22);border-radius:18px;padding:32px;margin-bottom:28px}
+    .dh-period{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+    .dh-title{font-family:'Bricolage Grotesque',sans-serif;font-size:28px;font-weight:800;color:#f4f3ff;margin-bottom:8px;line-height:1.2}
+    .dh-sub{font-size:14px;color:var(--grey);line-height:1.7;max-width:680px;margin-bottom:24px}
+    .dh-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .dh-stat{background:rgba(5,4,16,0.6);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center}
+    .dh-stat-val{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--muted);letter-spacing:-0.5px;margin-bottom:4px}
+    .dh-stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+
+    .section-title{font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:700;color:#f4f3ff;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+    .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+    .narrative-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px;margin-bottom:24px}
+    .narrative-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+    .narrative-text{font-size:14px;color:rgba(244,243,255,0.72);line-height:1.85;white-space:pre-wrap}
+
+    .insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+    .insight-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+    .insight-card-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;margin-bottom:14px;color:#f4f3ff}
+    .insight-item{display:flex;gap:10px;margin-bottom:10px}
+    .insight-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);margin-top:7px;flex-shrink:0}
+    .insight-dot.amber{background:#FFB547}
+    .insight-text{font-size:13px;color:var(--grey);line-height:1.6}
+
+    .cases-section{margin-bottom:28px}
+    .debrief-case-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;cursor:pointer;transition:all .2s}
+    .debrief-case-card:hover{border-color:rgba(99,102,241,0.3);background:var(--card2)}
+    .dcc-type{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+    .dcc-narrative{font-size:13px;color:var(--grey);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .dcc-badges{display:flex;gap:6px;flex-shrink:0}
+    .risk-badge{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 9px;border-radius:4px}
+    .badge-critical{color:#FF4D6D;background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.25)}
+    .badge-high{color:#FFB547;background:rgba(255,181,71,0.1);border:1px solid rgba(255,181,71,0.25)}
+    .badge-medium{color:var(--muted);background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2)}
+    .badge-low{color:var(--grey);background:rgba(244,243,255,0.05);border:1px solid rgba(244,243,255,0.1)}
+
+    .next-month{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:28px}
+    .nm-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+    .nm-item{display:flex;gap:12px;margin-bottom:12px}
+    .nm-num{width:22px;height:22px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0;font-weight:700}
+    .nm-text{font-size:13px;color:var(--grey);line-height:1.6;padding-top:2px}
+
+    .humacity-summary{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.22);border-radius:14px;padding:24px;margin-bottom:28px}
+    .hs-header{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+    .hs-badge{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);padding:4px 10px;border-radius:4px}
+    .hs-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
+    .hs-assets{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .hs-asset{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+    .hs-asset-name{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+    .hs-asset-val{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--lavender);margin-bottom:4px;letter-spacing:-0.3px}
+    .hs-asset-desc{font-size:11px;color:var(--dim);line-height:1.5}
+
+    .action-row{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap}
+    .btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
+    .btn-primary:hover{opacity:.88}
+    .btn-ghost{padding:14px 28px;background:transparent;color:var(--grey);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;border:1px solid rgba(244,243,255,0.08);border-radius:10px;cursor:pointer;transition:all .2s}
+    .btn-ghost:hover{border-color:rgba(244,243,255,0.15);color:#f4f3ff}
+
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
+    @media(max-width:768px){.sidebar{display:none}.main{padding:20px 16px}.dh-stats{grid-template-columns:1fr 1fr}.insights-grid{grid-template-columns:1fr}.hs-assets{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="logo" onclick="window.location.href='index.html'">
+      <div class="logo-dot"></div>
+      <div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div>
+    </div>
+    <div class="nav-section">Core Tools</div>
+    <a href="dashboard.html" class="nav-item"><span class="icon">&#x229E;</span> Dashboard</a>
+    <a href="er-case-navigator.html" class="nav-item"><span class="icon">&#x26A1;</span> ER Case Navigator</a>
+    <a href="conversation-simulator.html" class="nav-item"><span class="icon">&#x1F3AD;</span> Conversation Simulator</a>
+    <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">&#x1F4CA;</span> HR Data Storyteller</a>
+    <a href="policy-compass.html" class="nav-item"><span class="icon">&#x1F9ED;</span> Policy Compass</a>
+    <a href="stakeholder-influence.html" class="nav-item"><span class="icon">&#x1F3AF;</span> Stakeholder Influence</a>
+    <div class="nav-section">Intelligence</div>
+    <a href="aria.html" class="nav-item"><span class="icon">&#x2736;</span> ARIA</a>
+    <a href="case-library.html" class="nav-item"><span class="icon">&#x25CE;</span> Case Library</a>
+    <a href="debrief.html" class="nav-item active"><span class="icon">&#x1F4CB;</span> The Debrief</a>
+    <div class="nav-section">Account</div>
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">&#x1F512;</span> Data &amp; Privacy</a>
+    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()"><span class="icon">&#x21A9;</span> Sign out</a>
+    <div class="meridian-chip">
+      <div class="label">MERIDIAN Active</div>
+      <div class="val" id="meridian-chip-val">Loading...</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; The Debrief</div>
+      <div class="page-title">&#x1F4CB; The Debrief</div>
+      <div class="page-sub">Your monthly intelligence report. Generated on the last working day of each month.</div>
+    </div>
+
+    <div id="loading-view" class="loading-state">
+      <div class="loading-orb">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/>
+          <circle cx="32" cy="32" r="28" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="44 132" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="loading-text">LOADING YOUR DEBRIEF...</div>
+    </div>
+
+    <div id="empty-view" style="display:none">
+      <div class="empty-state">
+        <div class="empty-icon">&#x1F4CB;</div>
+        <div class="month-label">&#x2736; August 2026</div>
+        <div class="empty-title">Your Debrief is building itself.</div>
+        <div class="empty-sub">Every case you navigate, every conversation you practice, every tool you use this month gets pulled into your Debrief. It arrives on the last working day of August — a complete intelligence report on your month.</div>
+        <div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.18);border-radius:12px;padding:20px 24px;max-width:480px;margin:0 auto 28px;text-align:left">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">Your Debrief will include</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:10px;font-size:13px;color:var(--grey)"><span style="color:var(--muted)">&#x2736;</span> A narrative of your month's HR intelligence activity</div>
+            <div style="display:flex;gap:10px;font-size:13px;color:var(--grey)"><span style="color:var(--muted)">&#x2736;</span> Every case you navigated — risk profile and outcome</div>
+            <div style="display:flex;gap:10px;font-size:13px;color:var(--grey)"><span style="color:var(--muted)">&#x2736;</span> Patterns in your case types and risk levels</div>
+            <div style="display:flex;gap:10px;font-size:13px;color:var(--grey)"><span style="color:var(--muted)">&#x2736;</span> Humacity asset class summary — your Human P&amp;L for the month</div>
+            <div style="display:flex;gap:10px;font-size:13px;color:var(--grey)"><span style="color:var(--muted)">&#x2736;</span> What to focus on next month</div>
+          </div>
+        </div>
+        <a href="er-case-navigator.html" class="btn-primary" style="display:inline-flex;text-decoration:none">Navigate your first case &rarr;</a>
+      </div>
+    </div>
+
+    <div id="debrief-view" style="display:none">
+      <div class="debrief-content">
+        <div class="debrief-hero">
+          <div class="dh-period" id="dh-period">August 2026</div>
+          <div class="dh-title" id="dh-title">Your August Debrief</div>
+          <div class="dh-sub" id="dh-sub"></div>
+          <div class="dh-stats">
+            <div class="dh-stat"><div class="dh-stat-val" id="dh-cases">0</div><div class="dh-stat-label">Cases navigated</div></div>
+            <div class="dh-stat"><div class="dh-stat-val" id="dh-critical" style="color:#FF4D6D">0</div><div class="dh-stat-label">Critical risk</div></div>
+            <div class="dh-stat"><div class="dh-stat-val" id="dh-resolved" style="color:#22c55e">0</div><div class="dh-stat-label">Resolved</div></div>
+            <div class="dh-stat"><div class="dh-stat-val" id="dh-tools">0</div><div class="dh-stat-label">Tools used</div></div>
+          </div>
+        </div>
+
+        <div class="section-title">Monthly Narrative</div>
+        <div class="narrative-card">
+          <div class="narrative-label">What your month says about you</div>
+          <div class="narrative-text" id="monthly-narrative">&#8212;</div>
+        </div>
+
+        <div class="section-title">Key Insights</div>
+        <div class="insights-grid">
+          <div class="insight-card">
+            <div class="insight-card-title">&#x2705; What you did well</div>
+            <div id="insights-well"></div>
+          </div>
+          <div class="insight-card">
+            <div class="insight-card-title">&#x1F3AF; Where to sharpen</div>
+            <div id="insights-sharpen"></div>
+          </div>
+        </div>
+
+        <div class="section-title">Cases This Month</div>
+        <div class="cases-section">
+          <div id="debrief-cases-list"></div>
+        </div>
+
+        <div class="section-title">Humacity Summary</div>
+        <div class="humacity-summary">
+          <div class="hs-header">
+            <div class="hs-badge">HUMACITY</div>
+            <div class="hs-title">Your Human P&amp;L for the Month</div>
+          </div>
+          <div class="hs-assets" id="hs-assets-grid"></div>
+        </div>
+
+        <div class="section-title">Next Month</div>
+        <div class="next-month">
+          <div class="nm-label">Three things to focus on</div>
+          <div id="next-month-list"></div>
+        </div>
+
+        <div class="action-row">
+          <button class="btn-primary" onclick="window.location.href='er-case-navigator.html'">Start a New Case &rarr;</button>
+          <button class="btn-ghost" onclick="window.location.href='case-library.html'">View Full Case Library</button>
+          <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+    var BASE = 'https://kumarviveksrv-cloud.github.io/vantage/';
+
+    if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; }
+
+    var meridianRaw = sessionStorage.getItem('sr_meridian');
+    var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
+    document.getElementById('meridian-chip-val').innerText = (meridian.state||'Not set') + ' \xb7 ' + (meridian.industry||'Not set');
+
+    function getUserId() {
+      var uid = localStorage.getItem('sr_user_id');
+      if (!uid) { uid = 'usr_' + Math.random().toString(36).substr(2,9) + '_' + Date.now(); localStorage.setItem('sr_user_id', uid); }
+      return uid;
+    }
+
+    function getRiskBadge(risk) {
+      if (!risk) return '';
+      var cls = 'badge-' + (risk||'medium').toLowerCase();
+      return '<div class="risk-badge '+cls+'">'+(risk||'').toUpperCase()+'</div>';
+    }
+
+    function showView(view) {
+      ['loading-view','empty-view','debrief-view'].forEach(function(v){ document.getElementById(v).style.display='none'; });
+      document.getElementById(view).style.display = view === 'debrief-view' ? 'block' : 'block';
+    }
+
+    async function loadDebrief() {
+      var userId = getUserId();
+      try {
+        var res = await fetch(WORKER, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ tool:'get_debrief', userId:userId, meridian:meridian })
+        });
+        var data = await res.json();
+        if (data.success && data.data && data.data.hasDebrief) {
+          renderDebrief(data.data);
+        } else {
+          showView('empty-view');
+        }
+      } catch(err) {
+        showView('empty-view');
+      }
+    }
+
+    function renderDebrief(d) {
+      document.getElementById('dh-period').innerText = d.period || 'August 2026';
+      document.getElementById('dh-title').innerText = 'Your ' + (d.period || 'August') + ' Debrief';
+      document.getElementById('dh-sub').innerText = d.summary || '';
+      document.getElementById('dh-cases').innerText = d.stats ? d.stats.totalCases || 0 : 0;
+      document.getElementById('dh-critical').innerText = d.stats ? d.stats.criticalCases || 0 : 0;
+      document.getElementById('dh-resolved').innerText = d.stats ? d.stats.resolvedCases || 0 : 0;
+      document.getElementById('dh-tools').innerText = d.stats ? d.stats.toolsUsed || 0 : 0;
+      document.getElementById('monthly-narrative').innerText = d.narrative || '\u2014';
+
+      document.getElementById('insights-well').innerHTML = (d.insightsWell||[]).map(function(i){
+        return '<div class="insight-item"><div class="insight-dot"></div><div class="insight-text">'+i+'</div></div>';
+      }).join('');
+      document.getElementById('insights-sharpen').innerHTML = (d.insightsSharpen||[]).map(function(i){
+        return '<div class="insight-item"><div class="insight-dot amber"></div><div class="insight-text">'+i+'</div></div>';
+      }).join('');
+
+      if (d.cases && d.cases.length > 0) {
+        document.getElementById('debrief-cases-list').innerHTML = d.cases.map(function(c){
+          return '<div class="debrief-case-card" onclick="window.location.href=\'case-library.html\'">' +
+            '<div><div class="dcc-type">'+(c.caseType||'ER Case')+'</div><div class="dcc-narrative">'+(c.narrative||'')+'</div></div>' +
+            '<div class="dcc-badges">'+getRiskBadge(c.risk)+'</div>' +
+          '</div>';
+        }).join('');
+      } else {
+        document.getElementById('debrief-cases-list').innerHTML = '<div style="font-size:13px;color:var(--dim);padding:16px 0">No cases recorded this month.</div>';
+      }
+
+      if (d.humacity && d.humacity.assets) {
+        document.getElementById('hs-assets-grid').innerHTML = d.humacity.assets.map(function(a){
+          return '<div class="hs-asset"><div class="hs-asset-name">'+(a.name||'')+'</div><div class="hs-asset-val">'+(a.value||'\u2014')+'</div><div class="hs-asset-desc">'+(a.description||'')+'</div></div>';
+        }).join('');
+      }
+
+      document.getElementById('next-month-list').innerHTML = (d.nextMonth||[]).map(function(item,i){
+        return '<div class="nm-item"><div class="nm-num">'+(i+1)+'</div><div class="nm-text">'+item+'</div></div>';
+      }).join('');
+
+      showView('debrief-view');
+    }
+
+    loadDebrief();
+  </script>
+  <script src="sidebar-shared.js"></script>
+</body>
+</html>
