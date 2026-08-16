@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Demo — Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.25);--grey:rgba(244,243,255,0.45);--dim:rgba(244,243,255,0.25)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,4,16,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(99,102,241,0.1)}
+    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .nav-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite}
+    .nav-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
+    .nav-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:1px}
+    .nav-right{display:flex;align-items:center;gap:12px}
+    .demo-badge{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.22);padding:5px 12px;border-radius:20px}
+    .nav-cta{padding:10px 22px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer;text-decoration:none;box-shadow:0 4px 16px rgba(99,102,241,0.4);transition:opacity .2s}
+    .nav-cta:hover{opacity:.88}
+
+    /* HERO */
+    .hero{padding:120px 40px 60px;text-align:center;background-image:linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px);background-size:48px 48px;position:relative;overflow:hidden}
+    .hero::after{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:500px;background:radial-gradient(circle,rgba(99,102,241,0.07) 0%,transparent 65%);pointer-events:none}
+    .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:8px}
+    .hero-eyebrow-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;animation:pulse 1.8s ease-in-out infinite}
+    .hero-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(26px,3.5vw,44px);font-weight:800;line-height:1.15;margin-bottom:16px;color:#f4f3ff;position:relative;z-index:1}
+    .hero-sub{font-size:15px;color:var(--grey);line-height:1.75;max-width:580px;margin:0 auto 12px;position:relative;z-index:1}
+    .hero-note{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.04em;position:relative;z-index:1}
+
+    /* TOOL TABS */
+    .tool-tabs{display:flex;justify-content:center;gap:10px;padding:32px 40px 0;flex-wrap:wrap}
+    .tool-tab{padding:12px 22px;background:rgba(99,102,241,0.06);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--grey);display:flex;align-items:center;gap:8px}
+    .tool-tab:hover{border-color:rgba(99,102,241,0.3);color:#f4f3ff;background:rgba(99,102,241,0.1)}
+    .tool-tab.active{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.45);color:#c4b5fd;font-weight:600}
+
+    /* DEMO PANEL */
+    .demo-panel{max-width:760px;margin:0 auto;padding:28px 40px 60px}
+    .demo-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:30px;animation:fadeIn .35s ease;position:relative;overflow:hidden}
+    .demo-card::before{content:'';position:absolute;inset:-1px;border-radius:18px;background:linear-gradient(135deg,rgba(99,102,241,0.1),transparent 55%);z-index:0;pointer-events:none}
+    .demo-card>*{position:relative;z-index:1}
+    .demo-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+    .demo-card-title{font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:700;color:#f4f3ff;display:flex;align-items:center;gap:10px}
+    .demo-tag{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);padding:4px 10px;border-radius:4px}
+    .scenario-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+    .scenario-text{background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-size:13px;color:rgba(244,243,255,0.65);line-height:1.7;margin-bottom:8px;font-style:italic}
+    .scenario-note{font-size:11px;color:var(--dim);margin-bottom:22px;font-family:'JetBrains Mono',monospace;letter-spacing:.03em}
+    .run-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.4);display:flex;align-items:center;justify-content:center;gap:8px}
+    .run-btn:hover{opacity:.88}
+    .run-btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
+
+    /* LOADING */
+    .loading-wrap{text-align:center;padding:40px 0;display:none}
+    .loading-orb{width:56px;height:56px;margin:0 auto 18px}
+    .loading-orb svg{animation:spin 2s linear infinite}
+    .loading-text{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.08em}
+
+    /* OUTPUT */
+    .output-wrap{display:none;animation:fadeIn .4s ease}
+    .risk-banner{border-radius:12px;padding:18px 22px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+    .risk-critical{background:rgba(255,77,109,0.08);border:1px solid rgba(255,77,109,0.25)}
+    .risk-high{background:rgba(255,181,71,0.08);border:1px solid rgba(255,181,71,0.25)}
+    .risk-medium{background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.25)}
+    .risk-low{background:rgba(244,243,255,0.04);border:1px solid rgba(244,243,255,0.1)}
+    .risk-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;margin-bottom:5px}
+    .risk-sub{font-size:13px;color:var(--grey);line-height:1.5;max-width:500px}
+    .risk-badge{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;flex-shrink:0}
+    .badge-critical{color:#FF4D6D;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3)}
+    .badge-high{color:#FFB547;background:rgba(255,181,71,0.15);border:1px solid rgba(255,181,71,0.3)}
+    .badge-medium{color:var(--muted);background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3)}
+    .badge-low{color:var(--grey);background:rgba(244,243,255,0.06);border:1px solid rgba(244,243,255,0.1)}
+
+    .pact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+    .pact-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px}
+    .pact-dim{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between}
+    .pact-score{font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 7px;border-radius:4px}
+    .score-critical{color:#FF4D6D;background:rgba(255,77,109,0.12);border:1px solid rgba(255,77,109,0.2)}
+    .score-high{color:#FFB547;background:rgba(255,181,71,0.12);border:1px solid rgba(255,181,71,0.2)}
+    .score-medium{color:var(--muted);background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.2)}
+    .score-low{color:var(--grey);background:rgba(244,243,255,0.05);border:1px solid rgba(244,243,255,0.08)}
+    .pact-status{font-size:13px;font-weight:500;color:rgba(244,243,255,0.75);margin-bottom:8px}
+    .pact-point{display:flex;gap:7px;margin-bottom:7px;font-size:12px;color:var(--grey);line-height:1.5}
+    .pact-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0}
+
+    .humacity-card{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.22);border-radius:12px;padding:20px;margin-bottom:20px}
+    .hc-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+    .hc-badge{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);padding:3px 9px;border-radius:4px}
+    .hc-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;color:#f4f3ff}
+    .hc-exposure{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px}
+    .hc-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+    .hc-val{font-size:13px;color:var(--muted);line-height:1.6;font-family:'JetBrains Mono',monospace}
+    .hc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .hc-block{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+    .hc-block-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+    .hc-block-label.red{color:#FF4D6D}
+    .hc-block-label.green{color:var(--muted)}
+    .hc-block-text{font-size:12px;color:var(--grey);line-height:1.5}
+
+    .steps-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:20px}
+    .steps-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;margin-bottom:14px;color:#f4f3ff}
+    .step-item{display:flex;gap:10px;margin-bottom:10px}
+    .step-num{width:22px;height:22px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0;font-weight:700}
+    .step-text{font-size:13px;color:var(--grey);line-height:1.5;padding-top:2px}
+
+    .demo-cta{background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.22);border-radius:14px;padding:28px;text-align:center;margin-top:24px}
+    .demo-cta-title{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px;color:#f4f3ff}
+    .demo-cta-sub{font-size:13px;color:var(--grey);margin-bottom:22px;line-height:1.65}
+    .cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .btn-p{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;text-decoration:none;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
+    .btn-p:hover{opacity:.88}
+    .btn-g{padding:14px 22px;background:transparent;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;border:1px solid rgba(99,102,241,0.3);border-radius:10px;cursor:pointer;transition:all .2s;text-decoration:none}
+    .btn-g:hover{background:rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.5)}
+
+    /* SIGNAL DEMO */
+    .signal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+    .signal-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px}
+    .sig-dim{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+    .dim-s{color:var(--muted)}.dim-i{color:#FFB547}.dim-g{color:#FF4D6D}.dim-n{color:var(--muted)}.dim-a{color:var(--muted)}.dim-l{color:var(--lavender)}
+    .sig-content{font-size:12px;color:var(--grey);line-height:1.6}
+    .anchor-block{background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:18px 20px;margin-bottom:18px;display:flex;align-items:center;gap:20px}
+    .anchor-num{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:var(--lavender);letter-spacing:-0.5px;flex-shrink:0}
+    .anchor-ctx{font-size:13px;color:var(--grey);line-height:1.6}
+
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
+    @media(max-width:768px){nav{padding:12px 20px}.hero{padding:100px 20px 40px}.tool-tabs{padding:24px 20px 0;gap:8px}.demo-panel{padding:20px 20px 48px}.pact-grid{grid-template-columns:1fr}.signal-grid{grid-template-columns:1fr}.hc-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-dot"></div>
+    <div><div class="nav-name">Virorah</div><div class="nav-sub">Vantage</div></div>
+  </a>
+  <div class="nav-right">
+    <div class="demo-badge">&#x1F1EE;&#x1F1F3; India Edition &middot; Live Demo</div>
+    <a href="access.html" class="nav-cta">Apply for Early Access</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Live tool outputs &middot; No mockups</div>
+  <div class="hero-title">Two live tools. Real outputs.<br>See exactly what Indian HR professionals use every day.</div>
+  <div class="hero-sub">to navigate the cases, conversations, and data moments that define their careers.</div>
+  <div class="hero-note">These are actual tool outputs — not mockups. Zero AI calls cached in this demo. Every number and insight below reflects the platform's real output quality.</div>
+</div>
+
+<div class="tool-tabs">
+  <div class="tool-tab active" id="tab-pact" onclick="switchTool('pact')">&#x26A1; PACT ER Case Navigator</div>
+  <div class="tool-tab" id="tab-signal" onclick="switchTool('signal')">&#x1F4CA; HR Data Storyteller</div>
+</div>
+
+<div class="demo-panel">
+
+  <!-- PACT TOOL -->
+  <div id="pact-tool">
+    <div class="demo-card">
+      <div class="demo-card-header">
+        <div class="demo-card-title">&#x26A1; PACT ER Case Navigator <div class="demo-tag">Demo &middot; Misconduct Case</div></div>
+      </div>
+      <div class="scenario-label">Pre-loaded scenario</div>
+      <div class="scenario-text">Rohan Mehta, Senior Software Engineer, 5 years tenure. Badge records confirm he marked attendance as present on 14 days over the past 3 months when he was not in office. Evidence gathered. No prior warnings on record. Line manager wants to proceed with immediate termination.</div>
+      <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you describe your own live cases.</div>
+      <button class="run-btn" id="pact-run-btn" onclick="runPACT()">&#x26A1; Run PACT Analysis</button>
+      <div class="loading-wrap" id="pact-loading">
+        <div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div>
+        <div class="loading-text">RUNNING PACT ASSESSMENT...</div>
+      </div>
+      <div class="output-wrap" id="pact-output"></div>
+    </div>
+  </div>
+
+  <!-- SIGNAL TOOL -->
+  <div id="signal-tool" style="display:none">
+    <div class="demo-card">
+      <div class="demo-card-header">
+        <div class="demo-card-title">&#x1F4CA; HR Data Storyteller <div class="demo-tag">Demo &middot; CFO Presentation</div></div>
+      </div>
+      <div class="scenario-label">Pre-loaded scenario</div>
+      <div class="scenario-text">Attrition rate: 22% (up from 14% last quarter). Time to hire: 58 days. Engagement score: 54%. Open positions: 18. Average CTC: &#8377;14L. Audience: CFO. Context: Engineering attrition spike — need budget approval for &#8377;22L retention programme.</div>
+      <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you enter your own metrics and context.</div>
+      <button class="run-btn" id="signal-run-btn" onclick="runSIGNAL()">&#x1F4CA; Generate SIGNAL Narrative</button>
+      <div class="loading-wrap" id="signal-loading">
+        <div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div>
+        <div class="loading-text">BUILDING SIGNAL NARRATIVE...</div>
+      </div>
+      <div class="output-wrap" id="signal-output"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+  var BASE = 'https://kumarviveksrv-cloud.github.io/vantage/';
+  var demoMeridian = { state:'Maharashtra', industry:'IT / SaaS', orgType:'Corporate / Pvt Ltd', orgSize:'251 – 1,000', seniority:'HR Manager', unionStatus:'Non-unionised', hrFunction:'Employee Relations specialist' };
+
+  function switchTool(tool) {
+    document.querySelectorAll('.tool-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.getElementById('tab-'+tool).classList.add('active');
+    document.getElementById('pact-tool').style.display = tool === 'pact' ? 'block' : 'none';
+    document.getElementById('signal-tool').style.display = tool === 'signal' ? 'block' : 'none';
+  }
+
+  function getRiskClass(r){ return {Critical:'critical',High:'high',Medium:'medium',Low:'low'}[r]||'medium'; }
+  function getScoreClass(s){ return {'Critical':'score-critical','High':'score-high','Medium':'score-medium','Low':'score-low'}[s]||'score-medium'; }
+
+  async function runPACT() {
+    document.getElementById('pact-run-btn').disabled = true;
+    document.getElementById('pact-loading').style.display = 'block';
+    document.getElementById('pact-output').style.display = 'none';
+    try {
+      var res = await fetch(WORKER, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ tool:'pact', narrative:'Rohan Mehta, Senior Software Engineer, 5 years tenure. Badge records confirm he marked attendance as present on 14 days over the past 3 months when he was not in office. Evidence gathered. No prior warnings on record. Line manager wants to proceed with immediate termination.', caseType:'Misconduct', stakeholders:'Senior Software Engineer (5 years tenure), Line Manager, HR', meridian:demoMeridian })
+      });
+      var data = await res.json();
+      document.getElementById('pact-loading').style.display = 'none';
+      if (data.success) renderPACT(data.data);
+      else { document.getElementById('pact-run-btn').disabled = false; alert('Error: ' + (data.error||'Try again')); }
+    } catch(err) { document.getElementById('pact-loading').style.display = 'none'; document.getElementById('pact-run-btn').disabled = false; alert('Connection error. Try again.'); }
+  }
+
+  function renderPACT(r) {
+    var riskClass = getRiskClass(r.overallRisk);
+    var dims = ['process','accountability','consequence','trust'];
+    var labels = ['P — Process Integrity','A — Accountability Clarity','C — Consequence Mapping','T — Trust Preservation'];
+    var pactCards = dims.map(function(d,i){
+      var p = r.pact[d] || {};
+      var sc = getScoreClass(p.score);
+      var points = (p.points||[]).slice(0,2).map(function(pt){ return '<div class="pact-point"><div class="pact-dot"></div><div>'+pt+'</div></div>'; }).join('');
+      return '<div class="pact-card"><div class="pact-dim">'+labels[i]+'<span class="pact-score '+sc+'">'+(p.score||'Medium')+' RISK</span></div><div class="pact-status">'+(p.status||'')+'</div>'+points+'</div>';
+    }).join('');
+
+    var humacity = '';
+    if (r.humacity) {
+      var h = r.humacity;
+      var assets = (h.assetsAtRisk||[]).slice(0,2).map(function(a){
+        return '<div style="font-size:12px;color:var(--grey);margin-bottom:6px"><span style="color:var(--muted);font-family:JetBrains Mono,monospace;font-size:10px">'+(a.asset||'')+'</span> &mdash; '+(a.impact||'')+'</div>';
+      }).join('');
+      humacity = '<div class="humacity-card"><div class="hc-header"><div class="hc-badge">HUMACITY</div><div class="hc-title">Financial Impact</div></div><div class="hc-exposure"><div class="hc-label">Total Financial Exposure</div><div class="hc-val">'+(h.financialExposure||'')+'</div></div>'+assets+'<div class="hc-row"><div class="hc-block"><div class="hc-block-label red">Cost of Inaction</div><div class="hc-block-text">'+(h.costOfInaction||'')+'</div></div><div class="hc-block"><div class="hc-block-label green">Revenue Protected</div><div class="hc-block-text">'+(h.revenueProtected||'')+'</div></div></div></div>';
+    }
+
+    var steps = (r.nextSteps||[]).slice(0,4).map(function(s,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+s+'</div></div>'; }).join('');
+
+    document.getElementById('pact-output').innerHTML =
+      '<div class="risk-banner risk-'+riskClass+'">' +
+        '<div><div class="risk-title">'+r.overallRisk+' Risk &mdash; Misconduct Case</div><div class="risk-sub">'+(r.overallNarrative||'')+'</div></div>' +
+        '<div class="risk-badge badge-'+riskClass+'">'+(r.overallRisk||'').toUpperCase()+'</div>' +
+      '</div>' +
+      '<div class="pact-grid">'+pactCards+'</div>' +
+      humacity +
+      '<div class="steps-card"><div class="steps-title">Recommended Next Steps</div>'+steps+'</div>' +
+      '<div class="demo-cta"><div class="demo-cta-title">Your real cases need real answers.</div><div class="demo-cta-sub">On the full platform, you describe your own situation. PACT reads your MERIDIAN profile — your state, industry, org type, union status — and returns calibrated guidance for your exact reality.</div><div class="cta-btns"><a href="access.html" class="btn-p">Apply for Early Access &rarr;</a><a href="index.html" class="btn-g">See what else is inside</a></div></div>';
+
+    document.getElementById('pact-output').style.display = 'block';
+  }
+
+  async function runSIGNAL() {
+    document.getElementById('signal-run-btn').disabled = true;
+    document.getElementById('signal-loading').style.display = 'block';
+    document.getElementById('signal-output').style.display = 'none';
+    try {
+      var res = await fetch(WORKER, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ tool:'signal', audience:'CFO / Finance', context:'Engineering attrition has gone from 14% to 22% in one quarter. Leadership thinks it is a market issue. I need to present to the CFO next week and change that narrative. He responds to numbers and cost arguments. I need approval for a ₹22L retention programme.', ask:'Approval for ₹22L retention investment for engineering cohort', metrics:{ attrition:'22', timeToHire:'58', engagement:'54', openPositions:'18', avgCTC:'14' }, meridian:demoMeridian })
+      });
+      var data = await res.json();
+      document.getElementById('signal-loading').style.display = 'none';
+      if (data.success) renderSIGNAL(data.data);
+      else { document.getElementById('signal-run-btn').disabled = false; alert('Error: ' + (data.error||'Try again')); }
+    } catch(err) { document.getElementById('signal-loading').style.display = 'none'; document.getElementById('signal-run-btn').disabled = false; alert('Connection error. Try again.'); }
+  }
+
+  function renderSIGNAL(r) {
+    var dimKeys = ['situation','impact','gap','narrative','action','linkage'];
+    var dimLabels = ['S — Situation','I — Impact','G — Gap','N — Narrative','A — Action','L — Linkage'];
+    var dimClasses = ['dim-s','dim-i','dim-g','dim-n','dim-a','dim-l'];
+    var signalCards = dimKeys.map(function(k,i){
+      return '<div class="signal-card"><div class="sig-dim '+dimClasses[i]+'">'+dimLabels[i]+'</div><div class="sig-content">'+(r.signal ? (r.signal[k]||'') : '')+'</div></div>';
+    }).join('');
+
+    var anchor = r.dataAnchor || {};
+    var talkingPts = (r.talkingPoints||[]).slice(0,3).map(function(tp,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+tp+'</div></div>'; }).join('');
+
+    document.getElementById('signal-output').innerHTML =
+      '<div class="anchor-block"><div class="anchor-num">'+(anchor.number||'')+'</div><div class="anchor-ctx">'+(anchor.context||'The number that opens the room.')+'</div></div>' +
+      '<div class="signal-grid">'+signalCards+'</div>' +
+      '<div class="steps-card"><div class="steps-title">Talking Points &mdash; For the Q&amp;A</div>'+talkingPts+'</div>' +
+      '<div class="steps-card"><div class="steps-title">Full Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(r.fullNarrative||'')+'</div></div>' +
+      '<div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. SIGNAL builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Apply for Early Access &rarr;</a><a href="index.html" class="btn-g">See all five tools</a></div></div>';
+
+    document.getElementById('signal-output').style.display = 'block';
+  }
+</script>
+</body>
+</html>
