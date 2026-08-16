@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MERIDIAN Setup — Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden}
+    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.25);--grey:rgba(244,243,255,0.45);--dim:rgba(244,243,255,0.25)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+    body{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:32px 24px 60px;background-image:linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px);background-size:48px 48px;position:relative;overflow-y:auto}
+    body::after{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(circle,rgba(99,102,241,0.07) 0%,transparent 65%);pointer-events:none;z-index:0}
+
+    .header{text-align:center;margin-bottom:40px;position:relative;z-index:1;animation:fadeIn .5s ease}
+    .header-badge{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.22);padding:6px 14px;border-radius:20px;margin-bottom:20px}
+    .header-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
+    .header-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-bottom:12px;color:#f4f3ff;line-height:1.15}
+    .header-sub{font-size:15px;color:var(--grey);line-height:1.7;max-width:500px;margin:0 auto}
+
+    .progress-bar{width:100%;max-width:680px;margin-bottom:36px;position:relative;z-index:1}
+    .progress-track{height:3px;background:rgba(99,102,241,0.12);border-radius:2px;overflow:hidden;margin-bottom:12px}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--violet));border-radius:2px;transition:width .4s ease}
+    .progress-labels{display:flex;justify-content:space-between}
+    .progress-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em}
+
+    .step-card{width:100%;max-width:680px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;margin-bottom:16px;position:relative;z-index:1;animation:slideIn .3s ease}
+    .step-card::before{content:'';position:absolute;inset:-1px;border-radius:18px;background:linear-gradient(135deg,rgba(99,102,241,0.1),transparent 60%);z-index:-1;pointer-events:none}
+    .step-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(99,102,241,0.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+    .step-title{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px;color:#f4f3ff}
+    .step-sub{font-size:13px;color:var(--grey);margin-bottom:24px;line-height:1.6}
+    .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:block}
+
+    .options-grid{display:grid;gap:8px}
+    .options-grid.col2{grid-template-columns:1fr 1fr}
+    .options-grid.col3{grid-template-columns:1fr 1fr 1fr}
+    .options-grid.col4{grid-template-columns:1fr 1fr 1fr 1fr}
+    .opt-btn{padding:12px 16px;background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;text-align:center;color:var(--grey);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.3}
+    .opt-btn:hover{border-color:rgba(99,102,241,0.3);color:#f4f3ff;background:rgba(99,102,241,0.08)}
+    .opt-btn.selected{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.45);color:#c4b5fd;font-weight:500}
+    .opt-btn .opt-icon{font-size:16px;display:block;margin-bottom:4px}
+
+    input[type=text]{width:100%;padding:14px 16px;background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;transition:border .2s}
+    input[type=text]:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
+    input::placeholder{color:rgba(165,180,252,0.25)}
+    textarea{width:100%;padding:14px 16px;background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:1.6;resize:vertical;outline:none;transition:border .2s;min-height:100px}
+    textarea:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
+    textarea::placeholder{color:rgba(165,180,252,0.25)}
+
+    .nav-btns{display:flex;gap:12px;justify-content:space-between;width:100%;max-width:680px;position:relative;z-index:1}
+    .btn-back{padding:14px 28px;background:transparent;color:var(--grey);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;border:1px solid rgba(244,243,255,0.1);border-radius:10px;cursor:pointer;transition:all .2s}
+    .btn-back:hover{border-color:rgba(244,243,255,0.2);color:#f4f3ff}
+    .btn-next{padding:14px 32px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.4)}
+    .btn-next:hover{opacity:.88}
+    .btn-next:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
+    .btn-skip{padding:14px 20px;background:transparent;color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:11px;border:none;cursor:pointer;transition:color .2s;letter-spacing:.04em}
+    .btn-skip:hover{color:var(--grey)}
+
+    .policy-section{margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+    .policy-section-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+    .policy-fields{display:flex;flex-direction:column;gap:10px}
+    .policy-field{display:flex;flex-direction:column;gap:6px}
+    .policy-field-label{font-size:12px;color:var(--grey);font-family:'JetBrains Mono',monospace;letter-spacing:.03em}
+
+    .complete-card{width:100%;max-width:680px;text-align:center;background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.25);border-radius:18px;padding:48px 36px;position:relative;z-index:1;animation:fadeIn .5s ease}
+    .complete-icon{font-size:52px;margin-bottom:20px}
+    .complete-title{font-family:'Bricolage Grotesque',sans-serif;font-size:28px;font-weight:800;margin-bottom:12px;color:#f4f3ff}
+    .complete-sub{font-size:14px;color:var(--grey);line-height:1.75;margin-bottom:32px;max-width:460px;margin-left:auto;margin-right:auto}
+    .meridian-summary{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:28px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:left}
+    .ms-item .ms-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+    .ms-item .ms-val{font-size:13px;color:rgba(244,243,255,0.7)}
+    .btn-enter{display:inline-flex;align-items:center;gap:8px;padding:16px 36px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 24px rgba(99,102,241,0.45);text-decoration:none}
+    .btn-enter:hover{opacity:.88}
+
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
+    @media(max-width:600px){.options-grid.col3,.options-grid.col4{grid-template-columns:1fr 1fr}.options-grid.col2{grid-template-columns:1fr}.meridian-summary{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-badge"><div class="header-dot"></div>MERIDIAN Context Engine</div>
+    <div class="header-title">Build your professional context.</div>
+    <div class="header-sub">Seven parameters. Every Virorah tool uses these to calibrate its output to your exact reality — not generic advice. Takes 5 minutes.</div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="progress-labels">
+      <div class="progress-label" id="progress-label">Step 1 of 8</div>
+      <div class="progress-label" id="progress-pct">0%</div>
+    </div>
+  </div>
+
+  <div id="step-container" style="width:100%;max-width:680px;position:relative;z-index:1"></div>
+
+  <div class="nav-btns" id="nav-btns">
+    <button class="btn-back" id="btn-back" onclick="prevStep()" style="display:none">&#x2190; Back</button>
+    <div style="display:flex;gap:10px;margin-left:auto">
+      <button class="btn-skip" id="btn-skip" onclick="skipStep()">Skip</button>
+      <button class="btn-next" id="btn-next" onclick="nextStep()" disabled>Continue &#x2192;</button>
+    </div>
+  </div>
+
+  <script>
+    var BASE = 'https://kumarviveksrv-cloud.github.io/vantage/';
+    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+
+    if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; }
+
+    var profile = {};
+    var currentStep = 0;
+
+    var STEPS = [
+      {
+        id:'state', title:'Which state do you operate in?', sub:'This calibrates your advice to the correct labour law jurisdiction — termination norms, standing order requirements, and dispute resolution vary significantly by state.',
+        type:'grid', cols:4,
+        options:['Maharashtra','Delhi','Karnataka','Tamil Nadu','Telangana','Gujarat','Rajasthan','Haryana','UP','West Bengal','Punjab','Andhra Pradesh','Kerala','Madhya Pradesh','Other']
+      },
+      {
+        id:'industry', title:'What industry are you in?', sub:'Industry shapes everything from notice period norms to union density to typical ER case patterns.',
+        type:'grid', cols:3,
+        options:['IT / SaaS','Banking / NBFC','Manufacturing','Healthcare / Pharma','Retail / FMCG','Consulting / Professional Services','Education / EdTech','Logistics / Supply Chain','Media / Entertainment','Government / PSU','Startup','Other']
+      },
+      {
+        id:'orgType', title:'What type of organisation?', sub:'This determines which employment law provisions apply — registered factories, shops & establishments, or contract labour regulations.',
+        type:'grid', cols:2,
+        options:['Corporate / Pvt Ltd','MNC / Listed Company','Startup (pre-Series B)','SME / Family Business','Government / PSU','NGO / Non-profit']
+      },
+      {
+        id:'orgSize', title:'How large is your organisation?', sub:'Headcount determines which statutes apply — Industrial Disputes Act thresholds, retrenchment requirements, and Works Committee obligations vary by size.',
+        type:'grid', cols:3,
+        options:['1 \u2013 50','51 \u2013 250','251 \u2013 1,000','1,001 \u2013 5,000','5,000+']
+      },
+      {
+        id:'seniority', title:'What is your role and seniority?', sub:'This calibrates the depth of advice — an HRBP needs different output than a CHRO or an HR Coordinator.',
+        type:'grid', cols:3,
+        options:['HR Coordinator / Executive','HR Business Partner','HR Manager','Senior HR Manager','HRBP (Senior)','HR Director','CHRO / VP HR','HR Consultant','Founder / CEO with HR responsibility','Other']
+      },
+      {
+        id:'unionStatus', title:'Is your workforce unionised?', sub:'Union status fundamentally changes your ER approach — conciliation, charter of demands, and recognition disputes require entirely different handling.',
+        type:'grid', cols:2,
+        options:['Non-unionised','Partially unionised','Fully unionised \u2014 recognised union','Multiple unions','Collective bargaining in place','Not sure']
+      },
+      {
+        id:'hrFunction', title:'What is your primary HR function?', sub:'This shapes which tools and frameworks ARIA and Vantage will prioritise for you.',
+        type:'grid', cols:3,
+        options:['Generalist / All-round','Employee Relations specialist','Talent Acquisition','Learning & Development','Compensation & Benefits','HR Business Partner','HR Operations','OD / Culture','HR Analytics','HR Technology']
+      },
+      {
+        id:'policy', title:'Your Policy Guardrails', sub:'Optional — helps the platform understand your company context and policy boundaries. All fields are optional.',
+        type:'policy'
+      }
+    ];
+
+    function updateProgress() {
+      var pct = Math.round((currentStep / STEPS.length) * 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-label').innerText = 'Step ' + (currentStep + 1) + ' of ' + STEPS.length;
+      document.getElementById('progress-pct').innerText = pct + '%';
+    }
+
+    function renderStep() {
+      var step = STEPS[currentStep];
+      var container = document.getElementById('step-container');
+      updateProgress();
+
+      document.getElementById('btn-back').style.display = currentStep > 0 ? 'block' : 'none';
+      document.getElementById('btn-next').disabled = !profile[step.id] && step.type !== 'policy';
+      document.getElementById('btn-skip').style.display = step.type === 'policy' ? 'none' : 'block';
+
+      if (step.type === 'policy') {
+        document.getElementById('btn-next').disabled = false;
+        document.getElementById('btn-skip').style.display = 'none';
+        container.innerHTML =
+          '<div class="step-card">' +
+            '<div class="step-num">Step ' + (currentStep + 1) + ' of ' + STEPS.length + '</div>' +
+            '<div class="step-title">' + step.title + '</div>' +
+            '<div class="step-sub">' + step.sub + '</div>' +
+            '<div style="display:flex;flex-direction:column;gap:18px">' +
+              '<div>' +
+                '<label class="form-label">Notice Period (weeks)</label>' +
+                '<input type="text" id="pol-notice" placeholder="e.g. 4 weeks for managers, 2 weeks for staff" value="' + (profile.policyNoticePeriod||'') + '" oninput="profile.policyNoticePeriod=this.value" />' +
+              '</div>' +
+              '<div>' +
+                '<label class="form-label">Warning Process</label>' +
+                '<div class="options-grid col3" id="pol-warning-grid">' +
+                  ['Verbal then written','2 written warnings','3-strike policy','Show cause then warning','Domestic enquiry first','Company-specific process'].map(function(o){
+                    var sel = profile.policyWarningProcess === o ? ' selected' : '';
+                    return '<div class="opt-btn'+sel+'" onclick="selectPolicyOpt(\'policyWarningProcess\',\''+o+'\',this)">'+o+'</div>';
+                  }).join('') +
+                '</div>' +
+              '</div>' +
+              '<div>' +
+                '<label class="form-label">Termination Authority</label>' +
+                '<div class="options-grid col3" id="pol-term-grid">' +
+                  ['HR alone','Line Manager + HR','CHRO approval required','MD/CEO approval required','HR + Legal sign-off','Committee decision'].map(function(o){
+                    var sel = profile.policyTerminationAuth === o ? ' selected' : '';
+                    return '<div class="opt-btn'+sel+'" onclick="selectPolicyOpt(\'policyTerminationAuth\',\''+o+'\',this)">'+o+'</div>';
+                  }).join('') +
+                '</div>' +
+              '</div>' +
+              '<div>' +
+                '<label class="form-label">Domestic Enquiry Practice</label>' +
+                '<div class="options-grid col2" id="pol-de-grid">' +
+                  ['Always required before termination','Required for misconduct only','Discretionary','Rarely used in our org','Not applicable'].map(function(o){
+                    var sel = profile.policyDomesticEnquiry === o ? ' selected' : '';
+                    return '<div class="opt-btn'+sel+'" onclick="selectPolicyOpt(\'policyDomesticEnquiry\',\''+o+'\',this)">'+o+'</div>';
+                  }).join('') +
+                '</div>' +
+              '</div>' +
+              '<div>' +
+                '<label class="form-label">Standing Orders Status</label>' +
+                '<div class="options-grid col3" id="pol-so-grid">' +
+                  ['Certified standing orders','Model standing orders apply','Not applicable (< 50 employees)','Service rules / employment contract','Not sure','Under process'].map(function(o){
+                    var sel = profile.policyStandingOrders === o ? ' selected' : '';
+                    return '<div class="opt-btn'+sel+'" onclick="selectPolicyOpt(\'policyStandingOrders\',\''+o+'\',this)">'+o+'</div>';
+                  }).join('') +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        return;
+      }
+
+      var colClass = {2:'col2',3:'col3',4:'col4'}[step.cols] || 'col3';
+      container.innerHTML =
+        '<div class="step-card">' +
+          '<div class="step-num">Step ' + (currentStep + 1) + ' of ' + STEPS.length + '</div>' +
+          '<div class="step-title">' + step.title + '</div>' +
+          '<div class="step-sub">' + step.sub + '</div>' +
+          '<div class="options-grid ' + colClass + '">' +
+            step.options.map(function(o){
+              var sel = profile[step.id] === o ? ' selected' : '';
+              return '<div class="opt-btn' + sel + '" onclick="selectOpt(\'' + step.id + '\',\'' + o.replace(/'/g,"\\'") + '\',this)">' + o + '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>';
+    }
+
+    function selectOpt(field, value, el) {
+      el.closest('.options-grid').querySelectorAll('.opt-btn').forEach(function(b){ b.classList.remove('selected'); });
+      el.classList.add('selected');
+      profile[field] = value;
+      document.getElementById('btn-next').disabled = false;
+    }
+
+    function selectPolicyOpt(field, value, el) {
+      el.closest('.options-grid').querySelectorAll('.opt-btn').forEach(function(b){ b.classList.remove('selected'); });
+      el.classList.add('selected');
+      profile[field] = value;
+    }
+
+    function nextStep() {
+      if (currentStep < STEPS.length - 1) { currentStep++; renderStep(); window.scrollTo({top:0,behavior:'smooth'}); }
+      else { completeMERIDIAN(); }
+    }
+
+    function prevStep() {
+      if (currentStep > 0) { currentStep--; renderStep(); window.scrollTo({top:0,behavior:'smooth'}); }
+    }
+
+    function skipStep() {
+      if (currentStep < STEPS.length - 1) { currentStep++; renderStep(); }
+      else { completeMERIDIAN(); }
+    }
+
+    async function completeMERIDIAN() {
+      sessionStorage.setItem('sr_meridian', JSON.stringify(profile));
+      document.getElementById('progress-fill').style.width = '100%';
+      document.getElementById('progress-label').innerText = 'Complete';
+      document.getElementById('progress-pct').innerText = '100%';
+      document.getElementById('nav-btns').style.display = 'none';
+
+      try {
+        var userId = localStorage.getItem('sr_user_id') || ('usr_' + Math.random().toString(36).substr(2,9));
+        localStorage.setItem('sr_user_id', userId);
+        await fetch(WORKER, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ tool:'save_meridian', userId:userId, profile:profile })
+        });
+      } catch(e) {}
+
+      var policyFields = ['policyNoticePeriod','policyWarningProcess','policyTerminationAuth','policyDomesticEnquiry','policyStandingOrders'];
+      var policySet = policyFields.filter(function(f){ return profile[f]; }).length;
+
+      document.getElementById('step-container').innerHTML =
+        '<div class="complete-card">' +
+          '<div class="complete-icon">&#x1F9ED;</div>' +
+          '<div class="complete-title">MERIDIAN is ready.</div>' +
+          '<div class="complete-sub">Your seven-parameter professional context is set. Every tool in Vantage will now calibrate its output to your exact reality. You can update this at any time from your account settings.</div>' +
+          '<div class="meridian-summary">' +
+            '<div class="ms-item"><div class="ms-label">State</div><div class="ms-val">'+(profile.state||'Not set')+'</div></div>' +
+            '<div class="ms-item"><div class="ms-label">Industry</div><div class="ms-val">'+(profile.industry||'Not set')+'</div></div>' +
+            '<div class="ms-item"><div class="ms-label">Org Type</div><div class="ms-val">'+(profile.orgType||'Not set')+'</div></div>' +
+            '<div class="ms-item"><div class="ms-label">Org Size</div><div class="ms-val">'+(profile.orgSize||'Not set')+'</div></div>' +
+            '<div class="ms-item"><div class="ms-label">Seniority</div><div class="ms-val">'+(profile.seniority||'Not set')+'</div></div>' +
+            '<div class="ms-item"><div class="ms-label">Union Status</div><div class="ms-val">'+(profile.unionStatus||'Not set')+'</div></div>' +
+            '<div class="ms-item"><div class="ms-label">HR Function</div><div class="ms-val">'+(profile.hrFunction||'Not set')+'</div></div>' +
+            '<div class="ms-item"><div class="ms-label">Policy Fields</div><div class="ms-val">'+(policySet)+' of 5 set</div></div>' +
+          '</div>' +
+          '<a href="dashboard.html" class="btn-enter">Enter Vantage &#x2192;</a>' +
+        '</div>';
+    }
+
+    renderStep();
+  </script>
+</body>
+</html>
