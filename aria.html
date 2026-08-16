@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARIA — Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:#050410;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
+    body{display:flex}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+    @keyframes msgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(99,102,241,.5)}70%{box-shadow:0 0 0 24px rgba(99,102,241,0)}100%{box-shadow:0 0 0 0 rgba(99,102,241,0)}}
+    @keyframes micRed{0%{box-shadow:0 0 0 0 rgba(255,77,109,.5)}70%{box-shadow:0 0 0 24px rgba(255,77,109,0)}100%{box-shadow:0 0 0 0 rgba(255,77,109,0)}}
+    @keyframes waveBar{0%,100%{height:4px}50%{height:20px}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    /* SIDEBAR */
+    .sb{width:220px;flex-shrink:0;background:rgba(13,11,30,.98);border-right:1px solid rgba(99,102,241,.08);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto;z-index:20}
+    .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
+    .logo-dot{width:8px;height:8px;border-radius:50%;background:#6366f1;box-shadow:0 0 10px #6366f1;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700}
+    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:2px}
+    .ns{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:4px 10px;margin:16px 0 6px}
+    .ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,.45);font-size:13px;margin-bottom:2px}
+    .ni:hover{background:rgba(255,255,255,.04);color:#fff}
+    .ni.active{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.25);color:#a5b4fc;font-weight:500}
+    .ni .ic{font-size:16px;flex-shrink:0}
+    .mc{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.15)}
+    .mc .ml{font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .mc .mv{font-size:11px;color:rgba(255,255,255,.45)}
+
+    /* MAIN LAYOUT */
+    .main{flex:1;display:flex;height:100vh;overflow:hidden}
+
+    /* FACE AREA */
+    .face-area{flex:1;position:relative;overflow:hidden}
+    #aria-canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;z-index:1;pointer-events:none}
+
+    /* Floating controls over face */
+    .top-bar{position:absolute;top:0;left:0;right:0;z-index:10;padding:14px 22px 10px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(5,4,16,.9) 0%,transparent 100%)}
+    .aria-id .aria-name{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:#a5b4fc;letter-spacing:.04em}
+    .aria-id .aria-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.28);letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
+    .pills{display:flex;gap:6px}
+    .pill{padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:rgba(5,4,16,.8);color:rgba(255,255,255,.45);transition:all .2s}
+    .pill:hover{border-color:rgba(99,102,241,.3);color:#fff}
+    .pill.on{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.45);color:#a5b4fc;font-weight:600}
+    .endb{padding:8px 14px;background:rgba(255,77,109,.1);color:#FF4D6D;border:1px solid rgba(255,77,109,.25);border-radius:8px;font-size:12px;cursor:pointer}
+
+    /* Status strip */
+    .status-strip{position:absolute;bottom:110px;left:0;right:0;z-index:9;text-align:center;pointer-events:none}
+    .slbl{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.28);min-height:16px;transition:color .3s;display:inline-block}
+    .slbl.listening{color:#FF4D6D}.slbl.thinking{color:#FFB547}.slbl.speaking{color:#a5b4fc}
+
+    /* Wave bars */
+    .wbars{display:none;justify-content:center;gap:3px;height:20px;margin-bottom:6px}
+    .wb{width:3px;background:#FF4D6D;border-radius:2px;animation:waveBar .5s ease-in-out infinite}
+    .wb:nth-child(2){animation-delay:.1s}.wb:nth-child(3){animation-delay:.2s}.wb:nth-child(4){animation-delay:.3s}.wb:nth-child(5){animation-delay:.4s}
+
+    /* Mic area */
+    .mic-area{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:8px}
+    .micb{width:72px;height:72px;border-radius:50%;background:#6366f1;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:28px;transition:all .25s;box-shadow:0 0 32px rgba(99,102,241,.3)}
+    .micb:hover{transform:scale(1.07)}
+    .micb.listening{background:#FF4D6D;animation:micRed 1s ease-in-out infinite}
+    .micb.speaking{background:rgba(99,102,241,.15);border:2px solid #6366f1;animation:micPulse 2s ease-in-out infinite;cursor:default}
+    .micb.thinking{background:rgba(255,181,71,.15);border:2px solid #FFB547;cursor:default}
+    .mic-hint{font-size:10px;color:rgba(255,255,255,.2);font-family:'JetBrains Mono',monospace;letter-spacing:.05em;text-align:center}
+
+    /* Review transcript popup */
+    .review-popup{position:absolute;bottom:100px;left:50%;transform:translateX(-50%);z-index:11;background:rgba(13,11,30,.95);border:1px solid rgba(99,102,241,.3);border-radius:14px;padding:16px 18px;width:480px;max-width:90%;display:none;animation:fadeIn .2s ease;backdrop-filter:blur(12px)}
+    .review-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+    .review-text{width:100%;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(99,102,241,.2);border-radius:8px;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;resize:none;outline:none;line-height:1.5;min-height:60px}
+    .review-text:focus{border-color:rgba(99,102,241,.4)}
+    .review-btns{display:flex;gap:8px;margin-top:10px;justify-content:flex-end}
+    .rbtn-send{padding:9px 20px;background:#6366f1;color:#fff;border:none;border-radius:7px;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px}
+    .rbtn-cancel{padding:9px 16px;background:transparent;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.1);border-radius:7px;cursor:pointer;font-size:12px}
+
+    /* CHAT PANEL */
+    .panel{width:380px;flex-shrink:0;background:rgba(13,11,30,.97);border-left:1px solid rgba(99,102,241,.12);display:flex;flex-direction:column;height:100vh}
+    .panel-top{padding:14px 16px 10px;border-bottom:1px solid rgba(255,255,255,.05);flex-shrink:0}
+    .panel-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:2px}
+    .panel-sub{font-size:11px;color:rgba(255,255,255,.3)}
+    .panel-tabs{display:flex;gap:4px;padding:10px 14px 0;border-bottom:1px solid rgba(255,255,255,.05);flex-shrink:0}
+    .ptab{padding:6px 14px;font-size:11px;cursor:pointer;border-radius:6px 6px 0 0;color:rgba(255,255,255,.35);font-family:'JetBrains Mono',monospace;letter-spacing:.04em;transition:all .2s;border:none;background:transparent}
+    .ptab.active{background:rgba(99,102,241,.1);color:#a5b4fc;border-bottom:2px solid #6366f1}
+    .panel-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+
+    /* INTRO TAB */
+    .intro-tab{flex:1;overflow-y:auto;padding:18px 16px}
+    .intro-block{margin-bottom:20px}
+    .intro-heading{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;color:#fff;margin-bottom:6px}
+    .intro-text{font-size:12px;color:rgba(255,255,255,.5);line-height:1.7}
+    .intro-mode-card{background:rgba(99,102,241,.05);border:1px solid rgba(99,102,241,.12);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+    .imc-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:#a5b4fc;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+    .imc-desc{font-size:12px;color:rgba(255,255,255,.55);line-height:1.6}
+    .imc-when{font-size:11px;color:rgba(255,255,255,.3);margin-top:5px;font-style:italic}
+
+    /* CHAT TAB */
+    .chat-tab{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    .messages{flex:1;overflow-y:auto;padding:14px 14px 8px;display:flex;flex-direction:column;gap:10px}
+    .msg{animation:msgIn .22s ease}
+    .msg-a{display:flex;gap:8px}
+    .msg-y{display:flex;gap:8px;justify-content:flex-end}
+    .av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;flex-shrink:0;margin-top:2px}
+    .av-a{background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:#a5b4fc}
+    .av-y{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.4)}
+    .bb{max-width:88%;padding:9px 12px;border-radius:10px;font-size:12px;line-height:1.6}
+    .bb-a{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.82);border-radius:4px 10px 10px 10px}
+    .bb-y{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2);color:#fff;border-radius:10px 4px 10px 10px}
+    .tyd{display:flex;gap:4px;padding:3px 0}
+    .tyd span{width:5px;height:5px;border-radius:50%;background:#6366f1;animation:pulse .8s ease-in-out infinite}
+    .tyd span:nth-child(2){animation-delay:.15s}.tyd span:nth-child(3){animation-delay:.3s}
+    .empty-chat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+    .ec-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:8px}
+    .ec-sub{font-size:12px;color:rgba(255,255,255,.3);line-height:1.6}
+    .text-wrap{padding:12px 14px;border-top:1px solid rgba(255,255,255,.05);flex-shrink:0}
+    .review-toggle-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .review-label-small{font-size:11px;color:rgba(255,255,255,.35);font-family:'JetBrains Mono',monospace}
+    .review-toggle{position:relative;width:32px;height:18px;cursor:pointer}
+    .review-toggle input{opacity:0;width:0;height:0}
+    .rt-slider{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.1);border-radius:9px;transition:.3s}
+    .rt-slider:before{position:absolute;content:'';height:12px;width:12px;left:3px;bottom:3px;background:rgba(255,255,255,.5);border-radius:50%;transition:.3s}
+    input:checked + .rt-slider{background:rgba(99,102,241,.3)}
+    input:checked + .rt-slider:before{transform:translateX(14px);background:#6366f1}
+    .tinp-row{display:flex;gap:8px}
+    .ti{flex:1;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;outline:none;transition:border .2s}
+    .ti:focus{border-color:rgba(99,102,241,.3)}
+    .ti::placeholder{color:rgba(255,255,255,.2)}
+    .sb2{padding:10px 14px;background:#6366f1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px}
+    .sb2:hover{opacity:.88}
+
+    /* HISTORY TAB */
+    .history-tab{flex:1;overflow-y:auto;padding:14px}
+    .hist-empty{text-align:center;padding:40px 20px;font-size:12px;color:rgba(255,255,255,.3)}
+    .hist-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .2s}
+    .hist-item:hover{border-color:rgba(99,102,241,.2);background:rgba(99,102,241,.04)}
+    .hist-mode{font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+    .hist-time{font-size:11px;color:rgba(255,255,255,.3);margin-bottom:6px}
+    .hist-preview{font-size:12px;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hist-count{font-size:10px;color:rgba(255,255,255,.25);margin-top:4px;font-family:'JetBrains Mono',monospace}
+
+    select{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5' fill='%23a5b4fc'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+    select option{background:#0d0b1e;color:#fff}
+    select optgroup{background:#0d0b1e;color:#a5b4fc;font-style:normal}
+    ::-webkit-scrollbar{width:3px}
+    ::-webkit-scrollbar-thumb{background:rgba(99,102,241,.15);border-radius:2px}
+    @media(max-width:900px){.sb{display:none}.panel{width:300px}}
+
+    @media(max-width:680px){
+      .sb{display:none}
+      body{overflow:auto}
+      .main{flex-direction:column;height:100vh;overflow:hidden}
+      .face-area{flex:0 0 38vh;min-height:220px;max-height:320px;width:100%}
+      .panel{width:100%;flex:1;min-height:0;border-left:none;border-top:1px solid rgba(99,102,241,.12)}
+      .top-bar{padding:10px 14px 8px;flex-wrap:wrap;gap:6px}
+      .aria-id .aria-name{font-size:16px}
+      .aria-id .aria-sub{font-size:7px;display:none}
+      .pills{gap:4px;order:3;width:100%;justify-content:center;margin-top:2px}
+      .pill{padding:5px 10px;font-size:10px}
+      .endb{padding:5px 10px;font-size:10px;order:2}
+      .status-strip{bottom:52px}
+      .slbl{font-size:9px}
+      .mic-area{bottom:6px}
+      .micb{width:48px;height:48px;font-size:20px}
+      .mic-hint{font-size:8px}
+      .review-popup{width:calc(100% - 24px);bottom:60px}
+      .panel-top{padding:10px 12px 6px}
+      .panel-top .panel-title{font-size:13px}
+      .panel-top .panel-sub{font-size:9px}
+      .panel-top>div{margin-top:6px!important}
+      .panel-tabs{padding:6px 10px 0}
+      .messages{padding:10px 10px 6px}
+      .text-wrap{padding:8px 10px}
+      .bb{font-size:12px;padding:7px 10px}
+      .ti{font-size:12px;padding:8px 10px}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sb">
+    <div class="logo" onclick="window.location.href='index.html'">
+      <div class="logo-dot"></div>
+      <div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div>
+    </div>
+    <div class="ns">Core Tools</div>
+    <a href="dashboard.html" class="ni"><span class="ic">⊞</span>Dashboard</a>
+    <a href="er-case-navigator.html" class="ni"><span class="ic">⚡</span>ER Case Navigator</a>
+    <a href="conversation-simulator.html" class="ni"><span class="ic">🎭</span>Conversation Simulator</a>
+    <a href="hr-data-storyteller.html" class="ni"><span class="ic">📊</span>HR Data Storyteller</a>
+    <a href="policy-compass.html" class="ni"><span class="ic">🧭</span>Policy Compass</a>
+    <a href="stakeholder-influence.html" class="ni"><span class="ic">🎯</span>Stakeholder Influence</a>
+    <div class="ns">Intelligence</div>
+    <a href="aria.html" class="ni active"><span class="ic">✦</span>ARIA</a>
+    <a href="case-library.html" class="ni"><span class="ic">◎</span>Case Library</a>
+    <a href="debrief.html" class="ni"><span class="ic">📋</span>The Debrief</a>
+    <div class="ns">Account</div>
+    <a href="data-dashboard.html" class="ni"><span class="ic">🔒</span>Data &amp; Privacy</a>
+    <a href="access.html" class="ni" onclick="sessionStorage.clear()"><span class="ic">↩</span>Sign out</a>
+    <div class="mc"><div class="ml">MERIDIAN Active</div><div class="mv" id="mcv">—</div></div>
+  </div>
+
+  <div class="main">
+
+    <!-- FACE AREA -->
+    <div class="face-area">
+      <img id="aria-face-img" src="https://raw.githubusercontent.com/kumarviveksrv-cloud/pms-toolkit-data/main/aria_face.jpg" alt="ARIA" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center center;z-index:0;background:#050410;" />
+      <canvas id="aria-canvas"></canvas>
+
+      <!-- Top bar floats over canvas -->
+      <div class="top-bar">
+        <div class="aria-id">
+          <div class="aria-name">✦ ARIA</div>
+          <div class="aria-sub">Adaptive Reflective Intelligence for Advancement · MERIDIAN Active</div>
+        </div>
+        <div class="pills">
+          <div class="pill on" onclick="setMode(this,'case_partner')">Case Partner</div>
+          <div class="pill" onclick="setMode(this,'conversation_coach')">Conversation Coach</div>
+          <div class="pill" onclick="setMode(this,'reflection')">Reflection</div>
+        </div>
+        <button class="endb" id="end-btn" onclick="endSession()">End Session</button>
+      </div>
+
+      <!-- Wave bars + status -->
+      <div class="status-strip">
+        <div class="wbars" id="wb"><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div><div class="wb"></div></div>
+        <div class="slbl" id="slbl">Ready</div>
+      </div>
+
+      <!-- Review popup -->
+      <div class="review-popup" id="review-popup">
+        <div class="review-label">Review what ARIA heard — edit if needed</div>
+        <textarea class="review-text" id="review-text" rows="3"></textarea>
+        <div class="review-btns">
+          <button class="rbtn-cancel" onclick="cancelReview()">Discard</button>
+          <button class="rbtn-send" onclick="sendReview()">Send →</button>
+        </div>
+      </div>
+
+      <!-- Mic -->
+      <div class="mic-area">
+        <button class="micb" id="micb" onclick="handleMic()">🎤</button>
+        <div class="mic-hint" id="mic-hint">Tap to speak · review before sending</div>
+      </div>
+    </div>
+
+    <!-- CHAT PANEL -->
+    <div class="panel">
+      <div class="panel-top">
+        <div class="panel-title" id="panel-title">Case Partner</div>
+        <div class="panel-sub">ARIA · Adaptive Reflective Intelligence for Advancement</div>
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
+          <select id="voice-select" onchange="changeVoice(this.value)" style="padding:5px 8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;cursor:pointer;flex:1;min-width:0;-webkit-appearance:none">
+            <option value="auto">Auto (Female)</option>
+          </select>
+          <button id="speed-btn" onclick="toggleSpeed()" style="padding:5px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;white-space:nowrap;transition:all .2s">1.0x</button>
+        </div>
+      </div>
+      <div class="panel-tabs">
+        <button class="ptab active" onclick="showTab(this,'chat')">Chat</button>
+        <button class="ptab" onclick="showTab(this,'intro')">About ARIA</button>
+        <button class="ptab" onclick="showTab(this,'history')">History</button>
+      </div>
+      <div class="panel-body">
+
+        <!-- CHAT TAB -->
+        <div class="chat-tab" id="tab-chat">
+          <div class="messages" id="messages">
+            <div class="empty-chat" id="empty-chat">
+              <div class="ec-title">ARIA is ready.</div>
+              <div class="ec-sub">You're not talking to a chatbot.<br>You're talking to the intelligence behind Vantage.<br><br>Use the mic or type to begin.</div>
+            </div>
+          </div>
+          <div class="text-wrap">
+            <div class="review-toggle-row">
+              <label class="review-toggle">
+                <input type="checkbox" id="review-toggle-cb" checked onchange="toggleReviewMode(this.checked)">
+                <span class="rt-slider"></span>
+              </label>
+              <span class="review-label-small">Review before sending</span>
+            </div>
+            <div class="tinp-row">
+              <input class="ti" id="ti" type="text" placeholder="Or type here..." onkeydown="if(event.key==='Enter')sendText()" />
+              <button class="sb2" onclick="sendText()">→</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- INTRO TAB -->
+        <div class="intro-tab" id="tab-intro" style="display:none">
+          <div class="intro-block">
+            <div class="intro-heading">What is ARIA?</div>
+            <div class="intro-text">ARIA stands for Adaptive Reflective Intelligence for Advancement. She is the voice intelligence layer of Virorah Vantage — designed not to answer HR questions generically, but to think through your specific professional situation with you, in real time, calibrated to your MERIDIAN context.<br><br>ARIA is not a search engine. She is a thinking partner. She asks one question at a time, listens to what you say, and builds her understanding of your situation across the conversation. The more you share, the sharper she gets.</div>
+          </div>
+          <div class="intro-block">
+            <div class="intro-heading">How is ARIA different?</div>
+            <div class="intro-text">Every response ARIA generates knows your state, your industry, your org type, your seniority, and your company's policy guardrails — because your MERIDIAN profile is injected into every prompt. You are not getting a generic HR answer. You are getting an answer calibrated to your exact professional reality.</div>
+          </div>
+          <div class="intro-block">
+            <div class="intro-heading">The three modes</div>
+            <div class="intro-mode-card">
+              <div class="imc-name">Case Partner</div>
+              <div class="imc-desc">Talk through a live ER case — disciplinary, termination, grievance, PIP, harassment, or any situation that's landed on your desk. ARIA guides you through the PACT framework in real time: Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation. She helps you see the case the way a labour court would, before you act.</div>
+              <div class="imc-when">Use this when: something just happened and you need to think through it fast, without calling a lawyer at 9pm.</div>
+            </div>
+            <div class="intro-mode-card">
+              <div class="imc-name">Conversation Coach</div>
+              <div class="imc-desc">Practice the exact conversation you need to have — with a difficult direct report, a resistant manager, the CFO who doesn't believe in HR, or an employee who's about to resign. ARIA plays the other person. She pushes back. She gets defensive. She gives you real pressure so the actual conversation feels easier.</div>
+              <div class="imc-when">Use this when: you know what you need to say but you're not sure how to say it, or you're worried about the reaction.</div>
+            </div>
+            <div class="intro-mode-card">
+              <div class="imc-name">Reflection</div>
+              <div class="imc-desc">Think out loud about your month — the cases you navigated, the decisions that still sit with you, the patterns you're noticing, the things you'd do differently. ARIA listens, asks one question at a time, and surfaces what's actually underneath what you're saying. It's a structured professional retrospective, not a therapy session.</div>
+              <div class="imc-when">Use this when: you feel like you've been on autopilot and want to step back and understand what's actually been happening.</div>
+            </div>
+          </div>
+          <div class="intro-block">
+            <div class="intro-heading">Using the mic</div>
+            <div class="intro-text">Tap the mic once to start speaking. ARIA listens continuously — no need to rush. After 5 seconds of silence, it processes what you said. If you have "Review before sending" turned on, your transcript appears in an edit box before it's sent — so you can correct any mishearing. Tap the mic again any time to stop early.</div>
+          </div>
+          <div class="intro-block">
+            <div class="intro-heading">Your privacy</div>
+            <div class="intro-text">ARIA conversations are processed through Anthropic's Claude API. All content is treated as confidential. Conversations are saved locally to your browser (not to Virorah's servers) unless you explicitly save them. Your MERIDIAN context is included in each prompt to calibrate the response — it is not retained by Anthropic.</div>
+          </div>
+        </div>
+
+        <!-- HISTORY TAB -->
+        <div class="history-tab" id="tab-history" style="display:none">
+          <div id="history-list"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+    var BASE   = 'https://kumarviveksrv-cloud.github.io/vantage/';
+
+    if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; return; }
+    var mr = sessionStorage.getItem('sr_meridian');
+    var meridian = mr ? JSON.parse(mr) : {};
+    document.getElementById('mcv').innerText = (meridian.state||'Not set')+' · '+(meridian.industry||'Not set');
+
+    // ── PHOTOREALISTIC FACE + MATRIX OVERLAY ────────────────
+    function initFace() {
+      var canvas = document.getElementById('aria-canvas');
+      var ctx = canvas.getContext('2d');
+      var W, H, cx, cy, sc;
+
+      function resize() {
+        W = canvas.parentElement.clientWidth;
+        H = canvas.parentElement.clientHeight;
+        canvas.width = W; canvas.height = H;
+        cx = W / 2; cy = H / 2;
+        sc = Math.min(W, H) / 560;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      var CHARS = 'ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ0123456789';
+      var COL = 18;
+      var cols, drops;
+      function resetRain() {
+        cols = Math.floor(W / COL);
+        drops = [];
+        for (var i = 0; i < cols; i++) drops[i] = Math.floor(Math.random() * (-(H / COL)));
+      }
+      resetRain();
+      window.addEventListener('resize', resetRain);
+
+      var scanY = 0, glowPhase = 0, rainTick = 0;
+      var currentColor = {r:99, g:102, b:241};
+      var targetColor  = {r:99, g:102, b:241};
+
+      window._ariaSetColor = function(r,g,b) { targetColor={r:r,g:g,b:b}; };
+
+      function teal(a) { return 'rgba('+Math.round(currentColor.r)+','+Math.round(currentColor.g)+','+Math.round(currentColor.b)+','+a+')'; }
+
+      function drawRain() {
+        var speaking = ariaState === 'speaking';
+        ctx.font = (COL - 3) + 'px monospace';
+        for (var i = 0; i < cols; i++) {
+          var y = drops[i] * COL;
+          if (drops[i] > 0 && y < H) {
+            var ch = CHARS[Math.floor(Math.random() * CHARS.length)];
+            ctx.fillStyle = speaking ? teal(0.65) : teal(0.35);
+            ctx.fillText(ch, i * COL, y);
+            if (drops[i] > 1) {
+              ctx.fillStyle = speaking ? teal(0.28) : teal(0.14);
+              ctx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], i * COL, y - COL);
+            }
+          }
+          if (rainTick % 1 === 0) {
+            if (y > H && Math.random() > 0.974) drops[i] = 0;
+            drops[i]++;
+          }
+        }
+      }
+
+      function drawOverlay() {
+        var s = sc;
+        var speaking = ariaState === 'speaking';
+        glowPhase += speaking ? 0.07 : 0.02;
+
+        // Indigo scan line
+        scanY += speaking ? 0.8 : 0.4;
+        if (scanY > H) scanY = 0;
+        var scanAlpha = speaking ? 0.18 + Math.sin(glowPhase) * 0.06 : 0.08 + Math.sin(glowPhase) * 0.03;
+        var sg = ctx.createLinearGradient(0, scanY - 3, 0, scanY + 3);
+        sg.addColorStop(0, 'rgba(99,102,241,0)');
+        sg.addColorStop(0.5, 'rgba(99,102,241,' + scanAlpha + ')');
+        sg.addColorStop(1, 'rgba(99,102,241,0)');
+        ctx.fillStyle = sg;
+        ctx.fillRect(0, scanY - 3, W, 6);
+
+        // Violet scan line
+        var scanY2 = (scanY + H * 0.4) % H;
+        var sg2 = ctx.createLinearGradient(0, scanY2 - 2, 0, scanY2 + 2);
+        sg2.addColorStop(0, 'rgba(124,58,237,0)');
+        sg2.addColorStop(0.5, 'rgba(124,58,237,' + (scanAlpha * 0.5) + ')');
+        sg2.addColorStop(1, 'rgba(124,58,237,0)');
+        ctx.fillStyle = sg2;
+        ctx.fillRect(0, scanY2 - 2, W, 4);
+
+        // Eye glow when speaking
+        if (speaking) {
+          var eyePulse = (Math.sin(glowPhase * 3) + 1) * 0.5;
+          var eyeAlpha = 0.2 + eyePulse * 0.3;
+          var eyeY = H * 0.40;
+          var eyeW = W * 0.10;
+          var eyeH = H * 0.035;
+          ctx.save();
+          ctx.shadowBlur = 20 + eyePulse * 15;
+          ctx.shadowColor = teal(0.9);
+          ctx.strokeStyle = teal(eyeAlpha);
+          ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.ellipse(W * 0.38, eyeY, eyeW, eyeH, 0, 0, Math.PI * 2); ctx.stroke();
+          ctx.beginPath(); ctx.ellipse(W * 0.62, eyeY, eyeW, eyeH, 0, 0, Math.PI * 2); ctx.stroke();
+          ctx.restore();
+        }
+
+        // Speaking aura glow at center
+        if (speaking) {
+          var auraAlpha = 0.06 + Math.sin(glowPhase * 2) * 0.04;
+          var ag = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W, H) * 0.45);
+          ag.addColorStop(0, teal(auraAlpha));
+          ag.addColorStop(0.6, teal(auraAlpha * 0.3));
+          ag.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = ag;
+          ctx.fillRect(0, 0, W, H);
+        }
+
+        // Corner brackets
+        var b = 8 * s, bsz = 16 * s;
+        ctx.strokeStyle = teal(0.5); ctx.lineWidth = 1.5 * s;
+        ctx.shadowBlur = 0;
+        var corners = [[b, b + bsz, b, b, b + bsz, b], [W - b, b + bsz, W - b, b, W - b - bsz, b], [b, H - b - bsz, b, H - b, b + bsz, H - b], [W - b, H - b - bsz, W - b, H - b, W - b - bsz, H - b]];
+        corners.forEach(function(c) {
+          ctx.beginPath(); ctx.moveTo(c[0], c[1]); ctx.lineTo(c[2], c[3]); ctx.lineTo(c[4], c[5]); ctx.stroke();
+        });
+
+        // HUD labels
+        ctx.fillStyle = teal(0.4); ctx.font = (7 * s) + 'px monospace';
+        ctx.fillText('ARIA.v2', b + 2, b - 1 * s);
+        ctx.fillText('ONLINE', W - b - 40 * s, b - 1 * s);
+        ctx.fillText('MERIDIAN ' + (meridian.state || '').toUpperCase(), b + 2, H - b + 9 * s);
+      }
+
+      function loop() {
+        currentColor.r += (targetColor.r - currentColor.r) * 0.04;
+        currentColor.g += (targetColor.g - currentColor.g) * 0.04;
+        currentColor.b += (targetColor.b - currentColor.b) * 0.04;
+
+        ctx.clearRect(0, 0, W, H);
+        drawRain();
+        rainTick++;
+        drawOverlay();
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+    initFace();
+
+    // ── VOICE SYSTEM ─────────────────────────────────────────
+    var ariaState='idle', curMode='case_partner', hist=[];
+    var isListen=false, isSpeak=false, recog=null, voices=[], reviewMode=true;
+    var silenceTimer=null, liveTranscript='';
+
+    window.speechSynthesis.onvoiceschanged=function(){voices=window.speechSynthesis.getVoices();};
+    setTimeout(function(){voices=window.speechSynthesis.getVoices();},500);
+
+    function getBestVoice() {
+      var preferred=['Google UK English Female','Microsoft Zira Desktop','Microsoft Heera Desktop','Samantha','Karen','Moira','Victoria','Tessa'];
+      for(var i=0;i<preferred.length;i++){
+        var v=voices.find(function(x){return x.name===preferred[i];});
+        if(v)return v;
+      }
+      var female=voices.find(function(v){ return v.name.toLowerCase().includes('female')||(v.gender&&v.gender.toLowerCase()==='female'); });
+      if(female)return female;
+      var gb=voices.find(function(v){return v.lang==='en-GB';});
+      if(gb)return gb;
+      var inUS=voices.find(function(v){return v.lang==='en-IN';});
+      if(inUS)return inUS;
+      return voices.find(function(v){return v.lang.startsWith('en');})||null;
+    }
+
+    function setState(s) {
+      ariaState=s;
+      var colors={idle:[99,102,241],listening:[255,77,109],thinking:[255,181,71],speaking:[165,180,252]};
+      var c=colors[s]||colors.idle;
+      if(window._ariaSetColor)window._ariaSetColor(c[0],c[1],c[2]);
+      var el=document.getElementById('slbl');
+      el.className='slbl'+(s!=='idle'?' '+s:'');
+      el.innerText=s==='idle'?'Ready':s.charAt(0).toUpperCase()+s.slice(1)+'...';
+      document.getElementById('wb').style.display=s==='listening'?'flex':'none';
+      var mb=document.getElementById('micb');
+      mb.className='micb'+(s!=='idle'?' '+s:'');
+      mb.innerText=s==='listening'?'⏹':s==='thinking'?'💭':s==='speaking'?'🔊':'🎤';
+    }
+
+    window.showTab = function(el,tab) {
+      document.querySelectorAll('.ptab').forEach(function(t){t.classList.remove('active');});
+      el.classList.add('active');
+      document.getElementById('tab-chat').style.display=tab==='chat'?'flex':'none';
+      document.getElementById('tab-intro').style.display=tab==='intro'?'block':'none';
+      document.getElementById('tab-history').style.display=tab==='history'?'block':'none';
+      if(tab==='history')renderHistory();
+    }
+
+    window.setMode=function(el,mode) {
+      document.querySelectorAll('.pill').forEach(function(p){p.classList.remove('on');});
+      el.classList.add('on'); curMode=mode; hist=[];
+      var labels={case_partner:'Case Partner',conversation_coach:'Conversation Coach',reflection:'Reflection'};
+      document.getElementById('panel-title').innerText=labels[mode];
+      clearMessages(); setState('idle');
+    };
+
+    function clearMessages() {
+      document.getElementById('messages').innerHTML='<div class="empty-chat" id="empty-chat"><div class="ec-title">ARIA is ready.</div><div class="ec-sub">Use the mic or type to begin.</div></div>';
+    }
+
+    function addMsg(role,text,typing) {
+      var ec=document.getElementById('empty-chat'); if(ec)ec.remove();
+      var c=document.getElementById('messages'), d=document.createElement('div');
+      d.className='msg '+(role==='aria'?'msg-a':'msg-y');
+      var av=role==='aria'?'<div class="av av-a">A</div>':'<div class="av av-y">You</div>';
+      if(typing){d.id='ty';d.innerHTML=av+'<div class="bb bb-a"><div class="tyd"><span></span><span></span><span></span></div></div>';}
+      else{d.innerHTML=(role==='aria'?av:'')+'<div class="bb bb-'+(role==='aria'?'a':'y')+'">'+text+'</div>'+(role==='you'?av:'');}
+      c.appendChild(d); c.scrollTop=c.scrollHeight;
+    }
+    function rmTyping(){var t=document.getElementById('ty');if(t)t.remove();}
+
+    function speak(text) {
+      window.speechSynthesis.cancel(); isSpeak=true; setState('speaking');
+      var clean = (text || '').replace(/\*{1,3}/g, '').replace(/#{1,6}\s?/g, '').replace(/`/g, '').replace(/_/g, ' ').replace(/\n+/g, '. ').replace(/ +/g, ' ').trim();
+      var u=new SpeechSynthesisUtterance(clean);
+      u.lang='en-IN'; u.rate=0.88; u.pitch=1.1; u.volume=1.0;
+      var v=getBestVoice(); if(v)u.voice=v;
+      u.onend=function(){isSpeak=false;setState('idle');};
+      u.onerror=function(){isSpeak=false;setState('idle');};
+      window.speechSynthesis.speak(u);
+    }
+
+    function callARIA(msg) {
+      hist.push({role:'user',content:msg});
+      addMsg('user',msg); addMsg('aria','',true); setState('thinking');
+      fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'aria',mode:curMode,history:hist,meridian:meridian})})
+      .then(function(r){return r.json();})
+      .then(function(data){
+        rmTyping();
+        if(data.success){var r=data.data.response;hist.push({role:'assistant',content:r});addMsg('aria',r);speak(r);}
+        else{setState('idle');addMsg('aria','Something went wrong. Please try again.');}
+      })
+      .catch(function(){rmTyping();setState('idle');addMsg('aria','Connection error. Please check your network.');});
+    }
+
+    // CONTINUOUS MIC with 5s silence detection
+    function initRecog() {
+      var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+      if(!SR){alert('Voice recognition requires Chrome.');return null;}
+      var r=new SR();
+      var isMobile=/Android|iPhone|iPad/i.test(navigator.userAgent);
+      r.continuous=!isMobile;
+      r.interimResults=!isMobile;
+      r.lang='en-US';
+      r.maxAlternatives=3;
+
+      var fullTranscript='';
+      var finalAccumulator='';
+      var lastSpeechTime=Date.now();
+
+      r.onstart=function(){
+        isListen=true;
+        setState('listening');
+        fullTranscript='';
+        finalAccumulator='';
+        liveTranscript='';
+        lastSpeechTime=Date.now();
+        clearInterval(window._silenceCheck);
+        window._silenceCheck=setInterval(function(){
+          if(!isListen)return clearInterval(window._silenceCheck);
+          var elapsed=Date.now()-lastSpeechTime;
+          if(fullTranscript.length>0 && elapsed>5000){
+            clearInterval(window._silenceCheck);
+            if(reviewMode){showReview(fullTranscript.trim());}
+            else{stopAndSend();}
+          }
+        },500);
+      };
+
+      r.onresult=function(e){
+        lastSpeechTime=Date.now();
+        var interimTranscript='';
+        for(var i=e.resultIndex;i<e.results.length;i++){
+          if(e.results[i].isFinal){
+            finalAccumulator+=e.results[i][0].transcript+' ';
+          } else {
+            interimTranscript+=e.results[i][0].transcript;
+          }
+        }
+        fullTranscript=(finalAccumulator+interimTranscript).trim();
+        liveTranscript=fullTranscript;
+        var hint=document.getElementById('mic-hint');
+        if(hint&&fullTranscript){hint.innerText=fullTranscript.substring(Math.max(0,fullTranscript.length-60));}
+      };
+
+      r.onerror=function(e){
+        if(e.error==='no-speech'){
+          return;
+        }
+        isListen=false;
+        clearInterval(window._silenceCheck);
+        setState('idle');
+      };
+
+      r.onend=function(){
+        var isMobileEnd=/Android|iPhone|iPad/i.test(navigator.userAgent);
+        if(isMobileEnd && isListen && fullTranscript.length>0){
+          clearInterval(window._silenceCheck);
+          liveTranscript=fullTranscript.trim();
+          if(reviewMode){showReview(liveTranscript);}
+          else{stopAndSend();}
+        } else if(isListen && fullTranscript.length===0){
+          try{r.start();}catch(err){isListen=false;setState('idle');}
+        } else if(isListen && fullTranscript.length>0){
+          clearInterval(window._silenceCheck);
+          liveTranscript=fullTranscript.trim();
+          if(reviewMode){showReview(liveTranscript);}
+          else{stopAndSend();}
+        }
+      };
+
+      return r;
+    }
+
+    function stopAndSend() {
+      var txt=liveTranscript.trim();
+      liveTranscript='';
+      isListen=false;
+      clearInterval(window._silenceCheck);
+      if(recog)try{recog.stop();}catch(e){}
+      document.getElementById('mic-hint').innerText=reviewMode?'Tap to speak - review before sending':'Tap to speak - 5s silence auto-sends';
+      if(txt){setState('thinking');callARIA(txt);}
+      else setState('idle');
+    }
+
+    function showReview(txt) {
+      isListen=false;
+      if(recog)try{recog.stop();}catch(e){}
+      setState('idle');
+      document.getElementById('review-text').value=txt;
+      document.getElementById('review-popup').style.display='block';
+    }
+
+    window.cancelReview=function(){document.getElementById('review-popup').style.display='none';liveTranscript='';setState('idle');};
+    window.sendReview=function(){
+      var txt=document.getElementById('review-text').value.trim();
+      document.getElementById('review-popup').style.display='none';
+      liveTranscript='';
+      if(txt)callARIA(txt);
+    };
+
+    window.toggleReviewMode=function(on){
+      reviewMode=on;
+      document.getElementById('mic-hint').innerText=on?'Tap to speak · review before sending':'Tap to speak · 5s silence auto-sends';
+    };
+
+    window.handleMic=function(){
+      if(isSpeak){window.speechSynthesis.cancel();isSpeak=false;setState('idle');return;}
+      if(isListen){
+        clearInterval(window._silenceCheck);
+        var txt=liveTranscript.trim();
+        isListen=false; if(recog)try{recog.stop();}catch(e){}
+        liveTranscript='';
+        document.getElementById('mic-hint').innerText=reviewMode?'Tap to speak - review before sending':'Tap to speak - 5s silence auto-sends';
+        if(txt){if(reviewMode)showReview(txt);else callARIA(txt);}
+        else setState('idle');
+        return;
+      }
+      recog=initRecog(); if(!recog)return;
+      try{recog.start();}catch(e){console.error(e);}
+    };
+
+    window.sendText=function(){
+      var el=document.getElementById('ti'),t=el.value.trim();
+      if(!t)return; el.value=''; callARIA(t);
+    };
+
+    // SESSION HISTORY (localStorage, last 5)
+    function saveSession() {
+      if(hist.length<2)return;
+      var sessions=JSON.parse(localStorage.getItem('aria_sessions')||'[]');
+      var modes={case_partner:'Case Partner',conversation_coach:'Conversation Coach',reflection:'Reflection'};
+      sessions.unshift({id:Date.now(),mode:curMode,modeLabel:modes[curMode],timestamp:new Date().toISOString(),messages:hist.slice(),preview:hist[0]?hist[0].content.substring(0,80):''});
+      sessions=sessions.slice(0,5);
+      localStorage.setItem('aria_sessions',JSON.stringify(sessions));
+    }
+
+    function renderHistory() {
+      var sessions=JSON.parse(localStorage.getItem('aria_sessions')||'[]');
+      var el=document.getElementById('history-list');
+      if(!sessions.length){el.innerHTML='<div class="hist-empty">No saved sessions yet.<br>End a session to save it.</div>';return;}
+      el.innerHTML=sessions.map(function(s,i){
+        var d=new Date(s.timestamp);
+        var time=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})+' · '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+        return '<div class="hist-item" onclick="loadSession('+i+')"><div class="hist-mode">'+s.modeLabel+'</div><div class="hist-time">'+time+'</div><div class="hist-preview">'+s.preview+'...</div><div class="hist-count">'+(s.messages.length)+' messages</div></div>';
+      }).join('');
+    }
+
+    var savedCurrentChat=null;
+
+    window.loadSession=function(idx){
+      var sessions=JSON.parse(localStorage.getItem('aria_sessions')||'[]');
+      var s=sessions[idx]; if(!s)return;
+      savedCurrentChat={hist:hist.slice(),mode:curMode};
+      var modes={case_partner:'Case Partner',conversation_coach:'Conversation Coach',reflection:'Reflection'};
+      document.getElementById('panel-title').innerText=(modes[s.mode]||s.mode)+' (History)';
+      document.getElementById('messages').innerHTML='<div style="text-align:center;padding:8px"><button onclick="returnToCurrent()" style="padding:7px 16px;background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.3);border-radius:7px;cursor:pointer;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.06em">← Back to current session</button></div>';
+      s.messages.forEach(function(m){addMsg(m.role==='user'?'user':'aria',m.content,false);});
+      document.querySelectorAll('.ptab').forEach(function(t){t.classList.remove('active');});
+      document.querySelectorAll('.ptab')[0].classList.add('active');
+      document.getElementById('tab-chat').style.display='flex';
+      document.getElementById('tab-history').style.display='none';
+    };
+
+    window.returnToCurrent=function(){
+      if(!savedCurrentChat)return;
+      hist=savedCurrentChat.hist;
+      var modes={case_partner:'Case Partner',conversation_coach:'Conversation Coach',reflection:'Reflection'};
+      document.getElementById('panel-title').innerText=modes[savedCurrentChat.mode]||savedCurrentChat.mode;
+      document.getElementById('messages').innerHTML='';
+      if(hist.length===0){
+        document.getElementById('messages').innerHTML='<div class="empty-chat" id="empty-chat"><div class="ec-title">ARIA is ready.</div><div class="ec-sub">Use the mic or type to begin.</div></div>';
+      } else {
+        hist.forEach(function(m){addMsg(m.role==='user'?'user':'aria',m.content,false);});
+      }
+      savedCurrentChat=null;
+    };
+
+    // Voice selector population
+    var speechRate = 1.0;
+    var selectedVoiceName = 'auto';
+
+    function populateVoices() {
+      voices = window.speechSynthesis.getVoices();
+      var sel = document.getElementById('voice-select');
+      if (!sel || !voices.length) return;
+
+      var femaleNames = ['Google UK English Female','Microsoft Zira Desktop','Microsoft Heera Desktop','Samantha','Karen','Moira','Victoria','Tessa','Rishi','Veena'];
+      var maleNames = ['Google UK English Male','Microsoft David Desktop','Microsoft Ravi Desktop','Daniel','Alex','Tom','Fred'];
+
+      var femaleVoices = voices.filter(function(v) {
+        return femaleNames.some(function(n) { return v.name.includes(n); }) ||
+               v.name.toLowerCase().includes('female');
+      }).slice(0, 3);
+
+      var maleVoices = voices.filter(function(v) {
+        return maleNames.some(function(n) { return v.name.includes(n); }) ||
+               v.name.toLowerCase().includes('male');
+      }).slice(0, 3);
+
+      if (femaleVoices.length === 0 && maleVoices.length === 0) {
+        var enVoices = voices.filter(function(v) { return v.lang.startsWith('en'); });
+        femaleVoices = enVoices.slice(0, 3);
+        maleVoices = enVoices.slice(3, 6);
+      }
+
+      var html = '<option value="auto">Auto (Female)</option>';
+      if (femaleVoices.length) {
+        html += '<optgroup label="Female">';
+        femaleVoices.forEach(function(v) {
+          html += '<option value="' + v.name + '">' + v.name.substring(0, 28) + '</option>';
+        });
+        html += '</optgroup>';
+      }
+      if (maleVoices.length) {
+        html += '<optgroup label="Male">';
+        maleVoices.forEach(function(v) {
+          html += '<option value="' + v.name + '">' + v.name.substring(0, 28) + '</option>';
+        });
+        html += '</optgroup>';
+      }
+      sel.innerHTML = html;
+
+      var saved = localStorage.getItem('aria_voice');
+      if (saved) { sel.value = saved; selectedVoiceName = saved; }
+    }
+
+    window.changeVoice = function(name) {
+      selectedVoiceName = name;
+      localStorage.setItem('aria_voice', name);
+    };
+
+    // Speed toggle
+    window.toggleSpeed = function() {
+      var btn = document.getElementById('speed-btn');
+      if (speechRate === 1.0) {
+        speechRate = 1.5;
+        btn.innerText = '1.5x';
+        btn.style.color = '#a5b4fc';
+        btn.style.borderColor = 'rgba(99,102,241,.35)';
+      } else if (speechRate === 1.5) {
+        speechRate = 2.0;
+        btn.innerText = '2.0x';
+        btn.style.color = '#FFB547';
+        btn.style.borderColor = 'rgba(255,181,71,.35)';
+      } else {
+        speechRate = 1.0;
+        btn.innerText = '1.0x';
+        btn.style.color = 'rgba(255,255,255,.5)';
+        btn.style.borderColor = 'rgba(255,255,255,.1)';
+      }
+    };
+
+    // Override speak to use selected voice and speed
+    speak = function(text) {
+      window.speechSynthesis.cancel(); isSpeak=true; setState('speaking');
+      var clean = (text || '').replace(/\*{1,3}/g, '').replace(/#{1,6}\s?/g, '').replace(/`/g, '').replace(/_/g, ' ').replace(/\n+/g, '. ').replace(/ +/g, ' ').trim();
+      var u=new SpeechSynthesisUtterance(clean);
+      u.lang='en-IN'; u.rate=speechRate * 0.88; u.pitch=1.1; u.volume=1.0;
+
+      if (selectedVoiceName !== 'auto') {
+        var match = voices.find(function(v) { return v.name === selectedVoiceName; });
+        if (match) u.voice = match;
+      } else {
+        var v = getBestVoice(); if(v) u.voice = v;
+      }
+
+      u.onend=function(){isSpeak=false;setState('idle');};
+      u.onerror=function(){isSpeak=false;setState('idle');};
+      window.speechSynthesis.speak(u);
+    };
+
+    window.speechSynthesis.onvoiceschanged = function() { populateVoices(); };
+    setTimeout(populateVoices, 600);
+    setTimeout(populateVoices, 2000);
+
+    // End session button state
+    window.endSession=function(){
+      window.speechSynthesis.cancel(); clearTimeout(silenceTimer);
+      if(recog)try{recog.stop();}catch(e){}
+      saveSession();
+      hist=[]; liveTranscript=''; isListen=false; isSpeak=false;
+      clearMessages(); setState('idle');
+      var btn = document.getElementById('end-btn');
+      btn.innerText = 'Session Ended';
+      btn.style.background = 'rgba(255,255,255,.06)';
+      btn.style.color = 'rgba(255,255,255,.35)';
+      btn.style.borderColor = 'rgba(255,255,255,.08)';
+      btn.disabled = true;
+      setTimeout(function() {
+        btn.innerText = 'End Session';
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+        btn.disabled = false;
+      }, 3000);
+    };
+
+  })();
+  </script>
+  <script src="sidebar-shared.js"></script>
+</body>
+</html>
