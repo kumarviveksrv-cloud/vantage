@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service — Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;background:#060B18;color:#fff;font-family:'Plus Jakarta Sans',sans-serif}
+    body{display:flex}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
+    .sidebar{width:220px;flex-shrink:0;background:rgba(13,21,38,0.98);border-right:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;padding:20px 12px;min-height:100vh;overflow-y:auto}
+    .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
+    .logo-dot{width:8px;height:8px;border-radius:50%;background:#00E5C3;box-shadow:0 0 10px #00E5C3;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#fff}
+    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-top:2px}
+    .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:4px 10px;margin:16px 0 6px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.45);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
+    .nav-item:hover{background:rgba(255,255,255,0.04);color:#fff}
+    .nav-item.active{background:rgba(0,229,195,0.10);border-color:rgba(0,229,195,0.25);color:#00E5C3;font-weight:500}
+    .nav-item .icon{font-size:16px;flex-shrink:0}
+    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(0,229,195,0.08);border:1px solid rgba(0,229,195,0.15)}
+    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#00E5C3;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .meridian-chip .val{font-size:11px;color:rgba(255,255,255,0.45)}
+    .main{flex:1;padding:48px 60px;max-width:860px;line-height:1.75}
+    .doc-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;color:#00E5C3;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+    .doc-title{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;color:#fff;margin-bottom:8px}
+    .doc-meta{font-size:12px;color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06)}
+    .important-banner{background:rgba(255,181,71,0.08);border:1px solid rgba(255,181,71,0.25);border-radius:12px;padding:18px 22px;margin-bottom:36px;font-size:13px;color:rgba(255,181,71,0.9);line-height:1.6}
+    .important-banner strong{color:#FFB547;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px}
+    h2{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-top:40px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.06)}
+    h3{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);margin-top:20px;margin-bottom:8px}
+    p{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.75}
+    ul,ol{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;padding-left:20px;line-height:1.75}
+    li{margin-bottom:6px}
+    .highlight{background:rgba(0,229,195,0.06);border-left:3px solid rgba(0,229,195,0.4);border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7}
+    .warning{background:rgba(255,77,109,0.06);border-left:3px solid rgba(255,77,109,0.4);border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;font-size:13px;color:rgba(255,77,109,0.85);line-height:1.7}
+    .toc{background:#0D1526;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:22px 26px;margin-bottom:36px}
+    .toc-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:#00E5C3;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+    .toc a{display:block;font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;padding:4px 0;transition:color .2s}
+    .toc a:hover{color:#00E5C3}
+    strong{color:rgba(255,255,255,0.8)}
+    @media(max-width:768px){.sidebar{display:none}.main{padding:32px 20px}}
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="logo" onclick="window.location.href='index.html'">
+      <div class="logo-dot"></div>
+      <div>
+        <div class="logo-name">Virorah</div>
+        <div class="logo-sub">Vantage</div>
+      </div>
+    </div>
+    <div class="nav-section">Core Tools</div>
+    <a href="dashboard.html" class="nav-item"><span class="icon">⊞</span> Dashboard</a>
+    <a href="er-case-navigator.html" class="nav-item"><span class="icon">⚡</span> ER Case Navigator</a>
+    <a href="conversation-simulator.html" class="nav-item"><span class="icon">🎭</span> Conversation Simulator</a>
+    <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">📊</span> HR Data Storyteller</a>
+    <a href="policy-compass.html" class="nav-item"><span class="icon">🧭</span> Policy Compass</a>
+    <a href="stakeholder-influence.html" class="nav-item"><span class="icon">🎯</span> Stakeholder Influence</a>
+    <div class="nav-section">Intelligence</div>
+    <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
+    <a href="case-library.html" class="nav-item"><span class="icon">◎</span> Case Library</a>
+    <a href="debrief.html" class="nav-item"><span class="icon">📋</span> The Debrief</a>
+    <div class="nav-section">Philosophy</div>
+    <a href="https://humacity.com" target="_blank" class="nav-item"><span class="icon">🌀</span> Humacity</a>
+    <div class="nav-section">Legal</div>
+    <a href="terms.html" class="nav-item active"><span class="icon">📄</span> Terms of Service</a>
+    <a href="privacy.html" class="nav-item"><span class="icon">🔒</span> Privacy Policy</a>
+    <div class="nav-section">Account</div>
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">🔒</span> Data &amp; Privacy</a>
+    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()"><span class="icon">↩</span> Sign out</a>
+    <div class="meridian-chip">
+      <div class="label">MERIDIAN Active</div>
+      <div class="val" id="meridian-chip-val">—</div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="doc-eyebrow">Legal</div>
+    <h1 class="doc-title">Terms of Service</h1>
+    <div class="doc-meta">Virorah Private Limited &nbsp;·&nbsp; Last updated: August 12, 2026 &nbsp;·&nbsp; Effective: August 12, 2026</div>
+
+    <div class="important-banner">
+      <strong>⚠️ Read before you use the platform</strong>
+      The Virorah Situation Room is an AI-powered intelligence tool for HR professionals. It does not provide legal advice, employment law advice, financial advice, or HR policy directives. All outputs are for informational purposes only. You are solely responsible for any employment or business decision you make in reliance on any content generated by this platform. By using this platform, you agree to these terms in full.
+    </div>
+
+    <div class="toc">
+      <div class="toc-title">Contents</div>
+      <a href="#parties">1. Parties and Definitions</a>
+      <a href="#service">2. Description of Service</a>
+      <a href="#ai-disclaimer">3. AI Outputs — Critical Disclaimer</a>
+      <a href="#eligibility">4. Eligibility and Access</a>
+      <a href="#account">5. Your Account</a>
+      <a href="#subscription">6. Subscription and Payment</a>
+      <a href="#user-obligations">7. Your Obligations</a>
+      <a href="#ip">8. Intellectual Property</a>
+      <a href="#data">9. Your Data</a>
+      <a href="#third-party">10. Third-Party Services</a>
+      <a href="#disclaimer">11. Disclaimer of Warranties</a>
+      <a href="#liability">12. Limitation of Liability</a>
+      <a href="#indemnification">13. Indemnification</a>
+      <a href="#termination">14. Termination</a>
+      <a href="#governing-law">15. Governing Law and Dispute Resolution</a>
+      <a href="#changes">16. Changes to These Terms</a>
+      <a href="#contact">17. Contact</a>
+    </div>
+
+    <h2 id="parties">1. Parties and Definitions</h2>
+    <p><strong>"Virorah"</strong>, <strong>"we"</strong>, <strong>"us"</strong>, or <strong>"our"</strong> refers to Virorah Private Limited, a company incorporated under the Companies Act 2013, with its registered office in Gurugram, Haryana, India.</p>
+    <p><strong>"Platform"</strong> refers to the Virorah Situation Room, accessible at kumarviveksrv-cloud.github.io/vantage and any associated subdomains, applications, and services.</p>
+    <p><strong>"You"</strong> or <strong>"User"</strong> refers to any individual who accesses, registers for, or uses the Platform.</p>
+    <p><strong>"AI Output"</strong> refers to any text, assessment, recommendation, framework analysis, financial estimate, or other content generated by the Platform's artificial intelligence systems in response to your inputs.</p>
+    <p><strong>"Subscription"</strong> refers to a paid or free-trial plan entitling you to access Platform features as described at the time of subscription.</p>
+    <p><strong>"MERIDIAN"</strong>, <strong>"PACT"</strong>, <strong>"SIGNAL"</strong>, <strong>"INFLUENCE Stack"</strong>, and <strong>"Humacity"</strong> are proprietary frameworks and philosophies developed by Virorah Private Limited.</p>
+
+    <h2 id="service">2. Description of Service</h2>
+    <p>The Virorah Situation Room is a B2C AI-powered intelligence platform designed exclusively for individual HR professionals. It provides tools including but not limited to:</p>
+    <ul>
+      <li>The ER Case Navigator — AI-assisted employee relations case analysis using the PACT framework</li>
+      <li>The HR Data Storyteller — AI-generated HR narrative construction using the SIGNAL framework</li>
+      <li>The Stakeholder Influence Builder — AI-generated stakeholder engagement strategy using the INFLUENCE Stack framework</li>
+      <li>The Policy Compass — AI-assisted HR policy and compliance reasoning</li>
+      <li>The Conversation Simulator — AI role-play for HR conversation preparation</li>
+      <li>ARIA — AI voice intelligence assistant</li>
+      <li>The Debrief — Monthly AI-generated professional reflection</li>
+      <li>The Case Library — Personal case record management</li>
+    </ul>
+    <p>The Platform is intended to support, not replace, professional HR judgement. It is a thinking tool, not an advisory service.</p>
+
+    <h2 id="ai-disclaimer">3. AI Outputs — Critical Disclaimer</h2>
+
+    <div class="warning">
+      This section is the most important part of these Terms. Please read it carefully before using the Platform.
+    </div>
+
+    <h3>3.1 Not Legal Advice</h3>
+    <p>Nothing generated by the Platform constitutes legal advice of any kind. The Platform is not a law firm. Virorah Private Limited is not a legal practitioner. AI Outputs, including but not limited to assessments of legal risk, references to Indian legislation (including the Bharatiya Nyaya Sanhita, Bharatiya Nagarik Suraksha Sanhita, Bharatiya Sakshya Adhiniyam, Industrial Disputes Act, Factories Act, POSH Act, or any other statute), and process recommendations, are for informational purposes only and shall not be construed as legal advice.</p>
+    <p>You must consult a qualified legal practitioner before taking any action with potential legal consequences, including but not limited to employee termination, domestic enquiry proceedings, POSH investigations, or any action that may be subject to challenge in a labour court, tribunal, or civil court.</p>
+
+    <h3>3.2 Not HR Policy Directives</h3>
+    <p>AI Outputs do not constitute binding HR policy, company policy, or employment guidelines. They are intelligence inputs to support your professional judgement. Any HR decision, disciplinary action, or employment action you take remains entirely your professional responsibility and that of your organisation.</p>
+
+    <h3>3.3 Not Financial Advice</h3>
+    <p>Financial figures, rupee estimates, exposure calculations, and return-on-investment projections generated by the Platform's Humacity framework and related tools are illustrative estimates based on publicly available industry benchmarks and statistical models. They are not certified actuarial calculations, audited financial data, or professional financial advice. They should not be presented as definitive financial fact without independent verification.</p>
+
+    <h3>3.4 AI Limitations and Accuracy</h3>
+    <p>AI systems, including those powering this Platform, can produce outputs that are inaccurate, incomplete, outdated, or inapplicable to your specific situation. The Platform's AI is calibrated to Indian HR contexts but cannot account for every jurisdiction-specific nuance, company-specific policy, individual fact pattern, or recent legislative change. You acknowledge these limitations and agree not to rely on AI Outputs without applying your own professional judgement.</p>
+
+    <h3>3.5 Employment Decision Liability</h3>
+    <div class="warning">
+      Virorah Private Limited expressly disclaims all liability for any employment decision, disciplinary action, termination, performance improvement plan, grievance outcome, harassment investigation outcome, or any other HR or business decision made in reliance, in whole or in part, on any AI Output generated by the Platform. You assume sole and complete responsibility for all such decisions and their consequences.
+    </div>
+
+    <h2 id="eligibility">4. Eligibility and Access</h2>
+    <p>You must be at least 18 years of age to use the Platform. By using the Platform, you represent that you are a working HR professional, HR consultant, or individual with a legitimate professional interest in HR intelligence tools. The Platform is not intended for use by minors.</p>
+    <p>The Platform is currently intended for use by individuals based in India. Virorah makes no representation that the Platform complies with the laws of any jurisdiction outside India.</p>
+
+    <h2 id="account">5. Your Account</h2>
+    <p>Access to the Platform is currently governed by an access code system. You are responsible for maintaining the confidentiality of your access credentials. You agree not to share your access code or credentials with any other person. Virorah reserves the right to suspend or terminate access if credentials are shared in violation of these Terms.</p>
+    <p>You agree to provide accurate information during onboarding (including your MERIDIAN profile) and to update it if your circumstances change. Inaccurate profile information results in less calibrated AI Outputs — Virorah bears no responsibility for outputs generated on the basis of inaccurate information you provide.</p>
+
+    <h2 id="subscription">6. Subscription and Payment</h2>
+    <p>The Platform offers the following subscription tiers:</p>
+    <ul>
+      <li><strong>Core Plan:</strong> ₹699 per month</li>
+      <li><strong>Consultant Plan:</strong> ₹1,499 per month</li>
+    </ul>
+    <p>All subscriptions are monthly. No annual plans are offered. Subscriptions auto-renew monthly unless cancelled prior to the renewal date.</p>
+    <p>Payments are processed through Razorpay, a third-party payment gateway. By subscribing, you agree to Razorpay's terms of service and privacy policy in addition to these Terms. Virorah does not store your payment card details.</p>
+    <p>All fees are inclusive of applicable Goods and Services Tax (GST) unless otherwise stated. Virorah reserves the right to revise pricing with thirty (30) days' notice to existing subscribers.</p>
+    <p><strong>Refund Policy:</strong> Subscriptions are non-refundable once the billing period has commenced. If you cancel your subscription, you retain access until the end of the current billing period. No pro-rated refunds are issued for early cancellations.</p>
+
+    <h2 id="user-obligations">7. Your Obligations</h2>
+    <p>By using the Platform, you agree that you will not:</p>
+    <ul>
+      <li>Upload, submit, or share any information that constitutes your employer's confidential, proprietary, or trade secret information in violation of your employment agreement, non-disclosure agreement, or any other contractual or fiduciary obligation</li>
+      <li>Use the Platform to process personal data of employees without appropriate authorisation and in violation of applicable data protection law</li>
+      <li>Share, reproduce, resell, or commercially exploit any AI Output without Virorah's prior written consent</li>
+      <li>Attempt to reverse-engineer, scrape, or extract the Platform's underlying AI models, frameworks, or proprietary methodologies</li>
+      <li>Use the Platform in any manner that violates applicable Indian law, including the Information Technology Act 2000, the Digital Personal Data Protection Act 2023, or any other applicable statute</li>
+      <li>Misrepresent AI Outputs as certified legal advice, certified financial advice, or authoritative policy directives to any third party</li>
+      <li>Use the Platform on behalf of an organisation as an enterprise solution without entering into a separate enterprise agreement with Virorah</li>
+    </ul>
+
+    <div class="highlight">
+      <strong>On Employer Confidentiality:</strong> You are responsible for ensuring that any information you submit to the Platform complies with your obligations to your employer. Virorah recommends that you anonymise all case information before submission. The Platform automatically anonymises narratives before AI processing, but the primary responsibility for ensuring compliance with your confidentiality obligations rests with you.
+    </div>
+
+    <h2 id="ip">8. Intellectual Property</h2>
+    <p>All intellectual property in the Platform, including but not limited to the software, design, code, copy, frameworks, and the following proprietary methodologies, belongs exclusively to Virorah Private Limited:</p>
+    <ul>
+      <li><strong>Humacity™</strong> — the philosophy that every people decision has a financial dimension</li>
+      <li><strong>MERIDIAN™</strong> — the seven-parameter professional context engine</li>
+      <li><strong>PACT™</strong> — the Process Integrity, Accountability Clarity, Consequence Mapping, Trust Preservation framework</li>
+      <li><strong>SIGNAL™</strong> — the Situation, Impact, Gap, Narrative, Action, Linkage framework</li>
+      <li><strong>INFLUENCE Stack™</strong> — the five-layer stakeholder influence framework</li>
+      <li><strong>HUMANCE™</strong> — the four asset classes of Trust Capital, Culture Yield, Signal Intelligence, and Belonging Premium</li>
+    </ul>
+    <p>These frameworks may not be reproduced, published, taught, licensed, or commercially exploited without Virorah's prior written consent.</p>
+    <p>You retain ownership of the content you submit to the Platform (your case narratives, MERIDIAN profile, and other inputs). By submitting content, you grant Virorah a limited, non-exclusive, royalty-free licence to process your content solely for the purpose of delivering Platform services to you.</p>
+    <p>AI Outputs generated in response to your inputs are provided for your personal professional use. Commercial resale or redistribution of AI Outputs is not permitted without Virorah's written consent.</p>
+
+    <h2 id="data">9. Your Data</h2>
+    <p>Virorah's collection and use of your personal data is governed by the Privacy Policy, which is incorporated into these Terms by reference. Key points:</p>
+    <ul>
+      <li>Case narratives are anonymised before AI processing — names, companies, and locations are replaced with generic placeholders</li>
+      <li>Your MERIDIAN profile and case records are stored in Airtable, a third-party cloud storage service with servers in the United States</li>
+      <li>You have the right to access, correct, and delete your data at any time from within the Platform</li>
+      <li>You may export all your data in JSON format from the Data &amp; Privacy section of the Platform</li>
+    </ul>
+
+    <h2 id="third-party">10. Third-Party Services</h2>
+    <p>The Platform relies on the following third-party services to operate:</p>
+    <ul>
+      <li><strong>Anthropic, Inc. (Claude API):</strong> AI processing of your anonymised inputs. Anthropic's usage policies apply to content processed through their API. Anonymised case narratives are sent to Anthropic's servers for processing. Anthropic does not use API inputs to train their models under their current API terms.</li>
+      <li><strong>Airtable, Inc.:</strong> Cloud storage of your profile and case data. Airtable servers are located in the United States. By using the Platform, you consent to this cross-border transfer of your data as described in the Privacy Policy.</li>
+      <li><strong>Razorpay Software Pvt. Ltd.:</strong> Payment processing. Virorah does not store payment card data.</li>
+    </ul>
+    <p>Virorah is not responsible for the acts, omissions, policies, or data practices of these third-party services. Your use of the Platform constitutes acknowledgement of and consent to these third-party service relationships.</p>
+
+    <h2 id="disclaimer">11. Disclaimer of Warranties</h2>
+    <p>The Platform is provided on an <strong>"as is"</strong> and <strong>"as available"</strong> basis without warranties of any kind, whether express or implied. To the maximum extent permitted by applicable Indian law, Virorah expressly disclaims all warranties including:</p>
+    <ul>
+      <li>Any warranty of merchantability, fitness for a particular purpose, or non-infringement</li>
+      <li>Any warranty that the Platform will be uninterrupted, error-free, or free of viruses or harmful components</li>
+      <li>Any warranty as to the accuracy, completeness, reliability, or currentness of any AI Output</li>
+      <li>Any warranty that the Platform's outputs are suitable for your specific professional circumstances</li>
+    </ul>
+
+    <h2 id="liability">12. Limitation of Liability</h2>
+    <p>To the maximum extent permitted by applicable Indian law:</p>
+    <ul>
+      <li>Virorah Private Limited shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of employment, loss of income, loss of professional reputation, litigation costs, tribunal awards, or settlement amounts arising from employment decisions made in reliance on Platform outputs</li>
+      <li>Virorah's total aggregate liability to you for any claim arising under or in connection with these Terms or your use of the Platform shall not exceed the total subscription fees paid by you to Virorah in the three (3) calendar months immediately preceding the event giving rise to the claim</li>
+      <li>Where your subscription fee is zero (free trial or access code period), Virorah's maximum liability shall be ₹1,000 (one thousand Indian rupees)</li>
+    </ul>
+    <p>These limitations apply regardless of the form of action, whether in contract, tort, or otherwise, and even if Virorah has been advised of the possibility of such damages.</p>
+
+    <h2 id="indemnification">13. Indemnification</h2>
+    <p>You agree to indemnify, defend, and hold harmless Virorah Private Limited, its directors, employees, agents, and successors from and against any claims, damages, losses, liabilities, costs, and expenses (including reasonable legal fees) arising from or relating to:</p>
+    <ul>
+      <li>Any employment decision, disciplinary action, termination, or other HR action you take in reliance on AI Outputs generated by the Platform</li>
+      <li>Any challenge, claim, or legal proceeding initiated by an employee, former employee, trade union, labour authority, or any other party arising from an HR decision you made using the Platform</li>
+      <li>Your violation of these Terms</li>
+      <li>Your violation of any confidentiality, non-disclosure, or other obligation owed to your employer in connection with your use of the Platform</li>
+      <li>Your infringement of any third party's rights in connection with your use of the Platform</li>
+    </ul>
+
+    <h2 id="termination">14. Termination</h2>
+    <p>You may terminate your subscription at any time by cancelling through the Platform. Access continues until the end of the current billing period. No refund is issued for the remaining period.</p>
+    <p>Virorah reserves the right to suspend or permanently terminate your access, with or without notice, if:</p>
+    <ul>
+      <li>You breach any provision of these Terms</li>
+      <li>Virorah reasonably suspects misuse, abuse, or fraudulent use of the Platform</li>
+      <li>Virorah ceases to operate the Platform</li>
+    </ul>
+    <p>Upon termination, you may export your data before your access is revoked. Virorah will retain your data for thirty (30) days post-termination before permanent deletion, except where earlier deletion is required by law or requested by you.</p>
+
+    <h2 id="governing-law">15. Governing Law and Dispute Resolution</h2>
+    <p>These Terms are governed by and construed in accordance with the laws of India. The courts at Gurugram, Haryana shall have exclusive jurisdiction over any dispute arising from these Terms or your use of the Platform.</p>
+    <p><strong>Arbitration:</strong> Any dispute, controversy, or claim arising out of or relating to these Terms, including any question regarding their existence, validity, or termination, shall be referred to and finally resolved by arbitration under the Arbitration and Conciliation Act, 1996 (as amended). The seat of arbitration shall be Gurugram, Haryana. The arbitration shall be conducted in English by a sole arbitrator appointed by mutual agreement, or in the absence of agreement, by the competent court.</p>
+    <p>This arbitration clause does not prevent either party from seeking urgent interim relief from a competent court.</p>
+
+    <h2 id="changes">16. Changes to These Terms</h2>
+    <p>Virorah reserves the right to modify these Terms at any time. Where changes are material, Virorah will provide at least fifteen (15) days' notice via the Platform or the email address associated with your account. Continued use of the Platform after the effective date of revised Terms constitutes your acceptance of the revised Terms.</p>
+    <p>If you do not agree to revised Terms, you must discontinue your use of the Platform before the revised Terms take effect.</p>
+
+    <h2 id="contact">17. Contact</h2>
+    <p>For any questions regarding these Terms, please contact:</p>
+    <p><strong>Virorah Private Limited</strong><br>
+    Gurugram, Haryana, India<br>
+    Email: <a href="mailto:info@virorah.com" style="color:#00E5C3;text-decoration:none">info@virorah.com</a></p>
+    <p style="margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:rgba(255,255,255,0.2);font-family:'JetBrains Mono',monospace">Virorah Private Limited &nbsp;·&nbsp; Gurugram, Haryana, India &nbsp;·&nbsp; © 2026 All rights reserved</p>
+
+  </div>
+
+  <script>
+    var meridianRaw = sessionStorage.getItem('sr_meridian');
+    if (meridianRaw) {
+      try {
+        var m = JSON.parse(meridianRaw);
+        document.getElementById('meridian-chip-val').innerText = (m.state||'') + ' · ' + (m.industry||'');
+      } catch(e) {}
+    }
+  </script>
+  <script src="sidebar-shared.js"></script>
+</body>
+</html>
