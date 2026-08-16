@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;background:#060B18;color:#fff;font-family:'Plus Jakarta Sans',sans-serif}
+    body{display:flex}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
+    .sidebar{width:220px;flex-shrink:0;background:rgba(13,21,38,0.98);border-right:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;padding:20px 12px;min-height:100vh;overflow-y:auto}
+    .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
+    .logo-dot{width:8px;height:8px;border-radius:50%;background:#00E5C3;box-shadow:0 0 10px #00E5C3;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#fff}
+    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-top:2px}
+    .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:4px 10px;margin:16px 0 6px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.45);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
+    .nav-item:hover{background:rgba(255,255,255,0.04);color:#fff}
+    .nav-item.active{background:rgba(0,229,195,0.10);border-color:rgba(0,229,195,0.25);color:#00E5C3;font-weight:500}
+    .nav-item .icon{font-size:16px;flex-shrink:0}
+    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(0,229,195,0.08);border:1px solid rgba(0,229,195,0.15)}
+    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#00E5C3;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .meridian-chip .val{font-size:11px;color:rgba(255,255,255,0.45)}
+    .main{flex:1;padding:48px 60px;max-width:860px;line-height:1.75}
+    .doc-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;color:#00E5C3;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+    .doc-title{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;color:#fff;margin-bottom:8px}
+    .doc-meta{font-size:12px;color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06)}
+    .commitment-banner{background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.2);border-radius:12px;padding:18px 22px;margin-bottom:36px;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6}
+    .commitment-banner strong{color:#00E5C3;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px}
+    h2{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-top:40px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.06)}
+    h3{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);margin-top:20px;margin-bottom:8px}
+    p{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.75}
+    ul,ol{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;padding-left:20px;line-height:1.75}
+    li{margin-bottom:6px}
+    .highlight{background:rgba(0,229,195,0.06);border-left:3px solid rgba(0,229,195,0.4);border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7}
+    .data-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:12px}
+    .data-table th{background:rgba(0,229,195,0.08);color:#00E5C3;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid rgba(0,229,195,0.15)}
+    .data-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.55);vertical-align:top}
+    .data-table tr:hover td{background:rgba(255,255,255,0.02)}
+    .rights-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+    .right-card{background:#0D1526;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:16px}
+    .right-title{font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:6px}
+    .right-desc{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5}
+    .toc{background:#0D1526;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:22px 26px;margin-bottom:36px}
+    .toc-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:#00E5C3;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+    .toc a{display:block;font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;padding:4px 0;transition:color .2s}
+    .toc a:hover{color:#00E5C3}
+    strong{color:rgba(255,255,255,0.8)}
+    @media(max-width:768px){.sidebar{display:none}.main{padding:32px 20px}.rights-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="logo" onclick="window.location.href='index.html'">
+      <div class="logo-dot"></div>
+      <div>
+        <div class="logo-name">Virorah</div>
+        <div class="logo-sub">Vantage</div>
+      </div>
+    </div>
+    <div class="nav-section">Core Tools</div>
+    <a href="dashboard.html" class="nav-item"><span class="icon">⊞</span> Dashboard</a>
+    <a href="er-case-navigator.html" class="nav-item"><span class="icon">⚡</span> ER Case Navigator</a>
+    <a href="conversation-simulator.html" class="nav-item"><span class="icon">🎭</span> Conversation Simulator</a>
+    <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">📊</span> HR Data Storyteller</a>
+    <a href="policy-compass.html" class="nav-item"><span class="icon">🧭</span> Policy Compass</a>
+    <a href="stakeholder-influence.html" class="nav-item"><span class="icon">🎯</span> Stakeholder Influence</a>
+    <div class="nav-section">Intelligence</div>
+    <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
+    <a href="case-library.html" class="nav-item"><span class="icon">◎</span> Case Library</a>
+    <a href="debrief.html" class="nav-item"><span class="icon">📋</span> The Debrief</a>
+    <div class="nav-section">Philosophy</div>
+    <a href="https://humacity.com" target="_blank" class="nav-item"><span class="icon">🌀</span> Humacity</a>
+    <div class="nav-section">Legal</div>
+    <a href="terms.html" class="nav-item"><span class="icon">📄</span> Terms of Service</a>
+    <a href="privacy.html" class="nav-item active"><span class="icon">🔒</span> Privacy Policy</a>
+    <div class="nav-section">Account</div>
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">🔒</span> Data &amp; Privacy</a>
+    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()"><span class="icon">↩</span> Sign out</a>
+    <div class="meridian-chip">
+      <div class="label">MERIDIAN Active</div>
+      <div class="val" id="meridian-chip-val">—</div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="doc-eyebrow">Legal</div>
+    <h1 class="doc-title">Privacy Policy</h1>
+    <div class="doc-meta">Virorah Private Limited &nbsp;·&nbsp; Last updated: August 12, 2026 &nbsp;·&nbsp; Effective: August 12, 2026</div>
+
+    <div class="commitment-banner">
+      <strong>Our Privacy Commitment</strong>
+      Your professional data is yours. We collect the minimum necessary to deliver a calibrated experience. We anonymise everything before AI processing. You can export or delete everything instantly. We do not sell your data. We do not use your data to train AI models. We do not share your data with advertisers.
+    </div>
+
+    <div class="toc">
+      <div class="toc-title">Contents</div>
+      <a href="#who-we-are">1. Who We Are — Data Fiduciary</a>
+      <a href="#what-we-collect">2. What We Collect</a>
+      <a href="#how-we-use">3. How We Use Your Data</a>
+      <a href="#anonymisation">4. Anonymisation Before AI Processing</a>
+      <a href="#legal-basis">5. Legal Basis for Processing — DPDP Act 2023</a>
+      <a href="#storage">6. Data Storage and International Transfer</a>
+      <a href="#third-parties">7. Third-Party Processors</a>
+      <a href="#retention">8. Data Retention</a>
+      <a href="#your-rights">9. Your Rights Under DPDP Act 2023</a>
+      <a href="#security">10. Security</a>
+      <a href="#cookies">11. Cookies and Local Storage</a>
+      <a href="#children">12. Children's Data</a>
+      <a href="#changes">13. Changes to This Policy</a>
+      <a href="#grievance">14. Grievance Officer and Contact</a>
+    </div>
+
+    <h2 id="who-we-are">1. Who We Are — Data Fiduciary</h2>
+    <p>Virorah Private Limited (<strong>"Virorah"</strong>, <strong>"we"</strong>, <strong>"us"</strong>) is the Data Fiduciary for the Virorah Vantage platform under the Digital Personal Data Protection Act 2023 (DPDP Act). This means we determine the purposes and means of processing your personal data.</p>
+    <p>You, as the user of the Platform, are the Data Principal under the DPDP Act.</p>
+    <p>Our registered office is in Gurugram, Haryana, India. Contact: <a href="mailto:info@virorah.com" style="color:#00E5C3;text-decoration:none">info@virorah.com</a></p>
+
+    <h2 id="what-we-collect">2. What We Collect</h2>
+    <p>We collect only what is necessary to provide and improve the Platform. Here is a complete breakdown:</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Data Category</th>
+          <th>Specific Data</th>
+          <th>How Collected</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Identity &amp; Access</strong></td>
+          <td>Anonymised user ID (randomly generated, stored in browser localStorage)</td>
+          <td>Auto-generated on first access</td>
+          <td>To associate your records with your account without requiring personal identification</td>
+        </tr>
+        <tr>
+          <td><strong>MERIDIAN Profile</strong></td>
+          <td>State/region, industry, organisation type, organisation size, HR seniority level, union status, HR function, policy guardrail settings</td>
+          <td>Provided by you during onboarding</td>
+          <td>To calibrate AI outputs to your professional reality</td>
+        </tr>
+        <tr>
+          <td><strong>Case Data</strong></td>
+          <td>Anonymised case narratives, case type, PACT assessment results, status, retrospective notes</td>
+          <td>Provided by you when using the ER Case Navigator</td>
+          <td>To build your Case Library and generate your monthly Debrief</td>
+        </tr>
+        <tr>
+          <td><strong>Debrief Data</strong></td>
+          <td>AI-generated monthly debrief content, case statistics</td>
+          <td>Generated by the Platform based on your case data</td>
+          <td>To deliver your monthly professional reflection</td>
+        </tr>
+        <tr>
+          <td><strong>Usage Data</strong></td>
+          <td>Session data stored in browser sessionStorage (access status, MERIDIAN data for current session)</td>
+          <td>Auto-generated during use</td>
+          <td>To maintain your session without requiring repeated login</td>
+        </tr>
+        <tr>
+          <td><strong>Payment Data</strong></td>
+          <td>Subscription tier, payment status (processed entirely by Razorpay)</td>
+          <td>Via Razorpay on subscription</td>
+          <td>To manage your subscription. Virorah does not store card details.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>What we do NOT collect:</strong> Your real name, email address (unless you contact us), employer name, employee names, or any other directly identifying personal information about you or third parties mentioned in your case narratives.</p>
+
+    <h2 id="how-we-use">3. How We Use Your Data</h2>
+    <p>We use your data exclusively for the following purposes:</p>
+    <ul>
+      <li><strong>Service Delivery:</strong> To provide calibrated AI assessments, frameworks, and intelligence outputs based on your MERIDIAN profile and inputs</li>
+      <li><strong>Case Library:</strong> To store and display your case records for your professional reference</li>
+      <li><strong>Monthly Debrief:</strong> To generate your monthly professional reflection from your case data</li>
+      <li><strong>Platform Improvement:</strong> Aggregated, anonymised usage patterns (not individual records) may be used to improve the Platform's models and user experience</li>
+      <li><strong>Subscription Management:</strong> To manage your subscription, process payments (via Razorpay), and communicate about your account</li>
+      <li><strong>Legal Compliance:</strong> To comply with applicable Indian law, including the DPDP Act 2023 and the IT Act 2000</li>
+    </ul>
+    <p>We do not use your data for advertising. We do not sell your data to any third party. We do not use your individual case narratives or outputs to train AI models.</p>
+
+    <h2 id="anonymisation">4. Anonymisation Before AI Processing</h2>
+    <p>This is one of the most important privacy protections in the Platform. Before any case narrative or situation description is sent to our AI processing layer (powered by Anthropic's Claude API), the Platform automatically anonymises your input:</p>
+    <ul>
+      <li>All person names are replaced with <strong>Role A, Role B, Role C</strong> in order of appearance</li>
+      <li>Company names are replaced with <strong>Company X</strong></li>
+      <li>Specific locations (cities, office names) are replaced with <strong>Location Y</strong></li>
+      <li>Other identifying details are replaced with generic equivalents</li>
+    </ul>
+    <div class="highlight">
+      The AI model (Anthropic's Claude) never receives your real name, your employer's name, or any directly identifying information. It receives only anonymised narratives and your MERIDIAN profile parameters (state, industry, org type — none of which identify you personally).
+    </div>
+    <p>The original, non-anonymised narrative you type is stored only in your personal Airtable record and is never shared with any third party other than as described in Section 7.</p>
+
+    <h2 id="legal-basis">5. Legal Basis for Processing — DPDP Act 2023</h2>
+    <p>Under the Digital Personal Data Protection Act 2023, Virorah processes your personal data on the following legal bases:</p>
+    <ul>
+      <li><strong>Consent (Section 6, DPDP Act 2023):</strong> By creating a MERIDIAN profile and using the Platform, you provide free, specific, informed, and unambiguous consent to the processing of your personal data as described in this Policy. You may withdraw consent at any time by deleting your account and data from the Platform.</li>
+      <li><strong>Legitimate Use for Contract Performance:</strong> Processing necessary to deliver the Platform services you have subscribed to.</li>
+      <li><strong>Legal Obligation:</strong> Processing necessary to comply with applicable Indian law.</li>
+    </ul>
+    <p>You have the right to withdraw your consent at any time. Withdrawal of consent does not affect the lawfulness of processing prior to withdrawal. To withdraw consent, use the "Delete All My Data" function in the Data &amp; Privacy section of the Platform.</p>
+
+    <h2 id="storage">6. Data Storage and International Transfer</h2>
+    <p>Your data is stored using the following infrastructure:</p>
+    <ul>
+      <li><strong>Airtable (US servers):</strong> Your MERIDIAN profile, case records, and debrief data are stored in Airtable, a cloud database service. Airtable's servers are located in the United States (AWS us-east-1). By using the Platform, you explicitly consent to this cross-border transfer of your personal data to the United States.</li>
+      <li><strong>Browser Storage:</strong> Your session data (access status, current-session MERIDIAN profile) is stored in your browser's sessionStorage and localStorage. This data never leaves your device except as described above.</li>
+      <li><strong>Anthropic (US servers):</strong> Anonymised case narratives are processed by Anthropic's Claude API, with servers in the United States. As described in Section 4, only anonymised data is sent to Anthropic. Under Anthropic's API terms, your data is not used to train their models.</li>
+    </ul>
+    <p>Virorah takes reasonable contractual and technical measures to ensure that cross-border transfers are made only to jurisdictions or entities that provide an adequate level of data protection. However, you should be aware that data protection laws in the United States differ from those in India.</p>
+
+    <h2 id="third-parties">7. Third-Party Processors</h2>
+    <p>Virorah shares your data only with the following third-party processors, solely for the purposes described:</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Processor</th>
+          <th>Data Shared</th>
+          <th>Purpose</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Anthropic, Inc.</strong></td>
+          <td>Anonymised case narratives, MERIDIAN parameters (state, industry, org type — no personal identifiers)</td>
+          <td>AI processing and output generation</td>
+          <td>United States</td>
+        </tr>
+        <tr>
+          <td><strong>Airtable, Inc.</strong></td>
+          <td>User ID, MERIDIAN profile, case records, debrief records</td>
+          <td>Data storage and retrieval</td>
+          <td>United States</td>
+        </tr>
+        <tr>
+          <td><strong>Razorpay Software Pvt. Ltd.</strong></td>
+          <td>Payment details (card information processed directly by Razorpay; Virorah receives only payment status)</td>
+          <td>Payment processing</td>
+          <td>India</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>We do not share your data with any other third party, including advertisers, data brokers, analytics companies, or marketing platforms.</p>
+
+    <h2 id="retention">8. Data Retention</h2>
+    <p>We retain your data for as long as your account is active. Specifically:</p>
+    <ul>
+      <li><strong>MERIDIAN Profile:</strong> Retained until you delete it or delete your account</li>
+      <li><strong>Case Records:</strong> Retained until you delete individual cases or delete your account</li>
+      <li><strong>Debrief Records:</strong> Retained until you delete your account</li>
+      <li><strong>Post-deletion:</strong> After you delete your account or all data, records are permanently deleted from Airtable within 30 days. Browser localStorage and sessionStorage data is deleted immediately upon your request or when you clear your browser data.</li>
+      <li><strong>Legal Hold:</strong> Where Virorah is required by law to retain certain data, it will be retained for the legally required period and then deleted.</li>
+    </ul>
+
+    <h2 id="your-rights">9. Your Rights Under DPDP Act 2023</h2>
+    <p>As a Data Principal under the DPDP Act 2023, you have the following rights:</p>
+    <div class="rights-grid">
+      <div class="right-card">
+        <div class="right-title">Right to Access</div>
+        <div class="right-desc">View all personal data held about you. Available in the Data &amp; Privacy section of the Platform.</div>
+      </div>
+      <div class="right-card">
+        <div class="right-title">Right to Correction</div>
+        <div class="right-desc">Correct inaccurate or incomplete personal data. Update your MERIDIAN profile at any time via onboarding.html.</div>
+      </div>
+      <div class="right-card">
+        <div class="right-title">Right to Erasure</div>
+        <div class="right-desc">Delete all your data permanently. Use "Delete All My Data" in Data &amp; Privacy. Deletion is permanent and irreversible.</div>
+      </div>
+      <div class="right-card">
+        <div class="right-title">Right to Portability</div>
+        <div class="right-desc">Export all your data in JSON format. Use "Export All My Data" in Data &amp; Privacy at any time.</div>
+      </div>
+      <div class="right-card">
+        <div class="right-title">Right to Withdraw Consent</div>
+        <div class="right-desc">Withdraw your consent to data processing at any time by deleting your data. Withdrawal does not affect prior processing.</div>
+      </div>
+      <div class="right-card">
+        <div class="right-title">Right to Grievance Redressal</div>
+        <div class="right-desc">Raise a grievance with our Grievance Officer at info@virorah.com. We will respond within 48 hours.</div>
+      </div>
+    </div>
+    <p>To exercise any of these rights, visit the Data &amp; Privacy section of the Platform or contact us at <a href="mailto:info@virorah.com" style="color:#00E5C3;text-decoration:none">info@virorah.com</a>.</p>
+
+    <h2 id="security">10. Security</h2>
+    <p>Virorah implements the following technical and organisational security measures:</p>
+    <ul>
+      <li>All data in transit is encrypted using HTTPS/TLS</li>
+      <li>Access to Airtable data is restricted via API key authentication</li>
+      <li>Case narratives are anonymised before leaving your browser and before AI processing</li>
+      <li>No employee personal data or real names are stored on the Platform's servers</li>
+      <li>Browser sessionStorage is cleared on sign-out</li>
+    </ul>
+    <p>No system is completely secure. In the event of a data breach that poses a risk to your rights, Virorah will notify affected users as required by the DPDP Act 2023 and report to the Data Protection Board of India within the prescribed timeframe.</p>
+
+    <h2 id="cookies">11. Cookies and Local Storage</h2>
+    <p>The Platform does not use advertising cookies, tracking cookies, or third-party analytics cookies. The Platform uses:</p>
+    <ul>
+      <li><strong>Browser sessionStorage:</strong> To maintain your session (access status, current MERIDIAN profile). Cleared when you close your browser or sign out.</li>
+      <li><strong>Browser localStorage:</strong> To store your anonymised user ID for data persistence across sessions. You can clear this by using the "Delete All My Data" function.</li>
+    </ul>
+    <p>The Platform does not use Google Analytics, Meta Pixel, or any other third-party tracking technology.</p>
+
+    <h2 id="children">12. Children's Data</h2>
+    <p>The Platform is intended for use by adults (18 years and above) in a professional capacity. We do not knowingly collect personal data from anyone under the age of 18. If you believe a minor has provided data to the Platform, please contact us at <a href="mailto:info@virorah.com" style="color:#00E5C3;text-decoration:none">info@virorah.com</a> and we will delete it immediately.</p>
+
+    <h2 id="changes">13. Changes to This Policy</h2>
+    <p>Virorah may update this Privacy Policy from time to time to reflect changes in our practices, technology, legal requirements, or other factors. Where changes are material, we will notify you via the Platform with at least fifteen (15) days' notice before the changes take effect.</p>
+    <p>The date of the most recent revision is indicated at the top of this Policy. Continued use of the Platform after the effective date of a revised Policy constitutes your acceptance of the revised terms.</p>
+
+    <h2 id="grievance">14. Grievance Officer and Contact</h2>
+    <p>In accordance with the Information Technology Act 2000 and the DPDP Act 2023, the details of the Grievance Officer are as follows:</p>
+    <p><strong>Name:</strong> Kumar Vivek<br>
+    <strong>Designation:</strong> Founder &amp; Grievance Officer, Virorah Private Limited<br>
+    <strong>Address:</strong> Gurugram, Haryana, India<br>
+    <strong>Email:</strong> <a href="mailto:info@virorah.com" style="color:#00E5C3;text-decoration:none">info@virorah.com</a><br>
+    <strong>Response time:</strong> Within 48 hours of receipt of grievance</p>
+    <p>If you are not satisfied with our response, you have the right to approach the Data Protection Board of India once it is constituted and operational under the DPDP Act 2023.</p>
+    <p style="margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:rgba(255,255,255,0.2);font-family:'JetBrains Mono',monospace">Virorah Private Limited &nbsp;·&nbsp; Gurugram, Haryana, India &nbsp;·&nbsp; © 2026 All rights reserved</p>
+
+  </div>
+
+  <script>
+    var meridianRaw = sessionStorage.getItem('sr_meridian');
+    if (meridianRaw) {
+      try {
+        var m = JSON.parse(meridianRaw);
+        document.getElementById('meridian-chip-val').innerText = (m.state||'') + ' · ' + (m.industry||'');
+      } catch(e) {}
+    }
+  </script>
+  <script src="sidebar-shared.js"></script>
+</body>
+</html>
