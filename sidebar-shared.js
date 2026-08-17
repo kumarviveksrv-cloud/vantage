@@ -304,4 +304,254 @@
     if (b) b.remove();
   };
 
+
+  // ── MOBILE BOTTOM NAV ────────────────────────────────────
+  // Injects a native-style bottom navigation bar on mobile only
+  // Replaces the hidden sidebar with a proper mobile nav pattern
+
+  function injectMobileNav() {
+    if (window.innerWidth > 768) return;
+
+    // Determine active page
+    var path = window.location.pathname;
+    function isActive(page) { return path.includes(page); }
+
+    // Bottom nav CSS
+    var style = document.createElement('style');
+    style.textContent = [
+      '/* Mobile bottom nav */',
+      '.vantage-bottom-nav {',
+      '  display: none;',
+      '}',
+      '@media (max-width: 768px) {',
+      '  .vantage-bottom-nav {',
+      '    display: flex;',
+      '    position: fixed;',
+      '    bottom: 0;',
+      '    left: 0;',
+      '    right: 0;',
+      '    z-index: 9990;',
+      '    background: rgba(5,4,16,0.97);',
+      '    border-top: 1px solid rgba(99,102,241,0.18);',
+      '    backdrop-filter: blur(20px);',
+      '    -webkit-backdrop-filter: blur(20px);',
+      '    padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px)) 0;',
+      '    justify-content: space-around;',
+      '    align-items: flex-start;',
+      '  }',
+      '  .vbn-item {',
+      '    display: flex;',
+      '    flex-direction: column;',
+      '    align-items: center;',
+      '    gap: 4px;',
+      '    padding: 4px 12px;',
+      '    text-decoration: none;',
+      '    cursor: pointer;',
+      '    flex: 1;',
+      '    border: none;',
+      '    background: transparent;',
+      '    -webkit-tap-highlight-color: transparent;',
+      '  }',
+      '  .vbn-icon {',
+      '    font-size: 20px;',
+      '    line-height: 1;',
+      '    transition: transform 0.2s ease;',
+      '  }',
+      '  .vbn-label {',
+      '    font-family: "JetBrains Mono", monospace;',
+      '    font-size: 9px;',
+      '    letter-spacing: 0.04em;',
+      '    text-transform: uppercase;',
+      '    color: rgba(244,243,255,0.35);',
+      '    transition: color 0.2s ease;',
+      '    white-space: nowrap;',
+      '  }',
+      '  .vbn-item.active .vbn-label {',
+      '    color: #a5b4fc;',
+      '  }',
+      '  .vbn-item.active .vbn-icon {',
+      '    transform: scale(1.15);',
+      '  }',
+      '  .vbn-item:not(.active):hover .vbn-label {',
+      '    color: rgba(244,243,255,0.6);',
+      '  }',
+      '  /* More drawer overlay */',
+      '  .vbn-drawer-overlay {',
+      '    display: none;',
+      '    position: fixed;',
+      '    inset: 0;',
+      '    background: rgba(5,4,16,0.7);',
+      '    z-index: 9991;',
+      '    backdrop-filter: blur(4px);',
+      '    -webkit-backdrop-filter: blur(4px);',
+      '    animation: vbnFadeIn 0.2s ease;',
+      '  }',
+      '  @keyframes vbnFadeIn { from { opacity: 0; } to { opacity: 1; } }',
+      '  @keyframes vbnSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }',
+      '  .vbn-drawer-overlay.open { display: block; }',
+      '  .vbn-drawer {',
+      '    position: absolute;',
+      '    bottom: 0;',
+      '    left: 0;',
+      '    right: 0;',
+      '    background: #0d0b1e;',
+      '    border-top: 1px solid rgba(99,102,241,0.25);',
+      '    border-radius: 20px 20px 0 0;',
+      '    padding: 12px 0 calc(80px + env(safe-area-inset-bottom, 0px)) 0;',
+      '    animation: vbnSlideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);',
+      '  }',
+      '  .vbn-drawer-handle {',
+      '    width: 36px;',
+      '    height: 4px;',
+      '    background: rgba(255,255,255,0.15);',
+      '    border-radius: 2px;',
+      '    margin: 0 auto 16px;',
+      '  }',
+      '  .vbn-drawer-title {',
+      '    font-family: "JetBrains Mono", monospace;',
+      '    font-size: 9px;',
+      '    letter-spacing: 0.12em;',
+      '    text-transform: uppercase;',
+      '    color: rgba(99,102,241,0.6);',
+      '    padding: 0 20px 10px;',
+      '    border-bottom: 1px solid rgba(99,102,241,0.08);',
+      '    margin-bottom: 8px;',
+      '  }',
+      '  .vbn-drawer-item {',
+      '    display: flex;',
+      '    align-items: center;',
+      '    gap: 14px;',
+      '    padding: 14px 20px;',
+      '    text-decoration: none;',
+      '    color: rgba(244,243,255,0.65);',
+      '    font-family: "Plus Jakarta Sans", sans-serif;',
+      '    font-size: 14px;',
+      '    transition: background 0.15s ease, color 0.15s ease;',
+      '    -webkit-tap-highlight-color: transparent;',
+      '  }',
+      '  .vbn-drawer-item:active {',
+      '    background: rgba(99,102,241,0.08);',
+      '  }',
+      '  .vbn-drawer-item.active {',
+      '    color: #a5b4fc;',
+      '    background: rgba(99,102,241,0.06);',
+      '  }',
+      '  .vbn-drawer-icon { font-size: 18px; flex-shrink: 0; }',
+      '  .vbn-drawer-label { flex: 1; }',
+      '  .vbn-drawer-sub {',
+      '    font-size: 11px;',
+      '    color: rgba(244,243,255,0.28);',
+      '    font-family: "JetBrains Mono", monospace;',
+      '    letter-spacing: 0.04em;',
+      '  }',
+      '  /* Push page content above bottom nav */',
+      '  .main, main, .main-content, body > div:not(.vantage-bottom-nav):not(.vbn-drawer-overlay) {',
+      '    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;',
+      '  }',
+      '}',
+    ].join('\n');
+    document.head.appendChild(style);
+
+    // Build bottom nav HTML
+    var navItems = [
+      { icon: '\u229E', label: 'Home',    href: 'dashboard.html',         page: 'dashboard' },
+      { icon: '\u26A1', label: 'Cases',   href: 'er-case-navigator.html', page: 'er-case-navigator' },
+      { icon: '\u2726', label: 'ARIA',    href: 'aria.html',              page: 'aria' },
+      { icon: '\u25CE', label: 'Library', href: 'case-library.html',      page: 'case-library' },
+      { icon: '\u22EF', label: 'More',    href: null,                     page: 'more' },
+    ];
+
+    var drawerItems = [
+      { icon: '\uD83C\uDFAD', label: 'Conversation Simulator', sub: 'Practice before the real thing', href: 'conversation-simulator.html', page: 'conversation-simulator' },
+      { icon: '\uD83D\uDCCA', label: 'HR Data Storyteller',    sub: 'SIGNAL framework',               href: 'hr-data-storyteller.html',   page: 'hr-data-storyteller' },
+      { icon: '\uD83E\uDDED', label: 'Policy Compass',         sub: 'BNS · BNSS · BSA',               href: 'policy-compass.html',        page: 'policy-compass' },
+      { icon: '\uD83C\uDFAF', label: 'Stakeholder Influence',  sub: 'INFLUENCE stack',                href: 'stakeholder-influence.html', page: 'stakeholder-influence' },
+      { icon: '\uD83D\uDCCB', label: 'The Debrief',            sub: 'Monthly intelligence brief',     href: 'debrief.html',               page: 'debrief' },
+      { icon: '\uD83D\uDD12', label: 'Data & Privacy',         sub: 'Your data settings',             href: 'data-dashboard.html',        page: 'data-dashboard' },
+      { icon: '\u21A9',        label: 'Sign Out',               sub: '',                               href: 'access.html',                page: 'signout', signout: true },
+    ];
+
+    // Check if any drawer item is active
+    var drawerActive = drawerItems.some(function(d) { return d.page !== 'signout' && path.includes(d.page); });
+
+    // Build nav
+    var nav = document.createElement('div');
+    nav.className = 'vantage-bottom-nav';
+
+    navItems.forEach(function(item) {
+      var active = item.page === 'more'
+        ? drawerActive
+        : isActive(item.page);
+
+      if (item.href) {
+        var a = document.createElement('a');
+        a.className = 'vbn-item' + (active ? ' active' : '');
+        a.href = item.href;
+        a.innerHTML = '<span class="vbn-icon">' + item.icon + '</span><span class="vbn-label">' + item.label + '</span>';
+        nav.appendChild(a);
+      } else {
+        // More button
+        var btn = document.createElement('button');
+        btn.className = 'vbn-item' + (active ? ' active' : '');
+        btn.innerHTML = '<span class="vbn-icon">' + item.icon + '</span><span class="vbn-label">' + item.label + '</span>';
+        btn.onclick = function(e) { e.stopPropagation(); toggleDrawer(); };
+        nav.appendChild(btn);
+      }
+    });
+
+    document.body.appendChild(nav);
+
+    // Build drawer overlay
+    var overlay = document.createElement('div');
+    overlay.className = 'vbn-drawer-overlay';
+
+    var drawer = document.createElement('div');
+    drawer.className = 'vbn-drawer';
+    drawer.innerHTML = '<div class="vbn-drawer-handle"></div><div class="vbn-drawer-title">More tools</div>';
+
+    drawerItems.forEach(function(item) {
+      var active = item.page !== 'signout' && path.includes(item.page);
+      var a = document.createElement('a');
+      a.className = 'vbn-drawer-item' + (active ? ' active' : '');
+      a.href = item.href;
+      if (item.signout) { a.onclick = function() { sessionStorage.clear(); }; }
+      a.innerHTML = [
+        '<span class="vbn-drawer-icon">' + item.icon + '</span>',
+        '<span class="vbn-drawer-label">' + item.label + (item.sub ? '<br><span class="vbn-drawer-sub">' + item.sub + '</span>' : '') + '</span>',
+      ].join('');
+      drawer.appendChild(a);
+    });
+
+    overlay.appendChild(drawer);
+    document.body.appendChild(overlay);
+
+    // Drawer toggle
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeDrawer();
+    });
+
+    function toggleDrawer() {
+      if (overlay.classList.contains('open')) closeDrawer();
+      else openDrawer();
+    }
+    function openDrawer()  { overlay.classList.add('open'); }
+    function closeDrawer() { overlay.classList.remove('open'); }
+
+    // Close drawer on nav item click
+    drawer.querySelectorAll('.vbn-drawer-item').forEach(function(el) {
+      el.addEventListener('click', closeDrawer);
+    });
+  }
+
+  // Run on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', injectMobileNav);
+  } else {
+    injectMobileNav();
+  }
+  window.addEventListener('resize', function() {
+    var existing = document.querySelector('.vantage-bottom-nav');
+    if (window.innerWidth > 768 && existing) existing.remove();
+  });
+
 })();
