@@ -20,7 +20,7 @@
 
     /* NAV */
     nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,4,16,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(99,102,241,0.1)}
-    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
     .nav-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite}
     .nav-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
     .nav-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:1px}
@@ -139,9 +139,12 @@
 <body>
 
 <nav>
-  <a href="index.html" class="nav-logo">
-    <div class="nav-dot"></div>
-    <div><div class="nav-name">Virorah</div><div class="nav-sub">Vantage</div></div>
+  <a href="index.html" class="nav-logo" style="display:flex;align-items:center;gap:12px;text-decoration:none">
+    <img src="favicon.png" width="38" height="38" style="border-radius:9px;flex-shrink:0;display:block;border:1px solid rgba(99,102,241,0.25)" alt="Vantage"/>
+    <div style="display:flex;flex-direction:column;gap:3px">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:0.48rem;letter-spacing:0.32em;text-transform:uppercase;color:rgba(165,180,252,0.5);line-height:1">VIRORAH</span>
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:1rem;font-weight:700;color:#f4f3ff;letter-spacing:-0.02em;line-height:1.1">Vantage</div>
+    </div>
   </a>
   <div class="nav-right">
     <div class="demo-badge">&#x1F1EE;&#x1F1F3; India Edition &middot; Live Demo</div>
