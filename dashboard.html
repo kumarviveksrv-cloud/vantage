@@ -210,13 +210,17 @@
         <div class="welcome-sub">Your MERIDIAN context is ready. What's happening today?</div>
       </div>
       <div class="header-aria" onclick="window.location.href='aria.html'">
-        <svg class="aria-orb" viewBox="0 0 52 52" width="52" height="52">
-          <circle cx="26" cy="26" r="24" fill="none" stroke="#6366f1" stroke-width="0.5" stroke-opacity="0.3" stroke-dasharray="3 6" style="animation:spin 12s linear infinite;transform-origin:26px 26px"/>
-          <circle cx="26" cy="26" r="16" fill="rgba(99,102,241,0.08)"/>
-          <polygon points="26,10 38,30 14,30" fill="none" stroke="#6366f1" stroke-width="0.8" stroke-opacity="0.6"/>
-          <circle cx="20" cy="22" r="2.5" fill="#6366f1" style="animation:pulse 2s ease-in-out infinite"/>
-          <circle cx="32" cy="22" r="2.5" fill="#a5b4fc" style="animation:pulse 2s ease-in-out .3s infinite"/>
-          <line x1="18" y1="28" x2="34" y2="28" stroke="#6366f1" stroke-width="1" stroke-opacity="0.5"/>
+        <svg class="aria-orb" viewBox="0 0 120 120" width="52" height="52" xmlns="http://www.w3.org/2000/svg">
+          <defs><radialGradient id="dcg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#a5b4fc" stop-opacity="0.9"/><stop offset="100%" stop-color="#4f46e5" stop-opacity="0"/></radialGradient><filter id="dgl"><feGaussianBlur stdDeviation="2.5" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter></defs>
+          <circle cx="60" cy="60" r="56" fill="rgba(99,102,241,0.07)"/>
+          <g style="animation:dspin1 12s linear infinite;transform-origin:60px 60px"><circle cx="60" cy="60" r="50" fill="none" stroke="#6366f1" stroke-width="0.7" stroke-opacity="0.25" stroke-dasharray="6 12"/><circle cx="60" cy="10" r="2.8" fill="#a5b4fc" opacity="0.85" filter="url(#dgl)"/></g>
+          <g style="animation:dspin2 8s linear infinite;transform-origin:60px 60px"><ellipse cx="60" cy="60" rx="38" ry="17" fill="none" stroke="#7c3aed" stroke-width="0.5" stroke-opacity="0.3" stroke-dasharray="4 10" transform="rotate(-30,60,60)"/><circle cx="98" cy="60" r="2.2" fill="#c4b5fd" opacity="0.75" filter="url(#dgl)" transform="rotate(-30,60,60)"/></g>
+          <g opacity="0.3" filter="url(#dgl)"><line x1="60" y1="60" x2="35" y2="27" stroke="#a5b4fc" stroke-width="0.5"/><line x1="60" y1="60" x2="88" y2="31" stroke="#a5b4fc" stroke-width="0.5"/><line x1="60" y1="60" x2="22" y2="68" stroke="#6366f1" stroke-width="0.5"/><line x1="60" y1="60" x2="97" y2="73" stroke="#6366f1" stroke-width="0.5"/></g>
+          <g filter="url(#dgl)"><circle cx="35" cy="27" r="2.2" fill="#a5b4fc" style="animation:dnodeP 3s ease-in-out infinite"/><circle cx="88" cy="31" r="1.8" fill="#a5b4fc" style="animation:dnodeP 3s ease-in-out .5s infinite"/><circle cx="22" cy="68" r="2" fill="#6366f1" style="animation:dnodeP 3s ease-in-out 1s infinite"/><circle cx="97" cy="73" r="1.6" fill="#6366f1" style="animation:dnodeP 3s ease-in-out 1.5s infinite"/></g>
+          <circle cx="60" cy="60" r="23" fill="url(#dcg)" style="animation:dcorePulse 3s ease-in-out infinite"/>
+          <circle cx="60" cy="60" r="14" fill="#0d0b1e" stroke="#6366f1" stroke-width="0.8" stroke-opacity="0.6"/>
+          <g transform="translate(60,60)" opacity="0.9" filter="url(#dgl)"><circle cx="0" cy="-5" r="1.8" fill="#a5b4fc"/><circle cx="-4.5" cy="3" r="1.5" fill="#6366f1"/><circle cx="4.5" cy="3" r="1.5" fill="#6366f1"/><line x1="0" y1="-5" x2="-4.5" y2="3" stroke="#a5b4fc" stroke-width="0.5" opacity="0.5"/><line x1="0" y1="-5" x2="4.5" y2="3" stroke="#a5b4fc" stroke-width="0.5" opacity="0.5"/><line x1="-4.5" y1="3" x2="4.5" y2="3" stroke="#6366f1" stroke-width="0.5" opacity="0.5"/></g>
+          <style>@keyframes dspin1{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}@keyframes dspin2{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}@keyframes dcorePulse{0%,100%{opacity:0.65}50%{opacity:1}}@keyframes dnodeP{0%,100%{opacity:0.3}50%{opacity:1}}</style>
         </svg>
         <div class="aria-label">
           <div class="name">ARIA</div>
