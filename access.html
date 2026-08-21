@@ -46,13 +46,23 @@
 <body>
 
   <div class="orb">
-    <svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" width="72" height="72">
-      <circle cx="36" cy="36" r="33" fill="none" stroke="#6366f1" stroke-width="0.5" stroke-opacity="0.3" stroke-dasharray="4 8" style="animation:spin 14s linear infinite;transform-origin:36px 36px"/>
-      <circle cx="36" cy="36" r="22" fill="rgba(99,102,241,0.08)"/>
-      <polygon points="36,14 56,48 16,48" fill="none" stroke="#6366f1" stroke-width="1" stroke-opacity="0.6"/>
-      <circle cx="27" cy="32" r="3.5" fill="#6366f1" style="animation:pulse 2s ease-in-out infinite"/>
-      <circle cx="45" cy="32" r="3.5" fill="#a5b4fc" style="animation:pulse 2s ease-in-out .3s infinite"/>
-      <line x1="24" y1="42" x2="48" y2="42" stroke="#6366f1" stroke-width="1.2" stroke-opacity="0.4"/>
+    <svg viewBox="0 0 120 120" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="cg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#a5b4fc" stop-opacity="0.9"/><stop offset="50%" stop-color="#6366f1" stop-opacity="0.5"/><stop offset="100%" stop-color="#4f46e5" stop-opacity="0"/></radialGradient>
+        <radialGradient id="og" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#6366f1" stop-opacity="0.12"/><stop offset="100%" stop-color="#6366f1" stop-opacity="0"/></radialGradient>
+        <filter id="gl"><feGaussianBlur stdDeviation="2.5" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter>
+      </defs>
+      <circle cx="60" cy="60" r="58" fill="url(#og)"/>
+      <g style="animation:aspin1 12s linear infinite;transform-origin:60px 60px"><circle cx="60" cy="60" r="52" fill="none" stroke="#6366f1" stroke-width="0.6" stroke-opacity="0.22" stroke-dasharray="6 14"/><circle cx="60" cy="8" r="3" fill="#a5b4fc" opacity="0.85" filter="url(#gl)"/></g>
+      <g style="animation:aspin2 9s linear infinite;transform-origin:60px 60px"><ellipse cx="60" cy="60" rx="40" ry="19" fill="none" stroke="#7c3aed" stroke-width="0.5" stroke-opacity="0.28" stroke-dasharray="5 11" transform="rotate(-35,60,60)"/><circle cx="100" cy="60" r="2.2" fill="#c4b5fd" opacity="0.75" filter="url(#gl)" transform="rotate(-35,60,60)"/></g>
+      <g style="animation:aspin3 6s linear infinite;transform-origin:60px 60px"><ellipse cx="60" cy="60" rx="28" ry="10" fill="none" stroke="#6366f1" stroke-width="0.4" stroke-opacity="0.18" stroke-dasharray="3 9" transform="rotate(55,60,60)"/><circle cx="88" cy="60" r="1.8" fill="#6366f1" opacity="0.9" filter="url(#gl)" transform="rotate(55,60,60)"/></g>
+      <g opacity="0.32" filter="url(#gl)"><line x1="60" y1="60" x2="33" y2="26" stroke="#a5b4fc" stroke-width="0.5"/><line x1="60" y1="60" x2="90" y2="30" stroke="#a5b4fc" stroke-width="0.5"/><line x1="60" y1="60" x2="20" y2="68" stroke="#6366f1" stroke-width="0.5"/><line x1="60" y1="60" x2="98" y2="74" stroke="#6366f1" stroke-width="0.5"/><line x1="60" y1="60" x2="46" y2="97" stroke="#7c3aed" stroke-width="0.5"/><line x1="60" y1="60" x2="78" y2="96" stroke="#7c3aed" stroke-width="0.5"/></g>
+      <g filter="url(#gl)"><circle cx="33" cy="26" r="2.4" fill="#a5b4fc" style="animation:anodeP 3.2s ease-in-out infinite"/><circle cx="90" cy="30" r="2" fill="#a5b4fc" style="animation:anodeP 3.2s ease-in-out .4s infinite"/><circle cx="20" cy="68" r="2.2" fill="#6366f1" style="animation:anodeP 3.2s ease-in-out .8s infinite"/><circle cx="98" cy="74" r="1.8" fill="#6366f1" style="animation:anodeP 3.2s ease-in-out 1.2s infinite"/><circle cx="46" cy="97" r="2" fill="#c4b5fd" style="animation:anodeP 3.2s ease-in-out 1.6s infinite"/><circle cx="78" cy="96" r="1.8" fill="#c4b5fd" style="animation:anodeP 3.2s ease-in-out 2s infinite"/></g>
+      <circle cx="60" cy="60" r="24" fill="url(#cg)" style="animation:acorePulse 3s ease-in-out infinite"/>
+      <circle cx="60" cy="60" r="15" fill="#0d0b1e" stroke="#6366f1" stroke-width="0.8" stroke-opacity="0.65"/>
+      <circle cx="60" cy="60" r="10" fill="none" stroke="#a5b4fc" stroke-width="0.4" stroke-opacity="0.35"/>
+      <g transform="translate(60,60)" opacity="0.9" filter="url(#gl)"><circle cx="0" cy="-5.5" r="2" fill="#a5b4fc"/><circle cx="-5" cy="3.5" r="1.6" fill="#6366f1"/><circle cx="5" cy="3.5" r="1.6" fill="#6366f1"/><line x1="0" y1="-5.5" x2="-5" y2="3.5" stroke="#a5b4fc" stroke-width="0.5" opacity="0.55"/><line x1="0" y1="-5.5" x2="5" y2="3.5" stroke="#a5b4fc" stroke-width="0.5" opacity="0.55"/><line x1="-5" y1="3.5" x2="5" y2="3.5" stroke="#6366f1" stroke-width="0.5" opacity="0.55"/></g>
+      <style>@keyframes aspin1{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}@keyframes aspin2{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}@keyframes aspin3{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}@keyframes acorePulse{0%,100%{opacity:0.65}50%{opacity:1}}@keyframes anodeP{0%,100%{opacity:0.3}50%{opacity:1}}</style>
     </svg>
   </div>
 
