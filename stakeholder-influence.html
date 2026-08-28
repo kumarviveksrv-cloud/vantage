@@ -407,7 +407,7 @@
       showView('output-view');
     }
 
-    function practiceConversation() {
+    function practiceConversation() { 
       if (currentResult) sessionStorage.setItem('sr_practice_context', JSON.stringify({ narrative: document.getElementById('context').value.substring(0,300), role: selectedStakeholder }));
       window.location.href = BASE + 'conversation-simulator.html';
     }
