@@ -7,46 +7,46 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body{min-height:100%;background:#060B18;color:#fff;font-family:'Plus Jakarta Sans',sans-serif}
+    html,body{min-height:100%;background:#050410;color:#fff;font-family:'Plus Jakarta Sans',sans-serif}
     body{display:flex}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
-    .sidebar{width:220px;flex-shrink:0;background:rgba(13,21,38,0.98);border-right:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;padding:20px 12px;min-height:100vh;overflow-y:auto}
+    .sidebar{width:220px;flex-shrink:0;background:rgba(13,11,30,0.98);border-right:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;padding:20px 12px;min-height:100vh;overflow-y:auto}
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
-    .logo-dot{width:8px;height:8px;border-radius:50%;background:#00E5C3;box-shadow:0 0 10px #00E5C3;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+    .logo-dot{width:8px;height:8px;border-radius:50%;background:#6366f1;box-shadow:0 0 10px #6366f1;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
     .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#fff}
     .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-top:2px}
     .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:4px 10px;margin:16px 0 6px}
     .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.45);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
-    .nav-item:hover{background:rgba(255,255,255,0.04);color:#fff}
-    .nav-item.active{background:rgba(0,229,195,0.10);border-color:rgba(0,229,195,0.25);color:#00E5C3;font-weight:500}
+    .nav-item:hover{background:rgba(255,255,255,0.03);color:#fff}
+    .nav-item.active{background:rgba(99,102,241,0.10);border-color:rgba(99,102,241,0.25);color:#6366f1;font-weight:500}
     .nav-item .icon{font-size:16px;flex-shrink:0}
-    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(0,229,195,0.08);border:1px solid rgba(0,229,195,0.15)}
-    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#00E5C3;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.15)}
+    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#6366f1;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
     .meridian-chip .val{font-size:11px;color:rgba(255,255,255,0.45)}
     .main{flex:1;padding:48px 60px;max-width:860px;line-height:1.75}
-    .doc-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;color:#00E5C3;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+    .doc-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;color:#6366f1;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
     .doc-title{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;color:#fff;margin-bottom:8px}
     .doc-meta{font-size:12px;color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06)}
-    .commitment-banner{background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.2);border-radius:12px;padding:18px 22px;margin-bottom:36px;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6}
-    .commitment-banner strong{color:#00E5C3;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px}
+    .commitment-banner{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:18px 22px;margin-bottom:36px;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6}
+    .commitment-banner strong{color:#6366f1;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px}
     h2{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-top:40px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.06)}
     h3{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);margin-top:20px;margin-bottom:8px}
     p{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.75}
     ul,ol{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;padding-left:20px;line-height:1.75}
     li{margin-bottom:6px}
-    .highlight{background:rgba(0,229,195,0.06);border-left:3px solid rgba(0,229,195,0.4);border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7}
+    .highlight{background:rgba(99,102,241,0.06);border-left:3px solid rgba(99,102,241,0.4);border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7}
     .data-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:12px}
-    .data-table th{background:rgba(0,229,195,0.08);color:#00E5C3;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid rgba(0,229,195,0.15)}
-    .data-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.55);vertical-align:top}
+    .data-table th{background:rgba(99,102,241,0.08);color:#6366f1;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid rgba(99,102,241,0.15)}
+    .data-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.03);color:rgba(255,255,255,0.55);vertical-align:top}
     .data-table tr:hover td{background:rgba(255,255,255,0.02)}
     .rights-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
-    .right-card{background:#0D1526;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:16px}
+    .right-card{background:#0d0b1e;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:16px}
     .right-title{font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:6px}
     .right-desc{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.5}
-    .toc{background:#0D1526;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:22px 26px;margin-bottom:36px}
-    .toc-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:#00E5C3;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+    .toc{background:#0d0b1e;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:22px 26px;margin-bottom:36px}
+    .toc-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:#6366f1;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
     .toc a{display:block;font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;padding:4px 0;transition:color .2s}
-    .toc a:hover{color:#00E5C3}
+    .toc a:hover{color:#6366f1}
     strong{color:rgba(255,255,255,0.8)}
     @media(max-width:768px){.sidebar{display:none}.main{padding:32px 20px}.rights-grid{grid-template-columns:1fr}}
   </style>
@@ -118,7 +118,7 @@
     <h2 id="who-we-are">1. Who We Are — Data Fiduciary</h2>
     <p>Virorah Private Limited (<strong>"Virorah"</strong>, <strong>"we"</strong>, <strong>"us"</strong>) is the Data Fiduciary for the Virorah Vantage platform under the Digital Personal Data Protection Act 2023 (DPDP Act). This means we determine the purposes and means of processing your personal data.</p>
     <p>You, as the user of the Platform, are the Data Principal under the DPDP Act.</p>
-    <p>Our registered office is in Gurugram, Haryana, India. Contact: <a href="mailto:info@virorah.com" style="color:#00E5C3;text-decoration:none">info@virorah.com</a></p>
+    <p>Our registered office is in Gurugram, Haryana, India. Contact: <a href="mailto:info@virorah.com" style="color:#6366f1;text-decoration:none">info@virorah.com</a></p>
 
     <h2 id="what-we-collect">2. What We Collect</h2>
     <p>We collect only what is necessary to provide and improve the Platform. Here is a complete breakdown:</p>
@@ -289,7 +289,7 @@
         <div class="right-desc">Raise a grievance with our Grievance Officer at info@virorah.com. We will respond within 48 hours.</div>
       </div>
     </div>
-    <p>To exercise any of these rights, visit the Data &amp; Privacy section of the Platform or contact us at <a href="mailto:info@virorah.com" style="color:#00E5C3;text-decoration:none">info@virorah.com</a>.</p>
+    <p>To exercise any of these rights, visit the Data &amp; Privacy section of the Platform or contact us at <a href="mailto:info@virorah.com" style="color:#6366f1;text-decoration:none">info@virorah.com</a>.</p>
 
     <h2 id="security">10. Security</h2>
     <p>Virorah implements the following technical and organisational security measures:</p>
@@ -311,7 +311,7 @@
     <p>The Platform does not use Google Analytics, Meta Pixel, or any other third-party tracking technology.</p>
 
     <h2 id="children">12. Children's Data</h2>
-    <p>The Platform is intended for use by adults (18 years and above) in a professional capacity. We do not knowingly collect personal data from anyone under the age of 18. If you believe a minor has provided data to the Platform, please contact us at <a href="mailto:info@virorah.com" style="color:#00E5C3;text-decoration:none">info@virorah.com</a> and we will delete it immediately.</p>
+    <p>The Platform is intended for use by adults (18 years and above) in a professional capacity. We do not knowingly collect personal data from anyone under the age of 18. If you believe a minor has provided data to the Platform, please contact us at <a href="mailto:info@virorah.com" style="color:#6366f1;text-decoration:none">info@virorah.com</a> and we will delete it immediately.</p>
 
     <h2 id="changes">13. Changes to This Policy</h2>
     <p>Virorah may update this Privacy Policy from time to time to reflect changes in our practices, technology, legal requirements, or other factors. Where changes are material, we will notify you via the Platform with at least fifteen (15) days' notice before the changes take effect.</p>
@@ -322,7 +322,7 @@
     <p><strong>Name:</strong> Kumar Vivek<br>
     <strong>Designation:</strong> Founder &amp; Grievance Officer, Virorah Private Limited<br>
     <strong>Address:</strong> Gurugram, Haryana, India<br>
-    <strong>Email:</strong> <a href="mailto:info@virorah.com" style="color:#00E5C3;text-decoration:none">info@virorah.com</a><br>
+    <strong>Email:</strong> <a href="mailto:info@virorah.com" style="color:#6366f1;text-decoration:none">info@virorah.com</a><br>
     <strong>Response time:</strong> Within 48 hours of receipt of grievance</p>
     <p>If you are not satisfied with our response, you have the right to approach the Data Protection Board of India once it is constituted and operational under the DPDP Act 2023.</p>
     <p style="margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:rgba(255,255,255,0.2);font-family:'JetBrains Mono',monospace">Virorah Private Limited &nbsp;·&nbsp; Gurugram, Haryana, India &nbsp;·&nbsp; © 2026 All rights reserved</p>
