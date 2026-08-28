@@ -60,7 +60,6 @@
     .meridian-chip .val{font-size:12px;color:var(--grey);line-height:1.4}
     .meridian-chip .m-cta{display:inline-block;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#a5b4fc;text-decoration:none}
     .meridian-chip .m-cta:hover{color:#f4f3ff}
-    /* MERIDIAN POPUP */
     .meridian-overlay{position:fixed;inset:0;background:rgba(5,4,16,0.75);backdrop-filter:blur(6px);z-index:1000;display:flex;align-items:center;justify-content:center;animation:fadeIn .25s ease}
     .meridian-modal{background:#0d0b1e;border:1px solid rgba(99,102,241,0.25);border-radius:20px;padding:40px;max-width:480px;width:90%;position:relative;box-shadow:0 24px 80px rgba(99,102,241,0.2)}
     .meridian-modal-close{position:absolute;top:16px;right:18px;background:none;border:none;color:rgba(165,180,252,0.4);font-size:20px;cursor:pointer;line-height:1;transition:color .2s}
@@ -77,8 +76,12 @@
     .meridian-btn-later{padding:13px 18px;background:transparent;color:rgba(165,180,252,0.5);border:1px solid rgba(99,102,241,0.15);border-radius:10px;font-size:13px;cursor:pointer;transition:all .2s;white-space:nowrap}
     .meridian-btn-later:hover{border-color:rgba(99,102,241,0.3);color:rgba(165,180,252,0.8)}
 
+    /* STARFIELD */
+    #vantage-stars{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+    .main > *{position:relative;z-index:1}
+
     /* MAIN */
-    .main{flex:1;overflow-y:auto;height:100vh;padding:28px 32px;background-image:linear-gradient(rgba(99,102,241,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.03) 1px,transparent 1px);background-size:48px 48px}
+    .main{flex:1;overflow-y:auto;height:100vh;padding:28px 32px;position:relative}
     .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;animation:fadeIn .4s ease}
     .welcome-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
     .welcome-name{font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:700;color:var(--white)}
@@ -225,8 +228,6 @@
       <div class="val" id="meridian-summary">Not configured yet</div>
       <a class="m-cta" id="meridian-cta" href="onboarding.html">Set up now &#8594;</a>
     </div>
-
-    <!-- MERIDIAN popup -->
     <div class="meridian-overlay" id="meridian-overlay" style="display:none">
       <div class="meridian-modal">
         <button class="meridian-modal-close" onclick="closeMeridianPopup()">&#10005;</button>
@@ -400,37 +401,98 @@
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var chip = document.getElementById('meridian-chip');
     var badge = document.getElementById('meridian-badge');
-    var cta = document.getElementById('meridian-cta');
-
     if (meridianRaw) {
       try {
         var m = JSON.parse(meridianRaw);
         document.getElementById('meridian-summary').innerText = (m.state || '') + ' · ' + (m.industry || '');
         badge.innerText = 'Active';
         badge.className = 'm-badge complete';
-        if (cta) cta.style.display = 'none';
+        document.getElementById('meridian-cta').style.display = 'none';
       } catch(e) {}
     } else {
       chip.classList.add('incomplete');
       chip.onclick = function() { document.getElementById('meridian-overlay').style.display = 'flex'; };
-      if (cta) cta.style.display = 'none'; // chip itself is clickable
-      // Show popup on first visit (once per session)
+      document.getElementById('meridian-cta').style.display = 'none';
       if (!sessionStorage.getItem('meridian_popup_dismissed')) {
-        setTimeout(function() {
-          document.getElementById('meridian-overlay').style.display = 'flex';
-        }, 1200);
+        setTimeout(function(){ document.getElementById('meridian-overlay').style.display = 'flex'; }, 1200);
       }
     }
-
     function closeMeridianPopup() {
       document.getElementById('meridian-overlay').style.display = 'none';
       sessionStorage.setItem('meridian_popup_dismissed', '1');
     }
-    // Close on overlay click
     document.getElementById('meridian-overlay').addEventListener('click', function(e) {
       if (e.target === this) closeMeridianPopup();
     });
   </script>
 <script src="sidebar-shared.js"></script>
+
+  <script>
+  // Vantage starfield — same feel as virorah.com
+  (function(){
+    var cv = document.getElementById('vantage-stars');
+    if (!cv) return;
+    var ctx = cv.getContext('2d');
+    var stars = [], W, H;
+
+    function resize(){
+      W = cv.width  = window.innerWidth;
+      H = cv.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Generate stars
+    for (var i = 0; i < 160; i++) {
+      stars.push({
+        x: Math.random(),
+        y: Math.random(),
+        r: 0.4 + Math.random() * 1.0,
+        alpha: 0.08 + Math.random() * 0.35,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.004 + Math.random() * 0.008
+      });
+    }
+
+    // A few brighter accent nodes
+    for (var j = 0; j < 18; j++) {
+      stars.push({
+        x: Math.random(), y: Math.random(),
+        r: 1.2 + Math.random() * 1.8,
+        alpha: 0.3 + Math.random() * 0.4,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.003 + Math.random() * 0.005,
+        hot: true
+      });
+    }
+
+    var t = 0;
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      t += 0.012;
+
+      stars.forEach(function(s) {
+        s.phase += s.speed;
+        var twinkle = s.alpha * (0.55 + Math.sin(s.phase) * 0.45);
+        ctx.beginPath();
+        ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+        if (s.hot) {
+          // Brighter nodes get a soft glow
+          var grd = ctx.createRadialGradient(s.x*W, s.y*H, 0, s.x*W, s.y*H, s.r * 3);
+          grd.addColorStop(0, 'rgba(165,180,252,' + twinkle + ')');
+          grd.addColorStop(1, 'rgba(99,102,241,0)');
+          ctx.fillStyle = grd;
+          ctx.arc(s.x * W, s.y * H, s.r * 3, 0, Math.PI * 2);
+        } else {
+          ctx.fillStyle = 'rgba(165,180,252,' + twinkle + ')';
+        }
+        ctx.fill();
+      });
+
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>
 </body>
 </html>
