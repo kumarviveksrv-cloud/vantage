@@ -103,7 +103,7 @@
   <div class="nav-btns" id="nav-btns">
     <button class="btn-back" id="btn-back" onclick="prevStep()" style="display:none">&#x2190; Back</button>
     <div style="display:flex;gap:10px;margin-left:auto">
-      <button class="btn-skip" id="btn-skip" onclick="skipStep()">Skip</button>
+      <!-- Skip removed: skipping defeats MERIDIAN profile building -->
       <button class="btn-next" id="btn-next" onclick="nextStep()" disabled>Continue &#x2192;</button>
     </div>
   </div>
@@ -121,7 +121,17 @@
       {
         id:'state', title:'Which state do you operate in?', sub:'This calibrates your advice to the correct labour law jurisdiction — termination norms, standing order requirements, and dispute resolution vary significantly by state.',
         type:'grid', cols:4,
-        options:['Maharashtra','Delhi','Karnataka','Tamil Nadu','Telangana','Gujarat','Rajasthan','Haryana','UP','West Bengal','Punjab','Andhra Pradesh','Kerala','Madhya Pradesh','Other']
+        options:[
+          'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh',
+          'Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand',
+          'Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur',
+          'Meghalaya','Mizoram','Nagaland','Odisha','Punjab',
+          'Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura',
+          'Uttar Pradesh','Uttarakhand','West Bengal',
+          'Delhi (NCT)','Chandigarh','Jammu & Kashmir','Ladakh',
+          'Puducherry','Dadra & NH / Daman & Diu','Andaman & Nicobar','Lakshadweep',
+          'Pan-India / Multiple States'
+        ]
       },
       {
         id:'industry', title:'What industry are you in?', sub:'Industry shapes everything from notice period norms to union density to typical ER case patterns.',
@@ -131,17 +141,30 @@
       {
         id:'orgType', title:'What type of organisation?', sub:'This determines which employment law provisions apply — registered factories, shops & establishments, or contract labour regulations.',
         type:'grid', cols:2,
-        options:['Corporate / Pvt Ltd','MNC / Listed Company','Startup (pre-Series B)','SME / Family Business','Government / PSU','NGO / Non-profit']
+        options:[
+          'Corporate / Pvt Ltd','MNC','Listed / Public Company',
+          'SME / Family Business','Government / PSU','NGO / Non-profit',
+          'Bootstrapped / Self-funded','Pre-Seed Stage','Seed Stage',
+          'Series A','Series B','Series C+','Pre-IPO'
+        ]
       },
       {
         id:'orgSize', title:'How large is your organisation?', sub:'Headcount determines which statutes apply — Industrial Disputes Act thresholds, retrenchment requirements, and Works Committee obligations vary by size.',
         type:'grid', cols:3,
-        options:['1 \u2013 50','51 \u2013 250','251 \u2013 1,000','1,001 \u2013 5,000','5,000+']
+        options:[
+          '1 – 50','51 – 250','251 – 500','501 – 1,000',
+          '1,001 – 2,500','2,501 – 5,000','5,001 – 10,000','10,000+'
+        ]
       },
       {
         id:'seniority', title:'What is your role and seniority?', sub:'This calibrates the depth of advice — an HRBP needs different output than a CHRO or an HR Coordinator.',
         type:'grid', cols:3,
-        options:['HR Coordinator / Executive','HR Business Partner','HR Manager','Senior HR Manager','HRBP (Senior)','HR Director','CHRO / VP HR','HR Consultant','Founder / CEO with HR responsibility','Other']
+        options:[
+          'HR Executive / Coordinator','Assistant HR Manager','HR Manager','Senior HR Manager',
+          'HRBP (Junior / Mid-level)','HRBP (Senior)','Head of HR / Head of People & Culture',
+          'General Manager – HR','HR Director','AVP – HR','VP – HR',
+          'CHRO','HR Consultant / Advisor','Founder / CEO with HR Responsibility','Other'
+        ]
       },
       {
         id:'unionStatus', title:'Is your workforce unionised?', sub:'Union status fundamentally changes your ER approach — conciliation, charter of demands, and recognition disputes require entirely different handling.',
@@ -151,7 +174,16 @@
       {
         id:'hrFunction', title:'What is your primary HR function?', sub:'This shapes which tools and frameworks ARIA and Vantage will prioritise for you.',
         type:'grid', cols:3,
-        options:['Generalist / All-round','Employee Relations specialist','Talent Acquisition','Learning & Development','Compensation & Benefits','HR Business Partner','HR Operations','OD / Culture','HR Analytics','HR Technology']
+        options:[
+          'Generalist / All-round','Employee Relations (ER)','Talent Acquisition / Recruitment',
+          'Learning & Development (L&D)','Compensation & Benefits (C&B)','HR Business Partnering',
+          'HR Operations','Organisational Development (OD)','Culture & Engagement',
+          'HR Analytics / People Analytics','HR Technology / HRIS',
+          'Diversity, Equity & Inclusion (DEI)','Performance Management',
+          'Talent Management & Succession Planning','Payroll & Statutory Compliance',
+          'Labour & Industrial Relations','HR Shared Services',
+          'Workforce Planning & Manpower','Total Rewards','Employer Branding','Other'
+        ]
       },
       {
         id:'policy', title:'Your Policy Guardrails', sub:'Optional — helps the platform understand your company context and policy boundaries. All fields are optional.',
@@ -173,11 +205,11 @@
 
       document.getElementById('btn-back').style.display = currentStep > 0 ? 'block' : 'none';
       document.getElementById('btn-next').disabled = !profile[step.id] && step.type !== 'policy';
-      document.getElementById('btn-skip').style.display = step.type === 'policy' ? 'none' : 'block';
+      // Skip removed
 
       if (step.type === 'policy') {
         document.getElementById('btn-next').disabled = false;
-        document.getElementById('btn-skip').style.display = 'none';
+        // Skip removed
         container.innerHTML =
           '<div class="step-card">' +
             '<div class="step-num">Step ' + (currentStep + 1) + ' of ' + STEPS.length + '</div>' +
