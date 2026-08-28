@@ -49,9 +49,33 @@
     .nav-item.active{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.30);color:#c4b5fd;font-weight:500}
     .nav-item .icon{font-size:16px;flex-shrink:0;opacity:1;filter:none}
     .nav-badge{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--red);color:#fff;border-radius:10px;padding:1px 6px}
-    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.20)}
-    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
-    .meridian-chip .val{font-size:11px;color:var(--grey)}
+    .meridian-chip{margin-top:auto;padding:16px 16px;border-radius:12px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.20);transition:all .3s;cursor:default}
+    .meridian-chip.incomplete{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.5);animation:meridianGlow 2.5s ease-in-out infinite;cursor:pointer}
+    .meridian-chip.incomplete:hover{background:rgba(99,102,241,0.18);transform:translateY(-1px)}
+    @keyframes meridianGlow{0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,0);border-color:rgba(99,102,241,0.4)}50%{box-shadow:0 0 16px 4px rgba(99,102,241,0.25),0 0 0 1px rgba(99,102,241,0.6);border-color:rgba(99,102,241,0.8)}}
+    .meridian-chip .m-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+    .meridian-chip .m-badge{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 7px;border-radius:10px;background:rgba(239,68,68,0.15);color:rgba(239,68,68,0.8);letter-spacing:.06em;text-transform:uppercase}
+    .meridian-chip .m-badge.complete{background:rgba(34,197,94,0.12);color:rgba(34,197,94,0.7)}
+    .meridian-chip .val{font-size:12px;color:var(--grey);line-height:1.4}
+    .meridian-chip .m-cta{display:inline-block;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#a5b4fc;text-decoration:none}
+    .meridian-chip .m-cta:hover{color:#f4f3ff}
+    /* MERIDIAN POPUP */
+    .meridian-overlay{position:fixed;inset:0;background:rgba(5,4,16,0.75);backdrop-filter:blur(6px);z-index:1000;display:flex;align-items:center;justify-content:center;animation:fadeIn .25s ease}
+    .meridian-modal{background:#0d0b1e;border:1px solid rgba(99,102,241,0.25);border-radius:20px;padding:40px;max-width:480px;width:90%;position:relative;box-shadow:0 24px 80px rgba(99,102,241,0.2)}
+    .meridian-modal-close{position:absolute;top:16px;right:18px;background:none;border:none;color:rgba(165,180,252,0.4);font-size:20px;cursor:pointer;line-height:1;transition:color .2s}
+    .meridian-modal-close:hover{color:#f4f3ff}
+    .meridian-modal-badge{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(99,102,241,0.7);margin-bottom:16px}
+    .meridian-modal-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:#f4f3ff;margin-bottom:12px;line-height:1.2}
+    .meridian-modal-body{font-size:14px;color:rgba(244,243,255,0.55);line-height:1.75;margin-bottom:24px}
+    .meridian-modal-body strong{color:rgba(244,243,255,0.85);font-weight:600}
+    .meridian-modal-params{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:28px}
+    .meridian-param{background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.12);border-radius:8px;padding:10px 12px;font-size:11px;color:rgba(165,180,252,0.65);font-family:'JetBrains Mono',monospace;letter-spacing:.04em}
+    .meridian-modal-btns{display:flex;gap:10px}
+    .meridian-btn-primary{flex:1;padding:13px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;border:none;border-radius:10px;font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
+    .meridian-btn-primary:hover{opacity:.85}
+    .meridian-btn-later{padding:13px 18px;background:transparent;color:rgba(165,180,252,0.5);border:1px solid rgba(99,102,241,0.15);border-radius:10px;font-size:13px;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .meridian-btn-later:hover{border-color:rgba(99,102,241,0.3);color:rgba(165,180,252,0.8)}
 
     /* MAIN */
     .main{flex:1;overflow-y:auto;height:100vh;padding:28px 32px;background-image:linear-gradient(rgba(99,102,241,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.03) 1px,transparent 1px);background-size:48px 48px}
@@ -193,9 +217,37 @@
       <span class="icon">↩</span> Sign out
     </a>
 
-    <div class="meridian-chip">
-      <div class="label">MERIDIAN Active</div>
+    <div class="meridian-chip" id="meridian-chip">
+      <div class="m-header">
+        <div class="label">MERIDIAN Profile</div>
+        <div class="m-badge" id="meridian-badge">Incomplete</div>
+      </div>
       <div class="val" id="meridian-summary">Not configured yet</div>
+      <a class="m-cta" id="meridian-cta" href="onboarding.html">Set up now &#8594;</a>
+    </div>
+
+    <!-- MERIDIAN popup -->
+    <div class="meridian-overlay" id="meridian-overlay" style="display:none">
+      <div class="meridian-modal">
+        <button class="meridian-modal-close" onclick="closeMeridianPopup()">&#10005;</button>
+        <div class="meridian-modal-badge">MERIDIAN Context Engine</div>
+        <div class="meridian-modal-title">Why your profile changes everything.</div>
+        <div class="meridian-modal-body">Without MERIDIAN, every tool gives you <strong>generic advice</strong>. With it, every output is calibrated to your exact professional reality — your state's labour law, your org's size, your role's depth of authority.</div>
+        <div class="meridian-modal-params">
+          <div class="meridian-param">&#127987; State jurisdiction</div>
+          <div class="meridian-param">&#127970; Industry context</div>
+          <div class="meridian-param">&#127970; Organisation type</div>
+          <div class="meridian-param">&#128101; Headcount band</div>
+          <div class="meridian-param">&#128203; Your seniority</div>
+          <div class="meridian-param">&#9889; Union status</div>
+          <div class="meridian-param">&#127919; HR function</div>
+          <div class="meridian-param">&#128274; Policy guardrails</div>
+        </div>
+        <div class="meridian-modal-btns">
+          <button class="meridian-btn-primary" onclick="window.location.href='onboarding.html'">Set up MERIDIAN &#8594;</button>
+          <button class="meridian-btn-later" onclick="closeMeridianPopup()">Do it later</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -346,18 +398,38 @@
     }
 
     var meridianRaw = sessionStorage.getItem('sr_meridian');
+    var chip = document.getElementById('meridian-chip');
+    var badge = document.getElementById('meridian-badge');
+    var cta = document.getElementById('meridian-cta');
+
     if (meridianRaw) {
       try {
         var m = JSON.parse(meridianRaw);
         document.getElementById('meridian-summary').innerText = (m.state || '') + ' · ' + (m.industry || '');
+        badge.innerText = 'Active';
+        badge.className = 'm-badge complete';
+        if (cta) cta.style.display = 'none';
       } catch(e) {}
     } else {
-      document.getElementById('meridian-summary').innerText = 'Complete setup →';
-      document.getElementById('meridian-summary').style.cursor = 'pointer';
-      document.getElementById('meridian-summary').onclick = function() {
-        window.location.href = 'onboarding.html';
-      };
+      chip.classList.add('incomplete');
+      chip.onclick = function() { document.getElementById('meridian-overlay').style.display = 'flex'; };
+      if (cta) cta.style.display = 'none'; // chip itself is clickable
+      // Show popup on first visit (once per session)
+      if (!sessionStorage.getItem('meridian_popup_dismissed')) {
+        setTimeout(function() {
+          document.getElementById('meridian-overlay').style.display = 'flex';
+        }, 1200);
+      }
     }
+
+    function closeMeridianPopup() {
+      document.getElementById('meridian-overlay').style.display = 'none';
+      sessionStorage.setItem('meridian_popup_dismissed', '1');
+    }
+    // Close on overlay click
+    document.getElementById('meridian-overlay').addEventListener('click', function(e) {
+      if (e.target === this) closeMeridianPopup();
+    });
   </script>
 <script src="sidebar-shared.js"></script>
 </body>
