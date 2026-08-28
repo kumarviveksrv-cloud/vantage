@@ -7,39 +7,39 @@
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body{min-height:100%;background:#060B18;color:#fff;font-family:'Plus Jakarta Sans',sans-serif}
+    html,body{min-height:100%;background:#050410;color:#fff;font-family:'Plus Jakarta Sans',sans-serif}
     body{display:flex}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
-    .sidebar{width:220px;flex-shrink:0;background:rgba(13,21,38,0.98);border-right:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;padding:20px 12px;min-height:100vh;overflow-y:auto}
+    .sidebar{width:220px;flex-shrink:0;background:rgba(13,11,30,0.98);border-right:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;padding:20px 12px;min-height:100vh;overflow-y:auto}
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
-    .logo-dot{width:8px;height:8px;border-radius:50%;background:#00E5C3;box-shadow:0 0 10px #00E5C3;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+    .logo-dot{width:8px;height:8px;border-radius:50%;background:#6366f1;box-shadow:0 0 10px #6366f1;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
     .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#fff}
     .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-top:2px}
     .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:4px 10px;margin:16px 0 6px}
     .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.45);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
-    .nav-item:hover{background:rgba(255,255,255,0.04);color:#fff}
-    .nav-item.active{background:rgba(0,229,195,0.10);border-color:rgba(0,229,195,0.25);color:#00E5C3;font-weight:500}
+    .nav-item:hover{background:rgba(255,255,255,0.03);color:#fff}
+    .nav-item.active{background:rgba(99,102,241,0.10);border-color:rgba(99,102,241,0.25);color:#6366f1;font-weight:500}
     .nav-item .icon{font-size:16px;flex-shrink:0}
-    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(0,229,195,0.08);border:1px solid rgba(0,229,195,0.15)}
-    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#00E5C3;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.15)}
+    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#6366f1;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
     .meridian-chip .val{font-size:11px;color:rgba(255,255,255,0.45)}
     .main{flex:1;padding:48px 60px;max-width:860px;line-height:1.75}
-    .doc-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;color:#00E5C3;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+    .doc-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;color:#6366f1;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
     .doc-title{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;color:#fff;margin-bottom:8px}
     .doc-meta{font-size:12px;color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06)}
-    .important-banner{background:rgba(255,181,71,0.08);border:1px solid rgba(255,181,71,0.25);border-radius:12px;padding:18px 22px;margin-bottom:36px;font-size:13px;color:rgba(255,181,71,0.9);line-height:1.6}
+    .important-banner{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:12px;padding:18px 22px;margin-bottom:36px;font-size:13px;color:rgba(239,68,68,0.9);line-height:1.6}
     .important-banner strong{color:#FFB547;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px}
     h2{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-top:40px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.06)}
     h3{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);margin-top:20px;margin-bottom:8px}
     p{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;line-height:1.75}
     ul,ol{font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:14px;padding-left:20px;line-height:1.75}
     li{margin-bottom:6px}
-    .highlight{background:rgba(0,229,195,0.06);border-left:3px solid rgba(0,229,195,0.4);border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7}
+    .highlight{background:rgba(99,102,241,0.06);border-left:3px solid rgba(99,102,241,0.4);border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7}
     .warning{background:rgba(255,77,109,0.06);border-left:3px solid rgba(255,77,109,0.4);border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;font-size:13px;color:rgba(255,77,109,0.85);line-height:1.7}
-    .toc{background:#0D1526;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:22px 26px;margin-bottom:36px}
-    .toc-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:#00E5C3;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+    .toc{background:#0d0b1e;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:22px 26px;margin-bottom:36px}
+    .toc-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:#6366f1;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
     .toc a{display:block;font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;padding:4px 0;transition:color .2s}
-    .toc a:hover{color:#00E5C3}
+    .toc a:hover{color:#6366f1}
     strong{color:rgba(255,255,255,0.8)}
     @media(max-width:768px){.sidebar{display:none}.main{padding:32px 20px}}
   </style>
@@ -87,7 +87,7 @@
 
     <div class="important-banner">
       <strong>⚠️ Read before you use the platform</strong>
-      The Virorah Situation Room is an AI-powered intelligence tool for HR professionals. It does not provide legal advice, employment law advice, financial advice, or HR policy directives. All outputs are for informational purposes only. You are solely responsible for any employment or business decision you make in reliance on any content generated by this platform. By using this platform, you agree to these terms in full.
+      The Virorah Vantage is an AI-powered intelligence tool for HR professionals. It does not provide legal advice, employment law advice, financial advice, or HR policy directives. All outputs are for informational purposes only. You are solely responsible for any employment or business decision you make in reliance on any content generated by this platform. By using this platform, you agree to these terms in full.
     </div>
 
     <div class="toc">
@@ -113,14 +113,14 @@
 
     <h2 id="parties">1. Parties and Definitions</h2>
     <p><strong>"Virorah"</strong>, <strong>"we"</strong>, <strong>"us"</strong>, or <strong>"our"</strong> refers to Virorah Private Limited, a company incorporated under the Companies Act 2013, with its registered office in Gurugram, Haryana, India.</p>
-    <p><strong>"Platform"</strong> refers to the Virorah Situation Room, accessible at kumarviveksrv-cloud.github.io/vantage and any associated subdomains, applications, and services.</p>
+    <p><strong>"Platform"</strong> refers to the Virorah Vantage, accessible at kumarviveksrv-cloud.github.io/vantage and any associated subdomains, applications, and services.</p>
     <p><strong>"You"</strong> or <strong>"User"</strong> refers to any individual who accesses, registers for, or uses the Platform.</p>
     <p><strong>"AI Output"</strong> refers to any text, assessment, recommendation, framework analysis, financial estimate, or other content generated by the Platform's artificial intelligence systems in response to your inputs.</p>
     <p><strong>"Subscription"</strong> refers to a paid or free-trial plan entitling you to access Platform features as described at the time of subscription.</p>
     <p><strong>"MERIDIAN"</strong>, <strong>"PACT"</strong>, <strong>"SIGNAL"</strong>, <strong>"INFLUENCE Stack"</strong>, and <strong>"Humacity"</strong> are proprietary frameworks and philosophies developed by Virorah Private Limited.</p>
 
     <h2 id="service">2. Description of Service</h2>
-    <p>The Virorah Situation Room is a B2C AI-powered intelligence platform designed exclusively for individual HR professionals. It provides tools including but not limited to:</p>
+    <p>The Virorah Vantage is a B2C AI-powered intelligence platform designed exclusively for individual HR professionals. It provides tools including but not limited to:</p>
     <ul>
       <li>The ER Case Navigator — AI-assisted employee relations case analysis using the PACT framework</li>
       <li>The HR Data Storyteller — AI-generated HR narrative construction using the SIGNAL framework</li>
@@ -275,7 +275,7 @@
     <p>For any questions regarding these Terms, please contact:</p>
     <p><strong>Virorah Private Limited</strong><br>
     Gurugram, Haryana, India<br>
-    Email: <a href="mailto:info@virorah.com" style="color:#00E5C3;text-decoration:none">info@virorah.com</a></p>
+    Email: <a href="mailto:info@virorah.com" style="color:#6366f1;text-decoration:none">info@virorah.com</a></p>
     <p style="margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:rgba(255,255,255,0.2);font-family:'JetBrains Mono',monospace">Virorah Private Limited &nbsp;·&nbsp; Gurugram, Haryana, India &nbsp;·&nbsp; © 2026 All rights reserved</p>
 
   </div>
