@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Humac Baseline Score — Vantage</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#050410;--bg2:#0d0b1e;--bg3:#11102a;
+  --cobalt:#6366f1;--cobalt-dim:rgba(99,102,241,.15);--cobalt-border:rgba(99,102,241,.18);
+  --violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;
+  --text:#f4f3ff;--text-mid:#a5b4fc;--text-dim:rgba(244,243,255,.45);
+  --border:rgba(99,102,241,.15);--red:#E05C3A;
+  --font:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --display:'Bricolage Grotesque',sans-serif;
+  --stat:'Space Grotesk',sans-serif;
+  --sidebar:220px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* ── SIDEBAR ─────────────────── */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar);background:rgba(5,4,16,.97);backdrop-filter:blur(16px);border-right:1px solid var(--cobalt-border);z-index:200;display:flex;flex-direction:column;padding:0 0 20px;overflow-y:auto}
+.sb-brand{display:flex;align-items:center;gap:12px;padding:20px 18px;border-bottom:1px solid var(--cobalt-border);text-decoration:none}
+.sb-logo-wrap{width:36px;height:36px;border-radius:8px;background:var(--cobalt-dim);border:1px solid var(--cobalt-border);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;font-weight:600;color:var(--cobalt);flex-shrink:0}
+.sb-wordmark{display:flex;flex-direction:column;gap:1px}
+.sb-virorah{font-family:var(--mono);font-size:.44rem;letter-spacing:.32em;text-transform:uppercase;color:rgba(165,180,252,.4)}
+.sb-product{font-family:var(--display);font-size:.92rem;font-weight:600;color:var(--text);letter-spacing:-.01em}
+.sb-section{padding:14px 12px 5px;font-family:var(--mono);font-size:.52rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(244,243,255,.25)}
+.sb-item{display:flex;align-items:center;gap:9px;padding:7px 14px;margin:1px 6px;border-radius:7px;text-decoration:none;color:var(--text-dim);font-size:.82rem;transition:all .15s;border:1px solid transparent}
+.sb-item:hover{background:rgba(99,102,241,.08);color:var(--text);border-color:var(--cobalt-border)}
+.sb-item.active{background:rgba(99,102,241,.12);color:var(--muted);border-color:rgba(99,102,241,.4)}
+.sb-icon{width:16px;height:16px;flex-shrink:0;opacity:.6}
+.sb-bottom{margin-top:auto;padding-top:14px;border-top:1px solid var(--cobalt-border)}
+.sb-by{padding:10px 18px;font-family:var(--mono);font-size:.62rem;color:var(--text-dim)}
+.sb-by b{color:var(--muted)}
+
+/* ── MAIN WRAP ───────────────── */
+.wrap{margin-left:var(--sidebar);padding:40px 48px 80px;max-width:860px}
+
+/* ── PAGE HEADER ─────────────── */
+.page-eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.page-title{font-family:var(--display);font-size:1.7rem;font-weight:600;color:var(--text);margin-bottom:6px;letter-spacing:-.02em}
+.page-sub{font-size:.9rem;color:var(--text-dim);margin-bottom:36px;max-width:560px;line-height:1.6}
+
+/* ── PROGRESS STEPPER ────────── */
+.stepper{display:flex;align-items:center;gap:0;margin-bottom:40px}
+.step-item{display:flex;align-items:center;gap:0}
+.step-bubble{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;font-weight:600;transition:all .3s;flex-shrink:0}
+.step-bubble.done{background:var(--cobalt);color:#fff;border:none}
+.step-bubble.active{background:rgba(99,102,241,.15);color:var(--cobalt);border:2px solid var(--cobalt)}
+.step-bubble.pending{background:transparent;color:var(--text-dim);border:1px solid rgba(99,102,241,.2)}
+.step-label{font-family:var(--mono);font-size:.58rem;color:var(--text-dim);margin-left:6px;letter-spacing:.06em;transition:color .3s}
+.step-label.active{color:var(--muted)}
+.step-connector{width:24px;height:1px;background:rgba(99,102,241,.2);margin:0 6px;flex-shrink:0}
+
+/* ── BLOCK CARD ──────────────── */
+.block-card{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:16px;padding:32px;margin-bottom:0;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.block-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px}
+.block-id{font-family:var(--mono);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cobalt);background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);border-radius:4px;padding:3px 8px;margin-bottom:6px;display:inline-block}
+.block-name{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--text);letter-spacing:-.01em;margin-bottom:4px}
+.block-desc{font-size:.84rem;color:var(--text-dim);line-height:1.5;max-width:480px}
+.block-pillar{text-align:right;flex-shrink:0}
+.pillar-tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:4px;padding:3px 8px;color:var(--text-dim)}
+.pillar-weight{font-family:var(--mono);font-size:.64rem;color:var(--cobalt);margin-top:4px;text-align:right}
+
+/* ── FORMULA TOGGLE ──────────── */
+.formula-toggle{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.62rem;color:rgba(99,102,241,.6);cursor:pointer;background:none;border:none;padding:0;margin-bottom:20px;transition:color .15s}
+.formula-toggle:hover{color:var(--muted)}
+.formula-toggle svg{width:12px;height:12px;transition:transform .2s}
+.formula-toggle.open svg{transform:rotate(180deg)}
+.formula-panel{display:none;background:rgba(5,4,16,.6);border:1px solid rgba(99,102,241,.12);border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:.8rem;color:var(--text-dim);line-height:1.7}
+.formula-panel.open{display:block}
+.formula-panel code{font-family:var(--mono);font-size:.74rem;color:var(--muted);background:rgba(99,102,241,.06);padding:2px 6px;border-radius:3px}
+.formula-panel b{color:var(--text-mid);font-weight:500}
+
+/* ── QUESTIONS ───────────────── */
+.questions{display:flex;flex-direction:column;gap:20px;margin-bottom:24px}
+.question{display:flex;flex-direction:column;gap:8px}
+.q-text{font-size:.92rem;color:var(--text);line-height:1.55;font-weight:400}
+.q-sub{font-size:.78rem;color:var(--text-dim);line-height:1.5}
+
+/* percentage input */
+.pct-input-wrap{display:flex;align-items:center;gap:10px;margin-top:4px}
+.pct-input{background:var(--bg3);border:1px solid var(--cobalt-border);color:var(--text);border-radius:8px;padding:10px 14px;font-family:var(--stat);font-size:1.1rem;width:120px;transition:border-color .15s;text-align:right}
+.pct-input:focus{outline:none;border-color:var(--cobalt)}
+.pct-unit{font-family:var(--mono);font-size:.9rem;color:var(--text-dim)}
+.pct-hint{font-family:var(--mono);font-size:.6rem;color:rgba(99,102,241,.5)}
+
+/* yes/no buttons */
+.yesno-wrap{display:flex;gap:8px;margin-top:4px}
+.yn-btn{padding:8px 20px;border-radius:7px;font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;cursor:pointer;transition:all .15s;border:1px solid rgba(99,102,241,.2);background:transparent;color:var(--text-dim)}
+.yn-btn:hover{border-color:var(--cobalt-border);color:var(--text-mid)}
+.yn-btn.selected-yes{background:rgba(99,102,241,.15);border-color:var(--cobalt);color:var(--cobalt)}
+.yn-btn.selected-no{background:rgba(224,92,58,.08);border-color:rgba(224,92,58,.3);color:#E05C3A}
+
+/* number input */
+.num-input{background:var(--bg3);border:1px solid var(--cobalt-border);color:var(--text);border-radius:8px;padding:10px 14px;font-family:var(--stat);font-size:1.0rem;width:100px;transition:border-color .15s;text-align:right;margin-top:4px}
+.num-input:focus{outline:none;border-color:var(--cobalt)}
+.num-label{font-family:var(--mono);font-size:.64rem;color:var(--text-dim);display:inline-block;margin-left:8px}
+
+/* dropdown */
+.risk-select{background:var(--bg3);border:1px solid var(--cobalt-border);color:var(--text);border-radius:8px;padding:10px 14px;font-family:var(--font);font-size:.9rem;cursor:pointer;margin-top:4px;min-width:180px;transition:border-color .15s}
+.risk-select:focus{outline:none;border-color:var(--cobalt)}
+
+/* ── CONFIDENCE FLAG ─────────── */
+.confidence-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--border)}
+.confidence-label{font-family:var(--mono);font-size:.62rem;color:var(--text-dim);letter-spacing:.06em}
+.conf-btn{padding:6px 14px;border-radius:6px;font-family:var(--mono);font-size:.62rem;cursor:pointer;border:1px solid rgba(99,102,241,.2);background:transparent;color:var(--text-dim);transition:all .15s}
+.conf-btn:hover{border-color:var(--cobalt-border);color:var(--text-mid)}
+.conf-btn.selected{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.4);color:var(--muted)}
+
+/* ── NAVIGATION BUTTONS ──────── */
+.nav-row{display:flex;align-items:center;justify-content:space-between;margin-top:28px}
+.nav-back{background:transparent;border:1px solid rgba(99,102,241,.2);color:var(--text-dim);padding:10px 20px;border-radius:8px;font-family:var(--mono);font-size:.72rem;cursor:pointer;transition:all .15s}
+.nav-back:hover{border-color:var(--cobalt-border);color:var(--text-mid)}
+.nav-next{background:var(--cobalt);border:none;color:#fff;padding:10px 28px;border-radius:8px;font-family:var(--mono);font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s;letter-spacing:.04em}
+.nav-next:hover{background:#5254d4;transform:translateY(-1px)}
+.nav-next:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ── SCORE REVEAL ────────────── */
+#score-reveal{display:none;animation:fadeIn .4s ease}
+.reveal-eyebrow{font-family:var(--mono);font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+.humac-hero{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:20px;padding:40px 44px;margin-bottom:24px;position:relative;overflow:hidden}
+.humac-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.5),transparent)}
+.hero-scores{display:flex;align-items:flex-end;gap:32px;margin-bottom:20px;flex-wrap:wrap}
+.score-col{display:flex;flex-direction:column;gap:4px}
+.score-label{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
+.score-num{font-family:var(--stat);font-size:5.5rem;font-weight:700;line-height:1;letter-spacing:-.03em;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-num.adj{font-size:3.8rem;background:linear-gradient(135deg,#a5b4fc,#7c3aed);-webkit-background-clip:text;background-clip:text}
+.score-divider{width:1px;height:60px;background:rgba(99,102,241,.2);align-self:center}
+.band-row{display:flex;align-items:center;gap:10px}
+.band-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.band-name{font-family:var(--display);font-size:1.1rem;font-weight:600}
+.band-desc{font-size:.84rem;color:var(--text-dim);margin-top:2px}
+.hci-note{font-family:var(--mono);font-size:.66rem;color:rgba(99,102,241,.6);margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.conf-badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-left:10px}
+.conf-badge.high{background:rgba(99,102,241,.1);color:var(--cobalt);border:1px solid rgba(99,102,241,.2)}
+.conf-badge.medium{background:rgba(165,180,252,.08);color:var(--muted);border:1px solid rgba(165,180,252,.2)}
+.conf-badge.low{background:rgba(224,92,58,.06);color:#E05C3A;border:1px solid rgba(224,92,58,.2)}
+
+/* pillar breakdown */
+.pillars{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:14px;padding:24px 28px;margin-bottom:24px}
+.pillars-title{font-family:var(--mono);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:16px}
+.pillar-row{display:grid;grid-template-columns:80px 1fr 40px;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(99,102,241,.04)}
+.pillar-row:last-child{border-bottom:none}
+.pillar-name{font-family:var(--mono);font-size:.64rem;color:var(--text-dim)}
+.pillar-name span{display:block;color:rgba(244,243,255,.25);font-size:.54rem;margin-top:1px;letter-spacing:.04em}
+.pillar-bar-wrap{height:6px;background:rgba(99,102,241,.08);border-radius:3px;overflow:hidden}
+.pillar-bar{height:100%;background:linear-gradient(90deg,var(--cobalt),var(--violet));border-radius:3px;transition:width .6s cubic-bezier(.19,1,.22,1)}
+.pillar-score{font-family:var(--stat);font-size:.88rem;font-weight:600;color:var(--muted);text-align:right}
+
+/* actions */
+.reveal-actions{display:flex;gap:12px;flex-wrap:wrap}
+.action-primary{background:var(--cobalt);border:none;color:#fff;padding:12px 28px;border-radius:9px;font-family:var(--mono);font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s;letter-spacing:.04em;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.action-primary:hover{background:#5254d4;transform:translateY(-1px)}
+.action-secondary{background:transparent;border:1px solid rgba(99,102,241,.25);color:var(--muted);padding:12px 24px;border-radius:9px;font-family:var(--mono);font-size:.72rem;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center}
+.action-secondary:hover{border-color:var(--cobalt-border);color:var(--text)}
+
+@media(max-width:768px){.wrap{margin-left:0;padding:24px 20px 60px}.sidebar{display:none}.humac-hero{padding:24px 20px}.score-num{font-size:4rem}.score-num.adj{font-size:3rem}}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <a class="sb-brand" href="dashboard.html">
+    <div class="sb-logo-wrap">V</div>
+    <div class="sb-wordmark">
+      <span class="sb-virorah">VIRORAH</span>
+      <span class="sb-product">Vantage</span>
+    </div>
+  </a>
+  <div class="sb-section">Core Tools</div>
+  <a class="sb-item" href="er-case-navigator.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l5 2v4c0 3-2 5-5 6C5 13 3 11 3 8V4l5-2z"/></svg>ER Case Navigator</a>
+  <a class="sb-item" href="hr-data-storyteller.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12l4-4 3 3 5-6"/></svg>HR Data Storyteller</a>
+  <a class="sb-item" href="stakeholder-influence.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.5-5 6-5s6 2 6 5"/></svg>Stakeholder Influence</a>
+  <div class="sb-section">Intelligence</div>
+  <a class="sb-item" href="aria.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>ARIA</a>
+  <a class="sb-item" href="policy-compass.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l3 1"/></svg>Policy Compass</a>
+  <a class="sb-item" href="conversation-simulator.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12v8a1 1 0 01-1 1H4l-2 2V4z"/></svg>Conversation Simulator</a>
+  <div class="sb-section">My Record</div>
+  <a class="sb-item" href="case-library.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Case Library</a>
+  <a class="sb-item" href="debrief.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2h8a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1zM5 6h6M5 9h6M5 12h4"/></svg>The Debrief</a>
+  <div class="sb-section">Philosophy</div>
+  <a class="sb-item" href="https://humacity.com" target="_blank"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C4.7 2 2 4.7 2 8s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 2a4 4 0 010 8 4 4 0 010-8zm0 1v3l2 1"/></svg>Humacity ↗</a>
+  <div class="sb-bottom">
+    <div class="sb-by">by <b>Kumar Vivek</b></div>
+  </div>
+</aside>
+
+<div class="wrap">
+  <div class="page-eyebrow">Vantage · Humac Score</div>
+  <h1 class="page-title">Establish your baseline</h1>
+  <p class="page-sub">Eighteen questions across five blocks. Your answers generate a Humac Score — the financial measure of your organisation's human capital position. Estimates are fine. Precision makes it better.</p>
+
+  <!-- Progress Stepper -->
+  <div class="stepper" id="stepper"></div>
+
+  <!-- Block Container -->
+  <div id="block-container"></div>
+
+  <!-- Score Reveal -->
+  <div id="score-reveal">
+    <div class="reveal-eyebrow">Your Humac Baseline Score</div>
+    <div class="humac-hero">
+      <div class="hero-scores">
+        <div class="score-col">
+          <div class="score-label">Humac</div>
+          <div class="score-num" id="rv-humac">—</div>
+        </div>
+        <div class="score-divider"></div>
+        <div class="score-col">
+          <div class="score-label">HCI-adjusted</div>
+          <div class="score-num adj" id="rv-adj">—</div>
+        </div>
+      </div>
+      <div class="band-row">
+        <div class="band-dot" id="rv-dot"></div>
+        <div>
+          <div class="band-name" id="rv-band"></div>
+          <div class="band-desc" id="rv-desc"></div>
+        </div>
+      </div>
+      <div class="hci-note">
+        Human Confidence Index: <span id="rv-hci"></span>&nbsp;
+        <span class="conf-badge" id="rv-conf-badge"></span>
+      </div>
+    </div>
+
+    <div class="pillars">
+      <div class="pillars-title">Pillar breakdown</div>
+      <div id="rv-pillars"></div>
+    </div>
+
+    <div class="reveal-actions">
+      <a class="action-primary" href="dashboard.html">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+        Go to dashboard
+      </a>
+      <button class="action-secondary" onclick="restartOnboarding()">Refine answers</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────
+// QUESTION DEFINITIONS
+// ─────────────────────────────────────
+const BLOCKS = [
+  {
+    id:'A', title:'HR Value Return', pillar:'L1', weight:'25% weight',
+    desc:'How much financial value does HR generate relative to total salaries paid?',
+    formula:`<b>Precise formula:</b><br>
+<code>L1 ratio = Total HR Program Value ÷ Total Compensation</code><br><br>
+<b>Total HR Program Value includes:</b><br>
+• Stars/High Performers retained × salary × <code>1.80</code> (replacement cost avoided)<br>
+• Revenue hires (≤1yr) × salary × <code>1.40 × 0.85</code> (net revenue contribution)<br>
+• Emerging Talent × L&D spend × <code>2.80</code> (development return index)<br>
+• Tenured employees (5+yr) × salary × <code>0.08</code> (engagement premium)<br>
+• Inconsistent Performers × salary × <code>0.60</code> (risk exposure contained)<br><br>
+<b>Data to pull:</b> Payroll (total comp base), HRIS (talent classifications, tenure), Performance system (Star/ET/IP labels).`,
+    questions:[
+      {id:'q1', type:'pct',
+       text:'For every ₹100 of total salaries, roughly what percentage does your HR function generate in measurable financial value?',
+       sub:'Include: retention savings, quality-of-hire returns, development ROI, engagement productivity, and risk management outcomes.'}
+    ]
+  },
+  {
+    id:'B', title:'Talent Quality', pillar:'L2', weight:'15% weight',
+    desc:'Are people generating above-average returns relative to what they cost?',
+    formula:`<b>Five verdict areas — precise computation requires employee-level data:</b><br><br>
+<b>Promotion Accuracy:</b> % of promoted employees above grade benchmark 6 months post-promotion.<br>
+Pull from: performance system (pre- and post-promotion scores).<br><br>
+<b>Manager Quality:</b> % of managers outperforming their direct report average.<br>
+Pull from: manager + direct report performance ratings in the same review cycle.<br><br>
+<b>Hiring Quality:</b> % of hires in last 12 months above role performance baseline.<br>
+Pull from: new hire performance at 6-month mark vs. grade average.<br><br>
+<b>Selective Retention:</b> Star avg tenure vs. Inconsistent Performer avg tenure.<br>
+Pull from: HRIS (tenure by performance segment).<br><br>
+<b>HiPo Identification:</b> Does a formal named HiPo list exist and get updated?`,
+    questions:[
+      {id:'q2', type:'yn', text:'Of employees promoted in the last year, are the majority performing above expectations six months later?'},
+      {id:'q3', type:'yn', text:'Do most managers in your organisation outperform their own team\'s average output?'},
+      {id:'q4', type:'yn', text:'Of hires in the last 12 months, are more than half performing above their role baseline?'},
+      {id:'q5', type:'yn', text:'Are your top performers staying longer than your underperformers?'},
+      {id:'q6', type:'yn', text:'Does your organisation have a formal process for identifying high-potential employees?'}
+    ]
+  },
+  {
+    id:'C', title:'Org Health + HCI', pillar:'L3 + HCI', weight:'30% weight',
+    desc:'Leading indicators of organisational health — and current conditions affecting your score.',
+    formula:`<b>L3 is observational by design.</b> Professional judgment is the intended instrument for most signals — not a weaker substitute for data.<br><br>
+Three signals that benefit from data validation:<br>
+• Meetings &lt;40% of working week: pull calendar analytics (Google Workspace / M365)<br>
+• Projects completed on time &gt;60%: pull from Jira, Asana, or equivalent<br>
+• Documented performance conversations: pull from HRIS/performance logs<br><br>
+All other signals: answer from your direct knowledge of the organisation. HR business partner observation counts.`,
+    questions:[
+      {id:'q7',  type:'yn', text:'Is leadership stable, present, and actively engaged right now?', hci:true},
+      {id:'q8',  type:'yn', text:'Is the organisation free from major disruption, restructure, or layoffs?', hci:true},
+      {id:'q9',  type:'yn', text:'Is the culture broadly functional and not in crisis?', hci:true},
+      {id:'q10', type:'yn', text:'Is the organisation executing well against its strategic priorities?', hci:true},
+      {id:'q11', type:'yn', text:'Do managers have regular structured 1:1s with their direct reports?'},
+      {id:'q12', type:'yn', text:'Can frontline employees describe what a major leadership decision means for their work within one week?'},
+      {id:'q13', type:'yn', text:'Does HR proactively surface people risks to leadership — not just report metrics?'},
+      {id:'q14', type:'yn', text:'Are projects completed on time at a rate above 60%?'}
+    ]
+  },
+  {
+    id:'D', title:'HR Function Return', pillar:'L4', weight:'20% weight',
+    desc:'For every rupee spent running HR, how much comes back?',
+    formula:`<b>The Human P&L — precise formula:</b><br>
+<code>L4 ratio = HR Net Profit ÷ (Total COGS + Total OpEx)</code><br><br>
+<b>Human Revenue:</b> Retention savings + talent acquisition value + performance uplift + culture premium<br>
+<b>Human COGS:</b> Acquisition cost + development investment + HR function cost (team + tools)<br>
+<b>Human OpEx:</b> Compliance & admin + culture & engagement spend<br>
+<b>Adjustments:</b> Flight risk liability + skill debt + growth readiness gap<br>
+<b>Net Profit</b> = Revenue − COGS − OpEx − Adjustments<br><br>
+<b>Data to pull:</b> Finance (HR budget lines), Payroll (HR team cost), L&D spend records.`,
+    questions:[
+      {id:'q15', type:'pct',
+       text:'For every ₹100 your HR function spends on running HR — hiring costs, training, HR team salaries, tools, compliance — roughly how much measurable value does it generate?',
+       sub:'Include: retention savings, productivity gains, avoided legal costs, and quality-of-hire outcomes. Exclude base salaries from the ₹100.'}
+    ]
+  },
+  {
+    id:'E', title:'Human Balance Sheet', pillar:'L5', weight:'10% weight',
+    desc:'What is the net human capital position — assets vs. liabilities?',
+    formula:`<b>5 human assets:</b> Talent Equity, Institutional Knowledge, Org Learning Velocity, Relationship Capital, Culture Asset<br>
+<b>5 human liabilities:</b> Talent Concentration Risk, Skill Debt, Growth Readiness Gap, Culture Liability, Workforce Obsolescence Risk<br><br>
+<code>NHW = Total Assets − Total Liabilities + L4 Net Profit</code><br>
+<code>NHW Index = (NHW ÷ Total Comp) × 100</code><br><br>
+<b>Proxy calculation (your three answers):</b><br>
+Step 1: Q_A Yes → base 2.0, No → base 1.2<br>
+Step 2: × <code>(1 + min(years,10)/10 × 0.30)</code><br>
+Step 3: ÷ flight risk divisor (Low 1.0 / Medium 1.2 / High 1.5)<br>
+Step 4: NHW Index estimate = (ratio − 1.0) × 20`,
+    questions:[
+      {id:'q16', type:'yn', text:'Does your organisation invest more in developing talent than it loses to exits and skill gaps?'},
+      {id:'q17', type:'num', text:'How many years of institutional knowledge does your current team hold on average?', unit:'years', placeholder:'e.g. 4'},
+      {id:'q18', type:'select', text:'How would you describe your organisation\'s current flight risk level?',
+       options:['', 'Low', 'Medium', 'High'], placeholder:'Select flight risk level'}
+    ]
+  }
+];
+
+// ─────────────────────────────────────
+// STATE
+// ─────────────────────────────────────
+let currentBlock = 0;
+const answers = {};
+const confidence = {}; // 'computed' or 'estimated' per block
+
+// ─────────────────────────────────────
+// CALCULATION FUNCTIONS
+// ─────────────────────────────────────
+function calcL1(pct) {
+  const r = (pct || 0) / 100;
+  if (r <= 0.10) return 0;
+  if (r >= 1.20) return 100;
+  if (r <= 0.40) return ((r - 0.10) / 0.30) * 50;
+  return 50 + ((r - 0.40) / 0.80) * 50;
+}
+
+function calcL2(yesCount) {
+  return [0, 15, 33, 50, 75, 100][Math.max(0, Math.min(5, yesCount))];
+}
+
+function calcL3(yesCount) {
+  return (yesCount / 8) * 100;
+}
+
+function calcL4(pct) {
+  const r = (pct || 0) / 100;
+  if (r <= 0) return 0;
+  if (r >= 3.0) return 100;
+  if (r <= 1.0) return (r / 1.0) * 50;
+  return 50 + ((r - 1.0) / 2.0) * 50;
+}
+
+function calcL5(qA, qBYears, qC) {
+  const base = (qA === 'yes') ? 2.0 : 1.2;
+  const yrs = Math.min(parseFloat(qBYears) || 0, 10);
+  const mult = 1 + (yrs / 10) * 0.30;
+  const adj = base * mult;
+  const div = {low:1.0, medium:1.2, high:1.5}[(qC||'').toLowerCase()] || 1.0;
+  const ratio = adj / div;
+  const idx = (ratio - 1.0) * 20;
+  if (idx < 0) return 0;
+  if (idx >= 50) return 100;
+  if (idx <= 20) return 10 + (idx / 20) * 40;
+  return 50 + ((idx - 20) / 30) * 50;
+}
+
+function calcHCI(yesCount) {
+  return Math.round((0.70 + yesCount * 0.15) * 100) / 100;
+}
+
+function countYes(ids) {
+  return ids.filter(id => answers[id] === 'yes').length;
+}
+
+function getBand(score) {
+  if (score <= 30) return { name:'Value Destruction', color:'#E05C3A', desc:'People cost more than they return. Immediate intervention required.' };
+  if (score <= 50) return { name:'Value Neutral', color:'#a5b4fc', desc:'Breaking even on people investment. High deterioration risk without action.' };
+  if (score <= 70) return { name:'Value Generating', color:'#6366f1', desc:'Positive returns. Significant value still left on the table.' };
+  if (score <= 85) return { name:'Value Compounding', color:'#7c3aed', desc:'Systematic value creation. Strong leading indicators.' };
+  return { name:'Value Exceptional', color:'#c4b5fd', desc:'Top-tier. People treated as a compounding asset class.' };
+}
+
+function getConfidenceLevel() {
+  const estimated = Object.values(confidence).filter(v => v === 'estimated').length;
+  const total = BLOCKS.length;
+  if (estimated === 0) return 'high';
+  if (estimated <= 2) return 'medium';
+  return 'low';
+}
+
+// ─────────────────────────────────────
+// STEPPER RENDER
+// ─────────────────────────────────────
+function renderStepper() {
+  const el = document.getElementById('stepper');
+  el.innerHTML = '';
+  BLOCKS.forEach((b, i) => {
+    if (i > 0) {
+      const conn = document.createElement('div');
+      conn.className = 'step-connector';
+      el.appendChild(conn);
+    }
+    const item = document.createElement('div');
+    item.className = 'step-item';
+    const isDone = (i < currentBlock) || (document.getElementById('score-reveal').style.display !== 'none');
+    const isActive = i === currentBlock;
+    item.innerHTML = `
+      <div class="step-bubble ${isDone?'done':isActive?'active':'pending'}">${isDone?'✓':b.id}</div>
+      <div class="step-label ${isActive?'active':''}">${b.title}</div>
+    `;
+    el.appendChild(item);
+  });
+}
+
+// ─────────────────────────────────────
+// BLOCK RENDER
+// ─────────────────────────────────────
+function renderBlock(idx) {
+  const b = BLOCKS[idx];
+  const isFirst = idx === 0;
+  const isLast = idx === BLOCKS.length - 1;
+  const conf = confidence[b.id] || 'estimated';
+
+  let questionsHTML = b.questions.map(q => {
+    if (q.type === 'pct') {
+      const val = answers[q.id] || '';
+      return `<div class="question">
+        <div class="q-text">${q.text}</div>
+        ${q.sub ? `<div class="q-sub">${q.sub}</div>` : ''}
+        <div class="pct-input-wrap">
+          <input class="pct-input" type="number" id="${q.id}" min="0" max="500" value="${val}" placeholder="0" oninput="answers['${q.id}']=parseFloat(this.value)||0"/>
+          <span class="pct-unit">%</span>
+          <span class="pct-hint">of total salary bill</span>
+        </div>
+      </div>`;
+    }
+    if (q.type === 'yn') {
+      const val = answers[q.id];
+      const hciLabel = q.hci ? '<span style="font-family:var(--mono);font-size:.54rem;color:rgba(99,102,241,.5);margin-left:6px">HCI</span>' : '';
+      return `<div class="question">
+        <div class="q-text">${q.text}${hciLabel}</div>
+        <div class="yesno-wrap">
+          <button class="yn-btn ${val==='yes'?'selected-yes':''}" onclick="setYN('${q.id}','yes',this.closest('.yesno-wrap'))">Yes</button>
+          <button class="yn-btn ${val==='no'?'selected-no':''}" onclick="setYN('${q.id}','no',this.closest('.yesno-wrap'))">No</button>
+        </div>
+      </div>`;
+    }
+    if (q.type === 'num') {
+      const val = answers[q.id] || '';
+      return `<div class="question">
+        <div class="q-text">${q.text}</div>
+        <div>
+          <input class="num-input" type="number" id="${q.id}" min="0" max="50" value="${val}" placeholder="${q.placeholder}" oninput="answers['${q.id}']=parseFloat(this.value)||0"/>
+          <span class="num-label">${q.unit}</span>
+        </div>
+      </div>`;
+    }
+    if (q.type === 'select') {
+      const val = answers[q.id] || '';
+      return `<div class="question">
+        <div class="q-text">${q.text}</div>
+        <select class="risk-select" id="${q.id}" onchange="answers['${q.id}']=this.value.toLowerCase()">
+          ${q.options.map(o => `<option value="${o.toLowerCase()}" ${val===o.toLowerCase()?'selected':''}>${o||q.placeholder}</option>`).join('')}
+        </select>
+      </div>`;
+    }
+    return '';
+  }).join('');
+
+  const html = `
+    <div class="block-card" id="active-block">
+      <div class="block-header">
+        <div>
+          <div class="block-id">Block ${b.id}</div>
+          <div class="block-name">${b.title}</div>
+          <div class="block-desc">${b.desc}</div>
+        </div>
+        <div class="block-pillar">
+          <div class="pillar-tag">${b.pillar}</div>
+          <div class="pillar-weight">${b.weight}</div>
+        </div>
+      </div>
+
+      <button class="formula-toggle" id="ftoggle" onclick="toggleFormula()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg>
+        How do I calculate this precisely?
+      </button>
+      <div class="formula-panel" id="fpanel">${b.formula}</div>
+
+      <div class="questions">${questionsHTML}</div>
+
+      <div class="confidence-row">
+        <span class="confidence-label">These answers are</span>
+        <button class="conf-btn ${conf==='computed'?'selected':''}" onclick="setConf('${b.id}','computed')">Computed</button>
+        <button class="conf-btn ${conf==='estimated'?'selected':''}" onclick="setConf('${b.id}','estimated')">Estimated</button>
+      </div>
+
+      <div class="nav-row">
+        ${!isFirst ? `<button class="nav-back" onclick="prevBlock()">← Back</button>` : '<div></div>'}
+        <button class="nav-next" onclick="nextBlock()">${isLast ? 'Generate score →' : 'Continue →'}</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('block-container').innerHTML = html;
+  renderStepper();
+}
+
+function toggleFormula() {
+  const btn = document.getElementById('ftoggle');
+  const panel = document.getElementById('fpanel');
+  btn.classList.toggle('open');
+  panel.classList.toggle('open');
+}
+
+function setYN(qId, val, wrap) {
+  answers[qId] = val;
+  wrap.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('selected-yes','selected-no'));
+  const target = wrap.querySelector(`.yn-btn:${val==='yes'?'first-child':'last-child'}`);
+  if (target) target.classList.add(val==='yes'?'selected-yes':'selected-no');
+}
+
+function setConf(blockId, val) {
+  confidence[blockId] = val;
+  document.querySelectorAll('.conf-btn').forEach(b => b.classList.remove('selected'));
+  event.target.classList.add('selected');
+}
+
+// ─────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────
+function nextBlock() {
+  if (currentBlock < BLOCKS.length - 1) {
+    currentBlock++;
+    renderBlock(currentBlock);
+    window.scrollTo(0,0);
+  } else {
+    showScoreReveal();
+  }
+}
+
+function prevBlock() {
+  if (currentBlock > 0) {
+    currentBlock--;
+    renderBlock(currentBlock);
+    window.scrollTo(0,0);
+  }
+}
+
+function restartOnboarding() {
+  currentBlock = 0;
+  document.getElementById('score-reveal').style.display = 'none';
+  document.getElementById('block-container').style.display = 'block';
+  renderBlock(0);
+  window.scrollTo(0,0);
+}
+
+// ─────────────────────────────────────
+// SCORE REVEAL
+// ─────────────────────────────────────
+function showScoreReveal() {
+  // Calculate all scores
+  const l1 = Math.round(calcL1(answers.q1 || 0));
+  const l2 = calcL2(countYes(['q2','q3','q4','q5','q6']));
+  const l3 = Math.round(calcL3(countYes(['q7','q8','q9','q10','q11','q12','q13','q14'])));
+  const l4 = Math.round(calcL4(answers.q15 || 0));
+  const l5 = Math.round(calcL5(answers.q16, answers.q17, answers.q18));
+  const hci = calcHCI(countYes(['q7','q8','q9','q10']));
+  const humac = Math.round(l1*0.25 + l2*0.15 + l3*0.30 + l4*0.20 + l5*0.10);
+  const hciAdj = Math.round(humac * hci);
+  const band = getBand(humac);
+  const confLevel = getConfidenceLevel();
+
+  // Save to sessionStorage
+  const scoreData = {l1,l2,l3,l4,l5,hci,humac,hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers};
+  try { sessionStorage.setItem('vantage_humac', JSON.stringify(scoreData)); } catch(e) {}
+
+  // Render reveal
+  document.getElementById('rv-humac').textContent = humac;
+  document.getElementById('rv-adj').textContent = hciAdj;
+  document.getElementById('rv-band').textContent = band.name;
+  document.getElementById('rv-band').style.color = band.color;
+  document.getElementById('rv-desc').textContent = band.desc;
+  document.getElementById('rv-dot').style.background = band.color;
+  document.getElementById('rv-hci').textContent = hci.toFixed(2)+'x';
+
+  const badge = document.getElementById('rv-conf-badge');
+  badge.className = `conf-badge ${confLevel}`;
+  badge.textContent = confLevel.charAt(0).toUpperCase()+confLevel.slice(1)+' confidence';
+
+  // Pillar breakdown
+  const pillars = [
+    {label:'L1', name:'Value Ledger', score:l1, weight:'25%'},
+    {label:'L2', name:'Talent Premium', score:l2, weight:'15%'},
+    {label:'L3', name:'Org Vitals', score:l3, weight:'30%'},
+    {label:'L4', name:'Human P&L', score:l4, weight:'20%'},
+    {label:'L5', name:'Balance Sheet', score:l5, weight:'10%'},
+  ];
+  document.getElementById('rv-pillars').innerHTML = pillars.map(p => `
+    <div class="pillar-row">
+      <div class="pillar-name">${p.label} — ${p.name}<span>${p.weight}</span></div>
+      <div class="pillar-bar-wrap"><div class="pillar-bar" style="width:${p.score}%"></div></div>
+      <div class="pillar-score">${p.score}</div>
+    </div>
+  `).join('');
+
+  // Show reveal
+  document.getElementById('block-container').style.display = 'none';
+  document.getElementById('score-reveal').style.display = 'block';
+  renderStepper();
+  window.scrollTo(0,0);
+}
+
+// ─────────────────────────────────────
+// INIT
+// ─────────────────────────────────────
+renderStepper();
+renderBlock(0);
+</script>
+</body>
+</html>
