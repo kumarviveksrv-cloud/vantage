@@ -87,6 +87,17 @@
     '#pwa-banner {',
     '  border-color: rgba(99,102,241,0.3) !important;',
     '}',
+
+    // Icon column normalisation — emoji and Unicode symbols have different
+    // natural widths. Fixed min-width ensures text labels always start at
+    // the same horizontal position regardless of icon type.
+    '.nav-item .icon, .nav-item .nav-icon, .ni .ic {',
+    '  min-width: 20px !important;',
+    '  display: inline-flex !important;',
+    '  justify-content: center !important;',
+    '  align-items: center !important;',
+    '  flex-shrink: 0 !important;',
+    '}',
   ].join('\n');
   document.head.insertBefore(styleOverride, document.head.firstChild);
 
