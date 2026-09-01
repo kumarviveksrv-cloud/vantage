@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
   <link rel="apple-touch-icon" href="favicon.png"/>
   <link rel="icon" type="image/png" href="favicon.png"/>
   <link rel="shortcut icon" href="favicon.png"/>
@@ -12,11 +12,12 @@
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
     body{display:flex}
-    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.25);--grey:rgba(244,243,255,0.45);--dim:rgba(244,243,255,0.25)}
+    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--grey:rgba(244,243,255,0.45);--dim:rgba(244,243,255,0.25)}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
     @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
+    /* SIDEBAR */
     .sidebar{width:220px;flex-shrink:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto}
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
     .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
@@ -31,21 +32,22 @@
     .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
     .meridian-chip .val{font-size:11px;color:var(--grey)}
 
+    /* MAIN */
     .main{flex:1;overflow-y:auto;height:100vh;padding:28px 32px;background-image:linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px);background-size:48px 48px}
     .page-header{margin-bottom:28px;animation:fadeIn .3s ease}
     .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
-    .breadcrumb a{color:var(--dim);text-decoration:none}.breadcrumb a:hover{color:var(--muted)}
+    .breadcrumb a{color:var(--dim);text-decoration:none}
+    .breadcrumb a:hover{color:var(--muted)}
     .page-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:700;margin-bottom:4px;color:#f4f3ff}
     .page-sub{font-size:13px;color:var(--grey)}
 
+    /* INTAKE */
     .intro-card{background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:14px;padding:22px 26px;margin-bottom:24px}
     .intro-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;margin-bottom:12px}
     .intro-body{font-size:13px;color:rgba(244,243,255,0.5);line-height:1.75}
-
     .intake-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px}
     .form-section{margin-bottom:22px}
     .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:block}
-
     .flags-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px}
     .flag-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s}
     .flag-item:hover{border-color:rgba(99,102,241,0.3);background:rgba(99,102,241,0.08)}
@@ -53,55 +55,51 @@
     .flag-item.checked .flag-toggle{background:var(--accent);border-color:var(--accent);color:#fff}
     .flag-label{font-size:13px;color:var(--grey);transition:color .2s}
     .flag-item.checked .flag-label{color:#f4f3ff}
-
     textarea{width:100%;padding:14px 16px;background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:1.6;resize:vertical;outline:none;transition:border .2s}
     textarea:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
     textarea::placeholder{color:rgba(165,180,252,0.25)}
-
     .submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.35)}
     .submit-btn:hover{opacity:.88}
     .submit-btn:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
 
+    /* LOADING */
     .loading-state{text-align:center;padding:60px 20px}
     .loading-orb{width:64px;height:64px;margin:0 auto 24px}
     .loading-orb svg{animation:spin 2s linear infinite}
     .loading-text{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.08em}
 
+    /* OUTPUT */
     .output-section{animation:fadeIn .4s ease}
-    .verdict-banner{border-radius:14px;padding:22px 26px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:20px}
-    .verdict-yes{background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.25)}
-    .verdict-no{background:rgba(255,77,109,0.08);border:1px solid rgba(255,77,109,0.25)}
-    .verdict-conditional{background:rgba(255,181,71,0.08);border:1px solid rgba(255,181,71,0.25)}
-    .verdict-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
-    .verdict-title{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;color:#f4f3ff;margin-bottom:6px}
-    .verdict-sub{font-size:13px;color:var(--grey);line-height:1.5;max-width:580px}
-    .verdict-badge{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;padding:10px 20px;border-radius:8px;flex-shrink:0}
-    .badge-yes{color:var(--muted);background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3)}
-    .badge-no{color:#FF4D6D;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3)}
-    .badge-conditional{color:#FFB547;background:rgba(255,181,71,0.15);border:1px solid rgba(255,181,71,0.3)}
 
-    .legal-refs{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:20px}
-    .legal-refs-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;margin-bottom:14px;color:#f4f3ff}
-    .legal-ref-item{display:flex;gap:12px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
-    .legal-ref-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
-    .ref-act{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.04em;min-width:80px;flex-shrink:0;padding-top:2px}
-    .ref-text{font-size:13px;color:var(--grey);line-height:1.55}
+    /* Question echo */
+    .question-echo{background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start}
+    .question-echo-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .question-echo-text{font-size:13px;color:var(--grey);line-height:1.55}
 
-    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-    .output-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
-    .output-card-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;margin-bottom:14px;color:#f4f3ff}
-    .step-item{display:flex;gap:10px;margin-bottom:10px}
-    .step-num{width:22px;height:22px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0;font-weight:700}
-    .step-text{font-size:13px;color:var(--grey);line-height:1.5;padding-top:2px}
-    .risk-item{display:flex;gap:10px;margin-bottom:10px}
-    .risk-dot{width:6px;height:6px;border-radius:50%;background:#FFB547;margin-top:6px;flex-shrink:0}
-    .risk-text{font-size:13px;color:var(--grey);line-height:1.5}
+    /* Policy section cards */
+    .policy-section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 26px;margin-bottom:16px}
+    .policy-section.assessment-section{background:rgba(99,102,241,0.06);border-color:rgba(99,102,241,0.22)}
+    .policy-section.legal-section{border-left:3px solid rgba(99,102,241,0.4);border-radius:0 14px 14px 0}
+    .policy-section-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+    .policy-section-icon{font-size:14px}
+    .policy-section-text{font-size:13px;color:rgba(244,243,255,0.7);line-height:1.85;white-space:pre-wrap}
 
-    .meridian-note{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.18);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;gap:14px}
-    .meridian-icon{font-size:18px;flex-shrink:0;margin-top:2px}
-    .meridian-note-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
-    .meridian-note-text{font-size:13px;color:var(--grey);line-height:1.5}
+    /* Recommended path — prominent */
+    .recommended-card{background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.32);border-radius:14px;padding:22px 26px;margin-bottom:16px;position:relative;overflow:hidden}
+    .recommended-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.7),transparent)}
+    .rec-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+    .rec-text{font-size:13px;color:rgba(244,243,255,0.82);line-height:1.85;white-space:pre-wrap}
+    .meridian-note-inline{margin-top:14px;padding-top:12px;border-top:1px solid rgba(99,102,241,0.12);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.6;letter-spacing:.02em}
+    .meridian-note-inline-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;color:rgba(165,180,252,0.5)}
 
+    /* ARIA offer */
+    .aria-offer-card{background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(99,102,241,0.04));border:1px solid rgba(124,58,237,0.22);border-radius:12px;padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .aria-offer-inner{flex:1}
+    .aria-offer-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#c4b5fd;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+    .aria-offer-text{font-size:13px;color:var(--grey);line-height:1.5}
+    .aria-offer-btn{padding:10px 20px;background:linear-gradient(135deg,var(--violet),var(--accent));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;white-space:nowrap;box-shadow:0 4px 14px rgba(99,102,241,0.3)}
+
+    /* Action row */
     .action-row{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap}
     .btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
     .btn-primary:hover{opacity:.88}
@@ -110,102 +108,69 @@
 
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
-    @media(max-width:768px){.sidebar{display:none}.main{padding:20px 16px}.flags-grid{grid-template-columns:1fr 1fr}.two-col{grid-template-columns:1fr}}
+    @media(max-width:768px){.sidebar{display:none}.main{padding:20px 16px}.flags-grid{grid-template-columns:1fr 1fr}.aria-offer-card{flex-direction:column;align-items:flex-start}}
   </style>
 </head>
 <body>
 
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="logo" onclick="window.location.href='index.html'">
       <div class="logo-dot"></div>
       <div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div>
     </div>
-    <a href="dashboard.html" class="nav-item">
-      <span class="icon">⊞</span> Dashboard
-    </a>
-
+    <a href="dashboard.html" class="nav-item"><span class="icon">⊞</span> Dashboard</a>
     <div class="nav-section">Core Tools</div>
-    <a href="er-case-navigator.html" class="nav-item">
-      <span class="icon">⚡</span> ER Case Navigator
-      <span class="nav-badge">0</span>
-    </a>
-    <a href="hr-data-storyteller.html" class="nav-item">
-      <span class="icon">📊</span> HR Data Storyteller
-    </a>
-    <a href="stakeholder-influence.html" class="nav-item">
-      <span class="icon">🎯</span> Stakeholder Influence
-    </a>
-
+    <a href="er-case-navigator.html" class="nav-item"><span class="icon">⚡</span> ER Case Navigator</a>
+    <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">📊</span> HR Data Storyteller</a>
+    <a href="stakeholder-influence.html" class="nav-item"><span class="icon">🎯</span> Stakeholder Influence</a>
     <div class="nav-section">Intelligence</div>
-    <a href="aria.html" class="nav-item">
-      <span class="icon">✦</span> ARIA
-    </a>
-    <a href="policy-compass.html" class="nav-item active">
-      <span class="icon">🧭</span> Policy Compass
-    </a>
-    <a href="conversation-simulator.html" class="nav-item">
-      <span class="icon">🎭</span> Conversation Simulator
-    </a>
-
+    <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
+    <a href="policy-compass.html" class="nav-item active"><span class="icon">🧭</span> Policy Compass</a>
+    <a href="conversation-simulator.html" class="nav-item"><span class="icon">🎭</span> Conversation Simulator</a>
     <div class="nav-section">My Record</div>
-    <a href="case-library.html" class="nav-item">
-      <span class="icon">◎</span> Case Library
-    </a>
-    <a href="debrief.html" class="nav-item">
-      <span class="icon">📋</span> The Debrief
-    </a>
-
+    <a href="case-library.html" class="nav-item"><span class="icon">◎</span> Case Library</a>
+    <a href="debrief.html" class="nav-item"><span class="icon">📋</span> The Debrief</a>
     <div class="nav-section">Philosophy</div>
-    <a href="https://humacity.com" class="nav-item" target="_blank">
-      <span class="icon">🌀</span> Humacity
-    </a>
-
+    <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">🌀</span> Humacity</a>
     <div class="nav-section">Legal</div>
-    <a href="terms.html" class="nav-item">
-      <span class="icon">📄</span> Terms of Service
-    </a>
-    <a href="privacy.html" class="nav-item">
-      <span class="icon">🔒</span> Privacy Policy
-    </a>
-
+    <a href="terms.html" class="nav-item"><span class="icon">📄</span> Terms of Service</a>
+    <a href="privacy.html" class="nav-item"><span class="icon">🔒</span> Privacy Policy</a>
     <div class="nav-section">Account</div>
-    <a href="data-dashboard.html" class="nav-item">
-      <span class="icon">🔒</span> Data &amp; Privacy
-    </a>
-    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()">
-      <span class="icon">↩</span> Sign out
-    </a>
-
-<div class="meridian-chip">
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">🔒</span> Data &amp; Privacy</a>
+    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()"><span class="icon">↩</span> Sign out</a>
+    <div class="meridian-chip">
       <div class="label">MERIDIAN Active</div>
       <div class="val" id="meridian-chip-val">Loading...</div>
     </div>
   </div>
 
+  <!-- MAIN -->
   <div class="main">
 
+    <!-- INTAKE VIEW -->
     <div id="intake-view">
       <div class="page-header">
         <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Policy Compass</div>
         <div class="page-title">&#x1F9ED; Policy Compass</div>
-        <div class="page-sub">Can you do this? In 30 seconds, calibrated to Indian law and your exact context.</div>
+        <div class="page-sub">Can you do this? Three sections. Assessment, legal position, one recommended path.</div>
       </div>
       <div class="intro-card">
         <div class="intro-title">The question HR gets asked at 9am on a Monday.</div>
         <div class="intro-body">
-          Policy Compass answers "can I do this?" with a clear Yes, No, or Conditional — and the exact legal basis for that answer. Every response references <strong style="color:rgba(244,243,255,0.7)">BNS, BNSS, and BSA</strong> — the current Indian legal framework since July 2024. Never IPC, CrPC, or the Indian Evidence Act — those are repealed. Your MERIDIAN profile calibrates the answer to your state, industry, and org type before a word is generated.
+          Policy Compass answers "can I do this?" with the Vantage assessment, the precise legal basis, and one clear recommended path — calibrated to your MERIDIAN profile. Every response references <strong style="color:rgba(244,243,255,0.7)">BNS, BNSS, and BSA</strong> — the current Indian legal framework since July 2024. Never IPC, CrPC, or the Indian Evidence Act — those are repealed.
         </div>
       </div>
       <div class="intake-card">
         <div class="form-section">
           <label class="form-label">What flags apply to this situation?</label>
           <div class="flags-grid">
-            <div class="flag-item" onclick="toggleFlag(this)"><div class="flag-toggle">&#x2713;</div><div class="flag-label">Unionised workforce</div></div>
-            <div class="flag-item" onclick="toggleFlag(this)"><div class="flag-toggle">&#x2713;</div><div class="flag-label">POSH Act involved</div></div>
-            <div class="flag-item" onclick="toggleFlag(this)"><div class="flag-toggle">&#x2713;</div><div class="flag-label">Standing orders apply</div></div>
-            <div class="flag-item" onclick="toggleFlag(this)"><div class="flag-toggle">&#x2713;</div><div class="flag-label">Contractual worker</div></div>
-            <div class="flag-item" onclick="toggleFlag(this)"><div class="flag-toggle">&#x2713;</div><div class="flag-label">Senior management</div></div>
-            <div class="flag-item" onclick="toggleFlag(this)"><div class="flag-toggle">&#x2713;</div><div class="flag-label">Probationary employee</div></div>
+            <div class="flag-item" onclick="toggleFlag(this,'Unionised workforce')"><div class="flag-toggle">&#x2713;</div><div class="flag-label">Unionised workforce</div></div>
+            <div class="flag-item" onclick="toggleFlag(this,'POSH Act involved')"><div class="flag-toggle">&#x2713;</div><div class="flag-label">POSH Act involved</div></div>
+            <div class="flag-item" onclick="toggleFlag(this,'Standing orders apply')"><div class="flag-toggle">&#x2713;</div><div class="flag-label">Standing orders apply</div></div>
+            <div class="flag-item" onclick="toggleFlag(this,'Contractual worker')"><div class="flag-toggle">&#x2713;</div><div class="flag-label">Contractual worker</div></div>
+            <div class="flag-item" onclick="toggleFlag(this,'Senior management')"><div class="flag-toggle">&#x2713;</div><div class="flag-label">Senior management</div></div>
+            <div class="flag-item" onclick="toggleFlag(this,'Probationary employee')"><div class="flag-toggle">&#x2713;</div><div class="flag-label">Probationary employee</div></div>
           </div>
         </div>
         <div class="form-section">
@@ -216,6 +181,7 @@
       </div>
     </div>
 
+    <!-- LOADING VIEW -->
     <div id="loading-view" style="display:none">
       <div class="page-header"><div class="page-title">&#x1F9ED; Policy Compass</div></div>
       <div class="loading-state">
@@ -229,46 +195,61 @@
       </div>
     </div>
 
+    <!-- OUTPUT VIEW -->
     <div id="output-view" style="display:none">
       <div class="page-header">
         <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="policy-compass.html">Policy Compass</a> &middot; Guidance</div>
         <div class="page-title">Policy Guidance</div>
+        <div class="page-sub">Calibrated to your MERIDIAN profile and Indian law.</div>
       </div>
       <div class="output-section">
-        <div class="verdict-banner" id="verdict-banner">
+
+        <!-- Question echo -->
+        <div class="question-echo">
           <div>
-            <div class="verdict-label">Policy Compass Verdict</div>
-            <div class="verdict-title" id="verdict-title">&#8212;</div>
-            <div class="verdict-sub" id="verdict-sub"></div>
-          </div>
-          <div class="verdict-badge" id="verdict-badge">&#8212;</div>
-        </div>
-        <div class="meridian-note">
-          <div class="meridian-icon">&#x1F9ED;</div>
-          <div>
-            <div class="meridian-note-label">MERIDIAN Context Active</div>
-            <div class="meridian-note-text" id="meridian-note-text">Loading...</div>
+            <div class="question-echo-label">Your question</div>
+            <div class="question-echo-text" id="question-echo-text"></div>
           </div>
         </div>
-        <div class="legal-refs">
-          <div class="legal-refs-title">Legal Basis</div>
-          <div id="legal-refs-list"></div>
+
+        <!-- 🧠 Vantage Assessment -->
+        <div class="policy-section assessment-section">
+          <div class="policy-section-label"><span class="policy-section-icon">🧠</span> Vantage Assessment</div>
+          <div class="policy-section-text" id="section-assessment"></div>
         </div>
-        <div class="two-col">
-          <div class="output-card">
-            <div class="output-card-title">Recommended Steps</div>
-            <div id="steps-list"></div>
-          </div>
-          <div class="output-card">
-            <div class="output-card-title">Risks to Watch</div>
-            <div id="risks-list"></div>
+
+        <!-- ⚖️ Legal Position -->
+        <div class="policy-section legal-section">
+          <div class="policy-section-label"><span class="policy-section-icon">⚖️</span> Legal Position</div>
+          <div class="policy-section-text" id="section-legal"></div>
+        </div>
+
+        <!-- 🎯 Recommended Path -->
+        <div class="recommended-card">
+          <div class="rec-label">🎯 Recommended Path</div>
+          <div class="rec-text" id="section-recommended"></div>
+          <div class="meridian-note-inline" id="meridian-note-inline" style="display:none">
+            <div class="meridian-note-inline-label">MERIDIAN Note</div>
+            <div id="meridian-note-text"></div>
           </div>
         </div>
+
+        <!-- ARIA offer -->
+        <div class="aria-offer-card">
+          <div class="aria-offer-inner">
+            <div class="aria-offer-label">✦ ARIA — Explain this to someone who's pushing back</div>
+            <div class="aria-offer-text" id="aria-offer-text">Talk through how to explain this policy position to a resistant line manager, department head, or leadership team.</div>
+          </div>
+          <button class="aria-offer-btn" onclick="goToARIA()">Talk to ARIA &rarr;</button>
+        </div>
+
+        <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="openInCaseNavigator()">Open in ER Case Navigator &rarr;</button>
           <button class="btn-ghost" onclick="startNew()">New Question</button>
-          <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+          <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
         </div>
+
       </div>
     </div>
 
@@ -276,30 +257,36 @@
 
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
-    var BASE = 'https://kumarviveksrv-cloud.github.io/vantage/';
+    var BASE = 'https://vantage.virorah.com/';
     var activeFlags = [];
     var currentResult = null;
     var currentQuery = '';
+    var parsedSections = {};
 
-    if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; }
+    if (sessionStorage.getItem('sr_access') !== 'true') {
+      window.location.href = BASE + 'access.html';
+    }
 
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
-    document.getElementById('meridian-chip-val').innerText = (meridian.state||'Not set') + ' \xb7 ' + (meridian.industry||'Not set');
+    document.getElementById('meridian-chip-val').innerText =
+      (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
 
     document.getElementById('query').addEventListener('input', function(){
       document.getElementById('submit-btn').disabled = this.value.trim().length < 20;
     });
 
-    function toggleFlag(el) {
+    function toggleFlag(el, label) {
       el.classList.toggle('checked');
-      var label = el.querySelector('.flag-label').innerText;
       var idx = activeFlags.indexOf(label);
-      if (idx > -1) activeFlags.splice(idx, 1); else activeFlags.push(label);
+      if (idx > -1) activeFlags.splice(idx, 1);
+      else activeFlags.push(label);
     }
 
     function showView(view) {
-      ['intake-view','loading-view','output-view'].forEach(function(v){ document.getElementById(v).style.display='none'; });
+      ['intake-view','loading-view','output-view'].forEach(function(v){
+        document.getElementById(v).style.display = 'none';
+      });
       document.getElementById(view).style.display = 'block';
     }
 
@@ -308,46 +295,115 @@
       if (!currentQuery) return;
       showView('loading-view');
       try {
+        var context = activeFlags.length > 0
+          ? 'Active flags: ' + activeFlags.join(', ')
+          : '';
         var res = await fetch(WORKER, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ tool:'policy', query:currentQuery, flags:activeFlags, meridian:meridian })
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            tool: 'policy',
+            question: currentQuery,
+            context: context,
+            meridian: meridian
+          })
         });
         var data = await res.json();
-        if (data.success) { currentResult = data.data; renderOutput(); }
-        else { alert('Error: ' + (data.error || 'Unknown')); showView('intake-view'); }
-      } catch(err) { alert('Connection error: ' + err.message); showView('intake-view'); }
+        if (data.success) {
+          currentResult = data.data;
+          renderOutput();
+        } else {
+          alert('Error: ' + (data.error || 'Unknown'));
+          showView('intake-view');
+        }
+      } catch(err) {
+        alert('Connection error: ' + err.message);
+        showView('intake-view');
+      }
+    }
+
+    function parsePolicyResponse(text) {
+      var sections = { assessment: '', legal: '', recommended: '', meridianNote: '', ariaOffer: '' };
+      if (!text) return sections;
+
+      // Extract sections by emoji headers
+      var assessMatch = text.match(/🧠\s*VANTAGE ASSESSMENT\s*([\s\S]*?)(?=⚖️|🎯|$)/i);
+      var legalMatch  = text.match(/⚖️\s*LEGAL POSITION\s*([\s\S]*?)(?=🧠|🎯|$)/i);
+      var recMatch    = text.match(/🎯\s*RECOMMENDED PATH\s*([\s\S]*?)$/i);
+
+      if (assessMatch) sections.assessment = assessMatch[1].trim();
+      if (legalMatch)  sections.legal      = legalMatch[1].trim();
+      if (recMatch)    sections.recommended = recMatch[1].trim();
+
+      // If no emoji headers found, treat entire text as assessment
+      if (!sections.assessment && !sections.legal && !sections.recommended) {
+        sections.assessment = text.trim();
+      }
+
+      // Extract [MERIDIAN NOTE] from recommended section
+      var mnMatch = sections.recommended.match(/\[MERIDIAN NOTE\][:\s]*([\s\S]*)$/i);
+      if (mnMatch) {
+        sections.meridianNote  = mnMatch[1].trim();
+        sections.recommended   = sections.recommended.replace(/\[MERIDIAN NOTE\][:\s]*[\s\S]*$/i, '').trim();
+      }
+
+      // Extract ARIA offer (last sentence mentioning ARIA in recommended section)
+      var ariaMatch = sections.recommended.match(/ARIA[^.]*\.[^.]*$/i);
+      if (ariaMatch) {
+        sections.ariaOffer    = ariaMatch[0].trim();
+        sections.recommended  = sections.recommended.replace(ariaMatch[0], '').trim();
+      }
+
+      return sections;
     }
 
     function renderOutput() {
-      var r = currentResult;
-      var verdict = (r.verdict || 'Conditional').toLowerCase();
-      var banner = document.getElementById('verdict-banner');
-      banner.className = 'verdict-banner verdict-' + verdict;
-      document.getElementById('verdict-title').innerText = r.verdictTitle || r.verdict;
-      document.getElementById('verdict-sub').innerText = r.verdictSummary || '';
-      var badge = document.getElementById('verdict-badge');
-      badge.className = 'verdict-badge badge-' + verdict;
-      badge.innerText = (r.verdict || 'Conditional').toUpperCase();
-      document.getElementById('meridian-note-text').innerText = r.meridianNote || '';
-      document.getElementById('legal-refs-list').innerHTML = (r.legalReferences||[]).map(function(ref){
-        return '<div class="legal-ref-item"><div class="ref-act">' + (ref.act||'') + '</div><div class="ref-text">' + (ref.provision||'') + '</div></div>';
-      }).join('');
-      document.getElementById('steps-list').innerHTML = (r.recommendedSteps||[]).map(function(s,i){
-        return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+s+'</div></div>';
-      }).join('');
-      document.getElementById('risks-list').innerHTML = (r.risksToWatch||[]).map(function(risk){
-        return '<div class="risk-item"><div class="risk-dot"></div><div class="risk-text">'+risk+'</div></div>';
-      }).join('');
+      var responseText = (currentResult && currentResult.response) ? currentResult.response : '';
+      parsedSections = parsePolicyResponse(responseText);
+
+      // Question echo
+      document.getElementById('question-echo-text').innerText = currentQuery;
+
+      // Three sections
+      document.getElementById('section-assessment').innerText   = parsedSections.assessment;
+      document.getElementById('section-legal').innerText        = parsedSections.legal;
+      document.getElementById('section-recommended').innerText  = parsedSections.recommended;
+
+      // MERIDIAN note
+      if (parsedSections.meridianNote) {
+        document.getElementById('meridian-note-text').innerText    = parsedSections.meridianNote;
+        document.getElementById('meridian-note-inline').style.display = 'block';
+      }
+
+      // ARIA offer (use extracted sentence if available, else default)
+      if (parsedSections.ariaOffer) {
+        document.getElementById('aria-offer-text').innerText = parsedSections.ariaOffer;
+      }
+
       showView('output-view');
     }
 
+    function goToARIA() {
+      sessionStorage.setItem('sr_aria_context', JSON.stringify({
+        mode: 'conversation_coach',
+        scenario: 'Policy explanation — ' + currentQuery.substring(0, 150),
+        policyContext: parsedSections.recommended
+      }));
+      window.location.href = BASE + 'aria.html';
+    }
+
     function openInCaseNavigator() {
-      sessionStorage.setItem('sr_case_from_practice', JSON.stringify({ scenario: currentQuery }));
+      sessionStorage.setItem('sr_case_from_practice', JSON.stringify({
+        scenario: currentQuery
+      }));
       window.location.href = BASE + 'er-case-navigator.html';
     }
 
     function startNew() {
-      currentResult = null; activeFlags = [];
+      currentResult = null;
+      parsedSections = {};
+      activeFlags = [];
+      currentQuery = '';
       document.getElementById('query').value = '';
       document.getElementById('submit-btn').disabled = true;
       document.querySelectorAll('.flag-item').forEach(function(f){ f.classList.remove('checked'); });
