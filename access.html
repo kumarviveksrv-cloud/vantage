@@ -44,53 +44,40 @@
   <script>
     var CLERK_SIGN_IN = 'https://brief-koi-76.clerk.accounts.dev/sign-in';
     var BASE          = 'https://vantage.virorah.com/';
+    var DASHBOARD     = BASE + 'dashboard.html';
 
-    var params  = new URLSearchParams(window.location.search);
-    var token   = params.get('vt');     // session token returned after Clerk sign-in
-    var stored  = sessionStorage.getItem('vantage_token');
-    var redirect = params.get('redirect') || (BASE + 'dashboard.html');
+    // ── CASE 1: Already has an active session ────────────────────────────────
+    if (sessionStorage.getItem('sr_access') === 'true') {
+      document.getElementById('status-text').innerText = 'SESSION ACTIVE.';
+      window.location.replace(DASHBOARD);
 
-    // ── CASE 1: Returning from Clerk sign-in with our token ──────────────────
-    if (token && stored && token === stored) {
+    // ── CASE 2: Returning from Clerk sign-in ─────────────────────────────────
+    // Clerk redirected back to access.html (via the fallback URL we configured).
+    // If vantage_pending exists in sessionStorage it means THIS browser session
+    // initiated the Clerk sign-in flow — so we trust the return and grant access.
+    } else if (sessionStorage.getItem('vantage_pending') === '1') {
       document.getElementById('status-text').innerText = 'SIGNED IN. SETTING UP...';
+      sessionStorage.removeItem('vantage_pending');
       sessionStorage.setItem('sr_access', 'true');
 
-      // Ensure a user ID exists — real Clerk ID will be set later when
-      // a Production Clerk instance is configured. For now, preserve any
-      // existing ID or generate a new one.
+      // Preserve any existing user ID or generate a new one
       if (!localStorage.getItem('sr_user_id')) {
         localStorage.setItem('sr_user_id',
           'usr_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now()
         );
       }
 
-      // Clean the token from the URL then redirect
-      setTimeout(function () {
-        window.location.replace(redirect);
-      }, 300);
+      setTimeout(function () { window.location.replace(DASHBOARD); }, 300);
 
-    // ── CASE 2: Already has a valid session ──────────────────────────────────
-    } else if (sessionStorage.getItem('sr_access') === 'true') {
-      document.getElementById('status-text').innerText = 'SESSION ACTIVE.';
-      window.location.replace(redirect);
-
-    // ── CASE 3: Not authenticated — generate token and send to Clerk ─────────
+    // ── CASE 3: Not authenticated — send to Clerk sign-in ────────────────────
     } else {
       document.getElementById('status-text').innerText = 'REDIRECTING TO SIGN IN...';
-
-      // Generate a one-time session token — tied to THIS browser session
-      var newToken = Math.random().toString(36).substr(2, 12) +
-                     Math.random().toString(36).substr(2, 12);
-      sessionStorage.setItem('vantage_token', newToken);
-
-      // Clerk redirects back here with ?vt=[token] after successful sign-in
-      var returnUrl = BASE + 'access.html?vt=' + newToken +
-                      '&redirect=' + encodeURIComponent(redirect);
-
+      // Mark this session as having initiated the Clerk flow
+      sessionStorage.setItem('vantage_pending', '1');
+      // No redirect_url parameter — Clerk uses its configured fallback URL
+      // which we set to https://vantage.virorah.com/access.html
       setTimeout(function () {
-        window.location.replace(
-          CLERK_SIGN_IN + '?redirect_url=' + encodeURIComponent(returnUrl)
-        );
+        window.location.replace(CLERK_SIGN_IN);
       }, 200);
     }
   </script>
