@@ -203,7 +203,7 @@
     <a href="privacy.html" class="ni"><span class="ic">🔒</span>Privacy Policy</a>
     <div class="ns">Account</div>
     <a href="data-dashboard.html" class="ni"><span class="ic">🔒</span>Data &amp; Privacy</a>
-    <a href="access.html" class="ni" onclick="sessionStorage.clear()"><span class="ic">↩</span>Sign out</a>
+    <a href="#" class="ni" onclick="clerkSignOut(); return false;"><span class="ic">↩</span>Sign out</a>
     <div class="mc"><div class="ml">MERIDIAN Active</div><div class="mv" id="mcv">—</div></div>
   </div>
 
@@ -888,6 +888,7 @@
 
   })();
   </script>
+  <script src="clerk-auth.js"></script>
   <script src="sidebar-shared.js"></script>
 </body>
 </html>
