@@ -176,7 +176,7 @@
     <a href="data-dashboard.html" class="nav-item">
       <span class="icon">🔒</span> Data &amp; Privacy
     </a>
-    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()">
+    <a href="#" class="nav-item" onclick="clerkSignOut(); return false;">
       <span class="icon">↩</span> Sign out
     </a>
 
@@ -372,6 +372,7 @@
 
     loadDebrief();
   </script>
+  <script src="clerk-auth.js"></script>
   <script src="sidebar-shared.js"></script>
 </body>
 </html>
