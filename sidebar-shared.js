@@ -1033,4 +1033,44 @@
   })();
   // ── END LOCATION CLOCK ─────────────────────────────────────────────────────
 
+  // ── POLICY COMPASS → CORE TOOLS ────────────────────────────────────────────
+  // Policy Compass is a direct-use tool, not an intelligence layer.
+  // Moves it from the Intelligence section to Core Tools on every page via DOM,
+  // so no individual HTML files need updating.
+  (function() {
+    function movePolicyCompass() {
+      var policyLink = document.querySelector('a[href*="policy-compass"]');
+      if (!policyLink) return;
+
+      // Find the Core Tools section header (handles both .nav-section and .ns)
+      var sections = document.querySelectorAll('.nav-section, .ns');
+      var coreHeader = null;
+      sections.forEach(function(s) {
+        if (s.textContent.trim().toUpperCase() === 'CORE TOOLS') coreHeader = s;
+      });
+      if (!coreHeader) return;
+
+      // Walk forward from Core Tools to find the last nav item before the next section
+      var cursor = coreHeader.nextElementSibling;
+      var lastCoreItem = coreHeader;
+      while (cursor && !cursor.classList.contains('nav-section') && !cursor.classList.contains('ns')) {
+        // Skip the policy link itself if it was already here
+        if (cursor !== policyLink) lastCoreItem = cursor;
+        cursor = cursor.nextElementSibling;
+      }
+
+      // Only move if it's not already in the right place
+      if (lastCoreItem.nextSibling !== policyLink) {
+        lastCoreItem.parentNode.insertBefore(policyLink, lastCoreItem.nextSibling);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', movePolicyCompass);
+    } else {
+      movePolicyCompass();
+    }
+  })();
+  // ── END POLICY COMPASS MOVE ────────────────────────────────────────────────
+
 })();
