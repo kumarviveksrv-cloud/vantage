@@ -48,6 +48,8 @@
     <div class="card">
       <div class="card-title">Step into Vantage</div>
       <div class="card-sub">HR intelligence built for Indian professionals who lead in the language of business. Enter your work email to begin.</div>
+      <label class="form-label">Your name</label>
+      <input type="text" class="email-input" id="name-input" placeholder="Priya Sharma" autocomplete="name" style="margin-bottom:16px" />
       <label class="form-label">Work email</label>
       <input type="email" class="email-input" id="email-input" placeholder="you@company.com" autocomplete="email" />
       <div class="error-msg" id="error-msg"></div>
@@ -84,6 +86,7 @@
     function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 
     async function enterVantage() {
+      var name  = (document.getElementById('name-input').value || '').trim();
       var email = emailInput.value.trim();
       if (!email) { errorMsg.innerText = 'Please enter your work email.'; return; }
       if (!isValidEmail(email)) { errorMsg.innerText = 'Please enter a valid email address.'; return; }
@@ -118,12 +121,13 @@
         var userId = 'usr_' + btoa(email.toLowerCase()).replace(/[^a-z0-9]/gi,'').substr(0, 16) + '_v2';
         localStorage.setItem('sr_user_id', userId);
         localStorage.setItem('sr_user_email', email);
+        if (name) localStorage.setItem('sr_user_name', name);
 
         // Fire-and-forget: save user to Airtable
         fetch(WORKER, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tool: 'save_user', email: email, userId: userId, source: 'soft_launch_v1' })
+          body: JSON.stringify({ tool: 'save_user', email: email, userId: userId, name: name, source: 'soft_launch_v1' })
         }).catch(function() {});
 
         submitBtn.innerText = 'Welcome to Vantage!';
