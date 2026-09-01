@@ -12,7 +12,7 @@
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
     @keyframes msgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
     @keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(99,102,241,.5)}70%{box-shadow:0 0 0 24px rgba(99,102,241,0)}100%{box-shadow:0 0 0 0 rgba(99,102,241,0)}}
-    @keyframes micRed{0%{box-shadow:0 0 0 0 rgba(255,77,109,.5)}70%{box-shadow:0 0 0 24px rgba(255,77,109,0)}100%{box-shadow:0 0 0 0 rgba(255,77,109,0)}}
+    @keyframes micActive{0%{box-shadow:0 0 0 0 rgba(124,58,237,.6)}70%{box-shadow:0 0 0 24px rgba(124,58,237,0)}100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}}
     @keyframes waveBar{0%,100%{height:4px}50%{height:20px}}
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
@@ -46,25 +46,28 @@
     .pill{padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:rgba(5,4,16,.8);color:rgba(255,255,255,.45);transition:all .2s}
     .pill:hover{border-color:rgba(99,102,241,.3);color:#fff}
     .pill.on{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.45);color:#a5b4fc;font-weight:600}
-    .endb{padding:8px 14px;background:rgba(255,77,109,.1);color:#FF4D6D;border:1px solid rgba(255,77,109,.25);border-radius:8px;font-size:12px;cursor:pointer}
+    .endb{padding:8px 14px;background:rgba(124,58,237,.1);color:#c4b5fd;border:1px solid rgba(124,58,237,.25);border-radius:8px;font-size:12px;cursor:pointer}
 
     /* Status strip */
     .status-strip{position:absolute;bottom:110px;left:0;right:0;z-index:9;text-align:center;pointer-events:none}
     .slbl{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.28);min-height:16px;transition:color .3s;display:inline-block}
-    .slbl.listening{color:#FF4D6D}.slbl.thinking{color:#FFB547}.slbl.speaking{color:#a5b4fc}
+    .slbl.listening{color:#c4b5fd}
+    .slbl.thinking{color:#a5b4fc}
+    .slbl.speaking{color:#6366f1}
 
-    /* Wave bars */
+    /* Wave bars — now violet to match platform */
     .wbars{display:none;justify-content:center;gap:3px;height:20px;margin-bottom:6px}
-    .wb{width:3px;background:#FF4D6D;border-radius:2px;animation:waveBar .5s ease-in-out infinite}
+    .wb{width:3px;background:#7c3aed;border-radius:2px;animation:waveBar .5s ease-in-out infinite}
     .wb:nth-child(2){animation-delay:.1s}.wb:nth-child(3){animation-delay:.2s}.wb:nth-child(4){animation-delay:.3s}.wb:nth-child(5){animation-delay:.4s}
 
     /* Mic area */
     .mic-area{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:8px}
     .micb{width:72px;height:72px;border-radius:50%;background:#6366f1;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:28px;transition:all .25s;box-shadow:0 0 32px rgba(99,102,241,.3)}
     .micb:hover{transform:scale(1.07)}
-    .micb.listening{background:#FF4D6D;animation:micRed 1s ease-in-out infinite}
+    .micb.listening{background:#7c3aed;animation:micActive 1s ease-in-out infinite}
     .micb.speaking{background:rgba(99,102,241,.15);border:2px solid #6366f1;animation:micPulse 2s ease-in-out infinite;cursor:default}
-    .micb.thinking{background:rgba(255,181,71,.15);border:2px solid #FFB547;cursor:default}
+    .micb.thinking{background:rgba(165,180,252,.12);border:2px solid #a5b4fc;cursor:default}
+
     .mic-hint{font-size:10px;color:rgba(255,255,255,.2);font-family:'JetBrains Mono',monospace;letter-spacing:.05em;text-align:center}
 
     /* Review transcript popup */
@@ -180,7 +183,7 @@
 <body>
 
   <div class="sb">
-    <div class="logo" onclick="window.location.href='index.html'">
+    <div class="logo" onclick="window.location.href='dashboard.html'">
       <div class="logo-dot"></div>
       <div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div>
     </div>
@@ -196,11 +199,6 @@
     <div class="ns">My Record</div>
     <a href="case-library.html" class="ni"><span class="ic">◎</span>Case Library</a>
     <a href="debrief.html" class="ni"><span class="ic">📋</span>The Debrief</a>
-    <div class="ns">Philosophy</div>
-    <a href="https://humacity.com" class="ni" target="_blank"><span class="ic">🌀</span>Humacity</a>
-    <div class="ns">Legal</div>
-    <a href="terms.html" class="ni"><span class="ic">📄</span>Terms of Service</a>
-    <a href="privacy.html" class="ni"><span class="ic">🔒</span>Privacy Policy</a>
     <div class="ns">Account</div>
     <a href="data-dashboard.html" class="ni"><span class="ic">🔒</span>Data &amp; Privacy</a>
     <a href="#" class="ni" onclick="clerkSignOut(); return false;"><span class="ic">↩</span>Sign out</a>
@@ -343,7 +341,7 @@
   <script>
   (function(){
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
-    var BASE   = 'https://kumarviveksrv-cloud.github.io/vantage/';
+    var BASE   = 'https://vantage.virorah.com/';
 
     if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; return; }
     var mr = sessionStorage.getItem('sr_meridian');
@@ -515,7 +513,8 @@
 
     function setState(s) {
       ariaState=s;
-      var colors={idle:[99,102,241],listening:[255,77,109],thinking:[255,181,71],speaking:[165,180,252]};
+      // All states now within the indigo/violet palette
+      var colors={idle:[99,102,241],listening:[124,58,237],thinking:[165,180,252],speaking:[196,181,253]};
       var c=colors[s]||colors.idle;
       if(window._ariaSetColor)window._ariaSetColor(c[0],c[1],c[2]);
       var el=document.getElementById('slbl');
@@ -634,9 +633,7 @@
       };
 
       r.onerror=function(e){
-        if(e.error==='no-speech'){
-          return;
-        }
+        if(e.error==='no-speech'){return;}
         isListen=false;
         clearInterval(window._silenceCheck);
         setState('idle');
@@ -831,8 +828,8 @@
       } else if (speechRate === 1.5) {
         speechRate = 2.0;
         btn.innerText = '2.0x';
-        btn.style.color = '#FFB547';
-        btn.style.borderColor = 'rgba(255,181,71,.35)';
+        btn.style.color = '#c4b5fd';
+        btn.style.borderColor = 'rgba(124,58,237,.35)';
       } else {
         speechRate = 1.0;
         btn.innerText = '1.0x';
@@ -864,7 +861,7 @@
     setTimeout(populateVoices, 600);
     setTimeout(populateVoices, 2000);
 
-    // End session button state
+    // End session
     window.endSession=function(){
       window.speechSynthesis.cancel(); clearTimeout(silenceTimer);
       if(recog)try{recog.stop();}catch(e){}
