@@ -123,6 +123,10 @@
         localStorage.setItem('sr_user_email', email);
         if (name) localStorage.setItem('sr_user_name', name);
 
+        // Restore MERIDIAN from localStorage if this returning user has already configured it
+        var _savedMeridian = localStorage.getItem('sr_meridian_' + email);
+        if (_savedMeridian) { sessionStorage.setItem('sr_meridian', _savedMeridian); }
+
         // Fire-and-forget: save user to Airtable
         fetch(WORKER, {
           method: 'POST',
