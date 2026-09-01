@@ -1033,6 +1033,60 @@
   })();
   // ── END LOCATION CLOCK ─────────────────────────────────────────────────────
 
+  // ── LEGAL SECTION → BELOW ACCOUNT ─────────────────────────────────────────
+  // Legal (Terms, Privacy) belongs at the very bottom, below Account.
+  // DOM move runs after all injections so it catches both hardcoded and
+  // injected Legal sections correctly.
+  (function() {
+    function moveLegalSection() {
+      var sections = document.querySelectorAll('.nav-section, .ns');
+      var legalHeader = null;
+      var accountHeader = null;
+      sections.forEach(function(s) {
+        var t = s.textContent.trim().toUpperCase();
+        if (t === 'LEGAL') legalHeader = s;
+        if (t === 'ACCOUNT') accountHeader = s;
+      });
+      if (!legalHeader || !accountHeader) return;
+
+      // Collect Legal header + its nav items
+      var legalEls = [legalHeader];
+      var cursor = legalHeader.nextElementSibling;
+      while (cursor && !cursor.classList.contains('nav-section') && !cursor.classList.contains('ns')) {
+        legalEls.push(cursor);
+        cursor = cursor.nextElementSibling;
+      }
+
+      // Find the last element in the Account section
+      // (stops at meridian-chip, clock widget, or end of sidebar)
+      var accountEnd = accountHeader;
+      cursor = accountHeader.nextElementSibling;
+      while (cursor &&
+             !cursor.classList.contains('nav-section') &&
+             !cursor.classList.contains('ns') &&
+             !cursor.classList.contains('meridian-chip') &&
+             cursor.id !== 'meridian-chip' &&
+             cursor.id !== 'vantage-clock') {
+        accountEnd = cursor;
+        cursor = cursor.nextElementSibling;
+      }
+
+      // Move Legal (header + items) to just after Account section ends
+      var insertAfter = accountEnd;
+      legalEls.forEach(function(el) {
+        insertAfter.parentNode.insertBefore(el, insertAfter.nextSibling);
+        insertAfter = el;
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', moveLegalSection);
+    } else {
+      moveLegalSection();
+    }
+  })();
+  // ── END LEGAL SECTION MOVE ─────────────────────────────────────────────────
+
   // ── POLICY COMPASS → CORE TOOLS ────────────────────────────────────────────
   // Policy Compass is a direct-use tool, not an intelligence layer.
   // Moves it from the Intelligence section to Core Tools on every page via DOM,
