@@ -21,6 +21,7 @@
     @keyframes micPulseRed{0%{box-shadow:0 0 0 0 rgba(255,77,109,0.4)}70%{box-shadow:0 0 0 20px rgba(255,77,109,0)}100%{box-shadow:0 0 0 0 rgba(255,77,109,0)}}
     @keyframes waveBar{0%,100%{height:4px}50%{height:20px}}
 
+    /* SIDEBAR */
     .sidebar{width:220px;flex-shrink:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto}
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px}
     .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
@@ -35,6 +36,7 @@
     .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
     .meridian-chip .val{font-size:11px;color:var(--grey)}
 
+    /* MAIN */
     .main{flex:1;overflow:hidden;height:100vh;display:flex;flex-direction:column}
     .page-header{padding:24px 32px 0;flex-shrink:0;animation:fadeIn .3s ease}
     .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
@@ -44,6 +46,7 @@
     .page-sub{font-size:13px;color:var(--grey);margin-bottom:20px}
     .setup-scroll{flex:1;overflow-y:auto;padding:0 32px 32px}
 
+    /* SETUP FORM */
     .intake-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:16px;animation:fadeIn .3s ease}
     .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:block}
     .form-section{margin-bottom:22px}
@@ -63,6 +66,7 @@
     .submit-btn:hover{opacity:.88}
     .submit-btn:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
 
+    /* CHAT HEADER */
     .chat-header{padding:16px 32px;border-bottom:1px solid rgba(99,102,241,0.1);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
     .chat-header-left .role-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
     .chat-header-left .role-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
@@ -70,13 +74,22 @@
     .hdr-btn{padding:8px 16px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s}
     .hdr-btn-outline{background:transparent;color:var(--grey);border:1px solid rgba(244,243,255,0.1)}
     .hdr-btn-outline:hover{border-color:rgba(244,243,255,0.2);color:#f4f3ff}
-    .hdr-btn-danger{background:rgba(255,77,109,0.08);color:#FF4D6D;border:1px solid rgba(255,77,109,0.2)}
     .voice-toggle{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;cursor:pointer;transition:all .2s;border:1px solid rgba(244,243,255,0.1);background:transparent;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--grey)}
     .voice-toggle.active{background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.3);color:var(--muted)}
     .voice-toggle-dot{width:8px;height:8px;border-radius:50%;background:rgba(244,243,255,0.2);transition:all .2s}
     .voice-toggle.active .voice-toggle-dot{background:var(--accent);box-shadow:0 0 6px rgba(99,102,241,0.6)}
 
-    .messages{flex:1;overflow-y:auto;padding:24px 32px;display:flex;flex-direction:column;gap:16px}
+    /* STAKES BRIEFING PANEL */
+    .stakes-panel{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(124,58,237,0.03));border-bottom:1px solid rgba(99,102,241,0.18);padding:14px 32px;flex-shrink:0;animation:fadeIn .4s ease}
+    .stakes-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+    .stakes-grid{display:flex;gap:20px;flex-wrap:wrap}
+    .stake-item{display:flex;flex-direction:column;gap:3px}
+    .stake-k{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.45);letter-spacing:.06em;text-transform:uppercase}
+    .stake-v{font-size:12px;color:rgba(244,243,255,0.75);line-height:1.4;max-width:340px}
+    .stake-v.financial{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:#c4b5fd}
+
+    /* MESSAGES */
+    .messages{flex:1;overflow-y:auto;padding:20px 32px;display:flex;flex-direction:column;gap:16px}
     .msg{display:flex;gap:12px;animation:msgIn .25s ease}
     .msg-them{justify-content:flex-start}
     .msg-you{justify-content:flex-end}
@@ -92,6 +105,7 @@
     .typing span:nth-child(2){animation-delay:.15s}
     .typing span:nth-child(3){animation-delay:.3s}
 
+    /* TEXT INPUT */
     .chat-input-wrap{padding:16px 32px;border-top:1px solid rgba(99,102,241,0.1);display:flex;gap:12px;flex-shrink:0}
     .chat-input{flex:1;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;outline:none;resize:none;line-height:1.5;max-height:120px;transition:border .2s}
     .chat-input:focus{border-color:rgba(99,102,241,0.45)}
@@ -100,6 +114,7 @@
     .send-btn:hover{opacity:.88}
     .send-btn:disabled{opacity:.3;cursor:not-allowed}
 
+    /* VOICE INPUT */
     .voice-input-wrap{padding:20px 32px;border-top:1px solid rgba(99,102,241,0.1);display:flex;flex-direction:column;align-items:center;gap:16px;flex-shrink:0}
     .voice-status{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.08em;text-align:center;min-height:16px;transition:all .2s}
     .voice-status.listening{color:#FF4D6D}
@@ -119,10 +134,12 @@
     .wave-bar:nth-child(5){animation-delay:.4s}
     .voice-hint{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;text-align:center}
 
+    /* LOADING */
     .loading-center{flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center}
     .loading-orb-wrap{width:64px;height:64px;margin-bottom:24px}
     .loading-orb-wrap svg{animation:spin 2s linear infinite}
 
+    /* DEBRIEF */
     .debrief-scroll{flex:1;overflow-y:auto;padding:0 32px 32px}
     .debrief-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;animation:fadeIn .4s ease}
     .debrief-section-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:600;margin-bottom:14px;color:#f4f3ff}
@@ -132,9 +149,23 @@
     .highlight-card{background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:20px;margin-bottom:16px}
     .highlight-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
     .highlight-text{font-size:13px;color:rgba(244,243,255,0.7);line-height:1.6}
-    .prep-brief{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:24px}
+    .prep-brief{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:16px}
     .prep-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
     .prep-text{font-size:13px;color:var(--grey);line-height:1.8;white-space:pre-wrap}
+
+    /* FINANCIAL CONTEXT CARD (debrief) */
+    .fin-context-card{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.25);border-radius:12px;padding:20px 24px;margin-bottom:16px;position:relative;overflow:hidden}
+    .fin-context-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.5),transparent)}
+    .fin-context-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+    .fin-context-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    .fin-ctx-item{background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.1);border-radius:8px;padding:12px 14px}
+    .fin-ctx-k{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.5);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+    .fin-ctx-v{font-size:13px;color:rgba(244,243,255,0.75);line-height:1.45}
+    .fin-ctx-v.range{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;color:#c4b5fd}
+    .fin-context-impact{font-size:13px;color:rgba(244,243,255,0.6);line-height:1.7;margin-bottom:10px}
+    .fin-trajectory-note{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.12);border-radius:7px;padding:9px 12px;font-size:12px;color:var(--grey);line-height:1.5}
+    .fin-trajectory-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+
     .action-row{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
     .btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
     .btn-primary:hover{opacity:.88}
@@ -146,81 +177,44 @@
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
-    @media(max-width:768px){.sidebar{display:none}.roles-grid{grid-template-columns:repeat(2,1fr)}.main{overflow:hidden}}
+    @media(max-width:768px){.sidebar{display:none}.roles-grid{grid-template-columns:repeat(2,1fr)}.main{overflow:hidden}.stakes-grid{flex-direction:column;gap:10px}.fin-context-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
 
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">
       <div class="logo-dot"></div>
-      <div>
-        <div class="logo-name">Virorah</div>
-        <div class="logo-sub">Vantage</div>
-      </div>
+      <div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div>
     </div>
-    <a href="dashboard.html" class="nav-item">
-      <span class="icon">⊞</span> Dashboard
-    </a>
-
+    <a href="dashboard.html" class="nav-item"><span class="icon">⊞</span> Dashboard</a>
     <div class="nav-section">Core Tools</div>
-    <a href="er-case-navigator.html" class="nav-item">
-      <span class="icon">⚡</span> ER Case Navigator
-      <span class="nav-badge">0</span>
-    </a>
-    <a href="hr-data-storyteller.html" class="nav-item">
-      <span class="icon">📊</span> HR Data Storyteller
-    </a>
-    <a href="stakeholder-influence.html" class="nav-item">
-      <span class="icon">🎯</span> Stakeholder Influence
-    </a>
-
+    <a href="er-case-navigator.html" class="nav-item"><span class="icon">⚡</span> ER Case Navigator</a>
+    <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">📊</span> HR Data Storyteller</a>
+    <a href="stakeholder-influence.html" class="nav-item"><span class="icon">🎯</span> Stakeholder Influence</a>
     <div class="nav-section">Intelligence</div>
-    <a href="aria.html" class="nav-item">
-      <span class="icon">✦</span> ARIA
-    </a>
-    <a href="policy-compass.html" class="nav-item">
-      <span class="icon">🧭</span> Policy Compass
-    </a>
-    <a href="conversation-simulator.html" class="nav-item active">
-      <span class="icon">🎭</span> Conversation Simulator
-    </a>
-
+    <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
+    <a href="policy-compass.html" class="nav-item"><span class="icon">🧭</span> Policy Compass</a>
+    <a href="conversation-simulator.html" class="nav-item active"><span class="icon">🎭</span> Conversation Simulator</a>
     <div class="nav-section">My Record</div>
-    <a href="case-library.html" class="nav-item">
-      <span class="icon">◎</span> Case Library
-    </a>
-    <a href="debrief.html" class="nav-item">
-      <span class="icon">📋</span> The Debrief
-    </a>
-
+    <a href="case-library.html" class="nav-item"><span class="icon">◎</span> Case Library</a>
+    <a href="debrief.html" class="nav-item"><span class="icon">📋</span> The Debrief</a>
     <div class="nav-section">Philosophy</div>
-    <a href="https://humacity.com" class="nav-item" target="_blank">
-      <span class="icon">🌀</span> Humacity
-    </a>
-
+    <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">🌀</span> Humacity</a>
     <div class="nav-section">Legal</div>
-    <a href="terms.html" class="nav-item">
-      <span class="icon">📄</span> Terms of Service
-    </a>
-    <a href="privacy.html" class="nav-item">
-      <span class="icon">🔒</span> Privacy Policy
-    </a>
-
+    <a href="terms.html" class="nav-item"><span class="icon">📄</span> Terms of Service</a>
+    <a href="privacy.html" class="nav-item"><span class="icon">🔒</span> Privacy Policy</a>
     <div class="nav-section">Account</div>
-    <a href="data-dashboard.html" class="nav-item">
-      <span class="icon">🔒</span> Data &amp; Privacy
-    </a>
-    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()">
-      <span class="icon">↩</span> Sign out
-    </a>
-
-<div class="meridian-chip">
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">🔒</span> Data &amp; Privacy</a>
+    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()"><span class="icon">↩</span> Sign out</a>
+    <div class="meridian-chip">
       <div class="label">MERIDIAN Active</div>
       <div class="val" id="meridian-chip-val">Loading...</div>
     </div>
   </div>
 
+  <!-- MAIN -->
   <div class="main" id="main-panel">
 
     <!-- SETUP VIEW -->
@@ -232,8 +226,8 @@
       </div>
       <div class="setup-scroll">
         <div style="background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:14px;padding:22px 26px;margin-bottom:16px;animation:fadeIn .3s ease">
-          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;line-height:1.4;margin-bottom:12px">The real conversation is coming.</div>
-          <div style="font-size:13px;color:rgba(244,243,255,0.5);line-height:1.75">Pick the person you need to face. Describe what's at stake. Then have the conversation — text or voice — in a space where there are <strong style="color:rgba(244,243,255,0.8)">no consequences for getting it wrong</strong>. The coaching debrief after tells you exactly what to do differently when it counts. Set the difficulty to Challenging if you want it to push you.</div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;margin-bottom:12px">The real conversation is coming.</div>
+          <div style="font-size:13px;color:rgba(244,243,255,0.5);line-height:1.75">Pick the person you need to face. Describe what's at stake. Then have the conversation — text or voice — in a space where there are <strong style="color:rgba(244,243,255,0.8)">no consequences for getting it wrong</strong>. Before you start, you'll see the financial stakes — what this conversation is actually protecting or fighting for. The coaching debrief after tells you exactly what to do differently when it counts.</div>
         </div>
         <div class="intake-card">
           <div class="form-section">
@@ -294,7 +288,15 @@
           <button class="hdr-btn hdr-btn-outline" onclick="endPractice()">End Practice &amp; Get Debrief</button>
         </div>
       </div>
+
+      <!-- STAKES BRIEFING PANEL (shown only on first turn) -->
+      <div id="stakes-panel" class="stakes-panel" style="display:none">
+        <div class="stakes-label">&#x1F4B0; Stakes Briefing — what this conversation is actually about</div>
+        <div class="stakes-grid" id="stakes-grid"></div>
+      </div>
+
       <div class="messages" id="messages-container"></div>
+
       <div class="chat-input-wrap" id="text-input-wrap">
         <textarea class="chat-input" id="chat-input" placeholder="Type your response... (or switch to voice mode above)" rows="1"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
@@ -343,18 +345,43 @@
             <div id="what-improve"></div>
           </div>
         </div>
+
         <div class="highlight-card">
           <div class="highlight-label">The moment that would have changed everything</div>
           <div class="highlight-text" id="inflection-point">&#8212;</div>
         </div>
+
         <div class="highlight-card" style="background:linear-gradient(135deg,rgba(255,181,71,0.07),rgba(255,181,71,0.02));border-color:rgba(255,181,71,0.2)">
           <div class="highlight-label" style="color:#FFB547">One technique to try in the real conversation</div>
           <div class="highlight-text" id="technique">&#8212;</div>
         </div>
+
+        <!-- Financial Context Card -->
+        <div class="fin-context-card" id="fin-context-card" style="display:none">
+          <div class="fin-context-label">&#x1F4B0; Financial Context — what was at stake in this conversation</div>
+          <div class="fin-context-grid">
+            <div class="fin-ctx-item">
+              <div class="fin-ctx-k">At stake</div>
+              <div class="fin-ctx-v range" id="fc-at-stake">&#8212;</div>
+            </div>
+            <div class="fin-ctx-item">
+              <div class="fin-ctx-k">Humac pillar</div>
+              <div class="fin-ctx-v" id="fc-pillar">&#8212;</div>
+              <div style="font-size:11px;color:var(--dim);margin-top:4px" id="fc-pillar-rationale"></div>
+            </div>
+          </div>
+          <div class="fin-context-impact" id="fc-conversation-impact"></div>
+          <div class="fin-trajectory-note" id="fc-trajectory-row" style="display:none">
+            <div class="fin-trajectory-label">Trajectory Signal</div>
+            <div id="fc-trajectory"></div>
+          </div>
+        </div>
+
         <div class="prep-brief">
           <div class="prep-label">Preparation Brief &#8212; Read this before the real conversation</div>
           <div class="prep-text" id="prep-brief-text">&#8212;</div>
         </div>
+
         <div class="action-row">
           <button class="btn-primary" onclick="practiceAgain()">Practice Again</button>
           <button class="btn-indigo-outline" onclick="openInCaseNavigator()">Open in Case Navigator &#x2192;</button>
@@ -368,7 +395,7 @@
 
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
-    var BASE = 'https://kumarviveksrv-cloud.github.io/vantage/';
+    var BASE = 'https://vantage.virorah.com/';
     var selectedRole = '';
     var selectedDiff = 'standard';
     var conversationHistory = [];
@@ -382,15 +409,22 @@
     var recognition = null;
     var voices = [];
 
-    if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; }
+    if (sessionStorage.getItem('sr_access') !== 'true') {
+      window.location.href = BASE + 'access.html';
+    }
 
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
-    document.getElementById('meridian-chip-val').innerText = (meridian.state || 'Not set') + ' \xb7 ' + (meridian.industry || 'Not set');
+    document.getElementById('meridian-chip-val').innerText =
+      (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
 
     var practiceCtx = sessionStorage.getItem('sr_practice_context');
     if (practiceCtx) {
-      try { var ctx = JSON.parse(practiceCtx); if (ctx.narrative) document.getElementById('scenario').value = 'Context from ER case: ' + ctx.narrative; sessionStorage.removeItem('sr_practice_context'); } catch(e) {}
+      try {
+        var ctx = JSON.parse(practiceCtx);
+        if (ctx.narrative) document.getElementById('scenario').value = 'Context from ER case: ' + ctx.narrative;
+        sessionStorage.removeItem('sr_practice_context');
+      } catch(e) {}
     }
 
     document.getElementById('scenario').addEventListener('input', checkStart);
@@ -398,12 +432,29 @@
     window.speechSynthesis.onvoiceschanged = function() { voices = window.speechSynthesis.getVoices(); };
     setTimeout(function(){ voices = window.speechSynthesis.getVoices(); }, 500);
 
-    function selectRole(el, role) { document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('selected'); }); el.classList.add('selected'); selectedRole = role; checkStart(); }
-    function selectDiff(el, diff) { document.querySelectorAll('.diff-btn').forEach(function(b){ b.classList.remove('selected'); }); el.classList.add('selected'); selectedDiff = diff; }
-    function checkStart() { var s = document.getElementById('scenario').value.trim(); var o = document.getElementById('objective').value.trim(); document.getElementById('start-btn').disabled = !(selectedRole && s.length > 20 && o.length > 10); }
+    function selectRole(el, role) {
+      document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('selected'); });
+      el.classList.add('selected');
+      selectedRole = role;
+      checkStart();
+    }
+
+    function selectDiff(el, diff) {
+      document.querySelectorAll('.diff-btn').forEach(function(b){ b.classList.remove('selected'); });
+      el.classList.add('selected');
+      selectedDiff = diff;
+    }
+
+    function checkStart() {
+      var s = document.getElementById('scenario').value.trim();
+      var o = document.getElementById('objective').value.trim();
+      document.getElementById('start-btn').disabled = !(selectedRole && s.length > 20 && o.length > 10);
+    }
 
     function showView(view) {
-      ['setup-view','chat-view','loading-view','debrief-view'].forEach(function(v){ document.getElementById(v).style.display = 'none'; });
+      ['setup-view','chat-view','loading-view','debrief-view'].forEach(function(v){
+        document.getElementById(v).style.display = 'none';
+      });
       document.getElementById(view).style.display = 'flex';
       document.getElementById(view).style.flexDirection = 'column';
     }
@@ -412,14 +463,28 @@
       voiceMode = !voiceMode;
       var toggle = document.getElementById('voice-toggle');
       var label = document.getElementById('voice-toggle-label');
-      if (voiceMode) { toggle.classList.add('active'); label.innerText = '\u2328\uFE0F Switch to Text'; document.getElementById('text-input-wrap').style.display = 'none'; document.getElementById('voice-input-wrap').style.display = 'flex'; setVoiceStatus('Tap the mic to speak', ''); }
-      else { toggle.classList.remove('active'); label.innerText = '\uD83C\uDFA4 Switch to Voice'; document.getElementById('text-input-wrap').style.display = 'flex'; document.getElementById('voice-input-wrap').style.display = 'none'; stopListening(); }
+      if (voiceMode) {
+        toggle.classList.add('active');
+        label.innerText = '\u2328\uFE0F Switch to Text';
+        document.getElementById('text-input-wrap').style.display = 'none';
+        document.getElementById('voice-input-wrap').style.display = 'flex';
+        setVoiceStatus('Tap the mic to speak', '');
+      } else {
+        toggle.classList.remove('active');
+        label.innerText = '\uD83C\uDFA4 Switch to Voice';
+        document.getElementById('text-input-wrap').style.display = 'flex';
+        document.getElementById('voice-input-wrap').style.display = 'none';
+        stopListening();
+      }
     }
 
     function setVoiceStatus(text, state) {
-      var el = document.getElementById('voice-status'); el.innerText = text; el.className = 'voice-status' + (state ? ' ' + state : '');
+      var el = document.getElementById('voice-status');
+      el.innerText = text;
+      el.className = 'voice-status' + (state ? ' ' + state : '');
       document.getElementById('wave-bars').style.display = state === 'listening' ? 'flex' : 'none';
-      var micBtn = document.getElementById('mic-btn'); micBtn.className = 'mic-btn' + (state ? ' ' + state : '');
+      var micBtn = document.getElementById('mic-btn');
+      micBtn.className = 'mic-btn' + (state ? ' ' + state : '');
       if (state === 'listening') micBtn.innerText = '\u23F9';
       else if (state === 'thinking') micBtn.innerText = '\uD83D\uDCAD';
       else if (state === 'speaking') micBtn.innerText = '\uD83D\uDD0A';
@@ -429,29 +494,56 @@
     function initRecognition() {
       var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SR) { alert('Voice recognition requires Chrome.'); return null; }
-      var r = new SR(); r.continuous = false; r.interimResults = true; r.lang = 'en-US'; r.maxAlternatives = 3;
+      var r = new SR();
+      r.continuous = false; r.interimResults = true; r.lang = 'en-US'; r.maxAlternatives = 3;
       r.onstart = function() { isListening = true; setVoiceStatus('Listening... speak now', 'listening'); document.getElementById('voice-transcript').innerText = ''; };
       r.onresult = function(event) {
         var interim = '', final = '';
-        for (var i = event.resultIndex; i < event.results.length; i++) { if (event.results[i].isFinal) final += event.results[i][0].transcript; else interim += event.results[i][0].transcript; }
+        for (var i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) final += event.results[i][0].transcript;
+          else interim += event.results[i][0].transcript;
+        }
         document.getElementById('voice-transcript').innerText = final || interim;
         if (final) { isListening = false; sendVoiceMessage(final.trim()); }
       };
-      r.onerror = function(e) { isListening = false; if (e.error !== 'no-speech') setVoiceStatus('Mic error: ' + e.error + '. Tap to retry.', ''); else setVoiceStatus('No speech detected. Tap to try again.', ''); };
+      r.onerror = function(e) {
+        isListening = false;
+        if (e.error !== 'no-speech') setVoiceStatus('Mic error: ' + e.error + '. Tap to retry.', '');
+        else setVoiceStatus('No speech detected. Tap to try again.', '');
+      };
       r.onend = function() { isListening = false; if (!isSpeaking) setVoiceStatus('Tap the mic to speak', ''); };
       return r;
     }
 
-    function handleMicClick() { if (isSpeaking) { window.speechSynthesis.cancel(); isSpeaking = false; setVoiceStatus('Tap the mic to speak',''); return; } if (isListening) { stopListening(); return; } startListening(); }
-    function startListening() { recognition = initRecognition(); if (!recognition) return; try { recognition.start(); } catch(e) { console.error(e); } }
-    function stopListening() { if (recognition) { try { recognition.stop(); } catch(e) {} } isListening = false; setVoiceStatus('Tap the mic to speak', ''); }
+    function handleMicClick() {
+      if (isSpeaking) { window.speechSynthesis.cancel(); isSpeaking = false; setVoiceStatus('Tap the mic to speak',''); return; }
+      if (isListening) { stopListening(); return; }
+      startListening();
+    }
+
+    function startListening() {
+      recognition = initRecognition();
+      if (!recognition) return;
+      try { recognition.start(); } catch(e) { console.error(e); }
+    }
+
+    function stopListening() {
+      if (recognition) { try { recognition.stop(); } catch(e) {} }
+      isListening = false;
+      setVoiceStatus('Tap the mic to speak', '');
+    }
 
     function speak(text, onEnd) {
-      window.speechSynthesis.cancel(); isSpeaking = true; setVoiceStatus('Speaking...', 'speaking');
+      window.speechSynthesis.cancel();
+      isSpeaking = true;
+      setVoiceStatus('Speaking...', 'speaking');
       var clean = text.replace(/\*\*/g,'').replace(/#{1,6}\s/g,'').replace(/`/g,'').replace(/_/g,'');
       var utterance = new SpeechSynthesisUtterance(clean);
       utterance.lang = 'en-US'; utterance.rate = 0.92; utterance.pitch = 1;
-      if (voices.length > 0) { var preferred = voices.find(function(v){ return v.lang === 'en-US'; }) || voices.find(function(v){ return v.lang.startsWith('en'); }); if (preferred) utterance.voice = preferred; }
+      if (voices.length > 0) {
+        var preferred = voices.find(function(v){ return v.lang === 'en-US'; }) || voices.find(function(v){ return v.lang.startsWith('en'); });
+        if (preferred) utterance.voice = preferred;
+      }
       utterance.onend = function() { isSpeaking = false; setVoiceStatus('Tap the mic to respond', ''); if (onEnd) onEnd(); };
       utterance.onerror = function() { isSpeaking = false; setVoiceStatus('Tap the mic to speak', ''); };
       window.speechSynthesis.speak(utterance);
@@ -461,75 +553,289 @@
       var container = document.getElementById('messages-container');
       var div = document.createElement('div');
       div.className = 'msg ' + (role === 'you' ? 'msg-you' : 'msg-them');
-      var avatar = role === 'you' ? '<div class="msg-avatar avatar-you">\uD83E\uDDD1</div>' : '<div class="msg-avatar avatar-them">\uD83C\uDFAD</div>';
+      var avatar = role === 'you'
+        ? '<div class="msg-avatar avatar-you">\uD83E\uDDD1</div>'
+        : '<div class="msg-avatar avatar-them">\uD83C\uDFAD</div>';
       var label = role === 'you' ? 'You' : selectedRole;
       if (isTypingIndicator) {
         div.id = 'typing-indicator';
         div.innerHTML = avatar + '<div><div class="msg-label">' + label + '</div><div class="msg-bubble bubble-them"><div class="typing"><span></span><span></span><span></span></div></div></div>';
       } else {
-        div.innerHTML = (role !== 'you' ? avatar : '') + '<div><div class="msg-label">' + label + '</div><div class="msg-bubble ' + (role === 'you' ? 'bubble-you' : 'bubble-them') + '">' + text + '</div></div>' + (role === 'you' ? avatar : '');
+        div.innerHTML = (role !== 'you' ? avatar : '') +
+          '<div><div class="msg-label">' + label + '</div><div class="msg-bubble ' + (role === 'you' ? 'bubble-you' : 'bubble-them') + '">' + text + '</div></div>' +
+          (role === 'you' ? avatar : '');
       }
-      container.appendChild(div); container.scrollTop = container.scrollHeight; return div;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+      return div;
     }
 
-    function removeTyping() { var t = document.getElementById('typing-indicator'); if (t) t.remove(); }
-    function updateExchangeCounter() { document.getElementById('exchange-indicator').innerText = exchangeCount + ' / ' + MAX_EXCHANGES + ' exchanges'; }
+    function removeTyping() {
+      var t = document.getElementById('typing-indicator');
+      if (t) t.remove();
+    }
 
+    function updateExchangeCounter() {
+      document.getElementById('exchange-indicator').innerText = exchangeCount + ' / ' + MAX_EXCHANGES + ' exchanges';
+    }
+
+    // ─── STAKES BRIEFING PARSER ───────────────────────────────────────────────
+    function parseFirstResponse(text) {
+      if (!text) return { briefing: null, dialogue: text };
+
+      // Pattern 1: ---\nSTAKES BRIEFING ... ---\n[dialogue]
+      var m1 = text.match(/^-{3,}\s*\n([\s\S]*?)\n-{3,}\s*\n([\s\S]*)$/);
+      if (m1 && m1[1].toUpperCase().indexOf('STAKES') > -1) {
+        return { briefing: m1[1].trim(), dialogue: m1[2].trim() };
+      }
+
+      // Pattern 2: STAKES BRIEFING...The simulation begins now.\n---\n[dialogue]
+      var m2 = text.match(/([\s\S]*?The simulation begins now\.?)\s*\n?-*\s*\n([\s\S]*)/i);
+      if (m2) {
+        return { briefing: m2[1].trim(), dialogue: m2[2].trim() };
+      }
+
+      // Pattern 3: STAKES BRIEFING block then separator
+      var m3 = text.match(/STAKES BRIEFING\s*\n([\s\S]*?)\n-{3,}\s*\n([\s\S]*)/i);
+      if (m3) {
+        return { briefing: 'STAKES BRIEFING\n\n' + m3[1].trim(), dialogue: m3[2].trim() };
+      }
+
+      // No briefing found — treat entire text as dialogue
+      return { briefing: null, dialogue: text };
+    }
+
+    function showStakesBriefing(briefingText) {
+      var panel = document.getElementById('stakes-panel');
+      var grid = document.getElementById('stakes-grid');
+
+      var exposureMatch  = briefingText.match(/Financial exposure:\s*([^\n]+)/i);
+      var pillarMatch    = briefingText.match(/Humac pillar:\s*([^\n]+)/i);
+      var atStakeMatch   = briefingText.match(/What is at stake:\s*([^\n]+)/i);
+      var practisingMatch = briefingText.match(/You are practising with:\s*([^\n]+)/i);
+
+      var items = [];
+      if (exposureMatch) items.push({ k: 'Financial exposure', v: exposureMatch[1].trim(), cls: 'financial' });
+      if (pillarMatch)   items.push({ k: 'Humac pillar', v: pillarMatch[1].trim(), cls: '' });
+      if (atStakeMatch)  items.push({ k: 'What is at stake', v: atStakeMatch[1].trim(), cls: '' });
+      if (practisingMatch) items.push({ k: 'You are practising with', v: practisingMatch[1].trim(), cls: '' });
+
+      if (items.length === 0) {
+        // Fallback: just show the raw text compactly
+        grid.innerHTML = '<div class="stake-item"><div class="stake-v">' + briefingText.replace(/STAKES BRIEFING\n?/i,'').trim() + '</div></div>';
+      } else {
+        grid.innerHTML = items.map(function(item) {
+          return '<div class="stake-item"><div class="stake-k">' + item.k + '</div><div class="stake-v ' + item.cls + '">' + item.v + '</div></div>';
+        }).join('');
+      }
+      panel.style.display = 'block';
+    }
+
+    // ─── SIMULATION ───────────────────────────────────────────────────────────
     async function startSimulation() {
       currentScenario = document.getElementById('scenario').value.trim();
       currentObjective = document.getElementById('objective').value.trim();
       document.getElementById('chat-role-name').innerText = selectedRole;
-      conversationHistory = []; exchangeCount = 0; document.getElementById('messages-container').innerHTML = '';
-      showView('loading-view'); document.getElementById('loading-text').innerText = 'SETTING THE SCENE...';
-      conversationHistory.push({ role: 'user', content: '[START] Open the conversation naturally as the ' + selectedRole + '. One or two sentences. Do not wait for me to start.' });
+      conversationHistory = [];   // Empty — Worker detects isFirstTurn and produces Stakes Briefing
+      exchangeCount = 0;
+      document.getElementById('messages-container').innerHTML = '';
+      document.getElementById('stakes-panel').style.display = 'none';
+      showView('loading-view');
+      document.getElementById('loading-text').innerText = 'SETTING THE SCENE...';
+
       try {
-        var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tool:'practice', scenario:currentScenario, objective:currentObjective, stakeholderRole:selectedRole, difficulty:selectedDiff, history:conversationHistory, meridian:meridian }) });
+        var res = await fetch(WORKER, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            tool: 'practice',
+            scenario: currentScenario,
+            objective: currentObjective,
+            stakeholderRole: selectedRole,
+            difficulty: selectedDiff,
+            history: conversationHistory,
+            meridian: meridian
+          })
+        });
         var data = await res.json();
-        if (data.success) { var response = data.data.response; conversationHistory.push({ role:'assistant', content:response }); showView('chat-view'); addMessage('them', response); updateExchangeCounter(); if (voiceMode) speak(response); }
-        else { alert('Error starting: ' + (data.error || 'Unknown')); showView('setup-view'); }
-      } catch(err) { alert('Connection error: ' + err.message); showView('setup-view'); }
+        if (data.success) {
+          var response = data.data.response;
+
+          // Parse Stakes Briefing out of first response
+          var parsed = parseFirstResponse(response);
+          if (parsed.briefing) showStakesBriefing(parsed.briefing);
+
+          // Store only the actual dialogue in history
+          var dialogue = parsed.dialogue || response;
+          conversationHistory.push({ role: 'assistant', content: dialogue });
+
+          showView('chat-view');
+          if (dialogue) addMessage('them', dialogue);
+          updateExchangeCounter();
+          if (voiceMode) speak(dialogue);
+        } else {
+          alert('Error starting: ' + (data.error || 'Unknown'));
+          showView('setup-view');
+        }
+      } catch(err) {
+        alert('Connection error: ' + err.message);
+        showView('setup-view');
+      }
     }
 
-    async function sendMessage() { var input = document.getElementById('chat-input'); var text = input.value.trim(); if (!text) return; input.value = ''; await processUserMessage(text); }
-    async function sendVoiceMessage(text) { if (!text || text.length < 2) { setVoiceStatus('Tap the mic to speak', ''); return; } document.getElementById('voice-transcript').innerText = ''; setVoiceStatus('Thinking...', 'thinking'); await processUserMessage(text); }
+    async function sendMessage() {
+      var input = document.getElementById('chat-input');
+      var text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      await processUserMessage(text);
+    }
+
+    async function sendVoiceMessage(text) {
+      if (!text || text.length < 2) { setVoiceStatus('Tap the mic to speak', ''); return; }
+      document.getElementById('voice-transcript').innerText = '';
+      setVoiceStatus('Thinking...', 'thinking');
+      await processUserMessage(text);
+    }
 
     async function processUserMessage(text) {
       if (exchangeCount >= MAX_EXCHANGES) { endPractice(); return; }
-      document.getElementById('send-btn') && (document.getElementById('send-btn').disabled = true);
-      addMessage('you', text); conversationHistory.push({ role:'user', content:text }); exchangeCount++; updateExchangeCounter(); addMessage('them', '', true);
+      var sendBtn = document.getElementById('send-btn');
+      if (sendBtn) sendBtn.disabled = true;
+
+      addMessage('you', text);
+      conversationHistory.push({ role: 'user', content: text });
+      exchangeCount++;
+      updateExchangeCounter();
+      addMessage('them', '', true);
+
       try {
-        var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tool:'practice', scenario:currentScenario, objective:currentObjective, stakeholderRole:selectedRole, difficulty:selectedDiff, history:conversationHistory, meridian:meridian }) });
-        var data = await res.json(); removeTyping();
+        var res = await fetch(WORKER, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            tool: 'practice',
+            scenario: currentScenario,
+            objective: currentObjective,
+            stakeholderRole: selectedRole,
+            difficulty: selectedDiff,
+            history: conversationHistory,
+            meridian: meridian
+          })
+        });
+        var data = await res.json();
+        removeTyping();
         if (data.success) {
-          var response = data.data.response; conversationHistory.push({ role:'assistant', content:response }); addMessage('them', response);
-          if (voiceMode) { speak(response, function() { if (exchangeCount < MAX_EXCHANGES) setTimeout(startListening, 300); }); }
-          if (exchangeCount >= MAX_EXCHANGES) { var info = document.createElement('div'); info.style.cssText = 'text-align:center;font-family:JetBrains Mono,monospace;font-size:11px;color:rgba(244,243,255,0.25);padding:8px 0'; info.innerText = 'Max exchanges reached. Click "End Practice" for your debrief.'; document.getElementById('messages-container').appendChild(info); }
-        } else { alert('Error: ' + (data.error || 'Unknown')); if (voiceMode) setVoiceStatus('Error. Tap to try again.', ''); }
-      } catch(err) { removeTyping(); alert('Connection error: ' + err.message); if (voiceMode) setVoiceStatus('Connection error. Tap to retry.', ''); }
-      document.getElementById('send-btn') && (document.getElementById('send-btn').disabled = false);
+          var response = data.data.response;
+          conversationHistory.push({ role: 'assistant', content: response });
+          addMessage('them', response);
+          if (voiceMode) {
+            speak(response, function() {
+              if (exchangeCount < MAX_EXCHANGES) setTimeout(startListening, 300);
+            });
+          }
+          if (exchangeCount >= MAX_EXCHANGES) {
+            var info = document.createElement('div');
+            info.style.cssText = 'text-align:center;font-family:JetBrains Mono,monospace;font-size:11px;color:rgba(244,243,255,0.25);padding:8px 0';
+            info.innerText = 'Max exchanges reached. Click "End Practice" for your debrief.';
+            document.getElementById('messages-container').appendChild(info);
+          }
+        } else {
+          alert('Error: ' + (data.error || 'Unknown'));
+          if (voiceMode) setVoiceStatus('Error. Tap to try again.', '');
+        }
+      } catch(err) {
+        removeTyping();
+        alert('Connection error: ' + err.message);
+        if (voiceMode) setVoiceStatus('Connection error. Tap to retry.', '');
+      }
+      if (sendBtn) sendBtn.disabled = false;
     }
 
     async function endPractice() {
-      window.speechSynthesis.cancel(); stopListening(); showView('loading-view'); document.getElementById('loading-text').innerText = 'GENERATING YOUR DEBRIEF...';
+      window.speechSynthesis.cancel();
+      stopListening();
+      showView('loading-view');
+      document.getElementById('loading-text').innerText = 'GENERATING YOUR DEBRIEF...';
       try {
-        var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tool:'practice', scenario:currentScenario, objective:currentObjective, stakeholderRole:selectedRole, difficulty:selectedDiff, history:conversationHistory, meridian:meridian, requestDebrief:true }) });
+        var res = await fetch(WORKER, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            tool: 'practice',
+            scenario: currentScenario,
+            objective: currentObjective,
+            stakeholderRole: selectedRole,
+            difficulty: selectedDiff,
+            history: conversationHistory,
+            meridian: meridian,
+            requestDebrief: true
+          })
+        });
         var data = await res.json();
-        if (data.success) renderDebrief(data.data); else { alert('Debrief error: ' + (data.error || 'Unknown')); showView('chat-view'); }
-      } catch(err) { alert('Connection error: ' + err.message); showView('chat-view'); }
+        if (data.success) renderDebrief(data.data);
+        else { alert('Debrief error: ' + (data.error || 'Unknown')); showView('chat-view'); }
+      } catch(err) {
+        alert('Connection error: ' + err.message);
+        showView('chat-view');
+      }
     }
 
     function renderDebrief(r) {
-      document.getElementById('what-worked').innerHTML = (r.whatWorked||[]).map(function(w){ return '<div class="debrief-item"><div class="debrief-dot"></div><div class="debrief-item-text">'+w+'</div></div>'; }).join('');
-      document.getElementById('what-improve').innerHTML = (r.whatToImprove||[]).map(function(w){ return '<div class="debrief-item"><div class="debrief-dot" style="background:#FFB547"></div><div class="debrief-item-text">'+w+'</div></div>'; }).join('');
+      document.getElementById('what-worked').innerHTML = (r.whatWorked || []).map(function(w) {
+        return '<div class="debrief-item"><div class="debrief-dot"></div><div class="debrief-item-text">' + w + '</div></div>';
+      }).join('');
+      document.getElementById('what-improve').innerHTML = (r.whatToImprove || []).map(function(w) {
+        return '<div class="debrief-item"><div class="debrief-dot" style="background:#FFB547"></div><div class="debrief-item-text">' + w + '</div></div>';
+      }).join('');
       document.getElementById('inflection-point').innerText = r.inflectionPoint || '\u2014';
       document.getElementById('technique').innerText = r.techniqueForNextTime || '\u2014';
       document.getElementById('prep-brief-text').innerText = r.preparationBrief || '\u2014';
+
+      // Financial context (new in v1.2)
+      if (r.financialContext) {
+        var fc = r.financialContext;
+        document.getElementById('fc-at-stake').innerText = fc.atStake || '\u2014';
+        document.getElementById('fc-pillar').innerText = fc.pillar || '\u2014';
+        document.getElementById('fc-pillar-rationale').innerText = fc.pillarRationale || '';
+        document.getElementById('fc-conversation-impact').innerText = fc.howConversationAffectsIt || '';
+        if (fc.trajectorySignal) {
+          document.getElementById('fc-trajectory').innerText = fc.trajectorySignal;
+          document.getElementById('fc-trajectory-row').style.display = 'block';
+        }
+        document.getElementById('fin-context-card').style.display = 'block';
+      }
+
       showView('debrief-view');
     }
 
-    function openInCaseNavigator() { sessionStorage.setItem('sr_case_from_practice', JSON.stringify({ scenario:currentScenario, role:selectedRole })); window.location.href = BASE + 'er-case-navigator.html'; }
-    function practiceAgain() { conversationHistory = []; exchangeCount = 0; document.getElementById('messages-container').innerHTML = ''; startSimulation(); }
-    function newScenario() { window.speechSynthesis.cancel(); stopListening(); document.getElementById('scenario').value = ''; document.getElementById('objective').value = ''; document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('selected'); }); selectedRole = ''; document.getElementById('start-btn').disabled = true; showView('setup-view'); }
+    function openInCaseNavigator() {
+      sessionStorage.setItem('sr_case_from_practice', JSON.stringify({
+        scenario: currentScenario,
+        role: selectedRole
+      }));
+      window.location.href = BASE + 'er-case-navigator.html';
+    }
+
+    function practiceAgain() {
+      conversationHistory = [];
+      exchangeCount = 0;
+      document.getElementById('messages-container').innerHTML = '';
+      document.getElementById('stakes-panel').style.display = 'none';
+      startSimulation();
+    }
+
+    function newScenario() {
+      window.speechSynthesis.cancel();
+      stopListening();
+      document.getElementById('scenario').value = '';
+      document.getElementById('objective').value = '';
+      document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('selected'); });
+      selectedRole = '';
+      conversationHistory = [];
+      document.getElementById('start-btn').disabled = true;
+      showView('setup-view');
+    }
   </script>
   <script src="sidebar-shared.js"></script>
 </body>
