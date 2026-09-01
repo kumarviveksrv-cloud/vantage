@@ -44,27 +44,30 @@
       </svg>
     </div>
     <div class="status" id="status-text">Checking your session...</div>
-    <div class="sub-status" id="sub-text">This takes just a moment.</div>
+    <div class="sub-status" id="sub-text"></div>
     <div class="error-wrap" id="error-wrap">
       <div class="error-msg" id="error-msg">Authentication failed. Please try again.</div>
       <button class="retry-btn" onclick="window.location.reload()">Try again</button>
     </div>
   </div>
 
-  <script src="https://cdn.clerk.com/npm/@clerk/clerk-js@5/dist/clerk.browser.js" crossorigin="anonymous"></script>
-  <script>
-    var PUBLISHABLE_KEY = 'pk_test_YnJpZWYta29pLTc2LmNsZXJrLmFjY291bnRzLmRldiQ';
-    var CLERK_SIGN_IN   = 'https://brief-koi-76.clerk.accounts.dev/sign-in';
-    var BASE            = 'https://vantage.virorah.com/';
+  <!-- Correct Clerk CDN: use your Frontend API URL, not the npm CDN -->
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_YnJpZWYta29pLTc2LmNsZXJrLmFjY291bnRzLmRldiQ"
+    src="https://brief-koi-76.clerk.accounts.dev/.well-known/clerk.js"
+    type="text/javascript"
+  ></script>
 
-    // Where to send the user after successful auth
-    // Reads from ?redirect= param so any page can send the user back to itself
+  <script>
+    var BASE     = 'https://vantage.virorah.com/';
     var params   = new URLSearchParams(window.location.search);
     var redirect = params.get('redirect') || (BASE + 'dashboard.html');
 
     function setStatus(main, sub) {
       document.getElementById('status-text').innerText = main;
-      if (sub !== undefined) document.getElementById('sub-text').innerText = sub || '';
+      document.getElementById('sub-text').innerText = sub || '';
     }
 
     function showError(msg) {
@@ -73,57 +76,51 @@
       document.getElementById('sub-text').innerText = '';
     }
 
-    function onAuthenticated(clerk) {
-      var user = clerk.user;
-
-      // Store the real Clerk user ID — all tools read from this key
-      localStorage.setItem('sr_user_id', user.id);
-
-      // Store email for potential display use
-      var email = '';
-      if (user.primaryEmailAddress) email = user.primaryEmailAddress.emailAddress;
-      sessionStorage.setItem('sr_user_email', email);
-
-      // Set the session access flag that all protected pages check
-      sessionStorage.setItem('sr_access', 'true');
-
-      setStatus('Signed in.', 'Redirecting...');
-
-      // Small delay so the "Signed in" state is visible
-      setTimeout(function () {
-        window.location.replace(redirect);
-      }, 350);
-    }
-
-    // Boot Clerk
-    setStatus('Checking your session...', '');
-
-    var clerk = new Clerk(PUBLISHABLE_KEY);
-
-    clerk.load().then(function () {
-
-      if (clerk.user) {
-        // Already authenticated
-        setStatus('Session found.', 'Setting up your workspace...');
-        onAuthenticated(clerk);
-
-      } else {
-        // Not authenticated — redirect to Clerk hosted sign-in
-        // redirect_url brings them back here so we can set up their session
-        setStatus('Redirecting to sign in...', 'You will be brought back automatically.');
-
-        var returnHere = BASE + 'access.html?redirect=' + encodeURIComponent(redirect);
-        var signInUrl  = CLERK_SIGN_IN + '?redirect_url=' + encodeURIComponent(returnHere);
-
-        setTimeout(function () {
-          window.location.replace(signInUrl);
-        }, 200);
-      }
-
-    }).catch(function (err) {
-      console.error('Clerk load error:', err);
-      showError('Could not connect to authentication. Please check your connection and try again.');
+    // Wait for Clerk to be ready — it fires 'clerk:loaded' event
+    window.addEventListener('load', function() {
+      // Clerk auto-initialises via the data-clerk-publishable-key attribute
+      // We wait for the global window.Clerk to be available and loaded
+      var maxWait = 10000; // 10s timeout
+      var waited  = 0;
+      var interval = setInterval(function() {
+        waited += 200;
+        if (waited > maxWait) {
+          clearInterval(interval);
+          showError('Clerk took too long to load. Please check your connection and retry.');
+          return;
+        }
+        if (window.Clerk && typeof window.Clerk.load === 'function') {
+          clearInterval(interval);
+          bootClerk();
+        }
+      }, 200);
     });
+
+    function bootClerk() {
+      setStatus('Connecting...', '');
+      window.Clerk.load().then(function() {
+        if (window.Clerk.user) {
+          // Authenticated — store IDs and go
+          setStatus('Signed in.', 'Setting up your workspace...');
+          localStorage.setItem('sr_user_id', window.Clerk.user.id);
+          var email = window.Clerk.user.primaryEmailAddress
+            ? window.Clerk.user.primaryEmailAddress.emailAddress
+            : '';
+          sessionStorage.setItem('sr_user_email', email);
+          sessionStorage.setItem('sr_access', 'true');
+          setTimeout(function() { window.location.replace(redirect); }, 300);
+        } else {
+          // Not authenticated — let Clerk handle the redirect to sign-in
+          setStatus('Redirecting to sign in...', '');
+          window.Clerk.redirectToSignIn({
+            redirectUrl: BASE + 'access.html?redirect=' + encodeURIComponent(redirect)
+          });
+        }
+      }).catch(function(err) {
+        console.error('Clerk.load() error:', err);
+        showError('Could not connect to authentication. Please check your connection and try again.');
+      });
+    }
   </script>
 </body>
 </html>
