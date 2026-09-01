@@ -47,7 +47,7 @@
     .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.70);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;margin-bottom:2px}
     .nav-item:hover{background:rgba(99,102,241,0.08);color:var(--white);border-color:rgba(99,102,241,0.15)}
     .nav-item.active{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.30);color:#c4b5fd;font-weight:500}
-    .nav-item .icon{font-size:16px;flex-shrink:0;opacity:1;filter:none}
+    .nav-item .icon{font-size:16px;flex-shrink:0}
     .nav-badge{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--red);color:#fff;border-radius:10px;padding:1px 6px}
     .meridian-chip{margin-top:auto;padding:16px 16px;border-radius:12px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.20);transition:all .3s;cursor:default}
     .meridian-chip.incomplete{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.5);animation:meridianGlow 2.5s ease-in-out infinite;cursor:pointer}
@@ -90,6 +90,10 @@
     .aria-label{text-align:right}
     .aria-label .name{font-family:'Bricolage Grotesque',sans-serif;font-size:12px;font-weight:600;color:var(--muted)}
     .aria-label .status{font-size:11px;color:var(--grey)}
+
+    /* HUMAC WIDGET */
+    #humac-widget{background:var(--card);border:1px solid rgba(99,102,241,.18);border-radius:16px;padding:24px 28px;margin-bottom:24px;position:relative;overflow:hidden;animation:fadeIn .4s ease .05s both}
+    #humac-widget::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.4),transparent)}
 
     /* CALENDAR BANNER */
     .cal-banner{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.20);border-radius:12px;padding:16px 20px;display:flex;align-items:flex-start;gap:16px;margin-bottom:24px;animation:fadeIn .4s ease .1s both}
@@ -170,6 +174,8 @@
 </head>
 <body>
 
+  <canvas id="vantage-stars"></canvas>
+
   <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">
@@ -231,11 +237,11 @@
     <a href="data-dashboard.html" class="nav-item">
       <span class="icon">🔒</span> Data &amp; Privacy
     </a>
-    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()">
+    <a href="#" class="nav-item" onclick="clerkSignOut(); return false;">
       <span class="icon">↩</span> Sign out
     </a>
 
-<div class="meridian-chip" id="meridian-chip">
+    <div class="meridian-chip" id="meridian-chip">
       <div class="m-header">
         <div class="label">MERIDIAN Profile</div>
         <div class="m-badge" id="meridian-badge">Incomplete</div>
@@ -296,6 +302,9 @@
         </div>
       </div>
     </div>
+
+    <!-- HUMAC SCORE WIDGET -->
+    <div id="humac-widget"></div>
 
     <!-- Calendar Banner -->
     <div class="cal-banner">
@@ -439,71 +448,135 @@
     document.getElementById('meridian-overlay').addEventListener('click', function(e) {
       if (e.target === this) closeMeridianPopup();
     });
+
+    // ─────────────────────────────────────
+    // HUMAC SCORE WIDGET
+    // ─────────────────────────────────────
+    (function initHumacWidget() {
+      var widget = document.getElementById('humac-widget');
+      if (!widget) return;
+
+      var data;
+      try { data = JSON.parse(sessionStorage.getItem('vantage_humac') || 'null'); } catch(e) {}
+
+      if (!data) {
+        // Empty state — no score yet
+        widget.innerHTML =
+          '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">' +
+            '<div>' +
+              '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px">Humac Score</div>' +
+              '<div style="font-family:\'Bricolage Grotesque\',sans-serif;font-size:1.1rem;font-weight:600;color:#f4f3ff;margin-bottom:6px">Your financial baseline is not set</div>' +
+              '<div style="font-size:.82rem;color:rgba(244,243,255,.45);line-height:1.5;max-width:420px">Generate your Humac Score — the measure of how efficiently your organisation converts people investment into financial and organisational value.</div>' +
+            '</div>' +
+            '<a href="humac-onboarding.html" style="display:inline-flex;align-items:center;gap:8px;font-family:\'JetBrains Mono\',monospace;font-size:.68rem;background:#6366f1;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;flex-shrink:0;transition:all .15s" onmouseover="this.style.background=\'#5254d4\'" onmouseout="this.style.background=\'#6366f1\'">' +
+              'Generate baseline score →' +
+            '</a>' +
+          '</div>';
+        return;
+      }
+
+      // Score state — has score
+      var bands = {
+        'Value Destruction': '#E05C3A',
+        'Value Neutral': '#a5b4fc',
+        'Value Generating': '#6366f1',
+        'Value Compounding': '#7c3aed',
+        'Value Exceptional': '#c4b5fd'
+      };
+      var bandColor = bands[data.band] || '#6366f1';
+      var confLabels = {high: 'Computed', medium: 'Medium confidence', low: 'Estimated'};
+      var confDots = {high: '●', medium: '◐', low: '○'};
+      var ts = data.timestamp ? new Date(data.timestamp).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : '';
+      var pillars = [
+        {label:'L1', score: data.l1 || 0},
+        {label:'L2', score: data.l2 || 0},
+        {label:'L3', score: data.l3 || 0},
+        {label:'L4', score: data.l4 || 0},
+        {label:'L5', score: data.l5 || 0}
+      ];
+
+      widget.innerHTML =
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap">' +
+          '<div>' +
+            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:#a5b4fc;margin-bottom:10px">Humac Score</div>' +
+            '<div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">' +
+              '<div>' +
+                '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.56rem;color:rgba(244,243,255,.3);margin-bottom:2px">Humac</div>' +
+                '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:3.4rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (data.humac || 0) + '</div>' +
+              '</div>' +
+              '<div style="color:rgba(99,102,241,.25);font-size:1.6rem;align-self:center">|</div>' +
+              '<div>' +
+                '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.56rem;color:rgba(244,243,255,.3);margin-bottom:2px">HCI-adjusted</div>' +
+                '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:2.4rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#a5b4fc,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (data.hciAdj || 0) + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="text-align:right">' +
+            '<div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;border:1px solid ' + bandColor + '33;background:' + bandColor + '14;margin-bottom:6px">' +
+              '<div style="width:7px;height:7px;border-radius:50%;background:' + bandColor + '"></div>' +
+              '<span style="font-family:\'JetBrains Mono\',monospace;font-size:.6rem;color:' + bandColor + '">' + (data.band || '') + '</span>' +
+            '</div>' +
+            (ts ? '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.52rem;color:rgba(244,243,255,.2)">Set ' + ts + '</div>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:0;margin-bottom:14px;border:1px solid rgba(99,102,241,.08);border-radius:8px;overflow:hidden">' +
+          pillars.map(function(p, i) {
+            return '<div style="flex:1;padding:8px 0;' + (i < pillars.length-1 ? 'border-right:1px solid rgba(99,102,241,.08);' : '') + '">' +
+              '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.5rem;color:rgba(244,243,255,.22);margin-bottom:4px;text-align:center">' + p.label + '</div>' +
+              '<div style="height:3px;background:rgba(99,102,241,.08);margin:0 8px 4px;border-radius:2px;overflow:hidden">' +
+                '<div style="height:100%;width:' + p.score + '%;background:linear-gradient(90deg,#6366f1,#7c3aed);border-radius:2px"></div>' +
+              '</div>' +
+              '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.68rem;font-weight:500;color:#a5b4fc;text-align:center">' + p.score + '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between">' +
+          '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.54rem;color:rgba(244,243,255,.22)">' +
+            (confDots[data.confidence] || '○') + ' ' + (confLabels[data.confidence] || 'Estimated') +
+            ' · HCI ' + ((data.hci || 1).toFixed(2)) + 'x' +
+          '</div>' +
+          '<a href="humac-onboarding.html" style="font-family:\'JetBrains Mono\',monospace;font-size:.58rem;color:rgba(99,102,241,.55);text-decoration:none" onmouseover="this.style.color=\'#6366f1\'" onmouseout="this.style.color=\'rgba(99,102,241,.55)\'">Update score →</a>' +
+        '</div>';
+    })();
   </script>
-<script src="sidebar-shared.js"></script>
+
+  <script src="clerk-auth.js"></script>
+  <script src="sidebar-shared.js"></script>
 
   <script>
-  // Vantage starfield — same feel as virorah.com
+  // Vantage starfield
   (function(){
     var cv = document.getElementById('vantage-stars');
     if (!cv) return;
     var ctx = cv.getContext('2d');
     var stars = [], W, H;
-
-    function resize(){
-      W = cv.width  = window.innerWidth;
-      H = cv.height = window.innerHeight;
-    }
+    function resize(){ W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
     resize();
     window.addEventListener('resize', resize);
-
-    // Generate stars
     for (var i = 0; i < 160; i++) {
-      stars.push({
-        x: Math.random(),
-        y: Math.random(),
-        r: 0.4 + Math.random() * 1.0,
-        alpha: 0.08 + Math.random() * 0.35,
-        phase: Math.random() * Math.PI * 2,
-        speed: 0.004 + Math.random() * 0.008
-      });
+      stars.push({ x:Math.random(), y:Math.random(), r:0.4+Math.random()*1.0, alpha:0.08+Math.random()*0.35, phase:Math.random()*Math.PI*2, speed:0.004+Math.random()*0.008 });
     }
-
-    // A few brighter accent nodes
     for (var j = 0; j < 18; j++) {
-      stars.push({
-        x: Math.random(), y: Math.random(),
-        r: 1.2 + Math.random() * 1.8,
-        alpha: 0.3 + Math.random() * 0.4,
-        phase: Math.random() * Math.PI * 2,
-        speed: 0.003 + Math.random() * 0.005,
-        hot: true
-      });
+      stars.push({ x:Math.random(), y:Math.random(), r:1.2+Math.random()*1.8, alpha:0.3+Math.random()*0.4, phase:Math.random()*Math.PI*2, speed:0.003+Math.random()*0.005, hot:true });
     }
-
-    var t = 0;
     function draw() {
       ctx.clearRect(0, 0, W, H);
-      t += 0.012;
-
       stars.forEach(function(s) {
         s.phase += s.speed;
         var twinkle = s.alpha * (0.55 + Math.sin(s.phase) * 0.45);
         ctx.beginPath();
-        ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+        ctx.arc(s.x*W, s.y*H, s.r, 0, Math.PI*2);
         if (s.hot) {
-          // Brighter nodes get a soft glow
-          var grd = ctx.createRadialGradient(s.x*W, s.y*H, 0, s.x*W, s.y*H, s.r * 3);
-          grd.addColorStop(0, 'rgba(165,180,252,' + twinkle + ')');
+          var grd = ctx.createRadialGradient(s.x*W, s.y*H, 0, s.x*W, s.y*H, s.r*3);
+          grd.addColorStop(0, 'rgba(165,180,252,'+twinkle+')');
           grd.addColorStop(1, 'rgba(99,102,241,0)');
           ctx.fillStyle = grd;
-          ctx.arc(s.x * W, s.y * H, s.r * 3, 0, Math.PI * 2);
+          ctx.arc(s.x*W, s.y*H, s.r*3, 0, Math.PI*2);
         } else {
-          ctx.fillStyle = 'rgba(165,180,252,' + twinkle + ')';
+          ctx.fillStyle = 'rgba(165,180,252,'+twinkle+')';
         }
         ctx.fill();
       });
-
       requestAnimationFrame(draw);
     }
     draw();
