@@ -306,6 +306,9 @@
 
     async function completeMERIDIAN() {
       sessionStorage.setItem('sr_meridian', JSON.stringify(profile));
+      // Persist to localStorage so MERIDIAN survives sign-out and is restored on next login
+      var _mEmail = sessionStorage.getItem('sr_user_email') || localStorage.getItem('sr_user_email') || '';
+      if (_mEmail) { localStorage.setItem('sr_meridian_' + _mEmail, JSON.stringify(profile)); }
       document.getElementById('progress-fill').style.width = '100%';
       document.getElementById('progress-label').innerText = 'Complete';
       document.getElementById('progress-pct').innerText = '100%';
