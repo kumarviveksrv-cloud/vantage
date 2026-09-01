@@ -636,6 +636,139 @@
       showView('intake-view');
     }
   </script>
+
+  <script>
+    // ── WHISPER VOICE INPUT ──────────────────────────────────────────────────
+    // AudioContext + ScriptProcessor captures raw PCM → encodes WAV →
+    // POSTs to Cloudflare Worker → OpenAI Whisper → transcript in textarea.
+    // Tap once to start. Tap again to stop. No browser speech engine.
+    (function() {
+      var _active = false;
+      var _audioCtx = null;
+      var _micStream = null;
+      var _processor = null;
+      var _source = null;
+      var _buffers = [];
+      var _sampleRate = 44100;
+
+      function getToken() { return sessionStorage.getItem('sr_session_token') || ''; }
+      function getWorker() { return 'https://situation-room-api.kumarvivek-srv.workers.dev'; }
+
+      function startRec(btn, targetId) {
+        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false })
+          .then(function(stream) {
+            _micStream = stream;
+            _buffers = [];
+            try {
+              _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+              if (_audioCtx.state === 'suspended') _audioCtx.resume();
+              _sampleRate = _audioCtx.sampleRate;
+              _source = _audioCtx.createMediaStreamSource(stream);
+              _processor = _audioCtx.createScriptProcessor(4096, 1, 1);
+              _processor.onaudioprocess = function(e) {
+                if (!_active) return;
+                _buffers.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+              };
+              _source.connect(_processor);
+              _processor.connect(_audioCtx.destination);
+              _active = true;
+              setBtnState(btn, 'recording');
+              var el = document.getElementById(targetId);
+              if (el) { el._ph = el.placeholder; el.placeholder = 'Listening… tap ⏹ to stop and transcribe'; }
+            } catch(err) { releaseMic(); setBtnState(btn, 'idle'); }
+          })
+          .catch(function(err) {
+            var msg = err.name === 'NotAllowedError' ? 'Mic blocked — click the camera icon in the address bar' : 'Mic unavailable — try again';
+            setBtnState(btn, 'idle');
+            btn.title = msg;
+            btn.style.borderColor = 'rgba(248,113,113,0.6)';
+            setTimeout(function(){ btn.style.borderColor = ''; }, 3000);
+          });
+      }
+
+      function stopRec(btn, targetId) {
+        _active = false;
+        try { if (_processor) { _processor.disconnect(); _processor = null; } } catch(e) {}
+        try { if (_source) { _source.disconnect(); _source = null; } } catch(e) {}
+        var chunks = _buffers.slice(); _buffers = [];
+        releaseMic();
+        var el = document.getElementById(targetId);
+        if (el && el._ph) { el.placeholder = el._ph; }
+        if (!chunks.length) { setBtnState(btn, 'idle'); return; }
+        setBtnState(btn, 'processing');
+        transcribe(encodeWAV(chunks, _sampleRate), btn, targetId);
+      }
+
+      function releaseMic() {
+        if (_micStream) { try { _micStream.getTracks().forEach(function(t){ t.stop(); }); } catch(e){} _micStream = null; }
+      }
+
+      function encodeWAV(buffers, sr) {
+        var total = 0; buffers.forEach(function(b){ total += b.length; });
+        var merged = new Float32Array(total); var off = 0;
+        buffers.forEach(function(b){ merged.set(b, off); off += b.length; });
+        var pcm = new Int16Array(merged.length);
+        for (var i = 0; i < merged.length; i++) {
+          var s = Math.max(-1, Math.min(1, merged[i]));
+          pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        }
+        var buf = new ArrayBuffer(44 + pcm.buffer.byteLength);
+        var v = new DataView(buf);
+        function ws(o, s){ for(var i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i)); }
+        ws(0,'RIFF'); v.setUint32(4,36+pcm.buffer.byteLength,true); ws(8,'WAVE');
+        ws(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+        v.setUint32(24,sr,true); v.setUint32(28,sr*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
+        ws(36,'data'); v.setUint32(40,pcm.buffer.byteLength,true);
+        new Int16Array(buf,44).set(pcm);
+        return new Blob([buf],{type:'audio/wav'});
+      }
+
+      function transcribe(blob, btn, targetId) {
+        var fd = new FormData();
+        fd.append('audio', blob, 'recording.wav');
+        fd.append('token', getToken());
+        fetch(getWorker() + '/transcribe', { method: 'POST', body: fd })
+          .then(function(r){ if(!r.ok) return r.json().then(function(d){ throw new Error(d.error||'Transcription failed'); }); return r.json(); })
+          .then(function(data) {
+            if (data.text && data.text.trim()) {
+              var el = document.getElementById(targetId);
+              if (el) {
+                var existing = el.value.trim();
+                el.value = existing ? existing + ' ' + data.text.trim() : data.text.trim();
+                el.dispatchEvent(new Event('input'));
+              }
+            }
+            setBtnState(btn, 'idle');
+          })
+          .catch(function(err) {
+            console.error('Whisper error:', err);
+            setBtnState(btn, 'idle');
+            btn.title = (err && err.message) || 'Transcription failed — try again';
+            btn.style.borderColor = 'rgba(248,113,113,0.6)';
+            setTimeout(function(){ btn.style.borderColor=''; btn.title='Tap to speak'; }, 3000);
+          });
+      }
+
+      function setBtnState(btn, state) {
+        if (!btn) return;
+        if (state === 'recording') {
+          btn.innerHTML = '&#9209;'; btn.classList.add('listening'); btn.title = 'Tap to stop';
+        } else if (state === 'processing') {
+          btn.innerHTML = '&#8987;'; btn.classList.remove('listening'); btn.title = 'Transcribing…';
+        } else {
+          btn.innerHTML = '&#127908;'; btn.classList.remove('listening'); btn.title = 'Tap to speak';
+        }
+      }
+
+      window.toggleVoiceInput = function(targetId, btn) {
+        if (!navigator.mediaDevices || (!window.AudioContext && !window.webkitAudioContext)) {
+          alert('Voice input requires Chrome or a modern browser.');
+          return;
+        }
+        if (_active) { stopRec(btn, targetId); } else { startRec(btn, targetId); }
+      };
+    })();
+  </script>
   <script src="clerk-auth.js"></script>
   <script src="sidebar-shared.js"></script>
 </body>
