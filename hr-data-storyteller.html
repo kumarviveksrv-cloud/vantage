@@ -12,11 +12,12 @@
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
     body{display:flex}
-    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.25);--grey:rgba(244,243,255,0.45);--dim:rgba(244,243,255,0.25)}
+    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--grey:rgba(244,243,255,0.45);--dim:rgba(244,243,255,0.25)}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
     @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
+    /* SIDEBAR */
     .sidebar{width:220px;flex-shrink:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto}
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
     .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
@@ -31,6 +32,7 @@
     .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
     .meridian-chip .val{font-size:11px;color:var(--grey)}
 
+    /* MAIN */
     .main{flex:1;overflow-y:auto;height:100vh;padding:28px 32px;background-image:linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px);background-size:48px 48px}
     .page-header{margin-bottom:28px;animation:fadeIn .3s ease}
     .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
@@ -39,10 +41,10 @@
     .page-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:700;margin-bottom:4px;color:#f4f3ff}
     .page-sub{font-size:13px;color:var(--grey)}
 
+    /* INTAKE */
     .intro-card{background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:14px;padding:22px 26px;margin-bottom:24px;animation:fadeIn .3s ease}
     .intro-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;margin-bottom:12px}
     .intro-body{font-size:13px;color:rgba(244,243,255,0.5);line-height:1.75}
-
     .intake-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px;animation:fadeIn .3s ease}
     .form-section{margin-bottom:22px}
     .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:block}
@@ -64,43 +66,90 @@
     .submit-btn:hover{opacity:.88}
     .submit-btn:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
 
+    /* LOADING */
     .loading-state{text-align:center;padding:60px 20px;animation:fadeIn .3s ease}
     .loading-orb{width:64px;height:64px;margin:0 auto 24px}
     .loading-orb svg{animation:spin 2s linear infinite}
     .loading-text{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.08em}
 
+    /* OUTPUT */
     .output-section{animation:fadeIn .4s ease}
-    .narrative-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px}
-    .narrative-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px}
-    .narrative-label::after{content:'';flex:1;height:1px;background:var(--border)}
-    .narrative-text{font-size:14px;color:rgba(244,243,255,0.75);line-height:1.85;white-space:pre-wrap}
+
+    /* HEADLINE CARD */
+    .headline-card{background:linear-gradient(135deg,rgba(99,102,241,0.10),rgba(124,58,237,0.04));border:1px solid rgba(99,102,241,0.30);border-radius:16px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden}
+    .headline-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.7),transparent)}
+    .headline-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+    .headline-text{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;color:#f4f3ff;line-height:1.4}
+
+    /* TOP ROW: Revenue at Risk + Humac */
+    .top-two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+    .rar-card{background:rgba(255,77,109,0.05);border:1px solid rgba(255,77,109,0.2);border-radius:14px;padding:20px 24px}
+    .rar-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,77,109,0.7);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+    .rar-figure{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:#FF4D6D;letter-spacing:-0.5px;margin-bottom:6px}
+    .rar-basis{font-size:12px;color:rgba(244,243,255,0.5);line-height:1.5;margin-bottom:8px}
+    .rar-conf{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase}
+    .conf-high{color:rgba(34,197,94,0.9);background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25)}
+    .conf-medium{color:#FFB547;background:rgba(255,181,71,0.1);border:1px solid rgba(255,181,71,0.25)}
+    .conf-low{color:var(--muted);background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2)}
+    .humac-signal-card{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.25);border-radius:14px;padding:20px 24px}
+    .humac-signal-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+    .humac-signal-range{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#c4b5fd;letter-spacing:-0.3px;margin-bottom:6px}
+    .humac-signal-pillar{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+    .pillar-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;color:#c4b5fd;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.28)}
+    .humac-signal-rationale{font-size:12px;color:var(--grey);line-height:1.5;margin-bottom:8px}
+    .humac-signal-breakdown{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+    .humac-breakdown-item{font-size:11px;color:var(--dim);line-height:1.5;display:flex;gap:6px}
+    .humac-breakdown-dot{color:var(--muted);flex-shrink:0}
+    .trajectory-note{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.12);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--grey);line-height:1.5}
+    .traj-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(165,180,252,0.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+
+    /* SIGNAL GRID */
     .signal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
     .signal-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px}
-    .signal-dim{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
-    .signal-content{font-size:13px;color:var(--grey);line-height:1.6}
+    .signal-dim{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+    .signal-narrative{font-size:13px;color:var(--grey);line-height:1.6;margin-bottom:10px}
+    .signal-sub{font-size:12px;color:var(--dim);line-height:1.5}
+    .signal-figure{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;margin-bottom:6px}
+    .signal-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .signal-pill{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.18);color:var(--muted)}
     .signal-card.s-card{border-color:rgba(99,102,241,0.2);background:rgba(99,102,241,0.04)}
     .signal-card.i-card{border-color:rgba(255,181,71,0.2);background:rgba(255,181,71,0.03)}
     .signal-card.g-card{border-color:rgba(255,77,109,0.2);background:rgba(255,77,109,0.03)}
-    .signal-card.n-card{border-color:rgba(99,102,241,0.2);background:rgba(99,102,241,0.04)}
     .signal-card.a-card{border-color:rgba(165,180,252,0.2);background:rgba(165,180,252,0.04)}
     .signal-card.l-card{border-color:rgba(196,181,253,0.2);background:rgba(196,181,253,0.04)}
     .dim-s{color:var(--muted)}
     .dim-i{color:#FFB547}
     .dim-g{color:#FF4D6D}
-    .dim-n{color:var(--muted)}
     .dim-a{color:var(--muted)}
     .dim-l{color:var(--lavender)}
+    .gap-flow{display:flex;align-items:center;gap:6px;margin:8px 0;font-size:11px}
+    .gap-state{background:rgba(5,4,16,0.5);border:1px solid rgba(244,243,255,0.08);border-radius:6px;padding:4px 8px;color:var(--dim);font-size:11px;line-height:1.4}
+    .gap-arrow{color:var(--muted);font-size:12px;flex-shrink:0}
+    .gap-value{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:#FF4D6D;margin-top:4px}
+    .action-timeline{display:flex;flex-direction:column;gap:6px}
+    .action-horizon{display:flex;gap:8px;align-items:flex-start}
+    .horizon-badge{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 6px;border-radius:3px;flex-shrink:0;margin-top:2px;letter-spacing:.04em;text-transform:uppercase}
+    .hz-now{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:rgba(34,197,94,0.8)}
+    .hz-30{background:rgba(255,181,71,0.1);border:1px solid rgba(255,181,71,0.2);color:#FFB547}
+    .hz-90{background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);color:var(--muted)}
+    .horizon-text{font-size:12px;color:var(--grey);line-height:1.5}
 
-    .talking-points{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
-    .talking-point-item{display:flex;gap:12px;margin-bottom:14px}
-    .tp-num{width:24px;height:24px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0;font-weight:700;margin-top:2px}
-    .tp-text{font-size:13px;color:var(--grey);line-height:1.6}
+    /* NARRATIVE VERSIONS */
+    .narrative-section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
+    .narrative-tabs{display:flex;gap:8px;margin-bottom:18px}
+    .ntab{padding:8px 16px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;border:1px solid rgba(99,102,241,0.15);color:var(--grey);background:transparent}
+    .ntab.active{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.35);color:#c4b5fd}
+    .narrative-content{font-size:14px;color:rgba(244,243,255,0.75);line-height:1.85;white-space:pre-wrap}
+    .ntab-note{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);margin-bottom:12px}
 
-    .data-anchor{background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:20px 24px;margin-bottom:20px}
-    .da-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
-    .da-number{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:var(--lavender);letter-spacing:-0.5px;margin-bottom:6px}
-    .da-context{font-size:13px;color:var(--grey);line-height:1.55}
+    /* ARIA OFFER */
+    .aria-offer-card{background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(99,102,241,0.04));border:1px solid rgba(124,58,237,0.22);border-radius:12px;padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .aria-offer-inner{flex:1}
+    .aria-offer-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#c4b5fd;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+    .aria-offer-text{font-size:13px;color:var(--grey);line-height:1.5}
+    .aria-offer-btn{padding:10px 20px;background:linear-gradient(135deg,var(--violet),var(--accent));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;white-space:nowrap;box-shadow:0 4px 14px rgba(99,102,241,0.3)}
 
+    /* ACTION ROW */
     .action-row{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap}
     .btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
     .btn-primary:hover{opacity:.88}
@@ -109,80 +158,47 @@
 
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
-    @media(max-width:768px){.sidebar{display:none}.main{padding:20px 16px}.audience-grid{grid-template-columns:repeat(2,1fr)}.metrics-grid{grid-template-columns:1fr}.signal-grid{grid-template-columns:1fr}}
+    @media(max-width:768px){.sidebar{display:none}.main{padding:20px 16px}.audience-grid{grid-template-columns:repeat(2,1fr)}.metrics-grid{grid-template-columns:1fr}.signal-grid{grid-template-columns:1fr}.top-two-col{grid-template-columns:1fr}.aria-offer-card{flex-direction:column;align-items:flex-start}}
   </style>
 </head>
 <body>
 
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="logo" onclick="window.location.href='index.html'">
       <div class="logo-dot"></div>
       <div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div>
     </div>
-    <a href="dashboard.html" class="nav-item">
-      <span class="icon">⊞</span> Dashboard
-    </a>
-
+    <a href="dashboard.html" class="nav-item"><span class="icon">⊞</span> Dashboard</a>
     <div class="nav-section">Core Tools</div>
-    <a href="er-case-navigator.html" class="nav-item">
-      <span class="icon">⚡</span> ER Case Navigator
-      <span class="nav-badge">0</span>
-    </a>
-    <a href="hr-data-storyteller.html" class="nav-item active">
-      <span class="icon">📊</span> HR Data Storyteller
-    </a>
-    <a href="stakeholder-influence.html" class="nav-item">
-      <span class="icon">🎯</span> Stakeholder Influence
-    </a>
-
+    <a href="er-case-navigator.html" class="nav-item"><span class="icon">⚡</span> ER Case Navigator</a>
+    <a href="hr-data-storyteller.html" class="nav-item active"><span class="icon">📊</span> HR Data Storyteller</a>
+    <a href="stakeholder-influence.html" class="nav-item"><span class="icon">🎯</span> Stakeholder Influence</a>
     <div class="nav-section">Intelligence</div>
-    <a href="aria.html" class="nav-item">
-      <span class="icon">✦</span> ARIA
-    </a>
-    <a href="policy-compass.html" class="nav-item">
-      <span class="icon">🧭</span> Policy Compass
-    </a>
-    <a href="conversation-simulator.html" class="nav-item">
-      <span class="icon">🎭</span> Conversation Simulator
-    </a>
-
+    <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
+    <a href="policy-compass.html" class="nav-item"><span class="icon">🧭</span> Policy Compass</a>
+    <a href="conversation-simulator.html" class="nav-item"><span class="icon">🎭</span> Conversation Simulator</a>
     <div class="nav-section">My Record</div>
-    <a href="case-library.html" class="nav-item">
-      <span class="icon">◎</span> Case Library
-    </a>
-    <a href="debrief.html" class="nav-item">
-      <span class="icon">📋</span> The Debrief
-    </a>
-
+    <a href="case-library.html" class="nav-item"><span class="icon">◎</span> Case Library</a>
+    <a href="debrief.html" class="nav-item"><span class="icon">📋</span> The Debrief</a>
     <div class="nav-section">Philosophy</div>
-    <a href="https://humacity.com" class="nav-item" target="_blank">
-      <span class="icon">🌀</span> Humacity
-    </a>
-
+    <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">🌀</span> Humacity</a>
     <div class="nav-section">Legal</div>
-    <a href="terms.html" class="nav-item">
-      <span class="icon">📄</span> Terms of Service
-    </a>
-    <a href="privacy.html" class="nav-item">
-      <span class="icon">🔒</span> Privacy Policy
-    </a>
-
+    <a href="terms.html" class="nav-item"><span class="icon">📄</span> Terms of Service</a>
+    <a href="privacy.html" class="nav-item"><span class="icon">🔒</span> Privacy Policy</a>
     <div class="nav-section">Account</div>
-    <a href="data-dashboard.html" class="nav-item">
-      <span class="icon">🔒</span> Data &amp; Privacy
-    </a>
-    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()">
-      <span class="icon">↩</span> Sign out
-    </a>
-
-<div class="meridian-chip">
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">🔒</span> Data &amp; Privacy</a>
+    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()"><span class="icon">↩</span> Sign out</a>
+    <div class="meridian-chip">
       <div class="label">MERIDIAN Active</div>
       <div class="val" id="meridian-chip-val">Loading...</div>
     </div>
   </div>
 
+  <!-- MAIN -->
   <div class="main">
 
+    <!-- INTAKE VIEW -->
     <div id="intake-view">
       <div class="page-header">
         <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; HR Data Storyteller</div>
@@ -193,7 +209,7 @@
         <div class="intro-title">Numbers without narrative get ignored.</div>
         <div class="intro-body">
           <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);padding:3px 8px;border-radius:3px;margin-right:8px">SIGNAL</span>
-          This framework turns your HR metrics into a CFO-ready narrative across six dimensions: <strong style="color:rgba(244,243,255,0.8)">Situation</strong> (what's the context?), <strong style="color:rgba(244,243,255,0.8)">Impact</strong> (what does this cost?), <strong style="color:rgba(244,243,255,0.8)">Gap</strong> (what's missing?), <strong style="color:rgba(244,243,255,0.8)">Narrative</strong> (what's the story?), <strong style="color:rgba(244,243,255,0.8)">Action</strong> (what should happen?), <strong style="color:rgba(244,243,255,0.8)">Linkage</strong> (how does this connect to business outcomes?). The output is something you can walk into any leadership meeting with and own.
+          This framework turns your HR metrics into a CFO-ready narrative. Output includes the headline number that opens the room, Revenue at Risk (the forward-looking financial exposure of inaction), six SIGNAL dimensions, and three calibrated narrative versions — boardroom, CFO, and CEO. Walk in with it. Own it.
         </div>
       </div>
       <div class="intake-card">
@@ -232,6 +248,7 @@
       </div>
     </div>
 
+    <!-- LOADING VIEW -->
     <div id="loading-view" style="display:none">
       <div class="page-header"><div class="page-title">&#x1F4CA; HR Data Storyteller</div></div>
       <div class="loading-state">
@@ -245,6 +262,7 @@
       </div>
     </div>
 
+    <!-- OUTPUT VIEW -->
     <div id="output-view" style="display:none">
       <div class="page-header">
         <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="hr-data-storyteller.html">HR Data Storyteller</a> &middot; SIGNAL Output</div>
@@ -252,32 +270,104 @@
         <div class="page-sub" id="output-audience-label">Ready to present</div>
       </div>
       <div class="output-section">
-        <div class="data-anchor">
-          <div class="da-label">The Number That Opens the Room</div>
-          <div class="da-number" id="da-number">&#8212;</div>
-          <div class="da-context" id="da-context"></div>
+
+        <!-- Headline -->
+        <div class="headline-card">
+          <div class="headline-label">The number that opens the room</div>
+          <div class="headline-text" id="headline-text">&#8212;</div>
         </div>
+
+        <!-- Revenue at Risk + Humac -->
+        <div class="top-two-col">
+          <div class="rar-card">
+            <div class="rar-label">&#x26A0;&#xFE0F; Revenue at Risk — cost of inaction (12 months)</div>
+            <div class="rar-figure" id="rar-figure">&#8212;</div>
+            <div class="rar-basis" id="rar-basis"></div>
+            <span class="rar-conf" id="rar-conf"></span>
+          </div>
+          <div class="humac-signal-card">
+            <div class="humac-signal-label">Humac Financial Translation</div>
+            <div class="humac-signal-range" id="humac-range">&#8212;</div>
+            <div class="humac-signal-pillar">
+              <span class="pillar-badge" id="humac-pillar-badge"></span>
+              <span class="rar-conf" id="humac-conf"></span>
+            </div>
+            <div class="humac-signal-rationale" id="humac-rationale"></div>
+            <div class="humac-signal-breakdown" id="humac-breakdown"></div>
+            <div class="trajectory-note" id="humac-trajectory-wrap" style="display:none">
+              <div class="traj-label">Trajectory Connection</div>
+              <div id="humac-trajectory"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIGNAL grid: S, I, G, A, L (5 cards, N gets its own section below) -->
         <div class="signal-grid">
-          <div class="signal-card s-card"><div class="signal-dim dim-s">S &mdash; Situation</div><div class="signal-content" id="sig-s"></div></div>
-          <div class="signal-card i-card"><div class="signal-dim dim-i">I &mdash; Impact</div><div class="signal-content" id="sig-i"></div></div>
-          <div class="signal-card g-card"><div class="signal-dim dim-g">G &mdash; Gap</div><div class="signal-content" id="sig-g"></div></div>
-          <div class="signal-card n-card"><div class="signal-dim dim-n">N &mdash; Narrative</div><div class="signal-content" id="sig-n"></div></div>
-          <div class="signal-card a-card"><div class="signal-dim dim-a">A &mdash; Action</div><div class="signal-content" id="sig-a"></div></div>
-          <div class="signal-card l-card"><div class="signal-dim dim-l">L &mdash; Linkage</div><div class="signal-content" id="sig-l"></div></div>
+
+          <div class="signal-card s-card">
+            <div class="signal-dim dim-s">S &mdash; Situation</div>
+            <div class="signal-narrative" id="sig-s-narrative"></div>
+            <div class="signal-pills" id="sig-s-metrics"></div>
+          </div>
+
+          <div class="signal-card i-card">
+            <div class="signal-dim dim-i">I &mdash; Impact</div>
+            <div class="signal-figure" style="color:#FFB547" id="sig-i-figure"></div>
+            <div class="signal-narrative" id="sig-i-narrative"></div>
+            <div class="signal-sub" id="sig-i-breakdown"></div>
+          </div>
+
+          <div class="signal-card g-card">
+            <div class="signal-dim dim-g">G &mdash; Gap</div>
+            <div class="gap-value" id="sig-g-value"></div>
+            <div class="signal-narrative" id="sig-g-narrative"></div>
+            <div class="gap-flow" id="sig-g-flow" style="display:none">
+              <div class="gap-state" id="sig-g-current"></div>
+              <div class="gap-arrow">&#x2192;</div>
+              <div class="gap-state" id="sig-g-desired"></div>
+            </div>
+          </div>
+
+          <div class="signal-card a-card">
+            <div class="signal-dim dim-a">A &mdash; Action</div>
+            <div class="action-timeline" id="sig-a-timeline"></div>
+          </div>
+
+          <div class="signal-card l-card" style="grid-column:span 2">
+            <div class="signal-dim dim-l">L &mdash; Linkage to Business</div>
+            <div class="signal-narrative" id="sig-l-outcome"></div>
+            <div class="signal-sub" id="sig-l-revenue"></div>
+          </div>
+
         </div>
-        <div class="narrative-card">
-          <div class="narrative-label">Full Narrative &mdash; Present this verbatim or adapt it</div>
-          <div class="narrative-text" id="full-narrative"></div>
+
+        <!-- Narrative versions -->
+        <div class="narrative-section">
+          <div class="narrative-tabs">
+            <button class="ntab active" onclick="switchNarrative('boardroom',this)">&#x1F3DB; Boardroom</button>
+            <button class="ntab" onclick="switchNarrative('cfo',this)">&#x1F4B0; CFO</button>
+            <button class="ntab" onclick="switchNarrative('ceo',this)">&#x26A1; CEO</button>
+          </div>
+          <div class="ntab-note" id="ntab-note">Long-term value framing &mdash; strategic and directional</div>
+          <div class="narrative-content" id="narrative-content"></div>
         </div>
-        <div class="talking-points">
-          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:600;margin-bottom:16px;color:#f4f3ff">Talking Points &mdash; For the Q&amp;A that follows</div>
-          <div id="talking-points-list"></div>
+
+        <!-- ARIA offer -->
+        <div class="aria-offer-card">
+          <div class="aria-offer-inner">
+            <div class="aria-offer-label">✦ ARIA — Rehearse presenting this narrative</div>
+            <div class="aria-offer-text" id="aria-offer-text">ARIA can play the CFO or CEO so you can rehearse delivering this story under pressure.</div>
+          </div>
+          <button class="aria-offer-btn" onclick="goToARIA()">Talk to ARIA &rarr;</button>
         </div>
+
+        <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="buildInfluence()">Build Influence Stack &#x2192;</button>
           <button class="btn-ghost" onclick="startNew()">New Story</button>
-          <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+          <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
         </div>
+
       </div>
     </div>
 
@@ -285,21 +375,28 @@
 
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
-    var BASE = 'https://kumarviveksrv-cloud.github.io/vantage/';
+    var BASE = 'https://vantage.virorah.com/';
     var selectedAudience = '';
     var currentResult = null;
+    var narrativeVersions = {};
 
-    if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; }
+    if (sessionStorage.getItem('sr_access') !== 'true') {
+      window.location.href = BASE + 'access.html';
+    }
 
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
-    document.getElementById('meridian-chip-val').innerText = (meridian.state||'Not set') + ' \xb7 ' + (meridian.industry||'Not set');
+    document.getElementById('meridian-chip-val').innerText =
+      (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
 
-    ['context','ask'].forEach(function(id){ document.getElementById(id).addEventListener('input', checkSubmit); });
+    document.getElementById('context').addEventListener('input', checkSubmit);
+    document.getElementById('ask').addEventListener('input', checkSubmit);
 
     function selectAudience(el, audience) {
       document.querySelectorAll('.audience-btn').forEach(function(b){ b.classList.remove('selected'); });
-      el.classList.add('selected'); selectedAudience = audience; checkSubmit();
+      el.classList.add('selected');
+      selectedAudience = audience;
+      checkSubmit();
     }
 
     function checkSubmit() {
@@ -308,19 +405,28 @@
     }
 
     function showView(view) {
-      ['intake-view','loading-view','output-view'].forEach(function(v){ document.getElementById(v).style.display='none'; });
+      ['intake-view','loading-view','output-view'].forEach(function(v){
+        document.getElementById(v).style.display = 'none';
+      });
       document.getElementById(view).style.display = 'block';
     }
 
-    function getMetrics() {
-      return {
-        attrition: document.getElementById('attrition').value || null,
-        timeToHire: document.getElementById('time-to-hire').value || null,
-        engagement: document.getElementById('engagement').value || null,
-        openPositions: document.getElementById('open-positions').value || null,
-        absenteeism: document.getElementById('absenteeism').value || null,
-        avgCTC: document.getElementById('avg-ctc').value || null
-      };
+    // Build a human-readable metrics string instead of sending a JS object
+    function buildMetricsText() {
+      var lines = [];
+      var fields = [
+        { id: 'attrition',      label: 'Attrition rate',    suffix: '%' },
+        { id: 'time-to-hire',   label: 'Time to hire',      suffix: ' days' },
+        { id: 'engagement',     label: 'Engagement score',  suffix: '%' },
+        { id: 'open-positions', label: 'Open positions',     suffix: '' },
+        { id: 'absenteeism',    label: 'Absenteeism rate',  suffix: '%' },
+        { id: 'avg-ctc',        label: 'Average CTC',       suffix: ' lakhs' }
+      ];
+      fields.forEach(function(f) {
+        var v = document.getElementById(f.id).value.trim();
+        if (v) lines.push(f.label + ': ' + v + f.suffix);
+      });
+      return lines.length > 0 ? lines.join('\n') : 'No specific metrics entered — use context description below.';
     }
 
     async function runSIGNAL() {
@@ -330,40 +436,173 @@
       showView('loading-view');
       try {
         var res = await fetch(WORKER, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ tool:'signal', audience:selectedAudience, context:ctx, ask:ask, metrics:getMetrics(), meridian:meridian })
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            tool: 'signal',
+            audience: selectedAudience,
+            context: ctx,
+            metrics: buildMetricsText(),   // sends a readable string, not [object Object]
+            meridian: meridian
+          })
         });
         var data = await res.json();
-        if (data.success) { currentResult = data.data; renderOutput(); }
-        else { alert('Error: ' + (data.error || 'Unknown')); showView('intake-view'); }
-      } catch(err) { alert('Connection error: ' + err.message); showView('intake-view'); }
+        if (data.success) {
+          currentResult = data.data;
+          renderOutput();
+        } else {
+          alert('Error: ' + (data.error || 'Unknown'));
+          showView('intake-view');
+        }
+      } catch(err) {
+        alert('Connection error: ' + err.message);
+        showView('intake-view');
+      }
+    }
+
+    function getConfClass(conf) {
+      return { High: 'conf-high', Medium: 'conf-medium', Low: 'conf-low' }[conf] || 'conf-medium';
     }
 
     function renderOutput() {
       var r = currentResult;
+      if (!r) return;
+
+      var sig = r.signal || {};
+      var humac = r.humac || {};
+      var rar = r.revenueAtRisk || {};
+
       document.getElementById('output-audience-label').innerText = 'Prepared for ' + selectedAudience;
-      document.getElementById('da-number').innerText = r.dataAnchor ? r.dataAnchor.number || '\u2014' : '\u2014';
-      document.getElementById('da-context').innerText = r.dataAnchor ? r.dataAnchor.context || '' : '';
-      var dims = ['s','i','g','n','a','l'];
-      var keys = ['situation','impact','gap','narrative','action','linkage'];
-      dims.forEach(function(d,i){ document.getElementById('sig-'+d).innerText = r.signal ? (r.signal[keys[i]] || '') : ''; });
-      document.getElementById('full-narrative').innerText = r.fullNarrative || '';
-      document.getElementById('talking-points-list').innerHTML = (r.talkingPoints||[]).map(function(tp,i){
-        return '<div class="talking-point-item"><div class="tp-num">'+(i+1)+'</div><div class="tp-text">'+tp+'</div></div>';
+
+      // Headline
+      document.getElementById('headline-text').innerText = r.headline || '\u2014';
+
+      // Revenue at Risk
+      document.getElementById('rar-figure').innerText = rar.figure || '\u2014';
+      document.getElementById('rar-basis').innerText = rar.basis || '';
+      var rarConf = document.getElementById('rar-conf');
+      rarConf.innerText = (rar.confidence || '') + ' confidence';
+      rarConf.className = 'rar-conf ' + getConfClass(rar.confidence);
+
+      // Humac
+      document.getElementById('humac-range').innerText = humac.range || '\u2014';
+      var pillarBadge = document.getElementById('humac-pillar-badge');
+      pillarBadge.innerText = humac.pillar ? 'Humac ' + humac.pillar : '';
+      var humacConf = document.getElementById('humac-conf');
+      humacConf.innerText = (humac.confidence || '') + ' confidence';
+      humacConf.className = 'rar-conf ' + getConfClass(humac.confidence);
+      document.getElementById('humac-rationale').innerText = humac.pillarRationale || '';
+      document.getElementById('humac-breakdown').innerHTML = (humac.breakdown || []).map(function(item) {
+        return '<div class="humac-breakdown-item"><span class="humac-breakdown-dot">·</span><span>' + item + '</span></div>';
       }).join('');
+      if (humac.trajectoryConnection) {
+        document.getElementById('humac-trajectory').innerText = humac.trajectoryConnection;
+        document.getElementById('humac-trajectory-wrap').style.display = 'block';
+      }
+
+      // S — Situation
+      var sit = sig.situation || {};
+      document.getElementById('sig-s-narrative').innerText = sit.narrative || '';
+      document.getElementById('sig-s-metrics').innerHTML = (sit.keyMetrics || []).map(function(m) {
+        return '<span class="signal-pill">' + m + '</span>';
+      }).join('');
+
+      // I — Impact
+      var imp = sig.impact || {};
+      document.getElementById('sig-i-figure').innerText = imp.financialImpact || '';
+      document.getElementById('sig-i-narrative').innerText = imp.narrative || '';
+      document.getElementById('sig-i-breakdown').innerHTML = (imp.breakdown || []).map(function(item) {
+        return '<div style="margin-bottom:3px;display:flex;gap:6px"><span style="color:rgba(255,181,71,0.5)">·</span><span>' + item + '</span></div>';
+      }).join('');
+
+      // G — Gap
+      var gap = sig.gap || {};
+      document.getElementById('sig-g-value').innerText = gap.gapValue || '';
+      document.getElementById('sig-g-narrative').innerText = gap.narrative || '';
+      if (gap.currentState && gap.desiredState) {
+        document.getElementById('sig-g-current').innerText = gap.currentState;
+        document.getElementById('sig-g-desired').innerText = gap.desiredState;
+        document.getElementById('sig-g-flow').style.display = 'flex';
+      }
+
+      // A — Action (three time horizons)
+      var act = sig.action || {};
+      var timelineHtml = '';
+      (act.immediate || []).forEach(function(a) {
+        timelineHtml += '<div class="action-horizon"><span class="horizon-badge hz-now">Now</span><span class="horizon-text">' + a + '</span></div>';
+      });
+      (act.thirtyDay || []).forEach(function(a) {
+        timelineHtml += '<div class="action-horizon"><span class="horizon-badge hz-30">30d</span><span class="horizon-text">' + a + '</span></div>';
+      });
+      (act.ninetyDay || []).forEach(function(a) {
+        timelineHtml += '<div class="action-horizon"><span class="horizon-badge hz-90">90d</span><span class="horizon-text">' + a + '</span></div>';
+      });
+      document.getElementById('sig-a-timeline').innerHTML = timelineHtml;
+
+      // L — Linkage
+      var link = sig.linkage || {};
+      document.getElementById('sig-l-outcome').innerText = link.businessOutcome || '';
+      document.getElementById('sig-l-revenue').innerText = link.revenueConnection || (link.riskMitigation || '');
+
+      // Narrative versions
+      var narr = sig.narrative || {};
+      narrativeVersions = {
+        boardroom: narr.boardroomVersion || '',
+        cfo: narr.cfoVersion || '',
+        ceo: narr.ceoVersion || ''
+      };
+      document.getElementById('narrative-content').innerText = narrativeVersions.boardroom;
+
+      // ARIA
+      if (r.aria) {
+        document.getElementById('aria-offer-text').innerText = r.aria;
+      }
+
       showView('output-view');
     }
 
+    var ntabNotes = {
+      boardroom: 'Long-term value framing — strategic and directional',
+      cfo: 'P&L and returns framing — INR-forward, risk-focused',
+      ceo: 'Competitive and directional framing — trajectory and positioning'
+    };
+
+    function switchNarrative(version, el) {
+      document.querySelectorAll('.ntab').forEach(function(t){ t.classList.remove('active'); });
+      el.classList.add('active');
+      document.getElementById('narrative-content').innerText = narrativeVersions[version] || '';
+      document.getElementById('ntab-note').innerText = ntabNotes[version] || '';
+    }
+
+    function goToARIA() {
+      sessionStorage.setItem('sr_aria_context', JSON.stringify({
+        mode: 'conversation_coach',
+        scenario: 'HR Data Storyteller — presenting to ' + selectedAudience,
+        headline: document.getElementById('headline-text').innerText
+      }));
+      window.location.href = BASE + 'aria.html';
+    }
+
     function buildInfluence() {
-      if (currentResult) sessionStorage.setItem('sr_signal_context', JSON.stringify({ audience:selectedAudience, narrative:currentResult.fullNarrative ? currentResult.fullNarrative.substring(0,400) : '' }));
+      if (currentResult) {
+        sessionStorage.setItem('sr_signal_context', JSON.stringify({
+          audience: selectedAudience,
+          narrative: narrativeVersions.cfo ? narrativeVersions.cfo.substring(0, 400) : '',
+          headline: currentResult.headline || ''
+        }));
+      }
       window.location.href = BASE + 'stakeholder-influence.html';
     }
 
     function startNew() {
-      selectedAudience = ''; currentResult = null;
+      selectedAudience = '';
+      currentResult = null;
+      narrativeVersions = {};
       document.getElementById('context').value = '';
       document.getElementById('ask').value = '';
-      ['attrition','time-to-hire','engagement','open-positions','absenteeism','avg-ctc'].forEach(function(id){ document.getElementById(id).value = ''; });
+      ['attrition','time-to-hire','engagement','open-positions','absenteeism','avg-ctc'].forEach(function(id){
+        document.getElementById(id).value = '';
+      });
       document.querySelectorAll('.audience-btn').forEach(function(b){ b.classList.remove('selected'); });
       document.getElementById('submit-btn').disabled = true;
       showView('intake-view');
