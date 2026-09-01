@@ -202,6 +202,52 @@
     dataPrivacyLink.parentNode.insertBefore(meridianLink, dataPrivacyLink);
   }
 
+  // ── PRICING LINK + BILLING STATUS ────────────────────────
+  // Billing status reads from localStorage['vantage_plan'].
+  // Soft launch default: 'Early Access' (amber) — no key exists yet.
+  // Post-Razorpay: payment handler writes { status:'active', tier:'core'|'consultant' }
+  // to localStorage['vantage_plan'] and the badge updates on next load automatically.
+  var alreadyHasPricing = document.querySelector('a[href*="pricing"]');
+  if (dataPrivacyLink && !alreadyHasPricing) {
+    function _getBillingStatus() {
+      try {
+        var plan = JSON.parse(localStorage.getItem('vantage_plan') || 'null');
+        if (!plan) return { label: 'Early Access', color: 'rgba(255,181,71,.85)', bg: 'rgba(255,181,71,.1)' };
+        if (plan.status === 'active') {
+          var tier = plan.tier === 'consultant' ? 'Consultant' : 'Core';
+          return { label: 'Active \u00b7 ' + tier, color: 'rgba(74,222,128,.85)', bg: 'rgba(74,222,128,.1)' };
+        }
+        return { label: 'Inactive', color: 'rgba(248,113,113,.85)', bg: 'rgba(248,113,113,.1)' };
+      } catch(e) {
+        return { label: 'Early Access', color: 'rgba(255,181,71,.85)', bg: 'rgba(255,181,71,.1)' };
+      }
+    }
+    var _billing = _getBillingStatus();
+    var _isOnPricing = window.location.pathname.includes('pricing');
+
+    var pricingLink = document.createElement('a');
+    pricingLink.href = 'pricing.html';
+    pricingLink.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,.45);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    if (_isOnPricing) {
+      pricingLink.style.background = 'rgba(99,102,241,0.10)';
+      pricingLink.style.borderColor = 'rgba(99,102,241,0.25)';
+      pricingLink.style.color = '#a5b4fc';
+      pricingLink.style.fontWeight = '500';
+    }
+    pricingLink.innerHTML =
+      '<span style="display:flex;align-items:center;gap:10px;min-width:0">' +
+        '<span style="font-size:16px;flex-shrink:0">🪙</span>' +
+        '<span>Pricing</span>' +
+      '</span>' +
+      '<span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.04em;' +
+        'background:' + _billing.bg + ';color:' + _billing.color + ';' +
+        'padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0">' +
+        _billing.label +
+      '</span>';
+
+    dataPrivacyLink.parentNode.insertBefore(pricingLink, dataPrivacyLink);
+  }
+
   // ── MERIDIAN NOT-CONFIGURED WARNING BANNER ────────────────
   var TOOL_PAGES = [
     'er-case-navigator',
