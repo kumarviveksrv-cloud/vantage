@@ -53,8 +53,8 @@
     .stakeholder-btn:hover{border-color:rgba(99,102,241,0.3);color:#f4f3ff;background:rgba(99,102,241,0.08)}
     .stakeholder-btn.selected{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.45);color:#c4b5fd;font-weight:500}
     .stakeholder-icon{font-size:18px;display:block;margin-bottom:4px}
-    textarea{width:100%;padding:14px 16px;background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:1.6;resize:vertical;outline:none;transition:border .2s}
-    textarea:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
+    textarea{width:100%;padding:14px 16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:10px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:1.6;resize:vertical;outline:none;transition:border .2s}
+    textarea:focus{border-color:rgba(99,102,241,0.35);box-shadow:0 0 0 3px rgba(99,102,241,0.05)}
     textarea::placeholder{color:rgba(165,180,252,0.25)}
     input[type=text]{width:100%;padding:13px 15px;background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;outline:none;transition:border .2s}
     input[type=text]:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
@@ -144,6 +144,31 @@
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
     @media(max-width:768px){.sidebar{display:none}.main{padding:20px 16px}.stakeholder-grid{grid-template-columns:repeat(2,1fr)}.influence-header{flex-direction:column}.humac-influence-grid{grid-template-columns:1fr}.aria-offer-card{flex-direction:column;align-items:flex-start}}
+  
+    /* ── VOICE INPUT WRAPPER ── */
+    .voice-wrap{position:relative}
+    .voice-btn{
+      position:absolute;bottom:10px;right:10px;
+      width:32px;height:32px;border-radius:50%;
+      background:rgba(99,102,241,0.12);
+      border:1px solid rgba(99,102,241,0.25);
+      color:#a5b4fc;cursor:pointer;font-size:14px;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .2s;z-index:2;
+      line-height:1;
+    }
+    .voice-btn:hover{background:rgba(99,102,241,0.22);border-color:rgba(99,102,241,0.45)}
+    .voice-btn.listening{
+      background:rgba(124,58,237,0.25);
+      border-color:rgba(124,58,237,0.6);
+      color:#c4b5fd;
+      animation:voicePulse 1s ease-in-out infinite;
+    }
+    @keyframes voicePulse{
+      0%{box-shadow:0 0 0 0 rgba(124,58,237,0.5)}
+      70%{box-shadow:0 0 0 10px rgba(124,58,237,0)}
+      100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}
+    }
   </style>
 </head>
 <body>
@@ -216,8 +241,11 @@
           <textarea id="ask" placeholder='e.g. "Approve &#8377;18L retention investment for the engineering team" or "Sign off on a formal PIP process for three underperformers" or "Agree to loop in legal before the termination proceeds"' rows="3"></textarea>
         </div>
         <div class="form-section">
-          <label class="form-label">What's the situation? What resistance do you expect?</label>
-          <textarea id="situation" placeholder='e.g. "CFO thinks attrition is a market issue, not an HR problem. He&apos;s cut two HR budgets this year already. He responds to numbers and cost arguments, not culture or engagement talk. I have 20 minutes in the Monday review meeting."' rows="4"></textarea>
+          <label class="form-label">What's the situation? What resistance do you expect? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic</span></label>
+          <div class="voice-wrap">
+          <textarea id="situation" placeholder='e.g. "CFO thinks attrition is a market issue, not an HR problem. He&apos;s cut two HR budgets this year already. He responds to numbers and cost arguments, not culture or engagement talk. I have 20 minutes in the Monday review meeting."' rows="4" style="padding-right:48px"></textarea>
+          <button class="voice-btn" id="situation-mic" onclick="toggleVoiceInput('situation', this)" title="Tap to speak">&#127908;</button>
+          </div>
         </div>
         <div class="form-section">
           <label class="form-label">What's your strongest data point? (optional — included as additional context)</label>
