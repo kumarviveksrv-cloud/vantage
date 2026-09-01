@@ -6,21 +6,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign In — Virorah Vantage</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;justify-content:center}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    .wrap{text-align:center;animation:fadeIn .4s ease}
-    .logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:32px}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    body{display:flex;align-items:center;justify-content:center;background-image:linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px);background-size:48px 48px}
+    .wrap{width:100%;max-width:420px;padding:24px;animation:fadeIn .4s ease}
+    .logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:40px}
     .logo-dot{width:10px;height:10px;border-radius:50%;background:#6366f1;box-shadow:0 0 14px rgba(99,102,241,0.7);animation:pulse 2s ease-in-out infinite}
     .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;color:#f4f3ff}
     .logo-sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,0.5);margin-top:2px}
-    .spinner-wrap{margin:0 auto 24px;width:48px;height:48px}
-    .spinner-wrap svg{animation:spin 1.4s linear infinite}
-    .status{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(165,180,252,0.55);letter-spacing:.08em;text-transform:uppercase}
+    .card{background:#0d0b1e;border:1px solid rgba(99,102,241,0.18);border-radius:16px;padding:32px}
+    .card-title{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;color:#f4f3ff;margin-bottom:8px;text-align:center}
+    .card-sub{font-size:13px;color:rgba(244,243,255,0.4);line-height:1.65;text-align:center;margin-bottom:28px}
+    .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:#a5b4fc;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;display:block}
+    .email-input{width:100%;padding:14px 16px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.2);border-radius:10px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;transition:border .2s;margin-bottom:16px}
+    .email-input:focus{border-color:rgba(99,102,241,0.5);box-shadow:0 0 0 3px rgba(99,102,241,0.08)}
+    .email-input::placeholder{color:rgba(165,180,252,0.25)}
+    .submit-btn{width:100%;padding:15px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.35);margin-bottom:12px}
+    .submit-btn:hover{opacity:.88}
+    .submit-btn:disabled{opacity:.3;cursor:not-allowed}
+    .error-msg{font-size:12px;color:#FF4D6D;text-align:center;min-height:18px;margin-bottom:8px}
+    .privacy-note{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(244,243,255,0.2);text-align:center;line-height:1.5;margin-top:4px}
+    .meridian-chip{margin-top:24px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.14);border-radius:10px;padding:14px 18px;text-align:center}
+    .meridian-chip-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+    .meridian-chip-text{font-size:12px;color:rgba(244,243,255,0.4);line-height:1.55}
   </style>
 </head>
 <body>
@@ -32,53 +44,96 @@
         <div class="logo-sub">Vantage</div>
       </div>
     </div>
-    <div class="spinner-wrap">
-      <svg width="48" height="48" viewBox="0 0 48 48">
-        <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(99,102,241,0.12)" stroke-width="2.5"/>
-        <circle cx="24" cy="24" r="20" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-dasharray="32 95" stroke-linecap="round"/>
-      </svg>
+
+    <div class="card">
+      <div class="card-title">Step into Vantage</div>
+      <div class="card-sub">HR intelligence built for Indian professionals who lead in the language of business. Enter your work email to begin.</div>
+      <label class="form-label">Work email</label>
+      <input type="email" class="email-input" id="email-input" placeholder="you@company.com" autocomplete="email" />
+      <div class="error-msg" id="error-msg"></div>
+      <button class="submit-btn" id="submit-btn" onclick="enterVantage()">Enter Vantage &rarr;</button>
+      <div class="privacy-note">&#x1F512; Your email personalises your experience. Never shared or sold.</div>
     </div>
-    <div class="status" id="status-text">Checking your session...</div>
+
+    <div class="meridian-chip">
+      <div class="meridian-chip-label">MERIDIAN Inside</div>
+      <div class="meridian-chip-text">Seven parameters — your state, industry, org type, seniority, and more — calibrating every result to your exact professional reality.</div>
+    </div>
   </div>
 
   <script>
-    var CLERK_SIGN_IN = 'https://brief-koi-76.clerk.accounts.dev/sign-in';
-    var BASE          = 'https://vantage.virorah.com/';
-    var DASHBOARD     = BASE + 'dashboard.html';
+    var WORKER    = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+    var BASE      = 'https://vantage.virorah.com/';
+    var DASHBOARD = BASE + 'dashboard.html';
 
-    // ── CASE 1: Already has an active session ────────────────────────────────
-    if (sessionStorage.getItem('sr_access') === 'true') {
-      document.getElementById('status-text').innerText = 'SESSION ACTIVE.';
+    // If already has a valid session, go straight to dashboard
+    if (sessionStorage.getItem('sr_access') === 'true' &&
+        sessionStorage.getItem('sr_session_token')) {
       window.location.replace(DASHBOARD);
+    }
 
-    // ── CASE 2: Returning from Clerk sign-in ─────────────────────────────────
-    // Clerk redirected back to access.html (via the fallback URL we configured).
-    // If vantage_pending exists in sessionStorage it means THIS browser session
-    // initiated the Clerk sign-in flow — so we trust the return and grant access.
-    } else if (sessionStorage.getItem('vantage_pending') === '1') {
-      document.getElementById('status-text').innerText = 'SIGNED IN. SETTING UP...';
-      sessionStorage.removeItem('vantage_pending');
-      sessionStorage.setItem('sr_access', 'true');
+    var emailInput = document.getElementById('email-input');
+    var submitBtn  = document.getElementById('submit-btn');
+    var errorMsg   = document.getElementById('error-msg');
 
-      // Preserve any existing user ID or generate a new one
-      if (!localStorage.getItem('sr_user_id')) {
-        localStorage.setItem('sr_user_id',
-          'usr_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now()
-        );
+    emailInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') enterVantage();
+    });
+    emailInput.addEventListener('input', function() { errorMsg.innerText = ''; });
+
+    function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+    async function enterVantage() {
+      var email = emailInput.value.trim();
+      if (!email) { errorMsg.innerText = 'Please enter your work email.'; return; }
+      if (!isValidEmail(email)) { errorMsg.innerText = 'Please enter a valid email address.'; return; }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Verifying...';
+      errorMsg.innerText = '';
+
+      try {
+        // Get a signed session token from the Worker
+        var res = await fetch(WORKER, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tool: 'auth', email: email })
+        });
+        var data = await res.json();
+
+        if (!data.success) {
+          errorMsg.innerText = data.error || 'Sign-in failed. Please try again.';
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'Enter Vantage \u2192';
+          return;
+        }
+
+        // Store signed token and session state
+        var token = data.data.token;
+        sessionStorage.setItem('sr_session_token', token);
+        sessionStorage.setItem('sr_access', 'true');
+        sessionStorage.setItem('sr_user_email', email);
+
+        // Deterministic user ID from email (consistent same device)
+        var userId = 'usr_' + btoa(email.toLowerCase()).replace(/[^a-z0-9]/gi,'').substr(0, 16) + '_v2';
+        localStorage.setItem('sr_user_id', userId);
+        localStorage.setItem('sr_user_email', email);
+
+        // Fire-and-forget: save user to Airtable
+        fetch(WORKER, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tool: 'save_user', email: email, userId: userId, source: 'soft_launch_v1' })
+        }).catch(function() {});
+
+        submitBtn.innerText = 'Welcome to Vantage!';
+        setTimeout(function() { window.location.replace(DASHBOARD); }, 350);
+
+      } catch(err) {
+        errorMsg.innerText = 'Connection error. Please check your network and try again.';
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Enter Vantage \u2192';
       }
-
-      setTimeout(function () { window.location.replace(DASHBOARD); }, 300);
-
-    // ── CASE 3: Not authenticated — send to Clerk sign-in ────────────────────
-    } else {
-      document.getElementById('status-text').innerText = 'REDIRECTING TO SIGN IN...';
-      // Mark this session as having initiated the Clerk flow
-      sessionStorage.setItem('vantage_pending', '1');
-      // No redirect_url parameter — Clerk uses its configured fallback URL
-      // which we set to https://vantage.virorah.com/access.html
-      setTimeout(function () {
-        window.location.replace(CLERK_SIGN_IN);
-      }, 200);
     }
   </script>
 </body>
