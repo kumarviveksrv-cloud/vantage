@@ -1,17 +1,15 @@
 // clerk-auth.js — Virorah Vantage
-// Shared Clerk authentication utilities.
+// Authentication utilities + automatic token injection for all Worker calls.
 // Include via <script src="clerk-auth.js"></script> on all protected pages.
 
 (function () {
   'use strict';
 
-  var PUBLISHABLE_KEY = 'pk_test_YnJpZWYta29pLTc2LmNsZXJrLmFjY291bnRzLmRldiQ';
-  var CLERK_JS_URL    = 'https://brief-koi-76.clerk.accounts.dev/.well-known/clerk.js';
-  var BASE            = 'https://vantage.virorah.com/';
+  var WORKER_URL = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+  var BASE       = 'https://vantage.virorah.com/';
 
   // ─── getClerkUserId ────────────────────────────────────────────────────────
-  // Returns the Clerk user ID stored by access.html after successful auth.
-  // Falls back to a legacy random ID if Clerk ID is not present.
+  // Returns the user ID stored after sign-in.
   window.getClerkUserId = function () {
     var stored = localStorage.getItem('sr_user_id');
     if (stored) return stored;
@@ -21,57 +19,33 @@
   };
 
   // ─── clerkSignOut ──────────────────────────────────────────────────────────
-  // Clears all local session state, loads Clerk JS, calls signOut(), redirects.
   window.clerkSignOut = function () {
-    // Clear local state immediately
-    sessionStorage.removeItem('sr_access');
-    sessionStorage.removeItem('sr_meridian');
-    sessionStorage.removeItem('sr_user_email');
-    sessionStorage.removeItem('meridian_popup_dismissed');
+    sessionStorage.clear();
     localStorage.removeItem('sr_user_id');
+    localStorage.removeItem('sr_user_email');
     localStorage.removeItem('sr_last_case_id');
+    window.location.href = BASE + 'access.html';
+  };
 
-    // If Clerk is already loaded on this page, use it
-    if (window.Clerk && typeof window.Clerk.signOut === 'function') {
-      window.Clerk.signOut().then(function () {
-        window.location.href = BASE + 'index.html';
-      }).catch(function () {
-        window.location.href = BASE + 'index.html';
-      });
-      return;
+  // ─── FETCH INTERCEPTOR ────────────────────────────────────────────────────
+  // Automatically injects the session token into every Worker call.
+  // No changes needed to individual tool pages.
+  var _originalFetch = window.fetch;
+  window.fetch = function (url, options) {
+    if (typeof url === 'string' && url.indexOf(WORKER_URL) === 0 && options && options.body) {
+      try {
+        var body = JSON.parse(options.body);
+        // Only inject if this isn't the auth or save_user endpoint
+        if (body.tool !== 'auth' && body.tool !== 'save_user') {
+          var token = sessionStorage.getItem('sr_session_token') || '';
+          if (!body.token) {
+            body.token = token;
+            options = Object.assign({}, options, { body: JSON.stringify(body) });
+          }
+        }
+      } catch(e) {}
     }
-
-    // Otherwise load Clerk JS, then sign out
-    var s = document.createElement('script');
-    s.setAttribute('data-clerk-publishable-key', PUBLISHABLE_KEY);
-    s.crossOrigin = 'anonymous';
-    s.src = CLERK_JS_URL;
-    s.type = 'text/javascript';
-    s.onload = function () {
-      var maxWait = 5000;
-      var waited  = 0;
-      var iv = setInterval(function () {
-        waited += 100;
-        if (window.Clerk && typeof window.Clerk.load === 'function') {
-          clearInterval(iv);
-          window.Clerk.load().then(function () {
-            return window.Clerk.signOut();
-          }).then(function () {
-            window.location.href = BASE + 'index.html';
-          }).catch(function () {
-            window.location.href = BASE + 'index.html';
-          });
-        }
-        if (waited > maxWait) {
-          clearInterval(iv);
-          window.location.href = BASE + 'index.html';
-        }
-      }, 100);
-    };
-    s.onerror = function () {
-      window.location.href = BASE + 'index.html';
-    };
-    document.head.appendChild(s);
+    return _originalFetch.call(this, url, options);
   };
 
 })();
