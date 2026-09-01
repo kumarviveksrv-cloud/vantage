@@ -94,7 +94,7 @@
   // Injects before the Dashboard link on every page.
   // Platform Tour links to about.html (guided walkthrough is a future phase).
   // Hides the raw Dashboard link — replaced by Home inside Overview.
-  var dashLink = document.querySelector('.sb a[href="dashboard.html"], a.ni[href="dashboard.html"]');
+  var dashLink = document.querySelector('.sb a[href="dashboard.html"],a.ni[href="dashboard.html"],.sidebar a[href="dashboard.html"],a.nav-item[href="dashboard.html"]');
   var alreadyHasOverview = document.getElementById('vs-overview');
   if (dashLink && !alreadyHasOverview) {
     var overview = document.createElement('div');
@@ -136,7 +136,7 @@
 
   // ── MERIDIAN PROFILE LINK INJECTION ──────────────────────
   var dataPrivacyLink = document.querySelector('a[href*="data-dashboard"]');
-  var alreadyInjected = document.querySelector('a[href*="onboarding"]');
+  var alreadyInjected = document.querySelector('.nav-item[href*="onboarding"],.ni[href*="onboarding"]');
 
   // ── PHILOSOPHY & LEGAL SECTION INJECTION ─────────────────
   var alreadyHasPhilosophy = document.querySelector('a[href*="humacity.com"]');
