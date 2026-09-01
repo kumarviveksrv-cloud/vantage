@@ -173,7 +173,7 @@
     <a href="privacy.html" class="nav-item"><span class="icon">🔒</span> Privacy Policy</a>
     <div class="nav-section">Account</div>
     <a href="data-dashboard.html" class="nav-item"><span class="icon">🔒</span> Data &amp; Privacy</a>
-    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()"><span class="icon">↩</span> Sign out</a>
+    <a href="#" class="nav-item" onclick="clerkSignOut(); return false;"><span class="icon">↩</span> Sign out</a>
     <div class="meridian-chip">
       <div class="label">MERIDIAN Active</div>
       <div class="val" id="meridian-chip-val">Loading...</div>
@@ -550,6 +550,7 @@
       showView('intake-view');
     }
   </script>
+  <script src="clerk-auth.js"></script>
   <script src="sidebar-shared.js"></script>
 </body>
 </html>
