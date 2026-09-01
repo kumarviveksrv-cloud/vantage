@@ -30,9 +30,50 @@
     '  color: #c4b5fd !important;',
     '}',
 
-    // Nav section labels
+    // Nav section labels — updated from indigo (dark on dark, unreadable)
+    // to muted lavender which is inherently lighter and readable.
     '.nav-section {',
-    '  color: rgba(99,102,241,0.55) !important;',
+    '  color: rgba(165,180,252,0.65) !important;',
+    '}',
+
+    // ── PLATFORM-WIDE LABEL READABILITY ────────────────────
+    // All small uppercase JetBrains Mono section labels use
+    // low-opacity dark indigo (rgba(99,102,241,0.55)) which has
+    // near-zero contrast on the #050410 dark background.
+    // Changed to muted lavender at readable opacity across every
+    // known label class on every page.
+
+    // Sidebar section headers — both class naming conventions
+    '.nav-section, .ns {',
+    '  color: rgba(165,180,252,0.65) !important;',
+    '}',
+
+    // Dashboard card labels
+    '.stat-label, .cal-month, .debrief-label, .welcome-label {',
+    '  color: rgba(165,180,252,0.65) !important;',
+    '}',
+
+    // Tool card tags and tier labels
+    '.tool-tag, .tc-tag, .tc-tier, .pc-tier, .tc-label {',
+    '  color: rgba(165,180,252,0.65) !important;',
+    '}',
+
+    // Page section eyebrows and group headers
+    '.section-label, .hero-eyebrow, .lookup-group-title {',
+    '  color: rgba(165,180,252,0.65) !important;',
+    '}',
+
+    // ARIA quick banner label, billing notice, card labels
+    '.aria-quick-text .label, .billing-notice, .mc-label,',
+    '.imc-name, .hist-mode, .tc-month, .cc-month, .cs-label,',
+    '.panel-sub, .faq-label, .review-label, .debrief-label {',
+    '  color: rgba(165,180,252,0.60) !important;',
+    '}',
+
+    // MERIDIAN chip and related labels
+    '.meridian-chip .ml, .meridian-chip .label,',
+    '.m-header .label, .nav-badge-label {',
+    '  color: rgba(165,180,252,0.70) !important;',
     '}',
 
     // Teal accent buttons → indigo
@@ -135,9 +176,9 @@
     '  color: #c4b5fd !important;',
     '}',
 
-    // Section headers — mirrors .nav-section rule above
+    // Section headers — mirrors updated .nav-section rule above
     '.ns {',
-    '  color: rgba(99,102,241,0.55) !important;',
+    '  color: rgba(165,180,252,0.65) !important;',
     '}',
 
     // Logo subtitle — dashboard is rgba(165,180,252,0.6); ARIA was rgba(255,255,255,.35)
@@ -881,7 +922,7 @@
         row.innerHTML = [
           '<div>',
             '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;font-weight:500;color:rgba(232,230,255,0.9)">' + r[0] + '</div>',
-            '<div style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(99,102,241,0.55);letter-spacing:0.04em;margin-top:2px">' + r[1] + ' &middot; ' + r[2] + '</div>',
+            '<div style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(165,180,252,0.55);letter-spacing:0.04em;margin-top:2px">' + r[1] + ' &middot; ' + r[2] + '</div>',
           '</div>',
           '<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:0.08em">IST</div>',
         ].join('');
