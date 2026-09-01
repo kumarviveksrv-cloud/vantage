@@ -360,20 +360,23 @@
 
     // ── TOOL ROADMAP ──────────────────────────────────────────
     var TOOLS = [
-      { num:'01', icon:'⚡', tag:'HERO · Entry point', name:'ER Case Navigator', desc:'PACT diagnostic + 7-section Decision Protocol for every ER situation. Legal position, financial exposure, recommendation, and communication script.', path:'er-case-navigator.html', flagship:true },
-      { num:'02', icon:'🎯', tag:'Core', name:'Stakeholder Influence', desc:'The 5-layer INFLUENCE Stack. Makes saying no the riskier option for CFOs, CEOs, and department heads.', path:'stakeholder-influence.html', flagship:false },
-      { num:'03', icon:'📊', tag:'Core', name:'HR Data Storyteller', desc:'SIGNAL framework transforms raw HR metrics into Boardroom, CFO, and CEO financial narratives.', path:'hr-data-storyteller.html', flagship:false },
-      { num:'04', icon:'🎭', tag:'Intelligence', name:'Conversation Simulator', desc:'Practice at Standard or Challenging difficulty. Full debrief on what worked and what didn\'t.', path:'conversation-simulator.html', flagship:false },
-      { num:'05', icon:'🧭', tag:'Intelligence', name:'Policy Compass', desc:'BNS · BNSS · BSA · POSH · labour law · state-specific compliance. Precise, actionable, calibrated to your MERIDIAN.', path:'policy-compass.html', flagship:false },
-      { num:'06', icon:'✦', tag:'Intelligence Layer', name:'ARIA', desc:'Adaptive Reflective Intelligence for Advancement. Case Partner, Conversation Coach, Reflection. One question at a time.', path:'aria.html', flagship:true }
+      { num:'01', icon:'⚡', tag:'HERO · Entry point', name:'ER Case Navigator', desc:'PACT diagnostic + 7-section Decision Protocol for every ER situation. Legal position, financial exposure, recommendation, and communication script.', path:'er-case-navigator.html', flagship:true,  color:'#f43f5e', rgb:'244,63,94' },
+      { num:'02', icon:'🎯', tag:'Core', name:'Stakeholder Influence', desc:'The 5-layer INFLUENCE Stack. Makes saying no the riskier option for CFOs, CEOs, and department heads.', path:'stakeholder-influence.html', flagship:false, color:'#f59e0b', rgb:'245,158,11' },
+      { num:'03', icon:'📊', tag:'Core', name:'HR Data Storyteller', desc:'SIGNAL framework transforms raw HR metrics into Boardroom, CFO, and CEO financial narratives.', path:'hr-data-storyteller.html', flagship:false, color:'#0ea5e9', rgb:'14,165,233' },
+      { num:'04', icon:'🎭', tag:'Intelligence', name:'Conversation Simulator', desc:'Practice at Standard or Challenging difficulty. Full debrief on what worked and what didn\'t.', path:'conversation-simulator.html', flagship:false, color:'#a855f7', rgb:'168,85,247' },
+      { num:'05', icon:'🧭', tag:'Intelligence', name:'Policy Compass', desc:'BNS · BNSS · BSA · POSH · labour law · state-specific compliance. Precise, actionable, calibrated to your MERIDIAN.', path:'policy-compass.html', flagship:false, color:'#10b981', rgb:'16,185,129' },
+      { num:'06', icon:'✦', tag:'Intelligence Layer', name:'ARIA', desc:'Adaptive Reflective Intelligence for Advancement. Case Partner, Conversation Coach, Reflection. One question at a time.', path:'aria.html', flagship:true,  color:'#6366f1', rgb:'99,102,241' }
     ];
 
     var toolWrap = document.getElementById('tool-cards');
     toolWrap.innerHTML = TOOLS.map(function(t) {
-      return '<a href="' + t.path + '" class="tool-card' + (t.flagship ? ' flagship' : '') + '">' +
-        '<div class="tc-num">' + t.num + '</div>' +
-        '<div class="tc-icon">' + t.icon + '</div>' +
-        '<div class="tc-tag">' + t.tag + '</div>' +
+      var cardStyle = 'border-color:rgba(' + t.rgb + ',0.25);';
+      var topBar = '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,' + t.color + ',transparent);border-radius:12px 12px 0 0"></div>';
+      return '<a href="' + t.path + '" class="tool-card' + (t.flagship ? ' flagship' : '') + '" style="' + cardStyle + '">' +
+        topBar +
+        '<div class="tc-num" style="color:rgba(' + t.rgb + ',0.45)">' + t.num + '</div>' +
+        '<div class="tc-icon" style="color:' + t.color + ';filter:drop-shadow(0 0 8px rgba(' + t.rgb + ',0.4))">' + t.icon + '</div>' +
+        '<div class="tc-tag" style="color:' + t.color + ';background:rgba(' + t.rgb + ',0.1);border-color:rgba(' + t.rgb + ',0.25)">' + t.tag + '</div>' +
         '<div class="tc-name">' + t.name + '</div>' +
         '<div class="tc-desc">' + t.desc + '</div>' +
       '</a>';
