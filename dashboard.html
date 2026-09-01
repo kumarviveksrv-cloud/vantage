@@ -310,9 +310,9 @@
     <div class="cal-banner">
       <div class="cal-icon">📅</div>
       <div>
-        <div class="cal-month">HR Calendar · August 2026</div>
-        <div class="cal-title">Second half performance planning season.</div>
-        <div class="cal-body">Talent reviews, succession shortlisting, and H2 goal alignment are the priority this month. Watch for flight risk signals in high-performer cohorts — attrition risk spikes in August-September. Your ER Case Navigator and Stakeholder Influence Builder are your most critical tools right now.</div>
+        <div class="cal-month" id="js-cal-month">HR Calendar · Loading...</div>
+        <div class="cal-title" id="js-cal-title"></div>
+        <div class="cal-body" id="js-cal-body"></div>
       </div>
     </div>
 
@@ -407,9 +407,9 @@
     <!-- Debrief Teaser -->
     <div class="debrief-tease">
       <div>
-        <div class="debrief-label">The Debrief · August 2026</div>
+        <div class="debrief-label" id="js-debrief-label">The Debrief · Loading...</div>
         <div class="debrief-title">Your month is just beginning.</div>
-        <div class="debrief-sub">Navigate cases, practice conversations, and apply frameworks. Your Debrief arrives on the last working day of August.</div>
+        <div class="debrief-sub" id="js-debrief-sub">Navigate cases, practice conversations, and apply frameworks. Your Debrief arrives on the last working day of the month.</div>
       </div>
       <div class="debrief-chip">Preview →</div>
     </div>
@@ -448,6 +448,87 @@
     document.getElementById('meridian-overlay').addEventListener('click', function(e) {
       if (e.target === this) closeMeridianPopup();
     });
+
+    // ─────────────────────────────────────
+    // MONTHLY EDITORIAL CALENDAR
+    // ─────────────────────────────────────
+    (function updateMonthlyContent() {
+      var now = new Date();
+      var month = now.getMonth(); // 0 = Jan
+      var year  = now.getFullYear();
+      var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      var monthName = MONTHS[month];
+
+      // 12-month Indian HR editorial calendar
+      // Each entry: [title, body]
+      var CALENDAR = {
+        0: [ // January
+          'Annual goal-setting and increment season.',
+          'Fresh financial year planning, goal-setting conversations, and increment letters are in motion. Campus hiring pipelines need to be live. Use the Stakeholder Influence tool to present workforce plans to leadership before Q1 budgets freeze.'
+        ],
+        1: [ // February
+          'Pre-appraisal period and increment conversations.',
+          'Increment communication is the highest-stakes HR conversation of Q4. Calibration sessions, exception handling, and manager readiness are your focus this month. The Conversation Simulator is your most critical tool right now.'
+        ],
+        2: [ // March
+          'Financial year-end close and statutory compliance.',
+          'PF and gratuity settlements, headcount sign-off, and exit formalities must clear before March 31. Statutory compliance queries are at their peak. Your Policy Compass is essential for FY-end compliance questions your managers will be raising this week.'
+        ],
+        3: [ // April
+          'New financial year and appraisal completion.',
+          'Promotions, lateral moves, and performance letters go live. Fresher onboarding season begins — campus joiners arrive through June. Onboarding quality in the first 90 days sets your regretted attrition curve for the entire year.'
+        ],
+        4: [ // May
+          'Retention risk season and internship peaks.',
+          'Post-increment attrition risk peaks in May-June as market offers accelerate. Watch for early signals in your high performers. Internship cohorts need structured programmes. ER cases surfacing post-appraisal need immediate triage — delays become liability.'
+        ],
+        5: [ // June
+          'H1 close and POSH annual reporting deadline.',
+          'ICC annual reports are due by June 30 under the POSH Act — confirm your IC has filed or face Rs.50,000 exposure. Mid-year business reviews need HR metrics ready. The HR Data Storyteller converts your H1 data into the CFO narrative the room needs to act.'
+        ],
+        6: [ // July
+          'H2 kickoff and succession conversations.',
+          'H2 goal-setting, succession nominations, and leadership pipeline reviews. High-performer retention risk resurfaces after mid-year reviews. Watch for engagement dips in your top talent — losing a Star or HiPo in H2 carries a replacement cost of 1.8x salary at minimum.'
+        ],
+        7: [ // August
+          'Second half performance planning season.',
+          'Talent reviews, succession shortlisting, and H2 goal alignment are the priority. Watch for flight risk signals in high-performer cohorts — attrition risk peaks in August-September. Your ER Case Navigator and Stakeholder Influence Builder are your most critical tools right now.'
+        ],
+        8: [ // September
+          'Appraisal season preparation begins.',
+          'Q3 performance data collection, manager calibration preparation, and goal progress reviews. Festival season staffing conversations begin — Dussehra and Diwali are 4-6 weeks away. Unresolved ER cases now become liability in the year-end appraisal cycle. Clear the backlog this month.'
+        ],
+        9: [ // October
+          'Festival season and Q4 headcount conversations.',
+          'Diwali leave surge, bonus declarations, and statutory bonus compliance under the Payment of Bonus Act are live. Q4 headcount plans need sign-off before November. Post-Diwali attrition peaks — retention conversations this week prevent regretted exits next month.'
+        ],
+        10: [ // November
+          'Year-end calibration and December pipeline.',
+          'Post-Diwali market is active — counter-offer situations will surface. Year-end calibration meetings begin for December-cycle companies. Increment planning for January needs to be ready by month-end. The Conversation Simulator is critical for calibration conversation preparation right now.'
+        ],
+        11: [ // December
+          'Year-end reviews and January onboarding pipeline.',
+          'Annual performance reviews, increment finalisation, and January fresher joining pipeline. Full-year statutory compliance should be audited before December 31. The Policy Compass is your fastest route to year-end compliance questions across PF, gratuity, bonus, and POSH annual reporting.'
+        ]
+      };
+
+      var entry = CALENDAR[month] || CALENDAR[7];
+      var label = 'HR Calendar \u00b7 ' + monthName + ' ' + year;
+      var debriefLabel = 'The Debrief \u00b7 ' + monthName + ' ' + year;
+      var debriefSub = 'Navigate cases, practice conversations, and apply frameworks. Your Debrief arrives on the last working day of ' + monthName + '.';
+
+      var calMonth   = document.getElementById('js-cal-month');
+      var calTitle   = document.getElementById('js-cal-title');
+      var calBody    = document.getElementById('js-cal-body');
+      var debLabel   = document.getElementById('js-debrief-label');
+      var debSub     = document.getElementById('js-debrief-sub');
+
+      if (calMonth)  calMonth.textContent  = label;
+      if (calTitle)  calTitle.textContent  = entry[0];
+      if (calBody)   calBody.textContent   = entry[1];
+      if (debLabel)  debLabel.textContent  = debriefLabel;
+      if (debSub)    debSub.textContent    = debriefSub;
+    })();
 
     // ─────────────────────────────────────
     // HUMAC SCORE WIDGET
