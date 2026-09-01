@@ -12,11 +12,12 @@
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
     body{display:flex}
-    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.25);--grey:rgba(244,243,255,0.45);--dim:rgba(244,243,255,0.25)}
+    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--grey:rgba(244,243,255,0.45);--dim:rgba(244,243,255,0.25)}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
     @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
+    /* SIDEBAR */
     .sidebar{width:220px;flex-shrink:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto}
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
     .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
@@ -31,17 +32,19 @@
     .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
     .meridian-chip .val{font-size:11px;color:var(--grey)}
 
+    /* MAIN */
     .main{flex:1;overflow-y:auto;height:100vh;padding:28px 32px;background-image:linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px);background-size:48px 48px}
     .page-header{margin-bottom:28px;animation:fadeIn .3s ease}
     .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
-    .breadcrumb a{color:var(--dim);text-decoration:none}.breadcrumb a:hover{color:var(--muted)}
+    .breadcrumb a{color:var(--dim);text-decoration:none}
+    .breadcrumb a:hover{color:var(--muted)}
     .page-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:700;margin-bottom:4px;color:#f4f3ff}
     .page-sub{font-size:13px;color:var(--grey)}
 
+    /* INTAKE */
     .intro-card{background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:14px;padding:22px 26px;margin-bottom:24px}
     .intro-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;margin-bottom:12px}
     .intro-body{font-size:13px;color:rgba(244,243,255,0.5);line-height:1.75}
-
     .intake-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px}
     .form-section{margin-bottom:22px}
     .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:block}
@@ -60,50 +63,78 @@
     .submit-btn:hover{opacity:.88}
     .submit-btn:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
 
+    /* LOADING */
     .loading-state{text-align:center;padding:60px 20px}
     .loading-orb{width:64px;height:64px;margin:0 auto 24px}
     .loading-orb svg{animation:spin 2s linear infinite}
     .loading-text{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.08em}
 
+    /* OUTPUT */
     .output-section{animation:fadeIn .4s ease}
-    .influence-header{background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.22);border-radius:16px;padding:24px 28px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
-    .ih-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
-    .ih-title{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;color:#f4f3ff;margin-bottom:6px}
-    .ih-sub{font-size:13px;color:var(--grey);line-height:1.5;max-width:520px}
+
+    /* OPENING / CLOSING LINE CARDS */
+    .line-card{border-left:3px solid var(--accent);border-radius:0 12px 12px 0;background:var(--card);padding:16px 22px;margin-bottom:16px}
+    .line-card-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+    .line-card-text{font-size:14px;color:#f4f3ff;line-height:1.65;font-style:italic}
+    .closing-card{border-left-color:var(--violet);background:rgba(124,58,237,0.06)}
+
+    /* STAKEHOLDER PROFILE + DATA ANCHOR HEADER */
+    .influence-header{background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.22);border-radius:16px;padding:24px 28px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+    .ih-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+    .ih-profile{font-size:13px;color:var(--grey);line-height:1.6;max-width:520px}
+    .anchor-wrap{text-align:right;flex-shrink:0}
     .anchor-number{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:var(--lavender);letter-spacing:-0.5px;white-space:nowrap}
     .anchor-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;text-align:right;margin-top:4px}
+    .anchor-headline{font-size:12px;color:var(--grey);text-align:right;margin-top:4px;max-width:240px;line-height:1.4}
 
-    .influence-stack{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
-    .layer-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;transition:border-color .2s}
+    /* INFLUENCE STACK — 5 LAYERS */
+    .influence-stack{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+    .layer-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 26px;transition:border-color .2s}
     .layer-card:hover{border-color:rgba(99,102,241,0.28)}
-    .layer-header{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+    .layer-header{display:flex;align-items:center;gap:14px;margin-bottom:14px}
     .layer-num{width:28px;height:28px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--muted);flex-shrink:0}
     .layer-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
-    .layer-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:600;color:#f4f3ff;margin-bottom:8px}
-    .layer-content{font-size:13px;color:var(--grey);line-height:1.7}
-    .layer-tactic{font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;letter-spacing:.03em;margin-top:8px;border-top:1px solid var(--border);padding-top:8px}
 
-    .meridian-note{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.18);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;gap:14px}
-    .meridian-icon{font-size:18px;flex-shrink:0;margin-top:2px}
-    .meridian-note-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
-    .meridian-note-text{font-size:13px;color:var(--grey);line-height:1.5}
+    /* Layer content styles */
+    .l-text{font-size:13px;color:var(--grey);line-height:1.7;margin-bottom:10px}
+    .l-sub{font-size:12px;color:var(--dim);line-height:1.6}
+    .l-tactic{font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;letter-spacing:.03em;margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
+    .l-figure{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--lavender);letter-spacing:-0.3px;margin-bottom:6px}
+    .l-humac-basis{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.12);border-radius:7px;padding:9px 12px;font-size:12px;color:var(--grey);line-height:1.5;margin-top:10px}
+    .l-humac-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(165,180,252,0.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .l-rar{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+    .l-rar-figure{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#FF4D6D;letter-spacing:-0.3px}
+    .l-prob-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase}
+    .prob-high{color:rgba(255,77,109,0.9);background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.25)}
+    .prob-medium{color:#FFB547;background:rgba(255,181,71,0.1);border:1px solid rgba(255,181,71,0.25)}
+    .prob-low{color:var(--muted);background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2)}
+    .l-alternatives{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+    .l-alt-item{display:flex;gap:8px;font-size:12px;color:var(--dim);line-height:1.5}
+    .l-alt-num{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.4);flex-shrink:0;margin-top:2px}
+    .l-success{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:7px;padding:9px 12px;font-size:12px;color:rgba(244,243,255,0.6);line-height:1.5;margin-top:10px}
+    .l-success-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(34,197,94,0.5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
 
-    .humacity-card{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.25);border-radius:14px;padding:24px;margin-bottom:24px}
-    .humacity-header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-    .humacity-badge{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);padding:4px 10px;border-radius:4px}
-    .humacity-title{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:700;color:#f4f3ff}
-    .humacity-assets{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-    .humacity-asset{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
-    .humacity-asset-name{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
-    .humacity-asset-impact{font-size:11px;color:var(--grey);line-height:1.6;margin-bottom:6px}
-    .humacity-asset-value{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--lavender)}
-    .humacity-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .humacity-block{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
-    .humacity-block-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
-    .humacity-block-label.red{color:#FF4D6D}
-    .humacity-block-label.green{color:var(--muted)}
-    .humacity-block-text{font-size:12px;color:var(--grey);line-height:1.5}
+    /* HUMAC CARD */
+    .humac-influence-card{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.25);border-radius:14px;padding:20px 24px;margin-bottom:16px}
+    .humac-influence-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+    .humac-influence-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    .hi-item{background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.1);border-radius:8px;padding:12px 14px}
+    .hi-k{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.45);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+    .hi-v{font-size:13px;color:rgba(244,243,255,0.75);line-height:1.45}
+    .hi-v.pillar{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;color:#c4b5fd}
+    .humac-influence-meridian{font-size:12px;color:var(--grey);line-height:1.6;margin-bottom:10px}
+    .humac-traj-note{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.12);border-radius:7px;padding:9px 12px}
+    .humac-traj-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(165,180,252,0.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .humac-traj-text{font-size:12px;color:var(--grey);line-height:1.5}
 
+    /* ARIA OFFER */
+    .aria-offer-card{background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(99,102,241,0.04));border:1px solid rgba(124,58,237,0.22);border-radius:12px;padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .aria-offer-inner{flex:1}
+    .aria-offer-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#c4b5fd;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+    .aria-offer-text{font-size:13px;color:var(--grey);line-height:1.5}
+    .aria-offer-btn{padding:10px 20px;background:linear-gradient(135deg,var(--violet),var(--accent));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;white-space:nowrap;box-shadow:0 4px 14px rgba(99,102,241,0.3)}
+
+    /* ACTION ROW */
     .action-row{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap}
     .btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
     .btn-primary:hover{opacity:.88}
@@ -112,91 +143,58 @@
 
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
-    @media(max-width:768px){.sidebar{display:none}.main{padding:20px 16px}.stakeholder-grid{grid-template-columns:repeat(2,1fr)}.influence-header{flex-direction:column}.humacity-assets,.humacity-row{grid-template-columns:1fr}}
+    @media(max-width:768px){.sidebar{display:none}.main{padding:20px 16px}.stakeholder-grid{grid-template-columns:repeat(2,1fr)}.influence-header{flex-direction:column}.humac-influence-grid{grid-template-columns:1fr}.aria-offer-card{flex-direction:column;align-items:flex-start}}
   </style>
 </head>
 <body>
 
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="logo" onclick="window.location.href='index.html'">
       <div class="logo-dot"></div>
       <div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div>
     </div>
-    <a href="dashboard.html" class="nav-item">
-      <span class="icon">⊞</span> Dashboard
-    </a>
-
+    <a href="dashboard.html" class="nav-item"><span class="icon">⊞</span> Dashboard</a>
     <div class="nav-section">Core Tools</div>
-    <a href="er-case-navigator.html" class="nav-item">
-      <span class="icon">⚡</span> ER Case Navigator
-      <span class="nav-badge">0</span>
-    </a>
-    <a href="hr-data-storyteller.html" class="nav-item">
-      <span class="icon">📊</span> HR Data Storyteller
-    </a>
-    <a href="stakeholder-influence.html" class="nav-item active">
-      <span class="icon">🎯</span> Stakeholder Influence
-    </a>
-
+    <a href="er-case-navigator.html" class="nav-item"><span class="icon">⚡</span> ER Case Navigator</a>
+    <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">📊</span> HR Data Storyteller</a>
+    <a href="stakeholder-influence.html" class="nav-item active"><span class="icon">🎯</span> Stakeholder Influence</a>
     <div class="nav-section">Intelligence</div>
-    <a href="aria.html" class="nav-item">
-      <span class="icon">✦</span> ARIA
-    </a>
-    <a href="policy-compass.html" class="nav-item">
-      <span class="icon">🧭</span> Policy Compass
-    </a>
-    <a href="conversation-simulator.html" class="nav-item">
-      <span class="icon">🎭</span> Conversation Simulator
-    </a>
-
+    <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
+    <a href="policy-compass.html" class="nav-item"><span class="icon">🧭</span> Policy Compass</a>
+    <a href="conversation-simulator.html" class="nav-item"><span class="icon">🎭</span> Conversation Simulator</a>
     <div class="nav-section">My Record</div>
-    <a href="case-library.html" class="nav-item">
-      <span class="icon">◎</span> Case Library
-    </a>
-    <a href="debrief.html" class="nav-item">
-      <span class="icon">📋</span> The Debrief
-    </a>
-
+    <a href="case-library.html" class="nav-item"><span class="icon">◎</span> Case Library</a>
+    <a href="debrief.html" class="nav-item"><span class="icon">📋</span> The Debrief</a>
     <div class="nav-section">Philosophy</div>
-    <a href="https://humacity.com" class="nav-item" target="_blank">
-      <span class="icon">🌀</span> Humacity
-    </a>
-
+    <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">🌀</span> Humacity</a>
     <div class="nav-section">Legal</div>
-    <a href="terms.html" class="nav-item">
-      <span class="icon">📄</span> Terms of Service
-    </a>
-    <a href="privacy.html" class="nav-item">
-      <span class="icon">🔒</span> Privacy Policy
-    </a>
-
+    <a href="terms.html" class="nav-item"><span class="icon">📄</span> Terms of Service</a>
+    <a href="privacy.html" class="nav-item"><span class="icon">🔒</span> Privacy Policy</a>
     <div class="nav-section">Account</div>
-    <a href="data-dashboard.html" class="nav-item">
-      <span class="icon">🔒</span> Data &amp; Privacy
-    </a>
-    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()">
-      <span class="icon">↩</span> Sign out
-    </a>
-
-<div class="meridian-chip">
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">🔒</span> Data &amp; Privacy</a>
+    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()"><span class="icon">↩</span> Sign out</a>
+    <div class="meridian-chip">
       <div class="label">MERIDIAN Active</div>
       <div class="val" id="meridian-chip-val">Loading...</div>
     </div>
   </div>
 
+  <!-- MAIN -->
   <div class="main">
 
+    <!-- INTAKE VIEW -->
     <div id="intake-view">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Stakeholder Influence Builder</div>
-        <div class="page-title">&#x1F3AF; Stakeholder Influence Builder</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Stakeholder Influence</div>
+        <div class="page-title">&#x1F3AF; Stakeholder Influence</div>
         <div class="page-sub">Walk in with a five-layer strategy and one irrefutable number. Walk out with a decision.</div>
       </div>
       <div class="intro-card">
         <div class="intro-title">The meeting where HR usually loses.</div>
         <div class="intro-body">
           <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);padding:3px 8px;border-radius:3px;margin-right:8px">INFLUENCE</span>
-          The INFLUENCE Stack gives you five layers before you say a word: <strong style="color:rgba(244,243,255,0.8)">Credibility</strong> (why should they listen?), <strong style="color:rgba(244,243,255,0.8)">Data Anchor</strong> (the one number that makes it real), <strong style="color:rgba(244,243,255,0.8)">Narrative</strong> (the story that makes it land), <strong style="color:rgba(244,243,255,0.8)">Risk Mirror</strong> (what happens if they don't act), <strong style="color:rgba(244,243,255,0.8)">Decision Runway</strong> (the clear, low-friction ask). Plus the Humacity financial dimension — what this actually costs the business in the four asset classes.
+          Five layers before you say a word: <strong style="color:rgba(244,243,255,0.8)">Credibility</strong> (why they should listen), <strong style="color:rgba(244,243,255,0.8)">Data Anchor</strong> (the Humac-grounded number that reframes the conversation), <strong style="color:rgba(244,243,255,0.8)">Narrative Bridge</strong> (the story that makes it land), <strong style="color:rgba(244,243,255,0.8)">Risk Mirror</strong> (Revenue at Risk — the cost of saying no), <strong style="color:rgba(244,243,255,0.8)">Decision Runway</strong> (the specific ask with a deadline and two alternatives). Plus the exact opening and closing line.
         </div>
       </div>
       <div class="intake-card">
@@ -215,22 +213,23 @@
         </div>
         <div class="form-section">
           <label class="form-label">What are you trying to get them to do?</label>
-          <textarea id="objective" placeholder='e.g. "Approve &#8377;18L retention investment for the engineering team" or "Sign off on a formal PIP process for three underperformers in the sales function" or "Agree to loop in legal before we proceed with the termination"' rows="3"></textarea>
+          <textarea id="ask" placeholder='e.g. "Approve &#8377;18L retention investment for the engineering team" or "Sign off on a formal PIP process for three underperformers" or "Agree to loop in legal before the termination proceeds"' rows="3"></textarea>
         </div>
         <div class="form-section">
-          <label class="form-label">What's the context? What resistance do you expect?</label>
-          <textarea id="context" placeholder='e.g. "CFO thinks attrition is a market issue, not an HR problem. He&apos;s cut two HR budgets this year already. He responds to numbers and cost arguments, not culture or engagement talk. I have 20 minutes in the Monday review meeting."' rows="4"></textarea>
+          <label class="form-label">What's the situation? What resistance do you expect?</label>
+          <textarea id="situation" placeholder='e.g. "CFO thinks attrition is a market issue, not an HR problem. He&apos;s cut two HR budgets this year already. He responds to numbers and cost arguments, not culture or engagement talk. I have 20 minutes in the Monday review meeting."' rows="4"></textarea>
         </div>
         <div class="form-section">
-          <label class="form-label">What's your strongest data point? (optional)</label>
+          <label class="form-label">What's your strongest data point? (optional — included as additional context)</label>
           <input type="text" id="data-point" placeholder='e.g. "22% attrition in engineering this quarter, up from 14% last quarter" or "&#8377;2.4 crore estimated replacement cost for 8 senior exits"' />
         </div>
         <button class="submit-btn" id="submit-btn" onclick="runInfluence()" disabled>Build INFLUENCE Stack &rarr;</button>
       </div>
     </div>
 
+    <!-- LOADING VIEW -->
     <div id="loading-view" style="display:none">
-      <div class="page-header"><div class="page-title">&#x1F3AF; Stakeholder Influence Builder</div></div>
+      <div class="page-header"><div class="page-title">&#x1F3AF; Stakeholder Influence</div></div>
       <div class="loading-state">
         <div class="loading-orb">
           <svg width="64" height="64" viewBox="0 0 64 64">
@@ -242,6 +241,7 @@
       </div>
     </div>
 
+    <!-- OUTPUT VIEW -->
     <div id="output-view" style="display:none">
       <div class="page-header">
         <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="stakeholder-influence.html">Stakeholder Influence</a> &middot; INFLUENCE Stack</div>
@@ -249,58 +249,71 @@
         <div class="page-sub" id="output-stakeholder-label">Ready to present</div>
       </div>
       <div class="output-section">
+
+        <!-- Opening line -->
+        <div class="line-card">
+          <div class="line-card-label">Opening line — the first sentence you say in the room</div>
+          <div class="line-card-text" id="opening-line">&#8212;</div>
+        </div>
+
+        <!-- Stakeholder profile + Data Anchor header -->
         <div class="influence-header">
           <div>
-            <div class="ih-label">INFLUENCE Stack &middot; <span id="ih-stakeholder"></span></div>
-            <div class="ih-title" id="ih-title">&#8212;</div>
-            <div class="ih-sub" id="ih-sub"></div>
+            <div class="ih-label">Stakeholder Profile &middot; <span id="ih-stakeholder"></span></div>
+            <div class="ih-profile" id="ih-profile">&#8212;</div>
           </div>
-          <div style="text-align:right;flex-shrink:0">
+          <div class="anchor-wrap">
             <div class="anchor-number" id="anchor-number">&#8212;</div>
-            <div class="anchor-label">The Number That Opens the Room</div>
+            <div class="anchor-headline" id="anchor-headline"></div>
+            <div class="anchor-label">Data Anchor</div>
           </div>
         </div>
 
+        <!-- 5-layer INFLUENCE Stack -->
         <div class="influence-stack" id="influence-layers"></div>
 
-        <div class="meridian-note">
-          <div class="meridian-icon">&#x1F9ED;</div>
-          <div>
-            <div class="meridian-note-label">MERIDIAN Context Active</div>
-            <div class="meridian-note-text" id="meridian-note-text">Loading...</div>
+        <!-- Humac financial intelligence -->
+        <div class="humac-influence-card" id="humac-influence-card" style="display:none">
+          <div class="humac-influence-label">&#x1F4B0; Humac Financial Intelligence</div>
+          <div class="humac-influence-grid">
+            <div class="hi-item">
+              <div class="hi-k">Humac pillar</div>
+              <div class="hi-v pillar" id="hi-pillar">&#8212;</div>
+            </div>
+            <div class="hi-item">
+              <div class="hi-k">Confidence</div>
+              <div class="hi-v" id="hi-confidence">&#8212;</div>
+            </div>
+          </div>
+          <div class="humac-influence-meridian" id="hi-meridian"></div>
+          <div class="humac-traj-note" id="hi-traj-wrap" style="display:none">
+            <div class="humac-traj-label">Trajectory Note</div>
+            <div class="humac-traj-text" id="hi-trajectory"></div>
           </div>
         </div>
 
-        <div class="humacity-card" id="humacity-card" style="display:none">
-          <div class="humacity-header">
-            <div class="humacity-badge">HUMACITY</div>
-            <div class="humacity-title">Financial Impact on Four Asset Classes</div>
-          </div>
-          <div class="humacity-assets" id="humacity-assets-grid"></div>
-          <div class="humacity-row">
-            <div class="humacity-block">
-              <div class="humacity-block-label red">Cost of Inaction</div>
-              <div class="humacity-block-text" id="h-cost-inaction"></div>
-            </div>
-            <div class="humacity-block">
-              <div class="humacity-block-label green">Value of Acting Now</div>
-              <div class="humacity-block-text" id="h-value-acting"></div>
-            </div>
-          </div>
-          <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(99,102,241,0.12);display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
-            <div style="font-size:11px;color:rgba(244,243,255,0.3);line-height:1.6;max-width:520px">
-              <span style="color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase">What is Humacity?</span><br>
-              Every people decision has a financial dimension. Humacity names it across four asset classes: Trust Capital, Culture Yield, Signal Intelligence, and Belonging Premium. HR is not a support function. It is a P&amp;L operator.
-            </div>
-            <a href="https://humacity.com" target="_blank" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#a5b4fc;text-decoration:none;border:1px solid rgba(99,102,241,0.28);padding:8px 14px;border-radius:6px;white-space:nowrap;flex-shrink:0;transition:all .2s">Explore Humacity &rarr;</a>
-          </div>
+        <!-- Closing line -->
+        <div class="line-card closing-card" style="margin-top:-4px">
+          <div class="line-card-label">Closing line — the last sentence before you leave the room</div>
+          <div class="line-card-text" id="closing-line">&#8212;</div>
         </div>
 
+        <!-- ARIA offer -->
+        <div class="aria-offer-card">
+          <div class="aria-offer-inner">
+            <div class="aria-offer-label">✦ ARIA — Rehearse this conversation</div>
+            <div class="aria-offer-text" id="aria-offer-text">ARIA can play the stakeholder so you can rehearse holding the financial case under pressure.</div>
+          </div>
+          <button class="aria-offer-btn" onclick="goToARIA()">Talk to ARIA &rarr;</button>
+        </div>
+
+        <!-- Action row -->
         <div class="action-row">
-          <button class="btn-primary" onclick="practiceConversation()">Practice the Conversation &rarr;</button>
+          <button class="btn-primary" onclick="practiceConversation()">Simulate the Conversation &rarr;</button>
           <button class="btn-ghost" onclick="startNew()">New Stack</button>
-          <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+          <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
         </div>
+
       </div>
     </div>
 
@@ -308,106 +321,229 @@
 
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
-    var BASE = 'https://kumarviveksrv-cloud.github.io/vantage/';
+    var BASE = 'https://vantage.virorah.com/';
     var selectedStakeholder = '';
     var currentResult = null;
 
-    if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; }
+    if (sessionStorage.getItem('sr_access') !== 'true') {
+      window.location.href = BASE + 'access.html';
+    }
 
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
-    document.getElementById('meridian-chip-val').innerText = (meridian.state||'Not set') + ' \xb7 ' + (meridian.industry||'Not set');
+    document.getElementById('meridian-chip-val').innerText =
+      (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
 
+    // Pre-fill from HR Data Storyteller context
     var signalCtx = sessionStorage.getItem('sr_signal_context');
     if (signalCtx) {
-      try { var sc = JSON.parse(signalCtx); if (sc.narrative) document.getElementById('context').value = 'Context from SIGNAL: ' + sc.narrative; if (sc.audience) { document.querySelectorAll('.stakeholder-btn').forEach(function(b){ if (b.innerText.trim().includes(sc.audience.split('/')[0].trim())) { selectStakeholder(b, sc.audience); } }); } sessionStorage.removeItem('sr_signal_context'); checkSubmit(); } catch(e){}
+      try {
+        var sc = JSON.parse(signalCtx);
+        if (sc.narrative) {
+          document.getElementById('situation').value = 'Context from Data Storyteller: ' + sc.narrative;
+        }
+        if (sc.headline) {
+          document.getElementById('data-point').value = sc.headline;
+        }
+        if (sc.audience) {
+          document.querySelectorAll('.stakeholder-btn').forEach(function(b) {
+            if (b.innerText.trim().toLowerCase().indexOf(sc.audience.split('/')[0].trim().toLowerCase()) > -1) {
+              selectStakeholder(b, sc.audience);
+            }
+          });
+        }
+        sessionStorage.removeItem('sr_signal_context');
+        checkSubmit();
+      } catch(e) {}
     }
 
-    ['objective','context'].forEach(function(id){ document.getElementById(id).addEventListener('input', checkSubmit); });
+    ['ask','situation'].forEach(function(id) {
+      document.getElementById(id).addEventListener('input', checkSubmit);
+    });
 
     function selectStakeholder(el, stakeholder) {
       document.querySelectorAll('.stakeholder-btn').forEach(function(b){ b.classList.remove('selected'); });
-      el.classList.add('selected'); selectedStakeholder = stakeholder; checkSubmit();
+      el.classList.add('selected');
+      selectedStakeholder = stakeholder;
+      checkSubmit();
     }
 
     function checkSubmit() {
-      var obj = document.getElementById('objective').value.trim();
-      var ctx = document.getElementById('context').value.trim();
-      document.getElementById('submit-btn').disabled = !(selectedStakeholder && obj.length > 10 && ctx.length > 20);
+      var ask = document.getElementById('ask').value.trim();
+      var sit = document.getElementById('situation').value.trim();
+      document.getElementById('submit-btn').disabled = !(selectedStakeholder && ask.length > 10 && sit.length > 20);
     }
 
     function showView(view) {
-      ['intake-view','loading-view','output-view'].forEach(function(v){ document.getElementById(v).style.display='none'; });
+      ['intake-view','loading-view','output-view'].forEach(function(v){
+        document.getElementById(v).style.display = 'none';
+      });
       document.getElementById(view).style.display = 'block';
     }
 
     async function runInfluence() {
-      var obj = document.getElementById('objective').value.trim();
-      var ctx = document.getElementById('context').value.trim();
+      var ask = document.getElementById('ask').value.trim();
+      var sit = document.getElementById('situation').value.trim();
       var dp = document.getElementById('data-point').value.trim();
-      if (!selectedStakeholder || !obj || !ctx) return;
+      if (!selectedStakeholder || !ask || !sit) return;
       showView('loading-view');
       try {
         var res = await fetch(WORKER, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ tool:'influence', stakeholder:selectedStakeholder, objective:obj, context:ctx, dataPoint:dp, meridian:meridian })
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            tool: 'influence',
+            stakeholderType: selectedStakeholder,
+            situation: sit,
+            ask: ask,
+            context: dp ? 'Key data point: ' + dp : '',
+            meridian: meridian
+          })
         });
         var data = await res.json();
-        if (data.success) { currentResult = data.data; renderOutput(); }
-        else { alert('Error: ' + (data.error||'Unknown')); showView('intake-view'); }
-      } catch(err) { alert('Connection error: ' + err.message); showView('intake-view'); }
+        if (data.success) {
+          currentResult = data.data;
+          renderOutput();
+        } else {
+          alert('Error: ' + (data.error || 'Unknown'));
+          showView('intake-view');
+        }
+      } catch(err) {
+        alert('Connection error: ' + err.message);
+        showView('intake-view');
+      }
     }
 
-    var LAYER_NAMES = ['Credibility','Data Anchor','Narrative','Risk Mirror','Decision Runway'];
-    var LAYER_KEYS = ['credibility','dataAnchor','narrative','riskMirror','decisionRunway'];
+    function getProbClass(prob) {
+      return { High: 'prob-high', Medium: 'prob-medium', Low: 'prob-low' }[prob] || 'prob-medium';
+    }
+
+    function renderLayer(num, name, content) {
+      var card = document.createElement('div');
+      card.className = 'layer-card';
+      var header = '<div class="layer-header"><div class="layer-num">' + num + '</div><div class="layer-name">' + name + '</div></div>';
+      card.innerHTML = header + content;
+      return card;
+    }
 
     function renderOutput() {
       var r = currentResult;
+      if (!r) return;
+      var s = r.stack || {};
+      var h = r.humac || {};
+
       document.getElementById('output-stakeholder-label').innerText = 'Built for ' + selectedStakeholder;
       document.getElementById('ih-stakeholder').innerText = selectedStakeholder;
-      document.getElementById('ih-title').innerText = r.headline || '';
-      document.getElementById('ih-sub').innerText = r.subHeadline || '';
-      document.getElementById('anchor-number').innerText = r.anchorNumber || '\u2014';
-      document.getElementById('meridian-note-text').innerText = r.meridianNote || '';
+      document.getElementById('ih-profile').innerText = r.stakeholderProfile || '';
 
+      // Data Anchor header
+      var da = s.dataAnchor || {};
+      document.getElementById('anchor-number').innerText = da.figure || '\u2014';
+      document.getElementById('anchor-headline').innerText = da.headline || '';
+
+      // Opening / closing lines
+      document.getElementById('opening-line').innerText = r.openingLine || '\u2014';
+      document.getElementById('closing-line').innerText = r.closingLine || '\u2014';
+
+      // Build layers
       var layersEl = document.getElementById('influence-layers');
       layersEl.innerHTML = '';
-      LAYER_KEYS.forEach(function(key, i) {
-        var layer = r.layers && r.layers[key] ? r.layers[key] : null;
-        if (!layer) return;
-        var card = document.createElement('div');
-        card.className = 'layer-card';
-        card.innerHTML =
-          '<div class="layer-header"><div class="layer-num">'+(i+1)+'</div><div class="layer-name">'+LAYER_NAMES[i]+'</div></div>' +
-          '<div class="layer-title">'+(layer.title||'')+'</div>' +
-          '<div class="layer-content">'+(layer.content||'')+'</div>' +
-          (layer.tactic ? '<div class="layer-tactic">Tactic: '+(layer.tactic||'')+'</div>' : '');
-        layersEl.appendChild(card);
-      });
 
-      if (r.humacity) {
-        document.getElementById('humacity-card').style.display = 'block';
-        var h = r.humacity;
-        document.getElementById('h-cost-inaction').innerText = h.costOfInaction || '';
-        document.getElementById('h-value-acting').innerText = h.valueOfActingNow || '';
-        if (h.assetsAtRisk && h.assetsAtRisk.length > 0) {
-          document.getElementById('humacity-assets-grid').innerHTML = h.assetsAtRisk.map(function(a){
-            return '<div class="humacity-asset"><div class="humacity-asset-name">'+(a.asset||'')+'</div><div class="humacity-asset-impact">'+(a.impact||'')+'</div><div class="humacity-asset-value">'+(a.estimatedValue||'')+'</div></div>';
-          }).join('');
-        }
+      // Layer 1 — Credibility
+      var cred = s.credibility || {};
+      layersEl.appendChild(renderLayer(1, 'Credibility Foundation',
+        '<div class="l-text">' + (cred.statement || '') + '</div>' +
+        (cred.evidence ? '<div class="l-sub">' + cred.evidence + '</div>' : '') +
+        (cred.deliveryNote ? '<div class="l-tactic"><strong>Delivery:</strong> ' + cred.deliveryNote + '</div>' : '')
+      ));
+
+      // Layer 2 — Data Anchor
+      layersEl.appendChild(renderLayer(2, 'Data Anchor',
+        '<div class="l-figure">' + (da.figure || '\u2014') + '</div>' +
+        '<div class="l-text">' + (da.context || '') + '</div>' +
+        (da.humacBasis ? '<div class="l-humac-basis"><div class="l-humac-label">Humac basis</div>' + da.humacBasis + '</div>' : '')
+      ));
+
+      // Layer 3 — Narrative Bridge
+      var nb = s.narrativeBridge || {};
+      layersEl.appendChild(renderLayer(3, 'Narrative Bridge',
+        '<div class="l-text">' + (nb.story || '') + '</div>' +
+        (nb.connection ? '<div class="l-sub" style="margin-bottom:8px">' + nb.connection + '</div>' : '') +
+        (nb.emotionalHook ? '<div class="l-tactic"><strong>The human fact inside the financial case:</strong> ' + nb.emotionalHook + '</div>' : '')
+      ));
+
+      // Layer 4 — Risk Mirror
+      var rm = s.riskMirror || {};
+      var probText = rm.probability ? rm.probability.split(' — ')[0].split('.')[0] : '';
+      var probClass = getProbClass(probText);
+      layersEl.appendChild(renderLayer(4, 'Risk Mirror — Revenue at Risk',
+        '<div class="l-rar">' +
+          '<div class="l-rar-figure">' + (rm.revenueAtRisk || '\u2014') + '</div>' +
+          (probText ? '<span class="l-prob-badge ' + probClass + '">' + probText + ' probability</span>' : '') +
+        '</div>' +
+        (rm.revenueAtRiskBasis ? '<div class="l-sub" style="margin-bottom:8px">' + rm.revenueAtRiskBasis + '</div>' : '') +
+        '<div class="l-text">' + (rm.scenario || '') + '</div>' +
+        (rm.timeline ? '<div class="l-tactic"><strong>Timeline:</strong> ' + rm.timeline + '</div>' : '')
+      ));
+
+      // Layer 5 — Decision Runway
+      var dr = s.decisionRunway || {};
+      var altsHtml = '';
+      if (dr.alternatives && dr.alternatives.length > 0) {
+        altsHtml = '<div class="l-alternatives">' +
+          dr.alternatives.map(function(a, i) {
+            return '<div class="l-alt-item"><span class="l-alt-num">' + (i === 0 ? 'Alt A' : 'Alt B') + '</span><span>' + a + '</span></div>';
+          }).join('') +
+        '</div>';
       }
+      layersEl.appendChild(renderLayer(5, 'Decision Runway',
+        '<div class="l-text">' + (dr.ask || '') + '</div>' +
+        (dr.deadline ? '<div class="l-sub" style="margin-bottom:10px"><strong>Deadline:</strong> ' + dr.deadline + '</div>' : '') +
+        altsHtml +
+        (dr.successMetric ? '<div class="l-success"><div class="l-success-label">What you commit to report in 90 days</div>' + dr.successMetric + '</div>' : '')
+      ));
+
+      // Humac card
+      if (h.pillar || h.meridianCalibration) {
+        document.getElementById('hi-pillar').innerText = h.pillar ? 'Humac ' + h.pillar : '\u2014';
+        document.getElementById('hi-confidence').innerText = (h.confidence || '\u2014') + ' confidence';
+        document.getElementById('hi-meridian').innerText = (h.pillarRationale ? h.pillarRationale + ' ' : '') + (h.meridianCalibration || '');
+        if (h.trajectoryNote) {
+          document.getElementById('hi-trajectory').innerText = h.trajectoryNote;
+          document.getElementById('hi-traj-wrap').style.display = 'block';
+        }
+        document.getElementById('humac-influence-card').style.display = 'block';
+      }
+
+      // ARIA offer
+      if (r.aria) {
+        document.getElementById('aria-offer-text').innerText = r.aria;
+      }
+
       showView('output-view');
     }
 
-    function practiceConversation() { 
-      if (currentResult) sessionStorage.setItem('sr_practice_context', JSON.stringify({ narrative: document.getElementById('context').value.substring(0,300), role: selectedStakeholder }));
+    function goToARIA() {
+      sessionStorage.setItem('sr_aria_context', JSON.stringify({
+        mode: 'conversation_coach',
+        scenario: 'Stakeholder Influence — ' + selectedStakeholder + ' — ' + document.getElementById('ask').value.substring(0, 150)
+      }));
+      window.location.href = BASE + 'aria.html';
+    }
+
+    function practiceConversation() {
+      sessionStorage.setItem('sr_practice_context', JSON.stringify({
+        narrative: document.getElementById('situation').value.substring(0, 300),
+        role: selectedStakeholder
+      }));
       window.location.href = BASE + 'conversation-simulator.html';
     }
 
     function startNew() {
-      selectedStakeholder = ''; currentResult = null;
-      document.getElementById('objective').value = '';
-      document.getElementById('context').value = '';
+      selectedStakeholder = '';
+      currentResult = null;
+      document.getElementById('ask').value = '';
+      document.getElementById('situation').value = '';
       document.getElementById('data-point').value = '';
       document.querySelectorAll('.stakeholder-btn').forEach(function(b){ b.classList.remove('selected'); });
       document.getElementById('submit-btn').disabled = true;
