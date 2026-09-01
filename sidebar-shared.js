@@ -99,6 +99,12 @@
     '  flex-shrink: 0 !important;',
     '}',
 
+    // Default nav item base colour — pages built this session used 45% white.
+    // Dashboard uses 70%. This brings all pages to parity.
+    '.nav-item, a.nav-item {',
+    '  color: rgba(244,243,255,0.70) !important;',
+    '}',
+
     // ── ARIA-page class parity ─────────────────────────────
     // ARIA uses .sb / .ni / .ns instead of .sidebar / .nav-item / .nav-section.
     // The rules above target dashboard classes only, so they silently miss ARIA.
