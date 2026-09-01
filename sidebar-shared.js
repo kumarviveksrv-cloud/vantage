@@ -98,6 +98,46 @@
     '  align-items: center !important;',
     '  flex-shrink: 0 !important;',
     '}',
+
+    // ── ARIA-page class parity ─────────────────────────────
+    // ARIA uses .sb / .ni / .ns instead of .sidebar / .nav-item / .nav-section.
+    // The rules above target dashboard classes only, so they silently miss ARIA.
+    // These rules bring ARIA's sidebar to full brightness parity with the dashboard.
+
+    // Sidebar background — matches dashboard .sidebar override
+    '.sb {',
+    '  background: rgba(5,4,16,0.98) !important;',
+    '  border-right-color: rgba(99,102,241,0.18) !important;',
+    '}',
+
+    // Default nav item — dashboard is 70% white; ARIA was 45%
+    '.ni, a.ni {',
+    '  color: rgba(244,243,255,0.70) !important;',
+    '}',
+
+    // Active nav item — mirrors .nav-item.active rule above
+    '.ni.active, a.ni.active {',
+    '  background: rgba(99,102,241,0.12) !important;',
+    '  border-color: rgba(99,102,241,0.30) !important;',
+    '  color: #a5b4fc !important;',
+    '}',
+
+    // Hover nav item — mirrors .nav-item:hover rule above
+    '.ni:hover, a.ni:hover {',
+    '  background: rgba(99,102,241,0.08) !important;',
+    '  border-color: rgba(99,102,241,0.20) !important;',
+    '  color: #c4b5fd !important;',
+    '}',
+
+    // Section headers — mirrors .nav-section rule above
+    '.ns {',
+    '  color: rgba(99,102,241,0.55) !important;',
+    '}',
+
+    // Logo subtitle — dashboard is rgba(165,180,252,0.6); ARIA was rgba(255,255,255,.35)
+    '.logo-sub {',
+    '  color: rgba(165,180,252,0.55) !important;',
+    '}',
   ].join('\n');
   document.head.insertBefore(styleOverride, document.head.firstChild);
 
