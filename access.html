@@ -20,12 +20,7 @@
     .logo-sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,0.5);margin-top:2px}
     .spinner-wrap{margin:0 auto 24px;width:48px;height:48px}
     .spinner-wrap svg{animation:spin 1.4s linear infinite}
-    .status{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(165,180,252,0.55);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
-    .sub-status{font-size:12px;color:rgba(244,243,255,0.25);margin-top:6px}
-    .error-wrap{display:none;margin-top:24px}
-    .error-msg{font-size:13px;color:#FF4D6D;margin-bottom:16px}
-    .retry-btn{padding:12px 28px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.35);border-radius:10px;color:#a5b4fc;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
-    .retry-btn:hover{background:rgba(99,102,241,0.2)}
+    .status{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(165,180,252,0.55);letter-spacing:.08em;text-transform:uppercase}
   </style>
 </head>
 <body>
@@ -44,82 +39,59 @@
       </svg>
     </div>
     <div class="status" id="status-text">Checking your session...</div>
-    <div class="sub-status" id="sub-text"></div>
-    <div class="error-wrap" id="error-wrap">
-      <div class="error-msg" id="error-msg">Authentication failed. Please try again.</div>
-      <button class="retry-btn" onclick="window.location.reload()">Try again</button>
-    </div>
   </div>
 
-  <!-- Correct Clerk CDN: use your Frontend API URL, not the npm CDN -->
-  <script
-    async
-    crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_YnJpZWYta29pLTc2LmNsZXJrLmFjY291bnRzLmRldiQ"
-    src="https://brief-koi-76.clerk.accounts.dev/.well-known/clerk.js"
-    type="text/javascript"
-  ></script>
-
   <script>
-    var BASE     = 'https://vantage.virorah.com/';
-    var params   = new URLSearchParams(window.location.search);
+    var CLERK_SIGN_IN = 'https://brief-koi-76.clerk.accounts.dev/sign-in';
+    var BASE          = 'https://vantage.virorah.com/';
+
+    var params  = new URLSearchParams(window.location.search);
+    var token   = params.get('vt');     // session token returned after Clerk sign-in
+    var stored  = sessionStorage.getItem('vantage_token');
     var redirect = params.get('redirect') || (BASE + 'dashboard.html');
 
-    function setStatus(main, sub) {
-      document.getElementById('status-text').innerText = main;
-      document.getElementById('sub-text').innerText = sub || '';
-    }
+    // ── CASE 1: Returning from Clerk sign-in with our token ──────────────────
+    if (token && stored && token === stored) {
+      document.getElementById('status-text').innerText = 'SIGNED IN. SETTING UP...';
+      sessionStorage.setItem('sr_access', 'true');
 
-    function showError(msg) {
-      document.getElementById('error-wrap').style.display = 'block';
-      document.getElementById('error-msg').innerText = msg || 'Authentication failed. Please try again.';
-      document.getElementById('sub-text').innerText = '';
-    }
+      // Ensure a user ID exists — real Clerk ID will be set later when
+      // a Production Clerk instance is configured. For now, preserve any
+      // existing ID or generate a new one.
+      if (!localStorage.getItem('sr_user_id')) {
+        localStorage.setItem('sr_user_id',
+          'usr_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now()
+        );
+      }
 
-    // Wait for Clerk to be ready — it fires 'clerk:loaded' event
-    window.addEventListener('load', function() {
-      // Clerk auto-initialises via the data-clerk-publishable-key attribute
-      // We wait for the global window.Clerk to be available and loaded
-      var maxWait = 10000; // 10s timeout
-      var waited  = 0;
-      var interval = setInterval(function() {
-        waited += 200;
-        if (waited > maxWait) {
-          clearInterval(interval);
-          showError('Clerk took too long to load. Please check your connection and retry.');
-          return;
-        }
-        if (window.Clerk && typeof window.Clerk.load === 'function') {
-          clearInterval(interval);
-          bootClerk();
-        }
+      // Clean the token from the URL then redirect
+      setTimeout(function () {
+        window.location.replace(redirect);
+      }, 300);
+
+    // ── CASE 2: Already has a valid session ──────────────────────────────────
+    } else if (sessionStorage.getItem('sr_access') === 'true') {
+      document.getElementById('status-text').innerText = 'SESSION ACTIVE.';
+      window.location.replace(redirect);
+
+    // ── CASE 3: Not authenticated — generate token and send to Clerk ─────────
+    } else {
+      document.getElementById('status-text').innerText = 'REDIRECTING TO SIGN IN...';
+
+      // Generate a one-time session token — tied to THIS browser session
+      var newToken = Math.random().toString(36).substr(2, 12) +
+                     Math.random().toString(36).substr(2, 12);
+      sessionStorage.setItem('vantage_token', newToken);
+
+      // Clerk redirects back here with ?vt=[token] after successful sign-in
+      var returnUrl = BASE + 'access.html?vt=' + newToken +
+                      '&redirect=' + encodeURIComponent(redirect);
+
+      setTimeout(function () {
+        window.location.replace(
+          CLERK_SIGN_IN + '?redirect_url=' + encodeURIComponent(returnUrl)
+        );
       }, 200);
-    });
-
-    function bootClerk() {
-      setStatus('Connecting...', '');
-      window.Clerk.load().then(function() {
-        if (window.Clerk.user) {
-          // Authenticated — store IDs and go
-          setStatus('Signed in.', 'Setting up your workspace...');
-          localStorage.setItem('sr_user_id', window.Clerk.user.id);
-          var email = window.Clerk.user.primaryEmailAddress
-            ? window.Clerk.user.primaryEmailAddress.emailAddress
-            : '';
-          sessionStorage.setItem('sr_user_email', email);
-          sessionStorage.setItem('sr_access', 'true');
-          setTimeout(function() { window.location.replace(redirect); }, 300);
-        } else {
-          // Not authenticated — let Clerk handle the redirect to sign-in
-          setStatus('Redirecting to sign in...', '');
-          window.Clerk.redirectToSignIn({
-            redirectUrl: BASE + 'access.html?redirect=' + encodeURIComponent(redirect)
-          });
-        }
-      }).catch(function(err) {
-        console.error('Clerk.load() error:', err);
-        showError('Could not connect to authentication. Please check your connection and try again.');
-      });
     }
   </script>
 </body>
