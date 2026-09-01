@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Vantage — Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif}
+    body{display:flex}
+
+    /* SIDEBAR */
+    .sidebar{width:220px;flex-shrink:0;background:rgba(13,11,30,.98);border-right:1px solid rgba(99,102,241,.08);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto;position:fixed;top:0;left:0;z-index:20}
+    .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
+    .logo-dot{width:8px;height:8px;border-radius:50%;background:#6366f1;box-shadow:0 0 10px #6366f1;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700}
+    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:2px}
+    .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:4px 10px;margin:16px 0 6px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,.45);font-size:13px;margin-bottom:2px}
+    .nav-item:hover{background:rgba(255,255,255,.04);color:#fff}
+    .nav-item.active{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.25);color:#a5b4fc;font-weight:500}
+    .nav-icon{font-size:16px;flex-shrink:0}
+    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.15)}
+    .meridian-chip .ml{font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .meridian-chip .mv{font-size:11px;color:rgba(255,255,255,.45)}
+
+    /* MAIN */
+    .main{margin-left:220px;flex:1;min-height:100vh;overflow-y:auto}
+    .content{max-width:820px;margin:0 auto;padding:56px 40px 80px}
+
+    /* HERO */
+    .hero{margin-bottom:72px}
+    .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(99,102,241,.7);margin-bottom:18px}
+    .hero-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:800;line-height:1.1;color:#f4f3ff;margin-bottom:20px}
+    .hero-title span{background:linear-gradient(135deg,#a5b4fc,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-sub{font-size:1.05rem;color:rgba(244,243,255,.5);line-height:1.75;max-width:620px}
+
+    /* SECTION */
+    .section{margin-bottom:60px}
+    .section-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(99,102,241,.55);margin-bottom:12px}
+    .section-title{font-family:'Bricolage Grotesque',sans-serif;font-size:1.6rem;font-weight:700;color:#f4f3ff;margin-bottom:18px;line-height:1.25}
+    .section-body{font-size:.95rem;color:rgba(244,243,255,.5);line-height:1.85}
+    .section-body p+p{margin-top:16px}
+
+    /* DIVIDER */
+    .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.2),transparent);margin:60px 0}
+
+    /* TOOL CARDS */
+    .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:24px}
+    .tool-card{background:rgba(13,11,30,.8);border:1px solid rgba(99,102,241,.12);border-radius:12px;padding:18px 18px;transition:border-color .2s,background .2s}
+    .tool-card:hover{border-color:rgba(99,102,241,.3);background:rgba(99,102,241,.04)}
+    .tc-icon{font-size:20px;margin-bottom:10px}
+    .tc-tag{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:rgba(99,102,241,.55);margin-bottom:6px}
+    .tc-name{font-family:'Bricolage Grotesque',sans-serif;font-size:.95rem;font-weight:700;color:#f4f3ff;margin-bottom:6px}
+    .tc-desc{font-size:.8rem;color:rgba(244,243,255,.4);line-height:1.55}
+
+    /* HUMAC PILLARS */
+    .pillars{display:flex;flex-direction:column;gap:10px;margin-top:24px}
+    .pillar{display:flex;align-items:flex-start;gap:16px;padding:14px 16px;background:rgba(13,11,30,.8);border:1px solid rgba(99,102,241,.1);border-radius:10px}
+    .pillar-code{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#a5b4fc;letter-spacing:.06em;flex-shrink:0;width:28px;padding-top:1px}
+    .pillar-name{font-family:'Bricolage Grotesque',sans-serif;font-size:.88rem;font-weight:700;color:#f4f3ff;margin-bottom:3px}
+    .pillar-desc{font-size:.78rem;color:rgba(244,243,255,.38);line-height:1.5}
+
+    /* MERIDIAN CARD */
+    .meridian-card{background:rgba(99,102,241,.04);border:1px solid rgba(99,102,241,.18);border-radius:14px;padding:28px 28px;margin-top:24px}
+    .mc-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#a5b4fc;margin-bottom:14px}
+    .mc-params{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+    .mc-param{font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 12px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:6px;color:#a5b4fc;letter-spacing:.04em}
+
+    /* INDIA BADGE */
+    .india-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#a5b4fc;letter-spacing:.06em;margin-top:16px}
+
+    /* VISION BLOCK */
+    .vision-block{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(124,58,237,.06));border:1px solid rgba(99,102,241,.2);border-radius:16px;padding:36px 36px;margin-top:24px;position:relative;overflow:hidden}
+    .vision-block::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(99,102,241,.12),transparent 70%);pointer-events:none}
+    .vision-text{font-family:'Bricolage Grotesque',sans-serif;font-size:1.2rem;font-weight:600;color:#f4f3ff;line-height:1.6}
+
+    /* FOOTER */
+    .about-footer{margin-top:72px;padding-top:32px;border-top:1px solid rgba(99,102,241,.1);display:flex;align-items:center;justify-content:space-between;flex-wrap:gap}
+    .af-brand{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.08em}
+    .af-link{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(99,102,241,.55);text-decoration:none;letter-spacing:.06em;transition:color .2s}
+    .af-link:hover{color:#a5b4fc}
+
+    @media(max-width:768px){
+      .sidebar{display:none}
+      .main{margin-left:0}
+      .content{padding:32px 20px 60px}
+    }
+    ::-webkit-scrollbar{width:3px}
+    ::-webkit-scrollbar-thumb{background:rgba(99,102,241,.15);border-radius:2px}
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="logo" onclick="window.location.href='dashboard.html'">
+      <div class="logo-dot"></div>
+      <div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div>
+    </div>
+    <a href="dashboard.html" class="nav-item"><span class="nav-icon">⊞</span>Dashboard</a>
+    <div class="nav-section">Core Tools</div>
+    <a href="er-case-navigator.html" class="nav-item"><span class="nav-icon">⚡</span>ER Case Navigator</a>
+    <a href="hr-data-storyteller.html" class="nav-item"><span class="nav-icon">📊</span>HR Data Storyteller</a>
+    <a href="stakeholder-influence.html" class="nav-item"><span class="nav-icon">🎯</span>Stakeholder Influence</a>
+    <div class="nav-section">Intelligence</div>
+    <a href="aria.html" class="nav-item"><span class="nav-icon">✦</span>ARIA</a>
+    <a href="policy-compass.html" class="nav-item"><span class="nav-icon">🧭</span>Policy Compass</a>
+    <a href="conversation-simulator.html" class="nav-item"><span class="nav-icon">🎭</span>Conversation Simulator</a>
+    <div class="nav-section">My Record</div>
+    <a href="case-library.html" class="nav-item"><span class="nav-icon">◎</span>Case Library</a>
+    <a href="debrief.html" class="nav-item"><span class="nav-icon">📋</span>The Debrief</a>
+    <div class="nav-section">Account</div>
+    <a href="data-dashboard.html" class="nav-item"><span class="nav-icon">🔒</span>Data &amp; Privacy</a>
+    <a href="#" class="nav-item" onclick="clerkSignOut(); return false;"><span class="nav-icon">↩</span>Sign out</a>
+    <div class="meridian-chip">
+      <div class="ml">MERIDIAN Active</div>
+      <div class="mv" id="mcv">—</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="content">
+
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-eyebrow">Virorah Vantage · HR Decision Intelligence</div>
+        <h1 class="hero-title">The intelligence layer<br>HR has always <span>needed.</span></h1>
+        <p class="hero-sub">Built for Indian HR professionals who are done justifying their existence — and ready to hold leadership financially accountable for the people decisions they make.</p>
+      </div>
+
+      <!-- THE PROBLEM -->
+      <div class="section">
+        <div class="section-label">The problem</div>
+        <h2 class="section-title">HR has a credibility gap. Not a capability gap.</h2>
+        <div class="section-body">
+          <p>HR professionals in India are technically capable, deeply experienced, and often the most ethically serious people in the organisation. But they keep getting overruled, underfunded, and ignored — not because they're wrong, but because they're speaking the wrong language.</p>
+          <p>The language of the boardroom is financial. Decisions that get funded come with a number. Departments that earn respect hold others accountable. HR has been waiting for a seat at the table by speaking the language of care. Vantage is how you earn it by speaking the language of capital.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- WHAT IS VANTAGE -->
+      <div class="section">
+        <div class="section-label">What Vantage is</div>
+        <h2 class="section-title">HR Decision Intelligence. Not a dashboard. Not a chatbot.</h2>
+        <div class="section-body">
+          <p>Vantage is not an HRMS. It is not a productivity suite. It is not a dashboard that reports what happened last quarter so you can present it to someone who doesn't care.</p>
+          <p>Vantage is an intelligence layer. It takes every ER case, every people decision, every difficult conversation with a resistant stakeholder — and translates it into the financial consequence the business needs to hear. The legal position it needs to respect. The recommendation it can act on today.</p>
+          <p>When you walk into a room with Vantage behind you, you walk in with numbers. Not opinions. Not intuitions. Numbers that the CFO, CEO, and board understand — because they're in the language they already think in.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- THE TOOLS -->
+      <div class="section">
+        <div class="section-label">The tools</div>
+        <h2 class="section-title">Six tools. One integrated intelligence system.</h2>
+        <div class="section-body">
+          <p>Each tool in Vantage addresses a specific moment in the HR professional's work. Together they form a complete decision loop: assess, argue, practice, report, navigate, and reflect.</p>
+        </div>
+        <div class="tools-grid">
+          <div class="tool-card">
+            <div class="tc-icon">⚡</div>
+            <div class="tc-tag">Core · Assessment</div>
+            <div class="tc-name">ER Case Navigator</div>
+            <div class="tc-desc">PACT-assessed guidance for every ER situation. Legal position, financial exposure, recommendation, and communication script — in one output.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tc-icon">🎯</div>
+            <div class="tc-tag">Core · Influence</div>
+            <div class="tc-name">Stakeholder Influence</div>
+            <div class="tc-desc">The INFLUENCE Stack for any business case. Five layers that make saying no the riskier option for CFOs, CEOs, and department heads.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tc-icon">📊</div>
+            <div class="tc-tag">Core · Narrative</div>
+            <div class="tc-name">HR Data Storyteller</div>
+            <div class="tc-desc">The SIGNAL framework transforms raw HR metrics into financial narratives that make leadership act. Boardroom, CFO, and CEO versions.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tc-icon">🎭</div>
+            <div class="tc-tag">Intelligence · Practice</div>
+            <div class="tc-name">Conversation Simulator</div>
+            <div class="tc-desc">Practice before the real thing. Plays the difficult stakeholder at Standard or Challenging difficulty, then debriefs on what worked and what didn't.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tc-icon">🧭</div>
+            <div class="tc-tag">Intelligence · Compliance</div>
+            <div class="tc-name">Policy Compass</div>
+            <div class="tc-desc">Precise, actionable answers to Indian HR policy and compliance questions — calibrated to your state, org type, and company policies.</div>
+          </div>
+          <div class="tool-card">
+            <div class="tc-icon">✦</div>
+            <div class="tc-tag">Intelligence · Coaching</div>
+            <div class="tc-name">ARIA</div>
+            <div class="tc-desc">Adaptive Reflective Intelligence for Advancement. Your professional thinking partner. Case Partner, Conversation Coach, or Reflection — one question at a time.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- MERIDIAN -->
+      <div class="section">
+        <div class="section-label">The calibration engine</div>
+        <h2 class="section-title">MERIDIAN: why your answers are different from everyone else's.</h2>
+        <div class="section-body">
+          <p>Every answer Vantage gives you is calibrated to your exact professional reality through a 7-parameter profile called MERIDIAN. Generic HR advice is how you get generic HR outcomes. MERIDIAN is how you stop getting both.</p>
+          <p>A POSH compliance question for a 60-person startup in Bengaluru is a different question from the same issue at a 2,000-person manufacturing unit in Nashik with certified standing orders and an active union. Vantage knows the difference — because MERIDIAN tells it.</p>
+        </div>
+        <div class="meridian-card">
+          <div class="mc-label">Your 7-parameter profile</div>
+          <p style="font-size:.88rem;color:rgba(244,243,255,.5);line-height:1.7">State and jurisdiction. Industry. Organisation type. Organisation size. HR seniority level. Union status. HR function — and your company's internal policies on notice periods, warning processes, termination authority, domestic enquiry practice, and standing orders.</p>
+          <div class="mc-params">
+            <span class="mc-param">State / Jurisdiction</span>
+            <span class="mc-param">Industry</span>
+            <span class="mc-param">Org Type</span>
+            <span class="mc-param">Org Size</span>
+            <span class="mc-param">HR Seniority</span>
+            <span class="mc-param">Union Status</span>
+            <span class="mc-param">HR Function</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- HUMAC -->
+      <div class="section">
+        <div class="section-label">The financial framework</div>
+        <h2 class="section-title">Humac: the score that measures what people investment actually returns.</h2>
+        <div class="section-body">
+          <p>Vantage measures the financial efficiency of your people investment through a proprietary framework called Humac. Five pillars. One composite score. A Trajectory Index that shows where you're heading, not just where you are.</p>
+          <p>The Humac Score is not an engagement score. It is not an eNPS. It is a financial output — denominated in the same currency the CFO uses, aligned with ISO 30414 Human Capital Reporting Standards, and designed to appear in board decks, not HR reports.</p>
+        </div>
+        <div class="pillars">
+          <div class="pillar">
+            <div class="pillar-code">L1</div>
+            <div><div class="pillar-name">Value Ledger</div><div class="pillar-desc">The total financial cost and return of attrition, hiring, retention, and talent acquisition. Every exit and every hire has a number — this is where it lives.</div></div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-code">L2</div>
+            <div><div class="pillar-name">Talent Premium</div><div class="pillar-desc">The return on your Stars and HiPos above the performance baseline — and the liability of your Inconsistent Performers below it. Performance has a financial premium.</div></div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-code">L3</div>
+            <div><div class="pillar-name">Org Vitals</div><div class="pillar-desc">Twenty organisational telemetry signals across Leadership, Fear, Middle Layer, Execution, and HR Mirror. The diagnostic dimension that predicts where the organisation is heading.</div></div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-code">L4</div>
+            <div><div class="pillar-name">Human P&amp;L</div><div class="pillar-desc">HR programme costs, compliance spend, legal exposure, and below-the-line adjustments. The costs that never appear in the P&amp;L but are always paid somewhere.</div></div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-code">L5</div>
+            <div><div class="pillar-name">Human Balance Sheet</div><div class="pillar-desc">Institutional knowledge concentration, succession depth, and talent departure risk. The assets that don't appear on any financial statement but determine whether the organisation can execute.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- BUILT FOR INDIA -->
+      <div class="section">
+        <div class="section-label">Built for India</div>
+        <h2 class="section-title">Not adapted for India. Built in it.</h2>
+        <div class="section-body">
+          <p>Every legal citation in Vantage uses BNS, BNSS, and BSA — the Bharatiya Nyaya Sanhita, Bharatiya Nagarik Suraksha Sanhita, and Bharatiya Sakshya Adhiniyam — the codes that replaced IPC, CrPC, and the Indian Evidence Act on 1 July 2024. Vantage does not cite repealed statutes. It does not offer generic South Asian defaults. Every answer knows whether you're in Maharashtra or Telangana, whether you're in manufacturing or fintech, whether your standing orders are model or certified.</p>
+          <p>Every financial calculation is in INR. Every benchmark reflects Indian private sector practice. Every POSH citation knows the difference between the Internal Complaints Committee and what it is often incorrectly called.</p>
+        </div>
+        <div class="india-badge">
+          <span>🇮🇳</span>
+          <span>India-first · BNS / BNSS / BSA · INR · State-specific compliance</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- THE VISION -->
+      <div class="section">
+        <div class="section-label">The vision</div>
+        <h2 class="section-title">HR holding leadership accountable — not the other way around.</h2>
+        <div class="section-body">
+          <p>The dominant model of HR justifying itself to the business — seeking approval, presenting business cases, waiting for budget — assumes HR is a support function. Vantage is built on a different premise: that HR is the function that sits on the most consequential financial lever in any organisation, and that the reason it has been treated as a cost centre is not because it is one, but because it has not had the tools to prove otherwise.</p>
+          <p>The vision for Vantage is specific: every HR professional in India should be able to walk into a boardroom, a difficult performance conversation, or a complex disciplinary situation — and have the intelligence, the legal grounding, and the financial evidence to lead the decision, not just implement it.</p>
+        </div>
+        <div class="vision-block">
+          <div class="vision-text">"You are already in the room. Vantage gives you what you need to own it."</div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="about-footer">
+        <span class="af-brand">A VIRORAH PRODUCT · VANTAGE v1.0 · INDIA</span>
+        <div style="display:flex;gap:20px">
+          <a href="https://virorah.com" class="af-link" target="_blank">virorah.com ↗</a>
+          <a href="https://humacity.com" class="af-link" target="_blank">humacity.com ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    var BASE = 'https://vantage.virorah.com/';
+    if (sessionStorage.getItem('sr_access') !== 'true') {
+      window.location.href = BASE + 'access.html';
+    }
+    var mr = sessionStorage.getItem('sr_meridian');
+    var meridian = mr ? JSON.parse(mr) : {};
+    document.getElementById('mcv').innerText = (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
+  </script>
+  <script src="clerk-auth.js"></script>
+  <script src="sidebar-shared.js"></script>
+</body>
+</html>
