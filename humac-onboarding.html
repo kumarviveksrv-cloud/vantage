@@ -450,7 +450,7 @@ function renderStepper() {
     }
     const item = document.createElement('div');
     item.className = 'step-item';
-    const isDone = (i < currentBlock) || (document.getElementById('score-reveal').style.display !== 'none');
+    const isDone = (i < currentBlock) || (getComputedStyle(document.getElementById('score-reveal')).display !== 'none');
     const isActive = i === currentBlock;
     item.innerHTML = `
       <div class="step-bubble ${isDone?'done':isActive?'active':'pending'}">${isDone?'✓':b.id}</div>
