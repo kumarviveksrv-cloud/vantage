@@ -6,26 +6,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign In — Virorah Vantage</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
     @keyframes spin{to{transform:rotate(360deg)}}
-    body{display:flex;align-items:center;justify-content:center;min-height:100vh;
+    body{
+      display:flex;align-items:center;justify-content:center;min-height:100vh;
       background-image:linear-gradient(rgba(99,102,241,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.025) 1px,transparent 1px);
-      background-size:48px 48px;padding:24px}
-    .wrap{width:100%;max-width:440px;animation:fadeIn .4s ease}
-    .logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:32px}
+      background-size:48px 48px;padding:24px
+    }
+    .wrap{width:100%;max-width:420px;text-align:center;animation:fadeIn .4s ease}
+    .logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:40px}
     .logo-dot{width:10px;height:10px;border-radius:50%;background:#6366f1;box-shadow:0 0 14px rgba(99,102,241,.7);animation:pulse 2s ease-in-out infinite}
     .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;color:#f4f3ff}
     .logo-sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,.5);margin-top:2px}
-    #loading-state{text-align:center;padding:48px 32px;background:#0d0b1e;border:1px solid rgba(99,102,241,.18);border-radius:16px}
-    .spinner{width:28px;height:28px;border:2px solid rgba(99,102,241,.2);border-top-color:#6366f1;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}
-    .loading-text{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(165,180,252,.5)}
-    #clerk-container{display:none}
-    .meridian-chip{margin-top:20px;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.14);border-radius:10px;padding:14px 18px;text-align:center}
+    .card{background:#0d0b1e;border:1px solid rgba(99,102,241,.18);border-radius:16px;padding:40px 32px}
+    .spinner{width:32px;height:32px;border:2px solid rgba(99,102,241,.2);border-top-color:#6366f1;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+    .status-text{font-size:14px;color:rgba(244,243,255,.55);line-height:1.6;margin-bottom:8px}
+    .status-sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:rgba(165,180,252,.35);text-transform:uppercase}
+    .error-state{display:none}
+    .error-title{font-size:15px;font-weight:600;color:#f4f3ff;margin-bottom:8px}
+    .error-sub{font-size:13px;color:rgba(244,243,255,.45);line-height:1.6;margin-bottom:20px}
+    .retry-btn{padding:11px 24px;background:linear-gradient(135deg,#6366f1,#7c3aed);border:none;color:#fff;border-radius:8px;font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
+    .retry-btn:hover{opacity:.85}
+    .meridian-chip{margin-top:20px;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.14);border-radius:10px;padding:14px 18px}
     .meridian-chip-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
     .meridian-chip-text{font-size:12px;color:rgba(244,243,255,.4);line-height:1.55}
   </style>
@@ -39,21 +46,23 @@
         <div class="logo-sub">Vantage</div>
       </div>
     </div>
-    <div id="loading-state">
-      <div class="spinner"></div>
-      <div class="loading-text">Initialising secure sign-in&hellip;</div>
-    </div>
-    <div id="clerk-container"></div>
 
-    <!-- Forgot password fallback — links to Clerk Account Portal reset flow -->
-    <div id="forgot-pw-link" style="display:none;text-align:center;margin-top:16px">
-      <a href="https://brief-koi-76.accounts.dev/sign-in/forgot-password"
-         style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:500;color:rgba(165,180,252,0.7);text-decoration:none;transition:color .2s"
-         onmouseover="this.style.color='#a5b4fc'" onmouseout="this.style.color='rgba(165,180,252,0.7)'">
-        Forgot your password?
-      </a>
+    <div class="card">
+      <!-- Loading state -->
+      <div id="loading-state">
+        <div class="spinner"></div>
+        <div class="status-text">Checking your session&hellip;</div>
+        <div class="status-sub">Redirecting to secure sign-in</div>
+      </div>
+      <!-- Error state -->
+      <div class="error-state" id="error-state">
+        <div class="error-title">Sign-in unavailable</div>
+        <div class="error-sub">Unable to reach the authentication service. Please check your connection and try again.</div>
+        <button class="retry-btn" onclick="window.location.reload()">Try again</button>
+      </div>
     </div>
-    <div class="meridian-chip" id="meridian-chip" style="display:none">
+
+    <div class="meridian-chip" style="margin-top:20px">
       <div class="meridian-chip-label">MERIDIAN Inside</div>
       <div class="meridian-chip-text">Seven parameters calibrate every result to your exact professional reality — your state, industry, org type, seniority, and more.</div>
     </div>
@@ -64,12 +73,13 @@
     var CLERK_DOMAIN    = 'https://brief-koi-76.clerk.accounts.dev';
     var WORKER_URL      = 'https://situation-room-api.kumarvivek-srv.workers.dev';
     var DASHBOARD_URL   = 'https://vantage.virorah.com/dashboard.html';
+    var CLERK_SIGNIN    = CLERK_DOMAIN + '/sign-in';
 
     function getRedirectUrl() {
       try {
         var params = new URLSearchParams(window.location.search);
         var r = params.get('redirect_url') || '';
-        if (r && r.indexOf('https://vantage.virorah.com/') === 0) return r;
+        if (r && r.indexOf('https://vantage.virorah.com/') === 0 && r.indexOf('access.html') === -1) return r;
       } catch(e) {}
       return DASHBOARD_URL;
     }
@@ -92,114 +102,82 @@
       }
     }
 
-    // After sign-in: restore Humac Score and MERIDIAN from Airtable
     async function restoreUserData(token) {
       try {
-        var headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
-
-        // Restore Humac Score
+        var h = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
         var humacRes = await fetch(WORKER_URL, {
-          method: 'POST', headers: headers,
+          method: 'POST', headers: h,
           body: JSON.stringify({ tool: 'get_humac' })
         });
         if (humacRes.ok) {
-          var humacData = await humacRes.json();
-          if (humacData.success && humacData.data) {
-            try { sessionStorage.setItem('vantage_humac', JSON.stringify(humacData.data)); } catch(e) {}
-          }
+          var hd = await humacRes.json();
+          if (hd.success && hd.data) sessionStorage.setItem('vantage_humac', JSON.stringify(hd.data));
         }
-
-        // Restore MERIDIAN (Airtable takes priority over localStorage)
         var meridianRes = await fetch(WORKER_URL, {
-          method: 'POST', headers: headers,
+          method: 'POST', headers: h,
           body: JSON.stringify({ tool: 'get_meridian' })
         });
         if (meridianRes.ok) {
-          var meridianData = await meridianRes.json();
-          if (meridianData.success && meridianData.data) {
-            var meridian = meridianData.data;
-            sessionStorage.setItem('sr_meridian', JSON.stringify(meridian));
-            // Also cache in localStorage for fast-path on future sign-ins
+          var md = await meridianRes.json();
+          if (md.success && md.data) {
+            sessionStorage.setItem('sr_meridian', JSON.stringify(md.data));
             var email = sessionStorage.getItem('sr_user_email') || '';
-            if (email) localStorage.setItem('sr_meridian_' + email, JSON.stringify(meridian));
+            if (email) localStorage.setItem('sr_meridian_' + email, JSON.stringify(md.data));
           }
         }
-      } catch(e) {
-        console.warn('[Vantage] Data restore failed:', e);
-      }
+      } catch(e) { console.warn('[Vantage] Data restore error:', e); }
     }
 
-    function showClerkUI() {
+    function setStatus(text, sub) {
+      document.querySelector('.status-text').textContent = text;
+      if (sub) document.querySelector('.status-sub').textContent = sub;
+    }
+
+    function showError() {
       document.getElementById('loading-state').style.display = 'none';
-      document.getElementById('clerk-container').style.display = 'block';
-      document.getElementById('meridian-chip').style.display = 'block';
-      document.getElementById('forgot-pw-link').style.display = 'block';
-      window.Clerk.mountSignIn(document.getElementById('clerk-container'), {
-        routing: 'virtual',
-        appearance: {
-          variables: {
-            colorPrimary:         '#6366f1',
-            colorBackground:      '#050410',
-            colorInputBackground: '#0d0b1e',
-            colorInputText:       '#f4f3ff',
-            colorText:            '#f4f3ff',
-            colorTextSecondary:   'rgba(244,243,255,0.5)',
-            colorNeutral:         '#a5b4fc',
-            colorDanger:          '#f43f5e',
-            colorSuccess:         '#10b981',
-            borderRadius:         '10px',
-            fontFamily:           "'Plus Jakarta Sans', sans-serif",
-          },
-          layout: {
-            socialButtonsVariant: 'iconButton',
-            logoPlacement:        'none',
-          }
-        }
-      });
-      window.Clerk.addListener(function(resources) {
-        if (resources.user) {
-          syncUser(resources.user);
-          // Restore Humac Score and MERIDIAN from Airtable before redirecting
-          window.Clerk.session.getToken().then(function(token) {
-            return restoreUserData(token);
-          }).then(function() {
-            window.location.replace(getRedirectUrl());
-          }).catch(function() {
-            window.location.replace(getRedirectUrl());
-          });
-        }
-      });
+      document.getElementById('error-state').style.display = 'block';
     }
 
+    // Load Clerk SDK
     var s = document.createElement('script');
     s.async = true;
     s.crossOrigin = 'anonymous';
     s.setAttribute('data-clerk-publishable-key', PUBLISHABLE_KEY);
     s.src = CLERK_DOMAIN + '/npm/@clerk/clerk-js@latest/dist/clerk.browser.js';
+
     s.addEventListener('load', function() {
       window.Clerk.load().then(function() {
+
         if (window.Clerk.user) {
+          // Already signed in — restore data and go to dashboard
+          setStatus('Welcome back!', 'Restoring your workspace\u2026');
           syncUser(window.Clerk.user);
+          var redirectTo = getRedirectUrl();
           window.Clerk.session.getToken().then(function(token) {
             return restoreUserData(token);
           }).then(function() {
-            window.location.replace(getRedirectUrl());
+            window.location.replace(redirectTo);
           }).catch(function() {
-            window.location.replace(getRedirectUrl());
+            window.location.replace(redirectTo);
           });
           return;
         }
-        showClerkUI();
+
+        // Not signed in — redirect to Clerk Account Portal
+        setStatus('Redirecting to sign-in\u2026', 'Secured by Clerk');
+        var returnUrl = encodeURIComponent('https://vantage.virorah.com/access.html?redirect_url=' + encodeURIComponent(getRedirectUrl()));
+        window.location.replace(CLERK_SIGNIN + '?redirect_url=' + returnUrl);
+
       }).catch(function(err) {
-        console.error('[Clerk] Load error:', err);
-        document.getElementById('loading-state').innerHTML =
-          '<div style="font-size:13px;color:rgba(244,243,255,.5);line-height:1.6">Unable to load secure sign-in. Please refresh the page.</div>';
+        console.error('[Clerk] Error:', err);
+        showError();
       });
     });
+
     s.addEventListener('error', function() {
-      document.getElementById('loading-state').innerHTML =
-        '<div style="font-size:13px;color:rgba(244,243,255,.5);line-height:1.6">Sign-in could not be loaded. Please check your connection and refresh.</div>';
+      showError();
     });
+
     document.head.appendChild(s);
   </script>
 </body>
