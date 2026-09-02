@@ -75,6 +75,15 @@
     .meridian-btn-primary:hover{opacity:.85}
     .meridian-btn-later{padding:13px 18px;background:transparent;color:rgba(165,180,252,0.5);border:1px solid rgba(99,102,241,0.15);border-radius:10px;font-size:13px;cursor:pointer;transition:all .2s;white-space:nowrap}
     .meridian-btn-later:hover{border-color:rgba(99,102,241,0.3);color:rgba(165,180,252,0.8)}
+    /* Onboarding step indicator */
+    .ob-step-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .ob-step-indicator{display:flex;align-items:center;gap:0}
+    .ob-dot{width:10px;height:10px;border-radius:50%;background:rgba(99,102,241,.2);border:1.5px solid rgba(99,102,241,.3);flex-shrink:0}
+    .ob-dot-active{background:#6366f1;border-color:#6366f1;box-shadow:0 0 8px rgba(99,102,241,.5)}
+    .ob-dot-done{background:rgba(34,197,94,.5);border-color:rgba(34,197,94,.6)}
+    .ob-dot-line{width:28px;height:1.5px;background:rgba(99,102,241,.2)}
+    .ob-line-done{background:rgba(34,197,94,.4)}
+    .ob-step-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,.4)}
 
     /* STARFIELD */
     #vantage-stars{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
@@ -266,10 +275,20 @@
     </div>
     <div class="meridian-overlay" id="meridian-overlay" style="display:none">
       <div class="meridian-modal">
-        <button class="meridian-modal-close" onclick="closeMeridianPopup()">&#10005;</button>
+        <!-- Step indicator -->
+        <div class="ob-step-row">
+          <div class="ob-step-indicator">
+            <div class="ob-dot ob-dot-active"></div>
+            <div class="ob-dot-line"></div>
+            <div class="ob-dot"></div>
+            <div class="ob-dot-line"></div>
+            <div class="ob-dot"></div>
+          </div>
+          <div class="ob-step-label">Step 1 of 3 &mdash; Required</div>
+        </div>
         <div class="meridian-modal-badge">MERIDIAN Context Engine</div>
-        <div class="meridian-modal-title">Why your profile changes everything.</div>
-        <div class="meridian-modal-body">Without MERIDIAN, every tool gives you <strong>generic advice</strong>. With it, every output is calibrated to your exact professional reality — your state's labour law, your org's size, your role's depth of authority.</div>
+        <div class="meridian-modal-title">First, tell Vantage who you are.</div>
+        <div class="meridian-modal-body">Without MERIDIAN, every tool gives you <strong>generic advice</strong>. With it, every output is calibrated to your exact professional reality &mdash; your state's labour law, your org's size, your role's depth of authority. Takes under 90 seconds.</div>
         <div class="meridian-modal-params">
           <div class="meridian-param">&#127987; State jurisdiction</div>
           <div class="meridian-param">&#127970; Industry context</div>
@@ -281,8 +300,60 @@
           <div class="meridian-param">&#128274; Policy guardrails</div>
         </div>
         <div class="meridian-modal-btns">
-          <button class="meridian-btn-primary" onclick="window.location.href='onboarding.html'">Set up MERIDIAN &#8594;</button>
-          <button class="meridian-btn-later" onclick="closeMeridianPopup()">Do it later</button>
+          <button class="meridian-btn-primary" onclick="window.location.href='onboarding.html'">Set up MERIDIAN &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Humac Score -->
+    <div class="meridian-overlay" id="ob-step2-overlay" style="display:none">
+      <div class="meridian-modal">
+        <div class="ob-step-row">
+          <div class="ob-step-indicator">
+            <div class="ob-dot ob-dot-done"></div>
+            <div class="ob-dot-line ob-line-done"></div>
+            <div class="ob-dot ob-dot-active"></div>
+            <div class="ob-dot-line"></div>
+            <div class="ob-dot"></div>
+          </div>
+          <div class="ob-step-label">Step 2 of 3 &mdash; Recommended</div>
+        </div>
+        <div class="meridian-modal-badge">Humac Score</div>
+        <div class="meridian-modal-title">Measure your org's human capital.</div>
+        <div class="meridian-modal-body">Your <strong>Humac Score</strong> is a 0&ndash;100 composite that converts how efficiently your organisation turns people investment into financial value. Five weighted pillars. One number you can take into any boardroom.<br/><br/>Takes about <strong>10 minutes</strong>. You can always do it later &mdash; but having it makes every other tool sharper.</div>
+        <div class="meridian-modal-params">
+          <div class="meridian-param">L1 &middot; Value Ledger &middot; 25%</div>
+          <div class="meridian-param">L2 &middot; Talent Premium &middot; 15%</div>
+          <div class="meridian-param">L3 &middot; Org Vitals &middot; 30%</div>
+          <div class="meridian-param">L4 &middot; Human P&amp;L &middot; 20%</div>
+          <div class="meridian-param" style="grid-column:1/-1">L5 &middot; Human Balance Sheet &middot; 10%</div>
+        </div>
+        <div class="meridian-modal-btns">
+          <button class="meridian-btn-primary" onclick="goHumac()">Generate my Humac Score &rarr;</button>
+          <button class="meridian-btn-later" onclick="skipToStep3()">Do it later</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: First case -->
+    <div class="meridian-overlay" id="ob-step3-overlay" style="display:none">
+      <div class="meridian-modal">
+        <div class="ob-step-row">
+          <div class="ob-step-indicator">
+            <div class="ob-dot ob-dot-done"></div>
+            <div class="ob-dot-line ob-line-done"></div>
+            <div class="ob-dot ob-dot-done"></div>
+            <div class="ob-dot-line ob-line-done"></div>
+            <div class="ob-dot ob-dot-active"></div>
+          </div>
+          <div class="ob-step-label">Step 3 of 3 &mdash; Optional</div>
+        </div>
+        <div class="meridian-modal-badge">ER Case Navigator</div>
+        <div class="meridian-modal-title">Navigate your first case right now.</div>
+        <div class="meridian-modal-body">You have a situation. Every HR professional always does. Describe it and PACT will assess it across Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation &mdash; calibrated to your MERIDIAN profile &mdash; and return a full financial exposure in INR.<br/><br/><em style="color:rgba(165,180,252,.5);font-size:13px">Example: "My manager wants to terminate an employee who has been absent for 12 days without notice. No prior warning on record."</em></div>
+        <div class="meridian-modal-btns">
+          <button class="meridian-btn-primary" onclick="completeOnboarding('er-case-navigator.html')">Navigate my first case &rarr;</button>
+          <button class="meridian-btn-later" onclick="completeOnboarding(null)">I'll explore on my own</button>
         </div>
       </div>
     </div>
@@ -436,6 +507,9 @@
     if (sessionStorage.getItem('sr_access') !== 'true') {
       window.location.href = BASE + 'access.html';
     }
+    // ─────────────────────────────────────
+    // ONBOARDING SEQUENCE
+    // ─────────────────────────────────────
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var chip = document.getElementById('meridian-chip');
     var badge = document.getElementById('meridian-badge');
@@ -451,17 +525,72 @@
       chip.classList.add('incomplete');
       chip.onclick = function() { document.getElementById('meridian-overlay').style.display = 'flex'; };
       document.getElementById('meridian-cta').style.display = 'none';
-      if (!sessionStorage.getItem('meridian_popup_dismissed')) {
-        setTimeout(function(){ document.getElementById('meridian-overlay').style.display = 'flex'; }, 1200);
+    }
+
+    // Onboarding sequence logic
+    var onboardingComplete = localStorage.getItem('vantage_onboarding_complete') === '1';
+
+    function initOnboarding() {
+      if (onboardingComplete) return;
+      var hasMeridian = !!sessionStorage.getItem('sr_meridian');
+      var humacOffered = localStorage.getItem('vantage_ob_humac_offered') === '1';
+      var caseOffered  = localStorage.getItem('vantage_ob_case_offered') === '1';
+
+      if (!hasMeridian) {
+        // Step 1 — mandatory, no dismiss
+        setTimeout(function() {
+          document.getElementById('meridian-overlay').style.display = 'flex';
+        }, 1000);
+      } else if (!humacOffered) {
+        // Step 2 — Humac Score (skippable)
+        setTimeout(function() {
+          document.getElementById('ob-step2-overlay').style.display = 'flex';
+        }, 800);
+      } else if (!caseOffered) {
+        // Step 3 — First case (skippable)
+        setTimeout(function() {
+          document.getElementById('ob-step3-overlay').style.display = 'flex';
+        }, 800);
+      } else {
+        localStorage.setItem('vantage_onboarding_complete', '1');
       }
     }
-    function closeMeridianPopup() {
-      document.getElementById('meridian-overlay').style.display = 'none';
-      sessionStorage.setItem('meridian_popup_dismissed', '1');
+
+    function goHumac() {
+      localStorage.setItem('vantage_ob_humac_offered', '1');
+      window.location.href = 'humac-onboarding.html';
     }
+
+    function skipToStep3() {
+      localStorage.setItem('vantage_ob_humac_offered', '1');
+      document.getElementById('ob-step2-overlay').style.display = 'none';
+      setTimeout(function() {
+        document.getElementById('ob-step3-overlay').style.display = 'flex';
+      }, 300);
+    }
+
+    function completeOnboarding(destination) {
+      localStorage.setItem('vantage_ob_case_offered', '1');
+      localStorage.setItem('vantage_onboarding_complete', '1');
+      document.getElementById('ob-step3-overlay').style.display = 'none';
+      if (destination) window.location.href = destination;
+    }
+
+    // Step 1 backdrop click does nothing (mandatory)
     document.getElementById('meridian-overlay').addEventListener('click', function(e) {
-      if (e.target === this) closeMeridianPopup();
+      if (e.target === this && onboardingComplete) {
+        document.getElementById('meridian-overlay').style.display = 'none';
+      }
     });
+    // Steps 2 and 3 backdrop click allowed (skippable)
+    document.getElementById('ob-step2-overlay').addEventListener('click', function(e) {
+      if (e.target === this) skipToStep3();
+    });
+    document.getElementById('ob-step3-overlay').addEventListener('click', function(e) {
+      if (e.target === this) completeOnboarding(null);
+    });
+
+    initOnboarding();
 
     // ─────────────────────────────────────
     // MONTHLY EDITORIAL CALENDAR
