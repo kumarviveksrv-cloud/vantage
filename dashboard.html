@@ -425,34 +425,24 @@
       </div>
     </div>
 
-    <!-- PROCESSES BUILDING WIDGET -->
+    <!-- PROCESSES I'M BUILDING WIDGET -->
+    <!-- SR16 fix: this widget was previously declared twice with duplicate ids
+         (id="gaps-widget", id="gaps-list"), so all writes hit the first copy
+         and the second was orphaned hidden markup. Now a single canonical block. -->
     <div id="gaps-widget" style="display:none;background:var(--card);border:1px solid rgba(99,102,241,.18);border-radius:16px;padding:22px 26px;margin-bottom:24px;position:relative;overflow:hidden">
       <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,.4),transparent)"></div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
         <div>
-          <div style="font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,158,11,.6);margin-bottom:4px">Humac Gaps</div>
-          <div style="font-size:.92rem;font-weight:700;color:#f4f3ff">Processes I'm building</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,158,11,.6);margin-bottom:4px">Humac Gaps</div>
+          <div style="font-size:.92rem;font-weight:700;color:#f4f3ff;line-height:1.2">Processes I'm building</div>
         </div>
-        <a href="humac-onboarding.html" style="font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;color:rgba(165,180,252,.5);text-decoration:none;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.18);padding:6px 12px;border-radius:6px" onmouseover="this.style.color='#a5b4fc'" onmouseout="this.style.color='rgba(165,180,252,.5)'">Refine score &#x2192;</a>
+        <a href="humac-onboarding.html" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.06em;color:rgba(165,180,252,.5);text-decoration:none;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.18);padding:6px 12px;border-radius:6px;transition:all .2s" onmouseover="this.style.color='#a5b4fc'" onmouseout="this.style.color='rgba(165,180,252,.5)'">Refine score &#x2192;</a>
       </div>
       <div id="gaps-list" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
 
     <!-- HUMAC SCORE WIDGET -->
     <div id="humac-widget"></div>
-
-    <!-- PROCESSES I'M BUILDING WIDGET -->
-    <div id="gaps-widget" style="display:none;background:var(--card);border:1px solid rgba(99,102,241,.18);border-radius:16px;padding:22px 26px;margin-bottom:24px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,.4),transparent)"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div>
-          <div style="font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,158,11,.6);margin-bottom:4px">Humac Gaps</div>
-          <div style="font-size:.92rem;font-weight:700;color:#f4f3ff;line-height:1.2">Processes I'm building</div>
-        </div>
-        <a href="humac-onboarding.html" style="font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;color:rgba(165,180,252,.5);text-decoration:none;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.18);padding:6px 12px;border-radius:6px;transition:all .2s" onmouseover="this.style.color='#a5b4fc'" onmouseout="this.style.color='rgba(165,180,252,.5)'">Refine score →</a>
-      </div>
-      <div id="gaps-list" style="display:flex;flex-direction:column;gap:8px"></div>
-    </div>
 
     <div class="cal-banner">
       <div class="cal-icon">📅</div>
@@ -568,8 +558,11 @@
     if (sessionStorage.getItem('sr_access') !== 'true') {
       window.location.href = BASE + 'access.html';
     }
+
     // ─────────────────────────────────────
     // PROCESSES I'M BUILDING WIDGET
+    // SR16: previously invoked twice (renderGapsWidget IIFE + anon IIFE below).
+    // Now a single canonical implementation.
     // ─────────────────────────────────────
     (function renderGapsWidget() {
       var GAP_NAMES = {
@@ -595,8 +588,6 @@
       }).join('');
     })();
 
-
-
     // MERIDIAN chip state
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var chip = document.getElementById('meridian-chip');
@@ -614,9 +605,17 @@
       document.getElementById('meridian-cta').style.display = 'none';
     }
 
+    // ─────────────────────────────────────
     // SETUP CARD + ONBOARDING
+    // SR16 fix: Step 3 (Navigate your first case) previously read
+    // localStorage['vantage_ob_case_offered'], which was set the instant the
+    // Step 3 modal appeared — regardless of whether a case was actually saved.
+    // Now checks localStorage['sr_last_case_id'], which is set only by
+    // er-case-navigator.html on a successful save, so the checkmark is truthful.
+    // ─────────────────────────────────────
     var hasMeridian  = !!sessionStorage.getItem('sr_meridian');
     var hasHumac     = !!sessionStorage.getItem('vantage_humac');
+    var hasSavedCase = !!localStorage.getItem('sr_last_case_id');
     var setupDismissed = localStorage.getItem('vantage_setup_dismissed') === '1';
 
     var SETUP_STEPS = [
@@ -624,7 +623,7 @@
        desc:'Your 7-parameter professional context. Required for all tools.',href:'onboarding.html',cta:'Set up →'},
       {key:'humac',done:hasHumac,icon:'&#x1F4CA;',name:'Generate your Humac Score',
        desc:'18 questions. One number measuring your org\u2019s human capital position.',href:'humac-onboarding.html',cta:'Start \u2192'},
-      {key:'case',done:localStorage.getItem('vantage_ob_case_offered')==='1',icon:'&#x26A1;',
+      {key:'case',done:hasSavedCase,icon:'&#x26A1;',
        name:'Navigate your first case',desc:'Describe a real situation — PACT returns full financial exposure in INR.',href:'er-case-navigator.html',cta:'Go →'}
     ];
 
@@ -648,21 +647,6 @@
       var c=document.getElementById('setup-card'); if(c) c.style.display='none';
     }
     renderSetupCard();
-
-    // Gaps widget
-    (function(){
-      var GN={A:'HR Program ROI Tracking',B:'Talent Quality Measurement',C:'Org Health Signal Infrastructure',D:'HR Function Return Measurement',E:'Human Capital Balance Sheet Inputs'};
-      var b={}; try{b=JSON.parse(localStorage.getItem('vantage_gaps_building')||'{}');}catch(e){}
-      var k=Object.keys(b).filter(function(x){return b[x]==='1';});
-      if(!k.length) return;
-      var w=document.getElementById('gaps-widget'),l=document.getElementById('gaps-list');
-      if(!w||!l) return; w.style.display='block';
-      l.innerHTML=k.map(function(x){
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.15);border-radius:8px">' +
-          '<span style="width:7px;height:7px;border-radius:50%;background:rgba(34,197,94,.6);flex-shrink:0"></span>' +
-          '<span style="font-size:.8rem;color:rgba(244,243,255,.6)">'+(GN[x]||x)+'</span></div>';
-      }).join('');
-    })();
 
     // Onboarding modals - each fires only once via localStorage flags
     if (!hasMeridian && !localStorage.getItem('vantage_meridian_modal_shown')) {
