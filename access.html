@@ -70,10 +70,11 @@
 
   <script>
     var PUBLISHABLE_KEY = 'pk_test_YnJpZWYta29pLTc2LmNsZXJrLmFjY291bnRzLmRldiQ';
-    var CLERK_DOMAIN    = 'https://brief-koi-76.clerk.accounts.dev';
+    var CLERK_CDN       = 'https://brief-koi-76.clerk.accounts.dev';
+    var CLERK_PORTAL    = 'https://brief-koi-76.accounts.dev';
     var WORKER_URL      = 'https://situation-room-api.kumarvivek-srv.workers.dev';
     var DASHBOARD_URL   = 'https://vantage.virorah.com/dashboard.html';
-    var CLERK_SIGNIN    = CLERK_DOMAIN + '/sign-in';
+    var CLERK_SIGNIN    = CLERK_PORTAL + '/sign-in';
 
     function getRedirectUrl() {
       try {
@@ -143,7 +144,7 @@
     s.async = true;
     s.crossOrigin = 'anonymous';
     s.setAttribute('data-clerk-publishable-key', PUBLISHABLE_KEY);
-    s.src = CLERK_DOMAIN + '/npm/@clerk/clerk-js@latest/dist/clerk.browser.js';
+    s.src = CLERK_CDN + '/npm/@clerk/clerk-js@latest/dist/clerk.browser.js';
 
     s.addEventListener('load', function() {
       window.Clerk.load().then(function() {
