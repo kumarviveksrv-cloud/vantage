@@ -816,7 +816,7 @@ function renderGapSection(confidenceObj) {
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
           <button class="gap-toggle-btn ${isBuilding ? 'active' : ''}" id="gap-btn-${b.id}"
-            onclick="event.stopPropagation();toggleBuilding('${b.id}')">${isBuilding ? '✓ I'm building this' : 'Mark as building'}</button>
+            onclick="event.stopPropagation();toggleBuilding('${b.id}')">${isBuilding ? '\u2713 I\u2019m building this' : 'Mark as building'}</button>
           <span class="gap-chevron" id="gap-chev-${b.id}">▼</span>
         </div>
       </div>
@@ -864,7 +864,7 @@ function toggleBuilding(blockId) {
   const btn  = document.getElementById('gap-btn-'  + blockId);
   if (card) card.classList.toggle('building', isNowBuilding);
   if (pill) { pill.textContent = isNowBuilding ? '✓ Building' : 'Gap'; pill.classList.toggle('building', isNowBuilding); }
-  if (btn)  { btn.textContent  = isNowBuilding ? "✓ I'm building this" : 'Mark as building'; btn.classList.toggle('active', isNowBuilding); }
+  if (btn)  { btn.textContent  = isNowBuilding ? "\u2713 I\u2019m building this" : 'Mark as building'; btn.classList.toggle('active', isNowBuilding); }
 }
 
 // ─────────────────────────────────────
