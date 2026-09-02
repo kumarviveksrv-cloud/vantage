@@ -192,7 +192,15 @@
   // Injects before the Dashboard link on every page.
   // Platform Tour links to about.html (guided walkthrough is a future phase).
   // Hides the raw Dashboard link — replaced by Home inside Overview.
-  var dashLink = document.querySelector('.sb a[href="dashboard.html"],a.ni[href="dashboard.html"],.sidebar a[href="dashboard.html"],a.nav-item[href="dashboard.html"]');
+  //
+  // FIX (SR16): selector previously included ".sidebar a[href=\"dashboard.html\"]"
+  // with no class requirement on the anchor itself. On pages where the sidebar
+  // wrapper carries class "sidebar" but the dashboard link is the brand/logo
+  // anchor (class "sb-brand", not a nav item), that logo link matched and got
+  // hidden — killing the wordmark and injecting Overview above it instead of
+  // in the right place. Now requires the anchor itself to carry a genuine
+  // nav-item class (.ni or .nav-item), so brand/logo links are never matched.
+  var dashLink = document.querySelector('.sb a.ni[href="dashboard.html"],a.ni[href="dashboard.html"],.sidebar a.nav-item[href="dashboard.html"],a.nav-item[href="dashboard.html"]');
   var alreadyHasOverview = document.getElementById('vs-overview');
   if (dashLink && !alreadyHasOverview) {
     var overview = document.createElement('div');
@@ -1037,9 +1045,16 @@
   // Legal (Terms, Privacy) belongs at the very bottom, below Account.
   // DOM move runs after all injections so it catches both hardcoded and
   // injected Legal sections correctly.
+  //
+  // FIX (SR16): section header lookup previously checked only ".nav-section, .ns" —
+  // it never checked ".sb-section", even though movePolicyCompass() and
+  // injectHumacLink() below were both updated for that class. Any page using the
+  // .sb-section styling system (e.g. humac-onboarding.html) had Legal/Account
+  // silently never repositioned because this function found zero matching headers
+  // and returned early every time. Now checks all three header classes.
   (function() {
     function moveLegalSection() {
-      var sections = document.querySelectorAll('.nav-section, .ns');
+      var sections = document.querySelectorAll('.nav-section, .ns, .sb-section');
       var legalHeader = null;
       var accountHeader = null;
       sections.forEach(function(s) {
@@ -1049,10 +1064,14 @@
       });
       if (!legalHeader || !accountHeader) return;
 
+      function isSectionHeader(el) {
+        return el.classList.contains('nav-section') || el.classList.contains('ns') || el.classList.contains('sb-section');
+      }
+
       // Collect Legal header + its nav items
       var legalEls = [legalHeader];
       var cursor = legalHeader.nextElementSibling;
-      while (cursor && !cursor.classList.contains('nav-section') && !cursor.classList.contains('ns')) {
+      while (cursor && !isSectionHeader(cursor)) {
         legalEls.push(cursor);
         cursor = cursor.nextElementSibling;
       }
@@ -1062,8 +1081,7 @@
       var accountEnd = accountHeader;
       cursor = accountHeader.nextElementSibling;
       while (cursor &&
-             !cursor.classList.contains('nav-section') &&
-             !cursor.classList.contains('ns') &&
+             !isSectionHeader(cursor) &&
              !cursor.classList.contains('meridian-chip') &&
              cursor.id !== 'meridian-chip' &&
              cursor.id !== 'vantage-clock') {
