@@ -126,6 +126,36 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 
 /* ── SCORE REVEAL ────────────── */
 #score-reveal{display:none;animation:fadeIn .4s ease}
+    /* ── PROCESS GAP SECTION ─────────────────────── */
+    #gap-section{margin-top:48px;padding-top:40px;border-top:1px solid rgba(99,102,241,.15)}
+    .gap-header{font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(165,180,252,.5);margin-bottom:6px}
+    .gap-title{font-family:var(--bricolage);font-size:1.35rem;font-weight:800;color:#f4f3ff;margin-bottom:6px;line-height:1.2}
+    .gap-sub{font-size:.82rem;color:var(--text-dim);line-height:1.6;margin-bottom:28px}
+    .gap-card{background:rgba(13,11,30,.9);border:1px solid rgba(99,102,241,.18);border-radius:14px;margin-bottom:14px;overflow:hidden;transition:border-color .25s}
+    .gap-card.building{border-color:rgba(34,197,94,.35)}
+    .gap-card-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;cursor:pointer;gap:12px}
+    .gap-card-head:hover .gap-name{color:#f4f3ff}
+    .gap-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+    .gap-pill{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:rgba(245,158,11,.8);flex-shrink:0}
+    .gap-pill.building{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:rgba(34,197,94,.8)}
+    .gap-name{font-size:.88rem;font-weight:600;color:var(--muted);transition:color .2s;line-height:1.3}
+    .gap-toggle-btn{font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;padding:6px 12px;border-radius:6px;border:1px solid rgba(99,102,241,.2);background:transparent;color:rgba(165,180,252,.5);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+    .gap-toggle-btn:hover{border-color:rgba(99,102,241,.45);color:#a5b4fc}
+    .gap-toggle-btn.active{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.35);color:rgba(34,197,94,.8)}
+    .gap-body{display:none;padding:0 20px 20px;border-top:1px solid rgba(99,102,241,.1)}
+    .gap-body.open{display:block}
+    .gap-why{font-size:.78rem;color:var(--text-dim);line-height:1.65;margin:14px 0 16px;padding:10px 14px;background:rgba(99,102,241,.05);border-radius:8px;border-left:2px solid rgba(99,102,241,.3)}
+    .gap-sop-label{font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,.4);margin-bottom:12px}
+    .gap-sop-steps{display:flex;flex-direction:column;gap:10px}
+    .gap-sop-step{display:flex;gap:12px;align-items:flex-start}
+    .gap-step-num{width:20px;height:20px;border-radius:50%;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.56rem;color:#a5b4fc;flex-shrink:0;margin-top:1px}
+    .gap-step-text{font-size:.78rem;color:rgba(244,243,255,.5);line-height:1.65}
+    .gap-chevron{font-size:.7rem;color:rgba(165,180,252,.3);transition:transform .2s;flex-shrink:0}
+    .gap-chevron.open{transform:rotate(180deg)}
+    .gap-complete-row{margin-top:32px;padding:20px;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.14);border-radius:12px;text-align:center}
+    .gap-complete-title{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,.5);margin-bottom:6px}
+    .gap-complete-body{font-size:.8rem;color:var(--text-dim);line-height:1.6;margin-bottom:14px}
+
 .reveal-eyebrow{font-family:var(--mono);font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
 .humac-hero{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:20px;padding:40px 44px;margin-bottom:24px;position:relative;overflow:hidden}
 .humac-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.5),transparent)}
@@ -682,9 +712,159 @@ function showScoreReveal() {
 
   // Show reveal
   document.getElementById('block-container').style.display = 'none';
+  // Render process gap section
+  const gapHTML = renderGapSection(confidence);
+  const existingGap = document.getElementById('gap-section');
+  if (existingGap) existingGap.remove();
+  const gapContainer = document.createElement('div');
+  gapContainer.innerHTML = gapHTML;
+  document.getElementById('score-reveal').appendChild(gapContainer.firstElementChild || gapContainer);
+
   document.getElementById('score-reveal').style.display = 'block';
   renderStepper();
   window.scrollTo(0,0);
+}
+
+
+// ─────────────────────────────────────
+// PROCESS GAP DEFINITIONS
+// ─────────────────────────────────────
+const BLOCK_GAPS = {
+  A: {
+    name: 'HR Program ROI Tracking',
+    why: 'Without this, your L1 score rests on a professional estimate. With it, you can cite a real rupee figure that walks into any boardroom.',
+    sop: [
+      'List every HR initiative from the last 12 months — hiring campaigns, L&D programs, wellness initiatives, engagement projects, compliance programs.',
+      'For each initiative, assign a financial outcome: cost saved (attrition prevented × replacement cost), revenue enabled (quality hire productivity uplift), or risk mitigated (compliance penalty avoided).',
+      'Divide total financial value generated by total HR spend. Your HR ROI ratio is the foundation of your L1 score.',
+      'Tool needed: A simple spreadsheet — columns: Initiative, Cost, Outcome Type, Financial Value, ROI %. Run this calculation every half-year.'
+    ]
+  },
+  B: {
+    name: 'Talent Quality Measurement System',
+    why: 'L2 captures whether your people investment generates above-average returns. Each of the five questions maps to a specific measurement process you can build.',
+    sop: [
+      'Post-promotion tracking: Create a "Promotion Cohort" list. At 3 and 6 months, collect one rating per person from their manager — above / at / below grade expectations. % above = your promotion quality score.',
+      'Manager effectiveness: In your next performance cycle, add one employee survey question: "My manager actively raises the bar in our team." Aggregate % agreement per manager. That is your manager quality signal.',
+      'New hire baseline: 6 months after each joining date, ask the manager for a single rating vs. role grade average. Build a running spreadsheet. % above baseline = hiring quality.',
+      'Attrition by performance band: In every exit interview, note the employee's last performance rating. Maintain a running count of Stars vs. below-expectation exits. The ratio tells you everything.',
+      'HiPo list: Start a shared document with leadership — 10 to 15 names, reviewed and updated twice a year. That is your formal HiPo process. It does not need to be complicated.'
+    ]
+  },
+  C: {
+    name: 'Org Health Signal Infrastructure',
+    why: 'L3 carries 30% of your Humac Score. It is the highest-weighted pillar. Even one additional measured signal here shifts your score meaningfully.',
+    sop: [
+      'Structured 1:1 cadence: Ask managers to schedule 1:1s in calendar. Pull a calendar report at end of each quarter — % of direct reports with at least bi-weekly 1:1s on record. That number goes into your L3 score.',
+      'Project completion rate: Pull from Jira, Asana, Monday, or equivalent. % of projects with target dates that closed within 2 weeks of deadline in the last quarter. If you have no tool, ask department heads for a self-reported estimate at quarter-end.',
+      'Proactive people risk surfacing: Establish a monthly 15-minute "People Risk Radar" — HR flags 3 to 5 people concerns to leadership before they become incidents. Document it. That process alone shifts your L3 meaningfully.'
+    ]
+  },
+  D: {
+    name: 'HR Function Return Measurement',
+    why: 'L4 is your HR P&L. Knowing this number is what separates an HR professional from an HR strategist in leadership conversations. This is the metric that earns you a seat at the table.',
+    sop: [
+      'Calculate total HR spend: HR team salaries + recruitment fees + L&D budget + HR tools + compliance costs. Most organisations can pull this from finance in under an hour.',
+      'Calculate HR-attributable value: Attrition cost avoided (headcount retained × average replacement cost) + hiring quality uplift (above-baseline hires × productivity premium) + risk management outcomes (compliance penalties avoided).',
+      'Your HR ROI = Total Value ÷ Total HR Spend. Industry baseline is 1.5x. Strong is 2.5x and above. Walk into your next leadership meeting with this number.',
+      'Run this calculation once per half-year. Log it. The trend over time — not just the point-in-time number — is what you present to the board.'
+    ]
+  },
+  E: {
+    name: 'Human Capital Balance Sheet Inputs',
+    why: 'L5 tells you whether your organisation is accumulating or depleting human capital over time. It is the long-term health signal that most organisations never measure.',
+    sop: [
+      'Institutional knowledge depth: In your next all-hands or department survey, add one question — "How much of what you do would be genuinely difficult to hand over in 30 days?" Score 1 (easy) to 5 (nearly impossible). Average per department = your knowledge depth index.',
+      'Flight risk assessment: Quarterly, ask every manager to classify each direct report as Low, Medium, or High flight risk — privately, in writing. Aggregate the High pile by department. Review it with leadership.',
+      'Skill debt mapping: List the top 5 capabilities your organisation will need in 18 months. Rate your current team's readiness for each, 1 to 5. Average gap between need and readiness = your skill debt score. Review and update twice a year.'
+    ]
+  }
+};
+
+function renderGapSection(confidenceObj) {
+  // Find blocks answered as Estimated (or unanswered = defaulting to estimated)
+  const estimatedBlocks = BLOCKS.filter(b => {
+    const conf = confidenceObj[b.id] || 'estimated';
+    return conf === 'estimated';
+  });
+
+  if (estimatedBlocks.length === 0) {
+    // All computed — no gaps to show
+    return '';
+  }
+
+  const buildingKey = 'vantage_gaps_building';
+  let building = {};
+  try { building = JSON.parse(localStorage.getItem(buildingKey) || '{}'); } catch(e) {}
+
+  const gapCards = estimatedBlocks.map(b => {
+    const gap = BLOCK_GAPS[b.id];
+    if (!gap) return '';
+    const isBuilding = building[b.id] === '1';
+    const sopSteps = gap.sop.map((step, i) => `
+      <div class="gap-sop-step">
+        <div class="gap-step-num">${i+1}</div>
+        <div class="gap-step-text">${step}</div>
+      </div>`).join('');
+
+    return `
+    <div class="gap-card ${isBuilding ? 'building' : ''}" id="gap-card-${b.id}">
+      <div class="gap-card-head" onclick="toggleGapBody('${b.id}')">
+        <div class="gap-left">
+          <div class="gap-pill ${isBuilding ? 'building' : ''}" id="gap-pill-${b.id}">${isBuilding ? '✓ Building' : 'Gap'}</div>
+          <div class="gap-name">${gap.name}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <button class="gap-toggle-btn ${isBuilding ? 'active' : ''}" id="gap-btn-${b.id}"
+            onclick="event.stopPropagation();toggleBuilding('${b.id}')">${isBuilding ? '✓ I'm building this' : 'Mark as building'}</button>
+          <span class="gap-chevron" id="gap-chev-${b.id}">▼</span>
+        </div>
+      </div>
+      <div class="gap-body" id="gap-body-${b.id}">
+        <div class="gap-why">${gap.why}</div>
+        <div class="gap-sop-label">How to build this process — 6 month horizon</div>
+        <div class="gap-sop-steps">${sopSteps}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div id="gap-section">
+    <div class="gap-header">Data Gaps</div>
+    <div class="gap-title">Processes to build for a sharper score.</div>
+    <div class="gap-sub">${estimatedBlocks.length} of your ${BLOCKS.length} blocks were answered from professional judgment rather than measured data. That is completely valid — your current score is directional. Each gap below has a concrete process you can build in the next 6 months. Mark the ones you are working on. Come back when you have the data — your score will sharpen.</div>
+    ${gapCards}
+    <div class="gap-complete-row">
+      <div class="gap-complete-title">When you have the data</div>
+      <div class="gap-complete-body">Return to this onboarding, answer with Computed confidence, and regenerate your Humac Score. Every building block you complete moves your score closer to a board-ready figure.</div>
+      <a href="dashboard.html" style="display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:#a5b4fc;padding:10px 18px;border-radius:8px;text-decoration:none;transition:all .2s" onmouseover="this.style.background='rgba(99,102,241,.2)'" onmouseout="this.style.background='rgba(99,102,241,.1)'">← Save and return to dashboard</a>
+    </div>
+  </div>`;
+}
+
+function toggleGapBody(blockId) {
+  const body = document.getElementById('gap-body-' + blockId);
+  const chev = document.getElementById('gap-chev-' + blockId);
+  if (!body) return;
+  body.classList.toggle('open');
+  if (chev) chev.classList.toggle('open');
+}
+
+function toggleBuilding(blockId) {
+  const key = 'vantage_gaps_building';
+  let building = {};
+  try { building = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) {}
+  const isNowBuilding = building[blockId] !== '1';
+  if (isNowBuilding) building[blockId] = '1'; else delete building[blockId];
+  localStorage.setItem(key, JSON.stringify(building));
+
+  // Update UI
+  const card = document.getElementById('gap-card-' + blockId);
+  const pill = document.getElementById('gap-pill-' + blockId);
+  const btn  = document.getElementById('gap-btn-'  + blockId);
+  if (card) card.classList.toggle('building', isNowBuilding);
+  if (pill) { pill.textContent = isNowBuilding ? '✓ Building' : 'Gap'; pill.classList.toggle('building', isNowBuilding); }
+  if (btn)  { btn.textContent  = isNowBuilding ? "✓ I'm building this" : 'Mark as building'; btn.classList.toggle('active', isNowBuilding); }
 }
 
 // ─────────────────────────────────────
