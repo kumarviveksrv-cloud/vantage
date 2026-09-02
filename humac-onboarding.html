@@ -82,6 +82,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .question{display:flex;flex-direction:column;gap:8px}
 .q-text{font-size:.92rem;color:var(--text);line-height:1.55;font-weight:400}
 .q-sub{font-size:.78rem;color:var(--text-dim);line-height:1.5}
+    .block-note{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.15);border-radius:8px;padding:10px 14px;margin-bottom:20px;font-family:var(--mono);font-size:.6rem;color:rgba(165,180,252,.6);line-height:1.65;letter-spacing:.03em}
 
 /* percentage input */
 .pct-input-wrap{display:flex;align-items:center;gap:10px;margin-top:4px}
@@ -196,7 +197,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 <div class="wrap">
   <div class="page-eyebrow">Vantage · Humac Score</div>
   <h1 class="page-title">Establish your baseline</h1>
-  <p class="page-sub">Eighteen questions across five blocks. Your answers generate a Humac Score — the financial measure of your organisation's human capital position. Estimates are fine. Precision makes it better.</p>
+  <p class="page-sub">Eighteen questions across five blocks. Exact data improves precision — but professional judgment is equally valid. Estimates generate a Medium-confidence score. As you build better processes and return with real data, your score gets sharper.</p>
 
   <!-- Progress Stepper -->
   <div class="stepper" id="stepper"></div>
@@ -288,6 +289,7 @@ const BLOCKS = [
   {
     id:'B', title:'Talent Quality', pillar:'L2', weight:'15% weight',
     desc:'Are people generating above-average returns relative to what they cost?',
+    note:'Professional judgment is the right instrument here. You do not need HRIS data — answer based on what you\'d tell a trusted colleague. A guesstimate gives you a Medium-confidence score — still highly directional.',
     formula:`<b>Five verdict areas — precise computation requires employee-level data:</b><br><br>
 <b>Promotion Accuracy:</b> % of promoted employees above grade benchmark 6 months post-promotion.<br>
 Pull from: performance system (pre- and post-promotion scores).<br><br>
@@ -299,11 +301,11 @@ Pull from: new hire performance at 6-month mark vs. grade average.<br><br>
 Pull from: HRIS (tenure by performance segment).<br><br>
 <b>HiPo Identification:</b> Does a formal named HiPo list exist and get updated?`,
     questions:[
-      {id:'q2', type:'yn', text:'Of employees promoted in the last year, are the majority performing above expectations six months later?'},
-      {id:'q3', type:'yn', text:'Do most managers in your organisation outperform their own team\'s average output?'},
-      {id:'q4', type:'yn', text:'Of hires in the last 12 months, are more than half performing above their role baseline?'},
-      {id:'q5', type:'yn', text:'Are your top performers staying longer than your underperformers?'},
-      {id:'q6', type:'yn', text:'Does your organisation have a formal process for identifying high-potential employees?'}
+      {id:'q2', type:'yn', text:'When you think of people promoted in the last year, are most of them growing into the role — not just surviving it?', sub:'You do not need a 6-month review on file. If you would be comfortable giving them a stretch assignment, they are performing.'},
+      {id:'q3', type:'yn', text:'In your honest judgment, do most of your managers actively raise the bar in their teams — or does the team largely carry itself regardless of the manager?', sub:'Think of your last calibration or 1:1 feedback round. Managers who catch issues early, develop people, and hold standards count as Yes.'},
+      {id:'q4', type:'yn', text:'Of people you have hired in the last 12 months, is the majority genuinely working out — meeting or exceeding what you expected when you hired them?', sub:'You do not need a structured 6-month review. If you would confidently recommend them for a new project, they count as Yes.'},
+      {id:'q5', type:'yn', text:'When you look at who has resigned in the last 12 months, is it mostly people you were relieved to see leave — rather than people you wished you could have kept?', sub:'If your best people are the ones walking out the door, answer No. If exits have broadly been people you were replacing anyway, answer Yes.'},
+      {id:'q6', type:'yn', text:'Does your organisation have a named group of high-potential employees that leadership actively invests in differently — mentoring, accelerated projects, leadership exposure?', sub:'A spreadsheet with names counts. An informal conversation that happens every year does not.'}
     ]
   },
   {
@@ -535,6 +537,7 @@ function renderBlock(idx) {
       </button>
       <div class="formula-panel" id="fpanel">${b.formula}</div>
 
+      ${b.note ? `<div class="block-note">&#x1F4A1; ${b.note}</div>` : ''}
       <div class="questions">${questionsHTML}</div>
 
       <div class="confidence-row">
