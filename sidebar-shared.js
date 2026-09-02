@@ -1096,19 +1096,19 @@
       var policyLink = document.querySelector('a[href*="policy-compass"]');
       if (!policyLink) return;
 
-      // Find the Core Tools section header (handles both .nav-section and .ns)
-      var sections = document.querySelectorAll('.nav-section, .ns');
+      // Find the Core Tools section header (handles .nav-section, .ns, and .sb-section)
+      var sections = document.querySelectorAll('.nav-section, .ns, .sb-section');
       var coreHeader = null;
       sections.forEach(function(s) {
-        if (s.textContent.trim().toUpperCase() === 'CORE TOOLS') coreHeader = s;
+        var t = s.textContent.trim().toUpperCase();
+        if (t === 'CORE TOOLS') coreHeader = s;
       });
       if (!coreHeader) return;
 
       // Walk forward from Core Tools to find the last nav item before the next section
       var cursor = coreHeader.nextElementSibling;
       var lastCoreItem = coreHeader;
-      while (cursor && !cursor.classList.contains('nav-section') && !cursor.classList.contains('ns')) {
-        // Skip the policy link itself if it was already here
+      while (cursor && !cursor.classList.contains('nav-section') && !cursor.classList.contains('ns') && !cursor.classList.contains('sb-section')) {
         if (cursor !== policyLink) lastCoreItem = cursor;
         cursor = cursor.nextElementSibling;
       }
@@ -1126,5 +1126,51 @@
     }
   })();
   // ── END POLICY COMPASS MOVE ────────────────────────────────────────────────
+
+  // ── HUMAC SCORE LINK → MY RECORD SECTION ───────────────────────────────────
+  // Injects Humac Score link into the My Record section on every page
+  (function() {
+    function injectHumacLink() {
+      // Don't inject if already present
+      if (document.querySelector('a[href*="humac-onboarding"]')) return;
+
+      // Find My Record section (handles both class systems)
+      var sections = document.querySelectorAll('.nav-section, .ns, .sb-section');
+      var myRecordHeader = null;
+      sections.forEach(function(s) {
+        var t = s.textContent.trim().toUpperCase();
+        if (t === 'MY RECORD') myRecordHeader = s;
+      });
+      if (!myRecordHeader) return;
+
+      // Create the Humac Score link matching the page's nav style
+      var isOldStyle = !!document.querySelector('.sb-item');
+      var link = document.createElement('a');
+      link.href = 'humac-onboarding.html';
+
+      if (isOldStyle) {
+        link.className = 'sb-item';
+        link.innerHTML = '<svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M5 11l2-3 2 2 2-4"/></svg>Humac Score';
+      } else {
+        link.className = 'nav-item';
+        link.innerHTML = '<span class="icon">📊</span> Humac Score';
+      }
+
+      // Insert as first item under My Record
+      var firstItem = myRecordHeader.nextElementSibling;
+      if (firstItem) {
+        myRecordHeader.parentNode.insertBefore(link, firstItem);
+      } else {
+        myRecordHeader.parentNode.appendChild(link);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', injectHumacLink);
+    } else {
+      injectHumacLink();
+    }
+  })();
+  // ── END HUMAC SCORE LINK ───────────────────────────────────────────────────
 
 })();
