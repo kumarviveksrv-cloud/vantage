@@ -135,7 +135,7 @@
       document.getElementById('meridian-chip').style.display = 'block';
       document.getElementById('forgot-pw-link').style.display = 'block';
       window.Clerk.mountSignIn(document.getElementById('clerk-container'), {
-        routing: 'hash',
+        routing: 'virtual',
         appearance: {
           variables: {
             colorPrimary:         '#6366f1',
