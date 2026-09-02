@@ -53,6 +53,7 @@
   <script>
     var PUBLISHABLE_KEY = 'pk_test_YnJpZWYta29pLTc2LmNsZXJrLmFjY291bnRzLmRldiQ';
     var CLERK_DOMAIN    = 'https://brief-koi-76.clerk.accounts.dev';
+    var WORKER_URL      = 'https://situation-room-api.kumarvivek-srv.workers.dev';
     var DASHBOARD_URL   = 'https://vantage.virorah.com/dashboard.html';
 
     function getRedirectUrl() {
@@ -79,6 +80,43 @@
       if (email) {
         var m = localStorage.getItem('sr_meridian_' + email);
         if (m) sessionStorage.setItem('sr_meridian', m);
+      }
+    }
+
+    // After sign-in: restore Humac Score and MERIDIAN from Airtable
+    async function restoreUserData(token) {
+      try {
+        var headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
+
+        // Restore Humac Score
+        var humacRes = await fetch(WORKER_URL, {
+          method: 'POST', headers: headers,
+          body: JSON.stringify({ tool: 'get_humac' })
+        });
+        if (humacRes.ok) {
+          var humacData = await humacRes.json();
+          if (humacData.success && humacData.data) {
+            try { sessionStorage.setItem('vantage_humac', JSON.stringify(humacData.data)); } catch(e) {}
+          }
+        }
+
+        // Restore MERIDIAN (Airtable takes priority over localStorage)
+        var meridianRes = await fetch(WORKER_URL, {
+          method: 'POST', headers: headers,
+          body: JSON.stringify({ tool: 'get_meridian' })
+        });
+        if (meridianRes.ok) {
+          var meridianData = await meridianRes.json();
+          if (meridianData.success && meridianData.data) {
+            var meridian = meridianData.data;
+            sessionStorage.setItem('sr_meridian', JSON.stringify(meridian));
+            // Also cache in localStorage for fast-path on future sign-ins
+            var email = sessionStorage.getItem('sr_user_email') || '';
+            if (email) localStorage.setItem('sr_meridian_' + email, JSON.stringify(meridian));
+          }
+        }
+      } catch(e) {
+        console.warn('[Vantage] Data restore failed:', e);
       }
     }
 
@@ -111,7 +149,14 @@
       window.Clerk.addListener(function(resources) {
         if (resources.user) {
           syncUser(resources.user);
-          window.location.replace(getRedirectUrl());
+          // Restore Humac Score and MERIDIAN from Airtable before redirecting
+          window.Clerk.session.getToken().then(function(token) {
+            return restoreUserData(token);
+          }).then(function() {
+            window.location.replace(getRedirectUrl());
+          }).catch(function() {
+            window.location.replace(getRedirectUrl());
+          });
         }
       });
     }
@@ -125,7 +170,13 @@
       window.Clerk.load().then(function() {
         if (window.Clerk.user) {
           syncUser(window.Clerk.user);
-          window.location.replace(getRedirectUrl());
+          window.Clerk.session.getToken().then(function(token) {
+            return restoreUserData(token);
+          }).then(function() {
+            window.location.replace(getRedirectUrl());
+          }).catch(function() {
+            window.location.replace(getRedirectUrl());
+          });
           return;
         }
         showClerkUI();
