@@ -22,9 +22,9 @@
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
     .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
     .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
-    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.9);margin-top:2px}
-    .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#a5b4fc;padding:4px 10px;margin:16px 0 6px}
-    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.93);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
+    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.5);margin-top:2px}
+    .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.6);padding:4px 10px;margin:16px 0 6px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.65);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
     .nav-item:hover{background:rgba(99,102,241,0.08);color:#f4f3ff;border-color:rgba(99,102,241,0.15)}
     .nav-item.active{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.30);color:#c4b5fd;font-weight:500}
     .nav-item .icon{font-size:16px;flex-shrink:0}
@@ -241,7 +241,7 @@
           <textarea id="ask" placeholder='e.g. "Approve &#8377;18L retention investment for the engineering team" or "Sign off on a formal PIP process for three underperformers" or "Agree to loop in legal before the termination proceeds"' rows="3"></textarea>
         </div>
         <div class="form-section">
-          <label class="form-label">What's the situation? What resistance do you expect? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.9);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic</span></label>
+          <label class="form-label">What's the situation? What resistance do you expect? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic</span></label>
           <div class="voice-wrap">
           <textarea id="situation" placeholder='e.g. "CFO thinks attrition is a market issue, not an HR problem. He&apos;s cut two HR budgets this year already. He responds to numbers and cost arguments, not culture or engagement talk. I have 20 minutes in the Monday review meeting."' rows="4" style="padding-right:48px"></textarea>
           <button class="voice-btn" id="situation-mic" onclick="toggleVoiceInput('situation', this)" title="Tap to speak">&#127908;</button>
