@@ -44,6 +44,15 @@
       <div class="loading-text">Initialising secure sign-in&hellip;</div>
     </div>
     <div id="clerk-container"></div>
+
+    <!-- Forgot password fallback — links to Clerk Account Portal reset flow -->
+    <div id="forgot-pw-link" style="display:none;text-align:center;margin-top:14px">
+      <a href="https://brief-koi-76.accounts.dev/sign-in#/forgot-password"
+         style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(165,180,252,0.55);text-decoration:none;letter-spacing:.04em;transition:color .2s"
+         onmouseover="this.style.color='#a5b4fc'" onmouseout="this.style.color='rgba(165,180,252,0.55)'">
+        Forgot password?
+      </a>
+    </div>
     <div class="meridian-chip" id="meridian-chip" style="display:none">
       <div class="meridian-chip-label">MERIDIAN Inside</div>
       <div class="meridian-chip-text">Seven parameters calibrate every result to your exact professional reality — your state, industry, org type, seniority, and more.</div>
@@ -124,6 +133,7 @@
       document.getElementById('loading-state').style.display = 'none';
       document.getElementById('clerk-container').style.display = 'block';
       document.getElementById('meridian-chip').style.display = 'block';
+      document.getElementById('forgot-pw-link').style.display = 'block';
       window.Clerk.mountSignIn(document.getElementById('clerk-container'), {
         routing: 'hash',
         appearance: {
