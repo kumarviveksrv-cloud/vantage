@@ -188,60 +188,6 @@
 </head>
 <body>
 
-<!-- ── LOADING OVERLAY ── -->
-<div id="vantage-loader" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#050410;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .4s ease,visibility .4s ease;visibility:visible !important;opacity:1">
-  <svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-    <defs>
-      <radialGradient id="coreGrad" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#c4b5fd"/>
-        <stop offset="60%" stop-color="#7c3aed"/>
-        <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
-      </radialGradient>
-      <filter id="glow">
-        <feGaussianBlur stdDeviation="3" result="blur"/>
-        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>
-    </defs>
-    <!-- Outer ring -->
-    <circle cx="48" cy="48" r="42" stroke="rgba(99,102,241,0.18)" stroke-width="1" fill="none"/>
-    <!-- Orbiting ring 1 -->
-    <ellipse cx="48" cy="48" rx="42" ry="16" stroke="rgba(99,102,241,0.35)" stroke-width="1" fill="none" style="transform-origin:48px 48px">
-      <animateTransform attributeName="transform" type="rotate" from="0 48 48" to="360 48 48" dur="3s" repeatCount="indefinite"/>
-    </ellipse>
-    <!-- Orbiting ring 2 -->
-    <ellipse cx="48" cy="48" rx="42" ry="16" stroke="rgba(124,58,237,0.3)" stroke-width="1" fill="none" style="transform-origin:48px 48px">
-      <animateTransform attributeName="transform" type="rotate" from="60 48 48" to="420 48 48" dur="4.5s" repeatCount="indefinite"/>
-    </ellipse>
-    <!-- Neural lines -->
-    <g opacity="0.5" filter="url(#glow)">
-      <line x1="48" y1="6" x2="48" y2="90" stroke="rgba(99,102,241,0.2)" stroke-width="0.5"/>
-      <line x1="6" y1="48" x2="90" y2="48" stroke="rgba(99,102,241,0.2)" stroke-width="0.5"/>
-      <line x1="16" y1="16" x2="80" y2="80" stroke="rgba(124,58,237,0.15)" stroke-width="0.5"/>
-      <line x1="80" y1="16" x2="16" y2="80" stroke="rgba(124,58,237,0.15)" stroke-width="0.5"/>
-    </g>
-    <!-- Core orb -->
-    <circle cx="48" cy="48" r="18" fill="url(#coreGrad)" filter="url(#glow)">
-      <animate attributeName="r" values="16;20;16" dur="2s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0.85;1;0.85" dur="2s" repeatCount="indefinite"/>
-    </circle>
-    <!-- Core dot -->
-    <circle cx="48" cy="48" r="5" fill="#f4f3ff" opacity="0.9"/>
-    <!-- Orbiting node -->
-    <circle r="3" fill="#a5b4fc" filter="url(#glow)">
-      <animateMotion dur="3s" repeatCount="indefinite" path="M48,6 a42,42 0 1,1 -0.01,0 z"/>
-    </circle>
-    <circle r="2.5" fill="#c4b5fd" filter="url(#glow)">
-      <animateMotion dur="4.5s" repeatCount="indefinite" path="M90,48 a42,42 0 1,0 0.01,0 z"/>
-    </circle>
-  </svg>
-  <div style="text-align:center">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px">ARIA</div>
-    <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:rgba(244,243,255,0.9);letter-spacing:.04em">Vantage is ready.</div>
-  </div>
-</div>
-<style>
-  #vantage-loader.fade-out{opacity:0;visibility:hidden;pointer-events:none}
-</style>
 
   <canvas id="vantage-stars"></canvas>
 
@@ -490,19 +436,6 @@
     if (sessionStorage.getItem('sr_access') !== 'true') {
       window.location.href = BASE + 'access.html';
     }
-    // Fade out loader once auth confirmed and DOM ready
-    function hideLoader() {
-      var loader = document.getElementById('vantage-loader');
-      if (loader) {
-        setTimeout(function(){ loader.classList.add('fade-out'); }, 120);
-      }
-    }
-    if (document.readyState === 'complete') {
-      hideLoader();
-    } else {
-      window.addEventListener('load', hideLoader);
-    }
-
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var chip = document.getElementById('meridian-chip');
     var badge = document.getElementById('meridian-badge');
