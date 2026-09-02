@@ -2,13 +2,17 @@
   "name": "Virorah Vantage",
   "short_name": "Vantage",
   "description": "Walk into any room ready for anything. HR intelligence, calibrated to your exact professional reality.",
-  "start_url": "/vantage/index.html",
-  "scope": "/vantage/",
+  "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#050410",
   "theme_color": "#050410",
-  "categories": ["productivity", "business", "education"],
+  "categories": [
+    "productivity",
+    "business",
+    "education"
+  ],
   "icons": [
     {
       "src": "icon-192.png",
@@ -28,22 +32,37 @@
       "name": "ER Case Navigator",
       "short_name": "ER Cases",
       "description": "Navigate a new ER case with PACT",
-      "url": "/vantage/er-case-navigator.html",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "url": "/er-case-navigator.html",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "Talk to ARIA",
       "short_name": "ARIA",
       "description": "Voice intelligence session",
-      "url": "/vantage/aria.html",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "url": "/aria.html",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "Policy Compass",
       "short_name": "Policy",
       "description": "Get policy guidance instantly",
-      "url": "/vantage/policy-compass.html",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+      "url": "/policy-compass.html",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }
