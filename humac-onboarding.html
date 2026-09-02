@@ -606,6 +606,19 @@ function showScoreReveal() {
   const scoreData = {l1,l2,l3,l4,l5,hci,humac,hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers};
   try { sessionStorage.setItem('vantage_humac', JSON.stringify(scoreData)); } catch(e) {}
 
+  // Persist to Airtable (fire and forget — don't block the reveal)
+  (async function saveHumacToAirtable() {
+    try {
+      const WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+      const email = sessionStorage.getItem('sr_user_email') || '';
+      await fetch(WORKER, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tool: 'save_humac', email, humac: scoreData })
+      });
+    } catch(e) { /* non-blocking — sessionStorage is the source of truth */ }
+  })();
+
   // Render reveal
   document.getElementById('rv-humac').textContent = humac;
   document.getElementById('rv-adj').textContent = hciAdj;
