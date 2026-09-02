@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Virorah Vantage</title>
+  <style>
+    html,body{margin:0;padding:0;background:#050410;height:100%}
+    body{display:flex;align-items:center;justify-content:center}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .s{width:28px;height:28px;border:2px solid rgba(99,102,241,.2);border-top-color:#6366f1;border-radius:50%;animation:spin 1s linear infinite}
+  </style>
+</head>
+<body>
+  <div class="s"></div>
+  <script>
+    var PK   = 'pk_test_YnJpZWYta29pLTc2LmNsZXJrLmFjY291bnRzLmRldiQ';
+    var CDN  = 'https://brief-koi-76.clerk.accounts.dev';
+    var s = document.createElement('script');
+    s.setAttribute('data-clerk-publishable-key', PK);
+    s.src = CDN + '/npm/@clerk/clerk-js@latest/dist/clerk.browser.js';
+    s.onload = function() {
+      window.Clerk.load().then(function() {
+        window.location.replace(
+          window.Clerk.user
+            ? 'https://vantage.virorah.com/dashboard.html'
+            : 'https://vantage.virorah.com/index.html'
+        );
+      }).catch(function() {
+        window.location.replace('https://vantage.virorah.com/index.html');
+      });
+    };
+    s.onerror = function() {
+      window.location.replace('https://vantage.virorah.com/index.html');
+    };
+    document.head.appendChild(s);
+  </script>
+</body>
+</html>
