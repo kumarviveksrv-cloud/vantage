@@ -165,9 +165,9 @@
         }
 
         // Not signed in — redirect to Clerk Account Portal
+        // Clerk dashboard "After sign-in fallback" must be set to https://vantage.virorah.com/access.html
         setStatus('Redirecting to sign-in\u2026', 'Secured by Clerk');
-        var returnUrl = encodeURIComponent('https://vantage.virorah.com/access.html?redirect_url=' + encodeURIComponent(getRedirectUrl()));
-        window.location.replace(CLERK_SIGNIN + '?redirect_url=' + returnUrl);
+        window.location.replace('https://brief-koi-76.accounts.dev/sign-in');
 
       }).catch(function(err) {
         console.error('[Clerk] Error:', err);
