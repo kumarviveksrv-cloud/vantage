@@ -13,12 +13,44 @@
 
   var isAccessPage = window.location.pathname.indexOf('access.html') !== -1;
 
-  // ── FLASH PREVENTION ───────────────────────────────────────────────────────
-  // Hide the page body immediately while Clerk verifies the session.
-  // Prevents a brief flash of protected content before the auth redirect.
-  // Body becomes visible again once Clerk confirms the user is signed in.
-  if (!isAccessPage) {
-    document.documentElement.style.visibility = 'hidden';
+  // ── SMART FLASH PREVENTION ──────────────────────────────────────────────────
+  // Two tiers:
+  // Returning user (localStorage flag set): show page immediately, verify in background.
+  // New/unknown user: show branded loader until Clerk confirms or redirects.
+  var _hasLocalFlag = localStorage.getItem('vantage_clerk_signed_in') === '1';
+
+  if (!isAccessPage && !_hasLocalFlag) {
+    // Unknown user: inject branded loader instead of hiding page
+    var _ldr = document.createElement('div');
+    _ldr.id = 'vantage-auth-loader';
+    _ldr.innerHTML =
+      '<svg width="72" height="72" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+        '<circle cx="48" cy="48" r="42" stroke="rgba(99,102,241,0.18)" stroke-width="1" fill="none"/>' +
+        '<ellipse cx="48" cy="48" rx="42" ry="16" stroke="rgba(99,102,241,0.35)" stroke-width="1" fill="none">' +
+          '<animateTransform attributeName="transform" type="rotate" from="0 48 48" to="360 48 48" dur="3s" repeatCount="indefinite"/>' +
+        '</ellipse>' +
+        '<ellipse cx="48" cy="48" rx="42" ry="16" stroke="rgba(124,58,237,0.3)" stroke-width="1" fill="none">' +
+          '<animateTransform attributeName="transform" type="rotate" from="60 48 48" to="420 48 48" dur="4.5s" repeatCount="indefinite"/>' +
+        '</ellipse>' +
+        '<circle cx="48" cy="48" r="18" fill="url(#_cg)" opacity="0.9"><animate attributeName="r" values="16;20;16" dur="2s" repeatCount="indefinite"/></circle>' +
+        '<circle cx="48" cy="48" r="5" fill="#f4f3ff" opacity="0.9"/>' +
+        '<defs><radialGradient id="_cg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#c4b5fd"/><stop offset="60%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#6366f1" stop-opacity="0"/></radialGradient></defs>' +
+      '</svg>' +
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:#a5b4fc;margin-top:24px">ARIA</div>' +
+      '<div style="font-family:sans-serif;font-size:14px;color:rgba(244,243,255,0.8);margin-top:6px">Preparing Vantage...</div>';
+    _ldr.setAttribute('style','position:fixed;top:0;left:0;width:100%;height:100%;background:#050410;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .35s ease');
+    document.documentElement.appendChild(_ldr);
+  }
+  // Returning user: no hiding, no loader. Page renders immediately.
+
+  // Shared helper to remove loader
+  function _revealPage() {
+    document.documentElement.style.visibility = 'visible';
+    var el = document.getElementById('vantage-auth-loader');
+    if (el) {
+      el.style.opacity = '0';
+      setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 400);
+    }
   }
 
   // ── FAST-PATH ──────────────────────────────────────────────────────────────
@@ -147,7 +179,7 @@
       // Session confirmed — sync user data
       syncUser(user);
       // Reveal the page now that auth is confirmed
-      document.documentElement.style.visibility = 'visible';
+      _revealPage();
 
     }).catch(function (err) {
       console.error('[Clerk] SDK init error:', err);
@@ -161,7 +193,7 @@
   s.addEventListener('error', function () {
     console.error('[Clerk] SDK failed to load — auth unavailable');
     // Restore visibility so the page isn't stuck hidden
-    document.documentElement.style.visibility = 'visible';
+    _revealPage();
     // Don't redirect — let existing sessionStorage gate handle it
   });
 
