@@ -36,6 +36,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .sb-bottom{margin-top:auto;padding-top:14px;border-top:1px solid var(--cobalt-border)}
 .sb-by{padding:10px 18px;font-family:var(--mono);font-size:.76rem;color:var(--text-dim)}
 .sb-by b{color:var(--muted)}
+.meridian-chip{margin:10px 12px 0;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.20)}
+.meridian-chip .label{font-family:var(--mono);font-size:.66rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.meridian-chip .val{font-size:.7rem;color:var(--text-dim)}
 
 /* ── MAIN WRAP ───────────────── */
 .wrap{margin-left:var(--sidebar);padding:40px 48px 80px;max-width:860px}
@@ -191,7 +194,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .action-primary{background:var(--cobalt);border:none;color:#fff;padding:12px 28px;border-radius:9px;font-family:var(--mono);font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s;letter-spacing:.04em;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
 .action-primary:hover{background:#5254d4;transform:translateY(-1px)}
 .action-secondary{background:transparent;border:1px solid rgba(99,102,241,.25);color:var(--muted);padding:12px 24px;border-radius:9px;font-family:var(--mono);font-size:.72rem;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center}
-.action-secondary:hover{border-color:var(--cobalt-border);color:var(--text)}
+.action-secondary:hover{border-color:rgba(99,102,241,.4);color:var(--text)}
 
 @media(max-width:768px){.wrap{margin-left:0;padding:24px 20px 60px}.sidebar{display:none}.humac-hero{padding:24px 20px}.score-num{font-size:4rem}.score-num.adj{font-size:3rem}}
 </style>
@@ -206,6 +209,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
       <span class="sb-product">Vantage</span>
     </div>
   </a>
+  <div class="sb-section">Overview</div>
+  <a class="sb-item" href="about.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l1.5 3.5L13 7l-3.5 1.5L8 12l-1.5-3.5L3 7l3.5-1.5L8 2z"/></svg>Platform Tour</a>
+  <a class="sb-item" href="dashboard.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Home</a>
+  <a class="sb-item" href="about.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>About Vantage</a>
   <div class="sb-section">Core Tools</div>
   <a class="sb-item" href="er-case-navigator.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2l5 2v4c0 3-2 5-5 6C5 13 3 11 3 8V4l5-2z"/></svg>ER Case Navigator</a>
   <a class="sb-item" href="hr-data-storyteller.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12l4-4 3 3 5-6"/></svg>HR Data Storyteller</a>
@@ -220,6 +227,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
   <a class="sb-item" href="debrief.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2h8a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1zM5 6h6M5 9h6M5 12h4"/></svg>The Debrief</a>
   <div class="sb-section">Philosophy</div>
   <a class="sb-item" href="https://humacity.com" target="_blank"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C4.7 2 2 4.7 2 8s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 2a4 4 0 010 8 4 4 0 010-8zm0 1v3l2 1"/></svg>Humacity ↗</a>
+  <div class="sb-section">Account</div>
+  <a class="sb-item" href="data-dashboard.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="10" height="7" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg>Data &amp; Privacy</a>
+  <a class="sb-item" href="#" onclick="clerkSignOut(); return false;"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3H4a1 1 0 00-1 1v8a1 1 0 001 1h2M10 11l3-3-3-3M13 8H6"/></svg>Sign out</a>
+  <div class="sb-section">Legal</div>
+  <a class="sb-item" href="terms.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="10" height="12" rx="1"/><path d="M5.5 6h5M5.5 9h5"/></svg>Terms of Service</a>
+  <a class="sb-item" href="privacy.html"><svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="10" height="7" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg>Privacy Policy</a>
+  <div class="meridian-chip">
+    <div class="label">MERIDIAN Active</div>
+    <div class="val" id="meridian-chip-val">Loading...</div>
+  </div>
   <div class="sb-bottom">
     <div class="sb-by">by <b>Kumar Vivek</b></div>
   </div>
@@ -294,6 +311,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
       window._tenureYrs = '3'; window._tenureLabel = '3+ years (mid-market benchmark)';
     }
   } catch(e) { window._tenureYrs = '3'; window._tenureLabel = '3+ years'; }
+})();
+
+// ── MERIDIAN CHIP DISPLAY ────────────────────────────────────────────────
+(function() {
+  try {
+    var mRaw = sessionStorage.getItem('sr_meridian');
+    var m = mRaw ? JSON.parse(mRaw) : {};
+    var el = document.getElementById('meridian-chip-val');
+    if (el) el.innerText = (m.state || 'Not set') + ' · ' + (m.industry || 'Not set');
+  } catch(e) {}
 })();
 
 // QUESTION DEFINITIONS
@@ -877,3 +904,5 @@ renderBlock(0);
 </script>
 <script src="clerk-auth.js"></script>
 <script src="sidebar-shared.js"></script>
+</body>
+</html>
