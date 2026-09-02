@@ -13,6 +13,14 @@
 
   var isAccessPage = window.location.pathname.indexOf('access.html') !== -1;
 
+  // ── FLASH PREVENTION ───────────────────────────────────────────────────────
+  // Hide the page body immediately while Clerk verifies the session.
+  // Prevents a brief flash of protected content before the auth redirect.
+  // Body becomes visible again once Clerk confirms the user is signed in.
+  if (!isAccessPage) {
+    document.documentElement.style.visibility = 'hidden';
+  }
+
   // ── FAST-PATH ──────────────────────────────────────────────────────────────
   // If the localStorage flag is set (written after sign-in), pre-populate
   // sessionStorage so existing inline page checks don't redirect to access.html
@@ -138,6 +146,8 @@
 
       // Session confirmed — sync user data
       syncUser(user);
+      // Reveal the page now that auth is confirmed
+      document.documentElement.style.visibility = 'visible';
 
     }).catch(function (err) {
       console.error('[Clerk] SDK init error:', err);
@@ -150,6 +160,8 @@
 
   s.addEventListener('error', function () {
     console.error('[Clerk] SDK failed to load — auth unavailable');
+    // Restore visibility so the page isn't stuck hidden
+    document.documentElement.style.visibility = 'visible';
     // Don't redirect — let existing sessionStorage gate handle it
   });
 
