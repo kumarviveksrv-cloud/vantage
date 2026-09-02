@@ -106,7 +106,7 @@
     <a href="data-dashboard.html" class="nav-item">
       <span class="icon">🔒</span> Data &amp; Privacy
     </a>
-    <a href="access.html" class="nav-item" onclick="sessionStorage.clear()">
+    <a href="access.html" class="nav-item" onclick="if(window.clerkSignOut){window.clerkSignOut();}else{sessionStorage.clear();window.location.href='access.html';} return false;">
       <span class="icon">↩</span> Sign out
     </a>
 
