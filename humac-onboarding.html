@@ -112,6 +112,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .conf-btn{padding:6px 14px;border-radius:6px;font-family:var(--mono);font-size:.62rem;cursor:pointer;border:1px solid rgba(99,102,241,.2);background:transparent;color:var(--text-dim);transition:all .15s}
 .conf-btn:hover{border-color:var(--cobalt-border);color:var(--text-mid)}
 .conf-btn.selected{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.4);color:var(--muted)}
+    .conf-explain{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+    .conf-explain-item{font-family:var(--mono);font-size:.6rem;letter-spacing:.04em;color:rgba(165,180,252,.7);line-height:1.55;transition:opacity .2s}
 
 /* ── NAVIGATION BUTTONS ──────── */
 .nav-row{display:flex;align-items:center;justify-content:space-between;margin-top:28px}
@@ -247,6 +249,21 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 
 <script>
 // ─────────────────────────────────────
+// ── MERIDIAN-aware tenure threshold ────────────────────────────────────────
+(function() {
+  try {
+    var _m = JSON.parse(sessionStorage.getItem('sr_meridian') || '{}');
+    var _ot = (_m.orgType || '').toLowerCase();
+    if (_ot.includes('startup') || _ot.includes('series a') || _ot.includes('series b') || _ot.includes('seed')) {
+      window._tenureYrs = '2'; window._tenureLabel = '2+ years (startup benchmark)';
+    } else if (_ot.includes('large') || _ot.includes('enterprise') || _ot.includes('psu') || _ot.includes('government') || _ot.includes('public sector')) {
+      window._tenureYrs = '5'; window._tenureLabel = '5+ years (enterprise benchmark)';
+    } else {
+      window._tenureYrs = '3'; window._tenureLabel = '3+ years (mid-market benchmark)';
+    }
+  } catch(e) { window._tenureYrs = '3'; window._tenureLabel = '3+ years'; }
+})();
+
 // QUESTION DEFINITIONS
 // ─────────────────────────────────────
 const BLOCKS = [
@@ -256,11 +273,11 @@ const BLOCKS = [
     formula:`<b>Precise formula:</b><br>
 <code>L1 ratio = Total HR Program Value ÷ Total Compensation</code><br><br>
 <b>Total HR Program Value includes:</b><br>
-• Stars/High Performers retained × salary × <code>1.80</code> (replacement cost avoided)<br>
-• Revenue hires (≤1yr) × salary × <code>1.40 × 0.85</code> (net revenue contribution)<br>
+• High Performers currently active × salary × <code>1.80</code> (replacement cost avoided)<br>&nbsp;&nbsp;<small>Employees in your top performance band who are still with the org — regardless of whether a formal retention conversation happened.</small><br>
+• New joiners in revenue-generating roles (hired last 12 months) × salary × <code>1.40 × 0.85</code><br>&nbsp;&nbsp;<small>Include sales, BD, account management, client-facing — any role whose output directly contributes to revenue.</small><br>
 • Emerging Talent × L&D spend × <code>2.80</code> (development return index)<br>
-• Tenured employees (5+yr) × salary × <code>0.08</code> (engagement premium)<br>
-• Inconsistent Performers × salary × <code>0.60</code> (risk exposure contained)<br><br>
+• Stable employees (${window._tenureLabel}) × salary × <code>0.08</code> (engagement premium — based on your org type)<br>
+• Below-expectation contributors × salary × <code>0.60</code> (risk exposure contained)<br>&nbsp;&nbsp;<small>Employees who received "Needs Improvement" or equivalent in their last appraisal — or those you would privately categorise as inconsistent. If you run one annual cycle, estimate as a % of headcount.</small><br><br>
 <b>Data to pull:</b> Payroll (total comp base), HRIS (talent classifications, tenure), Performance system (Star/ET/IP labels).`,
     questions:[
       {id:'q1', type:'pct',
@@ -278,7 +295,7 @@ Pull from: performance system (pre- and post-promotion scores).<br><br>
 Pull from: manager + direct report performance ratings in the same review cycle.<br><br>
 <b>Hiring Quality:</b> % of hires in last 12 months above role performance baseline.<br>
 Pull from: new hire performance at 6-month mark vs. grade average.<br><br>
-<b>Selective Retention:</b> Star avg tenure vs. Inconsistent Performer avg tenure.<br>
+<b>Selective Retention:</b> Are top performers staying longer than below-expectation contributors?<br>&nbsp;&nbsp;<small>Count resignations in last 12 months by performance band. If more Stars left than underperformers, answer No.</small><br>
 Pull from: HRIS (tenure by performance segment).<br><br>
 <b>HiPo Identification:</b> Does a formal named HiPo list exist and get updated?`,
     questions:[
@@ -525,6 +542,10 @@ function renderBlock(idx) {
         <button class="conf-btn ${conf==='computed'?'selected':''}" onclick="setConf('${b.id}','computed')">Computed</button>
         <button class="conf-btn ${conf==='estimated'?'selected':''}" onclick="setConf('${b.id}','estimated')">Estimated</button>
       </div>
+      <div class="conf-explain">
+        <span class="conf-explain-item computed-explain" style="${conf==='computed'?'':'opacity:.45'}">&#x2713; <b>Computed:</b> You have actual figures from HRIS or payroll. Score confidence: <b>High</b>.</span>
+        <span class="conf-explain-item estimated-explain" style="${conf==='estimated'?'':'opacity:.45'}">&#x7e; <b>Estimated:</b> Working from memory or approximation. Score confidence: <b>Medium</b> — directional, still valuable.</span>
+      </div>
 
       <div class="nav-row">
         ${!isFirst ? `<button class="nav-back" onclick="prevBlock()">← Back</button>` : '<div></div>'}
@@ -552,6 +573,14 @@ function setYN(qId, val, wrap) {
 }
 
 function setConf(blockId, val) {
+  // Update explain text opacity
+  var card = document.querySelector('.block-card');
+  if (card) {
+    var cExp = card.querySelector('.computed-explain');
+    var eExp = card.querySelector('.estimated-explain');
+    if (cExp) cExp.style.opacity = val === 'computed' ? '1' : '.35';
+    if (eExp) eExp.style.opacity = val === 'estimated' ? '1' : '.35';
+  }
   confidence[blockId] = val;
   document.querySelectorAll('.conf-btn').forEach(b => b.classList.remove('selected'));
   event.target.classList.add('selected');
