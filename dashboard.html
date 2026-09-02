@@ -392,7 +392,19 @@
     <!-- HUMAC SCORE WIDGET -->
     <div id="humac-widget"></div>
 
-    <!-- Calendar Banner -->
+    <!-- PROCESSES I'M BUILDING WIDGET -->
+    <div id="gaps-widget" style="display:none;background:var(--card);border:1px solid rgba(99,102,241,.18);border-radius:16px;padding:22px 26px;margin-bottom:24px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,.4),transparent)"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <div style="font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,158,11,.6);margin-bottom:4px">Humac Gaps</div>
+          <div style="font-size:.92rem;font-weight:700;color:#f4f3ff;line-height:1.2">Processes I'm building</div>
+        </div>
+        <a href="humac-onboarding.html" style="font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;color:rgba(165,180,252,.5);text-decoration:none;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.18);padding:6px 12px;border-radius:6px;transition:all .2s" onmouseover="this.style.color='#a5b4fc'" onmouseout="this.style.color='rgba(165,180,252,.5)'">Refine score →</a>
+      </div>
+      <div id="gaps-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
     <div class="cal-banner">
       <div class="cal-icon">📅</div>
       <div>
@@ -508,8 +520,33 @@
       window.location.href = BASE + 'access.html';
     }
     // ─────────────────────────────────────
-    // ONBOARDING SEQUENCE
+    // PROCESSES I'M BUILDING WIDGET
     // ─────────────────────────────────────
+    (function renderGapsWidget() {
+      var GAP_NAMES = {
+        A: 'HR Program ROI Tracking',
+        B: 'Talent Quality Measurement',
+        C: 'Org Health Signal Infrastructure',
+        D: 'HR Function Return Measurement',
+        E: 'Human Capital Balance Sheet Inputs'
+      };
+      var building = {};
+      try { building = JSON.parse(localStorage.getItem('vantage_gaps_building') || '{}'); } catch(e) {}
+      var keys = Object.keys(building).filter(function(k){ return building[k] === '1'; });
+      if (keys.length === 0) return;
+      var widget = document.getElementById('gaps-widget');
+      var list   = document.getElementById('gaps-list');
+      if (!widget || !list) return;
+      widget.style.display = 'block';
+      list.innerHTML = keys.map(function(k) {
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.15);border-radius:8px">' +
+          '<span style="width:7px;height:7px;border-radius:50%;background:rgba(34,197,94,.6);flex-shrink:0"></span>' +
+          '<span style="font-size:.8rem;color:rgba(244,243,255,.6)">' + (GAP_NAMES[k] || k) + '</span>' +
+          '</div>';
+      }).join('');
+    })();
+
+
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var chip = document.getElementById('meridian-chip');
     var badge = document.getElementById('meridian-badge');
