@@ -10,6 +10,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <!-- SR17: vantage-theme.css above is the canonical palette + typography
+       source. Cormorant Garamond loads via that file's @import, so the
+       three headline swaps below (welcome-name, meridian-modal-title,
+       aria-quick-text .title, humac-widget empty-state headline) only
+       need the font-family change, not a separate font <link> here. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     :root{
@@ -65,7 +71,7 @@
     .meridian-modal-close{position:absolute;top:16px;right:18px;background:none;border:none;color:rgba(165,180,252,0.4);font-size:20px;cursor:pointer;line-height:1;transition:color .2s}
     .meridian-modal-close:hover{color:#f4f3ff}
     .meridian-modal-badge{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(99,102,241,0.7);margin-bottom:16px}
-    .meridian-modal-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:#f4f3ff;margin-bottom:12px;line-height:1.2}
+    .meridian-modal-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:#f4f3ff;margin-bottom:12px;line-height:1.2}
     .meridian-modal-body{font-size:14px;color:rgba(244,243,255,0.55);line-height:1.75;margin-bottom:24px}
     .meridian-modal-body strong{color:rgba(244,243,255,0.85);font-weight:600}
     .meridian-modal-params{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:28px}
@@ -115,7 +121,7 @@
     .main{flex:1;overflow-y:auto;height:100vh;padding:28px 32px;position:relative}
     .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;animation:fadeIn .4s ease}
     .welcome-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
-    .welcome-name{font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:700;color:var(--white)}
+    .welcome-name{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:var(--white)}
     .welcome-sub{font-size:13px;color:var(--grey);margin-top:4px}
     .header-aria{display:flex;align-items:center;gap:10px;cursor:pointer}
     .aria-label{text-align:right}
@@ -188,7 +194,7 @@
     .aria-quick{background:linear-gradient(135deg,rgba(99,102,241,0.10),rgba(124,58,237,0.05));border:1px solid rgba(99,102,241,0.25);border-radius:12px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;animation:fadeIn .4s ease .25s both;cursor:pointer;transition:all .2s}
     .aria-quick:hover{background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(124,58,237,0.08));border-color:rgba(99,102,241,0.40)}
     .aria-quick-text .label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
-    .aria-quick-text .title{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:700;margin-bottom:4px;color:var(--white)}
+    .aria-quick-text .title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:4px;color:var(--white)}
     .aria-quick-text .sub{font-size:12px;color:var(--grey)}
     .aria-btn{padding:10px 20px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 20px rgba(99,102,241,0.4)}
 
@@ -768,7 +774,7 @@
           '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">' +
             '<div>' +
               '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px">Humac Score</div>' +
-              '<div style="font-family:\'Bricolage Grotesque\',sans-serif;font-size:1.1rem;font-weight:600;color:#f4f3ff;margin-bottom:6px">Your financial baseline is not set</div>' +
+              '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;font-weight:600;color:#f4f3ff;margin-bottom:6px">Your financial baseline is not set</div>' +
               '<div style="font-size:.82rem;color:rgba(244,243,255,.45);line-height:1.5;max-width:420px">Generate your Humac Score — the measure of how efficiently your organisation converts people investment into financial and organisational value.</div>' +
             '</div>' +
             '<a href="humac-onboarding.html" style="display:inline-flex;align-items:center;gap:8px;font-family:\'JetBrains Mono\',monospace;font-size:.68rem;background:#6366f1;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;flex-shrink:0;transition:all .15s" onmouseover="this.style.background=\'#5254d4\'" onmouseout="this.style.background=\'#6366f1\'">' +
