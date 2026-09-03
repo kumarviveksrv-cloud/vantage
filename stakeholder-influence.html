@@ -8,6 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stakeholder Influence — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <!-- SR18: vantage-theme.css above is the canonical palette + typography
+       source. Local :root below is KEPT INTACT as a fallback — same
+       pattern as every other SR18 page. Cormorant Garamond applied to
+       .page-title and .intro-title only. The opening/closing line-card
+       text stays sans-serif italic (it's already a distinct quote
+       treatment; stacking serif+italic on top would be redundant, not
+       premium). Layer figures and the data-anchor number stay on the
+       Space Grotesk numeral stack, unchanged. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
@@ -38,12 +47,12 @@
     .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
     .breadcrumb a{color:var(--dim);text-decoration:none}
     .breadcrumb a:hover{color:var(--muted)}
-    .page-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:700;margin-bottom:4px;color:#f4f3ff}
+    .page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;margin-bottom:4px;color:#f4f3ff}
     .page-sub{font-size:13px;color:var(--grey)}
 
     /* INTAKE */
     .intro-card{background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:14px;padding:22px 26px;margin-bottom:24px}
-    .intro-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;margin-bottom:12px}
+    .intro-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f4f3ff;margin-bottom:12px}
     .intro-body{font-size:13px;color:rgba(244,243,255,0.5);line-height:1.75}
     .intake-card{background:rgba(5,4,16,0.25);border:1px solid rgba(99,102,241,0.12);border-radius:16px;padding:28px;margin-bottom:24px}
     .form-section{margin-bottom:22px}
