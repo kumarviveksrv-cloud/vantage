@@ -3,28 +3,32 @@
    Single source of truth for color tokens, typography, the
    sidebar (System A / nav-item), and global scrollbar styling.
 
-   Every Vantage page should link this file:
+   Every Vantage page links this file:
    <link rel="stylesheet" href="vantage-theme.css">
 
    DO NOT duplicate these rules locally in a page's own <style>
-   block. If a page needs its own local :root, only declare
-   page-specific variables there (never redeclare --bg, --card,
-   --teal, --white, --font-display, etc — this file owns those).
+   block. If a page needs a local :root, only declare page-specific
+   variables there — never redeclare --bg, --card, --teal, --white,
+   --font-display, etc. This file owns those.
 
-   Migration note (SR17): dashboard.html and humac-onboarding.html
-   are the first two pages migrated to this file. Remaining Vantage
-   pages (er-case-navigator.html, aria.html, case-library.html,
-   hr-data-storyteller.html, stakeholder-influence.html,
-   policy-compass.html, conversation-simulator.html, debrief.html,
-   onboarding.html, data-dashboard.html, terms.html, privacy.html,
-   pricing.html) still carry their own embedded copies and should
-   be migrated to this file one at a time, verifying each before
-   upload.
+   Migration status (SR18 — complete):
+   All 16 Vantage pages now link this file. The migration is done.
+   No further per-page migration is required.
 
-   Typography decision (SR17): headline font moved from Bricolage
-   Grotesque to Cormorant Garamond, matching Virorah PMS's editorial/
-   premium identity. This was a deliberate identity choice, not a bug
-   fix — see SR17 session notes if reversing this decision later.
+   Typography decision (SR17/SR18): headline font is Cormorant
+   Garamond, matching Virorah PMS's editorial/premium identity.
+   Applied to page-level .page-title, hero headlines, and
+   empty-state titles only. Dense UI chrome (nav items, card
+   headers, badge text, buttons) stays Bricolage Grotesque or
+   Plus Jakarta Sans. The .logo-name brand mark specifically
+   stays Bricolage — see Fix note below.
+
+   Fix (SR18 audit): .logo-name below is deliberately set to
+   Bricolage Grotesque, NOT var(--font-display). The "Virorah"
+   sidebar brand mark must never render in Cormorant Garamond.
+   Every page declares .logo-name locally in Bricolage, which
+   overrides this — but the canonical file should tell the truth
+   so new pages don't have to rediscover this by accident.
    ═══════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
@@ -112,11 +116,13 @@
 }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
 .logo-name {
-  font-family: var(--font-display);
-  font-size: 17px;
+  /* Deliberately Bricolage Grotesque — NOT var(--font-display).
+     The "Virorah" brand mark must stay sans-serif. Cormorant
+     Garamond is for editorial page headlines only. */
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
   font-weight: 700;
   color: var(--white);
-  letter-spacing: -.01em;
 }
 .logo-name span { color: var(--muted); }
 .logo-sub {
