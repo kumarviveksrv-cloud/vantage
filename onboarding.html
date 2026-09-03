@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MERIDIAN Setup — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <!-- SR18: vantage-theme.css above is the canonical palette + typography
+       source. Local :root below KEPT INTACT as a fallback — same
+       pattern as every other SR18 page with a local :root. Cormorant
+       Garamond applied to two genuine headline moments only:
+         .header-title  — "Build your professional context."
+         .complete-title — "MERIDIAN is ready."
+       .step-title (the wizard question titles) stays Bricolage — they
+       are dense interactive question headers in the wizard UI, not
+       editorial headlines. The .complete-title is also used in the
+       dynamically rendered innerHTML in completeMERIDIAN(), which picks
+       up the class-level Cormorant automatically.
+       BONUS FIX: BASE URL corrected from old GitHub Pages URL to
+       vantage.virorah.com. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden}
@@ -20,7 +34,7 @@
     .header{text-align:center;margin-bottom:40px;position:relative;z-index:1;animation:fadeIn .5s ease}
     .header-badge{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.22);padding:6px 14px;border-radius:20px;margin-bottom:20px}
     .header-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite}
-    .header-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(26px,3.5vw,40px);font-weight:800;margin-bottom:12px;color:#f4f3ff;line-height:1.15}
+    .header-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,44px);font-weight:600;margin-bottom:12px;color:#f4f3ff;line-height:1.15}
     .header-sub{font-size:15px;color:var(--grey);line-height:1.7;max-width:500px;margin:0 auto}
 
     .progress-bar{width:100%;max-width:680px;margin-bottom:36px;position:relative;z-index:1}
@@ -69,7 +83,7 @@
 
     .complete-card{width:100%;max-width:680px;text-align:center;background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.25);border-radius:18px;padding:48px 36px;position:relative;z-index:1;animation:fadeIn .5s ease}
     .complete-icon{font-size:52px;margin-bottom:20px}
-    .complete-title{font-family:'Bricolage Grotesque',sans-serif;font-size:28px;font-weight:800;margin-bottom:12px;color:#f4f3ff}
+    .complete-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;margin-bottom:12px;color:#f4f3ff}
     .complete-sub{font-size:14px;color:var(--grey);line-height:1.75;margin-bottom:32px;max-width:460px;margin-left:auto;margin-right:auto}
     .meridian-summary{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:28px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:left}
     .ms-item .ms-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
@@ -83,7 +97,7 @@
   </style>
 </head>
 <body>
-  <a href="dashboard.html" style="position:fixed;top:18px;left:24px;z-index:200;display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(165,180,252,0.45);text-decoration:none;padding:8px 14px;border:1px solid rgba(99,102,241,0.12);border-radius:8px;transition:all .2s;backdrop-filter:blur(8px);background:rgba(5,4,16,0.6)" onmouseover="this.style.color='#a5b4fc';this.style.borderColor='rgba(99,102,241,0.3)'" onmouseout="this.style.color='rgba(165,180,252,0.45)';this.style.borderColor='rgba(99,102,241,0.12)'">&#8592; Dashboard</a>
+  <a href="dashboard.html" style="position:fixed;top:18px;left:24px;z-index:200;display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(165,180,252,0.45);text-decoration:none;padding:8px 14px;border:1px solid rgba(99,102,241,0.12);border-radius:8px;transition:all .2s;backdrop-filter:blur(8px);background:rgba(5,4,16,0.6)" onmouseover="this.style.color='#a5b4fc';this.style.borderColor='rgba(99,102,241,0.3)'" onmouseout="this.style.color='rgba(165,180,252,0.45)';this.style.borderColor='rgba(99,102,241,0.12)'">&larr; Dashboard</a>
 
   <div class="header">
     <div class="header-badge"><div class="header-dot"></div>MERIDIAN Context Engine</div>
@@ -110,7 +124,7 @@
   </div>
 
   <script>
-    var BASE = 'https://kumarviveksrv-cloud.github.io/vantage/';
+    var BASE = 'https://vantage.virorah.com/';
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
 
     if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; }
@@ -153,8 +167,8 @@
         id:'orgSize', title:'How large is your organisation?', sub:'Headcount determines which statutes apply — Industrial Disputes Act thresholds, retrenchment requirements, and Works Committee obligations vary by size.',
         type:'grid', cols:3,
         options:[
-          '1 – 50','51 – 250','251 – 500','501 – 1,000',
-          '1,001 – 2,500','2,501 – 5,000','5,001 – 10,000','10,000+'
+          '1 \u2013 50','51 \u2013 250','251 \u2013 500','501 \u2013 1,000',
+          '1,001 \u2013 2,500','2,501 \u2013 5,000','5,001 \u2013 10,000','10,000+'
         ]
       },
       {
@@ -163,7 +177,7 @@
         options:[
           'HR Executive / Coordinator','Assistant HR Manager','HR Manager','Senior HR Manager',
           'HRBP (Junior / Mid-level)','HRBP (Senior)','Head of HR / Head of People & Culture',
-          'General Manager – HR','HR Director','AVP – HR','VP – HR',
+          'General Manager \u2013 HR','HR Director','AVP \u2013 HR','VP \u2013 HR',
           'CHRO','HR Consultant / Advisor','Founder / CEO with HR Responsibility','Other'
         ]
       },
