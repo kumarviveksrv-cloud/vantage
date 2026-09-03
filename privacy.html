@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Privacy Policy — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <!-- SR18: vantage-theme.css is the canonical palette + typography
+       source. No local :root block on this page. Cormorant Garamond
+       applied to .doc-title only — "Privacy Policy". All h2, h3, and
+       .right-title card headers stay Bricolage — functional document
+       navigation headers, not editorial headlines. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{min-height:100%;background:#050410;color:#fff;font-family:'Plus Jakarta Sans',sans-serif}
@@ -25,7 +31,7 @@
     .meridian-chip .val{font-size:11px;color:rgba(244,243,255,0.55)}
     .main{flex:1;padding:48px 60px;max-width:860px;line-height:1.75}
     .doc-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;color:#6366f1;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
-    .doc-title{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;color:#fff;margin-bottom:8px}
+    .doc-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:#fff;margin-bottom:8px}
     .doc-meta{font-size:12px;color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06)}
     .commitment-banner{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:18px 22px;margin-bottom:36px;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6}
     .commitment-banner strong{color:#6366f1;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:6px}
@@ -117,9 +123,9 @@
       <span class="icon">↩</span> Sign out
     </a>
 
-<div class="meridian-chip">
+    <div class="meridian-chip">
       <div class="label">MERIDIAN Active</div>
-      <div class="val" id="meridian-chip-val">—</div>
+      <div class="val" id="meridian-chip-val">&#8212;</div>
     </div>
   </div>
 
@@ -127,7 +133,7 @@
 
     <div class="doc-eyebrow">Legal</div>
     <h1 class="doc-title">Privacy Policy</h1>
-    <div class="doc-meta">Virorah Private Limited &nbsp;·&nbsp; Last updated: August 12, 2026 &nbsp;·&nbsp; Effective: August 12, 2026</div>
+    <div class="doc-meta">Virorah Private Limited &nbsp;&middot;&nbsp; Last updated: August 12, 2026 &nbsp;&middot;&nbsp; Effective: August 12, 2026</div>
 
     <div class="commitment-banner">
       <strong>Our Privacy Commitment</strong>
@@ -362,7 +368,7 @@
     <strong>Email:</strong> <a href="mailto:info@virorah.com" style="color:#6366f1;text-decoration:none">info@virorah.com</a><br>
     <strong>Response time:</strong> Within 48 hours of receipt of grievance</p>
     <p>If you are not satisfied with our response, you have the right to approach the Data Protection Board of India once it is constituted and operational under the DPDP Act 2023.</p>
-    <p style="margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:#a5b4fc;font-family:'JetBrains Mono',monospace">Virorah Private Limited &nbsp;·&nbsp; Gurugram, Haryana, India &nbsp;·&nbsp; © 2026 All rights reserved</p>
+    <p style="margin-top:40px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:#a5b4fc;font-family:'JetBrains Mono',monospace">Virorah Private Limited &nbsp;&middot;&nbsp; Gurugram, Haryana, India &nbsp;&middot;&nbsp; &copy; 2026 All rights reserved</p>
 
   </div>
 
@@ -371,7 +377,7 @@
     if (meridianRaw) {
       try {
         var m = JSON.parse(meridianRaw);
-        document.getElementById('meridian-chip-val').innerText = (m.state||'') + ' · ' + (m.industry||'');
+        document.getElementById('meridian-chip-val').innerText = (m.state||'') + ' \xb7 ' + (m.industry||'');
       } catch(e) {}
     }
   </script>
