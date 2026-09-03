@@ -312,12 +312,12 @@ var isCheckin=false;
 
 // ── BLOCKS ────────────────────────────────────────────────────────────────────
 var BLOCKS=[
-  {id:'A',title:'HR Value Return',pillar:'L1',weight:'25% weight',
+  {id:'A',title:'Value Ledger',pillar:'L1',weight:'25% weight',
    desc:'How much financial value does HR generate relative to total salaries paid?',
    formula:'<b>Precise formula:</b><br><code>L1 ratio = Total HR Program Value &divide; Total Compensation</code><br><br><b>Total HR Program Value includes:</b><br>&bull; High Performers currently active &times; salary &times; <code>1.80</code> (replacement cost avoided)<br>&bull; New joiners in revenue-generating roles (hired last 12 months) &times; salary &times; <code>1.40 &times; 0.85</code><br>&bull; Emerging Talent &times; L&D spend &times; <code>2.80</code> (development return index)<br>&bull; Stable employees ('+window._tenureLabel+') &times; salary &times; <code>0.08</code> (engagement premium)<br>&bull; Below-expectation contributors &times; salary &times; <code>0.60</code> (risk exposure contained)<br><br><b>Data to pull:</b> Payroll, HRIS (talent classifications, tenure), Performance system.',
    questions:[{id:'q1',type:'pct',text:'For every \u20B9100 of total salaries, roughly what percentage does your HR function generate in measurable financial value?',sub:'Include: retention savings, quality-of-hire returns, development ROI, engagement productivity, and risk management outcomes.'}]
   },
-  {id:'B',title:'Talent Quality',pillar:'L2',weight:'15% weight',
+  {id:'B',title:'Talent Premium',pillar:'L2',weight:'15% weight',
    desc:'Are people generating above-average returns relative to what they cost?',
    note:'Professional judgment is the right instrument here. You do not need HRIS data \u2014 answer based on what you\u2019d tell a trusted colleague.',
    formula:'<b>Five verdict areas &mdash; precise computation requires employee-level data:</b><br><br><b>Promotion Accuracy:</b> % of promoted employees above grade benchmark 6 months post-promotion.<br><b>Manager Quality:</b> % of managers outperforming their direct report average.<br><b>Hiring Quality:</b> % of hires in last 12 months above role performance baseline.<br><b>Selective Retention:</b> Are top performers staying longer than below-expectation contributors?<br><b>HiPo Identification:</b> Does a formal named HiPo list exist and get updated?',
@@ -329,7 +329,7 @@ var BLOCKS=[
      {id:'q6',type:'yn',text:'Does your organisation have a named group of high-potential employees that leadership actively invests in differently \u2014 mentoring, accelerated projects, leadership exposure?',sub:'A spreadsheet with names counts. An informal conversation that happens every year does not.'}
    ]
   },
-  {id:'C',title:'Org Health + HCI',pillar:'L3 + HCI',weight:'30% weight',
+  {id:'C',title:'Org Vitals',pillar:'L3 + HCI',weight:'30% weight',
    desc:'Leading indicators of organisational health \u2014 and current conditions affecting your score.',
    formula:'<b>L3 is observational by design.</b> Professional judgment is the intended instrument for most signals \u2014 not a weaker substitute for data.<br><br>Three signals that benefit from data validation:<br>&bull; Projects completed on time &gt;60%: pull from Jira, Asana, or equivalent<br>&bull; Documented performance conversations: pull from HRIS/performance logs<br><br>All other signals: answer from your direct knowledge of the organisation.',
    questions:[
@@ -343,7 +343,7 @@ var BLOCKS=[
      {id:'q14',type:'yn',text:'Are projects completed on time at a rate above 60%?'}
    ]
   },
-  {id:'D',title:'HR Function Return',pillar:'L4',weight:'20% weight',
+  {id:'D',title:'Human P&L',pillar:'L4',weight:'20% weight',
    desc:'For every rupee spent running HR, how much comes back?',
    formula:'<b>The Human P&L &mdash; precise formula:</b><br><code>L4 ratio = HR Net Profit &divide; (Total COGS + Total OpEx)</code><br><br><b>Human Revenue:</b> Retention savings + talent acquisition value + performance uplift + culture premium<br><b>Human COGS:</b> Acquisition cost + development investment + HR function cost<br><b>Human OpEx:</b> Compliance &amp; admin + culture &amp; engagement spend<br><b>Net Profit</b> = Revenue &minus; COGS &minus; OpEx &minus; Adjustments',
    questions:[{id:'q15',type:'pct',text:'For every \u20B9100 your HR function spends on running HR \u2014 hiring costs, training, HR team salaries, tools, compliance \u2014 roughly how much measurable value does it generate?',sub:'Include: retention savings, productivity gains, avoided legal costs, and quality-of-hire outcomes. Exclude base salaries from the \u20B9100.'}]
@@ -448,7 +448,7 @@ function renderStepper(){
   BLOCKS.forEach(function(b,i){
     if(i>0){var conn=document.createElement('div');conn.className='step-connector';el.appendChild(conn);}
     var item=document.createElement('div');item.className='step-item';
-    var isDone=(i<currentBlock)||(document.getElementById('score-reveal').style.display!=='none');
+    var isDone=(i<currentBlock)||(document.getElementById('score-reveal').style.display==='block');
     var isActive=i===currentBlock;
     item.innerHTML='<div class="step-bubble '+(isDone?'done':isActive?'active':'pending')+'">'+(isDone?'\u2713':b.id)+'</div><div class="step-label '+(isActive?'active':'')+'">'+(b.title)+'</div>';
     el.appendChild(item);
