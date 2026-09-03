@@ -238,30 +238,30 @@
       </div>
     </div>
     <a href="dashboard.html" class="nav-item active">
-      <span class="icon">⊞</span> Dashboard
+      <span class="icon">&#x229E;</span> Dashboard
     </a>
 
     <div class="nav-section">Core Tools</div>
     <a href="er-case-navigator.html" class="nav-item">
-      <span class="icon">⚡</span> ER Case Navigator
+      <span class="icon">&#x26A1;</span> ER Case Navigator
       <span class="nav-badge">0</span>
     </a>
     <a href="hr-data-storyteller.html" class="nav-item">
-      <span class="icon">📊</span> HR Data Storyteller
+      <span class="icon">&#x1F4CA;</span> HR Data Storyteller
     </a>
     <a href="stakeholder-influence.html" class="nav-item">
-      <span class="icon">🎯</span> Stakeholder Influence
+      <span class="icon">&#x1F3AF;</span> Stakeholder Influence
     </a>
 
     <div class="nav-section">Intelligence</div>
     <a href="aria.html" class="nav-item">
-      <span class="icon">✦</span> ARIA
+      <span class="icon">&#x2736;</span> ARIA
     </a>
     <a href="policy-compass.html" class="nav-item">
-      <span class="icon">🧭</span> Policy Compass
+      <span class="icon">&#x1F9ED;</span> Policy Compass
     </a>
     <a href="conversation-simulator.html" class="nav-item">
-      <span class="icon">🎭</span> Conversation Simulator
+      <span class="icon">&#x1F3AD;</span> Conversation Simulator
     </a>
 
     <div class="nav-section">My Record</div>
@@ -269,31 +269,31 @@
       <span class="icon">&#x1F4CA;</span> Humac Score
     </a>
     <a href="case-library.html" class="nav-item">
-      <span class="icon">◎</span> Case Library
+      <span class="icon">&#x25CE;</span> Case Library
     </a>
     <a href="debrief.html" class="nav-item">
-      <span class="icon">📋</span> The Debrief
+      <span class="icon">&#x1F4CB;</span> The Debrief
     </a>
 
     <div class="nav-section">Philosophy</div>
     <a href="https://humacity.com" class="nav-item" target="_blank">
-      <span class="icon">🌀</span> Humacity
+      <span class="icon">&#x1F300;</span> Humacity
     </a>
 
     <div class="nav-section">Legal</div>
     <a href="terms.html" class="nav-item">
-      <span class="icon">📄</span> Terms of Service
+      <span class="icon">&#x1F4C4;</span> Terms of Service
     </a>
     <a href="privacy.html" class="nav-item">
-      <span class="icon">🔒</span> Privacy Policy
+      <span class="icon">&#x1F512;</span> Privacy Policy
     </a>
 
     <div class="nav-section">Account</div>
     <a href="data-dashboard.html" class="nav-item">
-      <span class="icon">🔒</span> Data &amp; Privacy
+      <span class="icon">&#x1F512;</span> Data &amp; Privacy
     </a>
     <a href="#" class="nav-item" onclick="clerkSignOut(); return false;">
-      <span class="icon">↩</span> Sign out
+      <span class="icon">&#x21A9;</span> Sign out
     </a>
 
     <div class="meridian-chip" id="meridian-chip">
@@ -432,9 +432,7 @@
     </div>
 
     <!-- PROCESSES I'M BUILDING WIDGET -->
-    <!-- SR16 fix: this widget was previously declared twice with duplicate ids
-         (id="gaps-widget", id="gaps-list"), so all writes hit the first copy
-         and the second was orphaned hidden markup. Now a single canonical block. -->
+    <!-- SR16 fix: single canonical block (previously duplicated, causing orphaned markup) -->
     <div id="gaps-widget" style="display:none;background:var(--card);border:1px solid rgba(99,102,241,.18);border-radius:16px;padding:22px 26px;margin-bottom:24px;position:relative;overflow:hidden">
       <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,.4),transparent)"></div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
@@ -451,9 +449,9 @@
     <div id="humac-widget"></div>
 
     <div class="cal-banner">
-      <div class="cal-icon">📅</div>
+      <div class="cal-icon">&#x1F4C5;</div>
       <div>
-        <div class="cal-month" id="js-cal-month">HR Calendar · Loading...</div>
+        <div class="cal-month" id="js-cal-month">HR Calendar &middot; Loading...</div>
         <div class="cal-title" id="js-cal-title"></div>
         <div class="cal-body" id="js-cal-body"></div>
       </div>
@@ -479,18 +477,18 @@
       <div class="stat-card">
         <div class="stat-label">Frameworks Applied</div>
         <div class="stat-value">0</div>
-        <div class="stat-sub">PACT · SIGNAL · INFLUENCE</div>
+        <div class="stat-sub">PACT &middot; SIGNAL &middot; INFLUENCE</div>
       </div>
     </div>
 
     <!-- ARIA Quick Access -->
     <div class="aria-quick" onclick="window.location.href='aria.html'">
       <div class="aria-quick-text">
-        <div class="label">ARIA · Voice Intelligence</div>
+        <div class="label">ARIA &middot; Voice Intelligence</div>
         <div class="title">What's happening today?</div>
         <div class="sub">Talk through a live case, practice a difficult conversation, or just think out loud.</div>
       </div>
-      <button class="aria-btn">Talk to ARIA →</button>
+      <button class="aria-btn">Talk to ARIA &#x2192;</button>
     </div>
 
     <!-- Two column: Cases + Tools -->
@@ -500,11 +498,11 @@
       <div>
         <div class="section-header">
           <div class="section-title">Active Cases</div>
-          <a href="case-library.html" class="see-all">view all →</a>
+          <a href="case-library.html" class="see-all">view all &#x2192;</a>
         </div>
         <div id="cases-container">
           <div class="empty-cases">
-            <div class="emoji">⚡</div>
+            <div class="emoji">&#x26A1;</div>
             <div>No active cases yet.</div>
             <div style="margin-top:6px;font-size:12px">Open the ER Case Navigator when something lands on your desk.</div>
           </div>
@@ -519,27 +517,27 @@
         <div class="tools-grid">
           <a href="er-case-navigator.html" class="tool-card tc-er">
             <div class="tool-tag">HERO</div>
-            <div class="tool-icon">⚡</div>
+            <div class="tool-icon">&#x26A1;</div>
             <div class="tool-name">ER Case Navigator</div>
             <div class="tool-desc">PACT-assessed case guidance for every ER situation.</div>
           </a>
           <a href="conversation-simulator.html" class="tool-card tc-sim">
-            <div class="tool-icon">🎭</div>
+            <div class="tool-icon">&#x1F3AD;</div>
             <div class="tool-name">Conversation Simulator</div>
             <div class="tool-desc">Practice before the real thing.</div>
           </a>
           <a href="hr-data-storyteller.html" class="tool-card tc-signal">
-            <div class="tool-icon">📊</div>
+            <div class="tool-icon">&#x1F4CA;</div>
             <div class="tool-name">HR Data Storyteller</div>
             <div class="tool-desc">SIGNAL-formatted leadership narratives.</div>
           </a>
           <a href="policy-compass.html" class="tool-card tc-policy">
-            <div class="tool-icon">🧭</div>
+            <div class="tool-icon">&#x1F9ED;</div>
             <div class="tool-name">Policy Compass</div>
             <div class="tool-desc">Can I do this? Answered clearly.</div>
           </a>
           <a href="stakeholder-influence.html" class="tool-card tc-influence">
-            <div class="tool-icon">🎯</div>
+            <div class="tool-icon">&#x1F3AF;</div>
             <div class="tool-name">Stakeholder Influence</div>
             <div class="tool-desc">The INFLUENCE Stack for any business case.</div>
           </a>
@@ -550,11 +548,11 @@
     <!-- Debrief Teaser -->
     <div class="debrief-tease">
       <div>
-        <div class="debrief-label" id="js-debrief-label">The Debrief · Loading...</div>
+        <div class="debrief-label" id="js-debrief-label">The Debrief &middot; Loading...</div>
         <div class="debrief-title">Your month is just beginning.</div>
         <div class="debrief-sub" id="js-debrief-sub">Navigate cases, practice conversations, and apply frameworks. Your Debrief arrives on the last working day of the month.</div>
       </div>
-      <div class="debrief-chip">Preview →</div>
+      <div class="debrief-chip">Preview &#x2192;</div>
     </div>
 
   </div>
@@ -567,8 +565,7 @@
 
     // ─────────────────────────────────────
     // PROCESSES I'M BUILDING WIDGET
-    // SR16: previously invoked twice (renderGapsWidget IIFE + anon IIFE below).
-    // Now a single canonical implementation.
+    // SR16: single canonical implementation
     // ─────────────────────────────────────
     (function renderGapsWidget() {
       var GAP_NAMES = {
@@ -601,7 +598,7 @@
     if (meridianRaw) {
       try {
         var m = JSON.parse(meridianRaw);
-        document.getElementById('meridian-summary').innerText = (m.state || '') + ' · ' + (m.industry || '');
+        document.getElementById('meridian-summary').innerText = (m.state || '') + ' \xb7 ' + (m.industry || '');
         badge.innerText = 'Active'; badge.className = 'm-badge complete';
         document.getElementById('meridian-cta').style.display = 'none';
       } catch(e) {}
@@ -613,11 +610,8 @@
 
     // ─────────────────────────────────────
     // SETUP CARD + ONBOARDING
-    // SR16 fix: Step 3 (Navigate your first case) previously read
-    // localStorage['vantage_ob_case_offered'], which was set the instant the
-    // Step 3 modal appeared — regardless of whether a case was actually saved.
-    // Now checks localStorage['sr_last_case_id'], which is set only by
-    // er-case-navigator.html on a successful save, so the checkmark is truthful.
+    // SR16 fix: checks sr_last_case_id (set on actual case save)
+    // not vantage_ob_case_offered (set the moment the modal appeared)
     // ─────────────────────────────────────
     var hasMeridian  = !!sessionStorage.getItem('sr_meridian');
     var hasHumac     = !!sessionStorage.getItem('vantage_humac');
@@ -626,11 +620,11 @@
 
     var SETUP_STEPS = [
       {key:'meridian',done:hasMeridian,icon:'&#x1F9ED;',name:'Set up MERIDIAN',
-       desc:'Your 7-parameter professional context. Required for all tools.',href:'onboarding.html',cta:'Set up →'},
+       desc:'Your 7-parameter professional context. Required for all tools.',href:'onboarding.html',cta:'Set up \u2192'},
       {key:'humac',done:hasHumac,icon:'&#x1F4CA;',name:'Generate your Humac Score',
        desc:'18 questions. One number measuring your org\u2019s human capital position.',href:'humac-onboarding.html',cta:'Start \u2192'},
       {key:'case',done:hasSavedCase,icon:'&#x26A1;',
-       name:'Navigate your first case',desc:'Describe a real situation — PACT returns full financial exposure in INR.',href:'er-case-navigator.html',cta:'Go →'}
+       name:'Navigate your first case',desc:'Describe a real situation \u2014 PACT returns full financial exposure in INR.',href:'er-case-navigator.html',cta:'Go \u2192'}
     ];
 
     function renderSetupCard() {
@@ -640,7 +634,7 @@
       list.innerHTML = SETUP_STEPS.map(function(s){
         var cls=s.done?'done':'pending', tag=s.done?'div':'a', href=s.done?'':' href="'+s.href+'"';
         return '<'+tag+href+' class="setup-step '+cls+'">' +
-          '<div class="setup-step-icon">'+(s.done?'✓':s.icon)+'</div>' +
+          '<div class="setup-step-icon">'+(s.done?'\u2713':s.icon)+'</div>' +
           '<div style="flex:1;min-width:0"><div class="setup-step-name">'+s.name+'</div>' +
           '<div class="setup-step-desc">'+s.desc+'</div></div>' +
           (!s.done?'<div class="setup-step-cta">'+s.cta+'</div>':'') +
@@ -682,84 +676,38 @@
     // ─────────────────────────────────────
     (function updateMonthlyContent() {
       var now = new Date();
-      var month = now.getMonth(); // 0 = Jan
+      var month = now.getMonth();
       var year  = now.getFullYear();
       var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
       var monthName = MONTHS[month];
-
-      // 12-month Indian HR editorial calendar
-      // Each entry: [title, body]
       var CALENDAR = {
-        0: [ // January
-          'Annual goal-setting and increment season.',
-          'Fresh financial year planning, goal-setting conversations, and increment letters are in motion. Campus hiring pipelines need to be live. Use the Stakeholder Influence tool to present workforce plans to leadership before Q1 budgets freeze.'
-        ],
-        1: [ // February
-          'Pre-appraisal period and increment conversations.',
-          'Increment communication is the highest-stakes HR conversation of Q4. Calibration sessions, exception handling, and manager readiness are your focus this month. The Conversation Simulator is your most critical tool right now.'
-        ],
-        2: [ // March
-          'Financial year-end close and statutory compliance.',
-          'PF and gratuity settlements, headcount sign-off, and exit formalities must clear before March 31. Statutory compliance queries are at their peak. Your Policy Compass is essential for FY-end compliance questions your managers will be raising this week.'
-        ],
-        3: [ // April
-          'New financial year and appraisal completion.',
-          'Promotions, lateral moves, and performance letters go live. Fresher onboarding season begins — campus joiners arrive through June. Onboarding quality in the first 90 days sets your regretted attrition curve for the entire year.'
-        ],
-        4: [ // May
-          'Retention risk season and internship peaks.',
-          'Post-increment attrition risk peaks in May-June as market offers accelerate. Watch for early signals in your high performers. Internship cohorts need structured programmes. ER cases surfacing post-appraisal need immediate triage — delays become liability.'
-        ],
-        5: [ // June
-          'H1 close and POSH annual reporting deadline.',
-          'ICC annual reports are due by June 30 under the POSH Act — confirm your IC has filed or face Rs.50,000 exposure. Mid-year business reviews need HR metrics ready. The HR Data Storyteller converts your H1 data into the CFO narrative the room needs to act.'
-        ],
-        6: [ // July
-          'H2 kickoff and succession conversations.',
-          'H2 goal-setting, succession nominations, and leadership pipeline reviews. High-performer retention risk resurfaces after mid-year reviews. Watch for engagement dips in your top talent — losing a Star or HiPo in H2 carries a replacement cost of 1.8x salary at minimum.'
-        ],
-        7: [ // August
-          'Second half performance planning season.',
-          'Talent reviews, succession shortlisting, and H2 goal alignment are the priority. Watch for flight risk signals in high-performer cohorts — attrition risk peaks in August-September. Your ER Case Navigator and Stakeholder Influence Builder are your most critical tools right now.'
-        ],
-        8: [ // September
-          'Appraisal season preparation begins.',
-          'Q3 performance data collection, manager calibration preparation, and goal progress reviews. Festival season staffing conversations begin — Dussehra and Diwali are 4-6 weeks away. Unresolved ER cases now become liability in the year-end appraisal cycle. Clear the backlog this month.'
-        ],
-        9: [ // October
-          'Festival season and Q4 headcount conversations.',
-          'Diwali leave surge, bonus declarations, and statutory bonus compliance under the Payment of Bonus Act are live. Q4 headcount plans need sign-off before November. Post-Diwali attrition peaks — retention conversations this week prevent regretted exits next month.'
-        ],
-        10: [ // November
-          'Year-end calibration and December pipeline.',
-          'Post-Diwali market is active — counter-offer situations will surface. Year-end calibration meetings begin for December-cycle companies. Increment planning for January needs to be ready by month-end. The Conversation Simulator is critical for calibration conversation preparation right now.'
-        ],
-        11: [ // December
-          'Year-end reviews and January onboarding pipeline.',
-          'Annual performance reviews, increment finalisation, and January fresher joining pipeline. Full-year statutory compliance should be audited before December 31. The Policy Compass is your fastest route to year-end compliance questions across PF, gratuity, bonus, and POSH annual reporting.'
-        ]
+        0:['Annual goal-setting and increment season.','Fresh financial year planning, goal-setting conversations, and increment letters are in motion. Campus hiring pipelines need to be live. Use the Stakeholder Influence tool to present workforce plans to leadership before Q1 budgets freeze.'],
+        1:['Pre-appraisal period and increment conversations.','Increment communication is the highest-stakes HR conversation of Q4. Calibration sessions, exception handling, and manager readiness are your focus this month. The Conversation Simulator is your most critical tool right now.'],
+        2:['Financial year-end close and statutory compliance.','PF and gratuity settlements, headcount sign-off, and exit formalities must clear before March 31. Statutory compliance queries are at their peak. Your Policy Compass is essential for FY-end compliance questions your managers will be raising this week.'],
+        3:['New financial year and appraisal completion.','Promotions, lateral moves, and performance letters go live. Fresher onboarding season begins \u2014 campus joiners arrive through June. Onboarding quality in the first 90 days sets your regretted attrition curve for the entire year.'],
+        4:['Retention risk season and internship peaks.','Post-increment attrition risk peaks in May-June as market offers accelerate. Watch for early signals in your high performers. Internship cohorts need structured programmes. ER cases surfacing post-appraisal need immediate triage \u2014 delays become liability.'],
+        5:['H1 close and POSH annual reporting deadline.','ICC annual reports are due by June 30 under the POSH Act \u2014 confirm your IC has filed or face \u20b950,000 exposure. Mid-year business reviews need HR metrics ready. The HR Data Storyteller converts your H1 data into the CFO narrative the room needs to act.'],
+        6:['H2 kickoff and succession conversations.','H2 goal-setting, succession nominations, and leadership pipeline reviews. High-performer retention risk resurfaces after mid-year reviews. Watch for engagement dips in your top talent \u2014 losing a Star or HiPo in H2 carries a replacement cost of 1.8x salary at minimum.'],
+        7:['Second half performance planning season.','Talent reviews, succession shortlisting, and H2 goal alignment are the priority. Watch for flight risk signals in high-performer cohorts \u2014 attrition risk peaks in August-September. Your ER Case Navigator and Stakeholder Influence Builder are your most critical tools right now.'],
+        8:['Appraisal season preparation begins.','Q3 performance data collection, manager calibration preparation, and goal progress reviews. Festival season staffing conversations begin \u2014 Dussehra and Diwali are 4-6 weeks away. Unresolved ER cases now become liability in the year-end appraisal cycle. Clear the backlog this month.'],
+        9:['Festival season and Q4 headcount conversations.','Diwali leave surge, bonus declarations, and statutory bonus compliance under the Payment of Bonus Act are live. Q4 headcount plans need sign-off before November. Post-Diwali attrition peaks \u2014 retention conversations this week prevent regretted exits next month.'],
+        10:['Year-end calibration and December pipeline.','Post-Diwali market is active \u2014 counter-offer situations will surface. Year-end calibration meetings begin for December-cycle companies. Increment planning for January needs to be ready by month-end. The Conversation Simulator is critical for calibration conversation preparation right now.'],
+        11:['Year-end reviews and January onboarding pipeline.','Annual performance reviews, increment finalisation, and January fresher joining pipeline. Full-year statutory compliance should be audited before December 31. The Policy Compass is your fastest route to year-end compliance questions across PF, gratuity, bonus, and POSH annual reporting.']
       };
-
       var entry = CALENDAR[month] || CALENDAR[7];
       var label = 'HR Calendar \u00b7 ' + monthName + ' ' + year;
       var debriefLabel = 'The Debrief \u00b7 ' + monthName + ' ' + year;
       var debriefSub = 'Navigate cases, practice conversations, and apply frameworks. Your Debrief arrives on the last working day of ' + monthName + '.';
-
-      var calMonth   = document.getElementById('js-cal-month');
-      var calTitle   = document.getElementById('js-cal-title');
-      var calBody    = document.getElementById('js-cal-body');
-      var debLabel   = document.getElementById('js-debrief-label');
-      var debSub     = document.getElementById('js-debrief-sub');
-
-      if (calMonth)  calMonth.textContent  = label;
-      if (calTitle)  calTitle.textContent  = entry[0];
-      if (calBody)   calBody.textContent   = entry[1];
-      if (debLabel)  debLabel.textContent  = debriefLabel;
-      if (debSub)    debSub.textContent    = debriefSub;
+      var calMonth=document.getElementById('js-cal-month');var calTitle=document.getElementById('js-cal-title');var calBody=document.getElementById('js-cal-body');var debLabel=document.getElementById('js-debrief-label');var debSub=document.getElementById('js-debrief-sub');
+      if(calMonth)calMonth.textContent=label;if(calTitle)calTitle.textContent=entry[0];if(calBody)calBody.textContent=entry[1];if(debLabel)debLabel.textContent=debriefLabel;if(debSub)debSub.textContent=debriefSub;
     })();
 
     // ─────────────────────────────────────
     // HUMAC SCORE WIDGET
+    // SR18 Trajectory Index: trajectory row added between pillar bars
+    // and the footer. Reads data.trajectory from sessionStorage blob.
+    // Trajectory is null on baseline (shows placeholder text).
+    // Trajectory is an object on check-ins (shows arrow + delta + date).
     // ─────────────────────────────────────
     (function initHumacWidget() {
       var widget = document.getElementById('humac-widget');
@@ -769,22 +717,20 @@
       try { data = JSON.parse(sessionStorage.getItem('vantage_humac') || 'null'); } catch(e) {}
 
       if (!data) {
-        // Empty state — no score yet
         widget.innerHTML =
           '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">' +
             '<div>' +
               '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px">Humac Score</div>' +
               '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;font-weight:600;color:#f4f3ff;margin-bottom:6px">Your financial baseline is not set</div>' +
-              '<div style="font-size:.82rem;color:rgba(244,243,255,.45);line-height:1.5;max-width:420px">Generate your Humac Score — the measure of how efficiently your organisation converts people investment into financial and organisational value.</div>' +
+              '<div style="font-size:.82rem;color:rgba(244,243,255,.45);line-height:1.5;max-width:420px">Generate your Humac Score \u2014 the measure of how efficiently your organisation converts people investment into financial and organisational value.</div>' +
             '</div>' +
             '<a href="humac-onboarding.html" style="display:inline-flex;align-items:center;gap:8px;font-family:\'JetBrains Mono\',monospace;font-size:.68rem;background:#6366f1;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;flex-shrink:0;transition:all .15s" onmouseover="this.style.background=\'#5254d4\'" onmouseout="this.style.background=\'#6366f1\'">' +
-              'Generate baseline score →' +
+              'Generate baseline score \u2192' +
             '</a>' +
           '</div>';
         return;
       }
 
-      // Score state — has score
       var bands = {
         'Value Destruction': '#E05C3A',
         'Value Neutral': '#a5b4fc',
@@ -794,7 +740,7 @@
       };
       var bandColor = bands[data.band] || '#6366f1';
       var confLabels = {high: 'Computed', medium: 'Medium confidence', low: 'Estimated'};
-      var confDots = {high: '●', medium: '◐', low: '○'};
+      var confDots = {high: '\u25cf', medium: '\u25d0', low: '\u25cb'};
       var ts = data.timestamp ? new Date(data.timestamp).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : '';
       var pillars = [
         {label:'L1', score: data.l1 || 0},
@@ -803,6 +749,36 @@
         {label:'L4', score: data.l4 || 0},
         {label:'L5', score: data.l5 || 0}
       ];
+
+      // Build trajectory row
+      // null trajectory = baseline (shows placeholder)
+      // object trajectory = check-in (shows arrow + delta + since-date)
+      var traj = data.trajectory;
+      var trajRow = '';
+      if (traj) {
+        var delta = traj.delta;
+        var arrow = delta > 0 ? '\u2197' : delta < 0 ? '\u2198' : '\u2192';
+        var color = delta > 0 ? '#4ade80' : delta < 0 ? '#E05C3A' : '#a5b4fc';
+        var sign  = delta > 0 ? '+' : '';
+        var sinceDate = traj.previousTimestamp
+          ? new Date(traj.previousTimestamp).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})
+          : '';
+        trajRow =
+          '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(99,102,241,.06);margin-bottom:4px">' +
+            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.54rem;color:rgba(244,243,255,.22)">Trajectory</div>' +
+            '<div style="display:flex;align-items:center;gap:8px">' +
+              '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:.92rem;font-weight:700;color:' + color + '">' + arrow + ' ' + sign + delta + '</span>' +
+              (sinceDate ? '<span style="font-family:\'JetBrains Mono\',monospace;font-size:.52rem;color:rgba(244,243,255,.18)">since ' + sinceDate + '</span>' : '') +
+            '</div>' +
+          '</div>';
+      } else {
+        // Baseline: no trajectory yet
+        trajRow =
+          '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(99,102,241,.06);margin-bottom:4px">' +
+            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.54rem;color:rgba(244,243,255,.22)">Trajectory</div>' +
+            '<a href="humac-onboarding.html" style="font-family:\'JetBrains Mono\',monospace;font-size:.52rem;color:rgba(165,180,252,.3);text-decoration:none;transition:color .15s" onmouseover="this.style.color=\'rgba(165,180,252,.6)\'" onmouseout="this.style.color=\'rgba(165,180,252,.3)\'">\u2014 Run check-in to establish</a>' +
+          '</div>';
+      }
 
       widget.innerHTML =
         '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap">' +
@@ -839,12 +815,13 @@
             '</div>';
           }).join('') +
         '</div>' +
+        trajRow +
         '<div style="display:flex;align-items:center;justify-content:space-between">' +
           '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.54rem;color:rgba(244,243,255,.22)">' +
-            (confDots[data.confidence] || '○') + ' ' + (confLabels[data.confidence] || 'Estimated') +
-            ' · HCI ' + ((data.hci || 1).toFixed(2)) + 'x' +
+            (confDots[data.confidence] || '\u25cb') + ' ' + (confLabels[data.confidence] || 'Estimated') +
+            ' \xb7 HCI ' + ((data.hci || 1).toFixed(2)) + 'x' +
           '</div>' +
-          '<a href="humac-onboarding.html" style="font-family:\'JetBrains Mono\',monospace;font-size:.58rem;color:rgba(99,102,241,.55);text-decoration:none" onmouseover="this.style.color=\'#6366f1\'" onmouseout="this.style.color=\'rgba(99,102,241,.55)\'">Update score →</a>' +
+          '<a href="humac-onboarding.html" style="font-family:\'JetBrains Mono\',monospace;font-size:.58rem;color:rgba(99,102,241,.55);text-decoration:none" onmouseover="this.style.color=\'#6366f1\'" onmouseout="this.style.color=\'rgba(99,102,241,.55)\'">Update score \u2192</a>' +
         '</div>';
     })();
   </script>
@@ -853,7 +830,6 @@
   <script src="sidebar-shared.js"></script>
 
   <script>
-  // Vantage starfield
   (function(){
     var cv = document.getElementById('vantage-stars');
     if (!cv) return;
