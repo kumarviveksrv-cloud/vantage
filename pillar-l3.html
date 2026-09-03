@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>L3 · Org Vitals — Vantage</title>
+<link rel="apple-touch-icon" href="favicon.png"/>
+<link rel="icon" type="image/png" href="favicon.png"/>
+<link rel="shortcut icon" href="favicon.png"/>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#050410"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&family=Bricolage+Grotesque:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="vantage-theme.css"/>
+<style>
+:root{--bg:#050410;--bg2:#0d0b1e;--bg3:#11102a;--cobalt:#6366f1;--cobalt-border:rgba(99,102,241,.18);--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--text:#f4f3ff;--text-mid:#a5b4fc;--text-dim:rgba(244,243,255,.45);--red:#E05C3A;--font:'Plus Jakarta Sans',sans-serif;--mono:'JetBrains Mono',monospace;--display:'Cormorant Garamond',serif;--stat:'Space Grotesk',sans-serif;--sidebar:220px;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+.sidebar{width:var(--sidebar);flex-shrink:0;position:fixed;top:0;left:0;bottom:0;background:rgba(5,4,16,.98);border-right:1px solid rgba(99,102,241,.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto;z-index:200}
+.logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--cobalt);box-shadow:0 0 10px rgba(99,102,241,.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
+.logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,.6);margin-top:2px}
+.nav-section{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;margin:16px 0 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;font-size:13px;font-family:var(--font);font-weight:400;margin-bottom:2px;color:rgba(244,243,255,.7)}
+.nav-item:hover{background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.15);color:var(--text)}
+.nav-item.active{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.30);color:var(--lavender);font-weight:500}
+.nav-item .icon{font-size:16px;flex-shrink:0}
+.meridian-chip{margin-top:auto;padding:16px;border-radius:12px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.20)}
+.meridian-chip .m-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.meridian-chip .label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.meridian-chip .m-badge{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:10px;background:rgba(239,68,68,.15);color:rgba(239,68,68,.8);letter-spacing:.06em;text-transform:uppercase}
+.meridian-chip .m-badge.complete{background:rgba(34,197,94,.12);color:rgba(34,197,94,.7)}
+.meridian-chip .val{font-size:12px;color:var(--text-dim);line-height:1.4}
+.wrap{margin-left:var(--sidebar);padding:40px 48px 80px;max-width:920px;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pillar-nav-strip{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
+.pillar-back,.pillar-forward{font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;color:rgba(165,180,252,.45);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .15s}
+.pillar-back:hover,.pillar-forward:hover{color:var(--muted)}
+.pillar-dots{display:flex;gap:5px;align-items:center}
+.pd{display:flex;flex-direction:column;align-items:center;padding:5px 10px;border-radius:7px;font-family:var(--mono);font-size:.58rem;text-decoration:none;border:1px solid rgba(99,102,241,.18);color:rgba(165,180,252,.35);transition:all .15s;line-height:1.2;min-width:40px}
+.pd:hover{border-color:rgba(99,102,241,.35);color:var(--muted)}
+.pd.active{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.45);color:var(--cobalt)}
+.pd-label{font-weight:600;font-size:.62rem}
+.pd-score{font-size:.54rem;opacity:.7}
+.page-eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.page-title{font-family:var(--display);font-size:2.2rem;font-weight:600;color:var(--text);margin-bottom:6px;letter-spacing:-.02em}
+.page-sub{font-size:.88rem;color:var(--text-dim);margin-bottom:32px;line-height:1.6}
+/* SCORE HERO */
+.score-hero{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:20px;padding:36px 40px;margin-bottom:24px;position:relative;overflow:hidden}
+.score-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.5),transparent)}
+.hero-grid{display:grid;grid-template-columns:auto 1px 1fr;gap:36px;align-items:center}
+.hero-divider{background:rgba(99,102,241,.12);width:1px;height:64px;align-self:center}
+.score-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.score-number{font-family:var(--stat);font-size:5rem;font-weight:700;line-height:1;letter-spacing:-.04em;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px}
+.score-band-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:5px;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;font-weight:500}
+.hci-line{font-family:var(--mono);font-size:.64rem;color:rgba(99,102,241,.5);padding-top:10px;border-top:1px solid rgba(99,102,241,.1);margin-top:12px}
+/* DIAGNOSTIC SECTION */
+.diag-intro{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.18);border-radius:12px;padding:18px 20px;margin-bottom:24px}
+.diag-intro-label{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.diag-intro-text{font-size:.86rem;color:var(--text-dim);line-height:1.65}
+.diag-intro-text b{color:var(--text-mid);font-weight:500}
+.progress-bar-wrap{height:4px;background:rgba(99,102,241,.1);border-radius:2px;margin-top:12px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--cobalt),var(--violet));border-radius:2px;transition:width .4s ease}
+.progress-label{font-family:var(--mono);font-size:.62rem;color:rgba(165,180,252,.5);margin-top:6px}
+/* VITAL SIGN CARDS */
+.vitals-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.vital-card{background:var(--bg2);border:1px solid rgba(99,102,241,.16);border-radius:14px;overflow:hidden}
+.vital-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(99,102,241,.08)}
+.vital-name{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.vital-score-badge{font-family:var(--mono);font-size:.62rem;padding:2px 8px;border-radius:4px;font-weight:600}
+.vital-score-badge.healthy{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2)}
+.vital-score-badge.warning{background:rgba(165,180,252,.08);color:#a5b4fc;border:1px solid rgba(165,180,252,.2)}
+.vital-score-badge.critical{background:rgba(224,92,58,.08);color:#E05C3A;border:1px solid rgba(224,92,58,.2)}
+.vital-score-badge.partial{background:rgba(99,102,241,.08);color:var(--cobalt);border:1px solid rgba(99,102,241,.2)}
+.signal-row{display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid rgba(99,102,241,.05)}
+.signal-row:last-child{border-bottom:none}
+.signal-text{flex:1;font-size:.8rem;color:var(--text-dim);line-height:1.5}
+.signal-text .signal-sub{font-family:var(--mono);font-size:.62rem;color:rgba(165,180,252,.35);margin-top:3px;display:block}
+.signal-right{flex-shrink:0}
+.pre-answer{font-family:var(--mono);font-size:.64rem;padding:3px 8px;border-radius:4px;font-weight:500}
+.pre-answer.yes{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2)}
+.pre-answer.no{background:rgba(224,92,58,.08);color:#E05C3A;border:1px solid rgba(224,92,58,.2)}
+.yn-row{display:flex;gap:6px}
+.yn{padding:4px 12px;border-radius:5px;font-family:var(--mono);font-size:.64rem;cursor:pointer;transition:all .15s;border:1px solid rgba(99,102,241,.2);background:transparent;color:var(--text-dim)}
+.yn:hover{border-color:rgba(99,102,241,.4);color:var(--muted)}
+.yn.sel-yes{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.35);color:#4ade80}
+.yn.sel-no{background:rgba(224,92,58,.08);border-color:rgba(224,92,58,.25);color:#E05C3A}
+/* DNA TYPE */
+.dna-reveal{background:var(--bg2);border:1px solid rgba(99,102,241,.2);border-radius:16px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;display:none}
+.dna-reveal.visible{display:block}
+.dna-reveal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.5),transparent)}
+.dna-eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.dna-type{font-family:var(--display);font-size:2rem;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.15}
+.dna-desc{font-size:.88rem;color:var(--text-dim);line-height:1.7;margin-bottom:20px}
+.dna-desc b{color:var(--text-mid);font-weight:500}
+.dna-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.dna-cell{background:rgba(13,11,30,.5);border:1px solid rgba(99,102,241,.1);border-radius:10px;padding:14px}
+.dna-cell-label{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.dna-cell-text{font-size:.8rem;color:var(--text-dim);line-height:1.55}
+.dna-fin{font-family:var(--mono);font-size:.7rem;color:rgba(165,180,252,.5);margin-top:16px;padding-top:14px;border-top:1px solid rgba(99,102,241,.08);line-height:1.6}
+/* FINDINGS + ACTIONS */
+.findings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.finding-card{background:var(--bg2);border:1px solid rgba(99,102,241,.16);border-radius:14px;padding:20px}
+.finding-eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.finding-headline{font-size:.94rem;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.3}
+.finding-body{font-size:.81rem;color:var(--text-dim);line-height:1.7}
+.finding-body b{color:var(--text-mid);font-weight:500}
+.section-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.section-title{font-family:var(--display);font-size:1.45rem;font-weight:600;color:var(--text);margin-bottom:20px;line-height:1.2}
+.action-item{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid rgba(99,102,241,.06)}
+.action-item:last-child{border-bottom:none}
+.action-num{width:28px;height:28px;border-radius:50%;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.22);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:var(--muted);flex-shrink:0;margin-top:2px}
+.action-title{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.3}
+.action-body{font-size:.82rem;color:var(--text-dim);line-height:1.65}
+.intel-card{background:var(--bg2);border:1px solid rgba(99,102,241,.18);border-radius:14px;border-left:3px solid var(--cobalt);padding:24px 28px;margin-bottom:32px;position:relative;overflow:hidden}
+.intel-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--cobalt),var(--violet))}
+.intel-eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.intel-text{font-style:italic;font-size:1.02rem;line-height:1.75;color:rgba(244,243,255,.65)}
+.intel-text b{color:var(--lavender);font-style:normal}
+.bottom-nav{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.btn-back{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;background:transparent;border:1px solid rgba(99,102,241,.2);color:var(--muted);padding:10px 20px;border-radius:8px;text-decoration:none;transition:all .15s}
+.btn-back:hover{border-color:rgba(99,102,241,.4);color:var(--text)}
+.btn-next{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;background:var(--cobalt);border:none;color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;transition:all .15s}
+.btn-next:hover{background:#5254d4;transform:translateY(-1px)}
+@media(max-width:768px){.wrap{margin-left:0;padding:24px 20px 60px}.sidebar{display:none}.hero-grid{grid-template-columns:1fr;gap:20px}.hero-divider{display:none}.vitals-grid{grid-template-columns:1fr}.findings-grid{grid-template-columns:1fr}.dna-grid{grid-template-columns:1fr}.score-number{font-size:3.5rem}}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="logo" onclick="window.location.href='dashboard.html'"><div class="logo-dot"></div><div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div></div>
+  <a href="dashboard.html" class="nav-item"><span class="icon">&#x229E;</span> Dashboard</a>
+  <div class="nav-section">Core Tools</div>
+  <a href="er-case-navigator.html" class="nav-item"><span class="icon">&#x26A1;</span> ER Case Navigator</a>
+  <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">&#x1F4CA;</span> HR Data Storyteller</a>
+  <a href="stakeholder-influence.html" class="nav-item"><span class="icon">&#x1F3AF;</span> Stakeholder Influence</a>
+  <a href="policy-compass.html" class="nav-item"><span class="icon">&#x1F9ED;</span> Policy Compass</a>
+  <div class="nav-section">Intelligence</div>
+  <a href="aria.html" class="nav-item"><span class="icon">&#x2736;</span> ARIA</a>
+  <a href="conversation-simulator.html" class="nav-item"><span class="icon">&#x1F3AD;</span> Conversation Simulator</a>
+  <div class="nav-section">My Record</div>
+  <a href="humac-onboarding.html" class="nav-item active"><span class="icon">&#x1F4CA;</span> Humac Score</a>
+  <a href="case-library.html" class="nav-item"><span class="icon">&#x25CE;</span> Case Library</a>
+  <a href="debrief.html" class="nav-item"><span class="icon">&#x1F4CB;</span> The Debrief</a>
+  <div class="nav-section">Philosophy</div>
+  <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">&#x1F300;</span> Humacity</a>
+  <div class="nav-section">Legal</div>
+  <a href="terms.html" class="nav-item"><span class="icon">&#x1F4C4;</span> Terms of Service</a>
+  <a href="privacy.html" class="nav-item"><span class="icon">&#x1F512;</span> Privacy Policy</a>
+  <div class="nav-section">Account</div>
+  <a href="data-dashboard.html" class="nav-item"><span class="icon">&#x1F512;</span> Data &amp; Privacy</a>
+  <a href="#" class="nav-item" onclick="clerkSignOut();return false;"><span class="icon">&#x21A9;</span> Sign out</a>
+  <div class="meridian-chip" id="meridian-chip"><div class="m-header"><div class="label">MERIDIAN Profile</div><div class="m-badge" id="meridian-badge">Incomplete</div></div><div class="val" id="meridian-summary">Not configured yet</div></div>
+</div>
+<div class="wrap" id="main-wrap"></div>
+<script>
+(function(){var raw=sessionStorage.getItem('sr_meridian');var chip=document.getElementById('meridian-chip');var badge=document.getElementById('meridian-badge');if(raw){try{var m=JSON.parse(raw);document.getElementById('meridian-summary').innerText=(m.state||'')+' \xb7 '+(m.industry||'');badge.innerText='Active';badge.className='m-badge complete';}catch(e){}}else{chip.onclick=function(){window.location.href='onboarding.html';};chip.style.cursor='pointer';}})();
+
+var hd=null,md=null;
+try{hd=JSON.parse(sessionStorage.getItem('vantage_humac')||'null');}catch(e){}
+try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
+if(!hd){window.location.href='humac-onboarding.html';}
+
+var l1=hd.l1||0,l2=hd.l2||0,l3=hd.l3||0,l4=hd.l4||0,l5=hd.l5||0;
+var ra=hd.rawAnswers||{};
+var hci=hd.hci||1,conf=hd.confidence||'medium';
+var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
+var industry='',state='';
+if(md){industry=md.industry||'';state=md.state||'';}
+
+// Convert Humac yes/no string to boolean or null
+function hb(q){var v=ra[q];if(v==='yes')return true;if(v==='no')return false;return null;}
+
+// Pre-populated signals from Humac (q7-q14)
+// Vital sign mapping:
+// Leadership Pulse: s1=q7, s2-s4=new
+// Fear Index: s5=q8, s6-s8=new
+// Middle Layer: s9=q9(culture->mapped), s10=q11, s11-s12=new
+// Execution: s13=q10, s14=new, s15=q14, s16=new
+// HR Mirror: s17=q12, s18=q13, s19-s20=new
+
+var preMap={s1:hb('q7'),s5:hb('q8'),s9:hb('q9'),s10:hb('q11'),s13:hb('q10'),s15:hb('q14'),s17:hb('q12'),s18:hb('q13')};
+var interMap={};
+
+function getSignal(id){if(preMap[id]!==undefined&&preMap[id]!==null)return preMap[id];return interMap[id]!==undefined?interMap[id]:null;}
+
+var VITALS=[
+  {id:'leadership',name:'Leadership Pulse',signals:[
+    {id:'s1',text:'Is your leadership team stable and operating without major gaps right now?',sub:'Answer No if C-suite exits, vacancies, or conflicts are disrupting decisions.',pre:true},
+    {id:'s2',text:'Does senior leadership communicate directly with all employees at least once a month?',sub:'All-hands, video messages, or written updates. Manager-only cascade does not count.'},
+    {id:'s3',text:'Are major leadership decisions explained to the organisation, not just announced?',sub:'Reasoning, alternatives considered, and expected outcomes shared within 48 hours.'},
+    {id:'s4',text:'Does leadership consistently start and end meetings on time?',sub:'The leader who calls the meeting sets the cultural norm for how time is valued.'}
+  ]},
+  {id:'fear',name:'Fear Index',signals:[
+    {id:'s5',text:'Is the organisation operating without major structural disruption right now?',sub:'Active layoffs, live restructure, or M&A transition count as disruption. Answer No if any are live.',pre:true},
+    {id:'s6',text:'When mistakes happen, does leadership respond with diagnosis rather than public blame?',sub:'In the last 3 months, has any significant mistake been handled without naming and shaming?'},
+    {id:'s7',text:'Do people share bad news upward without significant delay?',sub:'When problems surface, do they reach leadership the same week, or weeks later when they become crises?'},
+    {id:'s8',text:'Is knowledge shared freely across teams rather than held within silos?',sub:'Do teams actively share what they know, or protect information as leverage?'}
+  ]},
+  {id:'middle',name:'Middle Layer Health',signals:[
+    {id:'s9',text:'Is your organisation free from a significant culture or morale crisis right now?',sub:'Answer No if mass exits, active investigations with widespread impact, or severe disengagement are present.',pre:true},
+    {id:'s10',text:'Do managers have regular structured 1:1s with their direct reports?',sub:'Structured means: employee-led agenda, documented, at least bi-weekly.',pre:true},
+    {id:'s11',text:'In the last 6 months, has any team member been promoted as a direct result of their manager\'s advocacy?',sub:'A manager who advocates for their people to leadership, not just rates them in a system.'},
+    {id:'s12',text:'In the last quarter, has any underperforming employee received a documented performance conversation from their manager?',sub:'A conversation that was written down, not just had verbally over coffee.'}
+  ]},
+  {id:'execution',name:'Execution Fidelity',signals:[
+    {id:'s13',text:'Are this year\'s strategic priorities broadly on track to be delivered?',sub:'If more than half of key annual initiatives are behind schedule or deprioritised, answer No.',pre:true},
+    {id:'s14',text:'Can any team member name the specific revenue or cost number their work directly impacts?',sub:'Not "we contribute to growth." A specific number. A specific line.'},
+    {id:'s15',text:'Are projects completed on time at a rate above 60%?',sub:'Projects with target dates that closed within 2 weeks of deadline in the last quarter.',pre:true},
+    {id:'s16',text:'Does less than 40% of the average employee\'s week consist of meetings?',sub:'Meetings are a proxy for progress in orgs that have forgotten what actual output looks like.'}
+  ]},
+  {id:'hr',name:'HR Mirror',signals:[
+    {id:'s17',text:'Can frontline employees describe what a major leadership decision means for their work within one week?',sub:'Not that they heard about it. That they can articulate what it means for their specific role.',pre:true},
+    {id:'s18',text:'Does HR flag people risks to leadership before they become incidents?',sub:'Proactive means: flight risk raised before resignation, morale problem raised before attrition spikes.',pre:true},
+    {id:'s19',text:'In the last 3 months, has HR initiated a proactive conversation with a business unit (not just responded to a request)?',sub:'A People Risk Radar, a talent review initiated by HR, a proactive risk briefing.'},
+    {id:'s20',text:'Does onboarding give new joiners a clear picture of their role, team, and expectations within their first two weeks?',sub:'Day 14 milestone: they can describe the company mission, their team\'s role, and their first project.'}
+  ]}
+];
+
+var DNA_TYPES={
+  quiet_compounding:{name:'The Quiet Compounding Machine',desc:'The benchmark. Leadership visible and consistent. Trust present. Middle layer developing people. Execution connected to outcomes. HR proactive.',good:'Attracting and keeping talent, consistent execution, compounding performance',vulnerable:'Complacency, slow response to market shifts',breaks:'Key leaders leave simultaneously \u2014 the culture is strong but specific people matter more than it seems',fin:'Above-market retention, above-market productivity, compounding talent quality premium over time'},
+  disciplined_challenger:{name:'The Disciplined Challenger',desc:'Well-run, fast-moving, high accountability. Still proving itself but genuinely healthy. The difference from the Compounding Machine is trajectory \u2014 this org is climbing, not yet compounding.',good:'Speed, execution, clear ownership, attracting ambitious people',vulnerable:'Burning people out, under-investing in culture during growth phases',breaks:'Growth rate slows and the intensity has no release valve',fin:'High revenue per employee, moderate attrition risk in senior roles, strong short-term output'},
+  resilient_community:{name:'The Resilient Community',desc:'Strong mission alignment, genuine care for people, real bonds across the org. Healthy DNA with a specific operational vulnerability in execution.',good:'Retention, loyalty, riding out hard times without losing people',vulnerable:'Operational discipline, commercial ruthlessness when the mission demands it',breaks:'When mission and commercial reality diverge and leadership cannot reconcile them',fin:'Low attrition cost, high loyalty premium, underperforming on revenue per employee'},
+  fear_factory:{name:'The Fear Factory',desc:'High output, low trust. Blame has been normalised. Knowledge is hoarded. One bad quarter away from a talent exodus.',good:'Short-term execution, compliance, hitting targets under pressure',vulnerable:'Innovation, knowledge transfer, retaining people who have options',breaks:'The best people leave quietly, then suddenly, taking institutional knowledge with them',fin:'High short-term output, declining innovation return over 18 months, rising replacement cost'},
+  frozen_middle:{name:'The Frozen Middle',desc:'Leadership is strong, frontline is capable, but the management layer has calcified. Protecting positions, blocking change, avoiding tough conversations.',good:'Stability, operational consistency',vulnerable:'Strategic change, any initiative requiring the middle layer to act differently',breaks:'Strategic initiatives die between announcement and execution \u2014 leadership announces, nothing happens',fin:'High initiative spend, low initiative completion rate, compounding strategic lag'},
+  founders_shadow:{name:'The Founder\'s Shadow',desc:'Everything flows through one or two people at the top. Fast decisions, high energy, zero institutional depth. Entirely dependent on the founder\'s continued presence.',good:'Speed, alignment to founder vision, agility in early stages',vulnerable:'Scaling, developing other leaders, functioning when the founder is absent',breaks:'The founder\'s bandwidth, then everything simultaneously \u2014 no second tier exists',fin:'Valuation depends entirely on key person retention, fragile growth trajectory'},
+  busy_illusion:{name:'The Busy Illusion',desc:'High activity, low outcome. Meetings everywhere, results nowhere. People are exhausted but nothing material moves. Tasks have replaced goals.',good:'Looking productive, avoiding conflict through activity',vulnerable:'Actual output, revenue growth, retaining people who want to do meaningful work',breaks:'People stop believing their work matters \u2014 the best ones leave first',fin:'High payroll cost, low revenue per employee, declining output quality'},
+  legacy_trap:{name:'The Legacy Trap',desc:'An established org where long-tenured employees are actively resisting change to protect their position. High stability, low adaptability.',good:'Institutional knowledge, stability, existing client relationships',vulnerable:'Any significant change, new technology, new competitors',breaks:'The first major market disruption the org cannot adapt to',fin:'Declining growth masked by stable legacy revenue, rising workforce obsolescence risk'}
+};
+
+function vitalScore(vital){
+  var yes=0,total=0;
+  vital.signals.forEach(function(s){var v=getSignal(s.id);if(v!==null){total++;if(v)yes++;}});
+  return{yes:yes,total:total,pct:total>0?yes/total:null};
+}
+
+function vitalStatus(vs){
+  if(vs.total<3)return'partial';
+  if(vs.yes>=3)return'healthy';
+  if(vs.yes===2)return'warning';
+  return'critical';
+}
+
+function computeDNA(){
+  var scores={};
+  VITALS.forEach(function(v){var vs=vitalScore(v);scores[v.id]=vs;});
+  var L=vitalStatus(scores.leadership),F=vitalStatus(scores.fear),M=vitalStatus(scores.middle),E=vitalStatus(scores.execution),H=vitalStatus(scores.hr);
+  var allAnswered=VITALS.every(function(v){return vitalScore(v).total>=3;});
+  if(!allAnswered)return null;
+  if(L==='healthy'&&F==='healthy'&&M==='healthy'&&E==='healthy'&&H==='healthy')return'quiet_compounding';
+  if(L==='healthy'&&F==='healthy'&&E==='healthy'&&M!=='critical')return'disciplined_challenger';
+  if(L==='healthy'&&F==='healthy'&&(E==='warning'||E==='critical'))return'resilient_community';
+  if(F==='critical')return'fear_factory';
+  if(M==='critical'&&F!=='critical')return'frozen_middle';
+  if(L==='critical')return'founders_shadow';
+  if(E==='critical'&&L!=='critical'&&F!=='critical')return'busy_illusion';
+  if(M==='warning'&&H==='warning'&&L==='warning')return'legacy_trap';
+  return'disciplined_challenger';
+}
+
+function countAnswered(){
+  var c=0;
+  VITALS.forEach(function(v){v.signals.forEach(function(s){if(getSignal(s.id)!==null)c++;});});
+  return c;
+}
+
+function renderPage(){
+  var answered=countAnswered();
+  var dnaKey=computeDNA();
+  var dna=dnaKey?DNA_TYPES[dnaKey]:null;
+
+  var w=document.getElementById('main-wrap');
+  var l1=hd.l1||0,l2=hd.l2||0,l3score=hd.l3||0,l4=hd.l4||0,l5=hd.l5||0;
+  var sb=(function(s){if(s<=25)return{name:'Minimum',color:'#E05C3A'};if(s<=50)return{name:'Emerging',color:'#a5b4fc'};if(s<=72)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};})(l3score);
+
+  var pdots=[{label:'L1',score:l1,href:'pillar-l1.html'},{label:'L2',score:l2,href:'pillar-l2.html'},{label:'L3',score:l3score,href:'pillar-l3.html',active:true},{label:'L4',score:l4,href:'pillar-l4.html'},{label:'L5',score:l5,href:'pillar-l5.html'}];
+  var nav='<div class="pillar-nav-strip"><a href="pillar-l2.html" class="pillar-back">\u2190 L2 Talent Premium</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+p.score+'</span></a>';}).join('')+'</div><a href="pillar-l4.html" class="pillar-forward">L4 Human P&L \u2192</a></div>';
+
+  var header='<div class="page-eyebrow">Vantage \xb7 Humac Score \xb7 Pillar Intelligence</div><h1 class="page-title">Org Vitals</h1><p class="page-sub">'+(md&&industry?industry+' \xb7 ':'')+(md&&state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate:'Your L3 pillar intelligence')+'</p>';
+
+  var hero='<div class="score-hero"><div class="hero-grid"><div><div class="score-label">L3 Score \xb7 30% weight</div><div class="score-number">'+l3score+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div style="font-size:.86rem;color:var(--text-dim);line-height:1.7;margin-bottom:12px">Org Vitals is the <b style="color:var(--text-mid)">highest-weighted pillar</b> at 30% of Humac Score. The 8 signals from your Humac assessment are pre-loaded below. Answer the remaining 12 to reveal your <b style="color:var(--text-mid)">Organisation DNA type</b> \u2014 one of eight character signatures that names what your org actually is under pressure.<div class="hci-line">L3 from Humac: 8 of 20 signals answered \xb7 '+answered+' total answered so far</div></div></div></div></div>';
+
+  var diagIntro='<div class="diag-intro"><div class="diag-intro-label">Organisation DNA Diagnostic</div><div class="diag-intro-text">Green signals are <b>pre-populated from your Humac Score assessment</b>. Answer the remaining signals below. Yes always means healthy. The DNA type reveals when enough signals are answered.<div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-fill" style="width:'+(answered/20*100).toFixed(0)+'%"></div></div><div class="progress-label" id="prog-label">'+answered+' of 20 signals answered</div></div></div>';
+
+  var vitalsHTML='<div class="vitals-grid">';
+  VITALS.forEach(function(vital){
+    var vs=vitalScore(vital);
+    var status=vitalStatus(vs);
+    var badgeCls=status==='healthy'?'healthy':status==='warning'?'warning':status==='critical'?'critical':'partial';
+    var badgeText=vs.total===0?'—':vs.yes+'/'+vs.total+' healthy';
+    vitalsHTML+='<div class="vital-card"><div class="vital-header"><div class="vital-name">'+vital.name+'</div><div class="vital-score-badge '+badgeCls+'">'+badgeText+'</div></div>';
+    vital.signals.forEach(function(sig){
+      var val=getSignal(sig.id);
+      var isPre=sig.pre&&preMap[sig.id]!==null&&preMap[sig.id]!==undefined;
+      vitalsHTML+='<div class="signal-row"><div class="signal-text">'+sig.text+'<span class="signal-sub">'+sig.sub+'</span></div><div class="signal-right">';
+      if(isPre){
+        vitalsHTML+='<div class="pre-answer '+(val?'yes':'no')+'">'+(val?'Yes':'No')+'</div>';
+      }else{
+        var yc=val===true?'sel-yes':'',nc=val===false?'sel-no':'';
+        vitalsHTML+='<div class="yn-row"><button class="yn '+yc+'" onclick="setSignal(\''+sig.id+'\',true,this)">Yes</button><button class="yn '+nc+'" onclick="setSignal(\''+sig.id+'\',false,this)">No</button></div>';
+      }
+      vitalsHTML+='</div></div>';
+    });
+    vitalsHTML+='</div>';
+  });
+  vitalsHTML+='</div>';
+
+  var dnaSection='<div class="dna-reveal'+(dna?' visible':'')+'" id="dna-reveal">'+(dna?
+    '<div class="dna-eyebrow">Organisation DNA Type</div>'+
+    '<div class="dna-type">'+dna.name+'</div>'+
+    '<div class="dna-desc">'+dna.desc+'</div>'+
+    '<div class="dna-grid">'+
+      '<div class="dna-cell"><div class="dna-cell-label">Good at</div><div class="dna-cell-text">'+dna.good+'</div></div>'+
+      '<div class="dna-cell"><div class="dna-cell-label">Vulnerable to</div><div class="dna-cell-text">'+dna.vulnerable+'</div></div>'+
+      '<div class="dna-cell"><div class="dna-cell-label">Breaks when</div><div class="dna-cell-text">'+dna.breaks+'</div></div>'+
+    '</div>'+
+    '<div class="dna-fin">Financial signal: '+dna.fin+'</div>'
+  :'<div style="text-align:center;padding:24px;color:var(--text-dim);font-size:.86rem">Answer at least 3 signals in each vital sign to reveal your Organisation DNA type.</div>')+'</div>';
+
+  var failingVitals=VITALS.filter(function(v){var vs=vitalScore(v);return vitalStatus(vs)==='critical'||vitalStatus(vs)==='warning';}).map(function(v){return v.name;});
+  var findings='<div class="findings-grid">'+
+    '<div class="finding-card"><div class="finding-eyebrow">L3 Weight</div><div class="finding-headline">30% of Humac Score</div><div class="finding-body">Org Vitals carries the <b>highest weighting</b> of all five pillars. A score shift here moves your total Humac Score more than any other pillar. The 20 signals measure the conditions that determine whether everything else works.</div></div>'+
+    '<div class="finding-card"><div class="finding-eyebrow">Signals Answered</div><div class="finding-headline">'+answered+' of 20</div><div class="finding-body">'+(answered>=16?'Enough signals answered for a reliable DNA type. The reading above reflects your org\u2019s actual character pattern \u2014 not a template.':answered>=8?'Pre-populated signals give you a partial read. Complete the remaining vital signs to unlock your full Organisation DNA type.':'Complete at least 3 signals per vital sign to reveal your DNA type. The more signals you answer, the more precise the reading.')+'</div></div>'+
+    '<div class="finding-card"><div class="finding-eyebrow">'+(failingVitals.length>0?'Vital Signs at Risk':'All Vital Signs')+'</div><div class="finding-headline">'+(failingVitals.length>0?failingVitals[0]+' needs attention':'Reading healthy')+'</div><div class="finding-body">'+(failingVitals.length>0?'<b>'+failingVitals.join(' and ')+'</b> '+(failingVitals.length===1?'is':'are')+' reading Warning or Critical based on answered signals. Each failing vital sign has specific, costed prescriptions in the Revenue Fluent framework. The actions below address them.':'All answered vital signs are reading Healthy. Continue answering remaining signals to confirm this reading.')+'</div></div>'+
+  '</div>';
+
+  var acts=[
+    {title:'Fix the highest-weighted failing vital sign first',body:failingVitals.length>0?'<b>'+failingVitals[0]+'</b> is your priority. Pick the single signal within it that is failing and address it in the next 30 days. One signal fixed upgrades the vital sign; one vital sign upgraded shifts the L3 score.':'All answered vital signs are strong. Focus on completing the remaining signals and committing to a quarterly L3 review.'},
+    {title:'Complete all 20 signals before your next leadership conversation',body:'A partial DNA reading is directional. A full 20-signal reading is specific enough to present to a business leader and say: "This is what kind of organisation we are, this is what we are vulnerable to, and this is what we are going to do about it."'},
+    {title:'Build a 90-day vital sign improvement plan',body:'For each failing vital sign, identify one concrete action with a 90-day deadline. Leadership Pulse: an all-hands calendar. Fear Index: a blameless retrospective. Middle Layer: documented 1:1 cadence. Execution: project accountability reviews. HR: a People Risk Radar.'},
+    {title:'Return to L3 in 90 days and re-answer interactively',body:'Org Vitals is the only pillar that changes significantly quarter to quarter. A restructure, a key leader departure, or a culture intervention can shift 3-4 signals in 90 days. Re-answering all 20 signals at the next check-in is the most valuable intelligence refresh in the Humac framework.'}
+  ];
+
+  var intelText=(function(){
+    var ctx=industry?' in the '+industry+' sector':'';
+    if(dna)return'An L3 score of <b>'+l3score+'</b>'+ctx+' combined with a <b>'+dna.name+'</b> DNA reading gives you something most HR functions have never had: a named, specific, defensible description of what kind of organisation you are and what breaks first under pressure. Use it.';
+    return'An L3 score of <b>'+l3score+'</b>'+ctx+' reflects the 8 signals from your Humac assessment. Complete the remaining 12 signals above to reveal your Organisation DNA type. The DNA type is the L3 insight that no score alone can provide \u2014 it names the specific character of your organisation and what it is most vulnerable to.';
+  })();
+
+  var intel='<div class="intel-card"><div class="intel-eyebrow">Intelligence Statement \xb7 L3 Org Vitals</div><div class="intel-text">'+intelText+'</div></div>';
+  var bottomNav='<div class="bottom-nav"><a href="pillar-l2.html" class="btn-back">\u2190 L2 Talent Premium</a><a href="pillar-l4.html" class="btn-next">L4 Human P&L \u2192</a></div>';
+
+  w.innerHTML=nav+header+hero+diagIntro+vitalsHTML+dnaSection+findings+'<div class="section-eyebrow" style="margin-bottom:6px">What to do next</div><div class="section-title" style="margin-bottom:20px">Moving your Org Vitals forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('')+intel+bottomNav;
+}
+
+function setSignal(id,val,btn){
+  interMap[id]=val;
+  var row=btn.closest('.yn-row');
+  if(row){row.querySelectorAll('.yn').forEach(function(b){b.classList.remove('sel-yes','sel-no');});btn.classList.add(val?'sel-yes':'sel-no');}
+  renderPage();
+  // Re-attach listeners since innerHTML resets
+  document.querySelectorAll('.yn').forEach(function(b){
+    b.onclick=function(){setSignal(this.getAttribute('data-sid'),this.getAttribute('data-val')==='true',this);};
+  });
+}
+
+renderPage();
+// Set data attributes for re-attachment after render
+(function reattach(){
+  var vitalsFlat=[];
+  VITALS.forEach(function(v){v.signals.forEach(function(s){if(!s.pre)vitalsFlat.push(s.id);});});
+})();
+</script>
+<script src="clerk-auth.js"></script>
+<script src="sidebar-shared.js"></script>
+</body>
+</html>
