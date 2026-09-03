@@ -8,6 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Conversation Simulator — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <!-- SR18: vantage-theme.css above is the canonical palette + typography
+       source. Local :root below is KEPT INTACT as a fallback — same
+       pattern as every other SR18 page. Cormorant Garamond applied to
+       .page-title (covers setup, chat, and debrief view headers) and
+       the "The real conversation is coming." intro headline (inline
+       font-family swap only). .debrief-section-title cards stay
+       Bricolage — they're dense 15px card headers, not headline
+       moments, same pattern as PMS's own small card header treatment. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
@@ -42,7 +51,7 @@
     .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
     .breadcrumb a{color:var(--dim);text-decoration:none}
     .breadcrumb a:hover{color:var(--muted)}
-    .page-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:700;margin-bottom:4px;color:#f4f3ff}
+    .page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;margin-bottom:4px;color:#f4f3ff}
     .page-sub{font-size:13px;color:var(--grey);margin-bottom:20px}
     .setup-scroll{flex:1;overflow-y:auto;padding:0 32px 32px}
 
@@ -153,7 +162,7 @@
     .prep-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
     .prep-text{font-size:13px;color:var(--grey);line-height:1.8;white-space:pre-wrap}
 
-    /* FINANCIAL CONTEXT CARD (debrief) */
+    /* FINANCIAL CONTEXT CARD */
     .fin-context-card{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.25);border-radius:12px;padding:20px 24px;margin-bottom:16px;position:relative;overflow:hidden}
     .fin-context-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.5),transparent)}
     .fin-context-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
@@ -227,13 +236,13 @@
     <!-- SETUP VIEW -->
     <div id="setup-view" style="display:flex;flex-direction:column;height:100%">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> · Conversation Simulator</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Conversation Simulator</div>
         <div class="page-title">&#x1F3AD; Conversation Simulator</div>
         <div class="page-sub">Let's make sure you've already had it once before it counts.</div>
       </div>
       <div class="setup-scroll">
         <div style="background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:14px;padding:22px 26px;margin-bottom:16px;animation:fadeIn .3s ease">
-          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;margin-bottom:12px">The real conversation is coming.</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f4f3ff;margin-bottom:12px">The real conversation is coming.</div>
           <div style="font-size:13px;color:rgba(244,243,255,0.5);line-height:1.75">Pick the person you need to face. Describe what's at stake. Then have the conversation — text or voice — in a space where there are <strong style="color:rgba(244,243,255,0.8)">no consequences for getting it wrong</strong>. Before you start, you'll see the financial stakes — what this conversation is actually protecting or fighting for. The coaching debrief after tells you exactly what to do differently when it counts.</div>
         </div>
         <div class="intake-card">
@@ -299,7 +308,6 @@
         </div>
       </div>
 
-      <!-- STAKES BRIEFING PANEL (shown only on first turn) -->
       <div id="stakes-panel" class="stakes-panel" style="display:none">
         <div class="stakes-label">&#x1F4B0; Stakes Briefing — what this conversation is actually about</div>
         <div class="stakes-grid" id="stakes-grid"></div>
@@ -340,7 +348,7 @@
     <!-- DEBRIEF VIEW -->
     <div id="debrief-view" style="display:none;flex-direction:column;height:100%">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> · <a href="conversation-simulator.html">Conversation Simulator</a> · Coaching Debrief</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="conversation-simulator.html">Conversation Simulator</a> &middot; Coaching Debrief</div>
         <div class="page-title">Coaching Debrief</div>
         <div class="page-sub">Here's what happened in your practice session.</div>
       </div>
@@ -426,7 +434,7 @@
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
     document.getElementById('meridian-chip-val').innerText =
-      (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
+      (meridian.state || 'Not set') + ' \xb7 ' + (meridian.industry || 'Not set');
 
     var practiceCtx = sessionStorage.getItem('sr_practice_context');
     if (practiceCtx) {
@@ -589,29 +597,24 @@
       document.getElementById('exchange-indicator').innerText = exchangeCount + ' / ' + MAX_EXCHANGES + ' exchanges';
     }
 
-    // ─── STAKES BRIEFING PARSER ───────────────────────────────────────────────
     function parseFirstResponse(text) {
       if (!text) return { briefing: null, dialogue: text };
 
-      // Pattern 1: ---\nSTAKES BRIEFING ... ---\n[dialogue]
       var m1 = text.match(/^-{3,}\s*\n([\s\S]*?)\n-{3,}\s*\n([\s\S]*)$/);
       if (m1 && m1[1].toUpperCase().indexOf('STAKES') > -1) {
         return { briefing: m1[1].trim(), dialogue: m1[2].trim() };
       }
 
-      // Pattern 2: STAKES BRIEFING...The simulation begins now.\n---\n[dialogue]
       var m2 = text.match(/([\s\S]*?The simulation begins now\.?)\s*\n?-*\s*\n([\s\S]*)/i);
       if (m2) {
         return { briefing: m2[1].trim(), dialogue: m2[2].trim() };
       }
 
-      // Pattern 3: STAKES BRIEFING block then separator
       var m3 = text.match(/STAKES BRIEFING\s*\n([\s\S]*?)\n-{3,}\s*\n([\s\S]*)/i);
       if (m3) {
         return { briefing: 'STAKES BRIEFING\n\n' + m3[1].trim(), dialogue: m3[2].trim() };
       }
 
-      // No briefing found — treat entire text as dialogue
       return { briefing: null, dialogue: text };
     }
 
@@ -619,19 +622,18 @@
       var panel = document.getElementById('stakes-panel');
       var grid = document.getElementById('stakes-grid');
 
-      var exposureMatch  = briefingText.match(/Financial exposure:\s*([^\n]+)/i);
-      var pillarMatch    = briefingText.match(/Humac pillar:\s*([^\n]+)/i);
-      var atStakeMatch   = briefingText.match(/What is at stake:\s*([^\n]+)/i);
+      var exposureMatch   = briefingText.match(/Financial exposure:\s*([^\n]+)/i);
+      var pillarMatch     = briefingText.match(/Humac pillar:\s*([^\n]+)/i);
+      var atStakeMatch    = briefingText.match(/What is at stake:\s*([^\n]+)/i);
       var practisingMatch = briefingText.match(/You are practising with:\s*([^\n]+)/i);
 
       var items = [];
-      if (exposureMatch) items.push({ k: 'Financial exposure', v: exposureMatch[1].trim(), cls: 'financial' });
-      if (pillarMatch)   items.push({ k: 'Humac pillar', v: pillarMatch[1].trim(), cls: '' });
-      if (atStakeMatch)  items.push({ k: 'What is at stake', v: atStakeMatch[1].trim(), cls: '' });
+      if (exposureMatch)   items.push({ k: 'Financial exposure',      v: exposureMatch[1].trim(),   cls: 'financial' });
+      if (pillarMatch)     items.push({ k: 'Humac pillar',            v: pillarMatch[1].trim(),     cls: '' });
+      if (atStakeMatch)    items.push({ k: 'What is at stake',        v: atStakeMatch[1].trim(),    cls: '' });
       if (practisingMatch) items.push({ k: 'You are practising with', v: practisingMatch[1].trim(), cls: '' });
 
       if (items.length === 0) {
-        // Fallback: just show the raw text compactly
         grid.innerHTML = '<div class="stake-item"><div class="stake-v">' + briefingText.replace(/STAKES BRIEFING\n?/i,'').trim() + '</div></div>';
       } else {
         grid.innerHTML = items.map(function(item) {
@@ -641,12 +643,11 @@
       panel.style.display = 'block';
     }
 
-    // ─── SIMULATION ───────────────────────────────────────────────────────────
     async function startSimulation() {
       currentScenario = document.getElementById('scenario').value.trim();
       currentObjective = document.getElementById('objective').value.trim();
       document.getElementById('chat-role-name').innerText = selectedRole;
-      conversationHistory = [];   // Empty — Worker detects isFirstTurn and produces Stakes Briefing
+      conversationHistory = [];
       exchangeCount = 0;
       document.getElementById('messages-container').innerHTML = '';
       document.getElementById('stakes-panel').style.display = 'none';
@@ -670,15 +671,10 @@
         var data = await res.json();
         if (data.success) {
           var response = data.data.response;
-
-          // Parse Stakes Briefing out of first response
           var parsed = parseFirstResponse(response);
           if (parsed.briefing) showStakesBriefing(parsed.briefing);
-
-          // Store only the actual dialogue in history
           var dialogue = parsed.dialogue || response;
           conversationHistory.push({ role: 'assistant', content: dialogue });
-
           showView('chat-view');
           if (dialogue) addMessage('them', dialogue);
           updateExchangeCounter();
@@ -802,7 +798,6 @@
       document.getElementById('technique').innerText = r.techniqueForNextTime || '\u2014';
       document.getElementById('prep-brief-text').innerText = r.preparationBrief || '\u2014';
 
-      // Financial context (new in v1.2)
       if (r.financialContext) {
         var fc = r.financialContext;
         document.getElementById('fc-at-stake').innerText = fc.atStake || '\u2014';
@@ -871,12 +866,12 @@
               _source.connect(_processor); _processor.connect(_audioCtx.destination);
               _active = true; setBtnState(btn, 'recording');
               var el = document.getElementById(targetId);
-              if (el) { el._ph = el.placeholder; el.placeholder = 'Listening… tap ⏹ to stop and transcribe'; }
+              if (el) { el._ph = el.placeholder; el.placeholder = 'Listening\u2026 tap \u23F9 to stop and transcribe'; }
             } catch(err) { releaseMic(); setBtnState(btn, 'idle'); }
           })
           .catch(function(err) {
             setBtnState(btn, 'idle');
-            btn.title = err.name === 'NotAllowedError' ? 'Mic blocked — click the camera icon in the address bar' : 'Mic unavailable — try again';
+            btn.title = err.name === 'NotAllowedError' ? 'Mic blocked \u2014 click the camera icon in the address bar' : 'Mic unavailable \u2014 try again';
             btn.style.borderColor = 'rgba(248,113,113,0.6)';
             setTimeout(function(){ btn.style.borderColor = ''; }, 3000);
           });
@@ -927,7 +922,7 @@
           })
           .catch(function(err) {
             console.error('Whisper error:', err); setBtnState(btn, 'idle');
-            btn.title = (err && err.message) || 'Transcription failed — try again';
+            btn.title = (err && err.message) || 'Transcription failed \u2014 try again';
             btn.style.borderColor = 'rgba(248,113,113,0.6)';
             setTimeout(function(){ btn.style.borderColor=''; btn.title='Tap to speak'; }, 3000);
           });
@@ -936,7 +931,7 @@
       function setBtnState(btn, state) {
         if (!btn) return;
         if (state === 'recording') { btn.innerHTML = '&#9209;'; btn.classList.add('listening'); btn.title = 'Tap to stop'; }
-        else if (state === 'processing') { btn.innerHTML = '&#8987;'; btn.classList.remove('listening'); btn.title = 'Transcribing…'; }
+        else if (state === 'processing') { btn.innerHTML = '&#8987;'; btn.classList.remove('listening'); btn.title = 'Transcribing\u2026'; }
         else { btn.innerHTML = '&#127908;'; btn.classList.remove('listening'); btn.title = 'Tap to speak'; }
       }
 
