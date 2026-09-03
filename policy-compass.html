@@ -8,6 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Policy Compass — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <!-- SR18: vantage-theme.css above is the canonical palette + typography
+       source. Local :root below is KEPT INTACT as a fallback — same
+       pattern as every other SR18 page. Cormorant Garamond applied to
+       .page-title and .intro-title only. All policy output sections
+       (.policy-section-text, .rec-text) stay sans-serif — they're
+       dense advisory prose, not headline moments. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
@@ -38,12 +45,12 @@
     .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
     .breadcrumb a{color:var(--dim);text-decoration:none}
     .breadcrumb a:hover{color:var(--muted)}
-    .page-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:700;margin-bottom:4px;color:#f4f3ff}
+    .page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;margin-bottom:4px;color:#f4f3ff}
     .page-sub{font-size:13px;color:var(--grey)}
 
     /* INTAKE */
     .intro-card{background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:14px;padding:22px 26px;margin-bottom:24px}
-    .intro-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;margin-bottom:12px}
+    .intro-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f4f3ff;margin-bottom:12px}
     .intro-body{font-size:13px;color:rgba(244,243,255,0.5);line-height:1.75}
     .intake-card{background:rgba(5,4,16,0.25);border:1px solid rgba(99,102,241,0.12);border-radius:16px;padding:28px;margin-bottom:24px}
     .form-section{margin-bottom:22px}
@@ -222,21 +229,21 @@
           </div>
         </div>
 
-        <!-- 🧠 Vantage Assessment -->
+        <!-- Vantage Assessment -->
         <div class="policy-section assessment-section">
-          <div class="policy-section-label"><span class="policy-section-icon">🧠</span> Vantage Assessment</div>
+          <div class="policy-section-label"><span class="policy-section-icon">&#x1F9E0;</span> Vantage Assessment</div>
           <div class="policy-section-text" id="section-assessment"></div>
         </div>
 
-        <!-- ⚖️ Legal Position -->
+        <!-- Legal Position -->
         <div class="policy-section legal-section">
-          <div class="policy-section-label"><span class="policy-section-icon">⚖️</span> Legal Position</div>
+          <div class="policy-section-label"><span class="policy-section-icon">&#x2696;&#xFE0F;</span> Legal Position</div>
           <div class="policy-section-text" id="section-legal"></div>
         </div>
 
-        <!-- 🎯 Recommended Path -->
+        <!-- Recommended Path -->
         <div class="recommended-card">
-          <div class="rec-label">🎯 Recommended Path</div>
+          <div class="rec-label">&#x1F3AF; Recommended Path</div>
           <div class="rec-text" id="section-recommended"></div>
           <div class="meridian-note-inline" id="meridian-note-inline" style="display:none">
             <div class="meridian-note-inline-label">MERIDIAN Note</div>
@@ -247,7 +254,7 @@
         <!-- ARIA offer -->
         <div class="aria-offer-card">
           <div class="aria-offer-inner">
-            <div class="aria-offer-label">✦ ARIA — Explain this to someone who's pushing back</div>
+            <div class="aria-offer-label">&#x2736; ARIA — Explain this to someone who's pushing back</div>
             <div class="aria-offer-text" id="aria-offer-text">Talk through how to explain this policy position to a resistant line manager, department head, or leadership team.</div>
           </div>
           <button class="aria-offer-btn" onclick="goToARIA()">Talk to ARIA &rarr;</button>
@@ -280,7 +287,7 @@
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
     document.getElementById('meridian-chip-val').innerText =
-      (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
+      (meridian.state || 'Not set') + ' \xb7 ' + (meridian.industry || 'Not set');
 
     document.getElementById('query').addEventListener('input', function(){
       document.getElementById('submit-btn').disabled = this.value.trim().length < 20;
@@ -336,7 +343,6 @@
       var sections = { assessment: '', legal: '', recommended: '', meridianNote: '', ariaOffer: '' };
       if (!text) return sections;
 
-      // Extract sections by emoji headers
       var assessMatch = text.match(/🧠\s*VANTAGE ASSESSMENT\s*([\s\S]*?)(?=⚖️|🎯|$)/i);
       var legalMatch  = text.match(/⚖️\s*LEGAL POSITION\s*([\s\S]*?)(?=🧠|🎯|$)/i);
       var recMatch    = text.match(/🎯\s*RECOMMENDED PATH\s*([\s\S]*?)$/i);
@@ -345,19 +351,16 @@
       if (legalMatch)  sections.legal      = legalMatch[1].trim();
       if (recMatch)    sections.recommended = recMatch[1].trim();
 
-      // If no emoji headers found, treat entire text as assessment
       if (!sections.assessment && !sections.legal && !sections.recommended) {
         sections.assessment = text.trim();
       }
 
-      // Extract [MERIDIAN NOTE] from recommended section
       var mnMatch = sections.recommended.match(/\[MERIDIAN NOTE\][:\s]*([\s\S]*)$/i);
       if (mnMatch) {
         sections.meridianNote  = mnMatch[1].trim();
         sections.recommended   = sections.recommended.replace(/\[MERIDIAN NOTE\][:\s]*[\s\S]*$/i, '').trim();
       }
 
-      // Extract ARIA offer (last sentence mentioning ARIA in recommended section)
       var ariaMatch = sections.recommended.match(/ARIA[^.]*\.[^.]*$/i);
       if (ariaMatch) {
         sections.ariaOffer    = ariaMatch[0].trim();
@@ -371,21 +374,16 @@
       var responseText = (currentResult && currentResult.response) ? currentResult.response : '';
       parsedSections = parsePolicyResponse(responseText);
 
-      // Question echo
       document.getElementById('question-echo-text').innerText = currentQuery;
-
-      // Three sections
       document.getElementById('section-assessment').innerText   = parsedSections.assessment;
       document.getElementById('section-legal').innerText        = parsedSections.legal;
       document.getElementById('section-recommended').innerText  = parsedSections.recommended;
 
-      // MERIDIAN note
       if (parsedSections.meridianNote) {
         document.getElementById('meridian-note-text').innerText    = parsedSections.meridianNote;
         document.getElementById('meridian-note-inline').style.display = 'block';
       }
 
-      // ARIA offer (use extracted sentence if available, else default)
       if (parsedSections.ariaOffer) {
         document.getElementById('aria-offer-text').innerText = parsedSections.ariaOffer;
       }
@@ -444,12 +442,12 @@
               _source.connect(_processor); _processor.connect(_audioCtx.destination);
               _active = true; setBtnState(btn, 'recording');
               var el = document.getElementById(targetId);
-              if (el) { el._ph = el.placeholder; el.placeholder = 'Listening… tap ⏹ to stop and transcribe'; }
+              if (el) { el._ph = el.placeholder; el.placeholder = 'Listening\u2026 tap \u23F9 to stop and transcribe'; }
             } catch(err) { releaseMic(); setBtnState(btn, 'idle'); }
           })
           .catch(function(err) {
             setBtnState(btn, 'idle');
-            btn.title = err.name === 'NotAllowedError' ? 'Mic blocked — click the camera icon in the address bar' : 'Mic unavailable — try again';
+            btn.title = err.name === 'NotAllowedError' ? 'Mic blocked \u2014 click the camera icon in the address bar' : 'Mic unavailable \u2014 try again';
             btn.style.borderColor = 'rgba(248,113,113,0.6)';
             setTimeout(function(){ btn.style.borderColor = ''; }, 3000);
           });
@@ -500,7 +498,7 @@
           })
           .catch(function(err) {
             console.error('Whisper error:', err); setBtnState(btn, 'idle');
-            btn.title = (err && err.message) || 'Transcription failed — try again';
+            btn.title = (err && err.message) || 'Transcription failed \u2014 try again';
             btn.style.borderColor = 'rgba(248,113,113,0.6)';
             setTimeout(function(){ btn.style.borderColor=''; btn.title='Tap to speak'; }, 3000);
           });
@@ -509,7 +507,7 @@
       function setBtnState(btn, state) {
         if (!btn) return;
         if (state === 'recording') { btn.innerHTML = '&#9209;'; btn.classList.add('listening'); btn.title = 'Tap to stop'; }
-        else if (state === 'processing') { btn.innerHTML = '&#8987;'; btn.classList.remove('listening'); btn.title = 'Transcribing…'; }
+        else if (state === 'processing') { btn.innerHTML = '&#8987;'; btn.classList.remove('listening'); btn.title = 'Transcribing\u2026'; }
         else { btn.innerHTML = '&#127908;'; btn.classList.remove('listening'); btn.title = 'Tap to speak'; }
       }
 
