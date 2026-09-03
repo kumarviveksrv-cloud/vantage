@@ -7,13 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&family=Bricolage+Grotesque:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="vantage-theme.css"/>
 <style>
-/* SR18: local :root RESTORED as a fallback (SR17 had stripped it —
-   too risky: if vantage-theme.css fails to load for any reason, a
-   page with zero local tokens renders completely unstyled). Values
-   below are identical to vantage-theme.css's canonical set, so the
-   theme file's rules simply take precedence when it loads correctly.
-   Edit vantage-theme.css for platform-wide changes; only touch the
-   block below if this page needs a genuine one-off override. */
 :root{
   --bg:#050410;--bg2:#0d0b1e;--bg3:#11102a;
   --cobalt:#6366f1;--cobalt-dim:rgba(99,102,241,.15);--cobalt-border:rgba(99,102,241,.18);
@@ -28,8 +21,6 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
-
-/* ── SIDEBAR (System A — matches dashboard.html structurally) ─── */
 .sidebar{width:var(--sidebar);flex-shrink:0;position:fixed;top:0;left:0;bottom:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto;z-index:200}
 .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
 .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--cobalt);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
@@ -47,16 +38,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .meridian-chip .m-badge{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:10px;background:rgba(239,68,68,0.15);color:rgba(239,68,68,0.8);letter-spacing:.06em;text-transform:uppercase}
 .meridian-chip .m-badge.complete{background:rgba(34,197,94,0.12);color:rgba(34,197,94,0.7)}
 .meridian-chip .val{font-size:12px;color:var(--grey);line-height:1.4}
-
-/* ── MAIN WRAP ───────────────── */
 .wrap{margin-left:var(--sidebar);padding:40px 48px 80px;max-width:860px}
-
-/* ── PAGE HEADER ─────────────── */
 .page-eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .page-title{font-family:var(--display);font-size:2.1rem;font-weight:600;color:var(--text);margin-bottom:6px;letter-spacing:-.02em}
 .page-sub{font-size:.9rem;color:var(--text-dim);margin-bottom:36px;max-width:560px;line-height:1.6}
-
-/* ── PROGRESS STEPPER ────────── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* CHECK-IN BANNER */
+.checkin-banner{background:linear-gradient(135deg,rgba(99,102,241,.09),rgba(124,58,237,.05));border:1px solid rgba(99,102,241,.25);border-radius:12px;padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:14px;animation:fadeIn .3s ease}
+.checkin-banner-icon{font-size:18px;flex-shrink:0}
+.checkin-banner-text{flex:1;font-size:.82rem;color:rgba(244,243,255,.65);line-height:1.5}
+.checkin-banner-text strong{color:#f4f3ff}
+.checkin-banner-badge{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);color:#c4b5fd;padding:3px 9px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+/* STEPPER */
 .stepper{display:flex;align-items:center;gap:0;margin-bottom:40px}
 .step-item{display:flex;align-items:center;gap:0}
 .step-bubble{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;font-weight:600;transition:all .3s;flex-shrink:0}
@@ -66,10 +59,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .step-label{font-family:var(--mono);font-size:.72rem;color:rgba(165,180,252,.55);margin-left:6px;letter-spacing:.06em;transition:color .3s}
 .step-label.active{color:var(--muted)}
 .step-connector{width:24px;height:1px;background:rgba(99,102,241,.2);margin:0 6px;flex-shrink:0}
-
-/* ── BLOCK CARD ──────────────── */
+/* BLOCK CARD */
 .block-card{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:16px;padding:32px;margin-bottom:0;animation:fadeIn .25s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .block-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px}
 .block-id{font-family:var(--mono);font-size:.70rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cobalt);background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);border-radius:4px;padding:3px 8px;margin-bottom:6px;display:inline-block}
 .block-name{font-family:var(--display);font-size:1.4rem;font-weight:600;color:var(--text);letter-spacing:-.01em;margin-bottom:4px}
@@ -77,8 +68,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .block-pillar{text-align:right;flex-shrink:0}
 .pillar-tag{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:4px;padding:3px 8px;color:var(--text-dim)}
 .pillar-weight{font-family:var(--mono);font-size:.78rem;color:var(--cobalt);margin-top:4px;text-align:right}
-
-/* ── FORMULA TOGGLE ──────────── */
 .formula-toggle{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.76rem;color:rgba(99,102,241,.6);cursor:pointer;background:none;border:none;padding:0;margin-bottom:20px;transition:color .15s}
 .formula-toggle:hover{color:var(--muted)}
 .formula-toggle svg{width:12px;height:12px;transition:transform .2s}
@@ -87,86 +76,96 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .formula-panel.open{display:block}
 .formula-panel code{font-family:var(--mono);font-size:.74rem;color:var(--muted);background:rgba(99,102,241,.06);padding:2px 6px;border-radius:3px}
 .formula-panel b{color:var(--text-mid);font-weight:500}
-
-/* ── QUESTIONS ───────────────── */
 .questions{display:flex;flex-direction:column;gap:20px;margin-bottom:24px}
 .question{display:flex;flex-direction:column;gap:8px}
 .q-text{font-size:.92rem;color:var(--text);line-height:1.55;font-weight:400}
 .q-sub{font-size:.78rem;color:var(--text-dim);line-height:1.5}
-    .block-note{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.15);border-radius:8px;padding:10px 14px;margin-bottom:20px;font-family:var(--mono);font-size:.74rem;color:rgba(165,180,252,.6);line-height:1.65;letter-spacing:.03em}
-
-/* percentage input */
+.block-note{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.15);border-radius:8px;padding:10px 14px;margin-bottom:20px;font-family:var(--mono);font-size:.74rem;color:rgba(165,180,252,.6);line-height:1.65;letter-spacing:.03em}
 .pct-input-wrap{display:flex;align-items:center;gap:10px;margin-top:4px}
 .pct-input{background:var(--bg3);border:1px solid var(--cobalt-border);color:var(--text);border-radius:8px;padding:10px 14px;font-family:var(--stat);font-size:1.1rem;width:120px;transition:border-color .15s;text-align:right}
 .pct-input:focus{outline:none;border-color:var(--cobalt)}
 .pct-unit{font-family:var(--mono);font-size:.9rem;color:var(--text-dim)}
 .pct-hint{font-family:var(--mono);font-size:.74rem;color:rgba(99,102,241,.5)}
-
-/* yes/no buttons */
 .yesno-wrap{display:flex;gap:8px;margin-top:4px}
 .yn-btn{padding:8px 20px;border-radius:7px;font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;cursor:pointer;transition:all .15s;border:1px solid rgba(99,102,241,.2);background:transparent;color:var(--text-dim)}
 .yn-btn:hover{border-color:var(--cobalt-border);color:var(--text-mid)}
 .yn-btn.selected-yes{background:rgba(99,102,241,.15);border-color:var(--cobalt);color:var(--cobalt)}
 .yn-btn.selected-no{background:rgba(224,92,58,.08);border-color:rgba(224,92,58,.3);color:#E05C3A}
-
-/* number input */
 .num-input{background:var(--bg3);border:1px solid var(--cobalt-border);color:var(--text);border-radius:8px;padding:10px 14px;font-family:var(--stat);font-size:1.0rem;width:100px;transition:border-color .15s;text-align:right;margin-top:4px}
 .num-input:focus{outline:none;border-color:var(--cobalt)}
 .num-label{font-family:var(--mono);font-size:.78rem;color:var(--text-dim);display:inline-block;margin-left:8px}
-
-/* dropdown */
 .risk-select{background:var(--bg3);border:1px solid var(--cobalt-border);color:var(--text);border-radius:8px;padding:10px 14px;font-family:var(--font);font-size:.9rem;cursor:pointer;margin-top:4px;min-width:180px;transition:border-color .15s}
 .risk-select:focus{outline:none;border-color:var(--cobalt)}
-
-/* ── CONFIDENCE FLAG ─────────── */
 .confidence-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--border)}
 .confidence-label{font-family:var(--mono);font-size:.76rem;color:var(--text-dim);letter-spacing:.06em}
 .conf-btn{padding:6px 14px;border-radius:6px;font-family:var(--mono);font-size:.76rem;cursor:pointer;border:1px solid rgba(99,102,241,.2);background:transparent;color:var(--text-dim);transition:all .15s}
 .conf-btn:hover{border-color:var(--cobalt-border);color:var(--text-mid)}
 .conf-btn.selected{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.4);color:var(--muted)}
-    .conf-explain{display:flex;flex-direction:column;gap:5px;margin-top:8px}
-    .conf-explain-item{font-family:var(--mono);font-size:.74rem;letter-spacing:.04em;color:rgba(165,180,252,.8);line-height:1.6;transition:opacity .2s}
-
-/* ── NAVIGATION BUTTONS ──────── */
+.conf-explain{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.conf-explain-item{font-family:var(--mono);font-size:.74rem;letter-spacing:.04em;color:rgba(165,180,252,.8);line-height:1.6;transition:opacity .2s}
 .nav-row{display:flex;align-items:center;justify-content:space-between;margin-top:28px}
 .nav-back{background:transparent;border:1px solid rgba(99,102,241,.2);color:var(--text-dim);padding:10px 20px;border-radius:8px;font-family:var(--mono);font-size:.72rem;cursor:pointer;transition:all .15s}
 .nav-back:hover{border-color:var(--cobalt-border);color:var(--text-mid)}
 .nav-next{background:var(--cobalt);border:none;color:#fff;padding:10px 28px;border-radius:8px;font-family:var(--mono);font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s;letter-spacing:.04em}
 .nav-next:hover{background:#5254d4;transform:translateY(-1px)}
 .nav-next:disabled{opacity:.4;cursor:not-allowed;transform:none}
-
-/* ── SCORE REVEAL ────────────── */
+/* SCORE REVEAL */
 #score-reveal{display:none;animation:fadeIn .4s ease}
-    /* ── PROCESS GAP SECTION ─────────────────────── */
-    #gap-section{margin-top:48px;padding-top:40px;border-top:1px solid rgba(99,102,241,.15)}
-    .gap-header{font-family:var(--mono);font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(165,180,252,.65);margin-bottom:6px}
-    .gap-title{font-family:var(--display);font-size:1.55rem;font-weight:600;color:#f4f3ff;margin-bottom:6px;line-height:1.2}
-    .gap-sub{font-size:.82rem;color:var(--text-dim);line-height:1.6;margin-bottom:28px}
-    .gap-card{background:rgba(13,11,30,.9);border:1px solid rgba(99,102,241,.18);border-radius:14px;margin-bottom:14px;overflow:hidden;transition:border-color .25s}
-    .gap-card.building{border-color:rgba(34,197,94,.35)}
-    .gap-card-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;cursor:pointer;gap:12px}
-    .gap-card-head:hover .gap-name{color:#f4f3ff}
-    .gap-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
-    .gap-pill{font-family:var(--mono);font-size:.70rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:rgba(245,158,11,.8);flex-shrink:0}
-    .gap-pill.building{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:rgba(34,197,94,.8)}
-    .gap-name{font-size:.88rem;font-weight:600;color:var(--muted);transition:color .2s;line-height:1.3}
-    .gap-toggle-btn{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;padding:6px 12px;border-radius:6px;border:1px solid rgba(99,102,241,.2);background:transparent;color:rgba(165,180,252,.5);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
-    .gap-toggle-btn:hover{border-color:rgba(99,102,241,.45);color:#a5b4fc}
-    .gap-toggle-btn.active{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.35);color:rgba(34,197,94,.8)}
-    .gap-body{display:none;padding:0 20px 20px;border-top:1px solid rgba(99,102,241,.1)}
-    .gap-body.open{display:block}
-    .gap-why{font-size:.78rem;color:var(--text-dim);line-height:1.65;margin:14px 0 16px;padding:10px 14px;background:rgba(99,102,241,.05);border-radius:8px;border-left:2px solid rgba(99,102,241,.3)}
-    .gap-sop-label{font-family:var(--mono);font-size:.70rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,.6);margin-bottom:12px}
-    .gap-sop-steps{display:flex;flex-direction:column;gap:10px}
-    .gap-sop-step{display:flex;gap:12px;align-items:flex-start}
-    .gap-step-num{width:20px;height:20px;border-radius:50%;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.70rem;color:#a5b4fc;flex-shrink:0;margin-top:1px}
-    .gap-step-text{font-size:.78rem;color:rgba(244,243,255,.5);line-height:1.65}
-    .gap-chevron{font-size:.7rem;color:rgba(165,180,252,.3);transition:transform .2s;flex-shrink:0}
-    .gap-chevron.open{transform:rotate(180deg)}
-    .gap-complete-row{margin-top:32px;padding:20px;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.14);border-radius:12px;text-align:center}
-    .gap-complete-title{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,.65);margin-bottom:6px}
-    .gap-complete-body{font-size:.8rem;color:var(--text-dim);line-height:1.6;margin-bottom:14px}
-
+/* TRAJECTORY SECTION */
+.trajectory-section{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:14px;padding:24px 28px;margin-bottom:24px;position:relative;overflow:hidden}
+.trajectory-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,.5),transparent)}
+.traj-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:16px}
+.traj-label{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.traj-headline{display:flex;align-items:baseline;gap:10px}
+.traj-arrow{font-size:2.2rem;font-weight:700;line-height:1;font-family:var(--stat)}
+.traj-delta{font-family:var(--stat);font-size:2.2rem;font-weight:700;line-height:1}
+.traj-vs{font-family:var(--mono);font-size:.72rem;color:var(--text-dim);margin-top:6px}
+.traj-right{text-align:right}
+.traj-prev-label{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(244,243,255,.25);margin-bottom:4px}
+.traj-prev-scores{display:flex;gap:24px;justify-content:flex-end}
+.traj-prev-col{display:flex;flex-direction:column;align-items:flex-end}
+.traj-prev-num{font-family:var(--stat);font-size:1.4rem;font-weight:600;color:rgba(244,243,255,.3)}
+.traj-prev-sub{font-family:var(--mono);font-size:.52rem;color:rgba(244,243,255,.18);margin-top:1px}
+.traj-divider{height:1px;background:rgba(99,102,241,.08);margin-bottom:16px}
+.traj-pillars-label{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px}
+.traj-pillar-grid{display:flex;flex-direction:column;gap:0;margin-bottom:16px}
+.traj-pillar-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(99,102,241,.04)}
+.traj-pillar-row:last-child{border-bottom:none}
+.traj-pillar-name{font-family:var(--mono);font-size:.76rem;color:var(--text-dim)}
+.traj-pillar-delta{font-family:var(--stat);font-size:.88rem;font-weight:600}
+.traj-signal-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid rgba(99,102,241,.08)}
+.traj-signal-label{font-family:var(--mono);font-size:.72rem;color:var(--text-dim)}
+.traj-signal-val{font-family:var(--mono);font-size:.76rem;font-weight:600}
+/* GAP SECTION */
+#gap-section{margin-top:48px;padding-top:40px;border-top:1px solid rgba(99,102,241,.15)}
+.gap-header{font-family:var(--mono);font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(165,180,252,.65);margin-bottom:6px}
+.gap-title{font-family:var(--display);font-size:1.55rem;font-weight:600;color:#f4f3ff;margin-bottom:6px;line-height:1.2}
+.gap-sub{font-size:.82rem;color:var(--text-dim);line-height:1.6;margin-bottom:28px}
+.gap-card{background:rgba(13,11,30,.9);border:1px solid rgba(99,102,241,.18);border-radius:14px;margin-bottom:14px;overflow:hidden;transition:border-color .25s}
+.gap-card.building{border-color:rgba(34,197,94,.35)}
+.gap-card-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;cursor:pointer;gap:12px}
+.gap-card-head:hover .gap-name{color:#f4f3ff}
+.gap-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.gap-pill{font-family:var(--mono);font-size:.70rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:rgba(245,158,11,.8);flex-shrink:0}
+.gap-pill.building{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:rgba(34,197,94,.8)}
+.gap-name{font-size:.88rem;font-weight:600;color:var(--muted);transition:color .2s;line-height:1.3}
+.gap-toggle-btn{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;padding:6px 12px;border-radius:6px;border:1px solid rgba(99,102,241,.2);background:transparent;color:rgba(165,180,252,.5);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.gap-toggle-btn:hover{border-color:rgba(99,102,241,.45);color:#a5b4fc}
+.gap-toggle-btn.active{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.35);color:rgba(34,197,94,.8)}
+.gap-body{display:none;padding:0 20px 20px;border-top:1px solid rgba(99,102,241,.1)}
+.gap-body.open{display:block}
+.gap-why{font-size:.78rem;color:var(--text-dim);line-height:1.65;margin:14px 0 16px;padding:10px 14px;background:rgba(99,102,241,.05);border-radius:8px;border-left:2px solid rgba(99,102,241,.3)}
+.gap-sop-label{font-family:var(--mono);font-size:.70rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,.6);margin-bottom:12px}
+.gap-sop-steps{display:flex;flex-direction:column;gap:10px}
+.gap-sop-step{display:flex;gap:12px;align-items:flex-start}
+.gap-step-num{width:20px;height:20px;border-radius:50%;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.70rem;color:#a5b4fc;flex-shrink:0;margin-top:1px}
+.gap-step-text{font-size:.78rem;color:rgba(244,243,255,.5);line-height:1.65}
+.gap-chevron{font-size:.7rem;color:rgba(165,180,252,.3);transition:transform .2s;flex-shrink:0}
+.gap-chevron.open{transform:rotate(180deg)}
+.gap-complete-row{margin-top:32px;padding:20px;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.14);border-radius:12px;text-align:center}
+.gap-complete-title{font-family:var(--mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,.65);margin-bottom:6px}
+.gap-complete-body{font-size:.8rem;color:var(--text-dim);line-height:1.6;margin-bottom:14px}
+/* SCORE REVEAL */
 .reveal-eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
 .humac-hero{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:20px;padding:40px 44px;margin-bottom:24px;position:relative;overflow:hidden}
 .humac-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.5),transparent)}
@@ -185,8 +184,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .conf-badge.high{background:rgba(99,102,241,.1);color:var(--cobalt);border:1px solid rgba(99,102,241,.2)}
 .conf-badge.medium{background:rgba(165,180,252,.08);color:var(--muted);border:1px solid rgba(165,180,252,.2)}
 .conf-badge.low{background:rgba(224,92,58,.06);color:#E05C3A;border:1px solid rgba(224,92,58,.2)}
-
-/* pillar breakdown */
 .pillars{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:14px;padding:24px 28px;margin-bottom:24px}
 .pillars-title{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:16px}
 .pillar-row{display:grid;grid-template-columns:80px 1fr 40px;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(99,102,241,.04)}
@@ -196,109 +193,79 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .pillar-bar-wrap{height:6px;background:rgba(99,102,241,.08);border-radius:3px;overflow:hidden}
 .pillar-bar{height:100%;background:linear-gradient(90deg,var(--cobalt),var(--violet));border-radius:3px;transition:width .6s cubic-bezier(.19,1,.22,1)}
 .pillar-score{font-family:var(--stat);font-size:.88rem;font-weight:600;color:var(--muted);text-align:right}
-
-/* actions */
 .reveal-actions{display:flex;gap:12px;flex-wrap:wrap}
 .action-primary{background:var(--cobalt);border:none;color:#fff;padding:12px 28px;border-radius:9px;font-family:var(--mono);font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s;letter-spacing:.04em;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
 .action-primary:hover{background:#5254d4;transform:translateY(-1px)}
 .action-secondary{background:transparent;border:1px solid rgba(99,102,241,.25);color:var(--muted);padding:12px 24px;border-radius:9px;font-family:var(--mono);font-size:.72rem;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center}
 .action-secondary:hover{border-color:rgba(99,102,241,.4);color:var(--text)}
-
-@media(max-width:768px){.wrap{margin-left:0;padding:24px 20px 60px}.sidebar{display:none}.humac-hero{padding:24px 20px}.score-num{font-size:4rem}.score-num.adj{font-size:3rem}}
+@media(max-width:768px){.wrap{margin-left:0;padding:24px 20px 60px}.sidebar{display:none}.humac-hero{padding:24px 20px}.score-num{font-size:4rem}.score-num.adj{font-size:3rem}.traj-top{flex-direction:column}}
 </style>
 </head>
 <body>
-
 <div class="sidebar">
   <div class="logo" onclick="window.location.href='dashboard.html'">
     <div class="logo-dot"></div>
-    <div>
-      <div class="logo-name">Virorah</div>
-      <div class="logo-sub">Vantage</div>
-    </div>
+    <div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div>
   </div>
-  <a href="dashboard.html" class="nav-item"><span class="icon">⊞</span> Dashboard</a>
-
+  <a href="dashboard.html" class="nav-item"><span class="icon">&#x229E;</span> Dashboard</a>
   <div class="nav-section">Core Tools</div>
-  <a href="er-case-navigator.html" class="nav-item"><span class="icon">⚡</span> ER Case Navigator</a>
-  <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">📊</span> HR Data Storyteller</a>
-  <a href="stakeholder-influence.html" class="nav-item"><span class="icon">🎯</span> Stakeholder Influence</a>
-  <a href="policy-compass.html" class="nav-item"><span class="icon">🧭</span> Policy Compass</a>
-
+  <a href="er-case-navigator.html" class="nav-item"><span class="icon">&#x26A1;</span> ER Case Navigator</a>
+  <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">&#x1F4CA;</span> HR Data Storyteller</a>
+  <a href="stakeholder-influence.html" class="nav-item"><span class="icon">&#x1F3AF;</span> Stakeholder Influence</a>
+  <a href="policy-compass.html" class="nav-item"><span class="icon">&#x1F9ED;</span> Policy Compass</a>
   <div class="nav-section">Intelligence</div>
-  <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
-  <a href="conversation-simulator.html" class="nav-item"><span class="icon">🎭</span> Conversation Simulator</a>
-
+  <a href="aria.html" class="nav-item"><span class="icon">&#x2736;</span> ARIA</a>
+  <a href="conversation-simulator.html" class="nav-item"><span class="icon">&#x1F3AD;</span> Conversation Simulator</a>
   <div class="nav-section">My Record</div>
-  <a href="humac-onboarding.html" class="nav-item active"><span class="icon">📊</span> Humac Score</a>
-  <a href="case-library.html" class="nav-item"><span class="icon">◎</span> Case Library</a>
-  <a href="debrief.html" class="nav-item"><span class="icon">📋</span> The Debrief</a>
-
+  <a href="humac-onboarding.html" class="nav-item active"><span class="icon">&#x1F4CA;</span> Humac Score</a>
+  <a href="case-library.html" class="nav-item"><span class="icon">&#x25CE;</span> Case Library</a>
+  <a href="debrief.html" class="nav-item"><span class="icon">&#x1F4CB;</span> The Debrief</a>
   <div class="nav-section">Philosophy</div>
-  <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">🌀</span> Humacity</a>
-
+  <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">&#x1F300;</span> Humacity</a>
   <div class="nav-section">Legal</div>
-  <a href="terms.html" class="nav-item"><span class="icon">📄</span> Terms of Service</a>
-  <a href="privacy.html" class="nav-item"><span class="icon">🔒</span> Privacy Policy</a>
-
+  <a href="terms.html" class="nav-item"><span class="icon">&#x1F4C4;</span> Terms of Service</a>
+  <a href="privacy.html" class="nav-item"><span class="icon">&#x1F512;</span> Privacy Policy</a>
   <div class="nav-section">Account</div>
-  <a href="data-dashboard.html" class="nav-item"><span class="icon">🔒</span> Data &amp; Privacy</a>
-  <a href="#" class="nav-item" onclick="clerkSignOut(); return false;"><span class="icon">↩</span> Sign out</a>
-
+  <a href="data-dashboard.html" class="nav-item"><span class="icon">&#x1F512;</span> Data &amp; Privacy</a>
+  <a href="#" class="nav-item" onclick="clerkSignOut(); return false;"><span class="icon">&#x21A9;</span> Sign out</a>
   <div class="meridian-chip" id="meridian-chip">
-    <div class="m-header">
-      <div class="label">MERIDIAN Profile</div>
-      <div class="m-badge" id="meridian-badge">Incomplete</div>
-    </div>
+    <div class="m-header"><div class="label">MERIDIAN Profile</div><div class="m-badge" id="meridian-badge">Incomplete</div></div>
     <div class="val" id="meridian-summary">Not configured yet</div>
   </div>
 </div>
 
 <div class="wrap">
-  <div class="page-eyebrow">Vantage · Humac Score</div>
-  <h1 class="page-title">Establish your baseline</h1>
-  <p class="page-sub">Eighteen questions across five blocks. Exact data improves precision — but professional judgment is equally valid. Estimates generate a Medium-confidence score. As you build better processes and return with real data, your score gets sharper.</p>
-
-  <!-- Progress Stepper -->
+  <div class="checkin-banner" id="checkin-banner" style="display:none">
+    <div class="checkin-banner-icon">&#x1F504;</div>
+    <div class="checkin-banner-text"><strong>Quarterly check-in.</strong> You already have a Humac baseline from <span id="checkin-prev-date">a previous session</span>. Answer the same questions with your most current data. Your Trajectory Index establishes after this check-in.</div>
+    <div class="checkin-banner-badge">Check-in #<span id="checkin-num">1</span></div>
+  </div>
+  <div class="page-eyebrow">Vantage &middot; Humac Score</div>
+  <h1 class="page-title" id="page-title-main">Establish your baseline</h1>
+  <p class="page-sub" id="page-sub-main">Eighteen questions across five blocks. Exact data improves precision &mdash; but professional judgment is equally valid. Estimates generate a Medium-confidence score. As you build better processes and return with real data, your score gets sharper.</p>
   <div class="stepper" id="stepper"></div>
-
-  <!-- Block Container -->
   <div id="block-container"></div>
-
-  <!-- Score Reveal -->
   <div id="score-reveal">
-    <div class="reveal-eyebrow">Your Humac Baseline Score</div>
+    <div class="reveal-eyebrow" id="rv-eyebrow">Your Humac Baseline Score</div>
     <div class="humac-hero">
       <div class="hero-scores">
-        <div class="score-col">
-          <div class="score-label">Humac</div>
-          <div class="score-num" id="rv-humac">—</div>
-        </div>
+        <div class="score-col"><div class="score-label">Humac</div><div class="score-num" id="rv-humac">&mdash;</div></div>
         <div class="score-divider"></div>
-        <div class="score-col">
-          <div class="score-label">HCI-adjusted</div>
-          <div class="score-num adj" id="rv-adj">—</div>
-        </div>
+        <div class="score-col"><div class="score-label">HCI-adjusted</div><div class="score-num adj" id="rv-adj">&mdash;</div></div>
       </div>
       <div class="band-row">
         <div class="band-dot" id="rv-dot"></div>
-        <div>
-          <div class="band-name" id="rv-band"></div>
-          <div class="band-desc" id="rv-desc"></div>
-        </div>
+        <div><div class="band-name" id="rv-band"></div><div class="band-desc" id="rv-desc"></div></div>
       </div>
-      <div class="hci-note">
-        Human Confidence Index: <span id="rv-hci"></span>&nbsp;
-        <span class="conf-badge" id="rv-conf-badge"></span>
-      </div>
+      <div class="hci-note">Human Confidence Index: <span id="rv-hci"></span>&nbsp;<span class="conf-badge" id="rv-conf-badge"></span></div>
     </div>
-
     <div class="pillars">
       <div class="pillars-title">Pillar breakdown</div>
       <div id="rv-pillars"></div>
     </div>
-
-        <div class="reveal-actions">
+    <!-- Trajectory section: populated by JS on check-in runs, empty on baseline -->
+    <div id="trajectory-placeholder"></div>
+    <div class="reveal-actions">
       <a class="action-primary" href="dashboard.html">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
         Go to dashboard
@@ -309,617 +276,294 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 </div>
 
 <script>
-// ─────────────────────────────────────
-// ── MERIDIAN-aware tenure threshold ────────────────────────────────────────
-(function() {
-  try {
-    var _m = JSON.parse(sessionStorage.getItem('sr_meridian') || '{}');
-    var _ot = (_m.orgType || '').toLowerCase();
-    if (_ot.includes('startup') || _ot.includes('series a') || _ot.includes('series b') || _ot.includes('seed')) {
-      window._tenureYrs = '2'; window._tenureLabel = '2+ years (startup benchmark)';
-    } else if (_ot.includes('large') || _ot.includes('enterprise') || _ot.includes('psu') || _ot.includes('government') || _ot.includes('public sector')) {
-      window._tenureYrs = '5'; window._tenureLabel = '5+ years (enterprise benchmark)';
-    } else {
-      window._tenureYrs = '3'; window._tenureLabel = '3+ years (mid-market benchmark)';
-    }
-  } catch(e) { window._tenureYrs = '3'; window._tenureLabel = '3+ years'; }
+// ── MERIDIAN tenure threshold ─────────────────────────────────────────────────
+(function(){
+  try{var _m=JSON.parse(sessionStorage.getItem('sr_meridian')||'{}');var _ot=(_m.orgType||'').toLowerCase();if(_ot.includes('startup')||_ot.includes('series a')||_ot.includes('series b')||_ot.includes('seed')){window._tenureYrs='2';window._tenureLabel='2+ years (startup benchmark)';}else if(_ot.includes('large')||_ot.includes('enterprise')||_ot.includes('psu')||_ot.includes('government')){window._tenureYrs='5';window._tenureLabel='5+ years (enterprise benchmark)';}else{window._tenureYrs='3';window._tenureLabel='3+ years (mid-market benchmark)';}}catch(e){window._tenureYrs='3';window._tenureLabel='3+ years';}
 })();
 
-// ── MERIDIAN CHIP DISPLAY (matches dashboard.html pattern) ──────────────────
-(function() {
-  var meridianRaw = sessionStorage.getItem('sr_meridian');
-  var chip = document.getElementById('meridian-chip');
-  var badge = document.getElementById('meridian-badge');
-  if (meridianRaw) {
-    try {
-      var m = JSON.parse(meridianRaw);
-      document.getElementById('meridian-summary').innerText = (m.state || '') + ' · ' + (m.industry || '');
-      badge.innerText = 'Active'; badge.className = 'm-badge complete';
-    } catch(e) {}
-  } else {
-    chip.onclick = function() { window.location.href = 'onboarding.html'; };
-    chip.style.cursor = 'pointer';
+// ── MERIDIAN chip ──────────────────────────────────────────────────────────────
+(function(){
+  var meridianRaw=sessionStorage.getItem('sr_meridian');var chip=document.getElementById('meridian-chip');var badge=document.getElementById('meridian-badge');
+  if(meridianRaw){try{var m=JSON.parse(meridianRaw);document.getElementById('meridian-summary').innerText=(m.state||'')+' \xb7 '+(m.industry||'');badge.innerText='Active';badge.className='m-badge complete';}catch(e){}}else{chip.onclick=function(){window.location.href='onboarding.html';};chip.style.cursor='pointer';}
+})();
+
+// ── CHECK-IN MODE DETECTION ───────────────────────────────────────────────────
+// If a previous vantage_humac exists, we are in check-in mode.
+// The existing score becomes the baseline for Trajectory computation.
+var previousScore=null;
+var isCheckin=false;
+(function(){
+  try{var _p=sessionStorage.getItem('vantage_humac');if(_p){previousScore=JSON.parse(_p);isCheckin=true;}}catch(e){}
+  if(isCheckin&&previousScore){
+    var titleEl=document.getElementById('page-title-main');
+    var subEl=document.getElementById('page-sub-main');
+    if(titleEl)titleEl.innerText='Quarterly check-in';
+    if(subEl)subEl.innerText='Updating from your previous baseline. Answer the same 18 questions with your most current data \u2014 your Trajectory Index establishes after this check-in.';
+    var banner=document.getElementById('checkin-banner');
+    var prevDateEl=document.getElementById('checkin-prev-date');
+    var numEl=document.getElementById('checkin-num');
+    if(banner)banner.style.display='flex';
+    if(prevDateEl&&previousScore.timestamp)prevDateEl.innerText=new Date(previousScore.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+    if(numEl)numEl.innerText=String((previousScore.checkInNumber||0)+1);
+    var ey=document.getElementById('rv-eyebrow');
+    if(ey)ey.innerText='Your Humac Check-in Score';
   }
 })();
 
-// QUESTION DEFINITIONS
-// ─────────────────────────────────────
-const BLOCKS = [
-  {
-    id:'A', title:'HR Value Return', pillar:'L1', weight:'25% weight',
-    desc:'How much financial value does HR generate relative to total salaries paid?',
-    formula:`<b>Precise formula:</b><br>
-<code>L1 ratio = Total HR Program Value ÷ Total Compensation</code><br><br>
-<b>Total HR Program Value includes:</b><br>
-• High Performers currently active × salary × <code>1.80</code> (replacement cost avoided)<br>&nbsp;&nbsp;<small>Employees in your top performance band who are still with the org — regardless of whether a formal retention conversation happened.</small><br>
-• New joiners in revenue-generating roles (hired last 12 months) × salary × <code>1.40 × 0.85</code><br>&nbsp;&nbsp;<small>Include sales, BD, account management, client-facing — any role whose output directly contributes to revenue.</small><br>
-• Emerging Talent × L&D spend × <code>2.80</code> (development return index)<br>
-• Stable employees (${window._tenureLabel}) × salary × <code>0.08</code> (engagement premium — based on your org type)<br>
-• Below-expectation contributors × salary × <code>0.60</code> (risk exposure contained)<br>&nbsp;&nbsp;<small>Employees who received "Needs Improvement" or equivalent in their last appraisal — or those you would privately categorise as inconsistent. If you run one annual cycle, estimate as a % of headcount.</small><br><br>
-<b>Data to pull:</b> Payroll (total comp base), HRIS (talent classifications, tenure), Performance system (Star/ET/IP labels).`,
-    questions:[
-      {id:'q1', type:'pct',
-       text:'For every ₹100 of total salaries, roughly what percentage does your HR function generate in measurable financial value?',
-       sub:'Include: retention savings, quality-of-hire returns, development ROI, engagement productivity, and risk management outcomes.'}
-    ]
+// ── BLOCKS ────────────────────────────────────────────────────────────────────
+var BLOCKS=[
+  {id:'A',title:'HR Value Return',pillar:'L1',weight:'25% weight',
+   desc:'How much financial value does HR generate relative to total salaries paid?',
+   formula:'<b>Precise formula:</b><br><code>L1 ratio = Total HR Program Value &divide; Total Compensation</code><br><br><b>Total HR Program Value includes:</b><br>&bull; High Performers currently active &times; salary &times; <code>1.80</code> (replacement cost avoided)<br>&bull; New joiners in revenue-generating roles (hired last 12 months) &times; salary &times; <code>1.40 &times; 0.85</code><br>&bull; Emerging Talent &times; L&D spend &times; <code>2.80</code> (development return index)<br>&bull; Stable employees ('+window._tenureLabel+') &times; salary &times; <code>0.08</code> (engagement premium)<br>&bull; Below-expectation contributors &times; salary &times; <code>0.60</code> (risk exposure contained)<br><br><b>Data to pull:</b> Payroll, HRIS (talent classifications, tenure), Performance system.',
+   questions:[{id:'q1',type:'pct',text:'For every \u20B9100 of total salaries, roughly what percentage does your HR function generate in measurable financial value?',sub:'Include: retention savings, quality-of-hire returns, development ROI, engagement productivity, and risk management outcomes.'}]
   },
-  {
-    id:'B', title:'Talent Quality', pillar:'L2', weight:'15% weight',
-    desc:'Are people generating above-average returns relative to what they cost?',
-    note:'Professional judgment is the right instrument here. You do not need HRIS data — answer based on what you\'d tell a trusted colleague. A guesstimate gives you a Medium-confidence score — still highly directional.',
-    formula:`<b>Five verdict areas — precise computation requires employee-level data:</b><br><br>
-<b>Promotion Accuracy:</b> % of promoted employees above grade benchmark 6 months post-promotion.<br>
-Pull from: performance system (pre- and post-promotion scores).<br><br>
-<b>Manager Quality:</b> % of managers outperforming their direct report average.<br>
-Pull from: manager + direct report performance ratings in the same review cycle.<br><br>
-<b>Hiring Quality:</b> % of hires in last 12 months above role performance baseline.<br>
-Pull from: new hire performance at 6-month mark vs. grade average.<br><br>
-<b>Selective Retention:</b> Are top performers staying longer than below-expectation contributors?<br>&nbsp;&nbsp;<small>Count resignations in last 12 months by performance band. If more Stars left than underperformers, answer No.</small><br>
-Pull from: HRIS (tenure by performance segment).<br><br>
-<b>HiPo Identification:</b> Does a formal named HiPo list exist and get updated?`,
-    questions:[
-      {id:'q2', type:'yn', text:'When you think of people promoted in the last year, are most of them growing into the role — not just surviving it?', sub:'You do not need a 6-month review on file. If you would be comfortable giving them a stretch assignment, they are performing.'},
-      {id:'q3', type:'yn', text:'In your honest judgment, do most of your managers actively raise the bar in their teams — or does the team largely carry itself regardless of the manager?', sub:'Think of your last calibration or 1:1 feedback round. Managers who catch issues early, develop people, and hold standards count as Yes.'},
-      {id:'q4', type:'yn', text:'Of people you have hired in the last 12 months, is the majority genuinely working out — meeting or exceeding what you expected when you hired them?', sub:'You do not need a structured 6-month review. If you would confidently recommend them for a new project, they count as Yes.'},
-      {id:'q5', type:'yn', text:'When you look at who has resigned in the last 12 months, is it mostly people you were relieved to see leave — rather than people you wished you could have kept?', sub:'If your best people are the ones walking out the door, answer No. If exits have broadly been people you were replacing anyway, answer Yes.'},
-      {id:'q6', type:'yn', text:'Does your organisation have a named group of high-potential employees that leadership actively invests in differently — mentoring, accelerated projects, leadership exposure?', sub:'A spreadsheet with names counts. An informal conversation that happens every year does not.'}
-    ]
+  {id:'B',title:'Talent Quality',pillar:'L2',weight:'15% weight',
+   desc:'Are people generating above-average returns relative to what they cost?',
+   note:'Professional judgment is the right instrument here. You do not need HRIS data \u2014 answer based on what you\u2019d tell a trusted colleague.',
+   formula:'<b>Five verdict areas &mdash; precise computation requires employee-level data:</b><br><br><b>Promotion Accuracy:</b> % of promoted employees above grade benchmark 6 months post-promotion.<br><b>Manager Quality:</b> % of managers outperforming their direct report average.<br><b>Hiring Quality:</b> % of hires in last 12 months above role performance baseline.<br><b>Selective Retention:</b> Are top performers staying longer than below-expectation contributors?<br><b>HiPo Identification:</b> Does a formal named HiPo list exist and get updated?',
+   questions:[
+     {id:'q2',type:'yn',text:'When you think of people promoted in the last year, are most of them growing into the role \u2014 not just surviving it?',sub:'If you would be comfortable giving them a stretch assignment, they are performing.'},
+     {id:'q3',type:'yn',text:'In your honest judgment, do most of your managers actively raise the bar in their teams \u2014 or does the team largely carry itself regardless of the manager?',sub:'Managers who catch issues early, develop people, and hold standards count as Yes.'},
+     {id:'q4',type:'yn',text:'Of people you have hired in the last 12 months, is the majority genuinely working out \u2014 meeting or exceeding what you expected when you hired them?',sub:'If you would confidently recommend them for a new project, they count as Yes.'},
+     {id:'q5',type:'yn',text:'When you look at who has resigned in the last 12 months, is it mostly people you were relieved to see leave \u2014 rather than people you wished you could have kept?',sub:'If your best people are the ones walking out the door, answer No.'},
+     {id:'q6',type:'yn',text:'Does your organisation have a named group of high-potential employees that leadership actively invests in differently \u2014 mentoring, accelerated projects, leadership exposure?',sub:'A spreadsheet with names counts. An informal conversation that happens every year does not.'}
+   ]
   },
-  {
-    id:'C', title:'Org Health + HCI', pillar:'L3 + HCI', weight:'30% weight',
-    desc:'Leading indicators of organisational health — and current conditions affecting your score.',
-    formula:`<b>L3 is observational by design.</b> Professional judgment is the intended instrument for most signals — not a weaker substitute for data.<br><br>
-Three signals that benefit from data validation:<br>
-• Meetings &lt;40% of working week: pull calendar analytics (Google Workspace / M365)<br>
-• Projects completed on time &gt;60%: pull from Jira, Asana, or equivalent<br>
-• Documented performance conversations: pull from HRIS/performance logs<br><br>
-All other signals: answer from your direct knowledge of the organisation. HR business partner observation counts.`,
-    questions:[
-      {id:'q7',  type:'yn', text:'Is leadership stable, present, and actively engaged right now?', hci:true},
-      {id:'q8',  type:'yn', text:'Is the organisation free from major disruption, restructure, or layoffs?', hci:true},
-      {id:'q9',  type:'yn', text:'Is the culture broadly functional and not in crisis?', hci:true},
-      {id:'q10', type:'yn', text:'Is the organisation executing well against its strategic priorities?', hci:true},
-      {id:'q11', type:'yn', text:'Do managers have regular structured 1:1s with their direct reports?'},
-      {id:'q12', type:'yn', text:'Can frontline employees describe what a major leadership decision means for their work within one week?'},
-      {id:'q13', type:'yn', text:'Does HR proactively surface people risks to leadership — not just report metrics?'},
-      {id:'q14', type:'yn', text:'Are projects completed on time at a rate above 60%?'}
-    ]
+  {id:'C',title:'Org Health + HCI',pillar:'L3 + HCI',weight:'30% weight',
+   desc:'Leading indicators of organisational health \u2014 and current conditions affecting your score.',
+   formula:'<b>L3 is observational by design.</b> Professional judgment is the intended instrument for most signals \u2014 not a weaker substitute for data.<br><br>Three signals that benefit from data validation:<br>&bull; Projects completed on time &gt;60%: pull from Jira, Asana, or equivalent<br>&bull; Documented performance conversations: pull from HRIS/performance logs<br><br>All other signals: answer from your direct knowledge of the organisation.',
+   questions:[
+     {id:'q7',type:'yn',text:'Is leadership stable, present, and actively engaged right now?',hci:true},
+     {id:'q8',type:'yn',text:'Is the organisation free from major disruption, restructure, or layoffs?',hci:true},
+     {id:'q9',type:'yn',text:'Is the culture broadly functional and not in crisis?',hci:true},
+     {id:'q10',type:'yn',text:'Is the organisation executing well against its strategic priorities?',hci:true},
+     {id:'q11',type:'yn',text:'Do managers have regular structured 1:1s with their direct reports?'},
+     {id:'q12',type:'yn',text:'Can frontline employees describe what a major leadership decision means for their work within one week?'},
+     {id:'q13',type:'yn',text:'Does HR proactively surface people risks to leadership \u2014 not just report metrics?'},
+     {id:'q14',type:'yn',text:'Are projects completed on time at a rate above 60%?'}
+   ]
   },
-  {
-    id:'D', title:'HR Function Return', pillar:'L4', weight:'20% weight',
-    desc:'For every rupee spent running HR, how much comes back?',
-    formula:`<b>The Human P&L — precise formula:</b><br>
-<code>L4 ratio = HR Net Profit ÷ (Total COGS + Total OpEx)</code><br><br>
-<b>Human Revenue:</b> Retention savings + talent acquisition value + performance uplift + culture premium<br>
-<b>Human COGS:</b> Acquisition cost + development investment + HR function cost (team + tools)<br>
-<b>Human OpEx:</b> Compliance & admin + culture & engagement spend<br>
-<b>Adjustments:</b> Flight risk liability + skill debt + growth readiness gap<br>
-<b>Net Profit</b> = Revenue − COGS − OpEx − Adjustments<br><br>
-<b>Data to pull:</b> Finance (HR budget lines), Payroll (HR team cost), L&D spend records.`,
-    questions:[
-      {id:'q15', type:'pct',
-       text:'For every ₹100 your HR function spends on running HR — hiring costs, training, HR team salaries, tools, compliance — roughly how much measurable value does it generate?',
-       sub:'Include: retention savings, productivity gains, avoided legal costs, and quality-of-hire outcomes. Exclude base salaries from the ₹100.'}
-    ]
+  {id:'D',title:'HR Function Return',pillar:'L4',weight:'20% weight',
+   desc:'For every rupee spent running HR, how much comes back?',
+   formula:'<b>The Human P&L &mdash; precise formula:</b><br><code>L4 ratio = HR Net Profit &divide; (Total COGS + Total OpEx)</code><br><br><b>Human Revenue:</b> Retention savings + talent acquisition value + performance uplift + culture premium<br><b>Human COGS:</b> Acquisition cost + development investment + HR function cost<br><b>Human OpEx:</b> Compliance &amp; admin + culture &amp; engagement spend<br><b>Net Profit</b> = Revenue &minus; COGS &minus; OpEx &minus; Adjustments',
+   questions:[{id:'q15',type:'pct',text:'For every \u20B9100 your HR function spends on running HR \u2014 hiring costs, training, HR team salaries, tools, compliance \u2014 roughly how much measurable value does it generate?',sub:'Include: retention savings, productivity gains, avoided legal costs, and quality-of-hire outcomes. Exclude base salaries from the \u20B9100.'}]
   },
-  {
-    id:'E', title:'Human Balance Sheet', pillar:'L5', weight:'10% weight',
-    desc:'What is the net human capital position — assets vs. liabilities?',
-    formula:`<b>5 human assets:</b> Talent Equity, Institutional Knowledge, Org Learning Velocity, Relationship Capital, Culture Asset<br>
-<b>5 human liabilities:</b> Talent Concentration Risk, Skill Debt, Growth Readiness Gap, Culture Liability, Workforce Obsolescence Risk<br><br>
-<code>NHW = Total Assets − Total Liabilities + L4 Net Profit</code><br>
-<code>NHW Index = (NHW ÷ Total Comp) × 100</code><br><br>
-<b>Proxy calculation (your three answers):</b><br>
-Step 1: Q_A Yes → base 2.0, No → base 1.2<br>
-Step 2: × <code>(1 + min(years,10)/10 × 0.30)</code><br>
-Step 3: ÷ flight risk divisor (Low 1.0 / Medium 1.2 / High 1.5)<br>
-Step 4: NHW Index estimate = (ratio − 1.0) × 20`,
-    questions:[
-      {id:'q16', type:'yn', text:'Does your organisation invest more in developing talent than it loses to exits and skill gaps?'},
-      {id:'q17', type:'num', text:'How many years of institutional knowledge does your current team hold on average?', unit:'years', placeholder:'e.g. 4'},
-      {id:'q18', type:'select', text:'How would you describe your organisation\'s current flight risk level?',
-       options:['', 'Low', 'Medium', 'High'], placeholder:'Select flight risk level'}
-    ]
+  {id:'E',title:'Human Balance Sheet',pillar:'L5',weight:'10% weight',
+   desc:'What is the net human capital position \u2014 assets vs. liabilities?',
+   formula:'<b>5 human assets:</b> Talent Equity, Institutional Knowledge, Org Learning Velocity, Relationship Capital, Culture Asset<br><b>5 human liabilities:</b> Talent Concentration Risk, Skill Debt, Growth Readiness Gap, Culture Liability, Workforce Obsolescence Risk<br><br><code>NHW = Total Assets &minus; Total Liabilities + L4 Net Profit</code><br><code>NHW Index = (NHW &divide; Total Comp) &times; 100</code>',
+   questions:[
+     {id:'q16',type:'yn',text:'Does your organisation invest more in developing talent than it loses to exits and skill gaps?'},
+     {id:'q17',type:'num',text:'How many years of institutional knowledge does your current team hold on average?',unit:'years',placeholder:'e.g. 4'},
+     {id:'q18',type:'select',text:'How would you describe your organisation\u2019s current flight risk level?',options:['','Low','Medium','High'],placeholder:'Select flight risk level'}
+   ]
   }
 ];
 
-// ─────────────────────────────────────
-// STATE
-// ─────────────────────────────────────
-let currentBlock = 0;
-const answers = {};
-const confidence = {}; // 'computed' or 'estimated' per block
+// ── STATE ──────────────────────────────────────────────────────────────────────
+var currentBlock=0;
+var answers={};
+var confidence={};
 
-// ─────────────────────────────────────
-// CALCULATION FUNCTIONS
-// ─────────────────────────────────────
-function calcL1(pct) {
-  const r = (pct || 0) / 100;
-  if (r <= 0.10) return 0;
-  if (r >= 1.20) return 100;
-  if (r <= 0.40) return ((r - 0.10) / 0.30) * 50;
-  return 50 + ((r - 0.40) / 0.80) * 50;
+// ── CALCULATIONS ──────────────────────────────────────────────────────────────
+function calcL1(pct){var r=(pct||0)/100;if(r<=0.10)return 0;if(r>=1.20)return 100;if(r<=0.40)return((r-0.10)/0.30)*50;return 50+((r-0.40)/0.80)*50;}
+function calcL2(n){return[0,15,33,50,75,100][Math.max(0,Math.min(5,n))];}
+function calcL3(n){return(n/8)*100;}
+function calcL4(pct){var r=(pct||0)/100;if(r<=0)return 0;if(r>=3.0)return 100;if(r<=1.0)return(r/1.0)*50;return 50+((r-1.0)/2.0)*50;}
+function calcL5(qA,qBYears,qC){var base=(qA==='yes')?2.0:1.2;var yrs=Math.min(parseFloat(qBYears)||0,10);var mult=1+(yrs/10)*0.30;var adj=base*mult;var div={low:1.0,medium:1.2,high:1.5}[(qC||'').toLowerCase()]||1.0;var ratio=adj/div;var idx=(ratio-1.0)*20;if(idx<0)return 0;if(idx>=50)return 100;if(idx<=20)return 10+(idx/20)*40;return 50+((idx-20)/30)*50;}
+function calcHCI(n){return Math.round((0.70+n*0.15)*100)/100;}
+function countYes(ids){return ids.filter(function(id){return answers[id]==='yes';}).length;}
+function getBand(s){if(s<=30)return{name:'Value Destruction',color:'#E05C3A',desc:'People cost more than they return. Immediate intervention required.'};if(s<=50)return{name:'Value Neutral',color:'#a5b4fc',desc:'Breaking even on people investment. High deterioration risk without action.'};if(s<=70)return{name:'Value Generating',color:'#6366f1',desc:'Positive returns. Significant value still left on the table.'};if(s<=85)return{name:'Value Compounding',color:'#7c3aed',desc:'Systematic value creation. Strong leading indicators.'};return{name:'Value Exceptional',color:'#c4b5fd',desc:'Top-tier. People treated as a compounding asset class.'};}
+function getConfidenceLevel(){var e=Object.values(confidence).filter(function(v){return v==='estimated';}).length;if(e===0)return 'high';if(e<=2)return 'medium';return 'low';}
+
+// ── TRAJECTORY COMPUTATION ─────────────────────────────────────────────────────
+function computeTrajectory(l1,l2,l3,l4,l5,humac,hciAdj){
+  if(!isCheckin||!previousScore)return null;
+  var pa=previousScore.rawAnswers||{};
+  var signals=['q7','q8','q9','q10','q11','q12','q13','q14'];
+  var posFlips=0,negFlips=0;
+  signals.forEach(function(qid){
+    if(pa[qid]==='no'&&answers[qid]==='yes')posFlips++;
+    if(pa[qid]==='yes'&&answers[qid]==='no')negFlips++;
+  });
+  var prevHumac=previousScore.humac||0;
+  var delta=humac-prevHumac;
+  return{
+    delta:delta,
+    direction:delta>0?'up':delta<0?'down':'flat',
+    pillarDeltas:{l1:Math.round(l1-(previousScore.l1||0)),l2:Math.round(l2-(previousScore.l2||0)),l3:Math.round(l3-(previousScore.l3||0)),l4:Math.round(l4-(previousScore.l4||0)),l5:Math.round(l5-(previousScore.l5||0))},
+    signalMomentum:posFlips-negFlips,
+    posFlips:posFlips,
+    negFlips:negFlips,
+    previousScore:prevHumac,
+    previousHciAdj:previousScore.hciAdj||0,
+    previousBand:previousScore.band||'',
+    previousTimestamp:previousScore.timestamp||'',
+    checkInNumber:(previousScore.checkInNumber||0)+1
+  };
 }
 
-function calcL2(yesCount) {
-  return [0, 15, 33, 50, 75, 100][Math.max(0, Math.min(5, yesCount))];
+// ── TRAJECTORY HTML ────────────────────────────────────────────────────────────
+function buildTrajectoryHTML(traj){
+  var delta=traj.delta;
+  var arrow,color,sign;
+  if(delta>0){arrow='\u2197';color='#4ade80';sign='+';}
+  else if(delta<0){arrow='\u2198';color='#E05C3A';sign='';}
+  else{arrow='\u2192';color='#a5b4fc';sign='';}
+  var prevDate=traj.previousTimestamp?new Date(traj.previousTimestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'previous check-in';
+  var pillarNames={l1:'L1 \u2014 Value Ledger',l2:'L2 \u2014 Talent Premium',l3:'L3 \u2014 Org Vitals',l4:'L4 \u2014 Human P&L',l5:'L5 \u2014 Balance Sheet'};
+  var pillarRows=Object.keys(traj.pillarDeltas).map(function(key){
+    var d=traj.pillarDeltas[key],a,c,s;
+    if(d>0){a='\u2197';c='#4ade80';s='+';}else if(d<0){a='\u2198';c='#E05C3A';s='';}else{a='\u2192';c='#a5b4fc';s='';}
+    return '<div class="traj-pillar-row"><span class="traj-pillar-name">'+pillarNames[key]+'</span><span class="traj-pillar-delta" style="color:'+c+'">'+a+' '+s+d+'</span></div>';
+  }).join('');
+  var smColor,smText;
+  if(traj.signalMomentum>0){smColor='#4ade80';smText='\u2197 '+traj.posFlips+' org signal'+(traj.posFlips>1?'s':'')+' improved'+(traj.negFlips>0?' \xb7 '+traj.negFlips+' weakened':'');}
+  else if(traj.signalMomentum<0){smColor='#E05C3A';smText='\u2198 '+traj.negFlips+' org signal'+(traj.negFlips>1?'s':'')+' weakened'+(traj.posFlips>0?' \xb7 '+traj.posFlips+' improved':'');}
+  else{smColor='#a5b4fc';smText='\u2192 Org signals stable (no change)';}
+  return '<div class="trajectory-section">'+
+    '<div class="traj-top">'+
+      '<div>'+
+        '<div class="traj-label">Trajectory Index \xb7 Check-in #'+traj.checkInNumber+'</div>'+
+        '<div class="traj-headline"><span class="traj-arrow" style="color:'+color+'">'+arrow+'</span><span class="traj-delta" style="color:'+color+'">'+sign+delta+'</span></div>'+
+        '<div class="traj-vs">vs. your baseline of '+traj.previousScore+' from '+prevDate+'</div>'+
+      '</div>'+
+      '<div class="traj-right">'+
+        '<div class="traj-prev-label">Previous</div>'+
+        '<div class="traj-prev-scores">'+
+          '<div class="traj-prev-col"><div class="traj-prev-num">'+traj.previousScore+'</div><div class="traj-prev-sub">Humac</div></div>'+
+          '<div class="traj-prev-col"><div class="traj-prev-num">'+traj.previousHciAdj+'</div><div class="traj-prev-sub">HCI-adj</div></div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="traj-divider"></div>'+
+    '<div class="traj-pillars-label">Pillar movement</div>'+
+    '<div class="traj-pillar-grid">'+pillarRows+'</div>'+
+    '<div class="traj-signal-row"><span class="traj-signal-label">L3 signal momentum</span><span class="traj-signal-val" style="color:'+smColor+'">'+smText+'</span></div>'+
+  '</div>';
 }
 
-function calcL3(yesCount) {
-  return (yesCount / 8) * 100;
-}
-
-function calcL4(pct) {
-  const r = (pct || 0) / 100;
-  if (r <= 0) return 0;
-  if (r >= 3.0) return 100;
-  if (r <= 1.0) return (r / 1.0) * 50;
-  return 50 + ((r - 1.0) / 2.0) * 50;
-}
-
-function calcL5(qA, qBYears, qC) {
-  const base = (qA === 'yes') ? 2.0 : 1.2;
-  const yrs = Math.min(parseFloat(qBYears) || 0, 10);
-  const mult = 1 + (yrs / 10) * 0.30;
-  const adj = base * mult;
-  const div = {low:1.0, medium:1.2, high:1.5}[(qC||'').toLowerCase()] || 1.0;
-  const ratio = adj / div;
-  const idx = (ratio - 1.0) * 20;
-  if (idx < 0) return 0;
-  if (idx >= 50) return 100;
-  if (idx <= 20) return 10 + (idx / 20) * 40;
-  return 50 + ((idx - 20) / 30) * 50;
-}
-
-function calcHCI(yesCount) {
-  return Math.round((0.70 + yesCount * 0.15) * 100) / 100;
-}
-
-function countYes(ids) {
-  return ids.filter(id => answers[id] === 'yes').length;
-}
-
-function getBand(score) {
-  if (score <= 30) return { name:'Value Destruction', color:'#E05C3A', desc:'People cost more than they return. Immediate intervention required.' };
-  if (score <= 50) return { name:'Value Neutral', color:'#a5b4fc', desc:'Breaking even on people investment. High deterioration risk without action.' };
-  if (score <= 70) return { name:'Value Generating', color:'#6366f1', desc:'Positive returns. Significant value still left on the table.' };
-  if (score <= 85) return { name:'Value Compounding', color:'#7c3aed', desc:'Systematic value creation. Strong leading indicators.' };
-  return { name:'Value Exceptional', color:'#c4b5fd', desc:'Top-tier. People treated as a compounding asset class.' };
-}
-
-function getConfidenceLevel() {
-  const estimated = Object.values(confidence).filter(v => v === 'estimated').length;
-  const total = BLOCKS.length;
-  if (estimated === 0) return 'high';
-  if (estimated <= 2) return 'medium';
-  return 'low';
-}
-
-// ─────────────────────────────────────
-// STEPPER RENDER
-// ─────────────────────────────────────
-function renderStepper() {
-  const el = document.getElementById('stepper');
-  el.innerHTML = '';
-  BLOCKS.forEach((b, i) => {
-    if (i > 0) {
-      const conn = document.createElement('div');
-      conn.className = 'step-connector';
-      el.appendChild(conn);
-    }
-    const item = document.createElement('div');
-    item.className = 'step-item';
-    const isDone = (i < currentBlock) || (getComputedStyle(document.getElementById('score-reveal')).display !== 'none');
-    const isActive = i === currentBlock;
-    item.innerHTML = `
-      <div class="step-bubble ${isDone?'done':isActive?'active':'pending'}">${isDone?'✓':b.id}</div>
-      <div class="step-label ${isActive?'active':''}">${b.title}</div>
-    `;
+// ── STEPPER ────────────────────────────────────────────────────────────────────
+function renderStepper(){
+  var el=document.getElementById('stepper');el.innerHTML='';
+  BLOCKS.forEach(function(b,i){
+    if(i>0){var conn=document.createElement('div');conn.className='step-connector';el.appendChild(conn);}
+    var item=document.createElement('div');item.className='step-item';
+    var isDone=(i<currentBlock)||(document.getElementById('score-reveal').style.display!=='none');
+    var isActive=i===currentBlock;
+    item.innerHTML='<div class="step-bubble '+(isDone?'done':isActive?'active':'pending')+'">'+(isDone?'\u2713':b.id)+'</div><div class="step-label '+(isActive?'active':'')+'">'+(b.title)+'</div>';
     el.appendChild(item);
   });
 }
 
-// ─────────────────────────────────────
-// BLOCK RENDER
-// ─────────────────────────────────────
-function renderBlock(idx) {
-  const b = BLOCKS[idx];
-  const isFirst = idx === 0;
-  const isLast = idx === BLOCKS.length - 1;
-  const conf = confidence[b.id] || 'estimated';
-
-  let questionsHTML = b.questions.map(q => {
-    if (q.type === 'pct') {
-      const val = answers[q.id] || '';
-      return `<div class="question">
-        <div class="q-text">${q.text}</div>
-        ${q.sub ? `<div class="q-sub">${q.sub}</div>` : ''}
-        <div class="pct-input-wrap">
-          <input class="pct-input" type="number" id="${q.id}" min="0" max="500" value="${val}" placeholder="0" oninput="answers['${q.id}']=parseFloat(this.value)||0"/>
-          <span class="pct-unit">%</span>
-          <span class="pct-hint">of total salary bill</span>
-        </div>
-      </div>`;
-    }
-    if (q.type === 'yn') {
-      const val = answers[q.id];
-      const hciLabel = q.hci ? '<span style="font-family:var(--mono);font-size:.68rem;color:rgba(99,102,241,.5);margin-left:6px">HCI</span>' : '';
-      return `<div class="question">
-        <div class="q-text">${q.text}${hciLabel}</div>
-        <div class="yesno-wrap">
-          <button class="yn-btn ${val==='yes'?'selected-yes':''}" onclick="setYN('${q.id}','yes',this.closest('.yesno-wrap'))">Yes</button>
-          <button class="yn-btn ${val==='no'?'selected-no':''}" onclick="setYN('${q.id}','no',this.closest('.yesno-wrap'))">No</button>
-        </div>
-      </div>`;
-    }
-    if (q.type === 'num') {
-      const val = answers[q.id] || '';
-      return `<div class="question">
-        <div class="q-text">${q.text}</div>
-        <div>
-          <input class="num-input" type="number" id="${q.id}" min="0" max="50" value="${val}" placeholder="${q.placeholder}" oninput="answers['${q.id}']=parseFloat(this.value)||0"/>
-          <span class="num-label">${q.unit}</span>
-        </div>
-      </div>`;
-    }
-    if (q.type === 'select') {
-      const val = answers[q.id] || '';
-      return `<div class="question">
-        <div class="q-text">${q.text}</div>
-        <select class="risk-select" id="${q.id}" onchange="answers['${q.id}']=this.value.toLowerCase()">
-          ${q.options.map(o => `<option value="${o.toLowerCase()}" ${val===o.toLowerCase()?'selected':''}>${o||q.placeholder}</option>`).join('')}
-        </select>
-      </div>`;
-    }
+// ── BLOCK RENDER ───────────────────────────────────────────────────────────────
+function renderBlock(idx){
+  var b=BLOCKS[idx];var isFirst=idx===0;var isLast=idx===BLOCKS.length-1;var conf=confidence[b.id]||'estimated';
+  var qHTML=b.questions.map(function(q){
+    if(q.type==='pct'){var val=answers[q.id]||'';return '<div class="question"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div class="pct-input-wrap"><input class="pct-input" type="number" id="'+q.id+'" min="0" max="500" value="'+val+'" placeholder="0" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0"/><span class="pct-unit">%</span><span class="pct-hint">of total salary bill</span></div></div>';}
+    if(q.type==='yn'){var val=answers[q.id];var hci=q.hci?'<span style="font-family:var(--mono);font-size:.68rem;color:rgba(99,102,241,.5);margin-left:6px">HCI</span>':'';return '<div class="question"><div class="q-text">'+q.text+hci+'</div><div class="yesno-wrap"><button class="yn-btn '+(val==='yes'?'selected-yes':'')+'" onclick="setYN(\''+q.id+'\',\'yes\',this.closest(\'.yesno-wrap\'))">Yes</button><button class="yn-btn '+(val==='no'?'selected-no':'')+'" onclick="setYN(\''+q.id+'\',\'no\',this.closest(\'.yesno-wrap\'))">No</button></div></div>';}
+    if(q.type==='num'){var val=answers[q.id]||'';return '<div class="question"><div class="q-text">'+q.text+'</div><div><input class="num-input" type="number" id="'+q.id+'" min="0" max="50" value="'+val+'" placeholder="'+q.placeholder+'" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0"/><span class="num-label">'+q.unit+'</span></div></div>';}
+    if(q.type==='select'){var val=answers[q.id]||'';return '<div class="question"><div class="q-text">'+q.text+'</div><select class="risk-select" id="'+q.id+'" onchange="answers[\''+q.id+'\']=this.value.toLowerCase()">'+q.options.map(function(o){return '<option value="'+o.toLowerCase()+'" '+(val===o.toLowerCase()?'selected':'')+'>'+(o||q.placeholder)+'</option>';}).join('')+'</select></div>';}
     return '';
   }).join('');
-
-  const html = `
-    <div class="block-card" id="active-block">
-      <div class="block-header">
-        <div>
-          <div class="block-id">Block ${b.id}</div>
-          <div class="block-name">${b.title}</div>
-          <div class="block-desc">${b.desc}</div>
-        </div>
-        <div class="block-pillar">
-          <div class="pillar-tag">${b.pillar}</div>
-          <div class="pillar-weight">${b.weight}</div>
-        </div>
-      </div>
-
-      <button class="formula-toggle" id="ftoggle" onclick="toggleFormula()">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg>
-        How do I calculate this precisely?
-      </button>
-      <div class="formula-panel" id="fpanel">${b.formula}</div>
-
-      ${b.note ? `<div class="block-note">&#x1F4A1; ${b.note}</div>` : ''}
-      <div class="questions">${questionsHTML}</div>
-
-      <div class="confidence-row">
-        <span class="confidence-label">These answers are</span>
-        <button class="conf-btn ${conf==='computed'?'selected':''}" onclick="setConf('${b.id}','computed')">Computed</button>
-        <button class="conf-btn ${conf==='estimated'?'selected':''}" onclick="setConf('${b.id}','estimated')">Estimated</button>
-      </div>
-      <div class="conf-explain">
-        <span class="conf-explain-item computed-explain" style="${conf==='computed'?'':'opacity:.45'}">&#x2713; <b>Computed:</b> You have actual figures from HRIS or payroll. Score confidence: <b>High</b>.</span>
-        <span class="conf-explain-item estimated-explain" style="${conf==='estimated'?'':'opacity:.45'}">&#x7e; <b>Estimated:</b> Working from memory or approximation. Score confidence: <b>Medium</b> — directional, still valuable.</span>
-      </div>
-
-      <div class="nav-row">
-        ${!isFirst ? `<button class="nav-back" onclick="prevBlock()">← Back</button>` : '<div></div>'}
-        <button class="nav-next" onclick="nextBlock()">${isLast ? 'Generate score →' : 'Continue →'}</button>
-      </div>
-    </div>
-  `;
-
-  document.getElementById('block-container').innerHTML = html;
+  var html='<div class="block-card" id="active-block"><div class="block-header"><div><div class="block-id">Block '+b.id+'</div><div class="block-name">'+b.title+'</div><div class="block-desc">'+b.desc+'</div></div><div class="block-pillar"><div class="pillar-tag">'+b.pillar+'</div><div class="pillar-weight">'+b.weight+'</div></div></div>'+
+    '<button class="formula-toggle" id="ftoggle" onclick="toggleFormula()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg>How do I calculate this precisely?</button>'+
+    '<div class="formula-panel" id="fpanel">'+b.formula+'</div>'+
+    (b.note?'<div class="block-note">&#x1F4A1; '+b.note+'</div>':'')+
+    '<div class="questions">'+qHTML+'</div>'+
+    '<div class="confidence-row"><span class="confidence-label">These answers are</span><button class="conf-btn '+(conf==='computed'?'selected':'')+'" onclick="setConf(\''+b.id+'\',\'computed\')">Computed</button><button class="conf-btn '+(conf==='estimated'?'selected':'')+'" onclick="setConf(\''+b.id+'\',\'estimated\')">Estimated</button></div>'+
+    '<div class="conf-explain"><span class="conf-explain-item computed-explain" style="'+(conf==='computed'?'':'opacity:.45')+'">\u2713 <b>Computed:</b> You have actual figures from HRIS or payroll. Score confidence: <b>High</b>.</span><span class="conf-explain-item estimated-explain" style="'+(conf==='estimated'?'':'opacity:.45')+'">\u007e <b>Estimated:</b> Working from memory or approximation. Score confidence: <b>Medium</b> \u2014 directional, still valuable.</span></div>'+
+    '<div class="nav-row">'+(!isFirst?'<button class="nav-back" onclick="prevBlock()">\u2190 Back</button>':'<div></div>')+'<button class="nav-next" onclick="nextBlock()">'+(isLast?'Generate score \u2192':'Continue \u2192')+'</button></div></div>';
+  document.getElementById('block-container').innerHTML=html;
   renderStepper();
 }
 
-function toggleFormula() {
-  const btn = document.getElementById('ftoggle');
-  const panel = document.getElementById('fpanel');
-  btn.classList.toggle('open');
-  panel.classList.toggle('open');
+function toggleFormula(){var btn=document.getElementById('ftoggle');var panel=document.getElementById('fpanel');btn.classList.toggle('open');panel.classList.toggle('open');}
+function setYN(qId,val,wrap){answers[qId]=val;wrap.querySelectorAll('.yn-btn').forEach(function(b){b.classList.remove('selected-yes','selected-no');});var t=wrap.querySelector('.yn-btn:'+(val==='yes'?'first-child':'last-child'));if(t)t.classList.add(val==='yes'?'selected-yes':'selected-no');}
+function setConf(blockId,val){var card=document.querySelector('.block-card');if(card){var c=card.querySelector('.computed-explain');var e=card.querySelector('.estimated-explain');if(c)c.style.opacity=val==='computed'?'1':'.35';if(e)e.style.opacity=val==='estimated'?'1':'.35';}confidence[blockId]=val;document.querySelectorAll('.conf-btn').forEach(function(b){b.classList.remove('selected');});event.target.classList.add('selected');}
+function nextBlock(){if(currentBlock<BLOCKS.length-1){currentBlock++;renderBlock(currentBlock);window.scrollTo(0,0);}else{showScoreReveal();}}
+function prevBlock(){if(currentBlock>0){currentBlock--;renderBlock(currentBlock);window.scrollTo(0,0);}}
+function restartOnboarding(){currentBlock=0;document.getElementById('score-reveal').style.display='none';document.getElementById('block-container').style.display='block';renderBlock(0);window.scrollTo(0,0);}
+
+// ── SCORE REVEAL ───────────────────────────────────────────────────────────────
+function showScoreReveal(){
+  var l1=Math.round(calcL1(answers.q1||0));
+  var l2=calcL2(countYes(['q2','q3','q4','q5','q6']));
+  var l3=Math.round(calcL3(countYes(['q7','q8','q9','q10','q11','q12','q13','q14'])));
+  var l4=Math.round(calcL4(answers.q15||0));
+  var l5=Math.round(calcL5(answers.q16,answers.q17,answers.q18));
+  var hci=calcHCI(countYes(['q7','q8','q9','q10']));
+  var humac=Math.round(l1*0.25+l2*0.15+l3*0.30+l4*0.20+l5*0.10);
+  var hciAdj=Math.round(humac*hci);
+  var band=getBand(humac);
+  var confLevel=getConfidenceLevel();
+
+  // Trajectory — null on baseline, object on check-in
+  var trajectory=computeTrajectory(l1,l2,l3,l4,l5,humac,hciAdj);
+
+  // scoreData: adding trajectory here means save_humac Worker stores it
+  // in the existing JSON blob with zero Worker-side changes required.
+  var scoreData={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5,hci:hci,humac:humac,hciAdj:hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers,trajectory:trajectory};
+
+  try{sessionStorage.setItem('vantage_humac',JSON.stringify(scoreData));}catch(e){}
+
+  // Airtable persist — fire and forget
+  (function(){try{var WORKER='https://situation-room-api.kumarvivek-srv.workers.dev';var email=sessionStorage.getItem('sr_user_email')||'';fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'save_humac',email:email,humac:scoreData})});}catch(e){}})();
+
+  document.getElementById('rv-humac').textContent=humac;
+  document.getElementById('rv-adj').textContent=hciAdj;
+  document.getElementById('rv-band').textContent=band.name;
+  document.getElementById('rv-band').style.color=band.color;
+  document.getElementById('rv-desc').textContent=band.desc;
+  document.getElementById('rv-dot').style.background=band.color;
+  document.getElementById('rv-hci').textContent=hci.toFixed(2)+'x';
+  var badge=document.getElementById('rv-conf-badge');badge.className='conf-badge '+confLevel;badge.textContent=confLevel.charAt(0).toUpperCase()+confLevel.slice(1)+' confidence';
+
+  var pillars=[{label:'L1',name:'Value Ledger',score:l1,weight:'25%'},{label:'L2',name:'Talent Premium',score:l2,weight:'15%'},{label:'L3',name:'Org Vitals',score:l3,weight:'30%'},{label:'L4',name:'Human P&L',score:l4,weight:'20%'},{label:'L5',name:'Balance Sheet',score:l5,weight:'10%'}];
+  document.getElementById('rv-pillars').innerHTML=pillars.map(function(p){return '<div class="pillar-row"><div class="pillar-name">'+p.label+' \u2014 '+p.name+'<span>'+p.weight+'</span></div><div class="pillar-bar-wrap"><div class="pillar-bar" style="width:'+p.score+'%"></div></div><div class="pillar-score">'+p.score+'</div></div>';}).join('');
+
+  // Populate trajectory placeholder (empty string on baseline = invisible)
+  var trajEl=document.getElementById('trajectory-placeholder');
+  if(trajectory&&trajEl)trajEl.innerHTML=buildTrajectoryHTML(trajectory);
+
+  // Gap section
+  var gapHTML=renderGapSection(confidence);
+  var existingGap=document.getElementById('gap-section');if(existingGap)existingGap.remove();
+  var gapContainer=document.createElement('div');gapContainer.innerHTML=gapHTML;
+  if(gapContainer.firstElementChild)document.getElementById('score-reveal').appendChild(gapContainer.firstElementChild);
+
+  document.getElementById('block-container').style.display='none';
+  document.getElementById('score-reveal').style.display='block';
+  renderStepper();window.scrollTo(0,0);
 }
 
-function setYN(qId, val, wrap) {
-  answers[qId] = val;
-  wrap.querySelectorAll('.yn-btn').forEach(b => b.classList.remove('selected-yes','selected-no'));
-  const target = wrap.querySelector(`.yn-btn:${val==='yes'?'first-child':'last-child'}`);
-  if (target) target.classList.add(val==='yes'?'selected-yes':'selected-no');
-}
-
-function setConf(blockId, val) {
-  // Update explain text opacity
-  var card = document.querySelector('.block-card');
-  if (card) {
-    var cExp = card.querySelector('.computed-explain');
-    var eExp = card.querySelector('.estimated-explain');
-    if (cExp) cExp.style.opacity = val === 'computed' ? '1' : '.35';
-    if (eExp) eExp.style.opacity = val === 'estimated' ? '1' : '.35';
-  }
-  confidence[blockId] = val;
-  document.querySelectorAll('.conf-btn').forEach(b => b.classList.remove('selected'));
-  event.target.classList.add('selected');
-}
-
-// ─────────────────────────────────────
-// NAVIGATION
-// ─────────────────────────────────────
-function nextBlock() {
-  if (currentBlock < BLOCKS.length - 1) {
-    currentBlock++;
-    renderBlock(currentBlock);
-    window.scrollTo(0,0);
-  } else {
-    showScoreReveal();
-  }
-}
-
-function prevBlock() {
-  if (currentBlock > 0) {
-    currentBlock--;
-    renderBlock(currentBlock);
-    window.scrollTo(0,0);
-  }
-}
-
-function restartOnboarding() {
-  currentBlock = 0;
-  document.getElementById('score-reveal').style.display = 'none';
-  document.getElementById('block-container').style.display = 'block';
-  renderBlock(0);
-  window.scrollTo(0,0);
-}
-
-// ─────────────────────────────────────
-// SCORE REVEAL
-// ─────────────────────────────────────
-function showScoreReveal() {
-  // Calculate all scores
-  const l1 = Math.round(calcL1(answers.q1 || 0));
-  const l2 = calcL2(countYes(['q2','q3','q4','q5','q6']));
-  const l3 = Math.round(calcL3(countYes(['q7','q8','q9','q10','q11','q12','q13','q14'])));
-  const l4 = Math.round(calcL4(answers.q15 || 0));
-  const l5 = Math.round(calcL5(answers.q16, answers.q17, answers.q18));
-  const hci = calcHCI(countYes(['q7','q8','q9','q10']));
-  const humac = Math.round(l1*0.25 + l2*0.15 + l3*0.30 + l4*0.20 + l5*0.10);
-  const hciAdj = Math.round(humac * hci);
-  const band = getBand(humac);
-  const confLevel = getConfidenceLevel();
-
-  // Save to sessionStorage
-  const scoreData = {l1,l2,l3,l4,l5,hci,humac,hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers};
-  try { sessionStorage.setItem('vantage_humac', JSON.stringify(scoreData)); } catch(e) {}
-
-  // Persist to Airtable (fire and forget — don't block the reveal)
-  (async function saveHumacToAirtable() {
-    try {
-      const WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
-      const email = sessionStorage.getItem('sr_user_email') || '';
-      await fetch(WORKER, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tool: 'save_humac', email, humac: scoreData })
-      });
-    } catch(e) { /* non-blocking — sessionStorage is the source of truth */ }
-  })();
-
-  // Render reveal
-  document.getElementById('rv-humac').textContent = humac;
-  document.getElementById('rv-adj').textContent = hciAdj;
-  document.getElementById('rv-band').textContent = band.name;
-  document.getElementById('rv-band').style.color = band.color;
-  document.getElementById('rv-desc').textContent = band.desc;
-  document.getElementById('rv-dot').style.background = band.color;
-  document.getElementById('rv-hci').textContent = hci.toFixed(2)+'x';
-
-  const badge = document.getElementById('rv-conf-badge');
-  badge.className = `conf-badge ${confLevel}`;
-  badge.textContent = confLevel.charAt(0).toUpperCase()+confLevel.slice(1)+' confidence';
-
-  // Pillar breakdown
-  const pillars = [
-    {label:'L1', name:'Value Ledger', score:l1, weight:'25%'},
-    {label:'L2', name:'Talent Premium', score:l2, weight:'15%'},
-    {label:'L3', name:'Org Vitals', score:l3, weight:'30%'},
-    {label:'L4', name:'Human P&L', score:l4, weight:'20%'},
-    {label:'L5', name:'Balance Sheet', score:l5, weight:'10%'},
-  ];
-  document.getElementById('rv-pillars').innerHTML = pillars.map(p => `
-    <div class="pillar-row">
-      <div class="pillar-name">${p.label} — ${p.name}<span>${p.weight}</span></div>
-      <div class="pillar-bar-wrap"><div class="pillar-bar" style="width:${p.score}%"></div></div>
-      <div class="pillar-score">${p.score}</div>
-    </div>
-  `).join('');
-
-  // Show reveal
-  document.getElementById('block-container').style.display = 'none';
-  // Render process gap section
-  const gapHTML = renderGapSection(confidence);
-  const existingGap = document.getElementById('gap-section');
-  if (existingGap) existingGap.remove();
-  const gapContainer = document.createElement('div');
-  gapContainer.innerHTML = gapHTML;
-  document.getElementById('score-reveal').appendChild(gapContainer.firstElementChild || gapContainer);
-
-  document.getElementById('score-reveal').style.display = 'block';
-  renderStepper();
-  window.scrollTo(0,0);
-}
-
-
-// ─────────────────────────────────────
-// PROCESS GAP DEFINITIONS
-// ─────────────────────────────────────
-const BLOCK_GAPS = {
-  A: {
-    name: 'HR Program ROI Tracking',
-    why: 'Without this, your L1 score rests on a professional estimate. With it, you can cite a real rupee figure that walks into any boardroom.',
-    sop: [
-      'List every HR initiative from the last 12 months — hiring campaigns, L&D programs, wellness initiatives, engagement projects, compliance programs.',
-      'For each initiative, assign a financial outcome: cost saved (attrition prevented × replacement cost), revenue enabled (quality hire productivity uplift), or risk mitigated (compliance penalty avoided).',
-      'Divide total financial value generated by total HR spend. Your HR ROI ratio is the foundation of your L1 score.',
-      'Tool needed: A simple spreadsheet — columns: Initiative, Cost, Outcome Type, Financial Value, ROI %. Run this calculation every half-year.'
-    ]
-  },
-  B: {
-    name: 'Talent Quality Measurement System',
-    why: 'L2 captures whether your people investment generates above-average returns. Each of the five questions maps to a specific measurement process you can build.',
-    sop: [
-      'Post-promotion tracking: Create a "Promotion Cohort" list. At 3 and 6 months, collect one rating per person from their manager — above / at / below grade expectations. % above = your promotion quality score.',
-      'Manager effectiveness: In your next performance cycle, add one employee survey question: "My manager actively raises the bar in our team." Aggregate % agreement per manager. That is your manager quality signal.',
-      'New hire baseline: 6 months after each joining date, ask the manager for a single rating vs. role grade average. Build a running spreadsheet. % above baseline = hiring quality.',
-      'Attrition by performance band: In every exit interview, note the employee’s last performance rating. Maintain a running count of Stars vs. below-expectation exits. The ratio tells you everything.',
-      'HiPo list: Start a shared document with leadership — 10 to 15 names, reviewed and updated twice a year. That is your formal HiPo process. It does not need to be complicated.'
-    ]
-  },
-  C: {
-    name: 'Org Health Signal Infrastructure',
-    why: 'L3 carries 30% of your Humac Score. It is the highest-weighted pillar. Even one additional measured signal here shifts your score meaningfully.',
-    sop: [
-      'Structured 1:1 cadence: Ask managers to schedule 1:1s in calendar. Pull a calendar report at end of each quarter — % of direct reports with at least bi-weekly 1:1s on record. That number goes into your L3 score.',
-      'Project completion rate: Pull from Jira, Asana, Monday, or equivalent. % of projects with target dates that closed within 2 weeks of deadline in the last quarter. If you have no tool, ask department heads for a self-reported estimate at quarter-end.',
-      'Proactive people risk surfacing: Establish a monthly 15-minute "People Risk Radar" — HR flags 3 to 5 people concerns to leadership before they become incidents. Document it. That process alone shifts your L3 meaningfully.'
-    ]
-  },
-  D: {
-    name: 'HR Function Return Measurement',
-    why: 'L4 is your HR P&L. Knowing this number is what separates an HR professional from an HR strategist in leadership conversations. This is the metric that earns you a seat at the table.',
-    sop: [
-      'Calculate total HR spend: HR team salaries + recruitment fees + L&D budget + HR tools + compliance costs. Most organisations can pull this from finance in under an hour.',
-      'Calculate HR-attributable value: Attrition cost avoided (headcount retained × average replacement cost) + hiring quality uplift (above-baseline hires × productivity premium) + risk management outcomes (compliance penalties avoided).',
-      'Your HR ROI = Total Value ÷ Total HR Spend. Industry baseline is 1.5x. Strong is 2.5x and above. Walk into your next leadership meeting with this number.',
-      'Run this calculation once per half-year. Log it. The trend over time — not just the point-in-time number — is what you present to the board.'
-    ]
-  },
-  E: {
-    name: 'Human Capital Balance Sheet Inputs',
-    why: 'L5 tells you whether your organisation is accumulating or depleting human capital over time. It is the long-term health signal that most organisations never measure.',
-    sop: [
-      'Institutional knowledge depth: In your next all-hands or department survey, add one question — "How much of what you do would be genuinely difficult to hand over in 30 days?" Score 1 (easy) to 5 (nearly impossible). Average per department = your knowledge depth index.',
-      'Flight risk assessment: Quarterly, ask every manager to classify each direct report as Low, Medium, or High flight risk — privately, in writing. Aggregate the High pile by department. Review it with leadership.',
-      'Skill debt mapping: List the top 5 capabilities your organisation will need in 18 months. Rate your current team’s readiness for each, 1 to 5. Average gap between need and readiness = your skill debt score. Review and update twice a year.'
-    ]
-  }
+// ── GAP SECTION ────────────────────────────────────────────────────────────────
+var BLOCK_GAPS={
+  A:{name:'HR Program ROI Tracking',why:'Without this, your L1 score rests on a professional estimate. With it, you can cite a real rupee figure that walks into any boardroom.',sop:['List every HR initiative from the last 12 months \u2014 hiring campaigns, L&D programs, wellness initiatives, engagement projects, compliance programs.','For each initiative, assign a financial outcome: cost saved, revenue enabled, or risk mitigated.','Divide total financial value generated by total HR spend. Your HR ROI ratio is the foundation of your L1 score.','Tool needed: A simple spreadsheet. Run this calculation every half-year.']},
+  B:{name:'Talent Quality Measurement System',why:'L2 captures whether your people investment generates above-average returns. Each of the five questions maps to a specific measurement process you can build.',sop:['Post-promotion tracking: Create a Promotion Cohort list. At 3 and 6 months, collect one rating per person from their manager.','Manager effectiveness: In your next performance cycle, add one survey question: "My manager actively raises the bar in our team."','New hire baseline: 6 months after each joining date, ask the manager for a single rating vs. role grade average.','Attrition by performance band: In every exit interview, note the employee\'s last performance rating.','HiPo list: Start a shared document with leadership \u2014 10 to 15 names, reviewed and updated twice a year.']},
+  C:{name:'Org Health Signal Infrastructure',why:'L3 carries 30% of your Humac Score. It is the highest-weighted pillar. Even one additional measured signal here shifts your score meaningfully.',sop:['Structured 1:1 cadence: Pull a calendar report at end of each quarter \u2014 % of direct reports with bi-weekly 1:1s on record.','Project completion rate: Pull from Jira, Asana, or equivalent. % of projects that closed within 2 weeks of deadline.','Proactive people risk surfacing: Establish a monthly 15-minute People Risk Radar \u2014 HR flags 3 to 5 concerns to leadership before they become incidents.']},
+  D:{name:'HR Function Return Measurement',why:'L4 is your HR P&L. Knowing this number is what separates an HR professional from an HR strategist in leadership conversations.',sop:['Calculate total HR spend: HR team salaries + recruitment fees + L&D budget + HR tools + compliance costs.','Calculate HR-attributable value: Attrition cost avoided + hiring quality uplift + risk management outcomes.','Your HR ROI = Total Value \u00f7 Total HR Spend. Industry baseline is 1.5x. Strong is 2.5x and above.','Run this calculation once per half-year. Log it. The trend over time is what you present to the board.']},
+  E:{name:'Human Capital Balance Sheet Inputs',why:'L5 tells you whether your organisation is accumulating or depleting human capital over time.',sop:['Institutional knowledge depth: In your next all-hands survey, add: "How much of what you do would be difficult to hand over in 30 days?" Score 1 to 5.','Flight risk assessment: Quarterly, ask every manager to classify each direct report as Low, Medium, or High flight risk \u2014 privately, in writing.','Skill debt mapping: List the top 5 capabilities your organisation will need in 18 months. Rate your current team\'s readiness for each, 1 to 5.']}
 };
 
-function renderGapSection(confidenceObj) {
-  // Find blocks answered as Estimated (or unanswered = defaulting to estimated)
-  const estimatedBlocks = BLOCKS.filter(b => {
-    const conf = confidenceObj[b.id] || 'estimated';
-    return conf === 'estimated';
-  });
-
-  if (estimatedBlocks.length === 0) {
-    // All computed — no gaps to show
-    return '';
-  }
-
-  const buildingKey = 'vantage_gaps_building';
-  let building = {};
-  try { building = JSON.parse(localStorage.getItem(buildingKey) || '{}'); } catch(e) {}
-
-  const gapCards = estimatedBlocks.map(b => {
-    const gap = BLOCK_GAPS[b.id];
-    if (!gap) return '';
-    const isBuilding = building[b.id] === '1';
-    const sopSteps = gap.sop.map((step, i) => `
-      <div class="gap-sop-step">
-        <div class="gap-step-num">${i+1}</div>
-        <div class="gap-step-text">${step}</div>
-      </div>`).join('');
-
-    return `
-    <div class="gap-card ${isBuilding ? 'building' : ''}" id="gap-card-${b.id}">
-      <div class="gap-card-head" onclick="toggleGapBody('${b.id}')">
-        <div class="gap-left">
-          <div class="gap-pill ${isBuilding ? 'building' : ''}" id="gap-pill-${b.id}">${isBuilding ? '✓ Building' : 'Gap'}</div>
-          <div class="gap-name">${gap.name}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-          <button class="gap-toggle-btn ${isBuilding ? 'active' : ''}" id="gap-btn-${b.id}"
-            onclick="event.stopPropagation();toggleBuilding('${b.id}')">${isBuilding ? '\u2713 I\u2019m building this' : 'Mark as building'}</button>
-          <span class="gap-chevron" id="gap-chev-${b.id}">▼</span>
-        </div>
-      </div>
-      <div class="gap-body" id="gap-body-${b.id}">
-        <div class="gap-why">${gap.why}</div>
-        <div class="gap-sop-label">How to build this process — 6 month horizon</div>
-        <div class="gap-sop-steps">${sopSteps}</div>
-      </div>
-    </div>`;
+function renderGapSection(confidenceObj){
+  var estimatedBlocks=BLOCKS.filter(function(b){return(confidenceObj[b.id]||'estimated')==='estimated';});
+  if(estimatedBlocks.length===0)return '';
+  var building={};try{building=JSON.parse(localStorage.getItem('vantage_gaps_building')||'{}');}catch(e){}
+  var gapCards=estimatedBlocks.map(function(b){
+    var gap=BLOCK_GAPS[b.id];if(!gap)return '';
+    var isBuilding=building[b.id]==='1';
+    var sopSteps=gap.sop.map(function(step,i){return '<div class="gap-sop-step"><div class="gap-step-num">'+(i+1)+'</div><div class="gap-step-text">'+step+'</div></div>';}).join('');
+    return '<div class="gap-card '+(isBuilding?'building':'')+'" id="gap-card-'+b.id+'"><div class="gap-card-head" onclick="toggleGapBody(\''+b.id+'\')"><div class="gap-left"><div class="gap-pill '+(isBuilding?'building':'')+'" id="gap-pill-'+b.id+'">'+(isBuilding?'\u2713 Building':'Gap')+'</div><div class="gap-name">'+gap.name+'</div></div><div style="display:flex;align-items:center;gap:8px;flex-shrink:0"><button class="gap-toggle-btn '+(isBuilding?'active':'')+'" id="gap-btn-'+b.id+'" onclick="event.stopPropagation();toggleBuilding(\''+b.id+'\')">'+(isBuilding?'\u2713 I\u2019m building this':'Mark as building')+'</button><span class="gap-chevron" id="gap-chev-'+b.id+'">\u25BC</span></div></div><div class="gap-body" id="gap-body-'+b.id+'"><div class="gap-why">'+gap.why+'</div><div class="gap-sop-label">How to build this process \u2014 6 month horizon</div><div class="gap-sop-steps">'+sopSteps+'</div></div></div>';
   }).join('');
-
-  return `
-  <div id="gap-section">
-    <div class="gap-header">Data Gaps</div>
-    <div class="gap-title">Processes to build for a sharper score.</div>
-    <div class="gap-sub">${estimatedBlocks.length} of your ${BLOCKS.length} blocks were answered from professional judgment rather than measured data. That is completely valid — your current score is directional. Each gap below has a concrete process you can build in the next 6 months. Mark the ones you are working on. Come back when you have the data — your score will sharpen.</div>
-    ${gapCards}
-    <div class="gap-complete-row">
-      <div class="gap-complete-title">When you have the data</div>
-      <div class="gap-complete-body">Return to this onboarding, answer with Computed confidence, and regenerate your Humac Score. Every building block you complete moves your score closer to a board-ready figure.</div>
-      <a href="dashboard.html" style="display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.76rem;letter-spacing:.06em;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:#a5b4fc;padding:10px 18px;border-radius:8px;text-decoration:none;transition:all .2s" onmouseover="this.style.background='rgba(99,102,241,.2)'" onmouseout="this.style.background='rgba(99,102,241,.1)'">← Save and return to dashboard</a>
-    </div>
-  </div>`;
+  return '<div id="gap-section"><div class="gap-header">Data Gaps</div><div class="gap-title">Processes to build for a sharper score.</div><div class="gap-sub">'+estimatedBlocks.length+' of your '+BLOCKS.length+' blocks were answered from professional judgment rather than measured data. That is completely valid \u2014 your current score is directional. Each gap below has a concrete process you can build in the next 6 months.</div>'+gapCards+'<div class="gap-complete-row"><div class="gap-complete-title">When you have the data</div><div class="gap-complete-body">Return to this onboarding, answer with Computed confidence, and regenerate your Humac Score. Every building block you complete moves your score closer to a board-ready figure.</div><a href="dashboard.html" style="display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.76rem;letter-spacing:.06em;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:#a5b4fc;padding:10px 18px;border-radius:8px;text-decoration:none;transition:all .2s" onmouseover="this.style.background=\'rgba(99,102,241,.2)\'" onmouseout="this.style.background=\'rgba(99,102,241,.1)\'">Save and return to dashboard</a></div></div>';
 }
 
-function toggleGapBody(blockId) {
-  const body = document.getElementById('gap-body-' + blockId);
-  const chev = document.getElementById('gap-chev-' + blockId);
-  if (!body) return;
-  body.classList.toggle('open');
-  if (chev) chev.classList.toggle('open');
-}
+function toggleGapBody(blockId){var body=document.getElementById('gap-body-'+blockId);var chev=document.getElementById('gap-chev-'+blockId);if(!body)return;body.classList.toggle('open');if(chev)chev.classList.toggle('open');}
+function toggleBuilding(blockId){var key='vantage_gaps_building';var building={};try{building=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}var isNow=building[blockId]!=='1';if(isNow)building[blockId]='1';else delete building[blockId];localStorage.setItem(key,JSON.stringify(building));var card=document.getElementById('gap-card-'+blockId);var pill=document.getElementById('gap-pill-'+blockId);var btn=document.getElementById('gap-btn-'+blockId);if(card)card.classList.toggle('building',isNow);if(pill){pill.textContent=isNow?'\u2713 Building':'Gap';pill.classList.toggle('building',isNow);}if(btn){btn.textContent=isNow?'\u2713 I\u2019m building this':'Mark as building';btn.classList.toggle('active',isNow);}}
 
-function toggleBuilding(blockId) {
-  const key = 'vantage_gaps_building';
-  let building = {};
-  try { building = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) {}
-  const isNowBuilding = building[blockId] !== '1';
-  if (isNowBuilding) building[blockId] = '1'; else delete building[blockId];
-  localStorage.setItem(key, JSON.stringify(building));
-
-  // Update UI
-  const card = document.getElementById('gap-card-' + blockId);
-  const pill = document.getElementById('gap-pill-' + blockId);
-  const btn  = document.getElementById('gap-btn-'  + blockId);
-  if (card) card.classList.toggle('building', isNowBuilding);
-  if (pill) { pill.textContent = isNowBuilding ? '✓ Building' : 'Gap'; pill.classList.toggle('building', isNowBuilding); }
-  if (btn)  { btn.textContent  = isNowBuilding ? "\u2713 I\u2019m building this" : 'Mark as building'; btn.classList.toggle('active', isNowBuilding); }
-}
-
-// ─────────────────────────────────────
-// INIT
-// ─────────────────────────────────────
+// ── INIT ───────────────────────────────────────────────────────────────────────
 renderStepper();
 renderBlock(0);
-
 </script>
 <script src="clerk-auth.js"></script>
 <script src="sidebar-shared.js"></script>
