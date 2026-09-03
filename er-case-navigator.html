@@ -8,6 +8,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ER Case Navigator — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <!-- SR18: vantage-theme.css above is the canonical palette + typography
+       source, layered on top of this page's own :root below. The local
+       :root is KEPT INTACT (not stripped) as a fallback — if the theme
+       file fails to load for any reason (wrong path, upload order), this
+       page still renders correctly on its own values, which already
+       match the canonical palette exactly. Cormorant Garamond loads via
+       the theme file's @import; only .page-title, .risk-title, and the
+       "Something's landed on your desk." intake statement below were
+       swapped to it — genuine headline moments, same split PMS itself
+       uses (dense UI chrome stays sans-serif). -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
@@ -38,7 +49,7 @@
     .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
     .breadcrumb a{color:var(--dim);text-decoration:none}
     .breadcrumb a:hover{color:var(--muted)}
-    .page-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:700;margin-bottom:4px;color:#f4f3ff}
+    .page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;margin-bottom:4px;color:#f4f3ff}
     .page-sub{font-size:13px;color:var(--grey)}
 
     /* INTAKE */
@@ -78,7 +89,7 @@
     .risk-medium{background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.25)}
     .risk-low{background:rgba(244,243,255,0.04);border:1px solid rgba(244,243,255,0.1)}
     .risk-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;color:var(--dim)}
-    .risk-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff}
+    .risk-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#f4f3ff}
     .risk-narrative{font-size:13px;color:var(--grey);margin-top:6px;line-height:1.5;max-width:600px}
     .risk-badge-lg{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:8px 18px;border-radius:8px;flex-shrink:0}
     .badge-critical{color:#FF4D6D;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3)}
@@ -251,7 +262,7 @@
       </div>
 
       <div style="background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:14px;padding:22px 26px;margin-bottom:24px;animation:fadeIn .3s ease">
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;margin-bottom:12px">Something's landed on your desk.</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f4f3ff;margin-bottom:12px">Something's landed on your desk.</div>
         <div style="font-size:13px;color:rgba(244,243,255,0.5);line-height:1.75">
           <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);padding:3px 8px;border-radius:3px;margin-right:8px">PACT + PROTOCOL</span>
           Two layers, always. The <strong style="color:rgba(244,243,255,0.8)">PACT diagnostic</strong> scans across Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation. The <strong style="color:rgba(244,243,255,0.8)">Unified Decision Protocol</strong> translates that scan into assessment, legal position, financial exposure, one clear recommendation, and the exact language to use in the room.
