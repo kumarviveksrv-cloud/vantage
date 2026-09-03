@@ -527,7 +527,18 @@ function showScoreReveal(){
   var badge=document.getElementById('rv-conf-badge');badge.className='conf-badge '+confLevel;badge.textContent=confLevel.charAt(0).toUpperCase()+confLevel.slice(1)+' confidence';
 
   var pillars=[{label:'L1',name:'Value Ledger',score:l1,weight:'25%'},{label:'L2',name:'Talent Premium',score:l2,weight:'15%'},{label:'L3',name:'Org Vitals',score:l3,weight:'30%'},{label:'L4',name:'Human P&L',score:l4,weight:'20%'},{label:'L5',name:'Balance Sheet',score:l5,weight:'10%'}];
-  document.getElementById('rv-pillars').innerHTML=pillars.map(function(p){return '<div class="pillar-row"><div class="pillar-name">'+p.label+' \u2014 '+p.name+'<span>'+p.weight+'</span></div><div class="pillar-bar-wrap"><div class="pillar-bar" style="width:'+p.score+'%"></div></div><div class="pillar-score">'+p.score+'</div></div>';}).join('');
+  var pillarFiles={L1:'pillar-l1.html',L2:'pillar-l2.html',L3:'pillar-l3.html',L4:'pillar-l4.html',L5:'pillar-l5.html'};
+  document.getElementById('rv-pillars').innerHTML=pillars.map(function(p){
+    var href=pillarFiles[p.label]||'#';
+    return '<a href="'+href+'" class="pillar-row" style="text-decoration:none;cursor:pointer;display:grid;grid-template-columns:80px 1fr 40px;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(99,102,241,.04);transition:background .15s;border-radius:6px;padding-left:6px;margin-left:-6px" onmouseover="this.style.background=\'rgba(99,102,241,.05)\'" onmouseout="this.style.background=\'transparent\'">'+
+      '<div class="pillar-name" style="display:flex;flex-direction:column">'+
+        '<span style="font-family:var(--mono);font-size:.78rem;color:var(--text-dim)">'+p.label+' \u2014 '+p.name+'</span>'+
+        '<span style="font-family:var(--mono);font-size:.62rem;color:rgba(99,102,241,.5);margin-top:2px">'+p.weight+' \xb7 Explore \u2192</span>'+
+      '</div>'+
+      '<div class="pillar-bar-wrap"><div class="pillar-bar" style="width:'+p.score+'%"></div></div>'+
+      '<div class="pillar-score">'+p.score+'</div>'+
+    '</a>';
+  }).join('');
 
   // Populate trajectory placeholder (empty string on baseline = invisible)
   var trajEl=document.getElementById('trajectory-placeholder');
