@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ARIA — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <!-- SR18: vantage-theme.css above is the canonical palette + typography
+       source. This page has no local :root block — it uses inline hex
+       values throughout, so theme.css adds the canonical tokens without
+       conflicting with anything. Cormorant Garamond applied to two
+       genuine headline moments only:
+         .aria-name — the "✦ ARIA" identity mark floating over the face
+         .ec-title  — "ARIA is ready." the empty-chat state headline
+       Everything else stays as-is: panel-title, intro-heading, and
+       chat bubble text all stay sans-serif. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
@@ -40,7 +50,7 @@
 
     /* Floating controls over face */
     .top-bar{position:absolute;top:0;left:0;right:0;z-index:10;padding:14px 22px 10px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(5,4,16,.9) 0%,transparent 100%)}
-    .aria-id .aria-name{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:#a5b4fc;letter-spacing:.04em}
+    .aria-id .aria-name{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#a5b4fc}
     .aria-id .aria-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.28);letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
     .pills{display:flex;gap:6px}
     .pill{padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:rgba(5,4,16,.8);color:rgba(255,255,255,.45);transition:all .2s}
@@ -55,7 +65,7 @@
     .slbl.thinking{color:#a5b4fc}
     .slbl.speaking{color:#6366f1}
 
-    /* Wave bars — now violet to match platform */
+    /* Wave bars */
     .wbars{display:none;justify-content:center;gap:3px;height:20px;margin-bottom:6px}
     .wb{width:3px;background:#7c3aed;border-radius:2px;animation:waveBar .5s ease-in-out infinite}
     .wb:nth-child(2){animation-delay:.1s}.wb:nth-child(3){animation-delay:.2s}.wb:nth-child(4){animation-delay:.3s}.wb:nth-child(5){animation-delay:.4s}
@@ -67,7 +77,6 @@
     .micb.listening{background:#7c3aed;animation:micActive 1s ease-in-out infinite}
     .micb.speaking{background:rgba(99,102,241,.15);border:2px solid #6366f1;animation:micPulse 2s ease-in-out infinite;cursor:default}
     .micb.thinking{background:rgba(165,180,252,.12);border:2px solid #a5b4fc;cursor:default}
-
     .mic-hint{font-size:10px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;text-align:center}
 
     /* Review transcript popup */
@@ -115,7 +124,7 @@
     .tyd span{width:5px;height:5px;border-radius:50%;background:#6366f1;animation:pulse .8s ease-in-out infinite}
     .tyd span:nth-child(2){animation-delay:.15s}.tyd span:nth-child(3){animation-delay:.3s}
     .empty-chat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
-    .ec-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:8px}
+    .ec-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#fff;margin-bottom:8px}
     .ec-sub{font-size:12px;color:rgba(255,255,255,.3);line-height:1.6}
     .text-wrap{padding:12px 14px;border-top:1px solid rgba(255,255,255,.05);flex-shrink:0}
     .review-toggle-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
@@ -157,7 +166,7 @@
       .face-area{flex:0 0 38vh;min-height:220px;max-height:320px;width:100%}
       .panel{width:100%;flex:1;min-height:0;border-left:none;border-top:1px solid rgba(99,102,241,.12)}
       .top-bar{padding:10px 14px 8px;flex-wrap:wrap;gap:6px}
-      .aria-id .aria-name{font-size:16px}
+      .aria-id .aria-name{font-size:20px}
       .aria-id .aria-sub{font-size:7px;display:none}
       .pills{gap:4px;order:3;width:100%;justify-content:center;margin-top:2px}
       .pill{padding:5px 10px;font-size:10px}
@@ -346,7 +355,7 @@
     if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; return; }
     var mr = sessionStorage.getItem('sr_meridian');
     var meridian = mr ? JSON.parse(mr) : {};
-    document.getElementById('mcv').innerText = (meridian.state||'Not set')+' · '+(meridian.industry||'Not set');
+    document.getElementById('mcv').innerText = (meridian.state||'Not set')+' \xb7 '+(meridian.industry||'Not set');
 
     // ── PHOTOREALISTIC FACE + MATRIX OVERLAY ────────────────
     function initFace() {
@@ -364,7 +373,7 @@
       resize();
       window.addEventListener('resize', resize);
 
-      var CHARS = 'ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ0123456789';
+      var CHARS = '\u30F6\u30F7\u30F8\u30F9\u30FA\u30FB\u30FC\u30FD\u30FE\u30FF\u30A1\u30A2\u30A3\u30A4\u30A5\u30A6\u30A7\u30A8\u30A9\u30AA\u30AB\u30AC\u30AD\u30AE\u30AF\u30B0\u30B1\u30B2\u30B3\u30B4\u30B5\u30B6\u30B7\u30B8\u30B9\u30BA\u30BB\u30BC\u30BD\u30BE\u30BF\u30C0\u30C1\u30C2\u30C3\u30C4\u30C5\u30C6\u30C7\u30C8\u30C9\u30CA\u30CB\u30CC\u30CD\u30CE\u30CF\u30D0\u30D1\u30D2\u30D3\u30D4\u30D5\u30D6\u30D7\u30D8\u30D9\u30DA\u30DB\u30DC\u30DD\u30DE\u30DF\u30E0\u30E1\u30E2\u30E3\u30E4\u30E5\u30E6\u30E7\u30E8\u30E9\u30EA\u30EB\u30EC\u30ED\u30EE\u30EF\u30F0\u30F1\u30F2\u30F3\u30F4\u30F5\u30F60123456789';
       var COL = 18;
       var cols, drops;
       function resetRain() {
@@ -409,7 +418,6 @@
         var speaking = ariaState === 'speaking';
         glowPhase += speaking ? 0.07 : 0.02;
 
-        // Indigo scan line
         scanY += speaking ? 0.8 : 0.4;
         if (scanY > H) scanY = 0;
         var scanAlpha = speaking ? 0.18 + Math.sin(glowPhase) * 0.06 : 0.08 + Math.sin(glowPhase) * 0.03;
@@ -420,7 +428,6 @@
         ctx.fillStyle = sg;
         ctx.fillRect(0, scanY - 3, W, 6);
 
-        // Violet scan line
         var scanY2 = (scanY + H * 0.4) % H;
         var sg2 = ctx.createLinearGradient(0, scanY2 - 2, 0, scanY2 + 2);
         sg2.addColorStop(0, 'rgba(124,58,237,0)');
@@ -429,7 +436,6 @@
         ctx.fillStyle = sg2;
         ctx.fillRect(0, scanY2 - 2, W, 4);
 
-        // Eye glow when speaking
         if (speaking) {
           var eyePulse = (Math.sin(glowPhase * 3) + 1) * 0.5;
           var eyeAlpha = 0.2 + eyePulse * 0.3;
@@ -446,7 +452,6 @@
           ctx.restore();
         }
 
-        // Speaking aura glow at center
         if (speaking) {
           var auraAlpha = 0.06 + Math.sin(glowPhase * 2) * 0.04;
           var ag = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W, H) * 0.45);
@@ -457,7 +462,6 @@
           ctx.fillRect(0, 0, W, H);
         }
 
-        // Corner brackets
         var b = 8 * s, bsz = 16 * s;
         ctx.strokeStyle = teal(0.5); ctx.lineWidth = 1.5 * s;
         ctx.shadowBlur = 0;
@@ -466,7 +470,6 @@
           ctx.beginPath(); ctx.moveTo(c[0], c[1]); ctx.lineTo(c[2], c[3]); ctx.lineTo(c[4], c[5]); ctx.stroke();
         });
 
-        // HUD labels
         ctx.fillStyle = teal(0.4); ctx.font = (7 * s) + 'px monospace';
         ctx.fillText('ARIA.v2', b + 2, b - 1 * s);
         ctx.fillText('ONLINE', W - b - 40 * s, b - 1 * s);
@@ -513,7 +516,6 @@
 
     function setState(s) {
       ariaState=s;
-      // All states now within the indigo/violet palette
       var colors={idle:[99,102,241],listening:[124,58,237],thinking:[165,180,252],speaking:[196,181,253]};
       var c=colors[s]||colors.idle;
       if(window._ariaSetColor)window._ariaSetColor(c[0],c[1],c[2]);
@@ -523,7 +525,7 @@
       document.getElementById('wb').style.display=s==='listening'?'flex':'none';
       var mb=document.getElementById('micb');
       mb.className='micb'+(s!=='idle'?' '+s:'');
-      mb.innerText=s==='listening'?'⏹':s==='thinking'?'💭':s==='speaking'?'🔊':'🎤';
+      mb.innerText=s==='listening'?'\u23F9':s==='thinking'?'\uD83D\uDCAD':s==='speaking'?'\uD83D\uDD0A':'\uD83C\uDFA4';
     }
 
     window.showTab = function(el,tab) {
@@ -688,7 +690,7 @@
 
     window.toggleReviewMode=function(on){
       reviewMode=on;
-      document.getElementById('mic-hint').innerText=on?'Tap to speak · review before sending':'Tap to speak · 5s silence auto-sends';
+      document.getElementById('mic-hint').innerText=on?'Tap to speak \xb7 review before sending':'Tap to speak \xb7 5s silence auto-sends';
     };
 
     window.handleMic=function(){
@@ -728,7 +730,7 @@
       if(!sessions.length){el.innerHTML='<div class="hist-empty">No saved sessions yet.<br>End a session to save it.</div>';return;}
       el.innerHTML=sessions.map(function(s,i){
         var d=new Date(s.timestamp);
-        var time=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})+' · '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+        var time=d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})+' \xb7 '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
         return '<div class="hist-item" onclick="loadSession('+i+')"><div class="hist-mode">'+s.modeLabel+'</div><div class="hist-time">'+time+'</div><div class="hist-preview">'+s.preview+'...</div><div class="hist-count">'+(s.messages.length)+' messages</div></div>';
       }).join('');
     }
@@ -741,7 +743,7 @@
       savedCurrentChat={hist:hist.slice(),mode:curMode};
       var modes={case_partner:'Case Partner',conversation_coach:'Conversation Coach',reflection:'Reflection'};
       document.getElementById('panel-title').innerText=(modes[s.mode]||s.mode)+' (History)';
-      document.getElementById('messages').innerHTML='<div style="text-align:center;padding:8px"><button onclick="returnToCurrent()" style="padding:7px 16px;background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.3);border-radius:7px;cursor:pointer;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.06em">← Back to current session</button></div>';
+      document.getElementById('messages').innerHTML='<div style="text-align:center;padding:8px"><button onclick="returnToCurrent()" style="padding:7px 16px;background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.3);border-radius:7px;cursor:pointer;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.06em">\u2190 Back to current session</button></div>';
       s.messages.forEach(function(m){addMsg(m.role==='user'?'user':'aria',m.content,false);});
       document.querySelectorAll('.ptab').forEach(function(t){t.classList.remove('active');});
       document.querySelectorAll('.ptab')[0].classList.add('active');
