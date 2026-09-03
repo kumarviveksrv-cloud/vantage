@@ -1,0 +1,235 @@
+/* ═══════════════════════════════════════════════════════════
+   VANTAGE THEME — CANONICAL STYLESHEET
+   Single source of truth for color tokens, typography, the
+   sidebar (System A / nav-item), and global scrollbar styling.
+
+   Every Vantage page should link this file:
+   <link rel="stylesheet" href="vantage-theme.css">
+
+   DO NOT duplicate these rules locally in a page's own <style>
+   block. If a page needs its own local :root, only declare
+   page-specific variables there (never redeclare --bg, --card,
+   --teal, --white, --font-display, etc — this file owns those).
+
+   Migration note (SR17): dashboard.html and humac-onboarding.html
+   are the first two pages migrated to this file. Remaining Vantage
+   pages (er-case-navigator.html, aria.html, case-library.html,
+   hr-data-storyteller.html, stakeholder-influence.html,
+   policy-compass.html, conversation-simulator.html, debrief.html,
+   onboarding.html, data-dashboard.html, terms.html, privacy.html,
+   pricing.html) still carry their own embedded copies and should
+   be migrated to this file one at a time, verifying each before
+   upload.
+
+   Typography decision (SR17): headline font moved from Bricolage
+   Grotesque to Cormorant Garamond, matching Virorah PMS's editorial/
+   premium identity. This was a deliberate identity choice, not a bug
+   fix — see SR17 session notes if reversing this decision later.
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ── COLOR TOKENS ─────────────────────────────────────── */
+  --bg: #050410;
+  --bg2: #0d0b1e;
+  --bg3: #11102a;
+  --card: #0d0b1e;
+  --card2: #11102a;
+
+  --teal: #6366f1;
+  --cobalt: #6366f1;
+  --teal-dim: rgba(99,102,241,0.10);
+  --cobalt-dim: rgba(99,102,241,.15);
+  --teal-border: rgba(99,102,241,0.20);
+  --cobalt-border: rgba(99,102,241,.18);
+
+  --violet: #7c3aed;
+  --purple: #7c3aed;
+
+  --white: #f4f3ff;
+  --text: #f4f3ff;
+  --text-mid: #a5b4fc;
+  --muted: #a5b4fc;
+  --lavender: #c4b5fd;
+
+  --grey: rgba(244,243,255,0.45);
+  --text-dim: rgba(244,243,255,0.45);
+  --grey-dim: rgba(244,243,255,0.2);
+
+  --border: rgba(99,102,241,0.12);
+  --red: #FF4D6D;
+  --amber: #FFB547;
+
+  --sidebar: 220px;
+
+  /* ── TYPOGRAPHY ───────────────────────────────────────── */
+  --font: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --font-mono: 'JetBrains Mono', monospace;
+  --display: 'Cormorant Garamond', serif;
+  --font-display: 'Cormorant Garamond', serif;
+  --stat: 'Space Grotesk', sans-serif;
+  --font-stat: 'Space Grotesk', sans-serif;
+}
+
+/* ── GLOBAL SCROLLBAR ───────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6366f1, #7c3aed);
+  border-radius: 2px;
+}
+
+/* ── SIDEBAR (SYSTEM A / nav-item) ──────────────────────── */
+.sidebar {
+  width: var(--sidebar);
+  flex-shrink: 0;
+  background: rgba(5,4,16,0.98);
+  border-right: 1px solid rgba(99,102,241,0.18);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 12px;
+  height: 100vh;
+  overflow-y: auto;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+  margin-bottom: 28px;
+  cursor: pointer;
+}
+.logo-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 10px rgba(99,102,241,0.6);
+  animation: pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
+.logo-name {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -.01em;
+}
+.logo-name span { color: var(--muted); }
+.logo-sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(165,180,252,0.6);
+  margin-top: 2px;
+}
+.nav-section {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(99,102,241,0.75);
+  padding: 4px 10px;
+  margin: 16px 0 6px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .2s;
+  border: 1px solid transparent;
+  text-decoration: none;
+  color: rgba(244,243,255,0.70);
+  font-size: 13px;
+  font-family: var(--font-body);
+  font-weight: 400;
+  margin-bottom: 2px;
+}
+.nav-item:hover {
+  background: rgba(99,102,241,0.08);
+  color: var(--white);
+  border-color: rgba(99,102,241,0.15);
+}
+.nav-item.active {
+  background: rgba(99,102,241,0.12);
+  border-color: rgba(99,102,241,0.30);
+  color: #c4b5fd;
+  font-weight: 500;
+}
+.nav-item .icon { font-size: 16px; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  background: var(--red);
+  color: #fff;
+  border-radius: 10px;
+  padding: 1px 6px;
+}
+
+/* ── MERIDIAN CHIP ───────────────────────────────────────── */
+.meridian-chip {
+  margin-top: auto;
+  padding: 16px 16px;
+  border-radius: 12px;
+  background: rgba(99,102,241,0.08);
+  border: 1px solid rgba(99,102,241,0.20);
+  transition: all .3s;
+  cursor: default;
+}
+.meridian-chip.incomplete {
+  background: rgba(99,102,241,0.12);
+  border-color: rgba(99,102,241,0.5);
+  animation: meridianGlow 2.5s ease-in-out infinite;
+  cursor: pointer;
+}
+.meridian-chip.incomplete:hover {
+  background: rgba(99,102,241,0.18);
+  transform: translateY(-1px);
+}
+@keyframes meridianGlow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); border-color: rgba(99,102,241,0.4); }
+  50% { box-shadow: 0 0 16px 4px rgba(99,102,241,0.25), 0 0 0 1px rgba(99,102,241,0.6); border-color: rgba(99,102,241,0.8); }
+}
+.meridian-chip .m-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.meridian-chip .label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.meridian-chip .m-badge {
+  font-family: var(--mono);
+  font-size: 8px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: rgba(239,68,68,0.15);
+  color: rgba(239,68,68,0.8);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.meridian-chip .m-badge.complete { background: rgba(34,197,94,0.12); color: rgba(34,197,94,0.7); }
+.meridian-chip .val { font-size: 12px; color: var(--grey); line-height: 1.4; }
+.meridian-chip .m-cta {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #a5b4fc;
+  text-decoration: none;
+}
+.meridian-chip .m-cta:hover { color: #f4f3ff; }
+
+@media(max-width:768px){
+  .sidebar{ display:none; }
+}
