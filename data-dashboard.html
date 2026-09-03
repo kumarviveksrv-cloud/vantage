@@ -3,8 +3,19 @@
 <head> 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data & Privacy — Virorah Vantage</title>
+  <title>Data &amp; Privacy — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <!-- SR18: vantage-theme.css above is the canonical palette + typography
+       source. No local :root block — page uses inline hex values
+       throughout, so theme.css adds tokens without conflict. Cormorant
+       Garamond applied to two headline moments only:
+         .page-title — "🔒 Data & Privacy"
+         .trust-title — "Your data stays yours. Always."
+       All .section-title card headers stay Bricolage — they are
+       dense functional section headers, not editorial headlines.
+       BONUS FIX: BASE URL corrected from old GitHub Pages URL to
+       vantage.virorah.com. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
@@ -30,11 +41,11 @@
     .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:.06em;margin-bottom:8px}
     .breadcrumb a{color:rgba(255,255,255,0.3);text-decoration:none}
     .breadcrumb a:hover{color:#6366f1}
-    .page-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:700;margin-bottom:4px}
+    .page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;margin-bottom:4px}
     .page-sub{font-size:13px;color:rgba(244,243,255,0.55)}
     .trust-banner{background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.2);border-radius:14px;padding:22px 26px;margin-bottom:28px;display:flex;gap:16px;align-items:flex-start;animation:fadeIn .3s ease}
     .trust-icon{font-size:28px;flex-shrink:0}
-    .trust-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px;color:#fff}
+    .trust-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:6px;color:#fff}
     .trust-text{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6}
     .data-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;animation:fadeIn .3s ease .1s both}
     .data-stat{background:#0d0b1e;border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:18px 20px}
@@ -150,7 +161,7 @@
       <span class="icon">↩</span> Sign out
     </a>
 
-<div class="meridian-chip">
+    <div class="meridian-chip">
       <div class="label">MERIDIAN Active</div>
       <div class="val" id="meridian-chip-val">Loading...</div>
     </div>
@@ -158,13 +169,13 @@
 
   <div class="main">
     <div class="page-header">
-      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> · Data & Privacy</div>
-      <div class="page-title">🔒 Data & Privacy</div>
+      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Data &amp; Privacy</div>
+      <div class="page-title">&#x1F512; Data &amp; Privacy</div>
       <div class="page-sub">Everything the Vantage holds about you. Full transparency. Full control.</div>
     </div>
 
     <div class="trust-banner">
-      <div class="trust-icon">🛡️</div>
+      <div class="trust-icon">&#x1F6E1;&#xFE0F;</div>
       <div>
         <div class="trust-title">Your data stays yours. Always.</div>
         <div class="trust-text">Every case narrative is anonymised before processing — names, companies, and locations are stripped before any AI sees your data. Your professional record is stored in your personal Airtable workspace. You can export or delete everything instantly, at any time, for any reason.</div>
@@ -174,60 +185,60 @@
     <div class="data-stats">
       <div class="data-stat">
         <div class="data-stat-label">Cases stored</div>
-        <div class="data-stat-value" id="stat-cases">—</div>
+        <div class="data-stat-value" id="stat-cases">&#8212;</div>
         <div class="data-stat-sub">In your Case Library</div>
       </div>
       <div class="data-stat">
         <div class="data-stat-label">Debriefs generated</div>
-        <div class="data-stat-value" id="stat-debriefs">—</div>
+        <div class="data-stat-value" id="stat-debriefs">&#8212;</div>
         <div class="data-stat-sub">Monthly reflections</div>
       </div>
       <div class="data-stat">
         <div class="data-stat-label">Your user ID</div>
-        <div class="data-stat-value" style="font-size:12px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.4);margin-top:4px" id="stat-userid">—</div>
+        <div class="data-stat-value" style="font-size:12px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.4);margin-top:4px" id="stat-userid">&#8212;</div>
         <div class="data-stat-sub">Permanent identifier</div>
       </div>
     </div>
 
     <div class="section">
       <div class="section-header">
-        <div class="section-title"><span class="section-title-icon">🔐</span> How Your Data Is Protected</div>
+        <div class="section-title"><span class="section-title-icon">&#x1F510;</span> How Your Data Is Protected</div>
       </div>
       <div class="section-text">Every time you describe a situation in the ER Case Navigator, this is what happens before any AI processing:</div>
       <div class="anon-log">
-        <div class="anon-item"><span class="anon-check">✓</span> All person names replaced with Role A, Role B, Role C</div>
-        <div class="anon-item"><span class="anon-check">✓</span> Company names replaced with Company X</div>
-        <div class="anon-item"><span class="anon-check">✓</span> Specific locations replaced with Location Y</div>
-        <div class="anon-item"><span class="anon-check">✓</span> Anonymised text sent to Claude API — Anthropic never receives identifiable information</div>
-        <div class="anon-item"><span class="anon-check">✓</span> Original narrative stored only in your personal Airtable record</div>
-        <div class="anon-item"><span class="anon-check">✓</span> No data shared with third parties. Ever.</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> All person names replaced with Role A, Role B, Role C</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Company names replaced with Company X</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Specific locations replaced with Location Y</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Anonymised text sent to Claude API — Anthropic never receives identifiable information</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Original narrative stored only in your personal Airtable record</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> No data shared with third parties. Ever.</div>
       </div>
     </div>
 
     <div class="section">
       <div class="section-header">
-        <div class="section-title"><span class="section-title-icon">🧭</span> Your MERIDIAN Profile</div>
+        <div class="section-title"><span class="section-title-icon">&#x1F9ED;</span> Your MERIDIAN Profile</div>
         <a href="onboarding.html" class="action-btn btn-ghost" style="font-size:12px;padding:8px 16px">Edit Profile</a>
       </div>
       <div class="section-text">This is what the Vantage knows about your professional context. It calibrates every tool output to your specific reality.</div>
       <div class="profile-grid" id="profile-grid">
-        <div class="profile-field"><div class="profile-field-label">State</div><div class="profile-field-value" id="p-state">—</div></div>
-        <div class="profile-field"><div class="profile-field-label">Industry</div><div class="profile-field-value" id="p-industry">—</div></div>
-        <div class="profile-field"><div class="profile-field-label">Organisation Type</div><div class="profile-field-value" id="p-org-type">—</div></div>
-        <div class="profile-field"><div class="profile-field-label">Organisation Size</div><div class="profile-field-value" id="p-org-size">—</div></div>
-        <div class="profile-field"><div class="profile-field-label">Seniority Level</div><div class="profile-field-value" id="p-seniority">—</div></div>
-        <div class="profile-field"><div class="profile-field-label">HR Function</div><div class="profile-field-value" id="p-function">—</div></div>
+        <div class="profile-field"><div class="profile-field-label">State</div><div class="profile-field-value" id="p-state">&#8212;</div></div>
+        <div class="profile-field"><div class="profile-field-label">Industry</div><div class="profile-field-value" id="p-industry">&#8212;</div></div>
+        <div class="profile-field"><div class="profile-field-label">Organisation Type</div><div class="profile-field-value" id="p-org-type">&#8212;</div></div>
+        <div class="profile-field"><div class="profile-field-label">Organisation Size</div><div class="profile-field-value" id="p-org-size">&#8212;</div></div>
+        <div class="profile-field"><div class="profile-field-label">Seniority Level</div><div class="profile-field-value" id="p-seniority">&#8212;</div></div>
+        <div class="profile-field"><div class="profile-field-label">HR Function</div><div class="profile-field-value" id="p-function">&#8212;</div></div>
       </div>
     </div>
 
     <div class="section">
       <div class="section-header">
-        <div class="section-title"><span class="section-title-icon">📦</span> Export Your Data</div>
+        <div class="section-title"><span class="section-title-icon">&#x1F4E6;</span> Export Your Data</div>
       </div>
       <div class="section-text">Download everything the Vantage holds about you — your MERIDIAN profile, all cases, all Debriefs. Your professional record, portable forever. No lock-in.</div>
       <div class="btn-row">
         <button class="action-btn btn-teal" id="export-btn" onclick="exportData()">
-          <span>↓</span> Export All My Data
+          <span>&#x2193;</span> Export All My Data
         </button>
       </div>
       <div class="status-msg" id="export-status"></div>
@@ -235,7 +246,7 @@
 
     <div class="section" style="border-color:rgba(255,77,109,0.15)">
       <div class="section-header">
-        <div class="section-title"><span class="section-title-icon">🗑️</span> Delete All My Data</div>
+        <div class="section-title"><span class="section-title-icon">&#x1F5D1;&#xFE0F;</span> Delete All My Data</div>
       </div>
       <div class="section-text">Permanently delete everything — your cases, MERIDIAN profile, and Debriefs. This cannot be undone. Your user ID in localStorage will also be cleared.</div>
       <div class="btn-row">
@@ -248,20 +259,20 @@
 
     <div class="section">
       <div class="section-header">
-        <div class="section-title"><span class="section-title-icon">⚖️</span> Legal & Compliance</div>
+        <div class="section-title"><span class="section-title-icon">&#x2696;&#xFE0F;</span> Legal &amp; Compliance</div>
       </div>
       <div class="section-text">The Virorah Vantage complies with India's Digital Personal Data Protection Act 2023 (DPDP Act). Key rights:</div>
       <div class="anon-log">
-        <div class="anon-item"><span class="anon-check">✓</span> Right to access your data — view all data held about you on this page</div>
-        <div class="anon-item"><span class="anon-check">✓</span> Right to correction — update your MERIDIAN profile anytime via Edit Profile</div>
-        <div class="anon-item"><span class="anon-check">✓</span> Right to erasure — delete all data instantly using the button above</div>
-        <div class="anon-item"><span class="anon-check">✓</span> Right to portability — export all your data in JSON format anytime</div>
-        <div class="anon-item"><span class="anon-check">✓</span> Data minimisation — only what you explicitly provide is stored</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to access your data — view all data held about you on this page</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to correction — update your MERIDIAN profile anytime via Edit Profile</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to erasure — delete all data instantly using the button above</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to portability — export all your data in JSON format anytime</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Data minimisation — only what you explicitly provide is stored</div>
       </div>
     </div>
 
     <div class="disclaimer">
-      Virorah Private Limited · Gurgaon, India · Data stored in Airtable (US servers) with your explicit consent<br>
+      Virorah Private Limited &middot; Gurgaon, India &middot; Data stored in Airtable (US servers) with your explicit consent<br>
       Questions: <a href="mailto:info@virorah.com" style="color:rgba(99,102,241,0.5);text-decoration:none">info@virorah.com</a>
     </div>
 
@@ -269,7 +280,7 @@
 
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal">
-      <div class="modal-icon">⚠️</div>
+      <div class="modal-icon">&#x26A0;&#xFE0F;</div>
       <div class="modal-title">Delete everything permanently?</div>
       <div class="modal-text">This will permanently delete all your cases, MERIDIAN profile, and Debriefs from Airtable. Your local session will also be cleared. This cannot be undone.</div>
       <div class="modal-btns">
@@ -281,7 +292,7 @@
 
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
-    var BASE = 'https://kumarviveksrv-cloud.github.io/vantage/';
+    var BASE = 'https://vantage.virorah.com/';
 
     if (sessionStorage.getItem('sr_access') !== 'true') {
       window.location.href = BASE + 'access.html';
@@ -290,7 +301,7 @@
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
     document.getElementById('meridian-chip-val').innerText =
-      (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
+      (meridian.state || 'Not set') + ' \xb7 ' + (meridian.industry || 'Not set');
 
     function getUserId() {
       var uid = localStorage.getItem('sr_user_id');
@@ -307,12 +318,12 @@
       document.getElementById('stat-userid').innerText = shortId;
 
       if (meridian.state) {
-        document.getElementById('p-state').innerText = meridian.state || '—';
-        document.getElementById('p-industry').innerText = meridian.industry || '—';
-        document.getElementById('p-org-type').innerText = meridian.org_type || '—';
-        document.getElementById('p-org-size').innerText = meridian.org_size || '—';
-        document.getElementById('p-seniority').innerText = meridian.seniority || '—';
-        document.getElementById('p-function').innerText = meridian.function || '—';
+        document.getElementById('p-state').innerText = meridian.state || '\u2014';
+        document.getElementById('p-industry').innerText = meridian.industry || '\u2014';
+        document.getElementById('p-org-type').innerText = meridian.org_type || '\u2014';
+        document.getElementById('p-org-size').innerText = meridian.org_size || '\u2014';
+        document.getElementById('p-seniority').innerText = meridian.seniority || '\u2014';
+        document.getElementById('p-function').innerText = meridian.function || '\u2014';
       }
 
       fetch(WORKER, {
@@ -322,7 +333,7 @@
       }).then(function(r){ return r.json(); })
         .then(function(d){
           document.getElementById('stat-cases').innerText = d.success ? d.data.length : '0';
-        }).catch(function(){ document.getElementById('stat-cases').innerText = '—'; });
+        }).catch(function(){ document.getElementById('stat-cases').innerText = '\u2014'; });
 
       fetch(WORKER, {
         method: 'POST',
@@ -331,7 +342,7 @@
       }).then(function(r){ return r.json(); })
         .then(function(d){
           document.getElementById('stat-debriefs').innerText = d.success && d.data.exists ? '1+' : '0';
-        }).catch(function(){ document.getElementById('stat-debriefs').innerText = '—'; });
+        }).catch(function(){ document.getElementById('stat-debriefs').innerText = '\u2014'; });
     }
 
     function showStatus(id, msg, type) {
@@ -364,7 +375,7 @@
           a.download = 'virorah-situation-room-data-' + new Date().toISOString().split('T')[0] + '.json';
           a.click();
           URL.revokeObjectURL(url);
-          showStatus('export-status', '✓ Export downloaded successfully. Your data is yours.', 'success');
+          showStatus('export-status', '\u2713 Export downloaded successfully. Your data is yours.', 'success');
         } else {
           showStatus('export-status', 'Export failed. Please try again.', 'error');
         }
@@ -372,7 +383,7 @@
         showStatus('export-status', 'Connection error: ' + err.message, 'error');
       }
       btn.disabled = false;
-      btn.innerHTML = '<span>↓</span> Export All My Data';
+      btn.innerHTML = '<span>\u2193</span> Export All My Data';
     }
 
     function confirmDelete() {
@@ -401,7 +412,7 @@
           sessionStorage.removeItem('sr_onboarded');
           document.getElementById('stat-cases').innerText = '0';
           document.getElementById('stat-debriefs').innerText = '0';
-          showStatus('delete-status', '✓ All data deleted permanently. ' + (data.data.totalDeleted || 0) + ' records removed.', 'success');
+          showStatus('delete-status', '\u2713 All data deleted permanently. ' + (data.data.totalDeleted || 0) + ' records removed.', 'success');
           btn.innerText = 'Deleted';
           setTimeout(function(){
             sessionStorage.clear();
