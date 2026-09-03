@@ -7,11 +7,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&family=Bricolage+Grotesque:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="vantage-theme.css"/>
 <style>
-/* SR17: local :root trimmed to page-specific-only values.
-   All palette + typography tokens now come from vantage-theme.css.
-   Do not re-add --cobalt/--bg/--text/etc here — edit the theme
-   file instead, or this page drifts from the rest of Vantage
-   again exactly like it did in SR15/SR16. */
+/* SR18: local :root RESTORED as a fallback (SR17 had stripped it —
+   too risky: if vantage-theme.css fails to load for any reason, a
+   page with zero local tokens renders completely unstyled). Values
+   below are identical to vantage-theme.css's canonical set, so the
+   theme file's rules simply take precedence when it loads correctly.
+   Edit vantage-theme.css for platform-wide changes; only touch the
+   block below if this page needs a genuine one-off override. */
+:root{
+  --bg:#050410;--bg2:#0d0b1e;--bg3:#11102a;
+  --cobalt:#6366f1;--cobalt-dim:rgba(99,102,241,.15);--cobalt-border:rgba(99,102,241,.18);
+  --violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;
+  --text:#f4f3ff;--text-mid:#a5b4fc;--text-dim:rgba(244,243,255,.45);
+  --border:rgba(99,102,241,.15);--red:#E05C3A;
+  --font:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --display:'Cormorant Garamond',serif;
+  --stat:'Space Grotesk',sans-serif;
+  --sidebar:220px;
+}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
 
