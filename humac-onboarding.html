@@ -333,13 +333,13 @@ var BLOCKS=[
    desc:'Leading indicators of organisational health \u2014 and current conditions affecting your score.',
    formula:'<b>L3 is observational by design.</b> Professional judgment is the intended instrument for most signals \u2014 not a weaker substitute for data.<br><br>Three signals that benefit from data validation:<br>&bull; Projects completed on time &gt;60%: pull from Jira, Asana, or equivalent<br>&bull; Documented performance conversations: pull from HRIS/performance logs<br><br>All other signals: answer from your direct knowledge of the organisation.',
    questions:[
-     {id:'q7',type:'yn',text:'Is leadership stable, present, and actively engaged right now?',hci:true},
-     {id:'q8',type:'yn',text:'Is the organisation free from major disruption, restructure, or layoffs?',hci:true},
-     {id:'q9',type:'yn',text:'Is the culture broadly functional and not in crisis?',hci:true},
-     {id:'q10',type:'yn',text:'Is the organisation executing well against its strategic priorities?',hci:true},
+     {id:'q7',type:'yn',text:'Is your leadership team stable and operating without major gaps right now?',sub:'Answer No if there are recent or imminent C-suite exits, significant role vacancies, or active conflicts disrupting decision-making. If the team is roughly the same as 6 months ago and functioning, answer Yes.',hci:true},
+     {id:'q8',type:'yn',text:'Is the organisation operating without major structural disruption right now?',sub:'Active layoffs, a live restructure, an ongoing M&A process, or a significant leadership transition all count as disruption. If any of these are happening right now, answer No.',hci:true},
+     {id:'q9',type:'yn',text:'Is your organisation free from a significant culture or morale crisis right now?',sub:'Answer No if you are seeing mass exits concentrated in one function, an active harassment or grievance investigation with widespread impact, severe and visible disengagement, or public employer-brand damage. Isolated issues do not count.',hci:true},
+     {id:'q10',type:'yn',text:'Are this year\'s strategic priorities broadly on track to be delivered?',sub:'If more than half of your key annual initiatives are behind schedule, have been quietly deprioritised, or have lost leadership sponsorship, answer No.',hci:true},
      {id:'q11',type:'yn',text:'Do managers have regular structured 1:1s with their direct reports?'},
      {id:'q12',type:'yn',text:'Can frontline employees describe what a major leadership decision means for their work within one week?'},
-     {id:'q13',type:'yn',text:'Does HR proactively surface people risks to leadership \u2014 not just report metrics?'},
+     {id:'q13',type:'yn',text:'Does HR flag people risks to leadership before they become incidents?',sub:'Proactive means: raising a flight risk before the resignation lands, flagging a team morale problem before attrition spikes, or surfacing a manager issue before it reaches an ER case. If HR primarily responds after problems surface, answer No.'},
      {id:'q14',type:'yn',text:'Are projects completed on time at a rate above 60%?'}
    ]
   },
