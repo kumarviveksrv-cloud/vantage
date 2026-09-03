@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pricing — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <!-- SR18: vantage-theme.css is the canonical palette + typography
+       source. No local :root block on this page. Cormorant Garamond
+       applied to two editorial hero headlines only:
+         .hero-title — "Intelligence that compounds. Priced for what it's worth."
+         .cs-title   — "The value compounds. Every month."
+       .pc-name (Core / Consultant tier names), .faq-title ("Common
+       questions"), and .cc-title (compound card headers) all stay
+       Bricolage — they are dense product/UI chrome, not editorial
+       headlines. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif}
@@ -33,7 +43,7 @@
     /* HERO */
     .hero{text-align:center;margin-bottom:56px}
     .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(99,102,241,.65);margin-bottom:16px}
-    .hero-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;color:#f4f3ff;line-height:1.15;margin-bottom:16px}
+    .hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3.4rem);font-weight:600;color:#f4f3ff;line-height:1.15;margin-bottom:16px}
     .hero-sub{font-size:.95rem;color:rgba(244,243,255,.42);line-height:1.75;max-width:520px;margin:0 auto}
 
     /* BILLING NOTICE */
@@ -81,7 +91,7 @@
     /* COMPOUNDING VALUE */
     .compound-section{margin-bottom:56px}
     .cs-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(99,102,241,.55);margin-bottom:12px;text-align:center}
-    .cs-title{font-family:'Bricolage Grotesque',sans-serif;font-size:1.5rem;font-weight:700;color:#f4f3ff;text-align:center;margin-bottom:12px;line-height:1.3}
+    .cs-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;color:#f4f3ff;text-align:center;margin-bottom:12px;line-height:1.3}
     .cs-sub{font-size:.88rem;color:rgba(244,243,255,.4);text-align:center;line-height:1.75;max-width:560px;margin:0 auto 32px}
 
     .compound-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
@@ -141,7 +151,7 @@
     <a href="#" class="nav-item" onclick="clerkSignOut(); return false;"><span class="nav-icon">↩</span>Sign out</a>
     <div class="meridian-chip">
       <div class="ml">MERIDIAN Active</div>
-      <div class="mv" id="mcv">—</div>
+      <div class="mv" id="mcv">&#8212;</div>
     </div>
   </div>
 
@@ -150,12 +160,12 @@
 
       <!-- HERO -->
       <div class="hero">
-        <div class="hero-eyebrow">Virorah Vantage · Pricing</div>
+        <div class="hero-eyebrow">Virorah Vantage &middot; Pricing</div>
         <h1 class="hero-title">Intelligence that compounds.<br>Priced for what it's worth.</h1>
         <p class="hero-sub">The data you build in Vantage doesn't reset. Your MERIDIAN profile, your case history, your Humac trajectory — they grow every month. The longer you use it, the more it knows.</p>
         <div class="billing-notice">
-          <span>◈</span>
-          <span>Monthly billing only · No annual lock-in · Cancel anytime</span>
+          <span>&#x25C8;</span>
+          <span>Monthly billing only &middot; No annual lock-in &middot; Cancel anytime</span>
         </div>
       </div>
 
@@ -168,24 +178,24 @@
           <div class="pc-name">Core</div>
           <div class="pc-desc">The full Vantage intelligence suite for HR professionals working within a single organisation.</div>
           <div class="pc-price-wrap">
-            <div class="pc-price"><sup>₹</sup>699</div>
+            <div class="pc-price"><sup>&#x20B9;</sup>699</div>
           </div>
           <div class="pc-price-mo">per month</div>
-          <div class="pc-daily">₹23 per day · less than a coffee</div>
-          <a href="access.html" class="pc-cta secondary">Get started →</a>
+          <div class="pc-daily">&#x20B9;23 per day &middot; less than a coffee</div>
+          <a href="access.html" class="pc-cta secondary">Get started &rarr;</a>
           <div class="pc-divider"></div>
           <div class="pc-features-label">What's included</div>
           <ul class="pc-features">
-            <li class="pc-feature"><span class="pf-check">✦</span><span class="pf-label">ER Case Navigator — PACT diagnostic and 7-section Decision Protocol</span></li>
-            <li class="pc-feature"><span class="pf-check">✦</span><span class="pf-label">Stakeholder Influence Engine — 5-layer INFLUENCE Stack with Revenue at Risk</span></li>
-            <li class="pc-feature"><span class="pf-check">✦</span><span class="pf-label">HR Data Storyteller — SIGNAL framework with Boardroom, CFO, and CEO narratives</span></li>
-            <li class="pc-feature"><span class="pf-check">✦</span><span class="pf-label">Conversation Simulator — practice at Standard and Challenging difficulty with debrief</span></li>
-            <li class="pc-feature"><span class="pf-check">✦</span><span class="pf-label">Policy Compass — BNS / BNSS / BSA · state-specific · POSH · labour law</span></li>
-            <li class="pc-feature"><span class="pf-check">✦</span><span class="pf-label">ARIA — Case Partner, Conversation Coach, Reflection</span></li>
-            <li class="pc-feature"><span class="pf-check">✦</span><span class="pf-label">MERIDIAN Profile — single organisation, 7-parameter calibration</span></li>
-            <li class="pc-feature"><span class="pf-check">✦</span><span class="pf-label">Humac Score + Trajectory Index</span></li>
-            <li class="pc-feature"><span class="pf-check">✦</span><span class="pf-label">Case Library — full history, all cases</span></li>
-            <li class="pc-feature"><span class="pf-check">✦</span><span class="pf-label">The Monthly Debrief — your intelligence brief, last working day of the month</span></li>
+            <li class="pc-feature"><span class="pf-check">&#x2736;</span><span class="pf-label">ER Case Navigator — PACT diagnostic and 7-section Decision Protocol</span></li>
+            <li class="pc-feature"><span class="pf-check">&#x2736;</span><span class="pf-label">Stakeholder Influence Engine — 5-layer INFLUENCE Stack with Revenue at Risk</span></li>
+            <li class="pc-feature"><span class="pf-check">&#x2736;</span><span class="pf-label">HR Data Storyteller — SIGNAL framework with Boardroom, CFO, and CEO narratives</span></li>
+            <li class="pc-feature"><span class="pf-check">&#x2736;</span><span class="pf-label">Conversation Simulator — practice at Standard and Challenging difficulty with debrief</span></li>
+            <li class="pc-feature"><span class="pf-check">&#x2736;</span><span class="pf-label">Policy Compass — BNS / BNSS / BSA &middot; state-specific &middot; POSH &middot; labour law</span></li>
+            <li class="pc-feature"><span class="pf-check">&#x2736;</span><span class="pf-label">ARIA — Case Partner, Conversation Coach, Reflection</span></li>
+            <li class="pc-feature"><span class="pf-check">&#x2736;</span><span class="pf-label">MERIDIAN Profile — single organisation, 7-parameter calibration</span></li>
+            <li class="pc-feature"><span class="pf-check">&#x2736;</span><span class="pf-label">Humac Score + Trajectory Index</span></li>
+            <li class="pc-feature"><span class="pf-check">&#x2736;</span><span class="pf-label">Case Library — full history, all cases</span></li>
+            <li class="pc-feature"><span class="pf-check">&#x2736;</span><span class="pf-label">The Monthly Debrief — your intelligence brief, last working day of the month</span></li>
           </ul>
         </div>
 
@@ -196,20 +206,20 @@
           <div class="pc-name">Consultant</div>
           <div class="pc-desc">Everything in Core, built for HR professionals who serve multiple clients and need separate intelligence per engagement.</div>
           <div class="pc-price-wrap">
-            <div class="pc-price"><sup>₹</sup>1,499</div>
+            <div class="pc-price"><sup>&#x20B9;</sup>1,499</div>
           </div>
           <div class="pc-price-mo">per month</div>
-          <div class="pc-daily">₹50 per day · per client intelligence</div>
-          <a href="access.html" class="pc-cta primary">Get started →</a>
+          <div class="pc-daily">&#x20B9;50 per day &middot; per client intelligence</div>
+          <a href="access.html" class="pc-cta primary">Get started &rarr;</a>
           <div class="pc-divider"></div>
           <div class="pc-features-label">Everything in Core, plus</div>
           <ul class="pc-features">
-            <li class="pc-feature"><span class="pf-check violet">✦</span><span class="pf-label">Multiple MERIDIAN Profiles <span class="pf-tag">KEY</span> — one per client, each fully calibrated</span></li>
-            <li class="pc-feature"><span class="pf-check violet">✦</span><span class="pf-label">Client-tagged Case Library — cases organised by engagement, not mixed</span></li>
-            <li class="pc-feature"><span class="pf-check violet">✦</span><span class="pf-label">Switch MERIDIAN context per session — full tool suite recalibrates per client</span></li>
-            <li class="pc-feature"><span class="pf-check violet">✦</span><span class="pf-label">All 6 tools × all clients — ER, Influence, SIGNAL, Simulator, Policy, ARIA</span></li>
-            <li class="pc-feature"><span class="pf-check violet">✦</span><span class="pf-label">Humac Score per client engagement</span></li>
-            <li class="pc-feature"><span class="pf-check violet">✦</span><span class="pf-label">Monthly Debrief — across all active engagements</span></li>
+            <li class="pc-feature"><span class="pf-check violet">&#x2736;</span><span class="pf-label">Multiple MERIDIAN Profiles <span class="pf-tag">KEY</span> — one per client, each fully calibrated</span></li>
+            <li class="pc-feature"><span class="pf-check violet">&#x2736;</span><span class="pf-label">Client-tagged Case Library — cases organised by engagement, not mixed</span></li>
+            <li class="pc-feature"><span class="pf-check violet">&#x2736;</span><span class="pf-label">Switch MERIDIAN context per session — full tool suite recalibrates per client</span></li>
+            <li class="pc-feature"><span class="pf-check violet">&#x2736;</span><span class="pf-label">All 6 tools &times; all clients — ER, Influence, SIGNAL, Simulator, Policy, ARIA</span></li>
+            <li class="pc-feature"><span class="pf-check violet">&#x2736;</span><span class="pf-label">Humac Score per client engagement</span></li>
+            <li class="pc-feature"><span class="pf-check violet">&#x2736;</span><span class="pf-label">Monthly Debrief — across all active engagements</span></li>
           </ul>
         </div>
 
@@ -255,42 +265,42 @@
           <div class="faq-item">
             <div class="faq-q" onclick="toggleFaq(this)">
               <span>Is there an annual plan?</span>
-              <span class="faq-arrow">▾</span>
+              <span class="faq-arrow">&#x25BE;</span>
             </div>
             <div class="faq-a">No. Vantage is monthly only, always. There is no annual lock-in, no discounted upfront payment, no commitment period. You pay month to month and cancel whenever you choose. The retention mechanism is value, not a contract.</div>
           </div>
           <div class="faq-item">
             <div class="faq-q" onclick="toggleFaq(this)">
               <span>What happens to my data if I cancel?</span>
-              <span class="faq-arrow">▾</span>
+              <span class="faq-arrow">&#x25BE;</span>
             </div>
             <div class="faq-a">Your MERIDIAN profile, case library, and Humac score data are retained for 30 days after cancellation. You can export your data from the Data &amp; Privacy section before cancelling. After 30 days, data is permanently deleted from Vantage servers.</div>
           </div>
           <div class="faq-item">
             <div class="faq-q" onclick="toggleFaq(this)">
               <span>Can I switch from Core to Consultant?</span>
-              <span class="faq-arrow">▾</span>
+              <span class="faq-arrow">&#x25BE;</span>
             </div>
             <div class="faq-a">Yes. Switching tiers takes effect from the next billing cycle. Your existing data — MERIDIAN profile, case history, Humac score — carries over completely. Nothing is lost on upgrade.</div>
           </div>
           <div class="faq-item">
             <div class="faq-q" onclick="toggleFaq(this)">
               <span>How many MERIDIAN profiles does Consultant support?</span>
-              <span class="faq-arrow">▾</span>
+              <span class="faq-arrow">&#x25BE;</span>
             </div>
             <div class="faq-a">The Consultant tier is designed for HR practitioners managing multiple client engagements. Each client gets their own fully calibrated MERIDIAN profile. You switch context per session and all six tools recalibrate accordingly.</div>
           </div>
           <div class="faq-item">
             <div class="faq-q" onclick="toggleFaq(this)">
               <span>Is there a free trial?</span>
-              <span class="faq-arrow">▾</span>
+              <span class="faq-arrow">&#x25BE;</span>
             </div>
             <div class="faq-a">Vantage is currently in early access with a small group of HR professionals. If you've received an invite, you have full access during this period. Paid subscriptions go live once early access closes. Reach out to the team at virorah.com if you're interested in early access.</div>
           </div>
           <div class="faq-item">
             <div class="faq-q" onclick="toggleFaq(this)">
               <span>Is Vantage only available in India?</span>
-              <span class="faq-arrow">▾</span>
+              <span class="faq-arrow">&#x25BE;</span>
             </div>
             <div class="faq-a">Yes, currently. Vantage is built specifically for Indian HR practice — BNS / BNSS / BSA legal citations, INR financials, state-specific compliance, and Indian employment law frameworks. Global expansion is planned. If you're outside India and interested, note your country when reaching out.</div>
           </div>
@@ -317,7 +327,7 @@
     }
     var mr = sessionStorage.getItem('sr_meridian');
     var meridian = mr ? JSON.parse(mr) : {};
-    document.getElementById('mcv').innerText = (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
+    document.getElementById('mcv').innerText = (meridian.state || 'Not set') + ' \xb7 ' + (meridian.industry || 'Not set');
 
     function toggleFaq(el) {
       var item = el.parentElement;
