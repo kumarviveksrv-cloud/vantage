@@ -84,6 +84,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .pct-input-wrap{display:flex;align-items:center;gap:10px;margin-top:4px}
 .pct-input{background:var(--bg3);border:1px solid var(--cobalt-border);color:var(--text);border-radius:8px;padding:10px 14px;font-family:var(--stat);font-size:1.1rem;width:120px;transition:border-color .15s;text-align:right}
 .pct-input:focus{outline:none;border-color:var(--cobalt)}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
 .pct-unit{font-family:var(--mono);font-size:.9rem;color:var(--text-dim)}
 .pct-hint{font-family:var(--mono);font-size:.74rem;color:rgba(99,102,241,.5)}
 .yesno-wrap{display:flex;gap:8px;margin-top:4px}
