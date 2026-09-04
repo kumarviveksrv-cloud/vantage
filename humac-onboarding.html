@@ -302,6 +302,29 @@ var previousScore=null;
 var isCheckin=false;
 (function(){
   try{var _p=sessionStorage.getItem('vantage_humac');if(_p){previousScore=JSON.parse(_p);isCheckin=true;}}catch(e){}
+  // If no sessionStorage score, try to restore from Airtable
+  if(!previousScore){
+    (function(){
+      try{
+        var _WORKER='https://situation-room-api.kumarvivek-srv.workers.dev';
+        var _restore=function(token){
+          fetch(_WORKER,{
+            method:'POST',
+            headers:{'Content-Type':'application/json','Authorization':token?'Bearer '+token:''},
+            body:JSON.stringify({tool:'get_humac'})
+          }).then(function(r){return r.json();}).then(function(d){
+            if(d.success&&d.data){
+              try{sessionStorage.setItem('vantage_humac',JSON.stringify(d.data));}catch(e){}
+              previousScore=d.data;isCheckin=true;
+            }
+          }).catch(function(){});
+        };
+        if(window.Clerk&&window.Clerk.session){
+          window.Clerk.session.getToken().then(_restore).catch(function(){});
+        }
+      }catch(e){}
+    })();
+  }
   if(isCheckin&&previousScore){
     var titleEl=document.getElementById('page-title-main');
     var subEl=document.getElementById('page-sub-main');
@@ -515,7 +538,22 @@ function showScoreReveal(){
   try{sessionStorage.setItem('vantage_humac',JSON.stringify(scoreData));}catch(e){}
 
   // Airtable persist — fire and forget
-  (function(){try{var WORKER='https://situation-room-api.kumarvivek-srv.workers.dev';var email=sessionStorage.getItem('sr_user_email')||'';fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'save_humac',email:email,humac:scoreData})});}catch(e){}})();
+  (function(){
+    try{
+      var WORKER='https://situation-room-api.kumarvivek-srv.workers.dev';
+      var email=sessionStorage.getItem('sr_user_email')||'';
+      var doSave=function(token){
+        fetch(WORKER,{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':token?'Bearer '+token:''},
+          body:JSON.stringify({tool:'save_humac',email:email,humac:scoreData})
+        });
+      };
+      if(window.Clerk&&window.Clerk.session){
+        window.Clerk.session.getToken().then(doSave).catch(function(){doSave('');});
+      } else { doSave(''); }
+    }catch(e){}
+  })();
 
   document.getElementById('rv-humac').textContent=humac;
   document.getElementById('rv-adj').textContent=hciAdj;
