@@ -2,6 +2,53 @@
 
 (function() {
 
+  // ── VIRORAH VANTAGE LOGO MARK ───────────────────────────────────────────────
+  // Replaces the default text logo (dot + Virorah / VANTAGE) with the full
+  // Virorah V mark SVG + proper product identity hierarchy.
+  // Runs immediately so no flash of old logo is visible.
+  // Covers all pages since sidebar-shared.js loads on every Vantage page.
+  (function injectLogoMark() {
+    var logoEl = document.querySelector('.logo');
+    if (!logoEl) return;
+    var svgMark = [
+      '<svg width="30" height="30" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">',
+        '<defs>',
+          '<linearGradient id="vlogo-left" x1="0" y1="0" x2="0.3" y2="1">',
+            '<stop offset="0%" stop-color="#00D4FF"/>',
+            '<stop offset="100%" stop-color="#3366EE"/>',
+          '</linearGradient>',
+          '<linearGradient id="vlogo-right" x1="0" y1="0" x2="0.7" y2="1">',
+            '<stop offset="0%" stop-color="#7744EE"/>',
+            '<stop offset="100%" stop-color="#CC44FF"/>',
+          '</linearGradient>',
+          '<filter id="vlogo-glow" x="-40%" y="-40%" width="180%" height="180%">',
+            '<feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="blur"/>',
+            '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>',
+          '</filter>',
+        '</defs>',
+        // Left arm (cyan) — the V left stroke
+        '<polygon points="1,1 10,1 17,31 8,31" fill="url(#vlogo-left)" filter="url(#vlogo-glow)"/>',
+        // Left arm highlight — subtle inner bevel
+        '<polygon points="1,1 4,1 11,31 8,31" fill="#ffffff" fill-opacity="0.18"/>',
+        // Right arm (purple) — the V right stroke, drawn on top
+        '<polygon points="22,1 31,1 24,31 15,31" fill="url(#vlogo-right)" filter="url(#vlogo-glow)"/>',
+        // Right arm highlight — subtle inner bevel
+        '<polygon points="28,1 31,1 24,31 21,31" fill="#ffffff" fill-opacity="0.12"/>',
+      '</svg>'
+    ].join('');
+
+    logoEl.innerHTML =
+      '<div style="flex-shrink:0">' + svgMark + '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:1px">' +
+        '<div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:rgba(165,180,252,0.60)">' +
+          'Virorah' +
+        '</div>' +
+        '<div style="font-family:\'Bricolage Grotesque\',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff;letter-spacing:-.01em;line-height:1.1">' +
+          'Vantage' +
+        '</div>' +
+      '</div>';
+  })();
+
   // ── GLOBAL COLOR SYSTEM OVERRIDE ─────────────────────────
   // Unifies Vantage with PMS / Virorah Universe blue-indigo palette
   var styleOverride = document.createElement('style');
