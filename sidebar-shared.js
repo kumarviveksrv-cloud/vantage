@@ -269,7 +269,7 @@
     humacityLink.href = 'https://humacity.com';
     humacityLink.target = '_blank';
     humacityLink.className = 'nav-item';
-    humacityLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.45);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    humacityLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.72);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
     humacityLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">🌀</span> Humacity';
     parent.insertBefore(humacityLink, insertBefore);
 
@@ -281,14 +281,14 @@
     var termsLink = document.createElement('a');
     termsLink.href = 'terms.html';
     termsLink.className = 'nav-item';
-    termsLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.45);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    termsLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.72);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
     termsLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">📄</span> Terms of Service';
     parent.insertBefore(termsLink, insertBefore);
 
     var privacyLink2 = document.createElement('a');
     privacyLink2.href = 'privacy.html';
     privacyLink2.className = 'nav-item';
-    privacyLink2.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.45);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    privacyLink2.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.72);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
     privacyLink2.innerHTML = '<span style="font-size:16px;flex-shrink:0">🔒</span> Privacy Policy';
     parent.insertBefore(privacyLink2, insertBefore);
   }
@@ -297,7 +297,7 @@
     var meridianLink = document.createElement('a');
     meridianLink.href = 'onboarding.html';
     meridianLink.className = 'nav-item';
-    meridianLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.45);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    meridianLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.72);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
     meridianLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">🧭</span> MERIDIAN Profile';
     if (window.location.pathname.includes('onboarding')) {
       meridianLink.style.background = 'rgba(99,102,241,0.10)';
@@ -476,10 +476,10 @@
     banner.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0d0b1e;border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.4);max-width:380px;width:calc(100% - 48px)';
     banner.innerHTML = '<div style="font-size:28px;flex-shrink:0">📱</div>' +
       '<div style="flex:1"><div style="font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:14px;color:#fff;margin-bottom:3px">Install Vantage</div>' +
-      '<div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.4">Add to home screen for instant access — works offline too.</div></div>' +
+      '<div style="font-size:12px;color:rgba(255,255,255,0.70);line-height:1.4">Add to home screen for instant access — works offline too.</div></div>' +
       '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">' +
       '<button onclick="installPWA()" style="padding:8px 14px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:12px;border:none;border-radius:7px;cursor:pointer">Install</button>' +
-      '<button onclick="dismissPWA()" style="padding:6px 14px;background:transparent;color:rgba(255,255,255,0.35);font-size:11px;border:none;cursor:pointer">Not now</button>' +
+      '<button onclick="dismissPWA()" style="padding:6px 14px;background:transparent;color:rgba(255,255,255,0.65);font-size:12px;border:none;cursor:pointer">Not now</button>' +
       '</div>';
     document.body.appendChild(banner);
   }
@@ -558,7 +558,7 @@
       '    font-size: 9px;',
       '    letter-spacing: 0.04em;',
       '    text-transform: uppercase;',
-      '    color: rgba(244,243,255,0.35);',
+      '    color: rgba(244,243,255,0.62);',
       '    transition: color 0.2s ease;',
       '    white-space: nowrap;',
       '  }',
@@ -885,7 +885,7 @@
         '<div style="padding:20px 20px 14px;border-bottom:1px solid rgba(99,102,241,0.1);flex-shrink:0">',
           '<div style="width:36px;height:4px;background:rgba(255,255,255,0.12);border-radius:2px;margin:0 auto 14px"></div>',
           '<div style="font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:15px;color:#fff;margin-bottom:3px">Set your location</div>',
-          '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:12px;color:rgba(255,255,255,0.35);line-height:1.5">Date and time display only. No location tracking. Nothing leaves your device.</div>',
+          '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5">Date and time display only. No location tracking. Nothing leaves your device.</div>',
         '</div>',
         '<div style="padding:12px 20px 8px;flex-shrink:0">',
           '<input id="vclock-search" type="text" placeholder="Search city or state\u2026" autocomplete="off"',
@@ -919,7 +919,7 @@
       });
 
       if (!filtered.length) {
-        list.innerHTML = '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;color:rgba(255,255,255,0.25);text-align:center;padding:28px 0">No cities found</div>';
+        list.innerHTML = '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;color:rgba(255,255,255,0.60);text-align:center;padding:28px 0">No cities found</div>';
         return;
       }
 
@@ -932,7 +932,7 @@
             '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;font-weight:500;color:rgba(232,230,255,0.9)">' + r[0] + '</div>',
             '<div style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(165,180,252,0.55);letter-spacing:0.04em;margin-top:2px">' + r[1] + ' &middot; ' + r[2] + '</div>',
           '</div>',
-          '<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:0.08em">IST</div>',
+          '<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.08em">IST</div>',
         ].join('');
         row.addEventListener('mouseover', function() { this.style.background = 'rgba(99,102,241,0.08)'; });
         row.addEventListener('mouseout',  function() { this.style.background = 'transparent'; });
@@ -996,11 +996,11 @@
           '<div class="vclock-time" style="font-family:Space Grotesk,monospace;font-size:17px;font-weight:700;color:#a5b4fc;letter-spacing:0.02em;line-height:1">',
             (loc ? fmtTime(loc.timezone) : ''),
           '</div>',
-          '<div class="vclock-date" style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(255,255,255,0.38);letter-spacing:0.05em;margin-top:5px">',
+          '<div class="vclock-date" style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(255,255,255,0.65);letter-spacing:0.05em;margin-top:5px">',
             (loc ? fmtDate(loc.timezone) : ''),
           '</div>',
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:7px;padding-top:7px;border-top:1px solid rgba(99,102,241,0.1)">',
-            '<div class="vclock-location" style="font-family:Plus Jakarta Sans,sans-serif;font-size:11px;color:rgba(255,255,255,0.3);line-height:1.3;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">',
+            '<div class="vclock-location" style="font-family:Plus Jakarta Sans,sans-serif;font-size:12px;color:rgba(255,255,255,0.60);line-height:1.3;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">',
               (loc ? loc.city + ', ' + loc.state + ', ' + loc.country : ''),
             '</div>',
             '<button id="vclock-edit-btn" style="background:transparent;border:none;cursor:pointer;color:rgba(99,102,241,0.4);font-size:11px;padding:0 0 0 8px;flex-shrink:0;line-height:1;transition:color 0.15s" title="Change location">&#9998;</button>',
