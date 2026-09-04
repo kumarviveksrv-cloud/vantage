@@ -274,7 +274,7 @@ function renderPage(){
   var sb=(function(s){if(s<=25)return{name:'Minimum',color:'#E05C3A'};if(s<=50)return{name:'Emerging',color:'#a5b4fc'};if(s<=72)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};})(l3score);
 
   var pdots=[{label:'L1',score:l1,href:'pillar-l1.html'},{label:'L2',score:l2,href:'pillar-l2.html'},{label:'L3',score:l3score,href:'pillar-l3.html',active:true},{label:'L4',score:l4,href:'pillar-l4.html'},{label:'L5',score:l5,href:'pillar-l5.html'}];
-  var nav='<div class="pillar-nav-strip"><a href="pillar-l2.html" class="pillar-back">\u2190 L2 Talent Premium</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+p.score+'</span></a>';}).join('')+'</div><a href="pillar-l4.html" class="pillar-forward">L4 Human P&L \u2192</a></div>';
+  var nav='<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+p.score+'</span></a>';}).join('')+'</div><a href="pillar-l4.html" class="pillar-forward">L4 Human P&L \u2192</a></div>';
 
   var header='<div class="page-eyebrow">Vantage \xb7 Humac Score \xb7 Pillar Intelligence</div><h1 class="page-title">Org Vitals</h1><p class="page-sub">'+(md&&industry?industry+' \xb7 ':'')+(md&&state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate:'Your L3 pillar intelligence')+'</p>';
 
