@@ -18,7 +18,7 @@
         '.logo{flex-direction:column !important;align-items:center !important;',
         'gap:0 !important;padding:0 !important;margin-bottom:20px !important;cursor:pointer}',
         // Square logo image — black bg dissolved by screen blend mode
-        '.vl-sq{width:185px;height:auto;display:block;mix-blend-mode:screen;flex-shrink:0}'
+        '.vl-sq{width:90px;height:auto;display:block;mix-blend-mode:screen;flex-shrink:0}'
       ].join('');
       document.head.appendChild(s);
     }
