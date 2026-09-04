@@ -26,14 +26,19 @@
       var s = document.createElement('style');
       s.id = 'vantage-logo-css';
       s.textContent = [
-        '.vl-img{width:40px;height:40px;object-fit:contain;flex-shrink:0;',
+        // Override .logo gap so V and text are flush — no disconnected whitespace
+        '.logo{gap:2px !important}',
+        // V image: 44px so it matches 2 lines of 18px text (18*1.22*2 ≈ 44px)
+        '.vl-img{width:44px;height:44px;object-fit:contain;flex-shrink:0;',
         'mix-blend-mode:screen;display:block;border:none;background:none}',
-        '.vl-wrap{display:flex;flex-direction:column;gap:0;line-height:1.2}',
-        '.vl-top{font-family:Outfit,"Space Grotesk",sans-serif;font-size:14px;',
-        'font-weight:700;letter-spacing:.04em;text-transform:uppercase;',
-        'color:rgba(165,180,252,.82);display:block}',
-        '.vl-bot{font-family:Outfit,"Space Grotesk",sans-serif;font-size:14px;',
-        'font-weight:700;letter-spacing:.04em;text-transform:uppercase;',
+        '.vl-wrap{display:flex;flex-direction:column;gap:0;line-height:1.22}',
+        // IRORAH — slightly lavender tint (parent brand), 18px to fill V height
+        '.vl-top{font-family:Outfit,"Space Grotesk",sans-serif;font-size:18px;',
+        'font-weight:700;letter-spacing:.02em;text-transform:uppercase;',
+        'color:rgba(165,180,252,.85);display:block}',
+        // ANTAGE — full white (active product), same 18px
+        '.vl-bot{font-family:Outfit,"Space Grotesk",sans-serif;font-size:18px;',
+        'font-weight:700;letter-spacing:.02em;text-transform:uppercase;',
         'color:#f4f3ff;display:block}'
       ].join('');
       document.head.appendChild(s);
