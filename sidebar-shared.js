@@ -913,9 +913,14 @@
 
       panel.innerHTML = [
         '<div style="padding:20px 20px 14px;border-bottom:1px solid rgba(99,102,241,0.1);flex-shrink:0">',
-          '<div style="width:36px;height:4px;background:rgba(255,255,255,0.12);border-radius:2px;margin:0 auto 14px"></div>',
-          '<div style="font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:15px;color:#fff;margin-bottom:3px">Set your location</div>',
-          '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5">Date and time display only. No location tracking. Nothing leaves your device.</div>',
+          '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:3px">',
+            '<div>',
+              '<div style="width:36px;height:4px;background:rgba(255,255,255,0.12);border-radius:2px;margin:0 auto 14px"></div>',
+              '<div style="font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:15px;color:#fff">Set your location</div>',
+            '</div>',
+            '<button id="vclock-close-btn" style="background:transparent;border:none;cursor:pointer;color:rgba(165,180,252,0.5);font-size:18px;line-height:1;padding:0;margin-top:-4px;flex-shrink:0" aria-label="Close">&times;</button>',
+          '</div>',
+          '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5;margin-top:6px">Date and time display only. No location tracking. Nothing leaves your device.</div>',
         '</div>',
         '<div style="padding:12px 20px 8px;flex-shrink:0">',
           '<input id="vclock-search" type="text" placeholder="Search city or state\u2026" autocomplete="off"',
@@ -923,13 +928,21 @@
             'font-family:Plus Jakarta Sans,sans-serif;font-size:13px;color:#e8e6ff;outline:none;caret-color:#a5b4fc"',
           '/>',
         '</div>',
-        '<div id="vclock-list" style="overflow-y:auto;padding:4px 12px 20px;flex:1"></div>',
+        '<div id="vclock-list" style="overflow-y:auto;padding:4px 12px 20px;flex:1;min-height:0"></div>',
       ].join('');
 
       overlay.appendChild(panel);
       document.body.appendChild(overlay);
 
       overlay.addEventListener('click', function(e) { if (e.target === overlay) closePicker(); });
+
+      // Close button
+      var closeBtn = document.getElementById('vclock-close-btn');
+      if (closeBtn) closeBtn.addEventListener('click', closePicker);
+
+      // Escape key
+      function handleEsc(e) { if (e.key === 'Escape') { closePicker(); document.removeEventListener('keydown', handleEsc); } }
+      document.addEventListener('keydown', handleEsc);
 
       renderList('');
 
