@@ -26,8 +26,8 @@
       --teal-dim:rgba(99,102,241,0.10);
       --teal-border:rgba(99,102,241,0.20);
       --white:#f4f3ff;
-      --grey:rgba(244,243,255,0.45);
-      --grey-dim:rgba(244,243,255,0.2);
+      --grey:rgba(244,243,255,0.68);
+      --grey-dim:rgba(244,243,255,0.50);
       --border:rgba(99,102,241,0.12);
       --red:#FF4D6D;
       --amber:#FFB547;
@@ -86,7 +86,7 @@
     #setup-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.5),transparent)}
     .setup-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(99,102,241,.65);margin-bottom:6px}
     .setup-title{font-size:.92rem;font-weight:700;color:#f4f3ff;margin-bottom:4px}
-    .setup-sub{font-size:.75rem;color:rgba(244,243,255,.4);margin-bottom:18px;line-height:1.5}
+    .setup-sub{font-size:.82rem;color:rgba(244,243,255,.68);margin-bottom:18px;line-height:1.5}
     .setup-steps{display:flex;flex-direction:column;gap:8px}
     .setup-step{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;text-decoration:none;transition:all .2s;border:1px solid transparent}
     .setup-step.done{background:rgba(34,197,94,.05);border-color:rgba(34,197,94,.15);pointer-events:none}
@@ -97,7 +97,7 @@
     .setup-step.pending .setup-step-icon{background:rgba(99,102,241,.12);color:#a5b4fc}
     .setup-step-name{font-size:.82rem;font-weight:600;color:rgba(244,243,255,.8);line-height:1.2}
     .setup-step.done .setup-step-name{color:rgba(34,197,94,.7)}
-    .setup-step-desc{font-size:.7rem;color:rgba(244,243,255,.35);margin-top:1px}
+    .setup-step-desc{font-size:.78rem;color:rgba(244,243,255,.65);margin-top:1px}
     .setup-step-cta{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.06em;color:#a5b4fc;flex-shrink:0;margin-left:auto}
     .setup-dismiss{margin-top:14px;text-align:right}
     .setup-dismiss-btn{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.06em;color:rgba(165,180,252,.3);background:none;border:none;cursor:pointer;transition:color .2s}
@@ -721,7 +721,7 @@
             '<div>' +
               '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px">Humac Score</div>' +
               '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;font-weight:600;color:#f4f3ff;margin-bottom:6px">Your financial baseline is not set</div>' +
-              '<div style="font-size:.82rem;color:rgba(244,243,255,.45);line-height:1.5;max-width:420px">Generate your Humac Score \u2014 the measure of how efficiently your organisation converts people investment into financial and organisational value.</div>' +
+              '<div style="font-size:.86rem;color:rgba(244,243,255,.70);line-height:1.5;max-width:420px">Generate your Humac Score \u2014 the measure of how efficiently your organisation converts people investment into financial and organisational value.</div>' +
             '</div>' +
             '<a href="humac-onboarding.html" style="display:inline-flex;align-items:center;gap:8px;font-family:\'JetBrains Mono\',monospace;font-size:.68rem;background:#6366f1;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;flex-shrink:0;transition:all .15s" onmouseover="this.style.background=\'#5254d4\'" onmouseout="this.style.background=\'#6366f1\'">' +
               'Generate baseline score \u2192' +
@@ -764,17 +764,17 @@
           : '';
         trajRow =
           '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(99,102,241,.06);margin-bottom:4px">' +
-            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.54rem;color:rgba(244,243,255,.22)">Trajectory</div>' +
+            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.72rem;color:rgba(244,243,255,.60)">Trajectory</div>' +
             '<div style="display:flex;align-items:center;gap:8px">' +
               '<span style="font-family:\'Space Grotesk\',sans-serif;font-size:.92rem;font-weight:700;color:' + color + '">' + arrow + ' ' + sign + delta + '</span>' +
-              (sinceDate ? '<span style="font-family:\'JetBrains Mono\',monospace;font-size:.52rem;color:rgba(244,243,255,.18)">since ' + sinceDate + '</span>' : '') +
+              (sinceDate ? '<span style="font-family:\'JetBrains Mono\',monospace;font-size:.70rem;color:rgba(244,243,255,.55)">since ' + sinceDate + '</span>' : '') +
             '</div>' +
           '</div>';
       } else {
         // Baseline: no trajectory yet
         trajRow =
           '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(99,102,241,.06);margin-bottom:4px">' +
-            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.54rem;color:rgba(244,243,255,.22)">Trajectory</div>' +
+            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.72rem;color:rgba(244,243,255,.60)">Trajectory</div>' +
             '<a href="humac-onboarding.html" style="font-family:\'JetBrains Mono\',monospace;font-size:.52rem;color:rgba(165,180,252,.3);text-decoration:none;transition:color .15s" onmouseover="this.style.color=\'rgba(165,180,252,.6)\'" onmouseout="this.style.color=\'rgba(165,180,252,.3)\'">\u2014 Run check-in to establish</a>' +
           '</div>';
       }
@@ -785,12 +785,12 @@
             '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:#a5b4fc;margin-bottom:10px">Humac Score</div>' +
             '<div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">' +
               '<div>' +
-                '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.56rem;color:rgba(244,243,255,.3);margin-bottom:2px">Humac</div>' +
+                '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.72rem;color:rgba(244,243,255,.60);margin-bottom:2px">Humac</div>' +
                 '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:3.4rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (data.humac || 0) + '</div>' +
               '</div>' +
               '<div style="color:rgba(99,102,241,.25);font-size:1.6rem;align-self:center">|</div>' +
               '<div>' +
-                '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.56rem;color:rgba(244,243,255,.3);margin-bottom:2px">HCI-adjusted</div>' +
+                '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.72rem;color:rgba(244,243,255,.60);margin-bottom:2px">HCI-adjusted</div>' +
                 '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:2.4rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#a5b4fc,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (data.hciAdj || 0) + '</div>' +
               '</div>' +
             '</div>' +
@@ -800,13 +800,13 @@
               '<div style="width:7px;height:7px;border-radius:50%;background:' + bandColor + '"></div>' +
               '<span style="font-family:\'JetBrains Mono\',monospace;font-size:.6rem;color:' + bandColor + '">' + (data.band || '') + '</span>' +
             '</div>' +
-            (ts ? '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.52rem;color:rgba(244,243,255,.2)">Set ' + ts + '</div>' : '') +
+            (ts ? '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.70rem;color:rgba(244,243,255,.55)">Set ' + ts + '</div>' : '') +
           '</div>' +
         '</div>' +
         '<div style="display:flex;gap:0;margin-bottom:14px;border:1px solid rgba(99,102,241,.08);border-radius:8px;overflow:hidden">' +
           pillars.map(function(p, i) {
             return '<div style="flex:1;padding:8px 0;' + (i < pillars.length-1 ? 'border-right:1px solid rgba(99,102,241,.08);' : '') + '">' +
-              '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.5rem;color:rgba(244,243,255,.22);margin-bottom:4px;text-align:center">' + p.label + '</div>' +
+              '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.66rem;color:rgba(244,243,255,.58);margin-bottom:4px;text-align:center">' + p.label + '</div>' +
               '<div style="height:3px;background:rgba(99,102,241,.08);margin:0 8px 4px;border-radius:2px;overflow:hidden">' +
                 '<div style="height:100%;width:' + p.score + '%;background:linear-gradient(90deg,#6366f1,#7c3aed);border-radius:2px"></div>' +
               '</div>' +
@@ -816,7 +816,7 @@
         '</div>' +
         trajRow +
         '<div style="display:flex;align-items:center;justify-content:space-between">' +
-          '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.54rem;color:rgba(244,243,255,.22)">' +
+          '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.72rem;color:rgba(244,243,255,.60)">' +
             (confDots[data.confidence] || '\u25cb') + ' ' + (confLabels[data.confidence] || 'Estimated') +
             ' \xb7 HCI ' + ((data.hci || 1).toFixed(2)) + 'x' +
           '</div>' +
