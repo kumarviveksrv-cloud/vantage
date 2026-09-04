@@ -3,42 +3,67 @@
 (function() {
 
   // ── VIRORAH VANTAGE LOGO MARK ────────────────────────────────────────────────
-  // Layout: [V image] | IRORAH  ← completes "VIRORAH" (parent brand)
-  //                   | ANTAGE  ← completes "VANTAGE" (product)
-  // V image: virorah-v.png (black background version)
-  // mix-blend-mode: screen makes black disappear on dark sidebar, neon stays.
+  // Layout: [V image] | IRORAH  = "VIRORAH" (parent brand)
+  //                   | ANTAGE  = "VANTAGE" (product)
+  // Requires: virorah-v.png uploaded to repo root (black bg version).
+  // mix-blend-mode:screen removes black bg on dark sidebar.
+  // Uses DOM methods (not innerHTML) to avoid font-family quote escaping bugs.
   (function injectLogoMark() {
     var logoEl = document.querySelector('.logo');
     if (!logoEl) return;
 
-    // Load Outfit to match Virorah wordmark geometric font style
+    // Load Outfit to match Virorah wordmark geometric font
     if (!document.getElementById('vantage-outfit-font')) {
-      var fontLink = document.createElement('link');
-      fontLink.id = 'vantage-outfit-font';
-      fontLink.rel = 'stylesheet';
-      fontLink.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@700&display=swap';
-      document.head.appendChild(fontLink);
+      var fl = document.createElement('link');
+      fl.id = 'vantage-outfit-font';
+      fl.rel = 'stylesheet';
+      fl.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@700&display=swap';
+      document.head.appendChild(fl);
     }
 
-    // Determine correct base path — works whether page is at root or in subdirectory
-    var base = (typeof BASE !== 'undefined') ? BASE : '/';
+    // Inject logo CSS class once
+    if (!document.getElementById('vantage-logo-css')) {
+      var s = document.createElement('style');
+      s.id = 'vantage-logo-css';
+      s.textContent = [
+        '.vl-img{width:40px;height:40px;object-fit:contain;flex-shrink:0;',
+        'mix-blend-mode:screen;display:block;border:none;background:none}',
+        '.vl-wrap{display:flex;flex-direction:column;gap:0;line-height:1.2}',
+        '.vl-top{font-family:Outfit,"Space Grotesk",sans-serif;font-size:14px;',
+        'font-weight:700;letter-spacing:.04em;text-transform:uppercase;',
+        'color:rgba(165,180,252,.82);display:block}',
+        '.vl-bot{font-family:Outfit,"Space Grotesk",sans-serif;font-size:14px;',
+        'font-weight:700;letter-spacing:.04em;text-transform:uppercase;',
+        'color:#f4f3ff;display:block}'
+      ].join('');
+      document.head.appendChild(s);
+    }
 
-    logoEl.innerHTML =
-      '<img src="' + base + 'virorah-v.png" alt="Virorah V" ' +
-      'style="width:40px;height:40px;object-fit:contain;flex-shrink:0;' +
-             'mix-blend-mode:screen;display:block">' +
-      '<div style="display:flex;flex-direction:column;gap:0;line-height:1.15">' +
-        '<span style="font-family:'\''Outfit'\'','\''Space Grotesk'\'',sans-serif;' +
-               'font-size:14px;font-weight:700;letter-spacing:0.04em;' +
-               'text-transform:uppercase;color:rgba(165,180,252,0.80)">' +
-          'IRORAH' +
-        '</span>' +
-        '<span style="font-family:'\''Outfit'\'','\''Space Grotesk'\'',sans-serif;' +
-               'font-size:14px;font-weight:700;letter-spacing:0.04em;' +
-               'text-transform:uppercase;color:#f4f3ff">' +
-          'ANTAGE' +
-        '</span>' +
-      '</div>';
+    // Build logo DOM — no innerHTML, no escaping issues
+    var img = document.createElement('img');
+    img.src = 'virorah-v.png';
+    img.alt = 'V';
+    img.className = 'vl-img';
+    img.onerror = function() { this.style.display = 'none'; };
+
+    var wrap = document.createElement('div');
+    wrap.className = 'vl-wrap';
+
+    var top = document.createElement('span');
+    top.className = 'vl-top';
+    top.textContent = 'IRORAH';
+
+    var bot = document.createElement('span');
+    bot.className = 'vl-bot';
+    bot.textContent = 'ANTAGE';
+
+    wrap.appendChild(top);
+    wrap.appendChild(bot);
+
+    // Clear existing logo children, inject new ones
+    while (logoEl.firstChild) logoEl.removeChild(logoEl.firstChild);
+    logoEl.appendChild(img);
+    logoEl.appendChild(wrap);
   })();
 
   // ── GLOBAL COLOR SYSTEM OVERRIDE ─────────────────────────
