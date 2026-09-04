@@ -3,64 +3,38 @@
 (function() {
 
   // ── VIRORAH VANTAGE LOGO MARK ────────────────────────────────────────────────
-  // Uses the actual Virorah wordmark PNG (transparent background, exact logo font).
-  // Vivek uploads virorah-wordmark.png to repo root (from the delivered outputs file).
-  // Layout: [VIRORAH image — full width] on row 1, [Vantage badge] on row 2.
-  // This eliminates all font-matching issues — the A looks exactly like the logo.
+  // Square logo: V mark dominant top, VIRORAH + VANTAGE stacked below.
+  // Black bg removed by mix-blend-mode:screen on the dark sidebar.
+  // Upload virorah-vantage-sq.png to repo root.
   (function injectLogoMark() {
     var logoEl = document.querySelector('.logo');
     if (!logoEl) return;
 
-    // Load Outfit for the badge only
-    if (!document.getElementById('vantage-outfit-font')) {
-      var fl = document.createElement('link');
-      fl.id = 'vantage-outfit-font';
-      fl.rel = 'stylesheet';
-      fl.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@700&display=swap';
-      document.head.appendChild(fl);
-    }
-
-    // Inject logo CSS
     if (!document.getElementById('vantage-logo-css')) {
       var s = document.createElement('style');
       s.id = 'vantage-logo-css';
       s.textContent = [
-        // Stack wordmark + badge vertically, left-aligned
-        '.logo{flex-direction:column !important;align-items:flex-start !important;',
-        'gap:4px !important;cursor:pointer}',
-        // Wordmark image — exact logo, transparent bg, no blend mode needed
-        '.vl-wordmark{width:155px;height:auto;display:block;flex-shrink:0}',
-        // Vantage badge — unchanged from previous, Vivek approved
-        '.vl-badge{font-family:Outfit,"Space Grotesk",sans-serif;font-size:9.5px;',
-        'font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#fff;',
-        'background:linear-gradient(135deg,#6366f1 0%,#7c3aed 100%);',
-        'padding:3px 8px;border-radius:5px;white-space:nowrap;',
-        'box-shadow:0 0 8px rgba(99,102,241,0.45),0 0 0 1px rgba(99,102,241,0.3)}'
+        // Centre the square logo in the sidebar
+        '.logo{flex-direction:column !important;align-items:center !important;',
+        'gap:0 !important;padding:0 !important;margin-bottom:20px !important;cursor:pointer}',
+        // Square logo image — black bg dissolved by screen blend mode
+        '.vl-sq{width:185px;height:auto;display:block;mix-blend-mode:screen;flex-shrink:0}'
       ].join('');
       document.head.appendChild(s);
     }
 
-    // Build: [VIRORAH wordmark image] then [Vantage badge] below
     var img = document.createElement('img');
-    img.src = 'virorah-wordmark.png';
-    img.alt = 'Virorah';
-    img.className = 'vl-wordmark';
+    img.src = 'virorah-vantage-sq.png';
+    img.alt = 'Virorah Vantage';
+    img.className = 'vl-sq';
     img.onerror = function() {
-      // Fallback: plain text if image missing
-      this.style.display = 'none';
-      var fb = document.createElement('span');
-      fb.textContent = 'VIRORAH';
-      fb.style.cssText = 'font-size:16px;font-weight:700;color:#f4f3ff;letter-spacing:.04em';
-      logoEl.insertBefore(fb, logoEl.firstChild);
+      // Fallback to wordmark if sq not uploaded yet
+      this.src = 'virorah-wordmark.png';
+      this.style.cssText = 'width:155px;height:auto;display:block;flex-shrink:0;mix-blend-mode:screen';
     };
-
-    var badge = document.createElement('span');
-    badge.className = 'vl-badge';
-    badge.textContent = 'Vantage';
 
     while (logoEl.firstChild) logoEl.removeChild(logoEl.firstChild);
     logoEl.appendChild(img);
-    logoEl.appendChild(badge);
   })();
 
   // ── GLOBAL COLOR SYSTEM OVERRIDE ─────────────────────────
