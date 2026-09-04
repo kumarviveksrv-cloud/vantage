@@ -228,6 +228,12 @@
           </div>
         </div>
         <a href="er-case-navigator.html" class="btn-primary" style="display:inline-flex;text-decoration:none">Navigate your first case &rarr;</a>
+        <div style="margin-top:16px">
+          <button onclick="generateDebrief()" style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:transparent;border:1px solid rgba(99,102,241,0.35);color:#a5b4fc;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.08em;cursor:pointer;transition:all .15s" onmouseover="this.style.background='rgba(99,102,241,.08)'" onmouseout="this.style.background='transparent'">
+            Generate this month’s debrief →
+          </button>
+          <div style="font-size:0.65rem;color:rgba(244,243,255,0.35);margin-top:8px;font-family:'JetBrains Mono',monospace">Pulls your cases + Humac data · Takes ~15 seconds</div>
+        </div>
       </div>
     </div>
 
@@ -281,6 +287,19 @@
         <div class="next-month">
           <div class="nm-label">Three things to focus on</div>
           <div id="next-month-list"></div>
+        </div>
+
+        <!-- FOMO / Career Record Value section -->
+        <div id="fomo-section" style="display:none;margin:32px 0 24px">
+          <div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.2);border-left:3px solid #6366f1;border-radius:12px;padding:24px 28px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;background:linear-gradient(90deg,#6366f1,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px">Your Career Record</div>
+            <div id="fomo-block" style="font-style:italic;font-size:0.94rem;line-height:1.75;color:rgba(244,243,255,0.65)"></div>
+          </div>
+          <div style="margin-top:12px;text-align:right">
+            <button id="regen-btn" onclick="generateDebrief()" style="display:none;align-items:center;gap:6px;padding:8px 18px;background:transparent;border:1px solid rgba(99,102,241,0.25);color:rgba(165,180,252,0.6);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.08em;cursor:pointer;transition:all .15s" onmouseover="this.style.color='#a5b4fc';this.style.borderColor='rgba(99,102,241,.45)'" onmouseout="this.style.color='rgba(165,180,252,.6)';this.style.borderColor='rgba(99,102,241,.25)'">
+              Regenerate ↻
+            </button>
+          </div>
         </div>
 
         <div class="action-row" id="humac-refresh-section" style="display:none;flex-direction:column;gap:0;padding:0;margin-bottom:24px">
@@ -519,12 +538,32 @@
       document.getElementById(view).style.display = view === 'debrief-view' ? 'block' : 'block';
     }
 
-    async function loadDebrief() {
+    async function loadDebrief(forceRegenerate) {
       var userId = getUserId();
+      var humac = null;
+      var email = '';
+      try { humac = JSON.parse(sessionStorage.getItem('vantage_humac') || 'null'); } catch(e) {}
+      try { email = localStorage.getItem('vantage_user_email') || ''; } catch(e) {}
+      var clerkToken = '';
+      try { clerkToken = localStorage.getItem('clerk_token') || ''; } catch(e) {}
+
+      showView('loading-view');
+
       try {
         var res = await fetch(WORKER, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ tool:'get_debrief', userId:userId, meridian:meridian })
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            'Authorization': clerkToken ? 'Bearer ' + clerkToken : ''
+          },
+          body: JSON.stringify({
+            tool: 'get_debrief',
+            userId: userId,
+            meridian: meridian,
+            email: email,
+            humac: humac,
+            forceRegenerate: forceRegenerate || false
+          })
         });
         var data = await res.json();
         if (data.success && data.data && data.data.hasDebrief) {
@@ -535,6 +574,10 @@
       } catch(err) {
         showView('empty-view');
       }
+    }
+
+    function generateDebrief() {
+      loadDebrief(true);
     }
 
     function renderDebrief(d) {
@@ -574,6 +617,19 @@
       document.getElementById('next-month-list').innerHTML = (d.nextMonth||[]).map(function(item,i){
         return '<div class="nm-item"><div class="nm-num">'+(i+1)+'</div><div class="nm-text">'+item+'</div></div>';
       }).join('');
+
+      // FOMO block — career record value statement
+      if (d.fomoBlock) {
+        var fomoEl = document.getElementById('fomo-block');
+        if (fomoEl) {
+          fomoEl.innerText = d.fomoBlock;
+          document.getElementById('fomo-section').style.display = 'block';
+        }
+      }
+
+      // Regenerate button
+      var regenEl = document.getElementById('regen-btn');
+      if (regenEl) regenEl.style.display = 'inline-flex';
 
       showView('debrief-view');
     }
