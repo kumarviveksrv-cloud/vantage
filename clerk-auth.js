@@ -5,8 +5,8 @@
 (function () {
   'use strict';
 
-  var PUBLISHABLE_KEY  = 'pk_test_YnJpZWYta29pLTc2LmNsZXJrLmFjY291bnRzLmRldiQ';
-  var CLERK_DOMAIN     = 'https://brief-koi-76.clerk.accounts.dev';
+  var PUBLISHABLE_KEY  = 'pk_live_Y2xlcmsudmFudGFnZS52aXJvcmFoLmNvbSQ';
+  var CLERK_DOMAIN     = 'https://clerk.vantage.virorah.com';
   var WORKER_URL       = 'https://situation-room-api.kumarvivek-srv.workers.dev';
   var ACCESS_URL       = 'https://vantage.virorah.com/access.html';
   var DASHBOARD_URL    = 'https://vantage.virorah.com/dashboard.html';
