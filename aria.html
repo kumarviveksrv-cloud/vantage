@@ -31,15 +31,15 @@
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
     .logo-dot{width:8px;height:8px;border-radius:50%;background:#6366f1;box-shadow:0 0 10px #6366f1;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
     .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700}
-    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:2px}
-    .ns{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:4px 10px;margin:16px 0 6px}
+    .logo-sub{font-family:'JetBrains Mono',monospace;dpercase;color:rgba(255,255,255,.35);margin-top:2px}
+    .ns{font-family:'JetBrains Mono',monospace;dpercase;color:rgba(255,255,255,.2);padding:4px 10px;margin:16px 0 6px}
     .ni{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,.45);font-size:13px;margin-bottom:2px}
     .ni:hover{background:rgba(255,255,255,.04);color:#fff}
     .ni.active{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.25);color:#a5b4fc;font-weight:500}
     .ni .ic{font-size:16px;flex-shrink:0}
     .mc{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.15)}
     .mc .ml{font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
-    .mc .mv{font-size:11px;color:rgba(255,255,255,.45)}
+    .mc .mv{font-size:13px;color:rgba(255,255,255,.70)}
 
     /* MAIN LAYOUT */
     .main{flex:1;display:flex;height:100vh;overflow:hidden}
@@ -51,7 +51,7 @@
     /* Floating controls over face */
     .top-bar{position:absolute;top:0;left:0;right:0;z-index:10;padding:14px 22px 10px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(5,4,16,.9) 0%,transparent 100%)}
     .aria-id .aria-name{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#a5b4fc}
-    .aria-id .aria-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.28);letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
+    .aria-id .aria-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.60);letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
     .pills{display:flex;gap:6px}
     .pill{padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:rgba(5,4,16,.8);color:rgba(255,255,255,.45);transition:all .2s}
     .pill:hover{border-color:rgba(99,102,241,.3);color:#fff}
@@ -60,7 +60,7 @@
 
     /* Status strip */
     .status-strip{position:absolute;bottom:110px;left:0;right:0;z-index:9;text-align:center;pointer-events:none}
-    .slbl{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.28);min-height:16px;transition:color .3s;display:inline-block}
+    .slbl{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.60);min-height:16px;transition:color .3s;display:inline-block}
     .slbl.listening{color:#c4b5fd}
     .slbl.thinking{color:#a5b4fc}
     .slbl.speaking{color:#6366f1}
@@ -92,9 +92,9 @@
     .panel{width:380px;flex-shrink:0;background:rgba(13,11,30,.97);border-left:1px solid rgba(99,102,241,.12);display:flex;flex-direction:column;height:100vh}
     .panel-top{padding:14px 16px 10px;border-bottom:1px solid rgba(255,255,255,.05);flex-shrink:0}
     .panel-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:2px}
-    .panel-sub{font-size:11px;color:rgba(255,255,255,.3)}
+    .panel-sub{font-size:13px;color:rgba(255,255,255,.62)}
     .panel-tabs{display:flex;gap:4px;padding:10px 14px 0;border-bottom:1px solid rgba(255,255,255,.05);flex-shrink:0}
-    .ptab{padding:6px 14px;font-size:11px;cursor:pointer;border-radius:6px 6px 0 0;color:rgba(255,255,255,.35);font-family:'JetBrains Mono',monospace;letter-spacing:.04em;transition:all .2s;border:none;background:transparent}
+    .ptab{padding:6px 14px;font-size:12px;cursor:pointer;border-radius:6px 6px 0 0;color:rgba(255,255,255,.62);font-family:'JetBrains Mono',monospace;letter-spacing:.04em;transition:all .2s;border:none;background:transparent}
     .ptab.active{background:rgba(99,102,241,.1);color:#a5b4fc;border-bottom:2px solid #6366f1}
     .panel-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
 
@@ -106,7 +106,7 @@
     .intro-mode-card{background:rgba(99,102,241,.05);border:1px solid rgba(99,102,241,.12);border-radius:10px;padding:12px 14px;margin-bottom:10px}
     .imc-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:#a5b4fc;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
     .imc-desc{font-size:12px;color:rgba(255,255,255,.55);line-height:1.6}
-    .imc-when{font-size:11px;color:rgba(255,255,255,.3);margin-top:5px;font-style:italic}
+    .imc-when{font-size:12px;color:rgba(255,255,255,.60);margin-top:5px;font-style:italic}
 
     /* CHAT TAB */
     .chat-tab{flex:1;display:flex;flex-direction:column;overflow:hidden}
@@ -125,10 +125,10 @@
     .tyd span:nth-child(2){animation-delay:.15s}.tyd span:nth-child(3){animation-delay:.3s}
     .empty-chat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
     .ec-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#fff;margin-bottom:8px}
-    .ec-sub{font-size:12px;color:rgba(255,255,255,.3);line-height:1.6}
+    .ec-sub{font-size:13px;color:rgba(255,255,255,.62);line-height:1.6}
     .text-wrap{padding:12px 14px;border-top:1px solid rgba(255,255,255,.05);flex-shrink:0}
     .review-toggle-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-    .review-label-small{font-size:11px;color:rgba(255,255,255,.35);font-family:'JetBrains Mono',monospace}
+    .review-label-small{font-size:12px;color:rgba(255,255,255,.62);font-family:'JetBrains Mono',monospace}
     .review-toggle{position:relative;width:32px;height:18px;cursor:pointer}
     .review-toggle input{opacity:0;width:0;height:0}
     .rt-slider{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.1);border-radius:9px;transition:.3s}
@@ -144,13 +144,13 @@
 
     /* HISTORY TAB */
     .history-tab{flex:1;overflow-y:auto;padding:14px}
-    .hist-empty{text-align:center;padding:40px 20px;font-size:12px;color:rgba(255,255,255,.3)}
+    .hist-empty{text-align:center;padding:40px 20px;font-size:13px;color:rgba(255,255,255,.60)}
     .hist-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .2s}
     .hist-item:hover{border-color:rgba(99,102,241,.2);background:rgba(99,102,241,.04)}
     .hist-mode{font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
-    .hist-time{font-size:11px;color:rgba(255,255,255,.3);margin-bottom:6px}
+    .hist-time{font-size:12px;color:rgba(255,255,255,.60);margin-bottom:6px}
     .hist-preview{font-size:12px;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .hist-count{font-size:10px;color:rgba(255,255,255,.25);margin-top:4px;font-family:'JetBrains Mono',monospace}
+    .hist-count{font-size:12px;color:rgba(255,255,255,.55);margin-top:4px;font-family:'JetBrains Mono',monospace}
 
     select{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5' fill='%23a5b4fc'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
     select option{background:#0d0b1e;color:#fff}
@@ -873,7 +873,7 @@
       var btn = document.getElementById('end-btn');
       btn.innerText = 'Session Ended';
       btn.style.background = 'rgba(255,255,255,.06)';
-      btn.style.color = 'rgba(255,255,255,.35)';
+      btn.style.color = 'rgba(255,255,255,.65)';
       btn.style.borderColor = 'rgba(255,255,255,.08)';
       btn.disabled = true;
       setTimeout(function() {
