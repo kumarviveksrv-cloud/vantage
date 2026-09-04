@@ -29,7 +29,7 @@
         // Override .logo gap so V and text are flush — no disconnected whitespace
         '.logo{gap:2px !important}',
         // V image: 44px so it matches 2 lines of 18px text (18*1.22*2 ≈ 44px)
-        '.vl-img{width:44px;height:44px;object-fit:contain;flex-shrink:0;',
+        '.vl-img{width:68px;height:68px;object-fit:contain;flex-shrink:0;',
         'mix-blend-mode:screen;display:block;border:none;background:none}',
         '.vl-wrap{display:flex;flex-direction:column;gap:0;line-height:1.22}',
         // IRORAH — slightly lavender tint (parent brand), 18px to fill V height
@@ -49,6 +49,8 @@
     img.src = 'virorah-v.png';
     img.alt = 'V';
     img.className = 'vl-img';
+    img.width = 68;
+    img.height = 68;
     img.onerror = function() { this.style.display = 'none'; };
 
     var wrap = document.createElement('div');
