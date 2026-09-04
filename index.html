@@ -1,637 +1,1255 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <link rel="apple-touch-icon" href="favicon.png"/>
-  <link rel="icon" type="image/png" href="favicon.png"/>
-  <link rel="shortcut icon" href="favicon.png"/>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0" />
-  <title>Virorah Vantage — People decisions are financial decisions.</title>
-  <meta name="description" content="The intelligence platform for Indian HR professionals who want to lead in the language of business." />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth;overflow-x:hidden;max-width:100%}
-    body{background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.6;overflow-x:hidden;max-width:100%}
-    :root{
-      --bg:#050410;--surface:#0d0b1e;--card:#11102a;
-      --accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;
-      --red:#FF4D6D;--amber:#FFB547;
-      --border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.28);
-      --text:rgba(244,243,255,0.9);--grey:rgba(244,243,255,0.62);--dim:rgba(244,243,255,0.50)
-    }
-    /* Prevent any child from causing horizontal overflow */
-    *{max-width:100%}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-    @keyframes shimIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-    .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
-    .reveal.visible{opacity:1;transform:translateY(0)}
-    #bg-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;max-width:100vw}
-    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,4,16,0.9);backdrop-filter:blur(16px);border-bottom:1px solid rgba(99,102,241,0.1)}
-    .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
-    .nav-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite}
-    .nav-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
-    .nav-sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:1px}
-    .nav-links{display:flex;align-items:center;gap:28px}
-    .nav-links a{font-size:13px;color:var(--grey);text-decoration:none;transition:color .2s}
-    .nav-links a:hover{color:#f4f3ff}
-    .nav-cta{padding:10px 22px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer;text-decoration:none;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.4)}
-    .nav-cta:hover{opacity:.88}
-    .hero{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:140px 48px 100px;overflow:hidden;text-align:center}
-    .hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:900px;height:700px;background:radial-gradient(ellipse,rgba(99,102,241,0.07) 0%,transparent 68%);pointer-events:none}
-    .hero::after{content:'';position:absolute;bottom:-100px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(124,58,237,0.05) 0%,transparent 70%);pointer-events:none}
-    .hero-inner{max-width:860px;margin:0 auto;position:relative;z-index:2;animation:fadeUp .9s ease both}
-    .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(165,180,252,0.75);margin-bottom:32px;display:inline-flex;align-items:center;gap:10px}
-    .hero-eyebrow::before,.hero-eyebrow::after{content:'';width:22px;height:1px;background:var(--accent);opacity:.5}
-    .hero-c3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;line-height:1.13;margin-bottom:40px;color:#f4f3ff}
-    .hero-c3-line1{display:block;font-size:clamp(15px,1.8vw,22px);font-weight:400;color:var(--grey);font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.01em;margin-bottom:18px}
-    .hero-c3-line2{display:block;font-size:clamp(32px,4.4vw,60px);line-height:1.08;margin-bottom:18px}
-    .hero-c3-line3{display:block;font-size:clamp(13px,1.5vw,19px);font-weight:400;color:rgba(244,243,255,0.38);font-family:'JetBrains Mono',monospace;letter-spacing:.04em}
-    .hero-c3-line2 .grad{background:linear-gradient(135deg,#f4f3ff 0%,#c4b5fd 50%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .cursor{display:inline-block;width:3px;height:.85em;background:var(--accent);animation:blink 1s step-end infinite;vertical-align:-.08em;margin-left:3px;border-radius:1px;-webkit-text-fill-color:initial}
-    .hero-divider{width:48px;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.5),transparent);margin:0 auto 32px}
-    .hero-sub{font-size:clamp(15px,1.6vw,18px);color:var(--grey);line-height:1.8;max-width:580px;margin:0 auto 44px}
-    .hero-sub strong{color:rgba(244,243,255,0.65);font-weight:500}
-    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-    .btn-primary{padding:16px 36px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:10px;cursor:pointer;text-decoration:none;display:inline-block;transition:opacity .2s,transform .2s;box-shadow:0 4px 28px rgba(99,102,241,0.45),0 0 0 1px rgba(99,102,241,0.15)}
-    .btn-primary:hover{opacity:.9;transform:translateY(-1px)}
-    .btn-outline{padding:16px 28px;background:transparent;color:rgba(244,243,255,0.7);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;border:1px solid rgba(244,243,255,0.1);border-radius:10px;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s}
-    .btn-outline:hover{border-color:rgba(99,102,241,0.4);color:#f4f3ff}
-    .marquee-section{position:relative;z-index:2;border-top:1px solid rgba(99,102,241,.1);border-bottom:1px solid rgba(99,102,241,.1);padding:14px 0;overflow:hidden;background:rgba(99,102,241,.04)}
-    .marquee-track{display:flex;gap:0;animation:marquee 32s linear infinite;width:max-content}
-    .marquee-item{display:flex;align-items:center;gap:10px;padding:0 36px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:rgba(165,180,252,.62);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
-    .marquee-dot{width:4px;height:4px;border-radius:50%;background:rgba(99,102,241,.5);flex-shrink:0}
-    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-    .alone-section{position:relative;z-index:2;padding:100px 48px;border-bottom:1px solid rgba(99,102,241,0.07)}
-    .alone-inner{max-width:720px;margin:0 auto}
-    .alone-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,0.70);margin-bottom:36px;display:flex;align-items:center;gap:12px}
-    .alone-eyebrow::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(99,102,241,0.25),transparent)}
-    .alone-body{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(20px,2.4vw,30px);font-weight:600;line-height:1.55;color:rgba(244,243,255,0.82);margin-bottom:36px}
-    .alone-body em{font-style:normal;color:#f4f3ff}
-    .alone-body .dim{color:rgba(244,243,255,0.38)}
-    .alone-close{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.06em;display:flex;align-items:center;gap:10px}
-    .alone-close::before{content:'';width:18px;height:1px;background:var(--accent);opacity:.6}
-    .cost-section{position:relative;z-index:2;padding:80px 48px 100px;background:linear-gradient(180deg,rgba(13,11,30,0.3) 0%,transparent 100%)}
-    .cost-inner{max-width:560px;margin:0 auto;text-align:center}
-    .cost-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,0.70);margin-bottom:20px}
-    .cost-headline{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(18px,2vw,26px);font-weight:700;color:rgba(244,243,255,0.6);margin-bottom:36px;line-height:1.4}
-    .cost-headline strong{color:#f4f3ff}
-    .mock-card{background:var(--surface);border:1px solid var(--border-accent);border-radius:18px;padding:28px;position:relative;text-align:left;animation:float 7s ease-in-out infinite}
-    .mock-card::before{content:'';position:absolute;inset:-1px;border-radius:18px;background:linear-gradient(135deg,rgba(99,102,241,0.15),transparent 60%);z-index:-1;pointer-events:none}
-    .mock-badge{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);padding:4px 10px;border-radius:4px;display:inline-block;margin-bottom:16px}
-    .mock-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;color:#f4f3ff}
-    .mock-risk{font-family:'JetBrains Mono',monospace;font-size:10px;color:#FF4D6D;background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.25);padding:3px 9px;border-radius:4px;display:inline-block;margin-bottom:18px}
-    .mock-exposure{background:#050410;border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:14px 18px;margin-bottom:14px}
-    .mock-expo-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
-    .mock-expo-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);line-height:1.65}
-    .mock-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .mock-mini{background:#050410;border:1px solid var(--border);border-radius:8px;padding:12px 14px}
-    .mock-mini-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
-    .mock-mini-val{font-size:11px;color:rgba(244,243,255,0.5);line-height:1.5}
-    .mock-mini-val strong{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;display:block;margin-bottom:2px}
+// Virorah Vantage — Shared Sidebar Enhancements + PWA
 
-    /* STATS STRIP — canvas overlay per card */
-    .stats-strip{position:relative;z-index:2;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(13,11,30,0.6);padding:36px 48px}
-    .stats-inner{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
-    .stat-item{text-align:center;position:relative}
-    .stat-num{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:var(--lavender);margin-bottom:6px;letter-spacing:-0.5px;position:relative;z-index:1}
-    
-    .stat-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;line-height:1.5;position:relative;z-index:1}
+(function() {
 
-    /* SHIFT — canvas overlay */
-    .shift-section-wrap{position:relative}
-    .shift-glitch-canvas{position:absolute;inset:0;pointer-events:none;z-index:5;opacity:0}
+  // ── VIRORAH VANTAGE LOGO MARK ────────────────────────────────────────────────
+  // Uses the actual Virorah wordmark PNG (transparent background, exact logo font).
+  // Vivek uploads virorah-wordmark.png to repo root (from the delivered outputs file).
+  // Layout: [VIRORAH image — full width] on row 1, [Vantage badge] on row 2.
+  // This eliminates all font-matching issues — the A looks exactly like the logo.
+  (function injectLogoMark() {
+    var logoEl = document.querySelector('.logo');
+    if (!logoEl) return;
 
-    /* MERIDIAN — canvas replace */
-    .meridian-canvas-wrap{position:relative;min-height:260px}
-    #meridian-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2}
-    .meridian-params{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:28px;opacity:0;transition:opacity 1s ease 2.5s}
-    .meridian-params.resolved{opacity:1}
-
-    section{position:relative;z-index:2;padding:100px 48px}
-    .section-inner{max-width:1140px;margin:0 auto}
-    .section-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.10em;text-transform:uppercase;color:rgba(165,180,252,0.72);margin-bottom:14px}
-    h2{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(28px,3.2vw,44px);font-weight:800;margin-bottom:18px;line-height:1.12;color:#f4f3ff}
-    .section-sub{font-size:15px;color:var(--grey);max-width:560px;line-height:1.75}
-    .shift-wrapper{display:grid;grid-template-columns:1fr 40px 1fr;gap:0;margin-top:52px;align-items:start}
-    .shift-col{display:flex;flex-direction:column;gap:14px}
-    .shift-colhead{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:6px 14px;border-radius:6px;display:inline-block;margin-bottom:4px;width:fit-content}
-    .shift-colhead.before{color:var(--dim);background:rgba(244,243,255,0.03);border:1px solid rgba(244,243,255,0.07)}
-    .shift-colhead.after{color:var(--muted);background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.2)}
-    .shift-card{border-radius:12px;padding:18px 22px;font-size:13px;line-height:1.7;position:relative;overflow:hidden}
-    .shift-card.before{background:rgba(244,243,255,0.02);border:1px solid rgba(244,243,255,0.05);color:var(--grey);font-style:italic;transition:opacity 0.8s ease,filter 0.8s ease}
-    .shift-card.after{background:var(--surface);border:1px solid rgba(99,102,241,0.18);color:rgba(244,243,255,0.72)}
-    .shift-card.after.revealed{opacity:1;transform:translateY(0)}
-    .shift-card.before.degraded{opacity:0.18;filter:blur(1.5px) saturate(0)}
-    .rupee{font-family:'JetBrains Mono',monospace;color:var(--muted);font-style:normal;font-size:13px}
-    .shift-arrow-col{display:flex;flex-direction:column;gap:14px;align-items:center;padding-top:42px}
-    .shift-arrow{font-size:16px;color:rgba(99,102,241,0.4);height:74px;display:flex;align-items:center;transition:color 0.5s ease,text-shadow 0.5s ease}
-    .shift-arrow.lit{color:#a5b4fc;text-shadow:0 0 12px rgba(165,180,252,0.6)}
-    .tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:52px}
-    .tool-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px;transition:border-color .25s,transform .25s}
-    .tool-card:hover{border-color:rgba(99,102,241,0.35);transform:translateY(-3px)}
-    .tool-card.wide{grid-column:span 2}
-    .tool-icon{font-size:22px;margin-bottom:14px}
-    .tool-tag{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-    .tool-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;color:#f4f3ff}
-    .tool-desc{font-size:13px;color:var(--grey);line-height:1.65}
-    .meridian-strip{position:relative;z-index:2;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:48px}
-    .meridian-inner{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
-    .meridian-param{background:#050410;border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-align:center;transition:border-color .4s,background .4s,box-shadow .4s}
-    .meridian-param.lit{border-color:rgba(99,102,241,0.5);background:rgba(99,102,241,0.06);box-shadow:0 0 16px rgba(99,102,241,0.12)}
-    .param-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
-    .param-val{font-size:12px;color:rgba(244,243,255,0.6);min-height:16px}
-    .humacity-section{position:relative;z-index:2;background:linear-gradient(135deg,rgba(99,102,241,0.05),rgba(99,102,241,0.01));border-top:1px solid rgba(99,102,241,0.12);border-bottom:1px solid rgba(99,102,241,0.12)}
-    .humacity-inner{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
-    .h-assets{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:32px}
-    .h-asset{background:rgba(5,4,16,0.7);border:1px solid rgba(99,102,241,0.15);border-radius:10px;padding:16px 18px}
-    .h-asset-name{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
-    .h-asset-desc{font-size:12px;color:var(--grey);line-height:1.55}
-    .humacity-link{display:inline-flex;align-items:center;gap:8px;margin-top:28px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-decoration:none;border:1px solid rgba(99,102,241,0.3);padding:10px 20px;border-radius:6px;transition:background .2s}
-    .humacity-link:hover{background:rgba(99,102,241,0.08)}
-    .pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:52px;max-width:720px}
-    .pricing-card{background:var(--surface);border-radius:16px;padding:34px}
-    .pricing-card.base{border:1px solid var(--border)}
-    .pricing-card.pro{border:1px solid var(--border-accent);background:linear-gradient(145deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02))}
-    .pricing-tier{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
-    .pricing-price{font-family:'Bricolage Grotesque',sans-serif;font-size:38px;font-weight:800;line-height:1;margin-bottom:6px;color:#f4f3ff}
-    .pricing-price sup{font-size:18px;vertical-align:super}
-    .pricing-cadence{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);margin-bottom:18px}
-    .pricing-desc{font-size:13px;color:var(--grey);margin-bottom:24px;line-height:1.65;padding-bottom:20px;border-bottom:1px solid var(--border)}
-    .pricing-features{display:flex;flex-direction:column;gap:9px;margin-bottom:28px}
-    .pricing-feature{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:rgba(244,243,255,0.58)}
-    .pf-check{width:16px;height:16px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace}
-    .pricing-cta{display:block;text-align:center;padding:14px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border-radius:10px;text-decoration:none;transition:all .2s}
-    .pricing-cta.solid{background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;box-shadow:0 4px 20px rgba(99,102,241,0.4)}
-    .pricing-cta.solid:hover{opacity:.88}
-    .pricing-cta.ghost{background:transparent;color:var(--muted);border:1px solid rgba(99,102,241,0.3)}
-    .pricing-cta.ghost:hover{background:rgba(99,102,241,0.07)}
-    .pricing-note{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);text-align:center;margin-top:12px;letter-spacing:.04em}
-    .why-section{position:relative;z-index:2;padding:80px 24px;background:linear-gradient(180deg,#050410 0%,rgba(99,102,241,0.04) 40%,rgba(99,102,241,0.04) 60%,#050410 100%)}
-    .why-section::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.4),transparent)}
-    .why-inner{max-width:780px;margin:0 auto}
-    .why-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(99,102,241,0.7);letter-spacing:.18em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px}
-    .why-eyebrow::before{content:'';width:28px;height:1px;background:rgba(99,102,241,0.4)}
-    .why-headline{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.1;color:#f4f3ff;margin-bottom:20px;letter-spacing:-.02em}
-    .why-headline em{font-style:italic;background:linear-gradient(135deg,#c4b5fd,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .why-opener{font-size:15px;color:rgba(244,243,255,0.5);line-height:1.8;margin-bottom:60px;max-width:660px;border-left:2px solid rgba(99,102,241,0.3);padding-left:20px}
-    .args-stack{display:flex;flex-direction:column;gap:2px;margin-bottom:60px}
-    .arg-card{background:rgba(13,11,30,0.6);border:1px solid rgba(244,243,255,0.05);border-radius:14px;padding:32px 36px;display:grid;grid-template-columns:56px 1fr;gap:28px;align-items:flex-start;transition:border-color .2s,background .2s;position:relative;overflow:hidden}
-    .arg-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,rgba(99,102,241,0),rgba(99,102,241,0.6),rgba(99,102,241,0));opacity:0;transition:opacity .2s}
-    .arg-card:hover{background:rgba(13,11,30,0.9);border-color:rgba(99,102,241,0.2)}
-    .arg-card:hover::before{opacity:1}
-    .arg-num{font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(99,102,241,0.5);letter-spacing:.08em;padding-top:4px;font-weight:500}
-    .arg-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;margin-bottom:10px;line-height:1.3}
-    .arg-title strong{color:var(--muted)}
-    .arg-text{font-size:13px;color:rgba(244,243,255,0.5);line-height:1.75}
-    .why-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.25),transparent);margin-bottom:48px}
-    .why-closing{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.2);border-radius:14px;padding:32px 40px;text-align:center}
-    .why-closing-text{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(1.1rem,2vw,1.4rem);font-weight:600;color:rgba(244,243,255,0.85);line-height:1.6;font-style:italic}
-    .why-closing-text::before,.why-closing-text::after{content:'"';color:rgba(99,102,241,0.5);font-size:1.6em;line-height:0;vertical-align:-.3em}
-    .final-strip{position:relative;z-index:2;padding:100px 48px;text-align:center;overflow:hidden}
-    .final-strip::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:800px;height:400px;background:radial-gradient(ellipse,rgba(99,102,241,0.08) 0%,transparent 70%);pointer-events:none}
-    .final-headline{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(28px,3.5vw,48px);font-weight:800;margin-bottom:16px;line-height:1.1;color:#f4f3ff}
-    .final-sub{font-size:15px;color:var(--grey);margin-bottom:36px}
-    .final-note{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-top:16px}
-    footer{position:relative;z-index:2;background:var(--surface);border-top:1px solid var(--border);padding:40px 48px;display:flex;align-items:center;justify-content:space-between}
-    .footer-left .f-logo{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px;color:#f4f3ff}
-    .footer-left .f-tag{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
-    .footer-links{display:flex;gap:24px}
-    .footer-links a{font-size:12px;color:var(--dim);text-decoration:none;transition:color .2s}
-    .footer-links a:hover{color:var(--muted)}
-    .footer-copy{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace}
-    #neural-core{position:fixed;top:0;left:0;width:9px;height:9px;border-radius:50%;background:#a5b4fc;box-shadow:0 0 12px 3px rgba(165,180,252,.7);pointer-events:none;z-index:9999}
-    #neural-readout{position:fixed;top:0;left:0;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#a5b4fc;pointer-events:none;z-index:9999;opacity:0;transition:opacity .25s;white-space:nowrap;letter-spacing:.4px}
-    #neural-canvas{position:fixed;inset:0;z-index:9997;pointer-events:none;width:100%;height:100%;max-width:100vw}
-    @media(max-width:960px){nav{padding:14px 24px}.nav-links{display:none}.hero{padding:110px 24px 72px}.alone-section{padding:72px 24px}.cost-section{padding:60px 24px 72px}.stats-strip{padding:28px 24px}.stats-inner{grid-template-columns:repeat(2,1fr);gap:20px}section{padding:72px 24px}.shift-wrapper{grid-template-columns:1fr;gap:24px}.shift-arrow-col{display:none}.tools-grid{grid-template-columns:1fr 1fr}.tool-card.wide{grid-column:span 1}.meridian-strip{padding:48px 24px}.meridian-inner{grid-template-columns:1fr}.humacity-inner{grid-template-columns:1fr}.pricing-grid{max-width:100%;grid-template-columns:1fr}.final-strip{padding:72px 24px}footer{flex-direction:column;gap:16px;text-align:center;padding:32px 24px;align-items:center}.footer-links{justify-content:center}}
-    @media(max-width:600px){.tools-grid{grid-template-columns:1fr}.meridian-params{grid-template-columns:repeat(2,1fr)}.h-assets{grid-template-columns:1fr}.arg-card{grid-template-columns:1fr;gap:10px;padding:24px}.why-closing{padding:24px}.mock-row{grid-template-columns:1fr}}
-  
-    /* ── PWA STANDALONE + MOBILE LANDING FIX ────────────────── */
-    @media(max-width:480px){
-      .hero{padding:90px 20px 60px;min-height:auto}
-      .hero-c3-line1{font-size:13px;margin-bottom:12px}
-      .hero-c3-line2{font-size:clamp(22px,7vw,32px);line-height:1.12;margin-bottom:14px}
-      .hero-c3-line3{font-size:11px}
-      .hero-divider{margin:0 auto 20px}
-      .hero-sub{font-size:13px;margin-bottom:28px}
-      .hero-actions{flex-direction:column;align-items:stretch;gap:10px}
-      .btn-primary{padding:14px 24px;font-size:14px;text-align:center}
-      .btn-outline{padding:12px 20px;font-size:13px;text-align:center}
-      .alone-section{padding:52px 20px}
-      .alone-body{font-size:clamp(16px,4.5vw,22px)}
-      .cost-section{padding:40px 20px 52px}
-      .cost-headline{font-size:15px}
-      .mock-card{padding:18px}
-      .mock-row{grid-template-columns:1fr}
-      .stats-strip{padding:20px 20px}
-      .stats-inner{grid-template-columns:repeat(2,1fr);gap:14px}
-      .stat-num{font-size:22px}
-      section{padding:52px 20px}
-      h2{font-size:clamp(22px,6vw,32px)}
-      .shift-wrapper{grid-template-columns:1fr;gap:16px}
-      .shift-arrow-col{display:none}
-      .tools-grid{grid-template-columns:1fr}
-      .tool-card.wide{grid-column:span 1}
-      .meridian-strip{padding:36px 20px}
-      .meridian-inner{grid-template-columns:1fr;gap:32px}
-      .meridian-params{grid-template-columns:repeat(2,1fr)}
-      .humacity-inner{grid-template-columns:1fr;gap:32px}
-      .h-assets{grid-template-columns:1fr}
-      .pricing-grid{grid-template-columns:1fr;max-width:100%}
-      .why-section{padding:52px 16px}
-      .arg-card{grid-template-columns:1fr;gap:8px;padding:20px}
-      .why-closing{padding:20px}
-      .final-strip{padding:52px 20px}
-      .final-headline{font-size:clamp(22px,6vw,36px)}
-      footer{flex-direction:column;gap:14px;text-align:center;padding:24px 20px;align-items:center}
-      .footer-links{justify-content:center;flex-wrap:wrap;gap:16px}
+    // Load Outfit for the badge only
+    if (!document.getElementById('vantage-outfit-font')) {
+      var fl = document.createElement('link');
+      fl.id = 'vantage-outfit-font';
+      fl.rel = 'stylesheet';
+      fl.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@700&display=swap';
+      document.head.appendChild(fl);
     }
 
-    /* PWA standalone mode — remove top padding conflict with status bar */
-    @media(display-mode:standalone){
-      nav{padding-top:env(safe-area-inset-top,16px)}
-      .hero{padding-top:calc(env(safe-area-inset-top,0px) + 90px)}
-      body{padding-bottom:env(safe-area-inset-bottom,0px)}
+    // Inject logo CSS
+    if (!document.getElementById('vantage-logo-css')) {
+      var s = document.createElement('style');
+      s.id = 'vantage-logo-css';
+      s.textContent = [
+        // Stack wordmark + badge vertically, left-aligned
+        '.logo{flex-direction:column !important;align-items:flex-start !important;',
+        'gap:4px !important;cursor:pointer}',
+        // Wordmark image — exact logo, transparent bg, no blend mode needed
+        '.vl-wordmark{width:155px;height:auto;display:block;flex-shrink:0}',
+        // Vantage badge — unchanged from previous, Vivek approved
+        '.vl-badge{font-family:Outfit,"Space Grotesk",sans-serif;font-size:9.5px;',
+        'font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#fff;',
+        'background:linear-gradient(135deg,#6366f1 0%,#7c3aed 100%);',
+        'padding:3px 8px;border-radius:5px;white-space:nowrap;',
+        'box-shadow:0 0 8px rgba(99,102,241,0.45),0 0 0 1px rgba(99,102,241,0.3)}'
+      ].join('');
+      document.head.appendChild(s);
     }
-  </style>
-</head>
-<body>
-<canvas id="bg-canvas"></canvas>
-<canvas id="neural-canvas"></canvas>
-<div id="neural-core"></div>
-<div id="neural-readout"></div>
 
-<nav>
-  <div class="nav-logo" style="display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer">
-    <img src="virorah-wordmark.png" alt="Virorah" height="34"
-      style="height:34px;width:auto;display:block;flex-shrink:0"/>
-    <span style="font-family:'Outfit','Bricolage Grotesque',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#6366f1,#7c3aed);padding:4px 10px;border-radius:5px;white-space:nowrap;box-shadow:0 0 10px rgba(99,102,241,0.45),0 0 0 1px rgba(99,102,241,0.3)">Vantage</span>
-  </div>
-  <div class="nav-links">
-    <a href="#tools">Tools</a>
-    <a href="#philosophy">Humacity</a>
-    <a href="#pricing">Pricing</a>
-    <a href="https://virorah.com" target="_blank" style="display:inline-flex;align-items:center;gap:5px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border:1px solid rgba(99,102,241,0.3);border-radius:20px;background:rgba(99,102,241,0.07);transition:all .2s;white-space:nowrap" onmouseover="this.style.background='rgba(99,102,241,0.14)';this.style.borderColor='rgba(99,102,241,0.6)'" onmouseout="this.style.background='rgba(99,102,241,0.07)';this.style.borderColor='rgba(99,102,241,0.3)'">The Virorah Universe &#x2197;</a>
-  </div>
-  <div style="display:flex;align-items:center;gap:10px">
-    <a href="access.html" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(165,180,252,0.6);text-decoration:none;padding:10px 16px;border:1px solid rgba(99,102,241,0.2);border-radius:8px;transition:all .2s" onmouseover="this.style.borderColor='rgba(99,102,241,0.5)';this.style.color='#a5b4fc'" onmouseout="this.style.borderColor='rgba(99,102,241,0.2)';this.style.color='rgba(165,180,252,0.6)'">Sign In</a>
-    <a href="demo.html" class="nav-cta">See it in action</a>
-  </div>
-</nav>
+    // Build: [VIRORAH wordmark image] then [Vantage badge] below
+    var img = document.createElement('img');
+    img.src = 'virorah-wordmark.png';
+    img.alt = 'Virorah';
+    img.className = 'vl-wordmark';
+    img.onerror = function() {
+      // Fallback: plain text if image missing
+      this.style.display = 'none';
+      var fb = document.createElement('span');
+      fb.textContent = 'VIRORAH';
+      fb.style.cssText = 'font-size:16px;font-weight:700;color:#f4f3ff;letter-spacing:.04em';
+      logoEl.insertBefore(fb, logoEl.firstChild);
+    };
 
-<div class="hero">
-  <div class="hero-inner">
-    <div class="hero-eyebrow">Virorah Vantage</div>
-    <div class="hero-c3">
-      <span class="hero-c3-line1">Every HR professional has a 9pm moment.</span>
-      <span class="hero-c3-line2"><span class="grad">A case that can't wait. A conversation that has to land right.<br>A call you'll be held accountable for —<br>whether or not you had the right support making it.</span><span class="cursor"></span></span>
-      <span class="hero-c3-line3">Now you do.</span>
-    </div>
-    <div class="hero-divider"></div>
-    <p class="hero-sub">The intelligence platform built for Indian HR professionals who want to stop being treated as a cost centre — and start leading in the <strong>language of business.</strong></p>
-    <div class="hero-actions">
-      <a href="demo.html" class="btn-primary">Enter Vantage &rarr;</a>
-      <a href="access.html" class="btn-outline">Sign In</a>
-    </div>
-  </div>
-</div>
+    var badge = document.createElement('span');
+    badge.className = 'vl-badge';
+    badge.textContent = 'Vantage';
 
-<div class="marquee-section">
-  <div class="marquee-track">
-    <div class="marquee-item"><div class="marquee-dot"></div>PACT Framework</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>SIGNAL Framework</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>INFLUENCE Stack</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>MERIDIAN Profile</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>ARIA Intelligence</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Trust Capital</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Culture Yield</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Signal Intelligence</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Belonging Premium</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>ER Case Navigator</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Policy Compass</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Human P&amp;L</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Case Library</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>The Debrief</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>BNS &middot; BNSS &middot; BSA</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>PACT Framework</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>SIGNAL Framework</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>INFLUENCE Stack</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>MERIDIAN Profile</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>ARIA Intelligence</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Trust Capital</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Culture Yield</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Signal Intelligence</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Belonging Premium</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>ER Case Navigator</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Policy Compass</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Human P&amp;L</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>Case Library</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>The Debrief</div>
-    <div class="marquee-item"><div class="marquee-dot"></div>BNS &middot; BNSS &middot; BSA</div>
-  </div>
-</div>
+    while (logoEl.firstChild) logoEl.removeChild(logoEl.firstChild);
+    logoEl.appendChild(img);
+    logoEl.appendChild(badge);
+  })();
 
-<div class="alone-section reveal">
-  <div class="alone-inner">
-    <div class="alone-eyebrow">The moment we built this for</div>
-    <div class="alone-body">
-      You know what the right call is. <em>You've always known.</em><br><br>
-      But there's a termination on your desk that has to happen by Friday. A grievance that just escalated to the MD. A CFO meeting in 48 hours where HR needs to finally show up in numbers — and you're the only person in the room who understands what's actually at stake.<br><br>
-      <span class="dim">No senior HR to call at 9pm. No playbook that maps to your state, your industry, your standing orders. Just you, the situation, and the weight of getting it wrong.</span><br><br>
-      That is the exact moment Vantage was built for.
-    </div>
-    <div class="alone-close">India-calibrated · MERIDIAN-contextualised · Built for the individual HR professional</div>
-  </div>
-</div>
+  // ── GLOBAL COLOR SYSTEM OVERRIDE ─────────────────────────
+  // Unifies Vantage with PMS / Virorah Universe blue-indigo palette
+  var styleOverride = document.createElement('style');
+  styleOverride.textContent = [
+    ':root {',
+    '  --teal: #6366f1 !important;',
+    '  --teal-dim: rgba(99,102,241,0.08) !important;',
+    '  --teal-border: rgba(99,102,241,0.25) !important;',
+    '  --bg: #050410 !important;',
+    '  --bg2: #0d0b1e !important;',
+    '  --surface: #0d0b1e !important;',
+    '  --card: #11102a !important;',
+    '}',
 
-<div class="cost-section reveal">
-  <div class="cost-inner">
-    <div class="cost-eyebrow">What that moment costs when it goes wrong</div>
-    <div class="cost-headline">One termination. <strong>Three documentation failures.</strong><br>&#8377;35L in exposure you didn't see coming.</div>
-    <div class="mock-card">
-      <div class="mock-badge">HUMACITY &middot; Financial Impact</div>
-      <div class="mock-title">Termination Case &middot; Process Integrity</div>
-      <div class="mock-risk">HIGH RISK</div>
-      <div class="mock-exposure">
-        <div class="mock-expo-label">Total Financial Exposure</div>
-        <div class="mock-expo-val">&#8377;28L &ndash; &#8377;35L estimated<br>Settlement &#8377;12L &middot; Legal &#8377;4L &middot; Replacement &#8377;8L<br>Productivity loss &#8377;4L&ndash;11L</div>
-      </div>
-      <div class="mock-row">
-        <div class="mock-mini"><div class="mock-mini-label">Cost of Inaction</div><div class="mock-mini-val"><strong>&#8377;22L</strong>if case proceeds without documentation trail</div></div>
-        <div class="mock-mini"><div class="mock-mini-label">Revenue Protected</div><div class="mock-mini-val"><strong>&#8377;18L</strong>preserved through correct process</div></div>
-      </div>
-    </div>
-  </div>
-</div>
+    // Sidebar active state
+    '.nav-item.active, a.nav-item.active {',
+    '  background: rgba(99,102,241,0.12) !important;',
+    '  border-color: rgba(99,102,241,0.30) !important;',
+    '  color: #a5b4fc !important;',
+    '}',
 
-<!-- STATS STRIP — sonar pulse animation -->
-<div class="stats-strip" id="stats-strip">
-  <div class="stats-inner">
-    <div class="stat-item"><div class="stat-num" id="sn0">&#8377;0L</div><div class="stat-label">Avg exposure per<br>ER case, India</div></div>
-    <div class="stat-item"><div class="stat-num" id="sn1">0</div><div class="stat-label">Intelligence tools<br>India-calibrated</div></div>
-    <div class="stat-item"><div class="stat-num" id="sn2">0</div><div class="stat-label">MERIDIAN context<br>parameters</div></div>
-    <div class="stat-item"><div class="stat-num" id="sn3">0</div><div class="stat-label">HUMANCE asset<br>classes tracked</div></div>
-  </div>
-</div>
+    // Sidebar hover
+    '.nav-item:hover, a.nav-item:hover {',
+    '  background: rgba(99,102,241,0.08) !important;',
+    '  border-color: rgba(99,102,241,0.20) !important;',
+    '  color: #c4b5fd !important;',
+    '}',
 
-<!-- SHIFT SECTION -->
-<section id="shift-section">
-  <div class="section-inner reveal">
-    <div class="section-eyebrow">The shift</div>
-    <h2>Two versions of the<br>same conversation.</h2>
-    <p class="section-sub">Same situation. One gets you nodded at. One gets you funded.</p>
-    <div class="shift-wrapper" id="shift-wrapper">
-      <div class="shift-col" id="shift-before">
-        <div class="shift-colhead before">Before Virorah</div>
-        <div class="shift-card before" id="sb0">"We had some attrition issues last quarter. Mostly mid-level. I think it's a culture thing."</div>
-        <div class="shift-card before" id="sb1">"The termination had some process gaps. We're reviewing our documentation internally."</div>
-        <div class="shift-card before" id="sb2">"I need the L&D budget approved. It's important for employee engagement."</div>
-      </div>
-      <div class="shift-arrow-col">
-        <div class="shift-arrow" id="sa0">&#8594;</div>
-        <div class="shift-arrow" id="sa1">&#8594;</div>
-        <div class="shift-arrow" id="sa2">&#8594;</div>
-      </div>
-      <div class="shift-col">
-        <div class="shift-colhead after">With Virorah</div>
-        <div class="shift-card after" id="saf0">"Trust Capital degraded by <span class="rupee">&#8377;12.4L</span> this quarter. Three unresolved cases are the source. Here's the intervention that recovers <span class="rupee">&#8377;8L</span> of that by month end."</div>
-        <div class="shift-card after" id="saf1">"Process Integrity scored Critical. Three documentation failures exposed us to <span class="rupee">&#8377;6L</span> in legal risk. Here's what we close in the next 72 hours."</div>
-        <div class="shift-card after" id="saf2">"The <span class="rupee">&#8377;12L</span> L&D investment hedges <span class="rupee">&#8377;48L</span> in replacement cost if we lose 8 senior managers this year. The pilot is 50 people, 90 days, <span class="rupee">&#8377;10L</span>. The math works."</div>
-      </div>
-    </div>
-  </div>
-</section>
+    // Nav section labels — updated from indigo (dark on dark, unreadable)
+    // to muted lavender which is inherently lighter and readable.
+    '.nav-section {',
+    '  color: rgba(165,180,252,0.65) !important;',
+    '}',
 
-<section id="tools" style="padding-top:0">
-  <div class="section-inner reveal">
-    <div class="section-eyebrow">The tools</div>
-    <h2>Five tools. Every hard HR<br>moment covered.</h2>
-    <p class="section-sub">Built around PACT, SIGNAL, INFLUENCE, and MERIDIAN — frameworks designed for the Indian HR reality, not a borrowed Western playbook.</p>
-    <div class="tools-grid">
-      <div class="tool-card wide"><div class="tool-icon">&#9889;</div><div class="tool-tag">PACT Framework</div><div class="tool-name">ER Case Navigator</div><div class="tool-desc">Describe any employee relations situation. PACT assesses Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation — calibrated to BNS, BNSS, and your exact MERIDIAN context. Returns a full Humacity financial exposure in INR. Your legal and financial picture, in 60 seconds.</div></div>
-      <div class="tool-card"><div class="tool-icon">&#127919;</div><div class="tool-tag">INFLUENCE Stack</div><div class="tool-name">Stakeholder Influence Builder</div><div class="tool-desc">Walk into any leadership conversation with a five-layer strategy and a single irrefutable rupee figure. Credibility, Data Anchor, Narrative, Risk Mirror, Decision Runway.</div></div>
-      <div class="tool-card"><div class="tool-icon">&#128202;</div><div class="tool-tag">SIGNAL Framework</div><div class="tool-name">HR Data Storyteller</div><div class="tool-desc">Turn raw HR metrics into a CFO-ready narrative. Situation, Impact, Gap, Narrative, Action, Linkage. Your numbers finally speak the right language.</div></div>
-      <div class="tool-card"><div class="tool-icon">&#127917;</div><div class="tool-tag">Voice Simulation</div><div class="tool-name">Conversation Simulator</div><div class="tool-desc">Practice the hard conversation before you're in it. ARIA voices the stakeholder and coaches you on what to sharpen before the real meeting.</div></div>
-      <div class="tool-card"><div class="tool-icon">&#129517;</div><div class="tool-tag">Compliance Intelligence</div><div class="tool-name">Policy Compass</div><div class="tool-desc">India-specific policy guidance in 30 seconds. Always references BNS, BNSS, BSA. Never outdated IPC, CrPC, or Indian Evidence Act — repealed July 2024.</div></div>
-    </div>
-  </div>
-</section>
+    // ── PLATFORM-WIDE LABEL READABILITY ────────────────────
+    // All small uppercase JetBrains Mono section labels use
+    // low-opacity dark indigo (rgba(99,102,241,0.55)) which has
+    // near-zero contrast on the #050410 dark background.
+    // Changed to muted lavender at readable opacity across every
+    // known label class on every page.
 
-<div class="meridian-strip reveal" id="meridian-strip">
-  <div class="meridian-inner">
-    <div>
-      <div class="section-eyebrow">MERIDIAN Context Engine</div>
-      <h2 style="font-size:clamp(24px,2.8vw,36px)">Advice calibrated<br>to your exact reality.</h2>
-      <p class="section-sub">Seven parameters. Every response in Virorah is tuned to your state, industry, org type, org size, seniority level, union status, and HR function. Not generic advice — your advice.</p>
-    </div>
-    <div>
-      <div class="meridian-params" id="meridian-params">
-        <div class="meridian-param" id="mp0"><div class="param-label">State</div><div class="param-val" id="mv0">&nbsp;</div></div>
-        <div class="meridian-param" id="mp1"><div class="param-label">Industry</div><div class="param-val" id="mv1">&nbsp;</div></div>
-        <div class="meridian-param" id="mp2"><div class="param-label">Org Type</div><div class="param-val" id="mv2">&nbsp;</div></div>
-        <div class="meridian-param" id="mp3"><div class="param-label">Org Size</div><div class="param-val" id="mv3">&nbsp;</div></div>
-        <div class="meridian-param" id="mp4"><div class="param-label">Seniority</div><div class="param-val" id="mv4">&nbsp;</div></div>
-        <div class="meridian-param" id="mp5"><div class="param-label">Union</div><div class="param-val" id="mv5">&nbsp;</div></div>
-        <div class="meridian-param" id="mp6"><div class="param-label">Function</div><div class="param-val" id="mv6">&nbsp;</div></div>
-        <div class="meridian-param" id="mp7" style="border-color:rgba(99,102,241,0.3)"><div class="param-label" style="color:var(--muted)">Result</div><div class="param-val" id="mv7" style="color:var(--muted)">&nbsp;</div></div>
-      </div>
-    </div>
-  </div>
-</div>
+    // Sidebar section headers — both class naming conventions
+    '.nav-section, .ns {',
+    '  color: rgba(165,180,252,0.65) !important;',
+    '}',
 
-<section class="humacity-section" id="philosophy">
-  <div class="section-inner reveal">
-    <div class="humacity-inner">
-      <div>
-        <div class="section-eyebrow">The philosophy</div>
-        <h2>Built on Humacity.</h2>
-        <p class="section-sub">Virorah runs on the Humacity framework — the operating system that treats every people decision as a financial event.</p>
-        <p style="font-size:14px;color:var(--grey);margin-top:16px;line-height:1.75">Every case you navigate, every influence conversation you build, every monthly debrief returns a Human P&L entry. Because what doesn't get measured doesn't get funded, and HR that can't be measured will always be underfunded.</p>
-        <p style="font-size:14px;color:rgba(244,243,255,0.6);margin-top:12px;font-style:italic;font-family:'Bricolage Grotesque',sans-serif;font-weight:600;">HR is not a support function. It is a P&L operator.</p>
-        <a href="https://humacity.com" target="_blank" class="humacity-link">Explore Humacity &rarr;</a>
-      </div>
-      <div>
-        <div class="h-assets">
-          <div class="h-asset"><div class="h-asset-name">Trust Capital</div><div class="h-asset-desc">The financial value of organisational trust. What it costs when it breaks, what it takes to rebuild.</div></div>
-          <div class="h-asset"><div class="h-asset-name">Culture Yield</div><div class="h-asset-desc">The return on culture investment. What disengagement actually costs per person, per quarter, in real numbers.</div></div>
-          <div class="h-asset"><div class="h-asset-name">Signal Intelligence</div><div class="h-asset-desc">The quality of your people data. What flying blind costs when attrition patterns go unread for months.</div></div>
-          <div class="h-asset"><div class="h-asset-name">Belonging Premium</div><div class="h-asset-desc">The retention and engagement value that inclusion generates — or the compounding cost when it doesn't.</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    // Dashboard card labels
+    '.stat-label, .cal-month, .debrief-label, .welcome-label {',
+    '  color: rgba(165,180,252,0.65) !important;',
+    '}',
 
-<section id="pricing">
-  <div class="section-inner reveal">
-    <div class="section-eyebrow">Pricing</div>
-    <h2>Start free.<br>Scale when it lands.</h2>
-    <p class="section-sub">Monthly only. No annual lock-in. No sales call. No enterprise deck. Just access.</p>
-    <div class="pricing-grid">
-      <div class="pricing-card base">
-        <div class="pricing-tier">Core</div>
-        <div class="pricing-price"><sup>&#8377;</sup>699</div>
-        <div class="pricing-cadence">per month</div>
-        <div class="pricing-desc">For the individual HR professional who wants to think, navigate, and influence at a higher level.</div>
-        <div class="pricing-features">
-          <div class="pricing-feature"><div class="pf-check">&#x2713;</div>ER Case Navigator (PACT)</div>
-          <div class="pricing-feature"><div class="pf-check">&#x2713;</div>Policy Compass</div>
-          <div class="pricing-feature"><div class="pf-check">&#x2713;</div>HR Data Storyteller (SIGNAL)</div>
-          <div class="pricing-feature"><div class="pf-check">&#x2713;</div>Conversation Simulator (ARIA)</div>
-          <div class="pricing-feature"><div class="pf-check">&#x2713;</div>MERIDIAN Context Engine</div>
-          <div class="pricing-feature"><div class="pf-check">&#x2713;</div>Case Library + Monthly Debrief</div>
-        </div>
-        <a href="access.html" class="pricing-cta ghost">Start Free Trial</a>
-        <div class="pricing-note">Monthly &middot; Cancel anytime</div>
-      </div>
-      <div class="pricing-card pro">
-        <div class="pricing-tier">Consultant</div>
-        <div class="pricing-price"><sup>&#8377;</sup>1,499</div>
-        <div class="pricing-cadence">per month</div>
-        <div class="pricing-desc">For HR consultants and senior practitioners who need the full financial intelligence layer.</div>
-        <div class="pricing-features">
-          <div class="pricing-feature"><div class="pf-check">&#x2713;</div>Everything in Core</div>
-          <div class="pricing-feature"><div class="pf-check">&#x2713;</div>Stakeholder Influence Builder</div>
-          <div class="pricing-feature"><div class="pf-check">&#x2713;</div>Full Humacity Financial Intelligence</div>
-          <div class="pricing-feature"><div class="pf-check">&#x2713;</div>Human P&L across all tools</div>
-          <div class="pricing-feature"><div class="pf-check">&#x2713;</div>Priority ARIA voice access</div>
-        </div>
-        <a href="access.html" class="pricing-cta solid">Start Free Trial</a>
-        <div class="pricing-note">Monthly &middot; Cancel anytime</div>
-      </div>
-    </div>
-  </div>
-</section>
+    // Tool card tags and tier labels
+    '.tool-tag, .tc-tag, .tc-tier, .pc-tier, .tc-label {',
+    '  color: rgba(165,180,252,0.65) !important;',
+    '}',
 
-<section class="why-section" id="why">
-  <div class="why-inner">
-    <div class="why-eyebrow">The question everyone asks</div>
-    <h2 class="why-headline">ChatGPT knows HR.<br>It doesn't know <em>yours.</em></h2>
-    <p class="why-opener">You've probably already tried it. Typed your situation into ChatGPT, read a thorough answer, then sat there wondering how any of it applied to your company, your city, your standing orders, your CFO's priorities. That's not a failure of the tool. It's a failure of the category. Generic intelligence cannot solve specific problems. Vantage was built because of that gap.</p>
-    <div class="args-stack">
-      <div class="arg-card"><div class="arg-num">01</div><div class="arg-body"><div class="arg-title"><strong>It doesn't know you're in Haryana.</strong></div><div class="arg-text">ChatGPT gives the exact same termination answer to an HR Manager in a 50-person Bangalore startup and an HR Director at a 2,000-person Haryana manufacturer operating under certified standing orders. Your state, your industry, your org type, your union status — none of it exists when you ask a general AI. MERIDIAN changes that. Seven parameters calibrate every single output to your exact professional reality before you type a word.</div></div></div>
-      <div class="arg-card"><div class="arg-num">02</div><div class="arg-body"><div class="arg-title"><strong>It can't tell you what your attrition actually costs.</strong></div><div class="arg-text">ChatGPT can tell you attrition is expensive. It cannot tell you your 18% attrition is costing &#8377;2.4 crore per quarter — calculated against your org size, your industry's replacement cost norms, and your average CTC. Humacity translates every people decision into its financial dimension. Because the only language that moves a CFO is the language of money.</div></div></div>
-      <div class="arg-card"><div class="arg-num">03</div><div class="arg-body"><div class="arg-title"><strong>It doesn't know what a domestic enquiry is when it actually matters.</strong></div><div class="arg-text">PACT, SIGNAL, INFLUENCE, MERIDIAN — purpose-built for the specific realities of Indian HR. The domestic enquiry procedure. The POSH Act's external ICC member requirement. The Model Standing Orders vs certified standing orders distinction that changes your entire disciplinary process.</div></div></div>
-      <div class="arg-card"><div class="arg-num">04</div><div class="arg-body"><div class="arg-title"><strong>It stops at the answer. We stay with you through the action.</strong></div><div class="arg-text">Vantage doesn't give you information. It gives you your next five moves, the exact conversation to practice before you have it, the INFLUENCE Stack for the boardroom, and the financial argument that makes them act. It doesn't stop at the answer. It stays with you until the action is done.</div></div></div>
-      <div class="arg-card"><div class="arg-num">05</div><div class="arg-body"><div class="arg-title"><strong>Every other HR platform was sold to your company. This one was built for you.</strong></div><div class="arg-text">Keka, DarwinBox, Zoho People — your company bought those. You are a user of tools that serve the organisation's interests, not yours. Vantage is the first HR intelligence platform built for the individual HR professional. Your cases. Your frameworks. Your monthly Debrief. Your career.</div></div></div>
-    </div>
-    <div class="why-divider"></div>
-    <div class="why-closing"><div class="why-closing-text">If you've ever been the most knowledgeable person in the room who sounded the least certain — this was built for that moment.</div></div>
-  </div>
-</section>
+    // Page section eyebrows and group headers
+    '.section-label, .hero-eyebrow, .lookup-group-title {',
+    '  color: rgba(165,180,252,0.65) !important;',
+    '}',
 
-<div class="final-strip reveal">
-  <h2 class="final-headline">The room is waiting.<br>Walk in with the numbers.</h2>
-  <p class="final-sub">Join Indian HR professionals who speak the language of business.</p>
-  <a href="demo.html" class="btn-primary">Enter Vantage &rarr;</a>
-  <div class="final-note">No login required &middot; <a href="access.html" style="color:rgba(244,243,255,.35);text-decoration:none">Sign In</a></div>
-</div>
+    // ARIA quick banner label, billing notice, card labels
+    '.aria-quick-text .label, .billing-notice, .mc-label,',
+    '.imc-name, .hist-mode, .tc-month, .cc-month, .cs-label,',
+    '.panel-sub, .faq-label, .review-label, .debrief-label {',
+    '  color: rgba(165,180,252,0.60) !important;',
+    '}',
 
-<footer>
-  <div class="footer-left">
-    <div class="f-logo">Virorah</div>
-    <div class="f-tag">Vantage &middot; Built on Humacity</div>
-  </div>
-  <div class="footer-links">
-    <a href="access.html">Enter Platform</a>
-    <a href="https://humacity.com" target="_blank">Humacity</a>
-    <a href="data-dashboard.html">Privacy</a>
-  </div>
-  <div class="footer-copy">&copy; 2026 Virorah &middot; People decisions are financial decisions.</div>
-</footer>
+    // MERIDIAN chip and related labels
+    '.meridian-chip .ml, .meridian-chip .label,',
+    '.m-header .label, .nav-badge-label {',
+    '  color: rgba(165,180,252,0.70) !important;',
+    '}',
 
-<script>
-// ── PARTICLE BG ──────────────────────────────────────────────
-(function(){
-  var c=document.getElementById('bg-canvas'),ctx=c.getContext('2d'),pts=[];
-  function resize(){c.width=innerWidth;c.height=innerHeight;}
-  function init(){pts=[];for(var i=0;i<90;i++)pts.push({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.8+.4,o:Math.random()*.6+.2});}
-  function draw(){
-    ctx.clearRect(0,0,c.width,c.height);
-    for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<130){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle='rgba(99,102,241,'+(0.18*(1-d/130))+')';ctx.lineWidth=.6;ctx.stroke();}}
-    pts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>c.width)p.vx*=-1;if(p.y<0||p.y>c.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(165,180,252,'+p.o+')';ctx.fill();});
-    requestAnimationFrame(draw);
+    // Teal accent buttons → indigo
+    '[style*="00E5C3"], [style*="0,229,195"] {',
+    '  --teal-replace: #6366f1;',
+    '}',
+
+    // Primary buttons
+    '.btn-primary, button.primary {',
+    '  background: linear-gradient(135deg, #6366f1, #7c3aed) !important;',
+    '  border-color: transparent !important;',
+    '}',
+
+    // Teal text anywhere
+    '[style*="color: #00E5C3"], [style*="color:#00E5C3"] {',
+    '  color: #6366f1 !important;',
+    '}',
+
+    // Card borders
+    '.card, .tool-card, .case-card {',
+    '  border-color: rgba(99,102,241,0.18) !important;',
+    '}',
+
+    // Scrollbar
+    '::-webkit-scrollbar-thumb {',
+    '  background: linear-gradient(180deg, #6366f1, #7c3aed) !important;',
+    '}',
+
+    // Sidebar border
+    '.sidebar, #sidebar {',
+    '  border-right-color: rgba(99,102,241,0.18) !important;',
+    '  background: rgba(5,4,16,0.95) !important;',
+    '}',
+
+    // ARIA teal glow → indigo
+    '.aria-glow, .voice-indicator {',
+    '  border-color: rgba(99,102,241,0.4) !important;',
+    '  box-shadow: 0 0 20px rgba(99,102,241,0.25) !important;',
+    '}',
+
+    // Humacity card teal border → indigo
+    '.humacity-card, .humacity-block {',
+    '  border-color: rgba(99,102,241,0.35) !important;',
+    '}',
+
+    // Selection highlight
+    '::selection {',
+    '  background: rgba(99,102,241,0.35) !important;',
+    '}',
+
+    // PWA banner teal → indigo
+    '#pwa-banner {',
+    '  border-color: rgba(99,102,241,0.3) !important;',
+    '}',
+
+    // Icon column normalisation — emoji and Unicode symbols have different
+    // natural widths. Fixed min-width ensures text labels always start at
+    // the same horizontal position regardless of icon type.
+    '.nav-item .icon, .nav-item .nav-icon, .ni .ic {',
+    '  min-width: 20px !important;',
+    '  display: inline-flex !important;',
+    '  justify-content: center !important;',
+    '  align-items: center !important;',
+    '  flex-shrink: 0 !important;',
+    '}',
+
+    // Default nav item base colour — pages built this session used 45% white.
+    // Dashboard uses 70%. This brings all pages to parity.
+    '.nav-item, a.nav-item {',
+    '  color: rgba(244,243,255,0.70) !important;',
+    '}',
+
+    // ── ARIA-page class parity ─────────────────────────────
+    // ARIA uses .sb / .ni / .ns instead of .sidebar / .nav-item / .nav-section.
+    // The rules above target dashboard classes only, so they silently miss ARIA.
+    // These rules bring ARIA's sidebar to full brightness parity with the dashboard.
+
+    // Sidebar background — matches dashboard .sidebar override
+    '.sb {',
+    '  background: rgba(5,4,16,0.98) !important;',
+    '  border-right-color: rgba(99,102,241,0.18) !important;',
+    '}',
+
+    // Default nav item — dashboard is 70% white; ARIA was 45%
+    '.ni, a.ni {',
+    '  color: rgba(244,243,255,0.70) !important;',
+    '}',
+
+    // Active nav item — mirrors .nav-item.active rule above
+    '.ni.active, a.ni.active {',
+    '  background: rgba(99,102,241,0.12) !important;',
+    '  border-color: rgba(99,102,241,0.30) !important;',
+    '  color: #a5b4fc !important;',
+    '}',
+
+    // Hover nav item — mirrors .nav-item:hover rule above
+    '.ni:hover, a.ni:hover {',
+    '  background: rgba(99,102,241,0.08) !important;',
+    '  border-color: rgba(99,102,241,0.20) !important;',
+    '  color: #c4b5fd !important;',
+    '}',
+
+    // Section headers — mirrors updated .nav-section rule above
+    '.ns {',
+    '  color: rgba(165,180,252,0.65) !important;',
+    '}',
+
+    // Logo subtitle — dashboard is rgba(165,180,252,0.6); ARIA was rgba(255,255,255,.35)
+    '.logo-sub {',
+    '  color: rgba(165,180,252,0.55) !important;',
+    '}',
+  ].join('\n');
+  document.head.insertBefore(styleOverride, document.head.firstChild);
+
+  // ── PLATFORM TOUR + OVERVIEW SECTION ─────────────────────
+  // Injects before the Dashboard link on every page.
+  // Platform Tour links to about.html (guided walkthrough is a future phase).
+  // Hides the raw Dashboard link — replaced by Home inside Overview.
+  //
+  // FIX (SR16): selector previously included ".sidebar a[href=\"dashboard.html\"]"
+  // with no class requirement on the anchor itself. On pages where the sidebar
+  // wrapper carries class "sidebar" but the dashboard link is the brand/logo
+  // anchor (class "sb-brand", not a nav item), that logo link matched and got
+  // hidden — killing the wordmark and injecting Overview above it instead of
+  // in the right place. Now requires the anchor itself to carry a genuine
+  // nav-item class (.ni or .nav-item), so brand/logo links are never matched.
+  var dashLink = document.querySelector('.sb a.ni[href="dashboard.html"],a.ni[href="dashboard.html"],.sidebar a.nav-item[href="dashboard.html"],a.nav-item[href="dashboard.html"]');
+  var alreadyHasOverview = document.getElementById('vs-overview');
+  if (dashLink && !alreadyHasOverview) {
+    var overview = document.createElement('div');
+    overview.id = 'vs-overview';
+
+    var tourBtn = document.createElement('a');
+    tourBtn.href = 'about.html';
+    tourBtn.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid rgba(99,102,241,0.18);text-decoration:none;color:rgba(255,255,255,0.6);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;background:rgba(99,102,241,0.06);margin-bottom:10px';
+    tourBtn.innerHTML = '<span style="display:flex;align-items:center;gap:10px"><span style="font-size:15px">🗺</span>Platform Tour</span><span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.08em;background:#6366f1;color:#fff;padding:2px 7px;border-radius:4px;font-weight:600">START</span>';
+
+    var overviewNs = document.createElement('div');
+    overviewNs.className = 'nav-section';
+    overviewNs.style.cssText = 'font-family:JetBrains Mono,monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:4px 10px;margin:0 0 6px';
+    overviewNs.innerText = 'Overview';
+
+    var isOnAbout = window.location.pathname.includes('about');
+    var isOnDash  = window.location.pathname.includes('dashboard') || window.location.pathname === '/' || window.location.pathname.endsWith('/vantage/');
+
+    var homeLink = document.createElement('a');
+    homeLink.href = 'dashboard.html';
+    homeLink.className = 'nav-item' + (isOnDash ? ' active' : '');
+    homeLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,.45);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    homeLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">⊞</span>Home';
+
+    var aboutLink = document.createElement('a');
+    aboutLink.href = 'about.html';
+    aboutLink.className = 'nav-item' + (isOnAbout ? ' active' : '');
+    aboutLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,.45);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:10px';
+    aboutLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">✦</span>About Vantage';
+
+    overview.appendChild(tourBtn);
+    overview.appendChild(overviewNs);
+    overview.appendChild(homeLink);
+    overview.appendChild(aboutLink);
+
+    dashLink.parentNode.insertBefore(overview, dashLink);
+    dashLink.style.display = 'none'; // replaced by Home in Overview
   }
-  resize();init();draw();
-  window.addEventListener('resize',function(){resize();init();});
-})();
 
-// ── NEURAL CURSOR ────────────────────────────────────────────
-(function(){
-  var canvas=document.getElementById('neural-canvas'),ctx=canvas.getContext('2d');
-  function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
-  resize();window.addEventListener('resize',resize);
-  var core=document.getElementById('neural-core'),readout=document.getElementById('neural-readout');
-  var targets=Array.prototype.slice.call(document.querySelectorAll('a,button'));
-  var mouseX=innerWidth/2,mouseY=innerHeight/2,curX=mouseX,curY=mouseY;
-  document.addEventListener('mousemove',function(e){mouseX=e.clientX;mouseY=e.clientY;});
-  var packets={},pid=0;
-  targets.forEach(function(el){el.__neuralId=pid++;});
-  function loop(){
-    curX+=(mouseX-curX)*0.22;curY+=(mouseY-curY)*0.22;
-    core.style.transform='translate3d('+curX+'px,'+curY+'px,0) translate(-50%,-50%)';
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    var nearest=null,nearestDist=Infinity;
-    targets.forEach(function(el){
-      var r=el.getBoundingClientRect();if(r.width===0&&r.height===0)return;
-      var cx=r.left+r.width/2,cy=r.top+r.height/2,dist=Math.hypot(curX-cx,curY-cy);
-      if(dist<nearestDist){nearestDist=dist;nearest={el:el,cx:cx,cy:cy,dist:dist};}
-      if(dist<260){
-        var alpha=Math.max(0,1-dist/260)*0.5;
-        ctx.beginPath();ctx.moveTo(curX,curY);ctx.lineTo(cx,cy);ctx.strokeStyle='rgba(165,180,252,'+alpha+')';ctx.lineWidth=1;ctx.stroke();
-        var key=el.__neuralId;if(packets[key]===undefined)packets[key]=Math.random();packets[key]+=0.012;if(packets[key]>1)packets[key]=0;
-        var p=packets[key],px=curX+(cx-curX)*p,py=curY+(cy-curY)*p;
-        ctx.beginPath();ctx.arc(px,py,2,0,Math.PI*2);ctx.fillStyle='rgba(196,181,253,'+(alpha+0.3)+')';ctx.fill();
+  // ── MERIDIAN PROFILE LINK INJECTION ──────────────────────
+  var dataPrivacyLink = document.querySelector('a[href*="data-dashboard"]');
+  var alreadyInjected = document.querySelector('.nav-item[href*="onboarding"],.ni[href*="onboarding"]');
+
+  // ── PHILOSOPHY & LEGAL SECTION INJECTION ─────────────────
+  var alreadyHasPhilosophy = document.querySelector('a[href*="humacity.com"]');
+  if (dataPrivacyLink && !alreadyHasPhilosophy) {
+    var accountSection = dataPrivacyLink.closest
+      ? dataPrivacyLink.parentElement
+      : dataPrivacyLink.parentNode;
+
+    var allNavSections = document.querySelectorAll('.nav-section');
+    var accountHeading = null;
+    allNavSections.forEach(function(el){
+      if (el.innerText.trim().toUpperCase() === 'ACCOUNT') accountHeading = el;
+    });
+
+    var insertBefore = accountHeading || dataPrivacyLink;
+    var parent = insertBefore.parentNode;
+
+    var philSection = document.createElement('div');
+    philSection.className = 'nav-section';
+    philSection.innerText = 'Philosophy';
+    parent.insertBefore(philSection, insertBefore);
+
+    var humacityLink = document.createElement('a');
+    humacityLink.href = 'https://humacity.com';
+    humacityLink.target = '_blank';
+    humacityLink.className = 'nav-item';
+    humacityLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.72);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    humacityLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">🌀</span> Humacity';
+    parent.insertBefore(humacityLink, insertBefore);
+
+    var legalSection = document.createElement('div');
+    legalSection.className = 'nav-section';
+    legalSection.innerText = 'Legal';
+    parent.insertBefore(legalSection, insertBefore);
+
+    var termsLink = document.createElement('a');
+    termsLink.href = 'terms.html';
+    termsLink.className = 'nav-item';
+    termsLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.72);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    termsLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">📄</span> Terms of Service';
+    parent.insertBefore(termsLink, insertBefore);
+
+    var privacyLink2 = document.createElement('a');
+    privacyLink2.href = 'privacy.html';
+    privacyLink2.className = 'nav-item';
+    privacyLink2.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.72);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    privacyLink2.innerHTML = '<span style="font-size:16px;flex-shrink:0">🔒</span> Privacy Policy';
+    parent.insertBefore(privacyLink2, insertBefore);
+  }
+
+  if (dataPrivacyLink && !alreadyInjected) {
+    var meridianLink = document.createElement('a');
+    meridianLink.href = 'onboarding.html';
+    meridianLink.className = 'nav-item';
+    meridianLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.72);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    meridianLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">🧭</span> MERIDIAN Profile';
+    if (window.location.pathname.includes('onboarding')) {
+      meridianLink.style.background = 'rgba(99,102,241,0.10)';
+      meridianLink.style.borderColor = 'rgba(99,102,241,0.25)';
+      meridianLink.style.color = '#a5b4fc';
+      meridianLink.style.fontWeight = '500';
+    }
+    dataPrivacyLink.parentNode.insertBefore(meridianLink, dataPrivacyLink);
+  }
+
+  // ── PRICING LINK + BILLING STATUS ────────────────────────
+  // Billing status reads from localStorage['vantage_plan'].
+  // Soft launch default: 'Early Access' (amber) — no key exists yet.
+  // Post-Razorpay: payment handler writes { status:'active', tier:'core'|'consultant' }
+  // to localStorage['vantage_plan'] and the badge updates on next load automatically.
+  var alreadyHasPricing = document.querySelector('a[href*="pricing"]');
+  if (dataPrivacyLink && !alreadyHasPricing) {
+    function _getBillingStatus() {
+      try {
+        var plan = JSON.parse(localStorage.getItem('vantage_plan') || 'null');
+        if (!plan) return { label: 'Early Access', color: 'rgba(255,181,71,.85)', bg: 'rgba(255,181,71,.1)' };
+        if (plan.status === 'active') {
+          var tier = plan.tier === 'consultant' ? 'Consultant' : 'Core';
+          return { label: 'Active \u00b7 ' + tier, color: 'rgba(74,222,128,.85)', bg: 'rgba(74,222,128,.1)' };
+        }
+        return { label: 'Inactive', color: 'rgba(248,113,113,.85)', bg: 'rgba(248,113,113,.1)' };
+      } catch(e) {
+        return { label: 'Early Access', color: 'rgba(255,181,71,.85)', bg: 'rgba(255,181,71,.1)' };
+      }
+    }
+    var _billing = _getBillingStatus();
+    var _isOnPricing = window.location.pathname.includes('pricing');
+
+    var pricingLink = document.createElement('a');
+    pricingLink.href = 'pricing.html';
+    pricingLink.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,.45);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    if (_isOnPricing) {
+      pricingLink.style.background = 'rgba(99,102,241,0.10)';
+      pricingLink.style.borderColor = 'rgba(99,102,241,0.25)';
+      pricingLink.style.color = '#a5b4fc';
+      pricingLink.style.fontWeight = '500';
+    }
+    pricingLink.innerHTML =
+      '<span style="display:flex;align-items:center;gap:10px;min-width:0">' +
+        '<span style="font-size:16px;flex-shrink:0">🪙</span>' +
+        '<span>Pricing</span>' +
+      '</span>' +
+      '<span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.04em;' +
+        'background:' + _billing.bg + ';color:' + _billing.color + ';' +
+        'padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0">' +
+        _billing.label +
+      '</span>';
+
+    dataPrivacyLink.parentNode.insertBefore(pricingLink, dataPrivacyLink);
+  }
+
+  // ── MERIDIAN NOT-CONFIGURED WARNING BANNER ────────────────
+  var TOOL_PAGES = [
+    'er-case-navigator',
+    'stakeholder-influence',
+    'hr-data-storyteller',
+    'policy-compass',
+    'conversation-simulator'
+  ];
+
+  var currentPath = window.location.pathname;
+  var isToolPage = TOOL_PAGES.some(function(page) {
+    return currentPath.includes(page);
+  });
+
+  var meridianConfigured = !!sessionStorage.getItem('sr_meridian');
+  var bannerDismissed = !!sessionStorage.getItem('meridian_banner_dismissed');
+
+  if (isToolPage && !meridianConfigured && !bannerDismissed) {
+    var banner = document.createElement('div');
+    banner.id = 'meridian-warning-banner';
+    banner.style.cssText = [
+      'position:fixed',
+      'top:0',
+      'left:0',
+      'right:0',
+      'z-index:9998',
+      'background:rgba(255,181,71,0.10)',
+      'border-bottom:1px solid rgba(255,181,71,0.35)',
+      'padding:10px 20px',
+      'display:flex',
+      'align-items:center',
+      'justify-content:space-between',
+      'gap:12px',
+      'flex-wrap:wrap'
+    ].join(';');
+
+    banner.innerHTML =
+      '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">' +
+        '<span style="font-size:16px;flex-shrink:0">⚠️</span>' +
+        '<span style="font-family:Plus Jakarta Sans,sans-serif;font-size:12px;color:rgba(255,181,71,0.95);line-height:1.4">' +
+          'Your results will be generic until MERIDIAN is configured. ' +
+          '<a href="onboarding.html" style="color:#FFB547;font-weight:600;text-decoration:underline">Set up your 7-parameter profile \u2192</a>' +
+          ' \u00a0\u00b7\u00a0 5 minutes.' +
+        '</span>' +
+      '</div>' +
+      '<button onclick="(function(){sessionStorage.setItem(\'meridian_banner_dismissed\',\'1\');var b=document.getElementById(\'meridian-warning-banner\');if(b)b.remove();})()" ' +
+        'style="background:transparent;border:none;color:rgba(255,181,71,0.6);font-size:18px;cursor:pointer;flex-shrink:0;line-height:1;padding:0 4px">' +
+        '\u00d7' +
+      '</button>';
+
+    document.body.insertBefore(banner, document.body.firstChild);
+
+    window.addEventListener('load', function() {
+      var bannerEl = document.getElementById('meridian-warning-banner');
+      var mainEl = document.querySelector('.main') || document.querySelector('main');
+      if (bannerEl && mainEl) {
+        mainEl.style.paddingTop = (parseInt(mainEl.style.paddingTop || 0) + bannerEl.offsetHeight) + 'px';
       }
     });
-    if(nearest&&nearest.dist<260){
-      readout.style.opacity=1;readout.style.left=(nearest.cx-60)+'px';readout.style.top=(nearest.el.getBoundingClientRect().top-22)+'px';
-      readout.textContent='analyzing · '+Math.max(4,Math.round(nearest.dist/3))+'ms';
-    }else{readout.style.opacity=0;}
-    requestAnimationFrame(loop);
   }
-  loop();
-})();
 
-// ── REVEAL ON SCROLL ─────────────────────────────────────────
-var reveals=document.querySelectorAll('.reveal');
-var revObs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.08});
-reveals.forEach(function(r){revObs.observe(r);});
+  // ── VIRORAH ATTRIBUTION ───────────────────────────────────
+  var chip = document.querySelector('.meridian-chip');
+  if (chip) {
+    var attribution = document.createElement('div');
+    attribution.style.cssText = 'padding-top:10px;margin-top:8px;border-top:1px solid rgba(255,255,255,0.06);text-align:center';
+    attribution.innerHTML = '<a href="https://kumarviveksrv-cloud.github.io/virorah/" target="_blank" style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-decoration:none;display:block;transition:color .2s" onmouseover="this.style.color=\'rgba(99,102,241,0.6)\'" onmouseout="this.style.color=\'rgba(255,255,255,0.35)\'">A Virorah Product &#x2197;</a>';
+    chip.appendChild(attribution);
+  }
 
-// ── MERIDIAN PARAMS — populate on scroll, static final state ─
-(function(){
-  var fired=false;
-  var params=[
-    {id:'mp0',val:'Maharashtra',mv:'mv0'},
-    {id:'mp1',val:'IT / SaaS',mv:'mv1'},
-    {id:'mp2',val:'Corporate',mv:'mv2'},
-    {id:'mp3',val:'251–1000',mv:'mv3'},
-    {id:'mp4',val:'HR Manager',mv:'mv4'},
-    {id:'mp5',val:'Non-union',mv:'mv5'},
-    {id:'mp6',val:'ER Specialist',mv:'mv6'},
-    {id:'mp7',val:'Precision advice',mv:'mv7'}
-  ];
-  function populate(){
-    params.forEach(function(p,i){
-      setTimeout(function(){
-        var mv=document.getElementById(p.mv);
-        var el=document.getElementById(p.id);
-        if(mv)mv.textContent=p.val;
-        if(el){el.style.borderColor='rgba(99,102,241,0.45)';el.style.boxShadow='0 0 14px rgba(99,102,241,0.12)';}
-      },i*120);
+  // ── PWA META TAGS ─────────────────────────────────────────
+  function addMeta(name, content) {
+    if (!document.querySelector('meta[name="' + name + '"]')) {
+      var m = document.createElement('meta');
+      m.name = name; m.content = content;
+      document.head.appendChild(m);
+    }
+  }
+
+  function addLink(rel, href) {
+    if (!document.querySelector('link[rel="' + rel + '"]')) {
+      var l = document.createElement('link');
+      l.rel = rel; l.href = href;
+      document.head.appendChild(l);
+    }
+  }
+
+  addLink('manifest', '/vantage/manifest.json');
+  addMeta('theme-color', '#050410');
+  addMeta('apple-mobile-web-app-capable', 'yes');
+  addMeta('apple-mobile-web-app-status-bar-style', 'black-translucent');
+  addMeta('apple-mobile-web-app-title', 'Vantage');
+  addLink('apple-touch-icon', '/vantage/icon-192.png');
+  addMeta('mobile-web-app-capable', 'yes');
+  addMeta('application-name', 'Vantage');
+
+  // ── SERVICE WORKER REGISTRATION ───────────────────────────
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(reg) { console.log('SW registered:', reg.scope); })
+        .catch(function(err) { console.log('SW failed:', err); });
     });
   }
-  var obs=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting&&!fired){fired=true;populate();}
+
+  // ── PWA INSTALL PROMPT ────────────────────────────────────
+  var deferredPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (sessionStorage.getItem('pwa_dismissed')) return;
+    setTimeout(showInstallBanner, 3000);
+  });
+
+  function showInstallBanner() {
+    if (document.getElementById('pwa-banner')) return;
+    var banner = document.createElement('div');
+    banner.id = 'pwa-banner';
+    banner.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0d0b1e;border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.4);max-width:380px;width:calc(100% - 48px)';
+    banner.innerHTML = '<div style="font-size:28px;flex-shrink:0">📱</div>' +
+      '<div style="flex:1"><div style="font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:14px;color:#fff;margin-bottom:3px">Install Vantage</div>' +
+      '<div style="font-size:12px;color:rgba(255,255,255,0.70);line-height:1.4">Add to home screen for instant access — works offline too.</div></div>' +
+      '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">' +
+      '<button onclick="installPWA()" style="padding:8px 14px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:12px;border:none;border-radius:7px;cursor:pointer">Install</button>' +
+      '<button onclick="dismissPWA()" style="padding:6px 14px;background:transparent;color:rgba(255,255,255,0.65);font-size:12px;border:none;cursor:pointer">Not now</button>' +
+      '</div>';
+    document.body.appendChild(banner);
+  }
+
+  window.installPWA = function() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(r) {
+      deferredPrompt = null;
+      var b = document.getElementById('pwa-banner');
+      if (b) b.remove();
     });
-  },{threshold:0.2});
-  var ms=document.getElementById('meridian-strip');
-  if(ms)obs.observe(ms);
+  };
+
+  window.dismissPWA = function() {
+    sessionStorage.setItem('pwa_dismissed', '1');
+    var b = document.getElementById('pwa-banner');
+    if (b) b.remove();
+  };
+
+
+  // ── MOBILE BOTTOM NAV ────────────────────────────────────
+  // Injects a native-style bottom navigation bar on mobile only
+  // Replaces the hidden sidebar with a proper mobile nav pattern
+
+  function injectMobileNav() {
+    if (window.innerWidth > 768) return;
+
+    // Determine active page
+    var path = window.location.pathname;
+    function isActive(page) { return path.includes(page); }
+
+    // Bottom nav CSS
+    var style = document.createElement('style');
+    style.textContent = [
+      '/* Mobile bottom nav */',
+      '.vantage-bottom-nav {',
+      '  display: none;',
+      '}',
+      '@media (max-width: 768px) {',
+      '  .vantage-bottom-nav {',
+      '    display: flex;',
+      '    position: fixed;',
+      '    bottom: 0;',
+      '    left: 0;',
+      '    right: 0;',
+      '    z-index: 9990;',
+      '    background: rgba(5,4,16,0.97);',
+      '    border-top: 1px solid rgba(99,102,241,0.18);',
+      '    backdrop-filter: blur(20px);',
+      '    -webkit-backdrop-filter: blur(20px);',
+      '    padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px)) 0;',
+      '    justify-content: space-around;',
+      '    align-items: flex-start;',
+      '  }',
+      '  .vbn-item {',
+      '    display: flex;',
+      '    flex-direction: column;',
+      '    align-items: center;',
+      '    gap: 4px;',
+      '    padding: 4px 12px;',
+      '    text-decoration: none;',
+      '    cursor: pointer;',
+      '    flex: 1;',
+      '    border: none;',
+      '    background: transparent;',
+      '    -webkit-tap-highlight-color: transparent;',
+      '  }',
+      '  .vbn-icon {',
+      '    font-size: 20px;',
+      '    line-height: 1;',
+      '    transition: transform 0.2s ease;',
+      '  }',
+      '  .vbn-label {',
+      '    font-family: "JetBrains Mono", monospace;',
+      '    font-size: 9px;',
+      '    letter-spacing: 0.04em;',
+      '    text-transform: uppercase;',
+      '    color: rgba(244,243,255,0.62);',
+      '    transition: color 0.2s ease;',
+      '    white-space: nowrap;',
+      '  }',
+      '  .vbn-item.active .vbn-label {',
+      '    color: #a5b4fc;',
+      '  }',
+      '  .vbn-item.active .vbn-icon {',
+      '    transform: scale(1.15);',
+      '  }',
+      '  .vbn-item:not(.active):hover .vbn-label {',
+      '    color: rgba(244,243,255,0.6);',
+      '  }',
+      '  /* More drawer overlay */',
+      '  .vbn-drawer-overlay {',
+      '    display: none;',
+      '    position: fixed;',
+      '    inset: 0;',
+      '    background: rgba(5,4,16,0.7);',
+      '    z-index: 9991;',
+      '    backdrop-filter: blur(4px);',
+      '    -webkit-backdrop-filter: blur(4px);',
+      '    animation: vbnFadeIn 0.2s ease;',
+      '  }',
+      '  @keyframes vbnFadeIn { from { opacity: 0; } to { opacity: 1; } }',
+      '  @keyframes vbnSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }',
+      '  .vbn-drawer-overlay.open { display: block; }',
+      '  .vbn-drawer {',
+      '    position: absolute;',
+      '    bottom: 0;',
+      '    left: 0;',
+      '    right: 0;',
+      '    background: #0d0b1e;',
+      '    border-top: 1px solid rgba(99,102,241,0.25);',
+      '    border-radius: 20px 20px 0 0;',
+      '    padding: 12px 0 calc(80px + env(safe-area-inset-bottom, 0px)) 0;',
+      '    animation: vbnSlideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);',
+      '  }',
+      '  .vbn-drawer-handle {',
+      '    width: 36px;',
+      '    height: 4px;',
+      '    background: rgba(255,255,255,0.15);',
+      '    border-radius: 2px;',
+      '    margin: 0 auto 16px;',
+      '  }',
+      '  .vbn-drawer-title {',
+      '    font-family: "JetBrains Mono", monospace;',
+      '    font-size: 9px;',
+      '    letter-spacing: 0.12em;',
+      '    text-transform: uppercase;',
+      '    color: rgba(99,102,241,0.6);',
+      '    padding: 0 20px 10px;',
+      '    border-bottom: 1px solid rgba(99,102,241,0.08);',
+      '    margin-bottom: 8px;',
+      '  }',
+      '  .vbn-drawer-item {',
+      '    display: flex;',
+      '    align-items: center;',
+      '    gap: 14px;',
+      '    padding: 14px 20px;',
+      '    text-decoration: none;',
+      '    color: rgba(244,243,255,0.65);',
+      '    font-family: "Plus Jakarta Sans", sans-serif;',
+      '    font-size: 14px;',
+      '    transition: background 0.15s ease, color 0.15s ease;',
+      '    -webkit-tap-highlight-color: transparent;',
+      '  }',
+      '  .vbn-drawer-item:active {',
+      '    background: rgba(99,102,241,0.08);',
+      '  }',
+      '  .vbn-drawer-item.active {',
+      '    color: #a5b4fc;',
+      '    background: rgba(99,102,241,0.06);',
+      '  }',
+      '  .vbn-drawer-icon { font-size: 18px; flex-shrink: 0; }',
+      '  .vbn-drawer-label { flex: 1; }',
+      '  .vbn-drawer-sub {',
+      '    font-size: 11px;',
+      '    color: rgba(244,243,255,0.28);',
+      '    font-family: "JetBrains Mono", monospace;',
+      '    letter-spacing: 0.04em;',
+      '  }',
+      '  /* Push page content above bottom nav */',
+      '  .main, main, .main-content, body > div:not(.vantage-bottom-nav):not(.vbn-drawer-overlay) {',
+      '    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;',
+      '  }',
+      '}',
+    ].join('\n');
+    document.head.appendChild(style);
+
+    // Build bottom nav HTML
+    var navItems = [
+      { icon: '\u229E', label: 'Home',    href: 'dashboard.html',         page: 'dashboard' },
+      { icon: '\u26A1', label: 'Cases',   href: 'er-case-navigator.html', page: 'er-case-navigator' },
+      { icon: '\u2726', label: 'ARIA',    href: 'aria.html',              page: 'aria' },
+      { icon: '\u25CE', label: 'Library', href: 'case-library.html',      page: 'case-library' },
+      { icon: '\u22EF', label: 'More',    href: null,                     page: 'more' },
+    ];
+
+    var drawerItems = [
+      { icon: '\uD83C\uDFAD', label: 'Conversation Simulator', sub: 'Practice before the real thing', href: 'conversation-simulator.html', page: 'conversation-simulator' },
+      { icon: '\uD83D\uDCCA', label: 'HR Data Storyteller',    sub: 'SIGNAL framework',               href: 'hr-data-storyteller.html',   page: 'hr-data-storyteller' },
+      { icon: '\uD83E\uDDED', label: 'Policy Compass',         sub: 'BNS · BNSS · BSA',               href: 'policy-compass.html',        page: 'policy-compass' },
+      { icon: '\uD83C\uDFAF', label: 'Stakeholder Influence',  sub: 'INFLUENCE stack',                href: 'stakeholder-influence.html', page: 'stakeholder-influence' },
+      { icon: '\uD83D\uDCCB', label: 'The Debrief',            sub: 'Monthly intelligence brief',     href: 'debrief.html',               page: 'debrief' },
+      { icon: '\uD83D\uDD12', label: 'Data & Privacy',         sub: 'Your data settings',             href: 'data-dashboard.html',        page: 'data-dashboard' },
+      { icon: '\u21A9',        label: 'Sign Out',               sub: '',                               href: 'access.html',                page: 'signout', signout: true },
+    ];
+
+    // Check if any drawer item is active
+    var drawerActive = drawerItems.some(function(d) { return d.page !== 'signout' && path.includes(d.page); });
+
+    // Build nav
+    var nav = document.createElement('div');
+    nav.className = 'vantage-bottom-nav';
+
+    navItems.forEach(function(item) {
+      var active = item.page === 'more'
+        ? drawerActive
+        : isActive(item.page);
+
+      if (item.href) {
+        var a = document.createElement('a');
+        a.className = 'vbn-item' + (active ? ' active' : '');
+        a.href = item.href;
+        a.innerHTML = '<span class="vbn-icon">' + item.icon + '</span><span class="vbn-label">' + item.label + '</span>';
+        nav.appendChild(a);
+      } else {
+        // More button
+        var btn = document.createElement('button');
+        btn.className = 'vbn-item' + (active ? ' active' : '');
+        btn.innerHTML = '<span class="vbn-icon">' + item.icon + '</span><span class="vbn-label">' + item.label + '</span>';
+        btn.onclick = function(e) { e.stopPropagation(); toggleDrawer(); };
+        nav.appendChild(btn);
+      }
+    });
+
+    document.body.appendChild(nav);
+
+    // Build drawer overlay
+    var overlay = document.createElement('div');
+    overlay.className = 'vbn-drawer-overlay';
+
+    var drawer = document.createElement('div');
+    drawer.className = 'vbn-drawer';
+    drawer.innerHTML = '<div class="vbn-drawer-handle"></div><div class="vbn-drawer-title">More tools</div>';
+
+    drawerItems.forEach(function(item) {
+      var active = item.page !== 'signout' && path.includes(item.page);
+      var a = document.createElement('a');
+      a.className = 'vbn-drawer-item' + (active ? ' active' : '');
+      a.href = item.href;
+      if (item.signout) { a.onclick = function() { sessionStorage.clear(); }; }
+      a.innerHTML = [
+        '<span class="vbn-drawer-icon">' + item.icon + '</span>',
+        '<span class="vbn-drawer-label">' + item.label + (item.sub ? '<br><span class="vbn-drawer-sub">' + item.sub + '</span>' : '') + '</span>',
+      ].join('');
+      drawer.appendChild(a);
+    });
+
+    overlay.appendChild(drawer);
+    document.body.appendChild(overlay);
+
+    // Drawer toggle
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeDrawer();
+    });
+
+    function toggleDrawer() {
+      if (overlay.classList.contains('open')) closeDrawer();
+      else openDrawer();
+    }
+    function openDrawer()  { overlay.classList.add('open'); }
+    function closeDrawer() { overlay.classList.remove('open'); }
+
+    // Close drawer on nav item click
+    drawer.querySelectorAll('.vbn-drawer-item').forEach(function(el) {
+      el.addEventListener('click', closeDrawer);
+    });
+  }
+
+  // Run on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', injectMobileNav);
+  } else {
+    injectMobileNav();
+  }
+  window.addEventListener('resize', function() {
+    var existing = document.querySelector('.vantage-bottom-nav');
+    if (window.innerWidth > 768 && existing) existing.remove();
+  });
+
+
+  // ── LOCATION CLOCK ─────────────────────────────────────────────────────────
+  // Displays live time, date, and user-selected city/state/country.
+  // Privacy-first: no geolocation. User picks from a list. Stored in localStorage.
+  // Architecture: timezone (IANA key) drives time. Location display (city/state/country)
+  // is a separate label. Adding global cities later = add rows to LOCATIONS array only.
+
+  (function() {
+    var LS_KEY = 'vantage_clock_location';
+    var clockInterval = null;
+    var clockEl = null;
+
+    // ── LOCATION DATA ─────────────────────────────────────────────────────────
+    // Format: [City, State, Country, IANA Timezone]
+    // India phase: all IST (Asia/Kolkata). Global phase: add new rows with correct tz.
+    var LOCATIONS = [
+      ['Agra',             'Uttar Pradesh',     'India', 'Asia/Kolkata'],
+      ['Ahmedabad',        'Gujarat',           'India', 'Asia/Kolkata'],
+      ['Amritsar',         'Punjab',            'India', 'Asia/Kolkata'],
+      ['Aurangabad',       'Maharashtra',       'India', 'Asia/Kolkata'],
+      ['Bengaluru',        'Karnataka',         'India', 'Asia/Kolkata'],
+      ['Bhopal',           'Madhya Pradesh',    'India', 'Asia/Kolkata'],
+      ['Bhubaneswar',      'Odisha',            'India', 'Asia/Kolkata'],
+      ['Chandigarh',       'Punjab & Haryana',  'India', 'Asia/Kolkata'],
+      ['Chennai',          'Tamil Nadu',        'India', 'Asia/Kolkata'],
+      ['Coimbatore',       'Tamil Nadu',        'India', 'Asia/Kolkata'],
+      ['Cuttack',          'Odisha',            'India', 'Asia/Kolkata'],
+      ['Dehradun',         'Uttarakhand',       'India', 'Asia/Kolkata'],
+      ['Faridabad',        'Haryana',           'India', 'Asia/Kolkata'],
+      ['Gaya',             'Bihar',             'India', 'Asia/Kolkata'],
+      ['Gurugram',         'Haryana',           'India', 'Asia/Kolkata'],
+      ['Guwahati',         'Assam',             'India', 'Asia/Kolkata'],
+      ['Gwalior',          'Madhya Pradesh',    'India', 'Asia/Kolkata'],
+      ['Howrah',           'West Bengal',       'India', 'Asia/Kolkata'],
+      ['Hubballi',         'Karnataka',         'India', 'Asia/Kolkata'],
+      ['Hyderabad',        'Telangana',         'India', 'Asia/Kolkata'],
+      ['Indore',           'Madhya Pradesh',    'India', 'Asia/Kolkata'],
+      ['Jabalpur',         'Madhya Pradesh',    'India', 'Asia/Kolkata'],
+      ['Jaipur',           'Rajasthan',         'India', 'Asia/Kolkata'],
+      ['Jamshedpur',       'Jharkhand',         'India', 'Asia/Kolkata'],
+      ['Jodhpur',          'Rajasthan',         'India', 'Asia/Kolkata'],
+      ['Kanpur',           'Uttar Pradesh',     'India', 'Asia/Kolkata'],
+      ['Kochi',            'Kerala',            'India', 'Asia/Kolkata'],
+      ['Kolkata',          'West Bengal',       'India', 'Asia/Kolkata'],
+      ['Kota',             'Rajasthan',         'India', 'Asia/Kolkata'],
+      ['Kozhikode',        'Kerala',            'India', 'Asia/Kolkata'],
+      ['Lucknow',          'Uttar Pradesh',     'India', 'Asia/Kolkata'],
+      ['Ludhiana',         'Punjab',            'India', 'Asia/Kolkata'],
+      ['Madurai',          'Tamil Nadu',        'India', 'Asia/Kolkata'],
+      ['Mangaluru',        'Karnataka',         'India', 'Asia/Kolkata'],
+      ['Mumbai',           'Maharashtra',       'India', 'Asia/Kolkata'],
+      ['Mysuru',           'Karnataka',         'India', 'Asia/Kolkata'],
+      ['Nagpur',           'Maharashtra',       'India', 'Asia/Kolkata'],
+      ['Nashik',           'Maharashtra',       'India', 'Asia/Kolkata'],
+      ['New Delhi',        'Delhi',             'India', 'Asia/Kolkata'],
+      ['Noida',            'Uttar Pradesh',     'India', 'Asia/Kolkata'],
+      ['Panaji',           'Goa',               'India', 'Asia/Kolkata'],
+      ['Patna',            'Bihar',             'India', 'Asia/Kolkata'],
+      ['Prayagraj',        'Uttar Pradesh',     'India', 'Asia/Kolkata'],
+      ['Pune',             'Maharashtra',       'India', 'Asia/Kolkata'],
+      ['Rajkot',           'Gujarat',           'India', 'Asia/Kolkata'],
+      ['Ranchi',           'Jharkhand',         'India', 'Asia/Kolkata'],
+      ['Salem',            'Tamil Nadu',        'India', 'Asia/Kolkata'],
+      ['Shimla',           'Himachal Pradesh',  'India', 'Asia/Kolkata'],
+      ['Siliguri',         'West Bengal',       'India', 'Asia/Kolkata'],
+      ['Surat',            'Gujarat',           'India', 'Asia/Kolkata'],
+      ['Thiruvananthapuram','Kerala',           'India', 'Asia/Kolkata'],
+      ['Tiruchirappalli',  'Tamil Nadu',        'India', 'Asia/Kolkata'],
+      ['Udaipur',          'Rajasthan',         'India', 'Asia/Kolkata'],
+      ['Vadodara',         'Gujarat',           'India', 'Asia/Kolkata'],
+      ['Varanasi',         'Uttar Pradesh',     'India', 'Asia/Kolkata'],
+      ['Vijayawada',       'Andhra Pradesh',    'India', 'Asia/Kolkata'],
+      ['Visakhapatnam',    'Andhra Pradesh',    'India', 'Asia/Kolkata'],
+      ['Warangal',         'Telangana',         'India', 'Asia/Kolkata'],
+    ];
+
+    // ── HELPERS ───────────────────────────────────────────────────────────────
+
+    function getStoredLocation() {
+      try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); }
+      catch(e) { return null; }
+    }
+
+    function saveLocation(city, state, country, timezone) {
+      localStorage.setItem(LS_KEY, JSON.stringify({ city: city, state: state, country: country, timezone: timezone }));
+    }
+
+    function fmtTime(tz) {
+      try {
+        return new Intl.DateTimeFormat('en-IN', {
+          timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+        }).format(new Date()).toUpperCase();
+      } catch(e) { return '--:--:-- --'; }
+    }
+
+    function fmtDate(tz) {
+      try {
+        return new Intl.DateTimeFormat('en-IN', {
+          timeZone: tz, weekday: 'short', day: '2-digit', month: 'short', year: 'numeric'
+        }).format(new Date());
+      } catch(e) { return '-- --- ----'; }
+    }
+
+    // ── CLOCK TICK ────────────────────────────────────────────────────────────
+
+    function tick() {
+      var loc = getStoredLocation();
+      if (!loc || !clockEl) return;
+      var t = clockEl.querySelector('.vclock-time');
+      var d = clockEl.querySelector('.vclock-date');
+      if (t) t.textContent = fmtTime(loc.timezone);
+      if (d) d.textContent = fmtDate(loc.timezone);
+    }
+
+    function startClock() {
+      if (clockInterval) clearInterval(clockInterval);
+      tick();
+      clockInterval = setInterval(tick, 1000);
+    }
+
+    // ── CITY PICKER MODAL ─────────────────────────────────────────────────────
+
+    function openPicker() {
+      if (document.getElementById('vclock-modal')) return;
+      var overlay = document.createElement('div');
+      overlay.id = 'vclock-modal';
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:flex-end;justify-content:center;background:rgba(5,4,16,0.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)';
+
+      var panel = document.createElement('div');
+      panel.style.cssText = 'width:100%;max-width:440px;background:#0d0b1e;border:1px solid rgba(99,102,241,0.25);border-radius:20px 20px 0 0;display:flex;flex-direction:column;max-height:80vh';
+
+      panel.innerHTML = [
+        '<div style="padding:20px 20px 14px;border-bottom:1px solid rgba(99,102,241,0.1);flex-shrink:0">',
+          '<div style="width:36px;height:4px;background:rgba(255,255,255,0.12);border-radius:2px;margin:0 auto 14px"></div>',
+          '<div style="font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:15px;color:#fff;margin-bottom:3px">Set your location</div>',
+          '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5">Date and time display only. No location tracking. Nothing leaves your device.</div>',
+        '</div>',
+        '<div style="padding:12px 20px 8px;flex-shrink:0">',
+          '<input id="vclock-search" type="text" placeholder="Search city or state\u2026" autocomplete="off"',
+            ' style="width:100%;box-sizing:border-box;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.2);border-radius:8px;padding:10px 14px;',
+            'font-family:Plus Jakarta Sans,sans-serif;font-size:13px;color:#e8e6ff;outline:none;caret-color:#a5b4fc"',
+          '/>',
+        '</div>',
+        '<div id="vclock-list" style="overflow-y:auto;padding:4px 12px 20px;flex:1"></div>',
+      ].join('');
+
+      overlay.appendChild(panel);
+      document.body.appendChild(overlay);
+
+      overlay.addEventListener('click', function(e) { if (e.target === overlay) closePicker(); });
+
+      renderList('');
+
+      var inp = document.getElementById('vclock-search');
+      if (inp) {
+        inp.focus();
+        inp.addEventListener('input', function() { renderList(this.value.trim().toLowerCase()); });
+      }
+    }
+
+    function renderList(filter) {
+      var list = document.getElementById('vclock-list');
+      if (!list) return;
+      var filtered = LOCATIONS.filter(function(r) {
+        if (!filter) return true;
+        return r[0].toLowerCase().indexOf(filter) !== -1 || r[1].toLowerCase().indexOf(filter) !== -1;
+      });
+
+      if (!filtered.length) {
+        list.innerHTML = '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;color:rgba(255,255,255,0.60);text-align:center;padding:28px 0">No cities found</div>';
+        return;
+      }
+
+      list.innerHTML = '';
+      filtered.forEach(function(r) {
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:11px 10px;border-radius:8px;cursor:pointer;transition:background 0.12s;margin-bottom:1px';
+        row.innerHTML = [
+          '<div>',
+            '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;font-weight:500;color:rgba(232,230,255,0.9)">' + r[0] + '</div>',
+            '<div style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(165,180,252,0.55);letter-spacing:0.04em;margin-top:2px">' + r[1] + ' &middot; ' + r[2] + '</div>',
+          '</div>',
+          '<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.08em">IST</div>',
+        ].join('');
+        row.addEventListener('mouseover', function() { this.style.background = 'rgba(99,102,241,0.08)'; });
+        row.addEventListener('mouseout',  function() { this.style.background = 'transparent'; });
+        row.addEventListener('click', function() {
+          saveLocation(r[0], r[1], r[2], r[3]);
+          closePicker();
+          refreshClockWidget();
+          startClock();
+        });
+        list.appendChild(row);
+      });
+    }
+
+    function closePicker() {
+      var m = document.getElementById('vclock-modal');
+      if (m) m.remove();
+    }
+
+    // ── CLOCK WIDGET RENDER ───────────────────────────────────────────────────
+
+    function refreshClockWidget() {
+      if (!clockEl) return;
+      var loc = getStoredLocation();
+      var mainEl  = clockEl.querySelector('.vclock-main');
+      var nolocEl = clockEl.querySelector('.vclock-noloc');
+      var locLbl  = clockEl.querySelector('.vclock-location');
+      var timeEl  = clockEl.querySelector('.vclock-time');
+      var dateEl  = clockEl.querySelector('.vclock-date');
+      if (loc) {
+        if (mainEl)  mainEl.style.display  = 'block';
+        if (nolocEl) nolocEl.style.display = 'none';
+        if (timeEl)  timeEl.textContent  = fmtTime(loc.timezone);
+        if (dateEl)  dateEl.textContent  = fmtDate(loc.timezone);
+        if (locLbl)  locLbl.textContent  = loc.city + ', ' + loc.state + ', ' + loc.country;
+      } else {
+        if (mainEl)  mainEl.style.display  = 'none';
+        if (nolocEl) nolocEl.style.display = 'flex';
+      }
+    }
+
+    function injectClock() {
+      // Anchor: .meridian-chip — the sidebar footer card present on all tool pages
+      var chip = document.querySelector('.meridian-chip');
+      if (!chip || document.getElementById('vantage-clock')) return;
+
+      var loc = getStoredLocation();
+
+      clockEl = document.createElement('div');
+      clockEl.id = 'vantage-clock';
+      clockEl.style.cssText = [
+        'margin:0 0 8px',
+        'padding:12px 14px',
+        'background:rgba(99,102,241,0.04)',
+        'border:1px solid rgba(99,102,241,0.13)',
+        'border-radius:10px',
+      ].join(';');
+
+      clockEl.innerHTML = [
+        // ── Set state: location configured ──
+        '<div class="vclock-main" style="display:' + (loc ? 'block' : 'none') + '">',
+          '<div class="vclock-time" style="font-family:Space Grotesk,monospace;font-size:17px;font-weight:700;color:#a5b4fc;letter-spacing:0.02em;line-height:1">',
+            (loc ? fmtTime(loc.timezone) : ''),
+          '</div>',
+          '<div class="vclock-date" style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(255,255,255,0.65);letter-spacing:0.05em;margin-top:5px">',
+            (loc ? fmtDate(loc.timezone) : ''),
+          '</div>',
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:7px;padding-top:7px;border-top:1px solid rgba(99,102,241,0.1)">',
+            '<div class="vclock-location" style="font-family:Plus Jakarta Sans,sans-serif;font-size:12px;color:rgba(255,255,255,0.60);line-height:1.3;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">',
+              (loc ? loc.city + ', ' + loc.state + ', ' + loc.country : ''),
+            '</div>',
+            '<button id="vclock-edit-btn" style="background:transparent;border:none;cursor:pointer;color:rgba(99,102,241,0.4);font-size:11px;padding:0 0 0 8px;flex-shrink:0;line-height:1;transition:color 0.15s" title="Change location">&#9998;</button>',
+          '</div>',
+        '</div>',
+        // ── Empty state: no location set ──
+        '<div class="vclock-noloc" style="display:' + (loc ? 'none' : 'flex') + ';align-items:center;gap:10px;cursor:pointer" id="vclock-noloc-btn">',
+          '<span style="font-size:15px;flex-shrink:0;opacity:0.5">&#128336;</span>',
+          '<div>',
+            '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:12px;color:rgba(232,230,255,0.5);font-weight:500">Set your location</div>',
+            '<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(99,102,241,0.45);letter-spacing:0.06em;margin-top:3px">Date &middot; Time &middot; City</div>',
+          '</div>',
+        '</div>',
+      ].join('');
+
+      // Inject just before the meridian-chip in the DOM
+      chip.parentNode.insertBefore(clockEl, chip);
+
+      // Bind events
+      var editBtn  = document.getElementById('vclock-edit-btn');
+      var nolocBtn = document.getElementById('vclock-noloc-btn');
+      if (editBtn)  editBtn.addEventListener('click', openPicker);
+      if (nolocBtn) nolocBtn.addEventListener('click', openPicker);
+
+      // Expose globally for any page-level code that needs it
+      window._vclockOpen = openPicker;
+
+      if (loc) startClock();
+    }
+
+    // Run after DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', injectClock);
+    } else {
+      injectClock();
+    }
+
+  })();
+  // ── END LOCATION CLOCK ─────────────────────────────────────────────────────
+
+  // ── LEGAL SECTION → BELOW ACCOUNT ─────────────────────────────────────────
+  // Legal (Terms, Privacy) belongs at the very bottom, below Account.
+  // DOM move runs after all injections so it catches both hardcoded and
+  // injected Legal sections correctly.
+  //
+  // FIX (SR16): section header lookup previously checked only ".nav-section, .ns" —
+  // it never checked ".sb-section", even though movePolicyCompass() and
+  // injectHumacLink() below were both updated for that class. Any page using the
+  // .sb-section styling system (e.g. humac-onboarding.html) had Legal/Account
+  // silently never repositioned because this function found zero matching headers
+  // and returned early every time. Now checks all three header classes.
+  (function() {
+    function moveLegalSection() {
+      var sections = document.querySelectorAll('.nav-section, .ns, .sb-section');
+      var legalHeader = null;
+      var accountHeader = null;
+      sections.forEach(function(s) {
+        var t = s.textContent.trim().toUpperCase();
+        if (t === 'LEGAL') legalHeader = s;
+        if (t === 'ACCOUNT') accountHeader = s;
+      });
+      if (!legalHeader || !accountHeader) return;
+
+      function isSectionHeader(el) {
+        return el.classList.contains('nav-section') || el.classList.contains('ns') || el.classList.contains('sb-section');
+      }
+
+      // Collect Legal header + its nav items
+      var legalEls = [legalHeader];
+      var cursor = legalHeader.nextElementSibling;
+      while (cursor && !isSectionHeader(cursor)) {
+        legalEls.push(cursor);
+        cursor = cursor.nextElementSibling;
+      }
+
+      // Find the last element in the Account section
+      // (stops at meridian-chip, clock widget, or end of sidebar)
+      var accountEnd = accountHeader;
+      cursor = accountHeader.nextElementSibling;
+      while (cursor &&
+             !isSectionHeader(cursor) &&
+             !cursor.classList.contains('meridian-chip') &&
+             cursor.id !== 'meridian-chip' &&
+             cursor.id !== 'vantage-clock') {
+        accountEnd = cursor;
+        cursor = cursor.nextElementSibling;
+      }
+
+      // Move Legal (header + items) to just after Account section ends
+      var insertAfter = accountEnd;
+      legalEls.forEach(function(el) {
+        insertAfter.parentNode.insertBefore(el, insertAfter.nextSibling);
+        insertAfter = el;
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', moveLegalSection);
+    } else {
+      moveLegalSection();
+    }
+  })();
+  // ── END LEGAL SECTION MOVE ─────────────────────────────────────────────────
+
+  // ── POLICY COMPASS → CORE TOOLS ────────────────────────────────────────────
+  // Policy Compass is a direct-use tool, not an intelligence layer.
+  // Moves it from the Intelligence section to Core Tools on every page via DOM,
+  // so no individual HTML files need updating.
+  (function() {
+    function movePolicyCompass() {
+      var policyLink = document.querySelector('a[href*="policy-compass"]');
+      if (!policyLink) return;
+
+      // Find the Core Tools section header (handles .nav-section, .ns, and .sb-section)
+      var sections = document.querySelectorAll('.nav-section, .ns, .sb-section');
+      var coreHeader = null;
+      sections.forEach(function(s) {
+        var t = s.textContent.trim().toUpperCase();
+        if (t === 'CORE TOOLS') coreHeader = s;
+      });
+      if (!coreHeader) return;
+
+      // Walk forward from Core Tools to find the last nav item before the next section
+      var cursor = coreHeader.nextElementSibling;
+      var lastCoreItem = coreHeader;
+      while (cursor && !cursor.classList.contains('nav-section') && !cursor.classList.contains('ns') && !cursor.classList.contains('sb-section')) {
+        if (cursor !== policyLink) lastCoreItem = cursor;
+        cursor = cursor.nextElementSibling;
+      }
+
+      // Only move if it's not already in the right place
+      if (lastCoreItem.nextSibling !== policyLink) {
+        lastCoreItem.parentNode.insertBefore(policyLink, lastCoreItem.nextSibling);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', movePolicyCompass);
+    } else {
+      movePolicyCompass();
+    }
+  })();
+  // ── END POLICY COMPASS MOVE ────────────────────────────────────────────────
+
+  // ── HUMAC SCORE LINK → MY RECORD SECTION ───────────────────────────────────
+  // Injects Humac Score link into the My Record section on every page
+  (function() {
+    function injectHumacLink() {
+      // Don't inject if already present
+      if (document.querySelector('a[href*="humac-onboarding"]')) return;
+
+      // Find My Record section (handles both class systems)
+      var sections = document.querySelectorAll('.nav-section, .ns, .sb-section');
+      var myRecordHeader = null;
+      sections.forEach(function(s) {
+        var t = s.textContent.trim().toUpperCase();
+        if (t === 'MY RECORD') myRecordHeader = s;
+      });
+      if (!myRecordHeader) return;
+
+      // Create the Humac Score link matching the page's nav style
+      var isOldStyle = !!document.querySelector('.sb-item');
+      var link = document.createElement('a');
+      link.href = 'humac-onboarding.html';
+
+      if (isOldStyle) {
+        link.className = 'sb-item';
+        link.innerHTML = '<svg class="sb-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M5 11l2-3 2 2 2-4"/></svg>Humac Score';
+      } else {
+        link.className = 'nav-item';
+        link.innerHTML = '<span class="icon">📊</span> Humac Score';
+      }
+
+      // Insert as first item under My Record
+      var firstItem = myRecordHeader.nextElementSibling;
+      if (firstItem) {
+        myRecordHeader.parentNode.insertBefore(link, firstItem);
+      } else {
+        myRecordHeader.parentNode.appendChild(link);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', injectHumacLink);
+    } else {
+      injectHumacLink();
+    }
+  })();
+  // ── END HUMAC SCORE LINK ───────────────────────────────────────────────────
+
 })();
-</script>
-</body>
-</html>
