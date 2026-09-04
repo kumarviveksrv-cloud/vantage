@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Page not found — Virorah Vantage</title>
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="apple-touch-icon" href="favicon.png"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #050410;
+      --bg2: #0d0b1e;
+      --teal: #6366f1;
+      --teal-dim: rgba(99,102,241,0.10);
+      --teal-border: rgba(99,102,241,0.20);
+      --text: #f4f3ff;
+      --text-mid: #a5b4fc;
+      --text-dim: rgba(244,243,255,0.68);
+      --mono: 'JetBrains Mono', monospace;
+      --body: 'Plus Jakarta Sans', sans-serif;
+      --stat: 'Space Grotesk', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Star field */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 15% 22%, rgba(165,180,252,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 72% 8%,  rgba(165,180,252,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 38% 65%, rgba(165,180,252,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 88% 44%, rgba(165,180,252,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 82%, rgba(165,180,252,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 6%  51%, rgba(165,180,252,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 92% 77%, rgba(165,180,252,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 29% 38%, rgba(165,180,252,0.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 64% 29%, rgba(165,180,252,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 48% 91%, rgba(165,180,252,0.2) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    /* Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 64px;
+      text-decoration: none;
+    }
+    .logo img {
+      height: 28px;
+      width: auto;
+      mix-blend-mode: screen;
+    }
+
+    /* The 404 number */
+    .code {
+      font-family: var(--stat);
+      font-size: clamp(96px, 20vw, 160px);
+      font-weight: 700;
+      line-height: 1;
+      background: linear-gradient(135deg, #f4f3ff 0%, #a5b4fc 50%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.04em;
+      margin-bottom: 8px;
+      user-select: none;
+    }
+
+    .label {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(165,180,252,0.5);
+      margin-bottom: 32px;
+    }
+
+    .message {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: var(--text-dim);
+      max-width: 380px;
+      margin-bottom: 48px;
+    }
+
+    /* Actions */
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #6366f1, #7c3aed);
+      color: #fff;
+      font-family: var(--body);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+
+    .btn-ghost {
+      display: block;
+      width: 100%;
+      padding: 11px 24px;
+      background: transparent;
+      border: 1px solid var(--teal-border);
+      color: var(--text-mid);
+      font-family: var(--body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-ghost:hover {
+      background: var(--teal-dim);
+      border-color: rgba(99,102,241,0.4);
+    }
+
+    /* Bottom tag */
+    .footer-tag {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      color: rgba(165,180,252,0.25);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 480px) {
+      .logo { margin-bottom: 48px; }
+      .code { font-size: 96px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <a href="index.html" class="logo">
+      <img src="virorah-vantage-logo.png" alt="Virorah Vantage"/>
+    </a>
+
+    <div class="code">404</div>
+    <div class="label">Page not found</div>
+
+    <p class="message">
+      This page doesn't exist — or it moved. Your dashboard and all your tools are exactly where you left them.
+    </p>
+
+    <div class="actions">
+      <a href="dashboard.html" class="btn-primary">Go to Dashboard</a>
+      <a href="index.html" class="btn-ghost">Back to Home</a>
+    </div>
+  </div>
+
+  <div class="footer-tag">VIRORAH VANTAGE &nbsp;&middot;&nbsp; PEOPLE DECISIONS ARE FINANCIAL DECISIONS</div>
+</body>
+</html>
