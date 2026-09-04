@@ -28,7 +28,7 @@
         '.logo{gap:0 !important;align-items:center !important;flex-wrap:nowrap !important}',
         // V mark image — negative right margin pulls IRORAH close to the V glyph
         '.vl-v{width:40px;height:40px;object-fit:contain;flex-shrink:0;',
-        'mix-blend-mode:screen;display:block;border:none;background:none;margin-right:-3px}',
+        'mix-blend-mode:screen;display:block;border:none;background:none;margin-right:-12px}',
         // IRORAH — same geometric weight as the Virorah wordmark
         '.vl-word{font-family:Outfit,"Space Grotesk",sans-serif;font-size:15px;',
         'font-weight:700;letter-spacing:0.01em;color:#f4f3ff;white-space:nowrap;',
