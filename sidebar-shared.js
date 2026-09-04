@@ -3,19 +3,20 @@
 (function() {
 
   // ── VIRORAH VANTAGE LOGO MARK ────────────────────────────────────────────────
-  // Pattern mirrors Virorah PMS: [V mark] IRORAH [product pill badge]
-  // V image uses mix-blend-mode:screen so black bg disappears on dark sidebar.
-  // No stacking — pure horizontal, one line, matching the parent brand system.
+  // Uses the actual Virorah wordmark PNG (transparent background, exact logo font).
+  // Vivek uploads virorah-wordmark.png to repo root (from the delivered outputs file).
+  // Layout: [VIRORAH image — full width] on row 1, [Vantage badge] on row 2.
+  // This eliminates all font-matching issues — the A looks exactly like the logo.
   (function injectLogoMark() {
     var logoEl = document.querySelector('.logo');
     if (!logoEl) return;
 
-    // Load Outfit to match Virorah wordmark geometric font
+    // Load Outfit for the badge only
     if (!document.getElementById('vantage-outfit-font')) {
       var fl = document.createElement('link');
       fl.id = 'vantage-outfit-font';
       fl.rel = 'stylesheet';
-      fl.href = 'https://fonts.googleapis.com/css2?family=Raleway:wght@800&family=Outfit:wght@700&display=swap';
+      fl.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@700&display=swap';
       document.head.appendChild(fl);
     }
 
@@ -24,35 +25,34 @@
       var s = document.createElement('style');
       s.id = 'vantage-logo-css';
       s.textContent = [
-        // Make .logo a tight horizontal row
-        '.logo{gap:0 !important;align-items:center !important;flex-wrap:nowrap !important}',
-        // V mark image — negative right margin pulls IRORAH close to the V glyph
-        '.vl-v{width:40px;height:40px;object-fit:contain;flex-shrink:0;',
-        'mix-blend-mode:screen;display:block;border:none;background:none;margin-right:-12px}',
-        // IRORAH — same geometric weight as the Virorah wordmark
-        '.vl-word{font-family:Raleway,"Space Grotesk",sans-serif;font-size:15px;',
-        'font-weight:800;letter-spacing:0.06em;color:#f4f3ff;white-space:nowrap;',
-        'text-transform:uppercase;line-height:1}',
-        // Vantage product pill — mirrors the PMS badge style
+        // Stack wordmark + badge vertically, left-aligned
+        '.logo{flex-direction:column !important;align-items:flex-start !important;',
+        'gap:4px !important;cursor:pointer}',
+        // Wordmark image — exact logo, transparent bg, no blend mode needed
+        '.vl-wordmark{width:155px;height:auto;display:block;flex-shrink:0}',
+        // Vantage badge — unchanged from previous, Vivek approved
         '.vl-badge{font-family:Outfit,"Space Grotesk",sans-serif;font-size:9.5px;',
         'font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#fff;',
         'background:linear-gradient(135deg,#6366f1 0%,#7c3aed 100%);',
-        'padding:3px 8px;border-radius:5px;margin-left:7px;white-space:nowrap;',
+        'padding:3px 8px;border-radius:5px;white-space:nowrap;',
         'box-shadow:0 0 8px rgba(99,102,241,0.45),0 0 0 1px rgba(99,102,241,0.3)}'
       ].join('');
       document.head.appendChild(s);
     }
 
-    // Build: [V img] [IRORAH] [Vantage badge]
+    // Build: [VIRORAH wordmark image] then [Vantage badge] below
     var img = document.createElement('img');
-    img.src = 'virorah-v.png';
-    img.alt = 'V';
-    img.className = 'vl-v';
-    img.onerror = function() { this.style.display = 'none'; };
-
-    var word = document.createElement('span');
-    word.className = 'vl-word';
-    word.textContent = 'IRORAH';
+    img.src = 'virorah-wordmark.png';
+    img.alt = 'Virorah';
+    img.className = 'vl-wordmark';
+    img.onerror = function() {
+      // Fallback: plain text if image missing
+      this.style.display = 'none';
+      var fb = document.createElement('span');
+      fb.textContent = 'VIRORAH';
+      fb.style.cssText = 'font-size:16px;font-weight:700;color:#f4f3ff;letter-spacing:.04em';
+      logoEl.insertBefore(fb, logoEl.firstChild);
+    };
 
     var badge = document.createElement('span');
     badge.className = 'vl-badge';
@@ -60,7 +60,6 @@
 
     while (logoEl.firstChild) logoEl.removeChild(logoEl.firstChild);
     logoEl.appendChild(img);
-    logoEl.appendChild(word);
     logoEl.appendChild(badge);
   })();
 
