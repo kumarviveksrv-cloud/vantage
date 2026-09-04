@@ -3,11 +3,9 @@
 (function() {
 
   // ── VIRORAH VANTAGE LOGO MARK ────────────────────────────────────────────────
-  // Layout: [V image] | IRORAH  = "VIRORAH" (parent brand)
-  //                   | ANTAGE  = "VANTAGE" (product)
-  // Requires: virorah-v.png uploaded to repo root (black bg version).
-  // mix-blend-mode:screen removes black bg on dark sidebar.
-  // Uses DOM methods (not innerHTML) to avoid font-family quote escaping bugs.
+  // Pattern mirrors Virorah PMS: [V mark] IRORAH [product pill badge]
+  // V image uses mix-blend-mode:screen so black bg disappears on dark sidebar.
+  // No stacking — pure horizontal, one line, matching the parent brand system.
   (function injectLogoMark() {
     var logoEl = document.querySelector('.logo');
     if (!logoEl) return;
@@ -21,56 +19,49 @@
       document.head.appendChild(fl);
     }
 
-    // Inject logo CSS class once
+    // Inject logo CSS
     if (!document.getElementById('vantage-logo-css')) {
       var s = document.createElement('style');
       s.id = 'vantage-logo-css';
       s.textContent = [
-        // Override .logo gap so V and text are flush — no disconnected whitespace
-        '.logo{gap:2px !important}',
-        // V image: 44px so it matches 2 lines of 18px text (18*1.22*2 ≈ 44px)
-        '.vl-img{width:68px;height:68px;object-fit:contain;flex-shrink:0;',
-        'mix-blend-mode:screen;display:block;border:none;background:none}',
-        '.vl-wrap{display:flex;flex-direction:column;gap:0;line-height:1.22}',
-        // IRORAH — slightly lavender tint (parent brand), 18px to fill V height
-        '.vl-top{font-family:Outfit,"Space Grotesk",sans-serif;font-size:18px;',
-        'font-weight:700;letter-spacing:.02em;text-transform:uppercase;',
-        'color:rgba(165,180,252,.85);display:block}',
-        // ANTAGE — full white (active product), same 18px
-        '.vl-bot{font-family:Outfit,"Space Grotesk",sans-serif;font-size:18px;',
-        'font-weight:700;letter-spacing:.02em;text-transform:uppercase;',
-        'color:#f4f3ff;display:block}'
+        // Make .logo a tight horizontal row
+        '.logo{gap:0 !important;align-items:center !important;flex-wrap:nowrap !important}',
+        // V mark image — negative right margin pulls IRORAH close to the V glyph
+        '.vl-v{width:40px;height:40px;object-fit:contain;flex-shrink:0;',
+        'mix-blend-mode:screen;display:block;border:none;background:none;margin-right:-3px}',
+        // IRORAH — same geometric weight as the Virorah wordmark
+        '.vl-word{font-family:Outfit,"Space Grotesk",sans-serif;font-size:15px;',
+        'font-weight:700;letter-spacing:0.01em;color:#f4f3ff;white-space:nowrap;',
+        'text-transform:uppercase;line-height:1}',
+        // Vantage product pill — mirrors the PMS badge style
+        '.vl-badge{font-family:Outfit,"Space Grotesk",sans-serif;font-size:9.5px;',
+        'font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#fff;',
+        'background:linear-gradient(135deg,#6366f1 0%,#7c3aed 100%);',
+        'padding:3px 8px;border-radius:5px;margin-left:7px;white-space:nowrap;',
+        'box-shadow:0 0 8px rgba(99,102,241,0.45),0 0 0 1px rgba(99,102,241,0.3)}'
       ].join('');
       document.head.appendChild(s);
     }
 
-    // Build logo DOM — no innerHTML, no escaping issues
+    // Build: [V img] [IRORAH] [Vantage badge]
     var img = document.createElement('img');
     img.src = 'virorah-v.png';
     img.alt = 'V';
-    img.className = 'vl-img';
-    img.width = 68;
-    img.height = 68;
+    img.className = 'vl-v';
     img.onerror = function() { this.style.display = 'none'; };
 
-    var wrap = document.createElement('div');
-    wrap.className = 'vl-wrap';
+    var word = document.createElement('span');
+    word.className = 'vl-word';
+    word.textContent = 'IRORAH';
 
-    var top = document.createElement('span');
-    top.className = 'vl-top';
-    top.textContent = 'IRORAH';
+    var badge = document.createElement('span');
+    badge.className = 'vl-badge';
+    badge.textContent = 'Vantage';
 
-    var bot = document.createElement('span');
-    bot.className = 'vl-bot';
-    bot.textContent = 'ANTAGE';
-
-    wrap.appendChild(top);
-    wrap.appendChild(bot);
-
-    // Clear existing logo children, inject new ones
     while (logoEl.firstChild) logoEl.removeChild(logoEl.firstChild);
     logoEl.appendChild(img);
-    logoEl.appendChild(wrap);
+    logoEl.appendChild(word);
+    logoEl.appendChild(badge);
   })();
 
   // ── GLOBAL COLOR SYSTEM OVERRIDE ─────────────────────────
