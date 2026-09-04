@@ -15,7 +15,7 @@
       var fl = document.createElement('link');
       fl.id = 'vantage-outfit-font';
       fl.rel = 'stylesheet';
-      fl.href = 'https://fonts.googleapis.com/css2?family=Outfit:wght@700&display=swap';
+      fl.href = 'https://fonts.googleapis.com/css2?family=Raleway:wght@800&family=Outfit:wght@700&display=swap';
       document.head.appendChild(fl);
     }
 
@@ -30,8 +30,8 @@
         '.vl-v{width:40px;height:40px;object-fit:contain;flex-shrink:0;',
         'mix-blend-mode:screen;display:block;border:none;background:none;margin-right:-12px}',
         // IRORAH — same geometric weight as the Virorah wordmark
-        '.vl-word{font-family:Outfit,"Space Grotesk",sans-serif;font-size:15px;',
-        'font-weight:700;letter-spacing:0.01em;color:#f4f3ff;white-space:nowrap;',
+        '.vl-word{font-family:Raleway,"Space Grotesk",sans-serif;font-size:15px;',
+        'font-weight:800;letter-spacing:0.06em;color:#f4f3ff;white-space:nowrap;',
         'text-transform:uppercase;line-height:1}',
         // Vantage product pill — mirrors the PMS badge style
         '.vl-badge{font-family:Outfit,"Space Grotesk",sans-serif;font-size:9.5px;',
