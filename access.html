@@ -77,9 +77,9 @@
   </div>
 
   <script>
-    var PUBLISHABLE_KEY = 'pk_test_YnJpZWYta29pLTc2LmNsZXJrLmFjY291bnRzLmRldiQ';
-    var CLERK_CDN       = 'https://brief-koi-76.clerk.accounts.dev';
-    var CLERK_PORTAL    = 'https://brief-koi-76.accounts.dev';
+    var PUBLISHABLE_KEY = 'pk_live_Y2xlcmsudmFudGFnZS52aXJvcmFoLmNvbSQ';
+    var CLERK_CDN       = 'https://clerk.vantage.virorah.com';
+    var CLERK_PORTAL    = 'https://accounts.vantage.virorah.com';
     var WORKER_URL      = 'https://situation-room-api.kumarvivek-srv.workers.dev';
     var DASHBOARD_URL   = 'https://vantage.virorah.com/dashboard.html';
     var CLERK_SIGNIN    = CLERK_PORTAL + '/sign-in';
@@ -175,7 +175,7 @@
         // Not signed in — redirect to Clerk Account Portal
         // Clerk dashboard "After sign-in fallback" must be set to https://vantage.virorah.com/access.html
         setStatus('Redirecting to sign-in\u2026', 'Secured by Clerk');
-        window.location.replace('https://brief-koi-76.accounts.dev/sign-in');
+        window.location.replace('https://accounts.vantage.virorah.com/sign-in?redirect_url=' + encodeURIComponent('https://vantage.virorah.com/access.html'));
 
       }).catch(function(err) {
         console.error('[Clerk] Error:', err);
