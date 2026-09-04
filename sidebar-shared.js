@@ -3,9 +3,10 @@
 (function() {
 
   // ── VIRORAH VANTAGE LOGO MARK ────────────────────────────────────────────────
-  // Square logo: V mark dominant top, VIRORAH + VANTAGE stacked below.
-  // Black bg removed by mix-blend-mode:screen on the dark sidebar.
-  // Upload virorah-vantage-sq.png to repo root.
+  // Uses virorah-vantage-logo.png — same file as landing page nav.
+  // Horizontal format: V mark + VIRORAH + VANTAGE on one line.
+  // At 190px wide in sidebar → ~63px tall. Fits cleanly above nav items.
+  // Black bg removed by mix-blend-mode:screen. No separate badge needed.
   (function injectLogoMark() {
     var logoEl = document.querySelector('.logo');
     if (!logoEl) return;
@@ -14,24 +15,18 @@
       var s = document.createElement('style');
       s.id = 'vantage-logo-css';
       s.textContent = [
-        // Centre the square logo in the sidebar
-        '.logo{flex-direction:column !important;align-items:center !important;',
-        'gap:0 !important;padding:0 !important;margin-bottom:20px !important;cursor:pointer}',
-        // Square logo image — black bg dissolved by screen blend mode
-        '.vl-sq{width:90px;height:auto;display:block;mix-blend-mode:screen;flex-shrink:0}'
+        '.logo{flex-direction:row !important;align-items:center !important;',
+        'gap:0 !important;padding:4px 0 !important;margin-bottom:16px !important;cursor:pointer}',
+        '.vl-logo{width:190px;height:auto;display:block;mix-blend-mode:screen;flex-shrink:0}'
       ].join('');
       document.head.appendChild(s);
     }
 
     var img = document.createElement('img');
-    img.src = 'virorah-vantage-sq.png';
+    img.src = 'virorah-vantage-logo.png';
     img.alt = 'Virorah Vantage';
-    img.className = 'vl-sq';
-    img.onerror = function() {
-      // Fallback to wordmark if sq not uploaded yet
-      this.src = 'virorah-wordmark.png';
-      this.style.cssText = 'width:155px;height:auto;display:block;flex-shrink:0;mix-blend-mode:screen';
-    };
+    img.className = 'vl-logo';
+    img.onerror = function() { this.style.display = 'none'; };
 
     while (logoEl.firstChild) logoEl.removeChild(logoEl.firstChild);
     logoEl.appendChild(img);
