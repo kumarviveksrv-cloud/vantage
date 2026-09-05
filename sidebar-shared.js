@@ -471,7 +471,7 @@
     }
   }
 
-  addLink('manifest', '/vantage/manifest.json');
+  addLink('manifest', '/manifest.json');
   addMeta('theme-color', '#050410');
   addMeta('apple-mobile-web-app-capable', 'yes');
   addMeta('apple-mobile-web-app-status-bar-style', 'black-translucent');
