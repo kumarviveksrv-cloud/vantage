@@ -579,7 +579,7 @@
       .then(function(data){
         rmTyping();
         if(data.success){var r=data.data.response;hist.push({role:'assistant',content:r});addMsg('aria',r);speak(r);}
-        else{setState('idle');addMsg('aria','Something went wrong. Please try again.');}
+        else{setState('idle');var _em=data.error==='USAGE_LIMIT'?(data.message||'You\u2019ve reached your 50-message daily limit for ARIA. She\u2019ll be back tomorrow.'):'Something went wrong. Please try again.';addMsg('aria',_em);}
       })
       .catch(function(){rmTyping();setState('idle');addMsg('aria','Connection error. Please check your network.');});
     }
