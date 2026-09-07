@@ -300,45 +300,53 @@ input[type=number]{-moz-appearance:textfield}
 // The existing score becomes the baseline for Trajectory computation.
 var previousScore=null;
 var isCheckin=false;
+
+// applyCheckinMode: called synchronously from sessionStorage OR async from
+// Airtable restore. Extracts the UI update so it can fire either path.
+function applyCheckinMode(score){
+  if(!score||!score.humac)return;
+  previousScore=score;isCheckin=true;
+  var titleEl=document.getElementById('page-title-main');
+  var subEl=document.getElementById('page-sub-main');
+  if(titleEl)titleEl.innerText='Quarterly check-in';
+  if(subEl)subEl.innerText='Updating from your previous baseline. Answer the same 18 questions with your most current data \u2014 your Trajectory Index establishes after this check-in.';
+  var banner=document.getElementById('checkin-banner');
+  var prevDateEl=document.getElementById('checkin-prev-date');
+  var numEl=document.getElementById('checkin-num');
+  if(banner)banner.style.display='flex';
+  if(prevDateEl&&score.timestamp)prevDateEl.innerText=new Date(score.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  if(numEl)numEl.innerText=String((score.checkInNumber||0)+1);
+  var ey=document.getElementById('rv-eyebrow');
+  if(ey)ey.innerText='Your Humac Check-in Score';
+}
+
 (function(){
-  try{var _p=sessionStorage.getItem('vantage_humac');if(_p){previousScore=JSON.parse(_p);isCheckin=true;}}catch(e){}
-  // If no sessionStorage score, try to restore from Airtable
-  if(!previousScore){
-    (function(){
-      try{
+  // Path 1: score already in sessionStorage — instant, synchronous
+  try{var _p=sessionStorage.getItem('vantage_humac');if(_p){applyCheckinMode(JSON.parse(_p));return;}}catch(e){}
+  // Path 2: no sessionStorage score — poll for Clerk then restore from Airtable
+  // Uses waitForClerkRestore instead of a one-time if() check, so Clerk timing
+  // on fast page loads never causes the restore to silently skip.
+  (function waitForClerkRestore(){
+    try{
+      if(window.Clerk&&window.Clerk.session){
         var _WORKER='https://situation-room-api.kumarvivek-srv.workers.dev';
-        var _restore=function(token){
+        window.Clerk.session.getToken().then(function(token){
           fetch(_WORKER,{
             method:'POST',
-            headers:{'Content-Type':'application/json','Authorization':token?'Bearer '+token:''},
+            headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
             body:JSON.stringify({tool:'get_humac'})
           }).then(function(r){return r.json();}).then(function(d){
-            if(d.success&&d.data){
+            if(d.success&&d.data&&d.data.humac){
               try{sessionStorage.setItem('vantage_humac',JSON.stringify(d.data));}catch(e){}
-              previousScore=d.data;isCheckin=true;
+              applyCheckinMode(d.data);
             }
           }).catch(function(){});
-        };
-        if(window.Clerk&&window.Clerk.session){
-          window.Clerk.session.getToken().then(_restore).catch(function(){});
-        }
-      }catch(e){}
-    })();
-  }
-  if(isCheckin&&previousScore){
-    var titleEl=document.getElementById('page-title-main');
-    var subEl=document.getElementById('page-sub-main');
-    if(titleEl)titleEl.innerText='Quarterly check-in';
-    if(subEl)subEl.innerText='Updating from your previous baseline. Answer the same 18 questions with your most current data \u2014 your Trajectory Index establishes after this check-in.';
-    var banner=document.getElementById('checkin-banner');
-    var prevDateEl=document.getElementById('checkin-prev-date');
-    var numEl=document.getElementById('checkin-num');
-    if(banner)banner.style.display='flex';
-    if(prevDateEl&&previousScore.timestamp)prevDateEl.innerText=new Date(previousScore.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
-    if(numEl)numEl.innerText=String((previousScore.checkInNumber||0)+1);
-    var ey=document.getElementById('rv-eyebrow');
-    if(ey)ey.innerText='Your Humac Check-in Score';
-  }
+        }).catch(function(){});
+      } else {
+        setTimeout(waitForClerkRestore,150);
+      }
+    }catch(e){}
+  })();
 })();
 
 // ── BLOCKS ────────────────────────────────────────────────────────────────────
@@ -549,9 +557,14 @@ function showScoreReveal(){
           body:JSON.stringify({tool:'save_humac',email:email,humac:scoreData})
         });
       };
-      if(window.Clerk&&window.Clerk.session){
-        window.Clerk.session.getToken().then(doSave).catch(function(){doSave('');});
-      } else { doSave(''); }
+      // Poll until Clerk is ready — never fire save with empty token (causes silent 401)
+      (function waitForClerkSave(){
+        if(window.Clerk&&window.Clerk.session){
+          window.Clerk.session.getToken().then(doSave).catch(function(){});
+        } else {
+          setTimeout(waitForClerkSave,150);
+        }
+      })();
     }catch(e){}
   })();
 
