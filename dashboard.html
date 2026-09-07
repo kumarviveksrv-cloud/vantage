@@ -708,7 +708,7 @@
     // Trajectory is null on baseline (shows placeholder text).
     // Trajectory is an object on check-ins (shows arrow + delta + date).
     // ─────────────────────────────────────
-    (function initHumacWidget() {
+    function renderHumacWidget() {
       var widget = document.getElementById('humac-widget');
       if (!widget) return;
 
@@ -822,6 +822,40 @@
           '</div>' +
           '<a href="humac-onboarding.html" style="font-family:\'JetBrains Mono\',monospace;font-size:.58rem;color:rgba(99,102,241,.55);text-decoration:none" onmouseover="this.style.color=\'#6366f1\'" onmouseout="this.style.color=\'rgba(99,102,241,.55)\'">Update score \u2192</a>' +
         '</div>';
+    }
+
+    // ── HUMAC SCORE RESTORE + RENDER ─────────────────────────────────────────
+    // sessionStorage is cleared on logout. On next sign-in, poll for Clerk,
+    // restore from Airtable via get_humac, then render. Shows a loading state
+    // while the fetch is in flight so the widget never flashes "not set" to a
+    // returning user who already has a score.
+    (function() {
+      if (sessionStorage.getItem('vantage_humac')) {
+        renderHumacWidget();
+        return;
+      }
+      var _wgt = document.getElementById('humac-widget');
+      if (_wgt) {
+        _wgt.innerHTML = '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.72rem;color:rgba(165,180,252,.4);padding:8px 0">Restoring Humac Score\u2026</div>';
+      }
+      (function waitForClerkRestore() {
+        if (window.Clerk && window.Clerk.session) {
+          window.Clerk.session.getToken().then(function(token) {
+            fetch('https://situation-room-api.kumarvivek-srv.workers.dev', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+              body: JSON.stringify({ tool: 'get_humac' })
+            }).then(function(r) { return r.json(); }).then(function(d) {
+              if (d.success && d.data && d.data.humac) {
+                try { sessionStorage.setItem('vantage_humac', JSON.stringify(d.data)); } catch(e) {}
+              }
+              renderHumacWidget();
+            }).catch(function() { renderHumacWidget(); });
+          }).catch(function() { renderHumacWidget(); });
+        } else {
+          setTimeout(waitForClerkRestore, 150);
+        }
+      })();
     })();
   </script>
 
