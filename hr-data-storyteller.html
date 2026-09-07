@@ -293,7 +293,7 @@
             <circle cx="32" cy="32" r="28" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="44 132" stroke-linecap="round"/>
           </svg>
         </div>
-        <div class="loading-text">BUILDING YOUR SIGNAL NARRATIVE...</div>
+        <div class="loading-text" id="loading-text">BUILDING YOUR SIGNAL NARRATIVE...</div>
       </div>
     </div>
 
@@ -410,6 +410,13 @@
 
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+
+    function showError(msg) {
+      document.getElementById('vantage-error-msg').textContent = msg;
+      document.getElementById('vantage-error').style.display = 'block';
+      showView('intake-view');
+      setTimeout(function(){ var el=document.getElementById('vantage-error'); if(el)el.style.display='none'; }, 10000);
+    }
     var BASE = 'https://vantage.virorah.com/';
     var selectedAudience = '';
     var currentResult = null;
@@ -469,6 +476,7 @@
       var ask = document.getElementById('ask').value.trim();
       if (!selectedAudience || !ctx) return;
       showView('loading-view');
+      var loadInterval = animateLoading();
       try {
         var res = await fetch(WORKER, {
           method: 'POST',
@@ -482,16 +490,16 @@
           })
         });
         var data = await res.json();
+        clearInterval(loadInterval);
         if (data.success) {
           currentResult = data.data;
           renderOutput();
         } else {
-          alert('Error: ' + (data.error || 'Unknown'));
-          showView('intake-view');
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You\u2019ve reached your daily limit for HR Data Storyteller. Resets tomorrow.') : 'Analysis failed. ' + (data.error || 'Please try again.'));
         }
       } catch(err) {
-        alert('Connection error: ' + err.message);
-        showView('intake-view');
+        clearInterval(loadInterval);
+        showError('Connection error. Please check your network and try again.');
       }
     }
 
@@ -778,5 +786,17 @@
   </script>
   <script src="clerk-auth.js"></script>
   <script src="sidebar-shared.js"></script>
+
+  <!-- Vantage inline error banner — replaces alert() calls -->
+  <div id="vantage-error" style="display:none;position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:999;background:#11102a;border:1px solid rgba(224,92,58,0.35);border-left:3px solid #E05C3A;border-radius:10px;padding:16px 20px;max-width:480px;width:calc(100% - 48px);box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:fadeIn .25s ease">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x26A0;&#xFE0F;</span>
+      <div style="flex:1">
+        <div id="vantage-error-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:rgba(244,243,255,.85);line-height:1.55"></div>
+        <button onclick="document.getElementById('vantage-error').style.display='none';showView('intake-view')" style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:#a5b4fc;background:transparent;border:1px solid rgba(99,102,241,.3);border-radius:6px;padding:5px 12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(99,102,241,.6)'" onmouseout="this.style.borderColor='rgba(99,102,241,.3)'">&#x2190; Try again</button>
+      </div>
+      <button onclick="document.getElementById('vantage-error').style.display='none'" style="background:none;border:none;color:rgba(244,243,255,.3);cursor:pointer;font-size:16px;padding:0;line-height:1;flex-shrink:0">&#x2715;</button>
+    </div>
+  </div>
 </body>
 </html>
