@@ -435,6 +435,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         <div class="action-row">
           <button class="btn-primary" onclick="saveCase()">Save to Case Library</button>
           <button class="btn-secondary" onclick="practiceConversation()">Simulate the Conversation &rarr;</button>
+          <button class="btn-ghost" onclick="fileToLedger()">File to Ledger &rarr;</button>
           <button class="btn-ghost" onclick="startNew()">New Case</button>
         </div>
 
@@ -700,6 +701,22 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         narrative: currentNarrative.substring(0, 300)
       }));
       window.location.href = BASE + 'conversation-simulator.html';
+    }
+
+    function fileToLedger() {
+      if (!currentResult) return;
+      var p = currentResult.protocol || {};
+      var gc = currentResult.greenCategory || {};
+      var prefill = {
+        sourceTool: 'pact',
+        situationSummary: (p.assessment || '').substring(0, 300),
+        hrRecommendation: p.recommendation || '',
+        predictedOutcome: p.financial && p.financial.trajectorySignal ? p.financial.trajectorySignal : '',
+        financialRangePredicted: p.financial ? p.financial.range : '',
+        greenCategory: gc.primary || ''
+      };
+      try { sessionStorage.setItem('ledger_prefill', JSON.stringify(prefill)); } catch(e) {}
+      window.location.href = 'ledger.html';
     }
 
     function startNew() {
