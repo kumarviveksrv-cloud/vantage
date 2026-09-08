@@ -400,6 +400,7 @@
         <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="buildInfluence()">Build Influence Stack &#x2192;</button>
+          <button class="btn-ghost" onclick="fileToLedger()">File to Ledger &rarr;</button>
           <button class="btn-ghost" onclick="startNew()">New Story</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
         </div>
@@ -647,6 +648,23 @@
         }));
       }
       window.location.href = BASE + 'stakeholder-influence.html';
+    }
+
+    function fileToLedger() {
+      if (!currentResult) return;
+      var r = currentResult;
+      var gc = r.greenCategory || {};
+      var rar = r.revenueAtRisk || {};
+      var prefill = {
+        sourceTool: 'signal',
+        situationSummary: r.headline || '',
+        hrRecommendation: (r.signal && r.signal.action && r.signal.action.immediate) ? r.signal.action.immediate.join('; ') : '',
+        predictedOutcome: rar.basis || '',
+        financialRangePredicted: rar.figure || '',
+        greenCategory: gc.primary || ''
+      };
+      try { sessionStorage.setItem('ledger_prefill', JSON.stringify(prefill)); } catch(e) {}
+      window.location.href = 'ledger.html';
     }
 
     function startNew() {
