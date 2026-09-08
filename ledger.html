@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="apple-touch-icon" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="shortcut icon" href="favicon.png"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Ledger — Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
+    body{display:flex}
+    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.25);--grey:rgba(244,243,255,0.68);--dim:rgba(244,243,255,0.25)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+    .sidebar{width:220px;flex-shrink:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto}
+    .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px}
+    .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
+    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.5);margin-top:2px}
+    .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.6);padding:4px 10px;margin:16px 0 6px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.65);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
+    .nav-item:hover{background:rgba(99,102,241,0.08);color:#f4f3ff;border-color:rgba(99,102,241,0.15)}
+    .nav-item.active{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.30);color:#c4b5fd;font-weight:500}
+    .nav-item .icon{font-size:16px;flex-shrink:0}
+    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.20)}
+    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .meridian-chip .val{font-size:11px;color:var(--grey)}
+
+    .main{flex:1;overflow-y:auto;height:100vh;padding:28px 32px;background-image:linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px);background-size:48px 48px}
+    .page-header{margin-bottom:24px;animation:fadeIn .3s ease}
+    .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
+    .breadcrumb a{color:var(--dim);text-decoration:none}
+    .page-title{font-family:'Bricolage Grotesque',sans-serif;font-size:28px;font-weight:700;color:#f4f3ff;letter-spacing:-.02em;margin-bottom:6px}
+    .page-sub{font-size:14px;color:rgba(244,243,255,0.55);line-height:1.6;max-width:620px}
+
+    /* SUMMARY STRIP */
+    .summary-strip{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;animation:fadeIn .3s ease}
+    .summary-chip{background:rgba(13,11,30,0.8);border:1px solid rgba(99,102,241,0.15);border-radius:10px;padding:14px 18px;flex:1;min-width:150px}
+    .summary-chip .sc-num{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#f4f3ff}
+    .summary-chip .sc-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:rgba(165,180,252,0.55);margin-top:2px}
+    .summary-sentence{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.16);border-left:3px solid var(--accent);border-radius:10px;padding:16px 20px;margin-bottom:24px;font-size:13px;color:rgba(244,243,255,0.75);line-height:1.65;animation:fadeIn .3s ease}
+
+    /* CONTROLS */
+    .controls-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+    .filter-tabs{display:flex;gap:6px}
+    .filter-tab{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;padding:7px 14px;border-radius:7px;border:1px solid rgba(99,102,241,0.2);color:rgba(244,243,255,0.55);cursor:pointer;transition:all .2s;background:transparent}
+    .filter-tab:hover{border-color:rgba(99,102,241,0.4);color:#f4f3ff}
+    .filter-tab.active{background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.4);color:#a5b4fc;font-weight:600}
+    .file-btn{padding:10px 18px;background:linear-gradient(135deg,var(--accent),var(--violet));border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+    .file-btn:hover{opacity:.9}
+
+    /* EMPTY STATE */
+    .empty-state{text-align:center;padding:80px 20px;animation:fadeIn .3s ease}
+    .empty-icon{font-size:40px;margin-bottom:16px;opacity:.5}
+    .empty-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:rgba(244,243,255,0.7);margin-bottom:8px}
+    .empty-body{font-size:13px;color:rgba(244,243,255,0.4);max-width:440px;margin:0 auto;line-height:1.65}
+
+    /* ENTRY CARDS */
+    .entry-list{display:flex;flex-direction:column;gap:12px}
+    .entry-card{background:rgba(13,11,30,0.8);border:1px solid rgba(99,102,241,0.15);border-radius:12px;padding:20px 22px;cursor:pointer;transition:all .2s;animation:fadeIn .3s ease}
+    .entry-card:hover{border-color:rgba(99,102,241,0.35)}
+    .entry-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px}
+    .entry-summary{font-size:14px;color:#f4f3ff;font-weight:500;line-height:1.5;flex:1}
+    .entry-status{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:12px;flex-shrink:0}
+    .status-open{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);color:#FBB724}
+    .status-resolved{background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);color:#4ade80}
+    .entry-meta{display:flex;gap:14px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(244,243,255,0.4)}
+    .entry-meta span{display:flex;align-items:center;gap:4px}
+    .vindication-tag{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:5px;margin-top:8px;display:inline-block}
+    .vind-hr{background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.3);color:#4ade80}
+    .vind-leadership{background:rgba(224,92,58,0.12);border:1px solid rgba(224,92,58,0.3);color:#E05C3A}
+    .vind-partial{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);color:#FBB724}
+    .vind-inconclusive{background:rgba(165,180,252,0.1);border:1px solid rgba(165,180,252,0.25);color:#a5b4fc}
+
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(5,4,16,0.85);z-index:1000;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay.show{display:flex}
+    .modal-box{background:#0d0b1e;border:1px solid rgba(99,102,241,0.25);border-radius:16px;max-width:640px;width:100%;max-height:88vh;overflow-y:auto;padding:28px 30px;animation:fadeIn .25s ease}
+    .modal-title{font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:700;color:#f4f3ff;margin-bottom:4px}
+    .modal-sub{font-size:12px;color:rgba(244,243,255,0.4);margin-bottom:20px}
+    .form-group{margin-bottom:16px}
+    .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:rgba(165,180,252,0.7);display:block;margin-bottom:6px}
+    .form-input,.form-textarea,.form-select{width:100%;background:rgba(5,4,16,0.8);border:1px solid rgba(99,102,241,0.2);border-radius:8px;padding:10px 13px;color:#f4f3ff;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;outline:none}
+    .form-textarea{resize:vertical;min-height:70px}
+    .form-select option{background:#0d0b1e}
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+    .toggle-label{font-size:13px;color:rgba(244,243,255,0.7)}
+    .toggle-switch{position:relative;width:40px;height:22px;background:rgba(99,102,241,0.2);border-radius:11px;cursor:pointer;transition:all .2s;flex-shrink:0}
+    .toggle-switch.on{background:var(--accent)}
+    .toggle-switch::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:all .2s}
+    .toggle-switch.on::after{left:20px}
+    .modal-actions{display:flex;gap:10px;margin-top:22px}
+    .modal-btn{flex:1;padding:11px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid rgba(99,102,241,0.25)}
+    .modal-btn.primary{background:linear-gradient(135deg,var(--accent),var(--violet));border:none;color:#fff}
+    .modal-btn.secondary{background:transparent;color:rgba(244,243,255,0.6)}
+    .modal-close{position:absolute;top:20px;right:22px;background:none;border:none;color:rgba(244,243,255,0.35);font-size:18px;cursor:pointer}
+
+    .privacy-note{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.35);margin-top:8px;letter-spacing:.03em}
+
+    @media(max-width:768px){
+      .sidebar{display:none}
+      .main{padding:18px 16px}
+      .summary-strip{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo" onclick="window.location.href='dashboard.html'" style="cursor:pointer">
+      <div class="logo-dot"></div>
+      <div><div class="logo-name">Vantage</div><div class="logo-sub">by Virorah</div></div>
+    </div>
+    <div class="nav-section">Core Tools</div>
+    <a href="er-case-navigator.html" class="nav-item"><span class="icon">⚡</span> ER Case Navigator</a>
+    <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">📊</span> HR Data Storyteller</a>
+    <a href="stakeholder-influence.html" class="nav-item"><span class="icon">🎯</span> Stakeholder Influence</a>
+    <a href="offer-intelligence.html" class="nav-item"><span class="icon">⚖️</span> Offer Intelligence</a>
+    <div class="nav-section">Intelligence</div>
+    <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
+    <a href="policy-compass.html" class="nav-item"><span class="icon">🧭</span> Policy Compass</a>
+    <a href="conversation-simulator.html" class="nav-item"><span class="icon">🎭</span> Conversation Simulator</a>
+    <div class="nav-section">My Record</div>
+    <a href="humac-onboarding.html" class="nav-item"><span class="icon">📈</span> Humac Score</a>
+    <a href="case-library.html" class="nav-item"><span class="icon">◎</span> Case Library</a>
+    <a href="ledger.html" class="nav-item active"><span class="icon">📜</span> The Ledger</a>
+    <a href="debrief.html" class="nav-item"><span class="icon">📋</span> The Debrief</a>
+    <div class="nav-section">Account</div>
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">🔒</span> Data &amp; Privacy</a>
+    <a href="#" class="nav-item" onclick="clerkSignOut(); return false;"><span class="icon">↩</span> Sign out</a>
+    <div class="meridian-chip">
+      <div class="label">MERIDIAN Active</div>
+      <div class="val" id="meridian-chip-val">Loading...</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; The Ledger</div>
+      <div class="page-title">📜 The Ledger</div>
+      <div class="page-sub">A documented, timestamped record of the positions you took, before the outcome was known. Not a grievance diary. A professional record that speaks for itself.</div>
+    </div>
+
+    <div class="summary-strip" id="summary-strip"></div>
+    <div class="summary-sentence" id="summary-sentence" style="display:none"></div>
+
+    <div class="controls-row">
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="setFilter('all', this)">All</button>
+        <button class="filter-tab" onclick="setFilter('Open', this)">Open</button>
+        <button class="filter-tab" onclick="setFilter('Resolved', this)">Resolved</button>
+      </div>
+      <button class="file-btn" onclick="openFileModal()">+ File a Position</button>
+    </div>
+
+    <div id="entries-container">
+      <div class="empty-state">
+        <div class="empty-icon">📜</div>
+        <div class="empty-title">Loading your Ledger...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILE POSITION MODAL -->
+  <div class="modal-overlay" id="file-modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeFileModal()">&#x2715;</button>
+      <div class="modal-title">File a Position</div>
+      <div class="modal-sub">Document your recommendation before the outcome is known. This becomes your record.</div>
+
+      <div class="form-group">
+        <label class="form-label">What's the situation?</label>
+        <textarea id="f-situation" class="form-textarea" placeholder="e.g. Engineering lead wants to skip the PIP process and terminate a mid-performer directly"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your recommendation</label>
+        <textarea id="f-recommendation" class="form-textarea" placeholder="What did you recommend?"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">What leadership actually decided <span style="text-transform:none;color:rgba(244,243,255,0.3)">(if different)</span></label>
+        <textarea id="f-leadership" class="form-textarea" placeholder="Leave blank if they followed your recommendation"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">What you predict will happen</label>
+        <textarea id="f-predicted" class="form-textarea" placeholder="Specific prediction — what outcome, in what timeframe"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Predicted financial range</label>
+        <input type="text" id="f-financial" class="form-input" placeholder="e.g. Rs.8L - Rs.14L" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Business impact category</label>
+        <select id="f-green" class="form-select">
+          <option value="Revenue Growth">Revenue Growth</option>
+          <option value="Cost Efficiency" selected>Cost Efficiency</option>
+          <option value="Risk Mitigation">Risk Mitigation</option>
+        </select>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label">Remind me to check the outcome</div>
+        <div class="toggle-switch on" id="reminder-toggle" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Check back in</label>
+        <select id="f-horizon" class="form-select">
+          <option value="30">30 days</option>
+          <option value="60" selected>60 days</option>
+          <option value="90">90 days</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeFileModal()">Cancel</button>
+        <button class="modal-btn primary" onclick="filePosition()">File Position</button>
+      </div>
+      <div class="privacy-note">🔒 Anonymised before processing. This record is yours.</div>
+    </div>
+  </div>
+
+  <!-- RESOLVE MODAL -->
+  <div class="modal-overlay" id="resolve-modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeResolveModal()">&#x2715;</button>
+      <div class="modal-title">Close the Loop</div>
+      <div class="modal-sub" id="resolve-sub"></div>
+
+      <div class="form-group">
+        <label class="form-label">What actually happened?</label>
+        <textarea id="r-outcome" class="form-textarea" placeholder="The actual outcome, specifically"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Actual financial variance</label>
+        <input type="text" id="r-variance" class="form-input" placeholder="e.g. Rs.11L actual — within your predicted range" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Vindication</label>
+        <select id="r-vindication" class="form-select">
+          <option value="HR Position Vindicated">HR Position Vindicated</option>
+          <option value="Leadership Path Vindicated">Leadership Path Vindicated</option>
+          <option value="Partial">Partial — both had merit</option>
+          <option value="Inconclusive">Inconclusive</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeResolveModal()">Cancel</button>
+        <button class="modal-btn primary" onclick="resolvePosition()">Save Resolution</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="vantage-error" style="display:none;position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:1100;background:#11102a;border:1px solid rgba(224,92,58,0.35);border-left:3px solid #E05C3A;border-radius:10px;padding:16px 20px;max-width:480px;width:calc(100% - 48px);box-shadow:0 8px 32px rgba(0,0,0,0.5)">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <span style="font-size:16px;flex-shrink:0">&#x26A0;&#xFE0F;</span>
+      <div id="vantage-error-msg" style="flex:1;font-size:13px;color:rgba(244,243,255,.85);line-height:1.55"></div>
+      <button onclick="document.getElementById('vantage-error').style.display='none'" style="background:none;border:none;color:rgba(244,243,255,.3);cursor:pointer;font-size:16px">&#x2715;</button>
+    </div>
+  </div>
+
+  <script src="clerk-auth.js"></script>
+  <script src="sidebar-shared.js"></script>
+  <script>
+    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+    var allEntries = [];
+    var currentFilter = 'all';
+    var resolvingId = null;
+
+    function showError(msg) {
+      document.getElementById('vantage-error-msg').textContent = msg;
+      document.getElementById('vantage-error').style.display = 'block';
+      setTimeout(function(){ document.getElementById('vantage-error').style.display = 'none'; }, 8000);
+    }
+
+    function setFilter(f, btn) {
+      currentFilter = f;
+      document.querySelectorAll('.filter-tab').forEach(function(t){ t.classList.remove('active'); });
+      btn.classList.add('active');
+      renderEntries();
+    }
+
+    function openFileModal() { document.getElementById('file-modal').classList.add('show'); }
+    function closeFileModal() {
+      document.getElementById('file-modal').classList.remove('show');
+      ['f-situation','f-recommendation','f-leadership','f-predicted','f-financial'].forEach(function(id){
+        document.getElementById(id).value = '';
+      });
+    }
+    function closeResolveModal() {
+      document.getElementById('resolve-modal').classList.remove('show');
+      resolvingId = null;
+    }
+
+    async function callWorker(payload) {
+      var token = null;
+      try {
+        if (window.Clerk && window.Clerk.session) token = await window.Clerk.session.getToken();
+      } catch(e) {}
+      var res = await fetch(WORKER, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) },
+        body: JSON.stringify(payload)
+      });
+      return res.json();
+    }
+
+    async function filePosition() {
+      var situation = document.getElementById('f-situation').value.trim();
+      var recommendation = document.getElementById('f-recommendation').value.trim();
+      if (!situation || !recommendation) { showError('Please fill in the situation and your recommendation at minimum.'); return; }
+      var leadership = document.getElementById('f-leadership').value.trim();
+      var predicted = document.getElementById('f-predicted').value.trim();
+      var financial = document.getElementById('f-financial').value.trim();
+      var green = document.getElementById('f-green').value;
+      var reminderOn = document.getElementById('reminder-toggle').classList.contains('on');
+      var horizonDays = parseInt(document.getElementById('f-horizon').value, 10);
+
+      try {
+        var data = await callWorker({
+          tool: 'file_position',
+          situationSummary: situation,
+          hrRecommendation: recommendation,
+          leadershipDecision: leadership,
+          predictedOutcome: predicted,
+          financialRangePredicted: financial,
+          greenCategory: green,
+          reminderEnabled: reminderOn,
+          reminderHorizonDays: horizonDays,
+          sourceTool: prefillSourceTool
+        });
+        if (data.success) {
+          closeFileModal();
+          loadLedger();
+        } else {
+          showError(data.error || 'Failed to file position. Please try again.');
+        }
+      } catch(e) {
+        showError('Connection error. Please try again.');
+      }
+    }
+
+    function openResolveModal(id) {
+      resolvingId = id;
+      var entry = allEntries.find(function(e){ return e.id === id; });
+      document.getElementById('resolve-sub').innerText = entry ? entry.situationSummary : '';
+      document.getElementById('resolve-modal').classList.add('show');
+    }
+
+    async function resolvePosition() {
+      if (!resolvingId) return;
+      var outcome = document.getElementById('r-outcome').value.trim();
+      var variance = document.getElementById('r-variance').value.trim();
+      var vindication = document.getElementById('r-vindication').value;
+      if (!outcome) { showError('Please describe what actually happened.'); return; }
+      try {
+        var data = await callWorker({
+          tool: 'resolve_position',
+          recordId: resolvingId,
+          actualOutcome: outcome,
+          actualFinancialVariance: variance,
+          vindication: vindication
+        });
+        if (data.success) {
+          closeResolveModal();
+          document.getElementById('r-outcome').value = '';
+          document.getElementById('r-variance').value = '';
+          loadLedger();
+        } else {
+          showError(data.error || 'Failed to save resolution.');
+        }
+      } catch(e) {
+        showError('Connection error. Please try again.');
+      }
+    }
+
+    function vindTagClass(v) {
+      if (v === 'HR Position Vindicated') return 'vind-hr';
+      if (v === 'Leadership Path Vindicated') return 'vind-leadership';
+      if (v === 'Partial') return 'vind-partial';
+      return 'vind-inconclusive';
+    }
+
+    function renderSummary() {
+      var total = allEntries.length;
+      var resolved = allEntries.filter(function(e){ return e.status === 'Resolved'; }).length;
+      var vindicated = allEntries.filter(function(e){ return e.vindication === 'HR Position Vindicated'; }).length;
+      var strip = document.getElementById('summary-strip');
+      strip.innerHTML =
+        '<div class="summary-chip"><div class="sc-num">' + total + '</div><div class="sc-label">Positions Filed</div></div>' +
+        '<div class="summary-chip"><div class="sc-num">' + resolved + '</div><div class="sc-label">Resolved</div></div>' +
+        '<div class="summary-chip"><div class="sc-num">' + vindicated + '</div><div class="sc-label">HR Position Vindicated</div></div>';
+
+      var sentence = document.getElementById('summary-sentence');
+      if (resolved >= 3) {
+        sentence.style.display = 'block';
+        sentence.innerText = total + ' position' + (total !== 1 ? 's' : '') + ' filed. ' + resolved + ' resolved. ' + vindicated + ' where the documented recommendation proved more accurate than the path taken.';
+      } else {
+        sentence.style.display = 'none';
+      }
+    }
+
+    function renderEntries() {
+      var container = document.getElementById('entries-container');
+      var filtered = currentFilter === 'all' ? allEntries : allEntries.filter(function(e){ return e.status === currentFilter; });
+
+      if (filtered.length === 0) {
+        container.innerHTML =
+          '<div class="empty-state">' +
+            '<div class="empty-icon">📜</div>' +
+            '<div class="empty-title">' + (allEntries.length === 0 ? 'No positions filed yet' : 'Nothing in this view') + '</div>' +
+            '<div class="empty-body">' + (allEntries.length === 0 ? 'File a position the next time leadership overrules a recommendation you\u2019ve made. Six weeks from now, you\u2019ll know exactly who was right.' : 'Try a different filter.') + '</div>' +
+          '</div>';
+        return;
+      }
+
+      container.innerHTML = '<div class="entry-list">' + filtered.map(function(e) {
+        var statusClass = e.status === 'Resolved' ? 'status-resolved' : 'status-open';
+        var vindHtml = e.vindication ? '<div class="vindication-tag ' + vindTagClass(e.vindication) + '">' + e.vindication + '</div>' : '';
+        var filedDate = e.filedDate ? new Date(e.filedDate).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : '';
+        return '<div class="entry-card" onclick="' + (e.status === 'Open' ? 'openResolveModal(\'' + e.id + '\')' : '') + '">' +
+          '<div class="entry-top">' +
+            '<div class="entry-summary">' + escapeHtml(e.situationSummary) + '</div>' +
+            '<div class="entry-status ' + statusClass + '">' + e.status + '</div>' +
+          '</div>' +
+          '<div class="entry-meta">' +
+            '<span>📅 Filed ' + filedDate + '</span>' +
+            (e.greenCategory ? '<span>' + e.greenCategory + '</span>' : '') +
+            (e.financialRangePredicted ? '<span>' + escapeHtml(e.financialRangePredicted) + '</span>' : '') +
+          '</div>' +
+          vindHtml +
+        '</div>';
+      }).join('') + '</div>';
+    }
+
+    function escapeHtml(s) {
+      if (!s) return '';
+      var d = document.createElement('div'); d.innerText = s; return d.innerHTML;
+    }
+
+    async function loadLedger() {
+      try {
+        var data = await callWorker({ tool: 'get_ledger' });
+        if (data.success) {
+          allEntries = data.data || [];
+          renderSummary();
+          renderEntries();
+        } else {
+          document.getElementById('entries-container').innerHTML = '<div class="empty-state"><div class="empty-title">Could not load The Ledger</div></div>';
+        }
+      } catch(e) {
+        document.getElementById('entries-container').innerHTML = '<div class="empty-state"><div class="empty-title">Connection error</div></div>';
+      }
+    }
+
+    var prefillSourceTool = 'manual';
+    (function checkPrefill() {
+      try {
+        var raw = sessionStorage.getItem('ledger_prefill');
+        if (raw) {
+          var p = JSON.parse(raw);
+          sessionStorage.removeItem('ledger_prefill');
+          if (p.sourceTool) prefillSourceTool = p.sourceTool;
+          setTimeout(function() {
+            openFileModal();
+            if (p.situationSummary) document.getElementById('f-situation').value = p.situationSummary;
+            if (p.hrRecommendation) document.getElementById('f-recommendation').value = p.hrRecommendation;
+            if (p.predictedOutcome) document.getElementById('f-predicted').value = p.predictedOutcome;
+            if (p.financialRangePredicted) document.getElementById('f-financial').value = p.financialRangePredicted;
+            if (p.greenCategory) document.getElementById('f-green').value = p.greenCategory;
+          }, 300);
+        }
+      } catch(e) {}
+    })();
+
+    (function waitForClerk() {
+      if (window.Clerk && window.Clerk.session) {
+        loadLedger();
+        window.Clerk.session.getToken().then(function(token) {
+          fetch(WORKER, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ tool: 'get_meridian' })
+          }).then(function(r){return r.json();}).then(function(d){
+            if (d.success && d.data) {
+              var chip = document.getElementById('meridian-chip-val');
+              if (chip) chip.innerText = [d.data.industry, d.data.state].filter(Boolean).join(', ') || 'Profile active';
+            }
+          }).catch(function(){});
+        }).catch(function(){});
+      } else {
+        setTimeout(waitForClerk, 150);
+      }
+    })();
+  </script>
+</body>
+</html>
