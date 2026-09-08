@@ -220,7 +220,8 @@
 
   // ── PLATFORM TOUR + OVERVIEW SECTION ─────────────────────
   // Injects before the Dashboard link on every page.
-  // Platform Tour links to about.html (guided walkthrough is a future phase).
+  // Platform Tour links to platform-tour.html (navigational walkthrough).
+  // About Vantage (separate nav item below) links to about.html (product story).
   // Hides the raw Dashboard link — replaced by Home inside Overview.
   //
   // FIX (SR16): selector previously included ".sidebar a[href=\"dashboard.html\"]"
@@ -237,7 +238,7 @@
     overview.id = 'vs-overview';
 
     var tourBtn = document.createElement('a');
-    tourBtn.href = 'about.html';
+    tourBtn.href = 'platform-tour.html';
     tourBtn.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid rgba(99,102,241,0.18);text-decoration:none;color:rgba(255,255,255,0.6);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;background:rgba(99,102,241,0.06);margin-bottom:10px';
     tourBtn.innerHTML = '<span style="display:flex;align-items:center;gap:10px"><span style="font-size:15px">🗺</span>Platform Tour</span><span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.08em;background:#6366f1;color:#fff;padding:2px 7px;border-radius:4px;font-weight:600">START</span>';
 
