@@ -314,7 +314,7 @@
       ? dataPrivacyLink.parentElement
       : dataPrivacyLink.parentNode;
 
-    var allNavSections = document.querySelectorAll('.nav-section');
+    var allNavSections = document.querySelectorAll('.nav-section, .ns');
     var accountHeading = null;
     allNavSections.forEach(function(el){
       if (el.innerText.trim().toUpperCase() === 'ACCOUNT') accountHeading = el;
