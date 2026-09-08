@@ -323,6 +323,7 @@
           <div class="humac-signal-card">
             <div class="humac-signal-label">Humac Financial Translation</div>
             <div class="humac-signal-range" id="humac-range">&#8212;</div>
+            <div id="humac-green-cat" style="margin-top:10px;margin-bottom:2px"></div>
             <div class="humac-signal-pillar">
               <span class="pillar-badge" id="humac-pillar-badge"></span>
               <span class="rar-conf" id="humac-conf"></span>
@@ -411,6 +412,16 @@
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
 
+    function renderGreenCat(gc) {
+      if (!gc || !gc.primary) return '';
+      var icons = {'Revenue Growth':'&#x2191;','Cost Efficiency':'&#x2193;','Risk Mitigation':'&#x26A0;'};
+      var labels = {'Revenue Growth':'Revenue Growth','Cost Efficiency':'Cost Efficiency','Risk Mitigation':'Risk Exposure'};
+      var colors = {'Revenue Growth':'#4ade80','Cost Efficiency':'#a5b4fc','Risk Mitigation':'#FBB724'};
+      var p = gc.primary; var s = gc.secondary;
+      var html = '<span style="font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.05em;color:' + (colors[p]||'#a5b4fc') + '">' + (icons[p]||'') + ' ' + (labels[p]||p) + '</span>';
+      if (s && s !== 'null' && s !== p) html += '<span style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(244,243,255,0.35);margin-left:8px">&middot; ' + (labels[s]||s) + '</span>';
+      return html;
+    }
     function showError(msg) {
       document.getElementById('vantage-error-msg').textContent = msg;
       document.getElementById('vantage-error').style.display = 'block';
@@ -528,6 +539,7 @@
       rarConf.className = 'rar-conf ' + getConfClass(rar.confidence);
 
       // Humac
+      document.getElementById('humac-green-cat').innerHTML = renderGreenCat(r.greenCategory);
       document.getElementById('humac-range').innerText = humac.range || '\u2014';
       var pillarBadge = document.getElementById('humac-pillar-badge');
       pillarBadge.innerText = humac.pillar ? 'Humac ' + humac.pillar : '';
