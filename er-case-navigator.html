@@ -393,6 +393,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
                 <span class="fin-badge" id="fin-confidence-badge"></span>
                 <span class="fin-badge pillar-badge" id="fin-pillar-badge"></span>
               </div>
+              <div id="fin-green-cat" style="margin-top:10px"></div>
             </div>
           </div>
           <div class="fin-breakdown" id="fin-breakdown"></div>
@@ -445,6 +446,16 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
 
+    function renderGreenCat(gc) {
+      if (!gc || !gc.primary) return '';
+      var icons = {'Revenue Growth':'&#x2191;','Cost Efficiency':'&#x2193;','Risk Mitigation':'&#x26A0;'};
+      var labels = {'Revenue Growth':'Revenue Growth','Cost Efficiency':'Cost Efficiency','Risk Mitigation':'Risk Exposure'};
+      var colors = {'Revenue Growth':'#4ade80','Cost Efficiency':'#a5b4fc','Risk Mitigation':'#FBB724'};
+      var p = gc.primary; var s = gc.secondary;
+      var html = '<span style="font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.05em;color:' + (colors[p]||'#a5b4fc') + '">' + (icons[p]||'') + ' ' + (labels[p]||p) + '</span>';
+      if (s && s !== 'null' && s !== p) html += '<span style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(244,243,255,0.35);margin-left:8px">&middot; ' + (labels[s]||s) + '</span>';
+      return html;
+    }
     function showError(msg) {
       document.getElementById('vantage-error-msg').textContent = msg;
       document.getElementById('vantage-error').style.display = 'block';
@@ -605,6 +616,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       document.getElementById('proto-context').innerText = pr.context || '';
 
       // Protocol: Financial
+      document.getElementById('fin-green-cat').innerHTML = renderGreenCat(result.greenCategory);
       document.getElementById('fin-range').innerText = fin.range || 'Not calculated';
       var confBadge = document.getElementById('fin-confidence-badge');
       confBadge.innerText = (fin.confidence || '') + ' confidence';
