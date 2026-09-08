@@ -148,6 +148,7 @@
     <a href="policy-compass.html" class="nav-item"><span class="nav-icon">🧭</span>Policy Compass</a>
     <a href="conversation-simulator.html" class="nav-item"><span class="nav-icon">🎭</span>Conversation Simulator</a>
     <div class="nav-section">My Record</div>
+    <a href="humac-onboarding.html" class="nav-item"><span class="nav-icon">📈</span>Humac Score</a>
     <a href="case-library.html" class="nav-item"><span class="nav-icon">◎</span>Case Library</a>
     <a href="debrief.html" class="nav-item"><span class="nav-icon">📋</span>The Debrief</a>
     <div class="nav-section">Account</div>
@@ -199,8 +200,8 @@
       <!-- TOOL ROADMAP -->
       <div class="section" id="tools">
         <div class="section-label">The Full Platform</div>
-        <h2 class="section-title">Six tools. One integrated intelligence system.</h2>
-        <p class="section-sub">Each tool addresses a specific moment in the HR professional's work. Together they form a complete decision loop.</p>
+        <h2 class="section-title">Eight tools. One integrated intelligence system.</h2>
+        <p class="section-sub">Each tool addresses a specific moment in the HR professional's work — from the case on your desk today to the decision you documented six weeks ago. Together they form a complete decision loop.</p>
         <div class="tools-grid" id="tool-cards"></div>
       </div>
 
@@ -338,6 +339,16 @@
         ['Preparing for a conversation and want to talk it through', 'ARIA · Conversation Coach', 'aria.html'],
         ['Monthly reflection on patterns and what they mean', 'ARIA · Reflection', 'aria.html']
       ]},
+      { group: 'An employee has an offer, or something\u2019s shifting', items: [
+        ['They\u2019ve resigned or disclosed a competing offer \u2014 should I match it?', 'Offer Intelligence', 'offer-intelligence.html'],
+        ['No offer yet, but something\u2019s changed \u2014 assess the flight risk', 'Offer Intelligence', 'offer-intelligence.html'],
+        ['What is the actual cost of losing this person vs. retaining them?', 'Offer Intelligence', 'offer-intelligence.html']
+      ]},
+      { group: 'I need to document a position before it gets overruled', items: [
+        ['Leadership is about to override a recommendation I have made', 'The Ledger', 'ledger.html'],
+        ['I want a timestamped record of what I recommended and why', 'The Ledger', 'ledger.html'],
+        ['I need to check back on a position I filed weeks ago', 'The Ledger', 'ledger.html']
+      ]},
       { group: 'I want to measure my organisation', items: [
         ['Generate the Humac Score — financial baseline of people investment', 'Humac Score', 'humac-onboarding.html'],
         ['Understand where our L3 signals are trending', 'Humac Score', 'humac-onboarding.html']
@@ -361,11 +372,13 @@
     // ── TOOL ROADMAP ──────────────────────────────────────────
     var TOOLS = [
       { num:'01', icon:'⚡', tag:'HERO · Entry point', name:'ER Case Navigator', desc:'PACT diagnostic + 7-section Decision Protocol for every ER situation. Legal position, financial exposure, recommendation, and communication script.', path:'er-case-navigator.html', flagship:true,  color:'#f43f5e', rgb:'244,63,94' },
-      { num:'02', icon:'🎯', tag:'Core', name:'Stakeholder Influence', desc:'The 5-layer INFLUENCE Stack. Makes saying no the riskier option for CFOs, CEOs, and department heads.', path:'stakeholder-influence.html', flagship:false, color:'#f59e0b', rgb:'245,158,11' },
-      { num:'03', icon:'📊', tag:'Core', name:'HR Data Storyteller', desc:'SIGNAL framework transforms raw HR metrics into Boardroom, CFO, and CEO financial narratives.', path:'hr-data-storyteller.html', flagship:false, color:'#0ea5e9', rgb:'14,165,233' },
-      { num:'04', icon:'🎭', tag:'Intelligence', name:'Conversation Simulator', desc:'Practice at Standard or Challenging difficulty. Full debrief on what worked and what didn\'t.', path:'conversation-simulator.html', flagship:false, color:'#a855f7', rgb:'168,85,247' },
-      { num:'05', icon:'🧭', tag:'Intelligence', name:'Policy Compass', desc:'BNS · BNSS · BSA · POSH · labour law · state-specific compliance. Precise, actionable, calibrated to your MERIDIAN.', path:'policy-compass.html', flagship:false, color:'#10b981', rgb:'16,185,129' },
-      { num:'06', icon:'✦', tag:'Intelligence Layer', name:'ARIA', desc:'Adaptive Reflective Intelligence for Advancement. Case Partner, Conversation Coach, Reflection. One question at a time.', path:'aria.html', flagship:true,  color:'#6366f1', rgb:'99,102,241' }
+      { num:'02', icon:'\u2696\ufe0f', tag:'Core', name:'Offer Intelligence', desc:'Model a counter-offer decision or a proactive flight risk assessment. Break-even ceiling, retention cost scenarios, and the exact scripts for the BU Head and the employee.', path:'offer-intelligence.html', flagship:false, color:'#eab308', rgb:'234,179,8' },
+      { num:'03', icon:'🎯', tag:'Core', name:'Stakeholder Influence', desc:'The 5-layer INFLUENCE Stack. Makes saying no the riskier option for CFOs, CEOs, and department heads.', path:'stakeholder-influence.html', flagship:false, color:'#f59e0b', rgb:'245,158,11' },
+      { num:'04', icon:'📊', tag:'Core', name:'HR Data Storyteller', desc:'SIGNAL framework transforms raw HR metrics into Boardroom, CFO, and CEO financial narratives.', path:'hr-data-storyteller.html', flagship:false, color:'#0ea5e9', rgb:'14,165,233' },
+      { num:'05', icon:'🎭', tag:'Intelligence', name:'Conversation Simulator', desc:'Practice at Standard or Challenging difficulty. Full debrief on what worked and what didn\'t.', path:'conversation-simulator.html', flagship:false, color:'#a855f7', rgb:'168,85,247' },
+      { num:'06', icon:'🧭', tag:'Intelligence', name:'Policy Compass', desc:'BNS · BNSS · BSA · POSH · labour law · state-specific compliance. Precise, actionable, calibrated to your MERIDIAN.', path:'policy-compass.html', flagship:false, color:'#10b981', rgb:'16,185,129' },
+      { num:'07', icon:'✦', tag:'Intelligence Layer', name:'ARIA', desc:'Adaptive Reflective Intelligence for Advancement. Case Partner, Conversation Coach, Reflection. One question at a time.', path:'aria.html', flagship:true,  color:'#6366f1', rgb:'99,102,241' },
+      { num:'08', icon:'📜', tag:'My Record · Accountability', name:'The Ledger', desc:'File your position before leadership overrules it. Six weeks later, close the loop and see who the outcome actually vindicated \u2014 with the receipts to show it.', path:'ledger.html', flagship:true,  color:'#4ade80', rgb:'74,222,128' }
     ];
 
     var toolWrap = document.getElementById('tool-cards');
