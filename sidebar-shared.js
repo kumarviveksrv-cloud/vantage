@@ -270,6 +270,22 @@
     dashLink.style.display = 'none'; // replaced by Home in Overview
   }
 
+  // ── LEDGER NAV INJECTION ──────────────────────────────────
+  // Injects The Ledger after Case Library on all pages.
+  var clNavLink = document.querySelector('a[href="case-library.html"]');
+  var alreadyHasLedger = document.querySelector('a[href="ledger.html"]');
+  if (clNavLink && !alreadyHasLedger) {
+    var currentPage2 = window.location.pathname.split('/').pop();
+    var ledgerLink = document.createElement('a');
+    ledgerLink.href = 'ledger.html';
+    var isNiClass2 = clNavLink.classList.contains('ni');
+    ledgerLink.className = isNiClass2 ? 'ni' : 'nav-item';
+    if (currentPage2 === 'ledger.html') ledgerLink.className += ' active';
+    ledgerLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.65);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    ledgerLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">\u{1F4DC}</span> The Ledger';
+    clNavLink.parentNode.insertBefore(ledgerLink, clNavLink.nextSibling);
+  }
+
   // ── OFFER INTELLIGENCE NAV INJECTION ─────────────────────
   // Injects Offer Intelligence after Stakeholder Influence on all pages.
   // Handles both standard .nav-item and ARIA-page .ni class patterns.
