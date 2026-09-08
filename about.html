@@ -6,15 +6,17 @@
   <link rel="shortcut icon" href="favicon.png"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Platform Tour — Virorah Vantage</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+  <title>About Vantage — Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif}
     body{display:flex}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-    /* SIDEBAR */
+    /* SIDEBAR — identical to platform-tour.html */
     .sidebar{width:220px;flex-shrink:0;background:rgba(13,11,30,.98);border-right:1px solid rgba(99,102,241,.08);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto;position:fixed;top:0;left:0;z-index:20}
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
     .logo-dot{width:8px;height:8px;border-radius:50%;background:#6366f1;box-shadow:0 0 10px #6366f1;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
@@ -31,89 +33,80 @@
 
     /* MAIN */
     .main{margin-left:220px;flex:1;min-height:100vh;overflow-y:auto}
-    .content{max-width:860px;margin:0 auto;padding:56px 40px 80px}
+    .content{max-width:820px;margin:0 auto;padding:64px 40px 90px}
 
     /* HERO */
-    .hero{text-align:center;margin-bottom:64px}
+    .hero{margin-bottom:60px;animation:fadeIn .4s ease}
     .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(99,102,241,.65);margin-bottom:16px}
-    .hero-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;color:#f4f3ff;line-height:1.15;margin-bottom:16px}
+    .hero-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(1.9rem,4vw,3rem);font-weight:800;color:#f4f3ff;line-height:1.15;margin-bottom:18px}
     .hero-title span{background:linear-gradient(135deg,#a5b4fc,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero-sub{font-size:.95rem;color:rgba(244,243,255,.42);line-height:1.75;max-width:520px;margin:0 auto 32px}
-
-    /* HERO BUTTONS */
-    .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-    .hbtn{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:18px 22px;border-radius:14px;cursor:pointer;min-width:220px;max-width:280px;text-align:left;border:none;font-family:inherit;text-decoration:none;transition:transform .2s,box-shadow .2s}
-    .hbtn:hover{transform:translateY(-3px)}
-    .hbtn-icon{font-size:20px}
-    .hbtn-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;color:#f4f3ff}
-    .hbtn-desc{font-size:11px;line-height:1.5;color:rgba(244,243,255,.6)}
-    .hbtn-primary{background:linear-gradient(135deg,#6366f1,#7c3aed);box-shadow:0 4px 24px rgba(99,102,241,.35)}
-    .hbtn-primary:hover{box-shadow:0 10px 36px rgba(99,102,241,.5)}
-    .hbtn-ghost{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2) !important}
-    .hbtn-ghost:hover{background:rgba(99,102,241,.12)}
+    .hero-sub{font-size:1rem;color:rgba(244,243,255,.48);line-height:1.8;max-width:600px}
 
     /* DIVIDER */
     .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.2),transparent);margin:56px 0}
 
-    /* SECTION */
-    .section{margin-bottom:56px;scroll-margin-top:80px}
+    /* SECTION LABEL */
     .section-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(99,102,241,.55);margin-bottom:10px;display:flex;align-items:center;gap:10px}
     .section-label::before{content:'';width:24px;height:1.5px;background:#6366f1;flex-shrink:0}
-    .section-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(1.3rem,2.5vw,1.7rem);font-weight:700;color:#f4f3ff;margin-bottom:6px;line-height:1.25}
-    .section-sub{font-size:.88rem;color:rgba(244,243,255,.38);margin-bottom:28px;line-height:1.7}
+    .section-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(1.3rem,2.5vw,1.7rem);font-weight:700;color:#f4f3ff;margin-bottom:8px;line-height:1.25}
+    .section-sub{font-size:.9rem;color:rgba(244,243,255,.4);margin-bottom:32px;line-height:1.7;max-width:620px}
 
-    /* LOOKUP */
-    .lookup-group{margin-bottom:28px}
-    .lookup-group-title{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#a5b4fc;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(99,102,241,.12)}
-    .lookup-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 4px;border-bottom:1px solid rgba(255,255,255,.04)}
-    .lookup-situation{font-size:13px;color:rgba(244,243,255,.75);flex:1;line-height:1.5}
-    .lookup-tool{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#a5b4fc;text-decoration:none;padding:7px 14px;border-radius:8px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);transition:all .2s;white-space:nowrap}
-    .lookup-tool:hover{background:rgba(99,102,241,.16);border-color:rgba(99,102,241,.4)}
+    /* DAY STORY */
+    .story-section{margin-bottom:60px}
+    .story-beat{display:flex;gap:22px;padding:26px 0;border-bottom:1px solid rgba(99,102,241,.08)}
+    .story-beat:last-child{border-bottom:none}
+    .story-time{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#a5b4fc;flex-shrink:0;width:64px;padding-top:2px}
+    .story-body{flex:1}
+    .story-text{font-size:.94rem;color:rgba(244,243,255,.65);line-height:1.75;margin-bottom:12px}
+    .story-text b{color:#f4f3ff;font-weight:600}
+    .story-tool-link{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#a5b4fc;text-decoration:none;padding:5px 12px;border-radius:6px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);transition:all .2s;margin-right:8px}
+    .story-tool-link:hover{background:rgba(99,102,241,.16);border-color:rgba(99,102,241,.4)}
+    .live-chip{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#4ade80;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.25);padding:5px 12px;border-radius:6px}
+    .live-chip.pending{color:#FBB724;background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.25)}
+    .live-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:pulse 1.6s ease-in-out infinite}
 
-    /* TOOL CARDS */
-    .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-    .tool-card{background:rgba(13,11,30,.9);border:1px solid rgba(99,102,241,.12);border-radius:14px;padding:20px 20px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;position:relative;transition:transform .2s,border-color .2s,box-shadow .2s}
-    .tool-card:hover{transform:translateY(-3px);border-color:rgba(99,102,241,.35);box-shadow:0 10px 30px rgba(99,102,241,.12)}
-    .tool-card.flagship{border-color:rgba(99,102,241,.35);background:linear-gradient(160deg,rgba(99,102,241,.08),rgba(124,58,237,.04))}
-    .tool-card.flagship:hover{border-color:rgba(99,102,241,.55)}
-    .tc-num{position:absolute;top:14px;right:16px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:rgba(99,102,241,.35)}
-    .tc-icon{font-size:22px}
-    .tc-tag{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;background:rgba(99,102,241,.12);color:#a5b4fc;padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:2px}
-    .tc-name{font-family:'Bricolage Grotesque',sans-serif;font-size:.95rem;font-weight:700;color:#f4f3ff}
-    .tc-desc{font-size:.78rem;color:rgba(244,243,255,.38);line-height:1.55}
+    /* FLAGSHIP DEEP-DIVES */
+    .flagship-block{background:rgba(13,11,30,.85);border:1px solid rgba(99,102,241,.18);border-radius:18px;padding:32px 32px;margin-bottom:20px;position:relative;overflow:hidden}
+    .flagship-block::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+    .fb-01::before{background:linear-gradient(90deg,#f43f5e,transparent)}
+    .fb-02::before{background:linear-gradient(90deg,#eab308,transparent)}
+    .fb-03::before{background:linear-gradient(90deg,#4ade80,transparent)}
+    .fb-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+    .fb-01 .fb-eyebrow{color:#f43f5e}
+    .fb-02 .fb-eyebrow{color:#eab308}
+    .fb-03 .fb-eyebrow{color:#4ade80}
+    .fb-title{font-family:'Bricolage Grotesque',sans-serif;font-size:1.35rem;font-weight:700;color:#f4f3ff;margin-bottom:14px}
+    .fb-body{font-size:.92rem;color:rgba(244,243,255,.6);line-height:1.75;margin-bottom:18px}
+    .fb-live{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.18);border-radius:10px;padding:14px 18px;margin-bottom:18px;font-size:.85rem;color:rgba(244,243,255,.7);line-height:1.6}
+    .fb-live b{color:#a5b4fc}
+    .fb-cta{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#fff;text-decoration:none;padding:11px 22px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#7c3aed);transition:opacity .2s}
+    .fb-cta:hover{opacity:.88}
 
-    /* PHILOSOPHY */
-    .phil-body{font-size:.95rem;color:rgba(244,243,255,.5);line-height:1.85}
-    .phil-body p+p{margin-top:16px}
+    /* SUPPORTING GRID */
+    .supporting-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-bottom:16px}
+    .sc-card{background:rgba(13,11,30,.8);border:1px solid rgba(99,102,241,.12);border-radius:14px;padding:20px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;transition:all .2s}
+    .sc-card:hover{border-color:rgba(99,102,241,.35);transform:translateY(-2px)}
+    .sc-icon{font-size:20px}
+    .sc-name{font-family:'Bricolage Grotesque',sans-serif;font-size:.9rem;font-weight:700;color:#f4f3ff}
+    .sc-desc{font-size:.76rem;color:rgba(244,243,255,.38);line-height:1.5}
 
-    /* MERIDIAN CARD */
-    .meridian-card{background:rgba(99,102,241,.04);border:1px solid rgba(99,102,241,.18);border-radius:14px;padding:26px 26px;margin-top:20px}
-    .mc-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#a5b4fc;margin-bottom:12px}
-    .mc-params{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-    .mc-param{font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 12px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:6px;color:#a5b4fc}
-
-    /* PILLARS */
-    .pillars{display:flex;flex-direction:column;gap:10px;margin-top:20px}
-    .pillar{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:rgba(13,11,30,.8);border:1px solid rgba(99,102,241,.1);border-radius:10px}
+    /* HUMAC FRAMEWORK */
+    .humac-live-card{background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(124,58,237,.05));border:1px solid rgba(99,102,241,.25);border-radius:16px;padding:28px 30px;margin-bottom:24px}
+    .hlc-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#a5b4fc;margin-bottom:10px}
+    .hlc-score-row{display:flex;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap}
+    .hlc-score{font-family:'Space Grotesk',sans-serif;font-size:2.4rem;font-weight:700;color:#f4f3ff}
+    .hlc-band{font-family:'JetBrains Mono',monospace;font-size:12px;color:#4ade80;padding:4px 12px;background:rgba(74,222,128,.1);border-radius:6px;border:1px solid rgba(74,222,128,.25)}
+    .hlc-sub{font-size:.85rem;color:rgba(244,243,255,.55);line-height:1.6}
+    .hlc-cta{display:inline-block;margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#a5b4fc;text-decoration:none}
+    .pillars{display:flex;flex-direction:column;gap:9px}
+    .pillar{display:flex;align-items:flex-start;gap:14px;padding:13px 16px;background:rgba(13,11,30,.8);border:1px solid rgba(99,102,241,.1);border-radius:10px}
     .pillar-code{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#a5b4fc;flex-shrink:0;width:28px;padding-top:1px}
-    .pillar-name{font-family:'Bricolage Grotesque',sans-serif;font-size:.88rem;font-weight:700;color:#f4f3ff;margin-bottom:3px}
-    .pillar-desc{font-size:.78rem;color:rgba(244,243,255,.38);line-height:1.5}
+    .pillar-name{font-family:'Bricolage Grotesque',sans-serif;font-size:.85rem;font-weight:700;color:#f4f3ff;margin-bottom:3px}
+    .pillar-desc{font-size:.76rem;color:rgba(244,243,255,.38);line-height:1.5}
 
-    /* INDIA BADGE */
-    .india-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#a5b4fc;letter-spacing:.06em;margin-top:14px}
-
-    /* VISION BLOCK */
-    .vision-block{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(124,58,237,.05));border:1px solid rgba(99,102,241,.2);border-radius:16px;padding:32px 32px;margin-top:20px}
-    .vision-text{font-family:'Bricolage Grotesque',sans-serif;font-size:1.15rem;font-weight:600;color:#f4f3ff;line-height:1.6}
-
-    /* FAQ */
-    .faq-item{border-bottom:1px solid rgba(99,102,241,.08)}
-    .faq-q{padding:16px 4px;font-size:.88rem;font-weight:600;color:rgba(244,243,255,.8);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;user-select:none}
-    .faq-q:hover{color:#f4f3ff}
-    .faq-arrow{font-size:11px;color:rgba(99,102,241,.5);transition:transform .2s;flex-shrink:0}
-    .faq-item.open .faq-arrow{transform:rotate(180deg)}
-    .faq-a{display:none;padding:0 4px 16px;font-size:.83rem;color:rgba(244,243,255,.42);line-height:1.75}
-    .faq-item.open .faq-a{display:block}
+    /* CLOSING */
+    .closing-block{text-align:center;padding:40px 20px;background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(124,58,237,.03));border:1px solid rgba(99,102,241,.15);border-radius:18px;margin-top:20px}
+    .closing-text{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:#f4f3ff;line-height:1.5;font-style:italic;max-width:540px;margin:0 auto}
 
     /* FOOTER */
     .about-footer{margin-top:64px;padding-top:28px;border-top:1px solid rgba(99,102,241,.08);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
@@ -124,11 +117,9 @@
     @media(max-width:768px){
       .sidebar{display:none}
       .main{margin-left:0}
-      .content{padding:32px 20px 60px}
-      .hero-btns{flex-direction:column;align-items:stretch}
-      .hbtn{max-width:100%}
-      .lookup-row{flex-direction:column;align-items:flex-start;gap:8px}
-      .lookup-tool{align-self:flex-start}
+      .content{padding:36px 20px 60px}
+      .story-beat{flex-direction:column;gap:8px}
+      .story-time{width:auto}
     }
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-thumb{background:rgba(99,102,241,.15);border-radius:2px}
@@ -146,6 +137,7 @@
     <a href="er-case-navigator.html" class="nav-item"><span class="nav-icon">⚡</span>ER Case Navigator</a>
     <a href="hr-data-storyteller.html" class="nav-item"><span class="nav-icon">📊</span>HR Data Storyteller</a>
     <a href="stakeholder-influence.html" class="nav-item"><span class="nav-icon">🎯</span>Stakeholder Influence</a>
+    <a href="offer-intelligence.html" class="nav-item"><span class="nav-icon">⚖️</span>Offer Intelligence</a>
     <div class="nav-section">Intelligence</div>
     <a href="aria.html" class="nav-item"><span class="nav-icon">✦</span>ARIA</a>
     <a href="policy-compass.html" class="nav-item"><span class="nav-icon">🧭</span>Policy Compass</a>
@@ -153,6 +145,7 @@
     <div class="nav-section">My Record</div>
     <a href="humac-onboarding.html" class="nav-item"><span class="nav-icon">📈</span>Humac Score</a>
     <a href="case-library.html" class="nav-item"><span class="nav-icon">◎</span>Case Library</a>
+    <a href="ledger.html" class="nav-item"><span class="nav-icon">📜</span>The Ledger</a>
     <a href="debrief.html" class="nav-item"><span class="nav-icon">📋</span>The Debrief</a>
     <div class="nav-section">Account</div>
     <a href="data-dashboard.html" class="nav-item"><span class="nav-icon">🔒</span>Data &amp; Privacy</a>
@@ -168,124 +161,149 @@
 
       <!-- HERO -->
       <div class="hero">
-        <div class="hero-eyebrow">Virorah Vantage · Platform Tour</div>
-        <h1 class="hero-title">Lost? <span>Start here.</span></h1>
-        <p class="hero-sub">Whether something just landed on your desk or you want to understand what Vantage is built for — this page gets you to the right place, fast.</p>
-        <div class="hero-btns">
-          <button class="hbtn hbtn-primary" onclick="document.getElementById('lookup').scrollIntoView({behavior:'smooth'})">
-            <div class="hbtn-icon">⚡</div>
-            <div class="hbtn-title">I have a situation right now</div>
-            <div class="hbtn-desc">Jump straight to the tool that matches what's on your desk.</div>
-          </button>
-          <button class="hbtn hbtn-ghost" onclick="document.getElementById('tools').scrollIntoView({behavior:'smooth'})">
-            <div class="hbtn-icon">🗺</div>
-            <div class="hbtn-title">Walk me through the platform</div>
-            <div class="hbtn-desc">See every tool, in the order most people find useful.</div>
-          </button>
-          <button class="hbtn hbtn-ghost" onclick="document.getElementById('philosophy').scrollIntoView({behavior:'smooth'})">
-            <div class="hbtn-icon">✦</div>
-            <div class="hbtn-title">What is Vantage?</div>
-            <div class="hbtn-desc">The problem it solves, the philosophy behind it, the vision.</div>
-          </button>
+        <div class="hero-eyebrow">About Vantage</div>
+        <h1 class="hero-title" id="hero-title">This is what a day looks like <span>when Vantage is behind you.</span></h1>
+        <p class="hero-sub" id="hero-sub">Not a feature list. A walk through an ordinary working day — the moments that already exist in your calendar, and what changes when you have this platform in the room with you.</p>
+      </div>
+
+      <!-- DAY STORY -->
+      <div class="story-section">
+        <div class="section-label">A Day With Vantage</div>
+        <h2 class="section-title">Nothing here is hypothetical. This is your desk.</h2>
+        <p class="section-sub">Five moments, the kind that already show up in your week. Where we can, we're pulling your own numbers into the story — not a demo account's.</p>
+
+        <div class="story-beat">
+          <div class="story-time">9:14 AM</div>
+          <div class="story-body">
+            <div class="story-text">A resignation letter lands in your inbox with a competing offer attached. Before you say a word to anyone, you already know the replacement cost, the break-even ceiling, and whether this is a fight worth having.</div>
+            <a href="offer-intelligence.html" class="story-tool-link">⚖️ Offer Intelligence →</a>
+          </div>
         </div>
-      </div>
 
-      <!-- SITUATION → TOOL LOOKUP -->
-      <div class="section" id="lookup">
-        <div class="section-label">Situation → Tool</div>
-        <h2 class="section-title">Tell me your problem. I'll tell you the tool.</h2>
-        <p class="section-sub">Find your situation below. Every row links directly to the right tool.</p>
-        <div id="lookup-groups"></div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- TOOL ROADMAP -->
-      <div class="section" id="tools">
-        <div class="section-label">The Full Platform</div>
-        <h2 class="section-title">Eight tools. One integrated intelligence system.</h2>
-        <p class="section-sub">Each tool addresses a specific moment in the HR professional's work — from the case on your desk today to the decision you documented six weeks ago. Together they form a complete decision loop.</p>
-        <div class="tools-grid" id="tool-cards"></div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- PHILOSOPHY -->
-      <div class="section" id="philosophy">
-        <div class="section-label">The Problem</div>
-        <h2 class="section-title">HR has a credibility gap. Not a capability gap.</h2>
-        <div class="phil-body">
-          <p>HR professionals in India are technically capable, deeply experienced, and often the most ethically serious people in the organisation. But they keep getting overruled, underfunded, and ignored — not because they're wrong, but because they're speaking the wrong language.</p>
-          <p>The language of the boardroom is financial. Decisions that get funded come with a number. Departments that earn respect hold others accountable. Vantage is built on a different premise: HR is the function that sits on the most consequential financial lever in any organisation. The reason it has been treated as a cost centre is not because it is one — but because it hasn't had the tools to prove otherwise.</p>
+        <div class="story-beat">
+          <div class="story-time">11:20 AM</div>
+          <div class="story-body">
+            <div class="story-text">The BU Head wants to skip the process on a termination. You run it through <b>PACT</b> in four minutes — Process, Accountability, Consequence, Trust — and you walk into his office with the legal exposure already calculated, not guessed at.</div>
+            <a href="er-case-navigator.html" class="story-tool-link">⚡ ER Case Navigator →</a>
+          </div>
         </div>
-      </div>
 
-      <!-- MERIDIAN -->
-      <div class="section">
-        <div class="section-label">The Calibration Engine</div>
-        <h2 class="section-title">MERIDIAN: why your answers are different from everyone else's.</h2>
-        <div class="phil-body">
-          <p>Every answer Vantage gives you is calibrated to your exact professional reality through a 7-parameter profile called MERIDIAN. A POSH compliance question for a 60-person startup in Bengaluru is a different question from the same issue at a 2,000-person manufacturing unit in Nashik with certified standing orders. Vantage knows the difference.</p>
+        <div class="story-beat">
+          <div class="story-time">1:00 PM</div>
+          <div class="story-body">
+            <div class="story-text" id="humac-beat-text">Someone asks how the org is actually doing, beyond the anecdotes. <span id="humac-beat-live"></span></div>
+            <a href="humac-onboarding.html" class="story-tool-link" id="humac-beat-cta">📈 See your Humac Score →</a>
+          </div>
         </div>
-        <div class="meridian-card">
-          <div class="mc-label">Your 7-parameter profile</div>
-          <div class="mc-params">
-            <span class="mc-param">State / Jurisdiction</span>
-            <span class="mc-param">Industry</span>
-            <span class="mc-param">Org Type</span>
-            <span class="mc-param">Org Size</span>
-            <span class="mc-param">HR Seniority</span>
-            <span class="mc-param">Union Status</span>
-            <span class="mc-param">HR Function</span>
+
+        <div class="story-beat">
+          <div class="story-time">3:30 PM</div>
+          <div class="story-body">
+            <div class="story-text">You disagree with a decision leadership is about to make, and you already know how this ends in six weeks. Rather than argue, you document it — timestamped, financially specific — and move on.</div>
+            <span id="ledger-beat-live" style="display:inline-flex;margin-bottom:8px"></span><br>
+            <a href="ledger.html" class="story-tool-link">📜 The Ledger →</a>
+          </div>
+        </div>
+
+        <div class="story-beat">
+          <div class="story-time">6:40 PM</div>
+          <div class="story-body">
+            <div class="story-text">On the drive home, you talk through what actually happened today — not to a chatbot, to something that asks the next question before you've finished the first thought.</div>
+            <a href="aria.html" class="story-tool-link">✦ Talk to ARIA →</a>
           </div>
         </div>
       </div>
 
-      <!-- HUMAC -->
-      <div class="section">
-        <div class="section-label">The Financial Framework</div>
-        <h2 class="section-title">Humac: the score that measures what people investment actually returns.</h2>
-        <div class="phil-body">
-          <p>Five pillars. One composite score. A Trajectory Index that shows where you're heading, not just where you are. The Humac Score is denominated in the same currency the CFO uses — designed to appear in board decks, not HR reports.</p>
-        </div>
-        <div class="pillars">
-          <div class="pillar"><div class="pillar-code">L1</div><div><div class="pillar-name">Value Ledger</div><div class="pillar-desc">Total financial cost and return of attrition, hiring, and retention.</div></div></div>
-          <div class="pillar"><div class="pillar-code">L2</div><div><div class="pillar-name">Talent Premium</div><div class="pillar-desc">Return on Stars and HiPos above baseline — and liability of Inconsistent Performers below it.</div></div></div>
-          <div class="pillar"><div class="pillar-code">L3</div><div><div class="pillar-name">Org Vitals</div><div class="pillar-desc">20 organisational telemetry signals across Leadership, Fear, Middle Layer, Execution, HR Mirror.</div></div></div>
-          <div class="pillar"><div class="pillar-code">L4</div><div><div class="pillar-name">Human P&amp;L</div><div class="pillar-desc">HR programme costs, compliance spend, legal exposure — costs that never appear in the P&amp;L but are always paid.</div></div></div>
-          <div class="pillar"><div class="pillar-code">L5</div><div><div class="pillar-name">Human Balance Sheet</div><div class="pillar-desc">Institutional knowledge, succession depth, talent concentration risk.</div></div></div>
-        </div>
-      </div>
+      <div class="divider"></div>
 
-      <!-- INDIA -->
+      <!-- FLAGSHIP DEEP-DIVES -->
       <div class="section">
-        <div class="section-label">Built for India</div>
-        <h2 class="section-title">Not adapted for India. Built in it.</h2>
-        <div class="phil-body">
-          <p>Every legal citation uses BNS, BNSS, and BSA — the codes that replaced IPC, CrPC, and the Indian Evidence Act on 1 July 2024. Every financial calculation is in INR. Every benchmark reflects Indian private sector practice. Every POSH citation knows the correct name is Internal Complaints Committee.</p>
-        </div>
-        <div class="india-badge"><span>🇮🇳</span><span>India-first · BNS / BNSS / BSA · INR · State-specific compliance</span></div>
-      </div>
+        <div class="section-label">What Nothing Else Does</div>
+        <h2 class="section-title">Three things you will not find anywhere else in Indian HR tech.</h2>
 
-      <!-- VISION -->
-      <div class="section">
-        <div class="section-label">The Vision</div>
-        <h2 class="section-title">HR holding leadership accountable — not the other way around.</h2>
-        <div class="phil-body">
-          <p>Every HR professional in India should be able to walk into a boardroom, a difficult performance conversation, or a complex disciplinary situation — and have the intelligence, the legal grounding, and the financial evidence to lead the decision, not just implement it.</p>
+        <div class="flagship-block fb-01">
+          <div class="fb-eyebrow">Flagship · Entry Point</div>
+          <div class="fb-title">⚡ ER Case Navigator</div>
+          <div class="fb-body">Every ER situation gets two layers, always, no exceptions. The PACT diagnostic scans Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation in under a minute. Then the seven-section Decision Protocol gives you the legal position, the exact financial exposure in INR, the MERIDIAN-calibrated context, and the specific language to use — with the stakeholder you're about to talk to, not a generic script.</div>
+          <a href="er-case-navigator.html" class="fb-cta">Open ER Case Navigator →</a>
         </div>
-        <div class="vision-block">
-          <div class="vision-text">"You are already in the room. Vantage gives you what you need to own it."</div>
+
+        <div class="flagship-block fb-02">
+          <div class="fb-eyebrow">Flagship · Retention Decisions</div>
+          <div class="fb-title">⚖️ Offer Intelligence</div>
+          <div class="fb-body">The counter-offer decision that used to be a gut call now has a break-even ceiling attached to it. Two flows: a live resignation with a competing offer in hand, or a proactive flight-risk read before anything's been said out loud. Either way, you get the replacement cost, the retention cost at three match levels, a flagged primary recommendation, and two scripts — one for the BU Head, one for the employee.</div>
+          <a href="offer-intelligence.html" class="fb-cta">Open Offer Intelligence →</a>
+        </div>
+
+        <div class="flagship-block fb-03">
+          <div class="fb-eyebrow">Flagship · The Career Record</div>
+          <div class="fb-title">📜 The Ledger</div>
+          <div class="fb-body">HR gets overruled and then gets blamed six months later when the overruled path fails. The Ledger flips that. File your position, the financial basis, and your prediction before the decision goes the other way. Six weeks or six months on, close the loop and see who the outcome actually vindicated. Not a confrontation. A timestamped professional record that speaks for itself.</div>
+          <div class="fb-live" id="ledger-fb-live">Loading your Ledger record…</div>
+          <a href="ledger.html" class="fb-cta">Open The Ledger →</a>
         </div>
       </div>
 
       <div class="divider"></div>
 
-      <!-- FAQ -->
-      <div class="section" id="faq">
-        <div class="section-label">Common Questions</div>
-        <h2 class="section-title">Still stuck?</h2>
-        <div id="faq-list"></div>
+      <!-- SUPPORTING TOOLS -->
+      <div class="section">
+        <div class="section-label">The Rest Of The System</div>
+        <h2 class="section-title">Five more tools, built for the moments in between.</h2>
+        <div class="supporting-grid">
+          <a href="hr-data-storyteller.html" class="sc-card">
+            <div class="sc-icon">📊</div>
+            <div class="sc-name">HR Data Storyteller</div>
+            <div class="sc-desc">Turns raw metrics into a Boardroom, CFO, and CEO version of the same story — with Revenue at Risk attached.</div>
+          </a>
+          <a href="stakeholder-influence.html" class="sc-card">
+            <div class="sc-icon">🎯</div>
+            <div class="sc-name">Stakeholder Influence</div>
+            <div class="sc-desc">The five-layer INFLUENCE Stack. Makes saying no the riskier decision, without a single question mark in the closing line.</div>
+          </a>
+          <a href="policy-compass.html" class="sc-card">
+            <div class="sc-icon">🧭</div>
+            <div class="sc-name">Policy Compass</div>
+            <div class="sc-desc">BNS, BNSS, BSA, POSH, state-specific compliance — precise, never a disclaimer machine.</div>
+          </a>
+          <a href="conversation-simulator.html" class="sc-card">
+            <div class="sc-icon">🎭</div>
+            <div class="sc-name">Conversation Simulator</div>
+            <div class="sc-desc">Rehearse the hard conversation before you have it, at a difficulty that actually pushes back.</div>
+          </a>
+          <a href="aria.html" class="sc-card">
+            <div class="sc-icon">✦</div>
+            <div class="sc-name">ARIA</div>
+            <div class="sc-desc">Case Partner, Conversation Coach, Reflection. One question at a time, never a lecture.</div>
+          </a>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- HUMAC FRAMEWORK -->
+      <div class="section">
+        <div class="section-label">The Financial Framework Underneath Everything</div>
+        <h2 class="section-title">Humac: the score that measures what people investment actually returns.</h2>
+        <p class="section-sub">Every tool above feeds into this. Five pillars, one composite score, a Trajectory Index that shows where you're heading — denominated in the language a CFO already speaks.</p>
+
+        <div class="humac-live-card" id="humac-live-card">
+          <div class="hlc-label">Your Humac Score</div>
+          <div id="humac-live-content">Loading…</div>
+        </div>
+
+        <div class="pillars">
+          <div class="pillar"><div class="pillar-code">L1</div><div><div class="pillar-name">Value Ledger</div><div class="pillar-desc">Total financial cost and return of attrition, hiring, and retention.</div></div></div>
+          <div class="pillar"><div class="pillar-code">L2</div><div><div class="pillar-name">Talent Premium</div><div class="pillar-desc">Return on Stars and HiPos above baseline — and the liability of Inconsistent Performers below it.</div></div></div>
+          <div class="pillar"><div class="pillar-code">L3</div><div><div class="pillar-name">Org Vitals</div><div class="pillar-desc">Organisational telemetry across Leadership, Fear, Middle Layer, Execution, HR Mirror.</div></div></div>
+          <div class="pillar"><div class="pillar-code">L4</div><div><div class="pillar-name">Human P&amp;L</div><div class="pillar-desc">HR programme costs, compliance spend, legal exposure — paid whether or not they appear in the P&amp;L.</div></div></div>
+          <div class="pillar"><div class="pillar-code">L5</div><div><div class="pillar-name">Human Balance Sheet</div><div class="pillar-desc">Institutional knowledge, succession depth, talent concentration risk.</div></div></div>
+        </div>
+      </div>
+
+      <!-- CLOSING -->
+      <div class="closing-block">
+        <div class="closing-text">"You are already in the room. Vantage gives you what you need to own it."</div>
       </div>
 
       <!-- FOOTER -->
@@ -302,122 +320,95 @@
 
   <script>
     var BASE = 'https://vantage.virorah.com/';
+    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+
     if (sessionStorage.getItem('sr_access') !== 'true') {
       window.location.href = BASE + 'access.html';
     }
+
     var mr = sessionStorage.getItem('sr_meridian');
     var meridian = mr ? JSON.parse(mr) : {};
-    document.getElementById('mcv').innerText = (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
+    document.getElementById('mcv').innerText = (meridian.state || 'Not set') + ' \u00b7 ' + (meridian.industry || 'Not set');
 
-    // ── SITUATION → TOOL LOOKUP ───────────────────────────────
-    var LOOKUP = [
-      { group: 'A situation just landed on my desk', items: [
-        ['A termination, misconduct, or disciplinary case', 'ER Case Navigator', 'er-case-navigator.html'],
-        ['A POSH complaint or harassment allegation', 'ER Case Navigator', 'er-case-navigator.html'],
-        ['A grievance, PIP, or ER escalation', 'ER Case Navigator', 'er-case-navigator.html'],
-        ['A process question — notice period, warning letter, domestic enquiry', 'Policy Compass', 'policy-compass.html']
-      ]},
-      { group: 'I need to influence someone', items: [
-        ['Convincing a CFO or CEO with financial numbers', 'Stakeholder Influence', 'stakeholder-influence.html'],
-        ['Building a business case for a people programme', 'Stakeholder Influence', 'stakeholder-influence.html'],
-        ['Getting budget approved for an HR initiative', 'Stakeholder Influence', 'stakeholder-influence.html']
-      ]},
-      { group: 'I have data that needs to become an argument', items: [
-        ['Attrition numbers, engagement scores, or time-to-hire data', 'HR Data Storyteller', 'hr-data-storyteller.html'],
-        ['A board meeting or leadership review tomorrow', 'HR Data Storyteller', 'hr-data-storyteller.html'],
-        ['Making HR metrics mean something financially', 'HR Data Storyteller', 'hr-data-storyteller.html']
-      ]},
-      { group: 'I have a hard conversation coming up', items: [
-        ['A PIP conversation, termination meeting, or salary pushback', 'Conversation Simulator', 'conversation-simulator.html'],
-        ['A resistant stakeholder or difficult employee', 'Conversation Simulator', 'conversation-simulator.html'],
-        ['Preparing before the real thing', 'Conversation Simulator', 'conversation-simulator.html']
-      ]},
-      { group: 'I need a policy or compliance answer', items: [
-        ['Can I do this? Is this legally defensible?', 'Policy Compass', 'policy-compass.html'],
-        ['POSH, standing orders, notice period, gratuity, bonus', 'Policy Compass', 'policy-compass.html'],
-        ['BNS / BNSS / BSA citation for a specific situation', 'Policy Compass', 'policy-compass.html']
-      ]},
-      { group: 'I want to think through something', items: [
-        ['Something just happened — I need to process it before acting', 'ARIA · Case Partner', 'aria.html'],
-        ['Preparing for a conversation and want to talk it through', 'ARIA · Conversation Coach', 'aria.html'],
-        ['Monthly reflection on patterns and what they mean', 'ARIA · Reflection', 'aria.html']
-      ]},
-      { group: 'An employee has an offer, or something\u2019s shifting', items: [
-        ['They\u2019ve resigned or disclosed a competing offer \u2014 should I match it?', 'Offer Intelligence', 'offer-intelligence.html'],
-        ['No offer yet, but something\u2019s changed \u2014 assess the flight risk', 'Offer Intelligence', 'offer-intelligence.html'],
-        ['What is the actual cost of losing this person vs. retaining them?', 'Offer Intelligence', 'offer-intelligence.html']
-      ]},
-      { group: 'I need to document a position before it gets overruled', items: [
-        ['Leadership is about to override a recommendation I have made', 'The Ledger', 'ledger.html'],
-        ['I want a timestamped record of what I recommended and why', 'The Ledger', 'ledger.html'],
-        ['I need to check back on a position I filed weeks ago', 'The Ledger', 'ledger.html']
-      ]},
-      { group: 'I want to measure my organisation', items: [
-        ['Generate the Humac Score — financial baseline of people investment', 'Humac Score', 'humac-onboarding.html'],
-        ['Understand where our L3 signals are trending', 'Humac Score', 'humac-onboarding.html']
-      ]}
-    ];
+    // Personalize hero if MERIDIAN industry is known
+    if (meridian.industry) {
+      document.getElementById('hero-sub').innerText = 'Not a feature list. A walk through an ordinary working day in ' + meridian.industry + ' HR \u2014 the moments that already exist in your calendar, and what changes when you have this platform in the room with you.';
+    }
 
-    var lookupWrap = document.getElementById('lookup-groups');
-    lookupWrap.innerHTML = LOOKUP.map(function(g) {
-      var rows = g.items.map(function(item) {
-        return '<div class="lookup-row">' +
-          '<div class="lookup-situation">' + item[0] + '</div>' +
-          '<a href="' + item[2] + '" class="lookup-tool">' + item[1] + ' →</a>' +
-        '</div>';
-      }).join('');
-      return '<div class="lookup-group">' +
-        '<div class="lookup-group-title">' + g.group + '</div>' +
-        rows +
-      '</div>';
-    }).join('');
+    function formatINR(n) {
+      if (!n && n !== 0) return null;
+      n = Math.round(Number(n));
+      if (n >= 10000000) return '\u20b9' + (n/10000000).toFixed(2) + 'Cr';
+      if (n >= 100000) return '\u20b9' + (n/100000).toFixed(1) + 'L';
+      if (n >= 1000) return '\u20b9' + (n/1000).toFixed(0) + 'K';
+      return '\u20b9' + n;
+    }
 
-    // ── TOOL ROADMAP ──────────────────────────────────────────
-    var TOOLS = [
-      { num:'01', icon:'⚡', tag:'HERO · Entry point', name:'ER Case Navigator', desc:'PACT diagnostic + 7-section Decision Protocol for every ER situation. Legal position, financial exposure, recommendation, and communication script.', path:'er-case-navigator.html', flagship:true,  color:'#f43f5e', rgb:'244,63,94' },
-      { num:'02', icon:'\u2696\ufe0f', tag:'Core', name:'Offer Intelligence', desc:'Model a counter-offer decision or a proactive flight risk assessment. Break-even ceiling, retention cost scenarios, and the exact scripts for the BU Head and the employee.', path:'offer-intelligence.html', flagship:false, color:'#eab308', rgb:'234,179,8' },
-      { num:'03', icon:'🎯', tag:'Core', name:'Stakeholder Influence', desc:'The 5-layer INFLUENCE Stack. Makes saying no the riskier option for CFOs, CEOs, and department heads.', path:'stakeholder-influence.html', flagship:false, color:'#f59e0b', rgb:'245,158,11' },
-      { num:'04', icon:'📊', tag:'Core', name:'HR Data Storyteller', desc:'SIGNAL framework transforms raw HR metrics into Boardroom, CFO, and CEO financial narratives.', path:'hr-data-storyteller.html', flagship:false, color:'#0ea5e9', rgb:'14,165,233' },
-      { num:'05', icon:'🎭', tag:'Intelligence', name:'Conversation Simulator', desc:'Practice at Standard or Challenging difficulty. Full debrief on what worked and what didn\'t.', path:'conversation-simulator.html', flagship:false, color:'#a855f7', rgb:'168,85,247' },
-      { num:'06', icon:'🧭', tag:'Intelligence', name:'Policy Compass', desc:'BNS · BNSS · BSA · POSH · labour law · state-specific compliance. Precise, actionable, calibrated to your MERIDIAN.', path:'policy-compass.html', flagship:false, color:'#10b981', rgb:'16,185,129' },
-      { num:'07', icon:'✦', tag:'Intelligence Layer', name:'ARIA', desc:'Adaptive Reflective Intelligence for Advancement. Case Partner, Conversation Coach, Reflection. One question at a time.', path:'aria.html', flagship:true,  color:'#6366f1', rgb:'99,102,241' },
-      { num:'08', icon:'📜', tag:'My Record · Accountability', name:'The Ledger', desc:'File your position before leadership overrules it. Six weeks later, close the loop and see who the outcome actually vindicated \u2014 with the receipts to show it.', path:'ledger.html', flagship:true,  color:'#4ade80', rgb:'74,222,128' }
-    ];
+    async function callWorker(payload, token) {
+      var res = await fetch(WORKER, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) },
+        body: JSON.stringify(payload)
+      });
+      return res.json();
+    }
 
-    var toolWrap = document.getElementById('tool-cards');
-    toolWrap.innerHTML = TOOLS.map(function(t) {
-      var cardStyle = 'border-color:rgba(' + t.rgb + ',0.25);';
-      var topBar = '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,' + t.color + ',transparent);border-radius:12px 12px 0 0"></div>';
-      return '<a href="' + t.path + '" class="tool-card' + (t.flagship ? ' flagship' : '') + '" style="' + cardStyle + '">' +
-        topBar +
-        '<div class="tc-num" style="color:rgba(' + t.rgb + ',0.45)">' + t.num + '</div>' +
-        '<div class="tc-icon" style="color:' + t.color + ';filter:drop-shadow(0 0 8px rgba(' + t.rgb + ',0.4))">' + t.icon + '</div>' +
-        '<div class="tc-tag" style="color:' + t.color + ';background:rgba(' + t.rgb + ',0.1);border-color:rgba(' + t.rgb + ',0.25)">' + t.tag + '</div>' +
-        '<div class="tc-name">' + t.name + '</div>' +
-        '<div class="tc-desc">' + t.desc + '</div>' +
-      '</a>';
-    }).join('');
+    function renderHumacLive(data) {
+      var beatLive = document.getElementById('humac-beat-live');
+      var beatCta = document.getElementById('humac-beat-cta');
+      var card = document.getElementById('humac-live-content');
 
-    // ── FAQ ───────────────────────────────────────────────────
-    var FAQ = [
-      ['Do I need to configure MERIDIAN before using the tools?', 'Not required, but strongly recommended. Without MERIDIAN, every tool gives you mid-size private sector Maharashtra defaults. With it, every output is calibrated to your state, industry, org type, seniority, union status, and internal policies. Setup takes 5 minutes and the difference in output quality is significant.'],
-      ['Does Vantage work without the mic?', 'Yes. Every tool has a text input. The mic on ARIA is an enhancement, not a requirement. Type anywhere you would speak.'],
-      ['What happens to my data?', 'Your MERIDIAN profile and case history are stored in your browser and linked to your email. They are not shared or sold. Conversations with ARIA are processed through Anthropic\'s Claude API and treated as confidential. You can delete everything from Data & Privacy at any time.'],
-      ['What is the Humac Score?', 'A composite financial score measuring how efficiently your organisation converts people investment into organisational value. Five pillars: L1 Value Ledger, L2 Talent Premium, L3 Org Vitals, L4 Human P&L, L5 Human Balance Sheet. Accompanied by a Trajectory Index showing the direction of travel.'],
-      ['Is Vantage only for in-house HR?', 'Core tier is designed for in-house HR professionals with a single MERIDIAN profile. Consultant tier is for HR practitioners working across multiple client engagements — each client gets their own calibrated MERIDIAN profile and the full tool suite recalibrates per client.'],
-      ['Is Vantage only available in India?', 'Currently yes. Built specifically for Indian HR practice — BNS/BNSS/BSA legal citations, INR financials, state-specific compliance, Indian employment law. Global expansion is planned.']
-    ];
+      if (data && data.humac) {
+        var band = data.band || 'Stable';
+        beatLive.innerHTML = 'Yours right now: <b>' + data.humac + '</b> \u2014 ' + band + '.';
+        beatCta.innerHTML = '\ud83d\udcc8 See the full breakdown \u2192';
+        card.innerHTML =
+          '<div class="hlc-score-row"><div class="hlc-score">' + data.humac + '</div><div class="hlc-band">' + band + '</div></div>' +
+          '<div class="hlc-sub">HCI-adjusted: ' + (data.hciAdj || data.humac) + ' \u00b7 Pillars \u2014 L1:' + (data.l1||0) + ' L2:' + (data.l2||0) + ' L3:' + (data.l3||0) + ' L4:' + (data.l4||0) + ' L5:' + (data.l5||0) + '</div>' +
+          '<a href="humac-onboarding.html" class="hlc-cta">Update your score \u2192</a>';
+      } else {
+        beatLive.innerHTML = 'You have not generated yours yet \u2014 it takes about four minutes.';
+        beatCta.innerHTML = '\ud83d\udcc8 Generate your Humac Score \u2192';
+        card.innerHTML =
+          '<div class="hlc-sub">You have not generated your Humac Score yet. Eighteen questions, four minutes, one number that measures how efficiently this organisation converts people investment into value.</div>' +
+          '<a href="humac-onboarding.html" class="hlc-cta">Generate it now \u2192</a>';
+      }
+    }
 
-    var faqWrap = document.getElementById('faq-list');
-    faqWrap.innerHTML = FAQ.map(function(f) {
-      return '<div class="faq-item">' +
-        '<div class="faq-q" onclick="this.parentElement.classList.toggle(\'open\')">' +
-          f[0] + '<span class="faq-arrow">▾</span>' +
-        '</div>' +
-        '<div class="faq-a">' + f[1] + '</div>' +
-      '</div>';
-    }).join('');
+    function renderLedgerLive(entries) {
+      var beatLive = document.getElementById('ledger-beat-live');
+      var fbLive = document.getElementById('ledger-fb-live');
+      var total = entries.length;
+      var resolved = entries.filter(function(e){ return e.status === 'Resolved'; }).length;
+      var vindicated = entries.filter(function(e){ return e.vindication === 'HR Position Vindicated'; }).length;
 
+      if (total > 0) {
+        beatLive.innerHTML = '<span class="live-chip"><span class="live-dot"></span>You already have ' + total + ' position' + (total !== 1 ? 's' : '') + ' filed' + (resolved > 0 ? ', ' + resolved + ' resolved' : '') + '.</span>';
+        fbLive.innerHTML = 'Your record so far: <b>' + total + '</b> filed, <b>' + resolved + '</b> resolved' + (vindicated > 0 ? ', <b>' + vindicated + '</b> where you were proven right.' : '.');
+      } else {
+        beatLive.innerHTML = '<span class="live-chip pending"><span class="live-dot"></span>You have not filed a position yet.</span>';
+        fbLive.innerHTML = 'You have not filed a position yet. The next time leadership overrules a recommendation, this is where you put it in writing \u2014 before anyone finds out who was right.';
+      }
+    }
+
+    (function waitForClerk() {
+      if (window.Clerk && window.Clerk.session) {
+        window.Clerk.session.getToken().then(function(token) {
+          callWorker({ tool: 'get_humac' }, token).then(function(d) {
+            renderHumacLive(d.success ? d.data : null);
+          }).catch(function() { renderHumacLive(null); });
+
+          callWorker({ tool: 'get_ledger' }, token).then(function(d) {
+            renderLedgerLive(d.success ? (d.data || []) : []);
+          }).catch(function() { renderLedgerLive([]); });
+        }).catch(function() {
+          renderHumacLive(null);
+          renderLedgerLive([]);
+        });
+      } else {
+        setTimeout(waitForClerk, 150);
+      }
+    })();
   </script>
   <script src="clerk-auth.js"></script>
   <script src="sidebar-shared.js"></script>
