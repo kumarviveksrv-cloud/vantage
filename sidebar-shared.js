@@ -270,6 +270,23 @@
     dashLink.style.display = 'none'; // replaced by Home in Overview
   }
 
+  // ── OFFER INTELLIGENCE NAV INJECTION ─────────────────────
+  // Injects Offer Intelligence after Stakeholder Influence on all pages.
+  // Handles both standard .nav-item and ARIA-page .ni class patterns.
+  var siNavLink = document.querySelector('a[href="stakeholder-influence.html"]');
+  var alreadyHasOI = document.querySelector('a[href="offer-intelligence.html"]');
+  if (siNavLink && !alreadyHasOI) {
+    var currentPage = window.location.pathname.split('/').pop();
+    var oiLink = document.createElement('a');
+    oiLink.href = 'offer-intelligence.html';
+    var isNiClass = siNavLink.classList.contains('ni');
+    oiLink.className = isNiClass ? 'ni' : 'nav-item';
+    if (currentPage === 'offer-intelligence.html') oiLink.className += ' active';
+    oiLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.65);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
+    oiLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">\u2696\uFE0F</span> Offer Intelligence';
+    siNavLink.parentNode.insertBefore(oiLink, siNavLink.nextSibling);
+  }
+
   // ── MERIDIAN PROFILE LINK INJECTION ──────────────────────
   var dataPrivacyLink = document.querySelector('a[href*="data-dashboard"]');
   var alreadyInjected = document.querySelector('.nav-item[href*="onboarding"],.ni[href*="onboarding"]');
