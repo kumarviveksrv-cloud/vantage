@@ -191,7 +191,7 @@
         <div class="story-beat">
           <div class="story-time">1:00 PM</div>
           <div class="story-body">
-            <div class="story-text" id="humac-beat-text">Someone asks how the org is actually doing, beyond the anecdotes. <span id="humac-beat-live"></span></div>
+            <div class="story-text" id="humac-beat-text">Someone asks how the org is actually doing, beyond the anecdotes. There is one number for that — the <b>Humac Score</b>, a single figure measuring how efficiently this organisation converts people investment into value. <span id="humac-beat-live"></span></div>
             <a href="humac-onboarding.html" class="story-tool-link" id="humac-beat-cta">📈 See your Humac Score →</a>
           </div>
         </div>
@@ -219,24 +219,26 @@
       <!-- FLAGSHIP DEEP-DIVES -->
       <div class="section">
         <div class="section-label">What Nothing Else Does</div>
-        <h2 class="section-title">Three things you will not find anywhere else in Indian HR tech.</h2>
+        <h2 class="section-title">Two tools nothing else in Indian HR tech has. One system that remembers what you said before anyone else does.</h2>
 
         <div class="flagship-block fb-01">
-          <div class="fb-eyebrow">Flagship · Entry Point</div>
+          <div class="fb-eyebrow">Core Tool · Entry Point</div>
           <div class="fb-title">⚡ ER Case Navigator</div>
           <div class="fb-body">Every ER situation gets two layers, always, no exceptions. The PACT diagnostic scans Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation in under a minute. Then the seven-section Decision Protocol gives you the legal position, the exact financial exposure in INR, the MERIDIAN-calibrated context, and the specific language to use — with the stakeholder you're about to talk to, not a generic script.</div>
           <a href="er-case-navigator.html" class="fb-cta">Open ER Case Navigator →</a>
         </div>
 
         <div class="flagship-block fb-02">
-          <div class="fb-eyebrow">Flagship · Retention Decisions</div>
+          <div class="fb-eyebrow">Core Tool · Retention Decisions</div>
           <div class="fb-title">⚖️ Offer Intelligence</div>
           <div class="fb-body">The counter-offer decision that used to be a gut call now has a break-even ceiling attached to it. Two flows: a live resignation with a competing offer in hand, or a proactive flight-risk read before anything's been said out loud. Either way, you get the replacement cost, the retention cost at three match levels, a flagged primary recommendation, and two scripts — one for the BU Head, one for the employee.</div>
           <a href="offer-intelligence.html" class="fb-cta">Open Offer Intelligence →</a>
         </div>
 
+        <p class="section-sub" style="margin-top:8px;margin-bottom:20px">Those two are tools — you feed them a situation, they give you an analysis. What comes next is not a tool. It lives in <b style="color:#f4f3ff">My Record</b>, alongside your Humac Score and Case Library, and it is the one Vantage feature that talks back to you months after you use it.</p>
+
         <div class="flagship-block fb-03">
-          <div class="fb-eyebrow">Flagship · The Career Record</div>
+          <div class="fb-eyebrow">My Record · The System That Remembers</div>
           <div class="fb-title">📜 The Ledger</div>
           <div class="fb-body">HR gets overruled and then gets blamed six months later when the overruled path fails. The Ledger flips that. File your position, the financial basis, and your prediction before the decision goes the other way. Six weeks or six months on, close the loop and see who the outcome actually vindicated. Not a confrontation. A timestamped professional record that speaks for itself.</div>
           <div class="fb-live" id="ledger-fb-live">Loading your Ledger record…</div>
@@ -249,7 +251,7 @@
       <!-- SUPPORTING TOOLS -->
       <div class="section">
         <div class="section-label">The Rest Of The System</div>
-        <h2 class="section-title">Five more tools, built for the moments in between.</h2>
+        <h2 class="section-title">Five more — seven tools in total, every one calibrated to your MERIDIAN.</h2>
         <div class="supporting-grid">
           <a href="hr-data-storyteller.html" class="sc-card">
             <div class="sc-icon">📊</div>
@@ -367,7 +369,7 @@
           '<div class="hlc-sub">HCI-adjusted: ' + (data.hciAdj || data.humac) + ' \u00b7 Pillars \u2014 L1:' + (data.l1||0) + ' L2:' + (data.l2||0) + ' L3:' + (data.l3||0) + ' L4:' + (data.l4||0) + ' L5:' + (data.l5||0) + '</div>' +
           '<a href="humac-onboarding.html" class="hlc-cta">Update your score \u2192</a>';
       } else {
-        beatLive.innerHTML = 'You have not generated yours yet \u2014 it takes about four minutes.';
+        beatLive.innerHTML = 'You have not generated your Humac Score yet \u2014 it takes about four minutes.';
         beatCta.innerHTML = '\ud83d\udcc8 Generate your Humac Score \u2192';
         card.innerHTML =
           '<div class="hlc-sub">You have not generated your Humac Score yet. Eighteen questions, four minutes, one number that measures how efficiently this organisation converts people investment into value.</div>' +
