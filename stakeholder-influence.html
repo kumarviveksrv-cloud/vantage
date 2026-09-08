@@ -348,6 +348,7 @@
         <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="practiceConversation()">Simulate the Conversation &rarr;</button>
+          <button class="btn-ghost" onclick="fileToLedger()">File to Ledger &rarr;</button>
           <button class="btn-ghost" onclick="startNew()">New Stack</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
         </div>
@@ -594,6 +595,24 @@
         role: selectedStakeholder
       }));
       window.location.href = BASE + 'conversation-simulator.html';
+    }
+
+    function fileToLedger() {
+      if (!currentResult) return;
+      var r = currentResult;
+      var gc = r.greenCategory || {};
+      var rm = (r.stack && r.stack.riskMirror) ? r.stack.riskMirror : {};
+      var dr = (r.stack && r.stack.decisionRunway) ? r.stack.decisionRunway : {};
+      var prefill = {
+        sourceTool: 'influence',
+        situationSummary: r.stakeholderProfile || '',
+        hrRecommendation: dr.ask || '',
+        predictedOutcome: rm.scenario || '',
+        financialRangePredicted: rm.revenueAtRisk || '',
+        greenCategory: gc.primary || ''
+      };
+      try { sessionStorage.setItem('ledger_prefill', JSON.stringify(prefill)); } catch(e) {}
+      window.location.href = 'ledger.html';
     }
 
     function startNew() {
