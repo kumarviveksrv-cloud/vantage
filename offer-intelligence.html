@@ -348,6 +348,7 @@
       <div class="output-section" id="output-content"></div>
       <div class="action-row">
         <button class="action-btn primary" onclick="saveToLibrary()">Save to Case Library</button>
+        <button class="action-btn" onclick="fileToLedger()">File to Ledger &rarr;</button>
         <button class="action-btn" onclick="showView('intake-view');currentResult=null;">New Analysis</button>
       </div>
     </div>
@@ -636,6 +637,29 @@
       html += '<div class="aria-card"><div class="aria-text">✦ ' + (d.aria || 'Talk to ARIA to rehearse this conversation before it happens.') + '</div><a class="aria-btn" href="aria.html">Talk to ARIA →</a></div>';
 
       document.getElementById('output-content').innerHTML = html;
+    }
+
+    function fileToLedger() {
+      if (!currentResult) return;
+      var r = currentResult;
+      var gc = r.greenCategory || {};
+      var rec = r.recommendation || {};
+      var prefill = { sourceTool: 'offer_intelligence', greenCategory: gc.primary || '' };
+      if (r.flow === 'counter_offer') {
+        var ep = r.employeeProfile || {};
+        prefill.situationSummary = 'Counter-offer decision: current ' + formatINR(ep.currentCTC) + ' vs offer ' + formatINR(ep.offerCTC) + ', Band ' + ep.performanceBand;
+        prefill.hrRecommendation = (rec.primary || '') + (rec.figure ? ' at ' + rec.figure : '');
+        prefill.predictedOutcome = rec.rationale || '';
+        prefill.financialRangePredicted = (r.financialModel && r.financialModel.breakEvenCeiling) ? r.financialModel.breakEvenCeiling : '';
+      } else {
+        var ep2 = r.employeeProfile || {};
+        prefill.situationSummary = 'Flight risk assessment: ' + formatINR(ep2.currentCTC) + ' CTC, Band ' + ep2.performanceBand + ', ' + ep2.flightRisk + ' risk';
+        prefill.hrRecommendation = rec.primary || '';
+        prefill.predictedOutcome = rec.rationale || '';
+        prefill.financialRangePredicted = (r.financialModel && r.financialModel.costOfLosingThem) ? r.financialModel.costOfLosingThem.total : '';
+      }
+      try { sessionStorage.setItem('ledger_prefill', JSON.stringify(prefill)); } catch(e) {}
+      window.location.href = 'ledger.html';
     }
 
     async function saveToLibrary() {
