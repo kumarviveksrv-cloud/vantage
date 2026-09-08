@@ -104,6 +104,22 @@
     .pillar-name{font-family:'Bricolage Grotesque',sans-serif;font-size:.85rem;font-weight:700;color:#f4f3ff;margin-bottom:3px}
     .pillar-desc{font-size:.76rem;color:rgba(244,243,255,.38);line-height:1.5}
 
+    /* EXPANDED PILLAR TREATMENT */
+    .manifesto-block{background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(124,58,237,.05));border:1px solid rgba(99,102,241,.25);border-radius:16px;padding:26px 30px;margin-bottom:28px}
+    .manifesto-text{font-size:.95rem;color:rgba(244,243,255,.72);line-height:1.85}
+    .manifesto-text b{color:#f4f3ff}
+    .pillar-xl{background:rgba(13,11,30,.85);border:1px solid rgba(99,102,241,.14);border-radius:14px;padding:24px 26px;margin-bottom:14px;position:relative}
+    .pillar-xl.invented{border-color:rgba(74,222,128,.3);background:linear-gradient(160deg,rgba(74,222,128,.05),rgba(13,11,30,.85))}
+    .pxl-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+    .pxl-code{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#a5b4fc;background:rgba(99,102,241,.1);padding:3px 10px;border-radius:6px;border:1px solid rgba(99,102,241,.2)}
+    .pxl-name{font-family:'Bricolage Grotesque',sans-serif;font-size:1.05rem;font-weight:700;color:#f4f3ff}
+    .pxl-badge{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#4ade80;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);padding:3px 9px;border-radius:5px}
+    .pxl-desc{font-size:.87rem;color:rgba(244,243,255,.55);line-height:1.7;margin-bottom:8px}
+    .pxl-note{font-size:.82rem;color:rgba(74,222,128,.85);line-height:1.6;font-style:italic;border-top:1px solid rgba(74,222,128,.15);padding-top:10px;margin-top:4px}
+    .pillar-live-scores{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    .pls-chip{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(244,243,255,.5);background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.15);padding:4px 10px;border-radius:6px}
+    .pls-chip b{color:#a5b4fc}
+
     /* CLOSING */
     .closing-block{text-align:center;padding:40px 20px;background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(124,58,237,.03));border:1px solid rgba(99,102,241,.15);border-radius:18px;margin-top:20px}
     .closing-text{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:#f4f3ff;line-height:1.5;font-style:italic;max-width:540px;margin:0 auto}
@@ -285,22 +301,47 @@
 
       <!-- HUMAC FRAMEWORK -->
       <div class="section">
-        <div class="section-label">The Financial Framework Underneath Everything</div>
-        <h2 class="section-title">Humac: the score that measures what people investment actually returns.</h2>
-        <p class="section-sub">Every tool above feeds into this. Five pillars, a two-number score — Raw and HCI-adjusted — and a Trajectory Index that shows where you're heading, denominated in the language a CFO already speaks.</p>
+        <div class="section-label">The Framework Nobody Else Has Built</div>
+        <h2 class="section-title">Two of these five pillars did not exist in HR before Vantage. We are introducing them here, for the first time.</h2>
+        <p class="section-sub">This is not a scorecard borrowed from somewhere else and rebadged. Five pillars, a two-number score — Raw and HCI-adjusted — and a Trajectory Index that shows where you're heading. Every tool on this platform ultimately reports into this.</p>
+
+        <div class="manifesto-block">
+          <div class="manifesto-text">HR has always had fragments of financial data — an exit cost here, a training budget there. Nobody had put a name on the shadow P&L that HR decisions actually create, or treated institutional knowledge as a balance sheet line item with a real number attached. <b>Human P&L and Human Balance Sheet are original categories.</b> They do not exist in any accounting standard, any HR framework, or any competitor's product. We built them because the cost was always real. It just never had anywhere to live.</div>
+        </div>
 
         <div class="humac-live-card" id="humac-live-card">
           <div class="hlc-label">Your Humac Score</div>
           <div id="humac-live-content">Loading…</div>
         </div>
 
-        <div class="pillars">
-          <div class="pillar"><div class="pillar-code">L1</div><div><div class="pillar-name">Value Ledger</div><div class="pillar-desc">Total financial cost and return of attrition, hiring, and retention.</div></div></div>
-          <div class="pillar"><div class="pillar-code">L2</div><div><div class="pillar-name">Talent Premium</div><div class="pillar-desc">Return on Stars and HiPos above baseline — and the liability of Inconsistent Performers below it.</div></div></div>
-          <div class="pillar"><div class="pillar-code">L3</div><div><div class="pillar-name">Org Vitals</div><div class="pillar-desc">Organisational telemetry across Leadership, Fear, Middle Layer, Execution, HR Mirror.</div></div></div>
-          <div class="pillar"><div class="pillar-code">L4</div><div><div class="pillar-name">Human P&amp;L</div><div class="pillar-desc">HR programme costs, compliance spend, legal exposure — paid whether or not they appear in the P&amp;L.</div></div></div>
-          <div class="pillar"><div class="pillar-code">L5</div><div><div class="pillar-name">Human Balance Sheet</div><div class="pillar-desc">Institutional knowledge, succession depth, talent concentration risk.</div></div></div>
+        <div class="pillar-xl">
+          <div class="pxl-top"><span class="pxl-code">L1</span><span class="pxl-name">Value Ledger</span></div>
+          <div class="pxl-desc">The total financial cost and return of attrition, hiring, and retention — the numbers that already exist somewhere in your organisation, scattered across a dozen spreadsheets nobody has ever put in one place. Replacement cost, productivity gap, knowledge transfer loss, all of it, finally added up.</div>
         </div>
+
+        <div class="pillar-xl">
+          <div class="pxl-top"><span class="pxl-code">L2</span><span class="pxl-name">Talent Premium</span></div>
+          <div class="pxl-desc">The gap between what a Star performer costs and what they actually return, measured against baseline — and, just as precisely, what an Inconsistent Performer is quietly costing you below it. Most organisations feel this gap. Almost none of them can put a number on it.</div>
+        </div>
+
+        <div class="pillar-xl">
+          <div class="pxl-top"><span class="pxl-code">L3</span><span class="pxl-name">Org Vitals</span></div>
+          <div class="pxl-desc">Organisational telemetry across Leadership, Fear, Middle Layer, Execution, and the HR Mirror — the signals that tell you something is wrong months before the exit interview does. Culture, made measurable, not just felt.</div>
+        </div>
+
+        <div class="pillar-xl invented">
+          <div class="pxl-top"><span class="pxl-code">L4</span><span class="pxl-name">Human P&amp;L</span><span class="pxl-badge">Original Concept</span></div>
+          <div class="pxl-desc">Every CFO has a Profit and Loss statement. None of them have this one — the financial account of every people decision that never appears on the official P&amp;L but gets paid for anyway: HR programme costs, compliance spend, legal exposure from a termination handled badly, the below-the-line drag that shows up in the results without ever showing up in the report.</div>
+          <div class="pxl-note">This category did not exist in HR or accounting practice before Vantage. It exists now because the cost was always there, whether anyone was counting it or not.</div>
+        </div>
+
+        <div class="pillar-xl invented">
+          <div class="pxl-top"><span class="pxl-code">L5</span><span class="pxl-name">Human Balance Sheet</span><span class="pxl-badge">Original Concept</span></div>
+          <div class="pxl-desc">Your organisation's balance sheet has line items for property, equipment, and receivables. It has nothing for the institutional knowledge that walks out the door when a fifteen-year employee retires, the succession depth that determines whether the business survives a key departure, or the talent concentration risk sitting quietly in one team. This pillar gives those things a number.</div>
+          <div class="pxl-note">The first framework to treat institutional knowledge and succession depth as literal balance sheet assets and liabilities, not soft HR language.</div>
+        </div>
+
+        <p class="section-sub" style="margin-top:10px">If this sounds like it should already exist somewhere in HR practice — it doesn't. That's the point. HR has been asked for years to "think like a business." Nobody built the ledger that would let it. This is that ledger.</p>
       </div>
 
       <!-- CLOSING -->
@@ -366,7 +407,14 @@
         beatCta.innerHTML = '\ud83d\udcc8 See the full breakdown \u2192';
         card.innerHTML =
           '<div class="hlc-score-row"><div class="hlc-score">' + data.humac + '</div><div class="hlc-band">' + band + '</div></div>' +
-          '<div class="hlc-sub">HCI-adjusted: ' + (data.hciAdj || data.humac) + ' \u00b7 Pillars \u2014 L1:' + (data.l1||0) + ' L2:' + (data.l2||0) + ' L3:' + (data.l3||0) + ' L4:' + (data.l4||0) + ' L5:' + (data.l5||0) + '</div>' +
+          '<div class="hlc-sub">HCI-adjusted: ' + (data.hciAdj || data.humac) + '</div>' +
+          '<div class="pillar-live-scores">' +
+            '<span class="pls-chip">L1 Value Ledger <b>' + (data.l1||0) + '</b></span>' +
+            '<span class="pls-chip">L2 Talent Premium <b>' + (data.l2||0) + '</b></span>' +
+            '<span class="pls-chip">L3 Org Vitals <b>' + (data.l3||0) + '</b></span>' +
+            '<span class="pls-chip">L4 Human P&amp;L <b>' + (data.l4||0) + '</b></span>' +
+            '<span class="pls-chip">L5 Human Balance Sheet <b>' + (data.l5||0) + '</b></span>' +
+          '</div>' +
           '<a href="humac-onboarding.html" class="hlc-cta">Update your score \u2192</a>';
       } else {
         beatLive.innerHTML = 'You have not generated your Humac Score yet \u2014 it takes about four minutes.';
