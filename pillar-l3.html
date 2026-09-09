@@ -186,6 +186,8 @@ function hb(q){var v=ra[q];if(v==='yes')return true;if(v==='no')return false;ret
 
 var preMap={s1:hb('q7'),s5:hb('q8'),s9:hb('q9'),s10:hb('q11'),s13:hb('q10'),s15:hb('q14'),s17:hb('q12'),s18:hb('q13')};
 var interMap={};
+try{var draftRaw=sessionStorage.getItem('vantage_l3_draft');if(draftRaw)interMap=JSON.parse(draftRaw)||{};}catch(e){interMap={};}
+var deltaDiscarded=false;
 
 function getSignal(id){if(preMap[id]!==undefined&&preMap[id]!==null)return preMap[id];return interMap[id]!==undefined?interMap[id]:null;}
 
@@ -269,6 +271,21 @@ function countAnswered(){
   return c;
 }
 
+// Dynamic L3 recompute from ALL answered signals (pre + draft), not the fixed /8 the onboarding uses.
+function computeDraftL3(){
+  var yes=0,total=0;
+  VITALS.forEach(function(v){v.signals.forEach(function(s){var val=getSignal(s.id);if(val!==null){total++;if(val)yes++;}});});
+  return total>0?Math.round((yes/total)*100):0;
+}
+
+var HUMAC_WEIGHTS={l1:0.25,l2:0.15,l3:0.30,l4:0.20,l5:0.10};
+function computeDraftHumac(draftL3){
+  var raw=Math.round((hd.l1||0)*HUMAC_WEIGHTS.l1+(hd.l2||0)*HUMAC_WEIGHTS.l2+draftL3*HUMAC_WEIGHTS.l3+(hd.l4||0)*HUMAC_WEIGHTS.l4+(hd.l5||0)*HUMAC_WEIGHTS.l5);
+  var hciAdj=Math.round(raw*(hd.hci||1));
+  return {raw:raw,hciAdj:hciAdj};
+}
+function getBandL3(s){if(s<=30)return{name:'Value Destruction',color:'#E05C3A'};if(s<=50)return{name:'Value Neutral',color:'#a5b4fc'};if(s<=70)return{name:'Value Generating',color:'#6366f1'};if(s<=85)return{name:'Value Compounding',color:'#7c3aed'};return{name:'Value Exceptional',color:'#c4b5fd'};}
+
 function renderPage(){
   var answered=countAnswered();
   var dnaKey=computeDNA();
@@ -286,6 +303,26 @@ function renderPage(){
   var hero='<div class="score-hero"><div class="hero-grid"><div><div class="score-label">L3 Score \xb7 30% weight</div><div class="score-number">'+l3score+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div style="font-size:.86rem;color:var(--text-dim);line-height:1.7;margin-bottom:12px">Org Vitals is the <b style="color:var(--text-mid)">highest-weighted pillar</b> at 30% of Humac Score. The 8 signals from your Humac assessment are pre-loaded below. Answer the remaining 12 to reveal your <b style="color:var(--text-mid)">Organisation DNA type</b> \u2014 one of eight character signatures that names what your org actually is under pressure.<div class="hci-line">L3 from Humac: 8 of 20 signals answered \xb7 '+answered+' total answered so far</div></div></div></div></div>';
 
   var diagIntro='<div class="diag-intro"><div class="diag-intro-label">Organisation DNA Diagnostic</div><div class="diag-intro-text">Green signals are <b>pre-populated from your Humac Score assessment</b>. Answer the remaining signals below. Yes always means healthy. The DNA type reveals when enough signals are answered.<div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-fill" style="width:'+(answered/20*100).toFixed(0)+'%"></div></div><div class="progress-label" id="prog-label">'+answered+' of 20 signals answered</div></div></div>';
+
+  var draftL3=computeDraftL3();
+  var draftHumac=computeDraftHumac(draftL3);
+  var hasChange=draftL3!==(hd.l3||0)&&answered>0;
+  var deltaBar='';
+  if(hasChange&&!deltaDiscarded){
+    var l3Up=draftL3>=(hd.l3||0);
+    var humacUp=draftHumac.raw>=(hd.humac||0);
+    deltaBar='<div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.3);border-radius:12px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">'+
+      '<div style="font-size:.86rem;color:var(--text-dim);line-height:1.6">'+
+        '<b style="color:var(--text)">Your Org Vitals answers have changed.</b> These are draft answers \u2014 nothing is officially recorded yet.<br>'+
+        'L3 score: <b style="color:'+(l3Up?'#4ade80':'#E05C3A')+'">'+(hd.l3||0)+' \u2192 '+draftL3+'</b> \xb7 '+
+        'Overall Humac: <b style="color:'+(humacUp?'#4ade80':'#E05C3A')+'">'+(hd.humac||0)+' \u2192 '+draftHumac.raw+'</b>'+
+      '</div>'+
+      '<div style="display:flex;gap:10px;flex-shrink:0">'+
+        '<button onclick="discardL3Update()" style="font-family:var(--mono);font-size:.68rem;padding:9px 18px;border-radius:8px;background:transparent;border:1px solid rgba(99,102,241,.25);color:var(--text-dim);cursor:pointer">Not Now</button>'+
+        '<button onclick="saveL3Update()" style="font-family:var(--mono);font-size:.68rem;padding:9px 18px;border-radius:8px;background:var(--cobalt);border:none;color:#fff;cursor:pointer;font-weight:500">Save Update</button>'+
+      '</div>'+
+    '</div>';
+  }
 
   var vitalsHTML='<div class="vitals-grid">';
   VITALS.forEach(function(vital){
@@ -345,15 +382,66 @@ function renderPage(){
   var intel='<div class="intel-card"><div class="intel-eyebrow">Intelligence Statement \xb7 L3 Org Vitals</div><div class="intel-text">'+intelText+'</div></div>';
   var bottomNav='<div class="bottom-nav"><a href="pillar-l2.html" class="btn-back">\u2190 L2 Talent Premium</a><a href="pillar-l4.html" class="btn-next">L4 Human P&L \u2192</a></div>';
 
-  w.innerHTML=nav+header+hero+diagIntro+vitalsHTML+dnaSection+findings+'<div class="section-eyebrow" style="margin-bottom:6px">What to do next</div><div class="section-title" style="margin-bottom:20px">Moving your Org Vitals forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('')+intel+bottomNav;
+  w.innerHTML=nav+header+hero+deltaBar+diagIntro+vitalsHTML+dnaSection+findings+'<div class="section-eyebrow" style="margin-bottom:6px">What to do next</div><div class="section-title" style="margin-bottom:20px">Moving your Org Vitals forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('')+intel+bottomNav;
 }
 
 function setSignal(id,val,btn){
   interMap[id]=val;
+  try{sessionStorage.setItem('vantage_l3_draft',JSON.stringify(interMap));}catch(e){}
+  deltaDiscarded=false;
   var row=btn.closest('.yn-row');
   if(row){row.querySelectorAll('.yn').forEach(function(b){b.classList.remove('sel-yes','sel-no');});btn.classList.add(val?'sel-yes':'sel-no');}
   renderPage();
   // Re-attach listeners since innerHTML resets
+  document.querySelectorAll('.yn').forEach(function(b){
+    b.onclick=function(){setSignal(this.getAttribute('data-sid'),this.getAttribute('data-val')==='true',this);};
+  });
+}
+
+function discardL3Update(){
+  deltaDiscarded=true;
+  renderPage();
+}
+
+function saveL3Update(){
+  var draftL3=computeDraftL3();
+  var draftHumac=computeDraftHumac(draftL3);
+  var band=getBandL3(draftHumac.raw);
+  var mergedAnswers=Object.assign({},hd.rawAnswers||{});
+  VITALS.forEach(function(v){v.signals.forEach(function(s){var val=getSignal(s.id);if(val!==null)mergedAnswers[s.id]=val?'yes':'no';});});
+  var l3Mode=computeDNA()!==null?'computed':'estimate';
+
+  var scoreData=Object.assign({},hd,{
+    l3:draftL3,humac:draftHumac.raw,hciAdj:draftHumac.hciAdj,band:band.name,
+    timestamp:new Date().toISOString(),rawAnswers:mergedAnswers,l3Mode:l3Mode
+  });
+
+  try{sessionStorage.setItem('vantage_humac',JSON.stringify(scoreData));}catch(e){}
+  hd=scoreData;
+
+  (function(){
+    try{
+      var WORKER='https://situation-room-api.kumarvivek-srv.workers.dev';
+      var email=sessionStorage.getItem('sr_user_email')||'';
+      var doSave=function(token){
+        fetch(WORKER,{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':token?'Bearer '+token:''},
+          body:JSON.stringify({tool:'save_humac',email:email,humac:scoreData})
+        });
+      };
+      (function waitForClerkSave(){
+        if(window.Clerk&&window.Clerk.session){
+          window.Clerk.session.getToken().then(doSave).catch(function(){});
+        } else {
+          setTimeout(waitForClerkSave,150);
+        }
+      })();
+    }catch(e){}
+  })();
+
+  deltaDiscarded=false;
+  renderPage();
   document.querySelectorAll('.yn').forEach(function(b){
     b.onclick=function(){setSignal(this.getAttribute('data-sid'),this.getAttribute('data-val')==='true',this);};
   });
