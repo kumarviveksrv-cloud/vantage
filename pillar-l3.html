@@ -184,8 +184,15 @@ function hb(q){var v=ra[q];if(v==='yes')return true;if(v==='no')return false;ret
 // Execution: s13=q10, s14=new, s15=q14, s16=new
 // HR Mirror: s17=q12, s18=q13, s19-s20=new
 
-var preMap={s1:hb('q7'),s5:hb('q8'),s9:hb('q9'),s10:hb('q11'),s13:hb('q10'),s15:hb('q14'),s17:hb('q12'),s18:hb('q13')};
+var preMap={
+  s1:hb('q7'),s2:hb('q19'),s3:hb('q20'),s4:hb('q21'),
+  s5:hb('q8'),s6:hb('q22'),s7:hb('q23'),s8:hb('q24'),
+  s9:hb('q9'),s10:hb('q11'),s11:hb('q25'),s12:hb('q26'),
+  s13:hb('q10'),s14:hb('q27'),s15:hb('q14'),s16:hb('q28'),
+  s17:hb('q12'),s18:hb('q13'),s19:hb('q29'),s20:hb('q30')
+};
 var interMap={};
+var preAnsweredCount=Object.keys(preMap).filter(function(k){return preMap[k]!==null&&preMap[k]!==undefined;}).length;
 try{var draftRaw=sessionStorage.getItem('vantage_l3_draft');if(draftRaw)interMap=JSON.parse(draftRaw)||{};}catch(e){interMap={};}
 var deltaDiscarded=false;
 
@@ -300,7 +307,11 @@ function renderPage(){
 
   var header='<div class="page-eyebrow">Vantage \xb7 Humac Score \xb7 Pillar Intelligence</div><h1 class="page-title">Org Vitals</h1><p class="page-sub">'+(md&&industry?industry+' \xb7 ':'')+(md&&state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate:'Your L3 pillar intelligence')+'</p>';
 
-  var hero='<div class="score-hero"><div class="hero-grid"><div><div class="score-label">L3 Score \xb7 30% weight</div><div class="score-number">'+l3score+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div style="font-size:.86rem;color:var(--text-dim);line-height:1.7;margin-bottom:12px">Org Vitals is the <b style="color:var(--text-mid)">highest-weighted pillar</b> at 30% of Humac Score. The 8 signals from your Humac assessment are pre-loaded below. Answer the remaining 12 to reveal your <b style="color:var(--text-mid)">Organisation DNA type</b> \u2014 one of eight character signatures that names what your org actually is under pressure.<div class="hci-line">L3 from Humac: 8 of 20 signals answered \xb7 '+answered+' total answered so far</div></div></div></div></div>';
+  var remainingCount=20-preAnsweredCount;
+  var heroCopy=remainingCount<=0
+    ? 'Org Vitals is the <b style="color:var(--text-mid)">highest-weighted pillar</b> at 30% of Humac Score. All 20 signals arrived from your latest check-in \u2014 your <b style="color:var(--text-mid)">Organisation DNA type</b> is ready below.'
+    : 'Org Vitals is the <b style="color:var(--text-mid)">highest-weighted pillar</b> at 30% of Humac Score. '+preAnsweredCount+' signal'+(preAnsweredCount===1?'':'s')+' from your Humac assessment '+(preAnsweredCount===1?'is':'are')+' pre-loaded below. Answer the remaining '+remainingCount+' to reveal your <b style="color:var(--text-mid)">Organisation DNA type</b> \u2014 one of eight character signatures that names what your org actually is under pressure.';
+  var hero='<div class="score-hero"><div class="hero-grid"><div><div class="score-label">L3 Score \xb7 30% weight</div><div class="score-number">'+l3score+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div style="font-size:.86rem;color:var(--text-dim);line-height:1.7;margin-bottom:12px">'+heroCopy+'<div class="hci-line">L3 from Humac: '+preAnsweredCount+' of 20 signals answered \xb7 '+answered+' total answered so far</div></div></div></div></div>';
 
   var diagIntro='<div class="diag-intro"><div class="diag-intro-label">Organisation DNA Diagnostic</div><div class="diag-intro-text">Green signals are <b>pre-populated from your Humac Score assessment</b>. Answer the remaining signals below. Yes always means healthy. The DNA type reveals when enough signals are answered.<div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-fill" style="width:'+(answered/20*100).toFixed(0)+'%"></div></div><div class="progress-label" id="prog-label">'+answered+' of 20 signals answered</div></div></div>';
 
@@ -333,7 +344,7 @@ function renderPage(){
     vitalsHTML+='<div class="vital-card"><div class="vital-header"><div class="vital-name">'+vital.name+'</div><div class="vital-score-badge '+badgeCls+'">'+badgeText+'</div></div>';
     vital.signals.forEach(function(sig){
       var val=getSignal(sig.id);
-      var isPre=sig.pre&&preMap[sig.id]!==null&&preMap[sig.id]!==undefined;
+      var isPre=preMap[sig.id]!==null&&preMap[sig.id]!==undefined;
       vitalsHTML+='<div class="signal-row"><div class="signal-text">'+sig.text+'<span class="signal-sub">'+sig.sub+'</span></div><div class="signal-right">';
       if(isPre){
         vitalsHTML+='<div class="pre-answer '+(val?'yes':'no')+'">'+(val?'Yes':'No')+'</div>';
@@ -376,7 +387,7 @@ function renderPage(){
   var intelText=(function(){
     var ctx=industry?' in the '+industry+' sector':'';
     if(dna)return'An L3 score of <b>'+l3score+'</b>'+ctx+' combined with a <b>'+dna.name+'</b> DNA reading gives you something most HR functions have never had: a named, specific, defensible description of what kind of organisation you are and what breaks first under pressure. Use it.';
-    return'An L3 score of <b>'+l3score+'</b>'+ctx+' reflects the 8 signals from your Humac assessment. Complete the remaining 12 signals above to reveal your Organisation DNA type. The DNA type is the L3 insight that no score alone can provide \u2014 it names the specific character of your organisation and what it is most vulnerable to.';
+    return'An L3 score of <b>'+l3score+'</b>'+ctx+' reflects '+preAnsweredCount+' signal'+(preAnsweredCount===1?'':'s')+' from your Humac assessment. Complete the remaining '+(20-preAnsweredCount)+' signal'+((20-preAnsweredCount)===1?'':'s')+' above to reveal your Organisation DNA type. The DNA type is the L3 insight that no score alone can provide \u2014 it names the specific character of your organisation and what it is most vulnerable to.';
   })();
 
   var intel='<div class="intel-card"><div class="intel-eyebrow">Intelligence Statement \xb7 L3 Org Vitals</div><div class="intel-text">'+intelText+'</div></div>';
