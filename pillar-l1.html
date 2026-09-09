@@ -100,7 +100,7 @@ body{
 .sv-teal{color:var(--teal)}.sv-gold{color:var(--gold)}.sv-cobalt{color:#a5b4fc}.sv-dim{color:rgba(244,243,255,.45)}
 /* INTRO COLLAPSIBLE */
 @keyframes cobalt-pulse{
-  0%,100%{box-shadow:0 0 0 1px rgba(99,102,241,.3),0 0 8px rgba(99,102,241,.15),0 0 20px rgba(99,102,241,.06)}
+  0%,100%{box-shadow:0 0 1px rgba(99,102,241,.3),0 0 8px rgba(99,102,241,.15),0 0 20px rgba(99,102,241,.06)}
   50%{box-shadow:0 0 0 1px rgba(99,102,241,.6),0 0 20px rgba(99,102,241,.4),0 0 40px rgba(99,102,241,.18)}
 }
 .intro-panel{margin-bottom:28px}
@@ -226,7 +226,34 @@ if(!hd){window.location.href='humac-onboarding.html';}
 
 var l1=hd.l1||0,l2=hd.l2||0,l3=hd.l3||0,l4=hd.l4||0,l5=hd.l5||0;
 var ra=hd.rawAnswers||{};
+var l1Mode=hd.l1Mode||'estimate';
 var q1Pct=(ra.q1!=null)?Number(ra.q1):0;
+
+function fmtINR(n){
+  var abs=Math.abs(n),sign=n<0?'-':'';
+  if(abs>=10000000)return sign+'\u20b9'+(abs/10000000).toFixed(2)+'Cr';
+  if(abs>=100000)return sign+'\u20b9'+(abs/100000).toFixed(1)+'L';
+  if(abs>=1000)return sign+'\u20b9'+Math.round(abs/1000)+'K';
+  return sign+'\u20b9'+Math.round(abs);
+}
+
+// Real per-component formulas — identical to Revenue Fluent's original buildAuto()
+function computeRealLedger(a){
+  var headcount=a.cq1_headcount||0, compBase=a.cq1_compbase||0;
+  var avgSalary=headcount>0?compBase/headcount:0;
+  var stars=a.cq1_stars||0, emerging=a.cq1_emerging||0, tenured5=a.cq1_tenured5||0,
+      revHires=a.cq1_revhires||0, atRisk=a.cq1_atrisk||0;
+  var rows=[];
+  if(stars>0){var ss=stars*avgSalary;rows.push({id:'E001',action:'Retention Savings',note:stars+' Star'+(stars!==1?'s':'')+' retained \xd7 1.8\xd7 salary \u2014 replacement cost avoided',pill:'Cost-Saving',pillCls:'p-cost',cost:ss*0.05,ret:ss*1.8,formula:'Stars ('+stars+') \xd7 avg salary (\u20b9'+Math.round(avgSalary).toLocaleString('en-IN')+') \xd7 1.80 = replacement cost avoided',working:'The highest-value component of L1. A Star who stays generates 1.8\xd7 their salary in value you did not have to spend finding their replacement.'});}
+  if(revHires>0){var rs=revHires*avgSalary;rows.push({id:'E002',action:'Quality of Hire',note:revHires+' revenue-role hire'+(revHires!==1?'s':'')+' (last 12mo) \xd7 salary \xd7 1.40',pill:'Revenue-Generating',pillCls:'p-rev',cost:rs*0.15,ret:rs*1.4,formula:'Revenue-role hires ('+revHires+') \xd7 avg salary \xd7 1.40 = talent acquisition value',working:'Every hire in a revenue-generating role who performs above average returns 1.40\xd7 their salary contribution in the first year.'});}
+  if(emerging>0){var dc=emerging*avgSalary*0.04;rows.push({id:'E003',action:'Development Return',note:emerging+' Emerging Talent \xd7 4% dev spend \xd7 2.8 DRI',pill:'Development',pillCls:'p-dev',cost:dc,ret:dc*2.8,formula:'Emerging Talent ('+emerging+') \xd7 avg salary \xd7 4% \xd7 2.8 DRI = development return',working:'The Development Return Index (2.8x) reflects the average multiplier on structured learning investment.'});}
+  if(tenured5>0){var ts=tenured5*avgSalary;rows.push({id:'E004',action:'Engagement Premium',note:tenured5+' employee'+(tenured5!==1?'s':'')+' at 5+ yrs tenure \xd7 8% productivity premium',pill:'Culture & Engagement',pillCls:'p-culture',cost:tenured5*avgSalary*0.01,ret:ts*0.08,formula:'Tenured 5+ yrs ('+tenured5+') \xd7 avg salary \xd7 8% = engagement premium',working:'Long-tenured employees generate approximately 8% more output through institutional knowledge and role mastery.'});}
+  if(atRisk>0){var as2=atRisk*avgSalary;rows.push({id:'E005',action:'Risk Management Value',note:atRisk+' at-risk performer'+(atRisk!==1?'s':'')+' \xd7 60% exposure contained',pill:'Risk & Compliance',pillCls:'p-risk',cost:atRisk*avgSalary*0.02,ret:as2*0.6,formula:'At-risk performers ('+atRisk+') \xd7 avg salary \xd7 60% = risk exposure contained',working:'Managing below-expectation performers proactively protects 60% of their salary in risk exposure per cycle.'});}
+  var totalCost=rows.reduce(function(s,r){return s+r.cost;},0);
+  var totalRet=rows.reduce(function(s,r){return s+r.ret;},0);
+  return {rows:rows, totalCost:totalCost, totalRet:totalRet, totalNet:totalRet-totalCost, compBase:compBase, avgSalary:avgSalary};
+}
+var realLedger=(l1Mode==='computed')?computeRealLedger(ra):null;
 var hci=hd.hci||1,conf=hd.confidence||'medium';
 var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
 var industry='',state='';
@@ -241,10 +268,10 @@ var benchColor=benchPos==='above'?'#4ade80':benchPos==='at'?'#6366f1':'#E05C3A';
 
 function band(s){if(s<=25)return{name:'Minimum',color:'#E05C3A'};if(s<=50)return{name:'Emerging',color:'#a5b4fc'};if(s<=72)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};}
 var sb=band(l1);
-var q1Ratio=(q1Pct/100).toFixed(2)+'x';
-var q1Display=q1Pct>0?'\u20b9'+q1Pct.toFixed(0):'N/A';
+var q1Ratio=realLedger?(realRatioPct/100).toFixed(2)+'x':(q1Pct/100).toFixed(2)+'x';
+var q1Display=realLedger?'\u20b9'+realRatioPct.toFixed(0):(q1Pct>0?'\u20b9'+q1Pct.toFixed(0):'N/A');
 
-// Ledger component indices — derived from q1Pct
+// Ledger component indices — derived from q1Pct (estimate mode only; unused when l1Mode==='computed')
 var totalIdx=q1Pct;
 var components=[
   {id:'E001',action:'Retention Savings',note:'High Performers retained \xd7 1.8\xd7 salary \u2014 replacement cost avoided',pill:'Cost-Saving',pillCls:'p-cost',
@@ -267,6 +294,9 @@ var totalCost=components.reduce(function(s,c){return s+c.cost;},0);
 var totalRet=components.reduce(function(s,c){return s+c.ret;},0);
 var totalNet=totalRet-totalCost;
 
+// When computed, the real ratio replaces the self-reported q1Pct entirely
+var realRatioPct=realLedger&&realLedger.compBase>0?(realLedger.totalRet/realLedger.compBase)*100:0;
+
 function swHTML(id,c){
   return '<button class="sw-trigger" onclick="toggleSW(\''+id+'\')" id="'+id+'-btn">'+
     '<svg viewBox="0 0 10 10"><polyline points="2,3 5,7 8,3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
@@ -279,6 +309,28 @@ function swHTML(id,c){
 }
 
 function ledgerHTML(){
+  if(realLedger){
+    var rrows=realLedger.rows.map(function(c){
+      var net=c.ret-c.cost;
+      return '<div class="ledger-row">'+
+        '<div><div class="row-date">Baseline</div></div>'+
+        '<div><div class="row-id">'+c.id+'</div><div class="row-action">'+c.action+'</div><div class="row-note">'+c.note+'</div><span class="pill '+c.pillCls+'">'+c.pill+'</span>'+swHTML('sw-'+c.id,c)+'</div>'+
+        '<div class="row-cost">'+fmtINR(c.cost)+'</div>'+
+        '<div class="row-ret">+'+fmtINR(c.ret)+'</div>'+
+        '<div class="row-net '+(net>=0?'pos':'neg')+'">'+(net>=0?'+':'')+fmtINR(net)+'</div>'+
+      '</div>';
+    }).join('');
+    return '<div class="ledger">'+
+      '<div class="ledger-hd"><span>When</span><span>Value Component</span><span>HR Cost</span><span>Return</span><span>Net</span></div>'+
+      (rrows||'<div style="padding:20px 24px;color:var(--text-dim);font-size:.82rem">No value components triggered \u2014 all cohort counts entered as zero.</div>')+
+      '<div class="ledger-total">'+
+        '<div class="total-lbl">TOTAL \xb7 '+scoreDate+' baseline \xb7 real figures</div>'+
+        '<div class="total-cost">'+fmtINR(realLedger.totalCost)+'</div>'+
+        '<div class="total-ret">+'+fmtINR(realLedger.totalRet)+'</div>'+
+        '<div class="total-net '+(realLedger.totalNet>=0?'pos':'neg')+'">'+(realLedger.totalNet>=0?'+':'')+fmtINR(realLedger.totalNet)+'</div>'+
+      '</div>'+
+    '</div>';
+  }
   var rows=components.map(function(c){
     var net=c.ret-c.cost;
     return '<div class="ledger-row">'+
@@ -293,7 +345,7 @@ function ledgerHTML(){
     '<div class="ledger-hd"><span>When</span><span>Value Component</span><span>HR Cost idx</span><span>Return idx</span><span>Net idx</span></div>'+
     rows+
     '<div class="ledger-total">'+
-      '<div class="total-lbl">TOTAL \xb7 '+scoreDate+' baseline</div>'+
+      '<div class="total-lbl">TOTAL \xb7 '+scoreDate+' baseline \xb7 estimated</div>'+
       '<div class="total-cost">'+(q1Pct>0?totalCost:'\u2014')+'</div>'+
       '<div class="total-ret">'+(q1Pct>0?'+'+totalRet:'\u2014')+'</div>'+
       '<div class="total-net '+(totalNet>=0?'pos':'neg')+'">'+(q1Pct>0?(totalNet>=0?'+':'')+totalNet:'\u2014')+'</div>'+
