@@ -266,7 +266,18 @@ input[type=number]{-moz-appearance:textfield}
   </div>
   <div class="page-eyebrow">Vantage &middot; Humac Score</div>
   <h1 class="page-title" id="page-title-main">Establish your baseline</h1>
-  <p class="page-sub" id="page-sub-main">Eighteen questions across five blocks. Exact data improves precision &mdash; but professional judgment is equally valid. Estimates generate a Medium-confidence score. As you build better processes and return with real data, your score gets sharper.</p>
+  <p class="page-sub" id="page-sub-main">A set of questions across five blocks. Exact data improves precision &mdash; but professional judgment is equally valid. Estimates generate a Medium-confidence score. As you build better processes and return with real data, your score gets sharper.</p>
+  <div class="upload-card" id="upload-card" style="background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(124,58,237,.04));border:1px solid rgba(99,102,241,.22);border-radius:14px;padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div style="max-width:520px">
+      <div style="font-family:var(--font);font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:4px">Have your organisation's real numbers already?</div>
+      <div style="font-family:var(--mono);font-size:.72rem;color:var(--text-dim);line-height:1.6">Download the template, fill in one row with your own data, and upload it back &mdash; every Computed field across all four pillars populates in one step.</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-shrink:0;align-items:center">
+      <a href="Vantage_Humac_Data_Template.xlsx" download style="font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:.02em;color:var(--cobalt);background:transparent;border:1px solid rgba(99,102,241,.35);padding:10px 16px;border-radius:9px;text-decoration:none;white-space:nowrap">Download Template</a>
+      <label style="font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:.02em;color:#fff;background:var(--cobalt);padding:10px 16px;border-radius:9px;cursor:pointer;white-space:nowrap">Upload Filled Template<input type="file" id="upload-input" accept=".xlsx,.xls" style="display:none" onchange="handleTemplateUpload(this.files[0])"/></label>
+    </div>
+  </div>
+  <div id="upload-status" style="display:none;font-family:var(--mono);font-size:.76rem;padding:10px 16px;border-radius:8px;margin-bottom:20px"></div>
   <div class="stepper" id="stepper"></div>
   <div id="block-container"></div>
   <div id="calc-loading" style="display:none;padding:60px 20px;text-align:center">
@@ -329,7 +340,7 @@ function applyCheckinMode(score){
   var titleEl=document.getElementById('page-title-main');
   var subEl=document.getElementById('page-sub-main');
   if(titleEl)titleEl.innerText='Quarterly check-in';
-  if(subEl)subEl.innerText='Updating from your previous baseline. Answer the same 18 questions with your most current data \u2014 your Trajectory Index establishes after this check-in.';
+  if(subEl)subEl.innerText='Updating from your previous baseline. Answer the same questions with your most current data \u2014 your Trajectory Index establishes after this check-in.';
   var banner=document.getElementById('checkin-banner');
   var prevDateEl=document.getElementById('checkin-prev-date');
   var numEl=document.getElementById('checkin-num');
@@ -477,6 +488,70 @@ var BLOCKS=[
 var currentBlock=0;
 var answers={};
 var confidence={};
+
+function handleTemplateUpload(file){
+  if(!file)return;
+  var statusEl=document.getElementById('upload-status');
+  statusEl.style.display='block';
+  statusEl.style.background='rgba(99,102,241,.08)';
+  statusEl.style.color='var(--text-mid)';
+  statusEl.style.border='1px solid rgba(99,102,241,.2)';
+  statusEl.textContent='Reading file\u2026';
+
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      if(typeof XLSX==='undefined'){throw new Error('File reader did not load. Refresh the page and try again.');}
+      var data=new Uint8Array(e.target.result);
+      var wb=XLSX.read(data,{type:'array'});
+      var sheet=wb.Sheets['Your Data'];
+      if(!sheet){throw new Error('Could not find the "Your Data" tab. Make sure you are uploading the unmodified Vantage template.');}
+      var rows=XLSX.utils.sheet_to_json(sheet,{header:1,range:1});
+
+      var parsed={};
+      rows.forEach(function(row){
+        var fieldId=row&&row[0];
+        var val=row&&row[4];
+        if(fieldId&&val!==undefined&&val!==null&&val!==''){
+          var num=parseFloat(val);
+          if(!isNaN(num))parsed[fieldId]=num;
+        }
+      });
+
+      var loadedCount=Object.keys(parsed).length;
+      if(loadedCount===0){
+        statusEl.style.background='rgba(224,92,58,.08)';statusEl.style.color='#E05C3A';statusEl.style.border='1px solid rgba(224,92,58,.25)';
+        statusEl.textContent='No values found in the "Your Answer" column. Fill in the template and try again.';
+        return;
+      }
+
+      Object.keys(parsed).forEach(function(k){answers[k]=parsed[k];});
+
+      var computedBlockIds=['A','B','D','E'];
+      var completedBlocks=[];
+      computedBlockIds.forEach(function(id){
+        var blk=BLOCKS.filter(function(b){return b.id===id;})[0];
+        if(!blk||!blk.computedQuestions)return;
+        var allPresent=blk.computedQuestions.every(function(q){return answers[q.id]!==undefined&&answers[q.id]!==null;});
+        if(allPresent){confidence[id]='computed';completedBlocks.push(blk.title);}
+        else{confidence[id]='estimated';}
+      });
+
+      statusEl.style.background='rgba(74,222,128,.08)';statusEl.style.color='#4ade80';statusEl.style.border='1px solid rgba(74,222,128,.25)';
+      statusEl.textContent='\u2713 '+loadedCount+' field'+(loadedCount===1?'':'s')+' loaded. '+completedBlocks.length+' of 4 pillars set to Computed mode'+(completedBlocks.length>0?' ('+completedBlocks.join(', ')+')':'')+'. Review each block below, then generate your score.';
+
+      renderBlock(0);
+    }catch(err){
+      statusEl.style.background='rgba(224,92,58,.08)';statusEl.style.color='#E05C3A';statusEl.style.border='1px solid rgba(224,92,58,.25)';
+      statusEl.textContent='Could not read this file: '+err.message;
+    }
+  };
+  reader.onerror=function(){
+    statusEl.style.display='block';statusEl.style.background='rgba(224,92,58,.08)';statusEl.style.color='#E05C3A';
+    statusEl.textContent='Could not read this file. Please try again.';
+  };
+  reader.readAsArrayBuffer(file);
+}
 
 // ── CALCULATIONS ──────────────────────────────────────────────────────────────
 function calcL1(pct){var r=(pct||0)/100;if(r<=0.10)return 0;if(r>=1.20)return 100;if(r<=0.40)return((r-0.10)/0.30)*50;return 50+((r-0.40)/0.80)*50;}
@@ -834,6 +909,7 @@ function toggleBuilding(blockId){var key='vantage_gaps_building';var building={}
 renderStepper();
 renderBlock(0);
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="clerk-auth.js"></script>
 <script src="sidebar-shared.js"></script>
 </body>
