@@ -201,6 +201,22 @@ input[type=number]{-moz-appearance:textfield}
 .pillar-bar-wrap{height:6px;background:rgba(99,102,241,.08);border-radius:3px;overflow:hidden}
 .pillar-bar{height:100%;background:linear-gradient(90deg,var(--cobalt),var(--violet));border-radius:3px;transition:width .6s cubic-bezier(.19,1,.22,1)}
 .pillar-score{font-family:var(--stat);font-size:.88rem;font-weight:600;color:var(--muted);text-align:right}
+.calc-spinner{width:48px;height:48px;margin:0 auto 24px;border-radius:50%;border:3px solid rgba(99,102,241,.15);border-top-color:var(--cobalt);animation:calcSpin .8s linear infinite}
+@keyframes calcSpin{to{transform:rotate(360deg)}}
+.calc-stage-text{font-family:var(--mono);font-size:.92rem;color:var(--text-mid);letter-spacing:.02em;transition:opacity .25s ease;min-height:24px}
+.pillar-card-v2{display:grid;grid-template-columns:60px 1fr auto;align-items:center;gap:18px;padding:18px 20px;margin-bottom:12px;border-radius:16px;background:linear-gradient(135deg,rgba(13,11,30,.7),rgba(5,4,16,.5));border:1px solid rgba(99,102,241,.16);text-decoration:none;cursor:pointer;position:relative;overflow:hidden;opacity:0;transform:translateY(16px) scale(.98);animation:pillarPop .55s cubic-bezier(.19,1,.22,1) forwards;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.pillar-card-v2:hover{transform:translateY(-4px) scale(1.005);border-color:var(--pillar-accent,rgba(99,102,241,.4));box-shadow:0 10px 32px var(--pillar-accent-glow,rgba(99,102,241,.2))}
+.pillar-card-v2::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pillar-accent,var(--cobalt))}
+@keyframes pillarPop{to{opacity:1;transform:translateY(0) scale(1)}}
+.pillar-badge-v2{width:60px;height:60px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--pillar-accent-dim,rgba(99,102,241,.12));border:1px solid var(--pillar-accent,rgba(99,102,241,.3));flex-shrink:0}
+.pillar-badge-num-v2{font-family:var(--stat);font-size:1.4rem;font-weight:700;color:var(--pillar-accent,var(--cobalt));line-height:1}
+.pillar-badge-label-v2{font-family:var(--mono);font-size:.5rem;letter-spacing:.08em;color:var(--text-dim);margin-top:2px}
+.pillar-body-v2{min-width:0}
+.pillar-title-v2{font-family:var(--font);font-size:.96rem;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:-.01em}
+.pillar-sub-v2{font-family:var(--mono);font-size:.66rem;color:var(--text-dim);display:flex;align-items:center;gap:8px}
+.pillar-band-dot-v2{width:6px;height:6px;border-radius:50%;background:var(--pillar-accent,var(--cobalt));flex-shrink:0}
+.pillar-cta-v2{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:.03em;color:#050410;background:var(--pillar-accent,var(--cobalt));padding:9px 16px;border-radius:22px;white-space:nowrap;transition:transform .18s ease,padding-right .18s ease}
+.pillar-card-v2:hover .pillar-cta-v2{transform:translateX(2px);padding-right:20px}
 .reveal-actions{display:flex;gap:12px;flex-wrap:wrap}
 .action-primary{background:var(--cobalt);border:none;color:#fff;padding:12px 28px;border-radius:9px;font-family:var(--mono);font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s;letter-spacing:.04em;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
 .action-primary:hover{background:#5254d4;transform:translateY(-1px)}
@@ -253,6 +269,10 @@ input[type=number]{-moz-appearance:textfield}
   <p class="page-sub" id="page-sub-main">Eighteen questions across five blocks. Exact data improves precision &mdash; but professional judgment is equally valid. Estimates generate a Medium-confidence score. As you build better processes and return with real data, your score gets sharper.</p>
   <div class="stepper" id="stepper"></div>
   <div id="block-container"></div>
+  <div id="calc-loading" style="display:none;padding:60px 20px;text-align:center">
+    <div class="calc-spinner"></div>
+    <div class="calc-stage-text" id="calc-stage-text">Calculating your Humac Score\u2026</div>
+  </div>
   <div id="score-reveal">
     <div class="reveal-eyebrow" id="rv-eyebrow">Your Humac Baseline Score</div>
     <div class="humac-hero">
@@ -681,6 +701,26 @@ function computeL2Real(a){
   return Math.round((promoScore+mgrScore+hireScore+selRetScore+hipoScore)/5);
 }
 function showScoreReveal(){
+  document.getElementById('block-container').style.display='none';
+  document.getElementById('calc-loading').style.display='block';
+  window.scrollTo(0,0);
+  var stages=['Calculating Value Ledger\u2026','Calculating Talent Premium\u2026','Reading Org Vitals signals\u2026','Calculating Human P&L\u2026','Calculating Human Balance Sheet\u2026','Applying Human Confidence Index\u2026','Assembling your Humac Score\u2026'];
+  var stageEl=document.getElementById('calc-stage-text');
+  var i=0;
+  stageEl.textContent=stages[0];
+  var interval=setInterval(function(){
+    i++;
+    if(i<stages.length){
+      stageEl.style.opacity='0';
+      setTimeout(function(){stageEl.textContent=stages[i];stageEl.style.opacity='1';},150);
+    } else {
+      clearInterval(interval);
+      document.getElementById('calc-loading').style.display='none';
+      renderScoreReveal();
+    }
+  },500);
+}
+function renderScoreReveal(){
   var l1=(confidence.A==='computed')?Math.round(computeL1Real(answers)):Math.round(calcL1(answers.q1||0));
   var l2=(confidence.B==='computed')?computeL2Real(answers):calcL2(countYes(['q2','q3','q4','q5','q6']));
   var l3=Math.round(calcL3(countYes(['q7','q8','q9','q10','q11','q12','q13','q14','q19','q20','q21','q22','q23','q24','q25','q26','q27','q28','q29','q30']),20));
@@ -735,15 +775,18 @@ function showScoreReveal(){
 
   var pillars=[{label:'L1',name:'Value Ledger',score:l1,weight:'25%'},{label:'L2',name:'Talent Premium',score:l2,weight:'15%'},{label:'L3',name:'Org Vitals',score:l3,weight:'30%'},{label:'L4',name:'Human P&L',score:l4,weight:'20%'},{label:'L5',name:'Balance Sheet',score:l5,weight:'10%'}];
   var pillarFiles={L1:'pillar-l1.html',L2:'pillar-l2.html',L3:'pillar-l3.html',L4:'pillar-l4.html',L5:'pillar-l5.html'};
-  document.getElementById('rv-pillars').innerHTML=pillars.map(function(p){
+  document.getElementById('rv-pillars').innerHTML=pillars.map(function(p,i){
     var href=pillarFiles[p.label]||'#';
-    return '<a href="'+href+'" class="pillar-row" style="text-decoration:none;cursor:pointer;display:grid;grid-template-columns:80px 1fr 40px;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(99,102,241,.04);transition:background .15s;border-radius:6px;padding-left:6px;margin-left:-6px" onmouseover="this.style.background=\'rgba(99,102,241,.05)\'" onmouseout="this.style.background=\'transparent\'">'+
-      '<div class="pillar-name" style="display:flex;flex-direction:column">'+
-        '<span style="font-family:var(--mono);font-size:.78rem;color:var(--text-dim)">'+p.label+' \u2014 '+p.name+'</span>'+
-        '<span style="font-family:var(--mono);font-size:.62rem;color:rgba(99,102,241,.5);margin-top:2px">'+p.weight+' \xb7 Explore \u2192</span>'+
+    var pb=getBand(p.score);
+    var accentDim=pb.color+'20';
+    var accentGlow=pb.color+'33';
+    return '<a href="'+href+'" class="pillar-card-v2" style="animation-delay:'+(i*0.1)+'s;--pillar-accent:'+pb.color+';--pillar-accent-dim:'+accentDim+';--pillar-accent-glow:'+accentGlow+'">'+
+      '<div class="pillar-badge-v2"><div class="pillar-badge-num-v2">'+p.score+'</div><div class="pillar-badge-label-v2">'+p.label+'</div></div>'+
+      '<div class="pillar-body-v2">'+
+        '<div class="pillar-title-v2">'+p.name+'</div>'+
+        '<div class="pillar-sub-v2"><span class="pillar-band-dot-v2"></span>'+pb.name+' \xb7 '+p.weight+' weight</div>'+
       '</div>'+
-      '<div class="pillar-bar-wrap"><div class="pillar-bar" style="width:'+p.score+'%"></div></div>'+
-      '<div class="pillar-score">'+p.score+'</div>'+
+      '<div class="pillar-cta-v2">View Full Story \u2192</div>'+
     '</a>';
   }).join('');
 
