@@ -391,17 +391,29 @@ var BLOCKS=[
    ]
   },
   {id:'C',title:'Org Vitals',pillar:'L3 + HCI',weight:'30% weight',
-   desc:'Leading indicators of organisational health \u2014 and current conditions affecting your score.',
-   formula:'<b>L3 is observational by design.</b> Professional judgment is the intended instrument for most signals \u2014 not a weaker substitute for data.<br><br>Three signals that benefit from data validation:<br>&bull; Projects completed on time &gt;60%: pull from Jira, Asana, or equivalent<br>&bull; Documented performance conversations: pull from HRIS/performance logs<br><br>All other signals: answer from your direct knowledge of the organisation.',
+   desc:'Leading indicators of organisational health across 20 signals in 5 categories \u2014 and current conditions affecting your score.',
+   formula:'<b>L3 is observational by design.</b> Professional judgment is the intended instrument for most signals \u2014 not a weaker substitute for data.<br><br>Five categories, 4 signals each: Leadership Pulse, Fear Index, Middle Layer Health, Execution Fidelity, HR Mirror.<br><br>Three signals that benefit from data validation:<br>&bull; Projects completed on time &gt;60%: pull from Jira, Asana, or equivalent<br>&bull; Documented performance conversations: pull from HRIS/performance logs<br><br>All other signals: answer from your direct knowledge of the organisation.',
    questions:[
      {id:'q7',type:'yn',text:'Is your leadership team stable and operating without major gaps right now?',sub:'Answer No if there are recent or imminent C-suite exits, significant role vacancies, or active conflicts disrupting decision-making. If the team is roughly the same as 6 months ago and functioning, answer Yes.',hci:true},
+     {id:'q19',type:'yn',text:'Does senior leadership communicate directly with all employees at least once a month?',sub:'All-hands, video messages, or written updates. Manager-only cascade does not count.'},
+     {id:'q20',type:'yn',text:'Are major leadership decisions explained to the organisation, not just announced?',sub:'Reasoning, alternatives considered, and expected outcomes shared within 48 hours.'},
+     {id:'q21',type:'yn',text:'Does leadership consistently start and end meetings on time?',sub:'The leader who calls the meeting sets the cultural norm for how time is valued.'},
      {id:'q8',type:'yn',text:'Is the organisation operating without major structural disruption right now?',sub:'Active layoffs, a live restructure, an ongoing M&A process, or a significant leadership transition all count as disruption. If any of these are happening right now, answer No.',hci:true},
+     {id:'q22',type:'yn',text:'When mistakes happen, does leadership respond with diagnosis rather than public blame?',sub:'In the last 3 months, has any significant mistake been handled without naming and shaming?'},
+     {id:'q23',type:'yn',text:'Do people share bad news upward without significant delay?',sub:'When problems surface, do they reach leadership the same week, or weeks later when they become crises?'},
+     {id:'q24',type:'yn',text:'Is knowledge shared freely across teams rather than held within silos?',sub:'Do teams actively share what they know, or protect information as leverage?'},
      {id:'q9',type:'yn',text:'Is your organisation free from a significant culture or morale crisis right now?',sub:'Answer No if you are seeing mass exits concentrated in one function, an active harassment or grievance investigation with widespread impact, severe and visible disengagement, or public employer-brand damage. Isolated issues do not count.',hci:true},
-     {id:'q10',type:'yn',text:'Are this year\'s strategic priorities broadly on track to be delivered?',sub:'If more than half of your key annual initiatives are behind schedule, have been quietly deprioritised, or have lost leadership sponsorship, answer No.',hci:true},
      {id:'q11',type:'yn',text:'Do managers have regular structured 1:1s with their direct reports?'},
+     {id:'q25',type:'yn',text:'In the last 6 months, has any team member been promoted as a direct result of their manager\u2019s advocacy?',sub:'A manager who advocates for their people to leadership, not just rates them in a system.'},
+     {id:'q26',type:'yn',text:'In the last quarter, has any underperforming employee received a documented performance conversation from their manager?',sub:'A conversation that was written down, not just had verbally over coffee.'},
+     {id:'q10',type:'yn',text:'Are this year\'s strategic priorities broadly on track to be delivered?',sub:'If more than half of your key annual initiatives are behind schedule, have been quietly deprioritised, or have lost leadership sponsorship, answer No.',hci:true},
+     {id:'q27',type:'yn',text:'Can any team member name the specific revenue or cost number their work directly impacts?',sub:'Not "we contribute to growth." A specific number. A specific line.'},
+     {id:'q14',type:'yn',text:'Are projects completed on time at a rate above 60%?'},
+     {id:'q28',type:'yn',text:'Does less than 40% of the average employee\'s week consist of meetings?',sub:'Meetings are a proxy for progress in orgs that have forgotten what actual output looks like.'},
      {id:'q12',type:'yn',text:'Can frontline employees describe what a major leadership decision means for their work within one week?'},
      {id:'q13',type:'yn',text:'Does HR flag people risks to leadership before they become incidents?',sub:'Proactive means: raising a flight risk before the resignation lands, flagging a team morale problem before attrition spikes, or surfacing a manager issue before it reaches an ER case. If HR primarily responds after problems surface, answer No.'},
-     {id:'q14',type:'yn',text:'Are projects completed on time at a rate above 60%?'}
+     {id:'q29',type:'yn',text:'In the last 3 months, has HR initiated a proactive conversation with a business unit, not just responded to a request?',sub:'A People Risk Radar, a talent review initiated by HR, a proactive risk briefing.'},
+     {id:'q30',type:'yn',text:'Does onboarding give new joiners a clear picture of their role, team, and expectations within their first two weeks?',sub:'Day 14 milestone: they can describe the company mission, their team\'s role, and their first project.'}
    ]
   },
   {id:'D',title:'Human P&L',pillar:'L4',weight:'20% weight',
@@ -448,7 +460,7 @@ var confidence={};
 // ── CALCULATIONS ──────────────────────────────────────────────────────────────
 function calcL1(pct){var r=(pct||0)/100;if(r<=0.10)return 0;if(r>=1.20)return 100;if(r<=0.40)return((r-0.10)/0.30)*50;return 50+((r-0.40)/0.80)*50;}
 function calcL2(n){return[0,15,33,50,75,100][Math.max(0,Math.min(5,n))];}
-function calcL3(n){return(n/8)*100;}
+function calcL3(n,total){return(n/(total||20))*100;}
 function calcL4(pct){var r=(pct||0)/100;if(r<=0)return 0;if(r>=3.0)return 100;if(r<=1.0)return(r/1.0)*50;return 50+((r-1.0)/2.0)*50;}
 function calcL5(qA,qBYears,qC){var base=(qA==='yes')?2.0:1.2;var yrs=Math.min(parseFloat(qBYears)||0,10);var mult=1+(yrs/10)*0.30;var adj=base*mult;var div={low:1.0,medium:1.2,high:1.5}[(qC||'').toLowerCase()]||1.0;var ratio=adj/div;var idx=(ratio-1.0)*20;if(idx<0)return 0;if(idx>=50)return 100;if(idx<=20)return 10+(idx/20)*40;return 50+((idx-20)/30)*50;}
 function calcHCI(n){return Math.round((0.70+n*0.15)*100)/100;}
@@ -460,7 +472,7 @@ function getConfidenceLevel(){var e=Object.values(confidence).filter(function(v)
 function computeTrajectory(l1,l2,l3,l4,l5,humac,hciAdj){
   if(!isCheckin||!previousScore)return null;
   var pa=previousScore.rawAnswers||{};
-  var signals=['q7','q8','q9','q10','q11','q12','q13','q14'];
+  var signals=['q7','q8','q9','q10','q11','q12','q13','q14','q19','q20','q21','q22','q23','q24','q25','q26','q27','q28','q29','q30'];
   var posFlips=0,negFlips=0;
   signals.forEach(function(qid){
     if(pa[qid]==='no'&&answers[qid]==='yes')posFlips++;
@@ -668,7 +680,7 @@ function computeL2Real(a){
 function showScoreReveal(){
   var l1=(confidence.A==='computed')?Math.round(computeL1Real(answers)):Math.round(calcL1(answers.q1||0));
   var l2=(confidence.B==='computed')?computeL2Real(answers):calcL2(countYes(['q2','q3','q4','q5','q6']));
-  var l3=Math.round(calcL3(countYes(['q7','q8','q9','q10','q11','q12','q13','q14'])));
+  var l3=Math.round(calcL3(countYes(['q7','q8','q9','q10','q11','q12','q13','q14','q19','q20','q21','q22','q23','q24','q25','q26','q27','q28','q29','q30']),20));
   var l4=(confidence.D==='computed')?Math.round(computeL4Real(answers)):Math.round(calcL4(answers.q15||0));
   var l5=(confidence.E==='computed')?Math.round(computeL5Real(answers)):Math.round(calcL5(answers.q16,answers.q17,answers.q18));
   var hci=calcHCI(countYes(['q7','q8','q9','q10']));
