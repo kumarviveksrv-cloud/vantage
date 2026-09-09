@@ -354,7 +354,16 @@ var BLOCKS=[
   {id:'A',title:'Value Ledger',pillar:'L1',weight:'25% weight',
    desc:'How much financial value does HR generate relative to total salaries paid?',
    formula:'<b>Precise formula:</b><br><code>L1 ratio = Total HR Program Value &divide; Total Compensation</code><br><br><b>Total HR Program Value includes:</b><br>&bull; High Performers currently active &times; salary &times; <code>1.80</code> (replacement cost avoided)<br>&bull; New joiners in revenue-generating roles (hired last 12 months) &times; salary &times; <code>1.40 &times; 0.85</code><br>&bull; Emerging Talent &times; L&D spend &times; <code>2.80</code> (development return index)<br>&bull; Stable employees ('+window._tenureLabel+') &times; salary &times; <code>0.08</code> (engagement premium)<br>&bull; Below-expectation contributors &times; salary &times; <code>0.60</code> (risk exposure contained)<br><br><b>Data to pull:</b> Payroll, HRIS (talent classifications, tenure), Performance system.',
-   questions:[{id:'q1',type:'pct',text:'For every \u20B9100 of total salaries, roughly what percentage does your HR function generate in measurable financial value?',sub:'Include: retention savings, quality-of-hire returns, development ROI, engagement productivity, and risk management outcomes.'}]
+   questions:[{id:'q1',type:'pct',text:'For every \u20B9100 of total salaries, roughly what percentage does your HR function generate in measurable financial value?',sub:'Include: retention savings, quality-of-hire returns, development ROI, engagement productivity, and risk management outcomes.'}],
+   computedQuestions:[
+     {id:'cq1_headcount',type:'num',text:'Total current headcount',sub:'Your full active employee count today.',unit:'people',placeholder:'e.g. 120'},
+     {id:'cq1_compbase',type:'num',text:'Total annual compensation base (\u20B9)',sub:'Sum of annual CTC across all employees.',unit:'\u20B9/year',placeholder:'e.g. 18000000'},
+     {id:'cq1_stars',type:'num',text:'Number of Star / top performers',sub:'Employees rated consistently in your top performance band.',unit:'people',placeholder:'e.g. 15'},
+     {id:'cq1_emerging',type:'num',text:'Number of Emerging Talent',sub:'High-potential employees still early in development.',unit:'people',placeholder:'e.g. 10'},
+     {id:'cq1_tenured5',type:'num',text:'Number of employees with 5+ years tenure',sub:'',unit:'people',placeholder:'e.g. 20'},
+     {id:'cq1_revhires',type:'num',text:'New hires in revenue-generating roles, last 12 months',sub:'Sales, Business Development, Customer Success, or equivalent revenue-facing roles.',unit:'people',placeholder:'e.g. 8'},
+     {id:'cq1_atrisk',type:'num',text:'Number of at-risk / inconsistent performers',sub:'',unit:'people',placeholder:'e.g. 6'}
+   ]
   },
   {id:'B',title:'Talent Premium',pillar:'L2',weight:'15% weight',
    desc:'Are people generating above-average returns relative to what they cost?',
@@ -385,7 +394,15 @@ var BLOCKS=[
   {id:'D',title:'Human P&L',pillar:'L4',weight:'20% weight',
    desc:'For every rupee spent running HR, how much comes back?',
    formula:'<b>The Human P&L &mdash; precise formula:</b><br><code>L4 ratio = HR Net Profit &divide; (Total COGS + Total OpEx)</code><br><br><b>Human Revenue:</b> Retention savings + talent acquisition value + performance uplift + culture premium<br><b>Human COGS:</b> Acquisition cost + development investment + HR function cost<br><b>Human OpEx:</b> Compliance &amp; admin + culture &amp; engagement spend<br><b>Net Profit</b> = Revenue &minus; COGS &minus; OpEx &minus; Adjustments',
-   questions:[{id:'q15',type:'pct',text:'For every \u20B9100 your HR function spends on running HR \u2014 hiring costs, training, HR team salaries, tools, compliance \u2014 roughly how much measurable value does it generate?',sub:'Include: retention savings, productivity gains, avoided legal costs, and quality-of-hire outcomes. Exclude base salaries from the \u20B9100.'}]
+   questions:[{id:'q15',type:'pct',text:'For every \u20B9100 your HR function spends on running HR \u2014 hiring costs, training, HR team salaries, tools, compliance \u2014 roughly how much measurable value does it generate?',sub:'Include: retention savings, productivity gains, avoided legal costs, and quality-of-hire outcomes. Exclude base salaries from the \u20B9100.'}],
+   computedQuestions:[
+     {id:'cq1_headcount',type:'num',text:'Total current headcount',sub:'Same figure as L1, if you already entered it there \u2014 no need to re-enter.',unit:'people',placeholder:'e.g. 120'},
+     {id:'cq1_compbase',type:'num',text:'Total annual compensation base (\u20B9)',sub:'Sum of annual CTC across all employees.',unit:'\u20B9/year',placeholder:'e.g. 18000000'},
+     {id:'cq1_stars',type:'num',text:'Number of Star / top performers',sub:'',unit:'people',placeholder:'e.g. 15'},
+     {id:'cq4_revhires24',type:'num',text:'New hires in revenue-generating roles, last 24 months',sub:'Sales, Business Development, Customer Success, or equivalent revenue-facing roles. Note: L4 uses a 24-month window, L1 uses 12 \u2014 these are intentionally different.',unit:'people',placeholder:'e.g. 12'},
+     {id:'cq1_emerging',type:'num',text:'Number of Emerging Talent',sub:'',unit:'people',placeholder:'e.g. 10'},
+     {id:'cq1_tenured5',type:'num',text:'Number of employees with 5+ years tenure',sub:'',unit:'people',placeholder:'e.g. 20'}
+   ]
   },
   {id:'E',title:'Human Balance Sheet',pillar:'L5',weight:'10% weight',
    desc:'What is the net human capital position \u2014 assets vs. liabilities?',
@@ -497,10 +514,11 @@ function renderStepper(){
 // ── BLOCK RENDER ───────────────────────────────────────────────────────────────
 function renderBlock(idx){
   var b=BLOCKS[idx];var isFirst=idx===0;var isLast=idx===BLOCKS.length-1;var conf=confidence[b.id]||'estimated';
-  var qHTML=b.questions.map(function(q){
+  var activeQuestions=(conf==='computed'&&b.computedQuestions)?b.computedQuestions:b.questions;
+  var qHTML=activeQuestions.map(function(q){
     if(q.type==='pct'){var val=answers[q.id]||'';return '<div class="question"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div class="pct-input-wrap"><input class="pct-input" type="number" id="'+q.id+'" min="0" max="500" value="'+val+'" placeholder="0" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0"/><span class="pct-unit">%</span><span class="pct-hint">of total salary bill</span></div></div>';}
     if(q.type==='yn'){var val=answers[q.id];var hci=q.hci?'<span style="font-family:var(--mono);font-size:.68rem;color:rgba(99,102,241,.5);margin-left:6px">HCI</span>':'';return '<div class="question"><div class="q-text">'+q.text+hci+'</div><div class="yesno-wrap"><button class="yn-btn '+(val==='yes'?'selected-yes':'')+'" onclick="setYN(\''+q.id+'\',\'yes\',this.closest(\'.yesno-wrap\'))">Yes</button><button class="yn-btn '+(val==='no'?'selected-no':'')+'" onclick="setYN(\''+q.id+'\',\'no\',this.closest(\'.yesno-wrap\'))">No</button></div></div>';}
-    if(q.type==='num'){var val=answers[q.id]||'';return '<div class="question"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div><input class="num-input" type="number" id="'+q.id+'" min="0" max="50" value="'+val+'" placeholder="'+q.placeholder+'" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0"/><span class="num-label">'+q.unit+'</span></div></div>';}
+    if(q.type==='num'){var val=answers[q.id]||'';return '<div class="question"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div><input class="num-input" type="number" id="'+q.id+'" min="0" max="'+(q.max||100000000)+'" value="'+val+'" placeholder="'+q.placeholder+'" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0"/><span class="num-label">'+q.unit+'</span></div></div>';}
     if(q.type==='select'){var val=answers[q.id]||'';return '<div class="question"><div class="q-text">'+q.text+'</div><select class="risk-select" id="'+q.id+'" onchange="answers[\''+q.id+'\']=this.value.toLowerCase()">'+q.options.map(function(o){return '<option value="'+o.toLowerCase()+'" '+(val===o.toLowerCase()?'selected':'')+'>'+(o||q.placeholder)+'</option>';}).join('')+'</select></div>';}
     return '';
   }).join('');
@@ -518,17 +536,54 @@ function renderBlock(idx){
 
 function toggleFormula(){var btn=document.getElementById('ftoggle');var panel=document.getElementById('fpanel');btn.classList.toggle('open');panel.classList.toggle('open');}
 function setYN(qId,val,wrap){answers[qId]=val;wrap.querySelectorAll('.yn-btn').forEach(function(b){b.classList.remove('selected-yes','selected-no');});var t=wrap.querySelector('.yn-btn:'+(val==='yes'?'first-child':'last-child'));if(t)t.classList.add(val==='yes'?'selected-yes':'selected-no');}
-function setConf(blockId,val){var card=document.querySelector('.block-card');if(card){var c=card.querySelector('.computed-explain');var e=card.querySelector('.estimated-explain');if(c)c.style.opacity=val==='computed'?'1':'.35';if(e)e.style.opacity=val==='estimated'?'1':'.35';}confidence[blockId]=val;document.querySelectorAll('.conf-btn').forEach(function(b){b.classList.remove('selected');});event.target.classList.add('selected');}
+function setConf(blockId,val){confidence[blockId]=val;var blk=BLOCKS.filter(function(x){return x.id===blockId;})[0];if(blk&&blk.computedQuestions){renderBlock(currentBlock);return;}var card=document.querySelector('.block-card');if(card){var c=card.querySelector('.computed-explain');var e=card.querySelector('.estimated-explain');if(c)c.style.opacity=val==='computed'?'1':'.35';if(e)e.style.opacity=val==='estimated'?'1':'.35';}document.querySelectorAll('.conf-btn').forEach(function(b){b.classList.remove('selected');});event.target.classList.add('selected');}
 function nextBlock(){if(currentBlock<BLOCKS.length-1){currentBlock++;renderBlock(currentBlock);window.scrollTo(0,0);}else{showScoreReveal();}}
 function prevBlock(){if(currentBlock>0){currentBlock--;renderBlock(currentBlock);window.scrollTo(0,0);}}
 function restartOnboarding(){currentBlock=0;document.getElementById('score-reveal').style.display='none';document.getElementById('block-container').style.display='block';renderBlock(0);window.scrollTo(0,0);}
 
 // ── SCORE REVEAL ───────────────────────────────────────────────────────────────
+var L1_BENCH={min:0.264,max:1.133};
+function minMaxL1(raw){var scaled=100*(raw-L1_BENCH.min)/(L1_BENCH.max-L1_BENCH.min);return Math.round(Math.max(0,Math.min(100,scaled))*10)/10;}
+function computeL1Real(a){
+  var headcount=a.cq1_headcount||0,compBase=a.cq1_compbase||0;
+  var avgSalary=headcount>0?compBase/headcount:0;
+  var stars=a.cq1_stars||0,emerging=a.cq1_emerging||0,tenured5=a.cq1_tenured5||0,revHires=a.cq1_revhires||0,atRisk=a.cq1_atrisk||0;
+  var totalRet=0;
+  if(stars>0)totalRet+=(stars*avgSalary)*1.8;
+  if(revHires>0)totalRet+=(revHires*avgSalary)*1.4;
+  if(emerging>0)totalRet+=(emerging*avgSalary*0.04)*2.8;
+  if(tenured5>0)totalRet+=(tenured5*avgSalary)*0.08;
+  if(atRisk>0)totalRet+=(atRisk*avgSalary)*0.6;
+  var raw=compBase>0?totalRet/compBase:0;
+  return minMaxL1(raw);
+}
+var L4_BENCH={min:0.670,max:6.300};
+function minMaxL4(raw){var scaled=100*(raw-L4_BENCH.min)/(L4_BENCH.max-L4_BENCH.min);return Math.round(Math.max(0,Math.min(100,scaled))*10)/10;}
+function computeL4Real(a){
+  var headcount=a.cq1_headcount||0,compBase=a.cq1_compbase||0;
+  var avgSalary=headcount>0?compBase/headcount:0;
+  var stars=a.cq1_stars||0,emerging=a.cq1_emerging||0,tenured5=a.cq1_tenured5||0,revHires24=a.cq4_revhires24||0;
+  var talentAcqValue=revHires24>0?(revHires24*avgSalary)*1.4:0;
+  var retSavings=stars>0?(stars*avgSalary*1.5)*0.3:0;
+  var perfUplift=emerging>0?(emerging*avgSalary)*0.08:0;
+  var culturePrem=tenured5>0?(tenured5*avgSalary)*0.06:0;
+  var totalRev=talentAcqValue+retSavings+perfUplift+culturePrem;
+  var acqCost=revHires24>0?(revHires24*avgSalary)*0.15:0;
+  var devInvest=emerging>0?(emerging*avgSalary)*0.04:0;
+  var hrFuncCost=compBase*0.04;
+  var totalCOGS=acqCost+devInvest+hrFuncCost;
+  var compliance=compBase*0.015;
+  var cultureSpend=compBase*0.02;
+  var totalOpEx=compliance+cultureSpend;
+  var hrInvestment=totalCOGS+totalOpEx;
+  var raw=hrInvestment>0?totalRev/hrInvestment:0;
+  return minMaxL4(raw);
+}
 function showScoreReveal(){
-  var l1=Math.round(calcL1(answers.q1||0));
+  var l1=(confidence.A==='computed')?Math.round(computeL1Real(answers)):Math.round(calcL1(answers.q1||0));
   var l2=calcL2(countYes(['q2','q3','q4','q5','q6']));
   var l3=Math.round(calcL3(countYes(['q7','q8','q9','q10','q11','q12','q13','q14'])));
-  var l4=Math.round(calcL4(answers.q15||0));
+  var l4=(confidence.D==='computed')?Math.round(computeL4Real(answers)):Math.round(calcL4(answers.q15||0));
   var l5=Math.round(calcL5(answers.q16,answers.q17,answers.q18));
   var hci=calcHCI(countYes(['q7','q8','q9','q10']));
   var humac=Math.round(l1*0.25+l2*0.15+l3*0.30+l4*0.20+l5*0.10);
@@ -541,7 +596,7 @@ function showScoreReveal(){
 
   // scoreData: adding trajectory here means save_humac Worker stores it
   // in the existing JSON blob with zero Worker-side changes required.
-  var scoreData={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5,hci:hci,humac:humac,hciAdj:hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers,trajectory:trajectory};
+  var scoreData={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5,hci:hci,humac:humac,hciAdj:hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers,trajectory:trajectory,l1Mode:(confidence.A==='computed')?'computed':'estimate',l4Mode:(confidence.D==='computed')?'computed':'estimate'};
 
   try{sessionStorage.setItem('vantage_humac',JSON.stringify(scoreData));}catch(e){}
 
