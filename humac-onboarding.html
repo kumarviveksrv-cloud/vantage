@@ -375,6 +375,19 @@ var BLOCKS=[
      {id:'q4',type:'yn',text:'Of people you have hired in the last 12 months, is the majority genuinely working out \u2014 meeting or exceeding what you expected when you hired them?',sub:'If you would confidently recommend them for a new project, they count as Yes.'},
      {id:'q5',type:'yn',text:'When you look at who has resigned in the last 12 months, is it mostly people you were relieved to see leave \u2014 rather than people you wished you could have kept?',sub:'If your best people are the ones walking out the door, answer No.'},
      {id:'q6',type:'yn',text:'Does your organisation have a named group of high-potential employees that leadership actively invests in differently \u2014 mentoring, accelerated projects, leadership exposure?',sub:'A spreadsheet with names counts. An informal conversation that happens every year does not.'}
+   ],
+   computedQuestions:[
+     {id:'cq1_headcount',type:'num',text:'Total current headcount',sub:'Same figure as L1/L4/L5, if already entered \u2014 no need to re-enter.',unit:'people',placeholder:'e.g. 120'},
+     {id:'cq1_stars',type:'num',text:'Number of Star / top performers',sub:'',unit:'people',placeholder:'e.g. 15'},
+     {id:'cq5_hipo',type:'num',text:'Number of High Potential employees',sub:'Same figure as L5, if already entered.',unit:'people',placeholder:'e.g. 8'},
+     {id:'cq2_promoted12mo',type:'num',text:'Number of employees promoted in the last 12 months',sub:'',unit:'people',placeholder:'e.g. 10'},
+     {id:'cq2_promotedexcelling',type:'num',text:'Of those, how many are clearly excelling in the new role today?',sub:'',unit:'people',placeholder:'e.g. 8'},
+     {id:'cq2_managers',type:'num',text:'Number of people managers in the organisation',sub:'',unit:'people',placeholder:'e.g. 12'},
+     {id:'cq2_managersoutperform',type:'num',text:'Of those, how many have teams that outperform the org average?',sub:'',unit:'people',placeholder:'e.g. 7'},
+     {id:'cq2_hired12mo',type:'num',text:'Number of employees hired in the last 12 months',sub:'',unit:'people',placeholder:'e.g. 15'},
+     {id:'cq2_hiredmeeting',type:'num',text:'Of those, how many are meeting or exceeding expectations?',sub:'',unit:'people',placeholder:'e.g. 11'},
+     {id:'cq2_tenuretop',type:'num',text:'Average tenure of your top performers (years)',sub:'',unit:'years',placeholder:'e.g. 4'},
+     {id:'cq2_tenureatrisk',type:'num',text:'Average tenure of your at-risk / inconsistent performers (years)',sub:'',unit:'years',placeholder:'e.g. 1.5'}
    ]
   },
   {id:'C',title:'Org Vitals',pillar:'L3 + HCI',weight:'30% weight',
@@ -615,9 +628,25 @@ function computeL5Real(a){
   var raw=compBase>0?nhw/compBase:0;
   return minMaxL5(raw);
 }
+function clampL2(n,lo,hi){return Math.max(lo,Math.min(hi,n));}
+function computeL2Real(a){
+  var headcount=a.cq1_headcount||0,stars=a.cq1_stars||0,hipo=a.cq5_hipo||0;
+  var promoted=a.cq2_promoted12mo||0,promotedEx=a.cq2_promotedexcelling||0;
+  var managers=a.cq2_managers||0,mgrOutperform=a.cq2_managersoutperform||0;
+  var hired=a.cq2_hired12mo||0,hiredMeeting=a.cq2_hiredmeeting||0;
+  var tenureTop=a.cq2_tenuretop||0,tenureAtRisk=a.cq2_tenureatrisk||0;
+  var promoScore=promoted>0?(promotedEx/promoted)*100:50;
+  var mgrScore=managers>0?(mgrOutperform/managers)*100:50;
+  var hireScore=hired>0?(hiredMeeting/hired)*100:50;
+  var selRetScore=50;
+  if(tenureAtRisk>0){var ratio=tenureTop/tenureAtRisk;selRetScore=clampL2((ratio/2)*100,0,100);}
+  else if(tenureTop>0){selRetScore=100;}
+  var hipoScore=headcount>0?clampL2(((hipo+stars)/headcount)*100*4,0,100):50;
+  return Math.round((promoScore+mgrScore+hireScore+selRetScore+hipoScore)/5);
+}
 function showScoreReveal(){
   var l1=(confidence.A==='computed')?Math.round(computeL1Real(answers)):Math.round(calcL1(answers.q1||0));
-  var l2=calcL2(countYes(['q2','q3','q4','q5','q6']));
+  var l2=(confidence.B==='computed')?computeL2Real(answers):calcL2(countYes(['q2','q3','q4','q5','q6']));
   var l3=Math.round(calcL3(countYes(['q7','q8','q9','q10','q11','q12','q13','q14'])));
   var l4=(confidence.D==='computed')?Math.round(computeL4Real(answers)):Math.round(calcL4(answers.q15||0));
   var l5=(confidence.E==='computed')?Math.round(computeL5Real(answers)):Math.round(calcL5(answers.q16,answers.q17,answers.q18));
@@ -632,7 +661,7 @@ function showScoreReveal(){
 
   // scoreData: adding trajectory here means save_humac Worker stores it
   // in the existing JSON blob with zero Worker-side changes required.
-  var scoreData={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5,hci:hci,humac:humac,hciAdj:hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers,trajectory:trajectory,l1Mode:(confidence.A==='computed')?'computed':'estimate',l4Mode:(confidence.D==='computed')?'computed':'estimate',l5Mode:(confidence.E==='computed')?'computed':'estimate'};
+  var scoreData={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5,hci:hci,humac:humac,hciAdj:hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers,trajectory:trajectory,l1Mode:(confidence.A==='computed')?'computed':'estimate',l2Mode:(confidence.B==='computed')?'computed':'estimate',l4Mode:(confidence.D==='computed')?'computed':'estimate',l5Mode:(confidence.E==='computed')?'computed':'estimate'};
 
   try{sessionStorage.setItem('vantage_humac',JSON.stringify(scoreData));}catch(e){}
 
