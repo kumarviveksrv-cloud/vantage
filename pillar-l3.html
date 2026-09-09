@@ -189,7 +189,8 @@ var preMap={
   s5:hb('q8'),s6:hb('q22'),s7:hb('q23'),s8:hb('q24'),
   s9:hb('q9'),s10:hb('q11'),s11:hb('q25'),s12:hb('q26'),
   s13:hb('q10'),s14:hb('q27'),s15:hb('q14'),s16:hb('q28'),
-  s17:hb('q12'),s18:hb('q13'),s19:hb('q29'),s20:hb('q30')
+  s17:hb('q12'),s18:hb('q13'),s19:hb('q29'),s20:hb('q30'),s21:hb('q31'),
+  s22:hb('q32'),s23:hb('q33'),s24:hb('q34'),s25:hb('q35')
 };
 var interMap={};
 var preAnsweredCount=Object.keys(preMap).filter(function(k){return preMap[k]!==null&&preMap[k]!==undefined;}).length;
@@ -201,35 +202,49 @@ function getSignal(id){if(preMap[id]!==undefined&&preMap[id]!==null)return preMa
 var VITALS=[
   {id:'leadership',name:'Leadership Pulse',signals:[
     {id:'s1',text:'Is your leadership team stable and operating without major gaps right now?',sub:'Answer No if C-suite exits, vacancies, or conflicts are disrupting decisions.',pre:true},
-    {id:'s2',text:'Does senior leadership communicate directly with all employees at least once a month?',sub:'All-hands, video messages, or written updates. Manager-only cascade does not count.'},
-    {id:'s3',text:'Are major leadership decisions explained to the organisation, not just announced?',sub:'Reasoning, alternatives considered, and expected outcomes shared within 48 hours.'},
-    {id:'s4',text:'Does leadership consistently start and end meetings on time?',sub:'The leader who calls the meeting sets the cultural norm for how time is valued.'}
+    {id:'s2',text:'Does senior leadership communicate directly with employees broadly at least once a month?',sub:'All-hands, video messages, or written updates. Manager-only cascade does not count.'},
+    {id:'s3',text:'Are major leadership decisions explained \u2014 the reasoning and trade-offs, not just the outcome \u2014 rather than simply announced?',sub:'Explained promptly, as a normal part of how decisions get communicated \u2014 not as a delayed afterthought reserved for when someone asks.'},
+    {id:'s4',text:'Does leadership generally follow through on commitments made to the organisation, on the timeline promised?',sub:'This is a proxy for credibility. Meetings that start late, initiatives promised and quietly dropped, deadlines stated but never met \u2014 all erode the same trust.'}
   ]},
   {id:'fear',name:'Fear Index',signals:[
-    {id:'s5',text:'Is the organisation operating without major structural disruption right now?',sub:'Active layoffs, live restructure, or M&A transition count as disruption. Answer No if any are live.',pre:true},
-    {id:'s6',text:'When mistakes happen, does leadership respond with diagnosis rather than public blame?',sub:'In the last 3 months, has this been the general pattern \u2014 not a single well-handled exception among several badly handled ones?'},
+    {id:'s5',text:'Is the organisation operating without major structural disruption right now?',sub:'Active layoffs, a live restructuring process, or an ongoing M&A transaction affecting the business as a whole. Answer No if any are live.',pre:true},
+    {id:'s6',text:'When mistakes happen, does leadership respond with diagnosis rather than public blame?',sub:'In the last quarter, has this been the general pattern \u2014 not a single well-handled exception among several badly handled ones?'},
     {id:'s7',text:'Do people share bad news upward without significant delay?',sub:'When problems surface, do they reach leadership the same week, or weeks later when they become crises?'},
     {id:'s8',text:'Is knowledge shared freely across teams rather than held within silos?',sub:'Do teams actively share what they know, or protect information as leverage?'}
   ]},
   {id:'middle',name:'Middle Layer Health',signals:[
     {id:'s9',text:'Is your organisation free from a significant culture or morale crisis right now?',sub:'Answer No if mass exits, active investigations with widespread impact, or severe disengagement are present.',pre:true},
-    {id:'s10',text:'Do managers have regular structured 1:1s with their direct reports?',sub:'Structured means: employee-led agenda, documented, at least bi-weekly.',pre:true},
-    {id:'s11',text:'In the last 6 months, has this been a regular pattern \u2014 multiple team members promoted as a direct result of their manager\'s advocacy, not an isolated case?',sub:'A manager who advocates for their people to leadership, not just rates them in a system.'},
+    {id:'s10',text:'Do most managers have regular, structured 1:1s with their direct reports?',sub:'Structured means: employee-led agenda, documented, at least bi-weekly.',pre:true},
+    {id:'s11',text:'In the last two quarters, has this been a regular pattern \u2014 multiple team members promoted as a direct result of their manager\'s advocacy, not an isolated case?',sub:'A manager who advocates for their people to leadership, not just rates them in a system.'},
     {id:'s12',text:'In the last quarter, have most underperforming employees received a documented performance conversation from their manager?',sub:'A conversation that was written down, not just had verbally over coffee.'}
   ]},
   {id:'execution',name:'Execution Fidelity',signals:[
     {id:'s13',text:'Are this year\'s strategic priorities broadly on track to be delivered?',sub:'If more than half of key annual initiatives are behind schedule or deprioritised, answer No.',pre:true},
     {id:'s14',text:'Do most team members know the specific revenue or cost number their work directly impacts?',sub:'Not "we contribute to growth." A specific number. A specific line.'},
     {id:'s15',text:'Are projects completed on time at a rate above 60%?',sub:'Projects with target dates that closed within 2 weeks of deadline in the last quarter.',pre:true},
-    {id:'s16',text:'Does less than 40% of the average employee\'s week consist of meetings?',sub:'Meetings are a proxy for progress in orgs that have forgotten what actual output looks like.'}
+    {id:'s16',text:'Do most meetings end with a clear decision or next step, rather than leading to another meeting?',sub:'A useful test \u2014 could someone summarise the outcome in one sentence? If most meetings end without one, that\u2019s the signal.'}
   ]},
   {id:'hr',name:'HR Mirror',signals:[
-    {id:'s17',text:'Can frontline employees describe what a major leadership decision means for their work within one week?',sub:'Not that they heard about it. That they can articulate what it means for their specific role.',pre:true},
+    {id:'s17',text:'Do most frontline employees know what a major leadership decision means for their work within one week?',sub:'Not that they heard about it. That they can articulate what it means for their specific role.',pre:true},
     {id:'s18',text:'Does HR flag people risks to leadership before they become incidents?',sub:'Proactive means: flight risk raised before resignation, morale problem raised before attrition spikes.',pre:true},
-    {id:'s19',text:'In the last 3 months, has HR initiated a proactive conversation with a business unit (not just responded to a request)?',sub:'A People Risk Radar, a talent review initiated by HR, a proactive risk briefing.'},
-    {id:'s20',text:'Does onboarding give new joiners a clear picture of their role, team, and expectations within their first two weeks?',sub:'Day 14 milestone: they can describe the company mission, their team\'s role, and their first project.'}
+    {id:'s19',text:'In the last quarter, has HR initiated a proactive conversation with a business unit (not just responded to a request)?',sub:'A People Risk Radar, a talent review initiated by HR, a proactive risk briefing.'},
+    {id:'s20',text:'Within their first two weeks, do most new joiners have a clear picture of their role and what\u2019s expected of them?',sub:'Day 14 milestone: most can describe their role, their first project, and what success looks like in it.'},
+    {id:'s21',text:'Within their first two weeks, do most new joiners understand how their team fits into the organisation\u2019s broader goals?',sub:'This is about orientation to the bigger picture \u2014 not just their own job, but why their team\u2019s work matters.'}
   ]}
 ];
+
+// Peer & Recognition Culture is deliberately NOT part of VITALS. The 8-archetype
+// DNA classifier below was built and tested around exactly the 5 categories above;
+// folding a 6th dimension into it would silently require every combination in
+// DNA_TYPES to be re-reasoned. This category feeds the real L3 score (see
+// computeDraftL3 and countAnswered, both updated to include it) and gets its own
+// dedicated display section, without touching DNA classification at all.
+var PEER_VITAL={id:'peer',name:'Peer & Recognition Culture',signals:[
+  {id:'s22',text:'Does your organisation have clear, consistently-applied criteria for how recognition and advancement decisions are made?',sub:'This is about whether a real system exists \u2014 documented, consistently applied \u2014 not whether every individual feels equally rewarded. A fair system can still leave some people dissatisfied; an absent or arbitrary one usually leaves many people quietly resentful.'},
+  {id:'s23',text:'Is peer-to-peer knowledge-sharing \u2014 mentoring, pairing, cross-training \u2014 an established practice at your organisation, not just something that happens informally by chance?',sub:'Established means it\u2019s expected and supported, not dependent on which team someone happens to land on.'},
+  {id:'s24',text:'When a colleague\u2019s work falls short, do peers generally raise it directly with them, rather than only involving a manager?',sub:'Answer based on the parts of the organisation you have the clearest visibility into. For example, a teammate spotting a mistake and mentioning it directly, rather than staying silent or escalating immediately.'},
+  {id:'s25',text:'Does your organisation have any structured way for peers to recognise each other\u2019s contributions, not just top-down recognition from leadership?',sub:'For example, a peer-nominated kudos channel, spot recognition employees can give each other, or a peer shout-out ritual in team meetings. The mechanism matters more than its size.'}
+]};
 
 var DNA_TYPES={
   quiet_compounding:{name:'The Quiet Compounding Machine',desc:'The benchmark. Leadership visible and consistent. Trust present. Middle layer developing people. Execution connected to outcomes. HR proactive.',good:'Attracting and keeping talent, consistent execution, compounding performance',vulnerable:'Complacency, slow response to market shifts',breaks:'Key leaders leave simultaneously \u2014 the culture is strong but specific people matter more than it seems',fin:'Above-market retention, above-market productivity, compounding talent quality premium over time'},
@@ -275,13 +290,16 @@ function computeDNA(){
 function countAnswered(){
   var c=0;
   VITALS.forEach(function(v){v.signals.forEach(function(s){if(getSignal(s.id)!==null)c++;});});
+  PEER_VITAL.signals.forEach(function(s){if(getSignal(s.id)!==null)c++;});
   return c;
 }
 
-// Dynamic L3 recompute from ALL answered signals (pre + draft), not the fixed /8 the onboarding uses.
+// Dynamic L3 recompute from ALL answered signals (pre + draft), including Peer &
+// Recognition Culture \u2014 it feeds the real score even though it never feeds DNA typing.
 function computeDraftL3(){
   var yes=0,total=0;
   VITALS.forEach(function(v){v.signals.forEach(function(s){var val=getSignal(s.id);if(val!==null){total++;if(val)yes++;}});});
+  PEER_VITAL.signals.forEach(function(s){var val=getSignal(s.id);if(val!==null){total++;if(val)yes++;}});
   return total>0?Math.round((yes/total)*100):0;
 }
 
@@ -307,13 +325,13 @@ function renderPage(){
 
   var header='<div class="page-eyebrow">Vantage \xb7 Humac Score \xb7 Pillar Intelligence</div><h1 class="page-title">Org Vitals</h1><p class="page-sub">'+(md&&industry?industry+' \xb7 ':'')+(md&&state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate:'Your L3 pillar intelligence')+'</p>';
 
-  var remainingCount=20-preAnsweredCount;
+  var remainingCount=25-preAnsweredCount;
   var heroCopy=remainingCount<=0
-    ? 'Org Vitals is the <b style="color:var(--text-mid)">highest-weighted pillar</b> at 30% of Humac Score. All 20 signals arrived from your latest check-in \u2014 your <b style="color:var(--text-mid)">Organisation DNA type</b> is ready below.'
+    ? 'Org Vitals is the <b style="color:var(--text-mid)">highest-weighted pillar</b> at 30% of Humac Score. All 25 signals arrived from your latest check-in \u2014 your <b style="color:var(--text-mid)">Organisation DNA type</b> is ready below.'
     : 'Org Vitals is the <b style="color:var(--text-mid)">highest-weighted pillar</b> at 30% of Humac Score. '+preAnsweredCount+' signal'+(preAnsweredCount===1?'':'s')+' from your Humac assessment '+(preAnsweredCount===1?'is':'are')+' pre-loaded below. Answer the remaining '+remainingCount+' to reveal your <b style="color:var(--text-mid)">Organisation DNA type</b> \u2014 one of eight character signatures that names what your org actually is under pressure.';
-  var hero='<div class="score-hero"><div class="hero-grid"><div><div class="score-label">L3 Score \xb7 30% weight</div><div class="score-number">'+l3score+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div style="font-size:.86rem;color:var(--text-dim);line-height:1.7;margin-bottom:12px">'+heroCopy+'<div class="hci-line">L3 from Humac: '+preAnsweredCount+' of 20 signals answered \xb7 '+answered+' total answered so far</div></div></div></div></div>';
+  var hero='<div class="score-hero"><div class="hero-grid"><div><div class="score-label">L3 Score \xb7 30% weight</div><div class="score-number">'+l3score+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div style="font-size:.86rem;color:var(--text-dim);line-height:1.7;margin-bottom:12px">'+heroCopy+'<div class="hci-line">L3 from Humac: '+preAnsweredCount+' of 25 signals answered \xb7 '+answered+' total answered so far</div></div></div></div></div>';
 
-  var diagIntro='<div class="diag-intro"><div class="diag-intro-label">Organisation DNA Diagnostic</div><div class="diag-intro-text">Green signals are <b>pre-populated from your Humac Score assessment</b>. Answer the remaining signals below. Yes always means healthy. The DNA type reveals when enough signals are answered.<div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-fill" style="width:'+(answered/20*100).toFixed(0)+'%"></div></div><div class="progress-label" id="prog-label">'+answered+' of 20 signals answered</div></div></div>';
+  var diagIntro='<div class="diag-intro"><div class="diag-intro-label">Organisation DNA Diagnostic</div><div class="diag-intro-text">Green signals are <b>pre-populated from your Humac Score assessment</b>. Answer the remaining signals below. Yes always means healthy. The DNA type reveals when enough signals are answered.<div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-fill" style="width:'+(answered/25*100).toFixed(0)+'%"></div></div><div class="progress-label" id="prog-label">'+answered+' of 25 signals answered</div></div></div>';
 
   var draftL3=computeDraftL3();
   var draftHumac=computeDraftHumac(draftL3);
@@ -358,6 +376,29 @@ function renderPage(){
   });
   vitalsHTML+='</div>';
 
+  // Peer & Recognition Culture \u2014 same card pattern, deliberately rendered as its
+  // own section rather than a sixth entry in vitalsHTML, since it never feeds the
+  // DNA classifier below. It still counts toward the real L3 score.
+  var peerVs=vitalScore(PEER_VITAL);
+  var peerStatus=vitalStatus(peerVs);
+  var peerBadgeCls=peerStatus==='healthy'?'healthy':peerStatus==='warning'?'warning':peerStatus==='critical'?'critical':'partial';
+  var peerBadgeText=peerVs.total===0?'\u2014':peerVs.yes+'/'+peerVs.total+' healthy';
+  var peerHTML='<div class="diag-intro" style="margin-top:8px"><div class="diag-intro-label">Peer &amp; Recognition Culture</div><div class="diag-intro-text">A sixth diagnostic category, tracked separately from the DNA type above. It feeds your L3 score but not the Organisation DNA classification \u2014 the eight character types are calibrated around the five vitals only. These signals are also more locally variable than leadership-level practices, which tend to be set centrally and apply uniformly. Answer from the part of the organisation you know best, rather than guessing at a company-wide average you can\u2019t actually see.</div></div>'+
+    '<div class="vitals-grid"><div class="vital-card"><div class="vital-header"><div class="vital-name">'+PEER_VITAL.name+'</div><div class="vital-score-badge '+peerBadgeCls+'">'+peerBadgeText+'</div></div>';
+  PEER_VITAL.signals.forEach(function(sig){
+    var val=getSignal(sig.id);
+    var isPre=preMap[sig.id]!==null&&preMap[sig.id]!==undefined;
+    peerHTML+='<div class="signal-row"><div class="signal-text">'+sig.text+'<span class="signal-sub">'+sig.sub+'</span></div><div class="signal-right">';
+    if(isPre){
+      peerHTML+='<div class="pre-answer '+(val?'yes':'no')+'">'+(val?'Yes':'No')+'</div>';
+    }else{
+      var yc=val===true?'sel-yes':'',nc=val===false?'sel-no':'';
+      peerHTML+='<div class="yn-row"><button class="yn '+yc+'" onclick="setSignal(\''+sig.id+'\',true,this)">Yes</button><button class="yn '+nc+'" onclick="setSignal(\''+sig.id+'\',false,this)">No</button></div>';
+    }
+    peerHTML+='</div></div>';
+  });
+  peerHTML+='</div></div>';
+
   var dnaSection='<div class="dna-reveal'+(dna?' visible':'')+'" id="dna-reveal">'+(dna?
     '<div class="dna-eyebrow">Organisation DNA Type</div>'+
     '<div class="dna-type">'+dna.name+'</div>'+
@@ -372,16 +413,17 @@ function renderPage(){
 
   var failingVitals=VITALS.filter(function(v){var vs=vitalScore(v);return vitalStatus(vs)==='critical'||vitalStatus(vs)==='warning';}).map(function(v){return v.name;});
   var findings='<div class="findings-grid">'+
-    '<div class="finding-card"><div class="finding-eyebrow">L3 Weight</div><div class="finding-headline">30% of Humac Score</div><div class="finding-body">Org Vitals carries the <b>highest weighting</b> of all five pillars. A score shift here moves your total Humac Score more than any other pillar. The 20 signals measure the conditions that determine whether everything else works.</div></div>'+
-    '<div class="finding-card"><div class="finding-eyebrow">Signals Answered</div><div class="finding-headline">'+answered+' of 20</div><div class="finding-body">'+(answered>=16?'Enough signals answered for a reliable DNA type. The reading above reflects your org\u2019s actual character pattern \u2014 not a template.':answered>=8?'Pre-populated signals give you a partial read. Complete the remaining vital signs to unlock your full Organisation DNA type.':'Complete at least 3 signals per vital sign to reveal your DNA type. The more signals you answer, the more precise the reading.')+'</div></div>'+
+    '<div class="finding-card"><div class="finding-eyebrow">L3 Weight</div><div class="finding-headline">30% of Humac Score</div><div class="finding-body">Org Vitals carries the <b>highest weighting</b> of all five pillars. A score shift here moves your total Humac Score more than any other pillar. The 25 signals measure the conditions that determine whether everything else works.</div></div>'+
+    '<div class="finding-card"><div class="finding-eyebrow">Signals Answered</div><div class="finding-headline">'+answered+' of 25</div><div class="finding-body">'+(dnaKey?'Enough signals answered for a reliable DNA type. The reading above reflects your org\u2019s actual character pattern \u2014 not a template.':answered>=10?'Pre-populated signals give you a partial read. Complete the remaining vital signs to unlock your full Organisation DNA type.':'Complete at least 3 signals per vital sign to reveal your DNA type. The more signals you answer, the more precise the reading.')+'</div></div>'+
     '<div class="finding-card"><div class="finding-eyebrow">'+(failingVitals.length>0?'Vital Signs at Risk':'All Vital Signs')+'</div><div class="finding-headline">'+(failingVitals.length>0?failingVitals[0]+' needs attention':'Reading healthy')+'</div><div class="finding-body">'+(failingVitals.length>0?'<b>'+failingVitals.join(' and ')+'</b> '+(failingVitals.length===1?'is':'are')+' reading Warning or Critical based on answered signals. Each failing vital sign has specific, costed prescriptions in the Revenue Fluent framework. The actions below address them.':'All answered vital signs are reading Healthy. Continue answering remaining signals to confirm this reading.')+'</div></div>'+
+    '<div class="finding-card"><div class="finding-eyebrow">Scope</div><div class="finding-headline">A representative sample, not an audit</div><div class="finding-body">These 25 signals are chosen as leading indicators \u2014 the same principle behind validated instruments like Gallup\u2019s Q12, which never claimed to capture everything about engagement either. <b>This pillar does not measure compensation fairness.</b> That requires actual pay-band data, not self-reported judgment, and belongs in a properly computed instrument rather than this one.</div></div>'+
   '</div>';
 
   var acts=[
     {title:'Fix the highest-weighted failing vital sign first',body:failingVitals.length>0?'<b>'+failingVitals[0]+'</b> is your priority. Pick the single signal within it that is failing and address it in the next 30 days. One signal fixed upgrades the vital sign; one vital sign upgraded shifts the L3 score.':'All answered vital signs are strong. Focus on completing the remaining signals and committing to a quarterly L3 review.'},
-    {title:'Complete all 20 signals before your next leadership conversation',body:'A partial DNA reading is directional. A full 20-signal reading is specific enough to present to a business leader and say: "This is what kind of organisation we are, this is what we are vulnerable to, and this is what we are going to do about it."'},
+    {title:'Complete all 25 signals before your next leadership conversation',body:'A partial DNA reading is directional. A full 25-signal reading is specific enough to present to a business leader and say: "This is what kind of organisation we are, this is what we are vulnerable to, and this is what we are going to do about it."'},
     {title:'Build a 90-day vital sign improvement plan',body:'For each failing vital sign, identify one concrete action with a 90-day deadline. Leadership Pulse: an all-hands calendar. Fear Index: a blameless retrospective. Middle Layer: documented 1:1 cadence. Execution: project accountability reviews. HR: a People Risk Radar.'},
-    {title:'Return to L3 in 90 days and re-answer interactively',body:'Org Vitals is the only pillar that changes significantly quarter to quarter. A restructure, a key leader departure, or a culture intervention can shift 3-4 signals in 90 days. Re-answering all 20 signals at the next check-in is the most valuable intelligence refresh in the Humac framework.'}
+    {title:'Return to L3 in 90 days and re-answer interactively',body:'Org Vitals is the only pillar that changes significantly quarter to quarter. A restructure, a key leader departure, or a culture intervention can shift 3-4 signals in 90 days. Re-answering all 25 signals at the next check-in is the most valuable intelligence refresh in the Humac framework.'}
   ];
 
   var intelText=(function(){
@@ -393,7 +435,7 @@ function renderPage(){
   var intel='<div class="intel-card"><div class="intel-eyebrow">Intelligence Statement \xb7 L3 Org Vitals</div><div class="intel-text">'+intelText+'</div></div>';
   var bottomNav='<div class="bottom-nav"><a href="pillar-l2.html" class="btn-back">\u2190 L2 Talent Premium</a><a href="pillar-l4.html" class="btn-next">L4 Human P&L \u2192</a></div>';
 
-  w.innerHTML=nav+header+hero+deltaBar+diagIntro+vitalsHTML+dnaSection+findings+'<div class="section-eyebrow" style="margin-bottom:6px">What to do next</div><div class="section-title" style="margin-bottom:20px">Moving your Org Vitals forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('')+intel+bottomNav;
+  w.innerHTML=nav+header+hero+deltaBar+diagIntro+vitalsHTML+dnaSection+peerHTML+findings+'<div class="section-eyebrow" style="margin-bottom:6px">What to do next</div><div class="section-title" style="margin-bottom:20px">Moving your Org Vitals forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('')+intel+bottomNav;
 }
 
 function setSignal(id,val,btn){
