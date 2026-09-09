@@ -525,6 +525,16 @@ function handleTemplateUpload(file){
         return;
       }
 
+      var checkIssues=validateDataIntegrity(parsed);
+      var checkErrors=checkIssues.filter(function(i){return i.severity==='error';});
+      var checkWarnings=checkIssues.filter(function(i){return i.severity==='warning';});
+
+      if(checkErrors.length>0){
+        statusEl.style.background='rgba(224,92,58,.08)';statusEl.style.color='#E05C3A';statusEl.style.border='1px solid rgba(224,92,58,.25)';
+        statusEl.innerHTML='This file has numbers that don\u2019t add up \u2014 nothing was applied. Fix these in the file and re-upload:<br>'+checkErrors.map(function(e){return '\u2022 '+e.message;}).join('<br>');
+        return;
+      }
+
       Object.keys(parsed).forEach(function(k){answers[k]=parsed[k];});
 
       var computedBlockIds=['A','B','D','E'];
@@ -537,8 +547,12 @@ function handleTemplateUpload(file){
         else{confidence[id]='estimated';}
       });
 
+      var successMsg='\u2713 '+loadedCount+' field'+(loadedCount===1?'':'s')+' loaded. '+completedBlocks.length+' of 4 pillars set to Computed mode'+(completedBlocks.length>0?' ('+completedBlocks.join(', ')+')':'')+'. Review each block below, then generate your score.';
+      if(checkWarnings.length>0){
+        successMsg+='<br><br>Worth double-checking:<br>'+checkWarnings.map(function(w){return '\u2022 '+w.message;}).join('<br>');
+      }
       statusEl.style.background='rgba(74,222,128,.08)';statusEl.style.color='#4ade80';statusEl.style.border='1px solid rgba(74,222,128,.25)';
-      statusEl.textContent='\u2713 '+loadedCount+' field'+(loadedCount===1?'':'s')+' loaded. '+completedBlocks.length+' of 4 pillars set to Computed mode'+(completedBlocks.length>0?' ('+completedBlocks.join(', ')+')':'')+'. Review each block below, then generate your score.';
+      statusEl.innerHTML=successMsg;
 
       renderBlock(0);
     }catch(err){
@@ -685,12 +699,80 @@ function validateBlock(idx){
   });
   return missing;
 }
+
+// Cross-field logical consistency \u2014 catches things per-field validation cannot:
+// a sub-count exceeding its own total, or a number that is technically "answered"
+// but internally contradicts another answer. Only checks a rule once every field
+// it depends on has actually been entered, so it activates progressively as
+// someone moves through the blocks rather than firing false positives early.
+function validateDataIntegrity(a){
+  var issues=[]; // {severity:'error'|'warning', message}
+  var hc=a.cq1_headcount;
+
+  if(hc!==undefined&&hc!==null&&hc>0){
+    [['cq1_stars','Star / top performers'],['cq1_emerging','Emerging Talent'],
+     ['cq1_atrisk','at-risk / inconsistent performers'],['cq5_hipo','High Potential employees'],
+     ['cq1_tenured5','employees with 5+ years tenure'],['cq5_seniorcount','senior/leadership employees'],
+     ['cq5_revemployees','revenue-role employees (2+ yrs tenure)']
+    ].forEach(function(c){
+      var val=a[c[0]];
+      if(val!==undefined&&val!==null&&val>hc){
+        issues.push({severity:'error',message:'"'+c[1]+'" ('+val+') cannot exceed total headcount ('+hc+').'});
+      }
+    });
+
+    if(a.cq1_stars!=null&&a.cq1_emerging!=null&&a.cq1_atrisk!=null&&a.cq5_hipo!=null){
+      var sumCats=a.cq1_stars+a.cq1_emerging+a.cq1_atrisk+a.cq5_hipo;
+      if(sumCats>hc)issues.push({severity:'error',message:'Stars + Emerging Talent + At-risk + High Potential ('+sumCats+' combined) exceed total headcount ('+hc+'). These groups should not overlap.'});
+    }
+
+    if(a.cq1_revhires>hc)issues.push({severity:'warning',message:'Revenue-role hires in the last 12 months ('+a.cq1_revhires+') exceed total headcount ('+hc+'). Please double-check.'});
+    if(a.cq4_revhires24>hc)issues.push({severity:'warning',message:'Revenue-role hires in the last 24 months ('+a.cq4_revhires24+') exceed total headcount ('+hc+'). Please double-check.'});
+
+    if(a.cq1_compbase>0){
+      var avgSal=a.cq1_compbase/hc;
+      if(avgSal<100000)issues.push({severity:'warning',message:'Average annual comp works out to \u20b9'+Math.round(avgSal).toLocaleString('en-IN')+'/employee \u2014 unusually low. Check the comp base is annual, not monthly.'});
+      if(avgSal>10000000)issues.push({severity:'warning',message:'Average annual comp works out to \u20b9'+Math.round(avgSal).toLocaleString('en-IN')+'/employee \u2014 unusually high. Please double-check.'});
+    }
+  }
+
+  if(a.cq2_promoted12mo!=null&&a.cq2_promotedexcelling>a.cq2_promoted12mo)issues.push({severity:'error',message:'Promoted employees "excelling" ('+a.cq2_promotedexcelling+') cannot exceed total promoted ('+a.cq2_promoted12mo+').'});
+  if(a.cq2_managers!=null&&a.cq2_managersoutperform>a.cq2_managers)issues.push({severity:'error',message:'Managers whose teams "outperform" ('+a.cq2_managersoutperform+') cannot exceed total managers ('+a.cq2_managers+').'});
+  if(a.cq2_hired12mo!=null&&a.cq2_hiredmeeting>a.cq2_hired12mo)issues.push({severity:'error',message:'Hires "meeting expectations" ('+a.cq2_hiredmeeting+') cannot exceed total hired ('+a.cq2_hired12mo+').'});
+
+  [['cq2_tenuretop','Average tenure of top performers'],['cq2_tenureatrisk','Average tenure of at-risk performers'],['cq5_seniortenure','Average tenure of senior/leadership']].forEach(function(c){
+    var v=a[c[0]];
+    if(v!==undefined&&v!==null&&(v<0||v>40))issues.push({severity:'warning',message:c[1]+' ('+v+' years) looks unusual. Please double-check.'});
+  });
+
+  return issues;
+}
+
 function nextBlock(){
   var missing=validateBlock(currentBlock);
   var errEl=document.getElementById('validation-error');
   if(missing>0){
     if(errEl){errEl.style.display='block';errEl.textContent='Please answer all questions in this block before continuing \u2014 '+missing+' still need'+(missing===1?'s':'')+' a response.';errEl.scrollIntoView({behavior:'smooth',block:'center'});}
     return;
+  }
+  var issues=validateDataIntegrity(answers);
+  var errors=issues.filter(function(i){return i.severity==='error';});
+  var warnings=issues.filter(function(i){return i.severity==='warning';});
+  if(errors.length>0){
+    if(errEl){errEl.style.display='block';errEl.style.background='rgba(224,92,58,.08)';errEl.style.borderColor='rgba(224,92,58,.25)';errEl.style.color='#E05C3A';errEl.removeAttribute('data-warned');errEl.innerHTML='These numbers don\u2019t add up \u2014 please fix before continuing:<br>'+errors.map(function(e){return '\u2022 '+e.message;}).join('<br>');errEl.scrollIntoView({behavior:'smooth',block:'center'});}
+    return;
+  }
+  if(warnings.length>0){
+    var alreadyWarned=errEl&&errEl.getAttribute('data-warned')==='1';
+    if(!alreadyWarned){
+      if(errEl){
+        errEl.style.display='block';errEl.style.background='rgba(165,180,252,.08)';errEl.style.borderColor='rgba(165,180,252,.3)';errEl.style.color='var(--text-mid)';
+        errEl.setAttribute('data-warned','1');
+        errEl.innerHTML='Worth a second look \u2014 click Continue again to proceed anyway:<br>'+warnings.map(function(w){return '\u2022 '+w.message;}).join('<br>');
+        errEl.scrollIntoView({behavior:'smooth',block:'center'});
+      }
+      return;
+    }
   }
   if(currentBlock<BLOCKS.length-1){currentBlock++;renderBlock(currentBlock);window.scrollTo(0,0);}else{showScoreReveal();}
 }
