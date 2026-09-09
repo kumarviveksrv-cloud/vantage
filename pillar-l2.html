@@ -134,38 +134,66 @@ try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
 if(!hd){window.location.href='humac-onboarding.html';}
 var l1=hd.l1||0,l2=hd.l2||0,l3=hd.l3||0,l4=hd.l4||0,l5=hd.l5||0;
 var ra=hd.rawAnswers||{};
+var l2Mode=hd.l2Mode||'estimate';
 var q2=ra.q2,q3=ra.q3,q4=ra.q4,q5=ra.q5,q6=ra.q6;
+
+function clampL2(n,lo,hi){return Math.max(lo,Math.min(hi,n));}
+// Real per-verdict breakdown — identical formula to Revenue Fluent's original L2 verdict scoring
+function computeRealL2(a){
+  var headcount=a.cq1_headcount||0,stars=a.cq1_stars||0,hipo=a.cq5_hipo||0;
+  var promoted=a.cq2_promoted12mo||0,promotedEx=a.cq2_promotedexcelling||0;
+  var managers=a.cq2_managers||0,mgrOutperform=a.cq2_managersoutperform||0;
+  var hired=a.cq2_hired12mo||0,hiredMeeting=a.cq2_hiredmeeting||0;
+  var tenureTop=a.cq2_tenuretop||0,tenureAtRisk=a.cq2_tenureatrisk||0;
+  var promoScore=promoted>0?(promotedEx/promoted)*100:50;
+  var mgrScore=managers>0?(mgrOutperform/managers)*100:50;
+  var hireScore=hired>0?(hiredMeeting/hired)*100:50;
+  var selRetScore=50;
+  if(tenureAtRisk>0){var ratio=tenureTop/tenureAtRisk;selRetScore=clampL2((ratio/2)*100,0,100);}
+  else if(tenureTop>0){selRetScore=100;}
+  var hipoScore=headcount>0?clampL2(((hipo+stars)/headcount)*100*4,0,100):50;
+  return {promoScore:Math.round(promoScore),mgrScore:Math.round(mgrScore),hireScore:Math.round(hireScore),selRetScore:Math.round(selRetScore),hipoScore:Math.round(hipoScore)};
+}
+var realL2=(l2Mode==='computed')?computeRealL2(ra):null;
 var hci=hd.hci||1,conf=hd.confidence||'medium';
 var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
-var yesCount=[q2,q3,q4,q5,q6].filter(function(v){return v==='yes';}).length;
+var yesCount=realL2
+  ?[realL2.promoScore,realL2.mgrScore,realL2.hireScore,realL2.selRetScore,realL2.hipoScore].filter(function(s){return s>=60;}).length
+  :[q2,q3,q4,q5,q6].filter(function(v){return v==='yes';}).length;
 var industry='',state='';
 if(md){industry=md.industry||'';state=md.state||'';}
 var sb=(function(s){if(s<=15)return{name:'Critical',color:'#E05C3A'};if(s<=33)return{name:'Emerging',color:'#a5b4fc'};if(s<=75)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};})(l2);
 
 var VERDICTS=[
-  {signal:'Promotion Accuracy',q:q2,
+  {signal:'Promotion Accuracy',q:q2,score:realL2?realL2.promoScore:null,
    passText:'Promotions are landing. Promoted employees are growing into roles, not just surviving them. This is the signal that confirms talent identification is accurate \u2014 you are elevating the right people at the right time.',
    failText:'Promotions are not landing. <b>A wrong promotion simultaneously puts the wrong person in more power and makes the vacated role harder to fill.</b> Most costly and hardest-to-reverse talent mistake in any org.',
    action:'Post-promotion tracking: at 3 and 6 months, ask the manager \u2014 above, at, or below grade expectations? Track the running %. That is your Promotion Accuracy number.'},
-  {signal:'Manager Quality',q:q3,
+  {signal:'Manager Quality',q:q3,score:realL2?realL2.mgrScore:null,
    passText:'Managers are raising the bar. The management layer is an active amplifier of team performance, not a drag. When managers outperform their team average, everyone gets better faster.',
    failText:'Managers are performing below their direct report average. <b>The manager explains more performance variance than any other single factor.</b> This is a structural problem, not individual underperformance.',
    action:'Add one question to your next pulse survey: "My manager actively raises the bar in our team." Aggregate by manager. Below 60% agreement = structured development conversation this quarter.'},
-  {signal:'Hiring Quality',q:q4,
+  {signal:'Hiring Quality',q:q4,score:realL2?realL2.hireScore:null,
    passText:'New hires are working out. Your recruiting function is selecting above-average talent consistently. The people you are choosing are meeting or exceeding what you expected when you hired them.',
    failText:'New hires are underperforming. <b>You are paying market salaries for below-market output in the talent you most recently chose.</b> This signal determines next year\u2019s performance more than any other.',
    action:'Six months after each joining date, the manager rates: above, at, or below grade baseline. Build a running spreadsheet. The % above baseline is your Hiring Quality number.'},
-  {signal:'Selective Retention',q:q5,
+  {signal:'Selective Retention',q:q5,score:realL2?realL2.selRetScore:null,
    passText:'Exits are broadly non-regretted. When people leave, they are largely people you were replacing anyway. Attrition is removing underperformers \u2014 meaning your retention efforts are working where they matter most.',
    failText:'Retention is inverted. The people leaving are the ones you wanted to keep. <b>This is the most financially damaging retention profile</b> \u2014 you are losing value and retaining cost simultaneously.',
    action:'In every exit interview, note the person\u2019s last performance rating. Stars vs below-expectation exits over 12 months. If Stars are leaving faster, you have a selective retention failure.'},
-  {signal:'HiPo Identification',q:q6,
+  {signal:'HiPo Identification',q:q6,score:realL2?realL2.hipoScore:null,
    passText:'A named HiPo pipeline exists. The org is actively investing in its next generation of leaders. A structured HiPo list is the difference between leadership development and hoping talent surfaces itself.',
    failText:'No formal HiPo identification. The pipeline is empty. <b>This failure is silent</b> \u2014 it does not appear until 5\u20137 years later, when the leaders who should have been developed simply are not there.',
    action:'Create a shared document with 10\u201315 names, reviewed twice a year. Each person gets one concrete investment: a mentoring assignment, stretch project, or leadership exposure. That is your formal HiPo process.'}
 ];
 
 function verdictCard(v){
+  if(v.score!==null&&v.score!==undefined){
+    var passedReal=v.score>=60;
+    var clsReal=passedReal?'passed':'failed';
+    var bdgClsReal=passedReal?'strong':'gap';
+    return '<div class="verdict-card '+clsReal+'"><div class="verdict-top"><div class="verdict-signal">'+v.signal+'</div><div class="verdict-badge '+bdgClsReal+'">'+v.score+'%</div></div><div class="verdict-text">'+(passedReal?v.passText:v.failText)+'</div><div class="verdict-action-lbl">How to measure this</div><div class="verdict-action-txt">'+v.action+'</div></div>';
+  }
   var ans=v.q==='yes'||v.q==='no';var passed=v.q==='yes';
   var cls=!ans?'unanswered':passed?'passed':'failed';
   var bdgCls=!ans?'pending':passed?'strong':'gap';
@@ -174,8 +202,12 @@ function verdictCard(v){
   return '<div class="verdict-card '+cls+'"><div class="verdict-top"><div class="verdict-signal">'+v.signal+'</div><div class="verdict-badge '+bdgCls+'">'+bdgTxt+'</div></div><div class="verdict-text">'+txt+'</div><div class="verdict-action-lbl">How to measure this</div><div class="verdict-action-txt">'+v.action+'</div></div>';
 }
 
-var gapSigs=VERDICTS.filter(function(v){return v.q==='no';});
-var strongSigs=VERDICTS.filter(function(v){return v.q==='yes';});
+var gapSigs=realL2
+  ?VERDICTS.filter(function(v){return v.score<60;})
+  :VERDICTS.filter(function(v){return v.q==='no';});
+var strongSigs=realL2
+  ?VERDICTS.filter(function(v){return v.score>=60;})
+  :VERDICTS.filter(function(v){return v.q==='yes';});
 
 function intelText(){
   var ctx=industry?' in the '+industry+' sector':'';
