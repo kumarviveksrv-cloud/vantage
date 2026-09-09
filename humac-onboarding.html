@@ -82,7 +82,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .formula-panel code{font-family:var(--mono);font-size:.74rem;color:var(--muted);background:rgba(99,102,241,.06);padding:2px 6px;border-radius:3px}
 .formula-panel b{color:var(--text-mid);font-weight:500}
 .questions{display:flex;flex-direction:column;gap:20px;margin-bottom:24px}
-.question{display:flex;flex-direction:column;gap:8px}
+.question{display:flex;flex-direction:column;gap:8px;transition:background .3s ease,box-shadow .3s ease;border-radius:10px}
+.question.question-error{background:rgba(224,92,58,.06);box-shadow:0 0 0 1px rgba(224,92,58,.35);padding:12px;margin:-12px 0 -4px}
 .q-text{font-size:.92rem;color:var(--text);line-height:1.55;font-weight:400}
 .q-category-header{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:24px 0 4px;padding-top:16px;border-top:1px solid rgba(99,102,241,.12)}
 .q-category-header:first-child{margin-top:0;padding-top:0;border-top:none}
@@ -677,10 +678,10 @@ function renderBlock(idx){
       lastCategory=q.category;
       qHTMLParts.push('<div class="q-category-header">'+q.category+'</div>'+(q.categoryNote?'<div class="q-category-note">'+q.categoryNote+'</div>':''));
     }
-    if(q.type==='pct'){var val=answers[q.id]||'';qHTMLParts.push('<div class="question"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div class="pct-input-wrap"><input class="pct-input" type="number" id="'+q.id+'" min="0" max="500" value="'+val+'" placeholder="0" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0"/><span class="pct-unit">%</span><span class="pct-hint">of total salary bill</span></div></div>');}
-    else if(q.type==='yn'){var val=answers[q.id];var hci=q.hci?'<span style="font-family:var(--mono);font-size:.68rem;color:rgba(99,102,241,.5);margin-left:6px">HCI</span>':'';qHTMLParts.push('<div class="question"><div class="q-text">'+q.text+hci+'</div><div class="yesno-wrap"><button class="yn-btn '+(val==='yes'?'selected-yes':'')+'" onclick="setYN(\''+q.id+'\',\'yes\',this.closest(\'.yesno-wrap\'))">Yes</button><button class="yn-btn '+(val==='no'?'selected-no':'')+'" onclick="setYN(\''+q.id+'\',\'no\',this.closest(\'.yesno-wrap\'))">No</button></div></div>');}
-    else if(q.type==='num'){var val=answers[q.id]||'';qHTMLParts.push('<div class="question"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div><input class="num-input" type="number" id="'+q.id+'" min="0" max="'+(q.max||100000000)+'" value="'+val+'" placeholder="'+q.placeholder+'" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0"/><span class="num-label">'+q.unit+'</span></div></div>');}
-    else if(q.type==='select'){var val=answers[q.id]||'';qHTMLParts.push('<div class="question"><div class="q-text">'+q.text+'</div><select class="risk-select" id="'+q.id+'" onchange="answers[\''+q.id+'\']=this.value.toLowerCase()">'+q.options.map(function(o){return '<option value="'+o.toLowerCase()+'" '+(val===o.toLowerCase()?'selected':'')+'>'+(o||q.placeholder)+'</option>';}).join('')+'</select></div>');}
+    if(q.type==='pct'){var val=answers[q.id]||'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div class="pct-input-wrap"><input class="pct-input" type="number" id="'+q.id+'" min="0" max="500" value="'+val+'" placeholder="0" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0;clearQError(\''+q.id+'\')"/><span class="pct-unit">%</span><span class="pct-hint">of total salary bill</span></div></div>');}
+    else if(q.type==='yn'){var val=answers[q.id];var hci=q.hci?'<span style="font-family:var(--mono);font-size:.68rem;color:rgba(99,102,241,.5);margin-left:6px">HCI</span>':'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+hci+'</div><div class="yesno-wrap"><button class="yn-btn '+(val==='yes'?'selected-yes':'')+'" onclick="setYN(\''+q.id+'\',\'yes\',this.closest(\'.yesno-wrap\'))">Yes</button><button class="yn-btn '+(val==='no'?'selected-no':'')+'" onclick="setYN(\''+q.id+'\',\'no\',this.closest(\'.yesno-wrap\'))">No</button></div></div>');}
+    else if(q.type==='num'){var val=answers[q.id]||'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div><input class="num-input" type="number" id="'+q.id+'" min="0" max="'+(q.max||100000000)+'" value="'+val+'" placeholder="'+q.placeholder+'" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0;clearQError(\''+q.id+'\')"/><span class="num-label">'+q.unit+'</span></div></div>');}
+    else if(q.type==='select'){var val=answers[q.id]||'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+'</div><select class="risk-select" id="'+q.id+'" onchange="answers[\''+q.id+'\']=this.value.toLowerCase();clearQError(\''+q.id+'\')">'+q.options.map(function(o){return '<option value="'+o.toLowerCase()+'" '+(val===o.toLowerCase()?'selected':'')+'>'+(o||q.placeholder)+'</option>';}).join('')+'</select></div>');}
   });
   var qHTML=qHTMLParts.join('');
   var html='<div class="block-card" id="active-block"><div class="block-header"><div><div class="block-id">Block '+b.id+'</div><div class="block-name">'+b.title+'</div><div class="block-desc">'+b.desc+'</div></div><div class="block-pillar"><div class="pillar-tag">'+b.pillar+'</div><div class="pillar-weight">'+b.weight+'</div></div></div>'+
@@ -699,19 +700,20 @@ function renderBlock(idx){
 }
 
 function toggleFormula(){var btn=document.getElementById('ftoggle');var panel=document.getElementById('fpanel');btn.classList.toggle('open');panel.classList.toggle('open');}
-function setYN(qId,val,wrap){answers[qId]=val;wrap.querySelectorAll('.yn-btn').forEach(function(b){b.classList.remove('selected-yes','selected-no');});var t=wrap.querySelector('.yn-btn:'+(val==='yes'?'first-child':'last-child'));if(t)t.classList.add(val==='yes'?'selected-yes':'selected-no');}
+function setYN(qId,val,wrap){answers[qId]=val;wrap.querySelectorAll('.yn-btn').forEach(function(b){b.classList.remove('selected-yes','selected-no');});var t=wrap.querySelector('.yn-btn:'+(val==='yes'?'first-child':'last-child'));if(t)t.classList.add(val==='yes'?'selected-yes':'selected-no');clearQError(qId);}
+function clearQError(qId){var el=document.getElementById('q-wrap-'+qId);if(el)el.classList.remove('question-error');}
 function setConf(blockId,val){confidence[blockId]=val;var blk=BLOCKS.filter(function(x){return x.id===blockId;})[0];if(blk&&blk.computedQuestions){renderBlock(currentBlock);return;}var card=document.querySelector('.block-card');if(card){var c=card.querySelector('.computed-explain');var e=card.querySelector('.estimated-explain');if(c)c.style.opacity=val==='computed'?'1':'.35';if(e)e.style.opacity=val==='estimated'?'1':'.35';}document.querySelectorAll('.conf-btn').forEach(function(b){b.classList.remove('selected');});event.target.classList.add('selected');}
 function validateBlock(idx){
   var b=BLOCKS[idx];var conf=confidence[b.id]||(b.computedQuestions?'computed':'estimated');
   var activeQuestions=(conf==='computed'&&b.computedQuestions)?b.computedQuestions:b.questions;
-  var missing=0;
+  var missingIds=[];
   activeQuestions.forEach(function(q){
     var val=answers[q.id];
-    if(q.type==='yn'){if(val!=='yes'&&val!=='no')missing++;}
-    else if(q.type==='select'){if(!val)missing++;}
-    else{if(val===undefined||val===null)missing++;}
+    if(q.type==='yn'){if(val!=='yes'&&val!=='no')missingIds.push(q.id);}
+    else if(q.type==='select'){if(!val)missingIds.push(q.id);}
+    else{if(val===undefined||val===null)missingIds.push(q.id);}
   });
-  return missing;
+  return missingIds;
 }
 
 // Cross-field logical consistency \u2014 catches things per-field validation cannot:
@@ -763,10 +765,15 @@ function validateDataIntegrity(a){
 }
 
 function nextBlock(){
-  var missing=validateBlock(currentBlock);
+  document.querySelectorAll('.question-error').forEach(function(el){el.classList.remove('question-error');});
+  var missingIds=validateBlock(currentBlock);
   var errEl=document.getElementById('validation-error');
-  if(missing>0){
-    if(errEl){errEl.style.display='block';errEl.textContent='Please answer all questions in this block before continuing \u2014 '+missing+' still need'+(missing===1?'s':'')+' a response.';errEl.scrollIntoView({behavior:'smooth',block:'center'});}
+  if(missingIds.length>0){
+    missingIds.forEach(function(id){var el=document.getElementById('q-wrap-'+id);if(el)el.classList.add('question-error');});
+    if(errEl){errEl.style.display='block';errEl.textContent='Please answer all questions in this block before continuing \u2014 '+missingIds.length+' still need'+(missingIds.length===1?'s':'')+' a response.';}
+    var firstMissing=document.getElementById('q-wrap-'+missingIds[0]);
+    if(firstMissing)firstMissing.scrollIntoView({behavior:'smooth',block:'center'});
+    else if(errEl)errEl.scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
   var issues=validateDataIntegrity(answers);
