@@ -411,6 +411,18 @@ var BLOCKS=[
      {id:'q16',type:'yn',text:'Does your organisation invest more in developing talent than it loses to exits and skill gaps?'},
      {id:'q17',type:'num',text:'What is the average number of years your current employees have been with this organisation?',sub:'This is your average tenure. Add up the years each employee has been with you, divide by headcount. It is a direct proxy for institutional knowledge \u2014 the longer people stay, the more they carry about how things actually work here.',unit:'years',placeholder:'e.g. 4'},
      {id:'q18',type:'select',text:'How would you describe your organisation\u2019s current flight risk level?',options:['','Low','Medium','High'],placeholder:'Select flight risk level'}
+   ],
+   computedQuestions:[
+     {id:'cq1_headcount',type:'num',text:'Total current headcount',sub:'Same figure as L1/L4, if already entered \u2014 no need to re-enter.',unit:'people',placeholder:'e.g. 120'},
+     {id:'cq1_compbase',type:'num',text:'Total annual compensation base (\u20B9)',sub:'',unit:'\u20B9/year',placeholder:'e.g. 18000000'},
+     {id:'cq1_stars',type:'num',text:'Number of Star / top performers',sub:'',unit:'people',placeholder:'e.g. 15'},
+     {id:'cq5_hipo',type:'num',text:'Number of High Potential employees',sub:'Distinct from Stars \u2014 high future potential, not necessarily peak current performance.',unit:'people',placeholder:'e.g. 8'},
+     {id:'cq1_atrisk',type:'num',text:'Number of at-risk / inconsistent performers',sub:'',unit:'people',placeholder:'e.g. 6'},
+     {id:'cq1_tenured5',type:'num',text:'Number of employees with 5+ years tenure',sub:'',unit:'people',placeholder:'e.g. 20'},
+     {id:'cq5_seniorcount',type:'num',text:'Number of senior / leadership employees',sub:'Director level and above.',unit:'people',placeholder:'e.g. 8'},
+     {id:'cq5_seniortenure',type:'num',text:'Average tenure of senior / leadership employees',sub:'',unit:'years',placeholder:'e.g. 6'},
+     {id:'cq1_emerging',type:'num',text:'Number of Emerging Talent',sub:'',unit:'people',placeholder:'e.g. 10'},
+     {id:'cq5_revemployees',type:'num',text:'Employees in revenue-generating roles with 2+ years tenure',sub:'Sales, BD, Customer Success, or equivalent \u2014 total headcount, not just recent hires.',unit:'people',placeholder:'e.g. 20'}
    ]
   }
 ];
@@ -579,12 +591,36 @@ function computeL4Real(a){
   var raw=hrInvestment>0?totalRev/hrInvestment:0;
   return minMaxL4(raw);
 }
+var L5_BENCH={min:-0.263,max:0.687};
+function minMaxL5(raw){var scaled=100*(raw-L5_BENCH.min)/(L5_BENCH.max-L5_BENCH.min);return Math.round(Math.max(0,Math.min(100,scaled))*10)/10;}
+function computeL5Real(a){
+  var headcount=a.cq1_headcount||0,compBase=a.cq1_compbase||0;
+  var avgSalary=headcount>0?compBase/headcount:0;
+  var stars=a.cq1_stars||0,hipo=a.cq5_hipo||0,atRisk=a.cq1_atrisk||0,
+      tenured5=a.cq1_tenured5||0,seniorCount=a.cq5_seniorcount||0,
+      seniorTenure=a.cq5_seniortenure||0,emerging=a.cq1_emerging||0,
+      revEmployees=a.cq5_revemployees||0;
+  var talentEquity=stars>0?(stars*avgSalary)*0.4:0;
+  var instKnowledge=seniorCount>0?seniorCount*avgSalary*Math.min(seniorTenure*0.08,0.6):0;
+  var orgLearning=emerging>0?(emerging*avgSalary)*0.35:0;
+  var relCapital=revEmployees>0?(revEmployees*avgSalary)*0.5:0;
+  var cultureAsset=tenured5>0?(tenured5*avgSalary)*0.08:0;
+  var totalAssets=talentEquity+instKnowledge+orgLearning+relCapital+cultureAsset;
+  var talentConc=(atRisk*avgSalary*0.6)+(hipo*avgSalary*0.25);
+  var skillDebt=compBase*0.03;
+  var growthGap=compBase*0.02;
+  var cultureLiab=compBase*0.01;
+  var totalLiab=talentConc+skillDebt+growthGap+cultureLiab;
+  var nhw=totalAssets-totalLiab;
+  var raw=compBase>0?nhw/compBase:0;
+  return minMaxL5(raw);
+}
 function showScoreReveal(){
   var l1=(confidence.A==='computed')?Math.round(computeL1Real(answers)):Math.round(calcL1(answers.q1||0));
   var l2=calcL2(countYes(['q2','q3','q4','q5','q6']));
   var l3=Math.round(calcL3(countYes(['q7','q8','q9','q10','q11','q12','q13','q14'])));
   var l4=(confidence.D==='computed')?Math.round(computeL4Real(answers)):Math.round(calcL4(answers.q15||0));
-  var l5=Math.round(calcL5(answers.q16,answers.q17,answers.q18));
+  var l5=(confidence.E==='computed')?Math.round(computeL5Real(answers)):Math.round(calcL5(answers.q16,answers.q17,answers.q18));
   var hci=calcHCI(countYes(['q7','q8','q9','q10']));
   var humac=Math.round(l1*0.25+l2*0.15+l3*0.30+l4*0.20+l5*0.10);
   var hciAdj=Math.round(humac*hci);
@@ -596,7 +632,7 @@ function showScoreReveal(){
 
   // scoreData: adding trajectory here means save_humac Worker stores it
   // in the existing JSON blob with zero Worker-side changes required.
-  var scoreData={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5,hci:hci,humac:humac,hciAdj:hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers,trajectory:trajectory,l1Mode:(confidence.A==='computed')?'computed':'estimate',l4Mode:(confidence.D==='computed')?'computed':'estimate'};
+  var scoreData={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5,hci:hci,humac:humac,hciAdj:hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers,trajectory:trajectory,l1Mode:(confidence.A==='computed')?'computed':'estimate',l4Mode:(confidence.D==='computed')?'computed':'estimate',l5Mode:(confidence.E==='computed')?'computed':'estimate'};
 
   try{sessionStorage.setItem('vantage_humac',JSON.stringify(scoreData));}catch(e){}
 
