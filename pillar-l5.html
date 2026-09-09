@@ -152,9 +152,45 @@ try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
 if(!hd){window.location.href='humac-onboarding.html';}
 var l1=hd.l1||0,l2=hd.l2||0,l3=hd.l3||0,l4=hd.l4||0,l5=hd.l5||0;
 var ra=hd.rawAnswers||{};
+var l5Mode=hd.l5Mode||'estimate';
 var q16=ra.q16;
 var q17=(ra.q17!=null)?Number(ra.q17):0;
 var q18=ra.q18||'medium';
+
+function fmtINR(n){
+  var abs=Math.abs(n),sign=n<0?'-':'';
+  if(abs>=10000000)return sign+'\u20b9'+(abs/10000000).toFixed(2)+'Cr';
+  if(abs>=100000)return sign+'\u20b9'+(abs/100000).toFixed(1)+'L';
+  if(abs>=1000)return sign+'\u20b9'+Math.round(abs/1000)+'K';
+  return sign+'\u20b9'+Math.round(abs);
+}
+
+// Real Human Balance Sheet — identical formula to Revenue Fluent's original computeBS(),
+// restoring the full 5-asset / 5-liability structure that the estimate-mode UI simplified to 3/3.
+function computeRealL5(a){
+  var headcount=a.cq1_headcount||0, compBase=a.cq1_compbase||0;
+  var avgSalary=headcount>0?compBase/headcount:0;
+  var stars=a.cq1_stars||0, hipo=a.cq5_hipo||0, atRisk=a.cq1_atrisk||0,
+      tenured5=a.cq1_tenured5||0, seniorCount=a.cq5_seniorcount||0,
+      seniorTenure=a.cq5_seniortenure||0, emerging=a.cq1_emerging||0,
+      revEmployees=a.cq5_revemployees||0;
+  var talentEquity=stars>0?(stars*avgSalary)*0.4:0;
+  var instKnowledge=seniorCount>0?seniorCount*avgSalary*Math.min(seniorTenure*0.08,0.6):0;
+  var orgLearning=emerging>0?(emerging*avgSalary)*0.35:0;
+  var relCapital=revEmployees>0?(revEmployees*avgSalary)*0.5:0;
+  var cultureAsset=tenured5>0?(tenured5*avgSalary)*0.08:0;
+  var totalAssets=talentEquity+instKnowledge+orgLearning+relCapital+cultureAsset;
+  var talentConc=(atRisk*avgSalary*0.6)+(hipo*avgSalary*0.25);
+  var skillDebt=compBase*0.03;
+  var growthGap=compBase*0.02;
+  var cultureLiab=compBase*0.01;
+  var totalLiab=talentConc+skillDebt+growthGap+cultureLiab;
+  var nhw=totalAssets-totalLiab;
+  return {talentEquity:talentEquity,instKnowledge:instKnowledge,orgLearning:orgLearning,relCapital:relCapital,cultureAsset:cultureAsset,
+          totalAssets:totalAssets,talentConc:talentConc,skillDebt:skillDebt,growthGap:growthGap,cultureLiab:cultureLiab,
+          totalLiab:totalLiab,nhw:nhw};
+}
+var realL5=(l5Mode==='computed')?computeRealL5(ra):null;
 var hci=hd.hci||1,conf=hd.confidence||'medium';
 var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
 var industry='',state='';
@@ -174,9 +210,38 @@ var skillDebt=q16==='yes'?25:55;
 var growthGap=q17>=4?20:q17>=2?40:60;
 var totalLiabs=flightRisk+skillDebt+growthGap;
 var nhw=totalAssets-totalLiabs;
-var nhwPos=nhw>=0;
+var nhwPos=realL5?realL5.nhw>=0:nhw>=0;
 
 function bsHTML(){
+  if(realL5){
+    return '<div class="bs-wrap">'+
+      '<div class="bs-header"><div class="bs-header-title">Human Balance Sheet</div><div class="bs-header-sub">Real figures \xb7 '+scoreDate+' baseline</div></div>'+
+      '<div class="bs-cols">'+
+        '<div>'+
+          '<div class="bs-col-head assets"><span>Human Assets</span></div>'+
+          bsAssetReal('Talent Equity',realL5.talentEquity,'Stars \xd7 salary \xd7 40%')+
+          bsAssetReal('Institutional Knowledge',realL5.instKnowledge,'Senior/leadership \xd7 salary \xd7 tenure-scaled premium')+
+          bsAssetReal('Org Learning Velocity',realL5.orgLearning,'Emerging Talent \xd7 salary \xd7 35%')+
+          bsAssetReal('Relationship Capital',realL5.relCapital,'Revenue-role employees (2+ yrs) \xd7 salary \xd7 50%')+
+          bsAssetReal('Culture Asset',realL5.cultureAsset,'Tenured 5+ yrs \xd7 salary \xd7 8%')+
+          '<div class="bs-total"><div class="bs-total-label">TOTAL HUMAN ASSETS</div><div class="bs-total-val asset">'+fmtINR(realL5.totalAssets)+'</div></div>'+
+        '</div>'+
+        '<div class="bs-col-divider"></div>'+
+        '<div>'+
+          '<div class="bs-col-head liabs"><span>Human Liabilities</span></div>'+
+          bsLiabReal('Talent Concentration Risk',realL5.talentConc,'At-risk \xd7 salary \xd7 60% + HiPo \xd7 salary \xd7 25%')+
+          bsLiabReal('Skill Debt',realL5.skillDebt,'3% of total comp base')+
+          bsLiabReal('Growth Readiness Gap',realL5.growthGap,'2% of total comp base')+
+          bsLiabReal('Culture Liability',realL5.cultureLiab,'1% of total comp base')+
+          '<div class="bs-total"><div class="bs-total-label">TOTAL HUMAN LIABILITIES</div><div class="bs-total-val liab">'+fmtINR(realL5.totalLiab)+'</div></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="bs-nhw">'+
+        '<div class="bs-nhw-left"><div class="bs-nhw-label">Net Human Worth (NHW)</div><div class="bs-nhw-desc">'+(nhwPos?'Assets exceed liabilities. Your human capital base is net-positive.':'Liabilities exceed assets. Human capital is depleting faster than it is accumulating.')+'</div></div>'+
+        '<div class="bs-nhw-val '+(nhwPos?'pos':'neg')+'">'+(nhwPos?'+':'')+fmtINR(realL5.nhw)+'</div>'+
+      '</div>'+
+    '</div>';
+  }
   return '<div class="bs-wrap">'+
     '<div class="bs-header"><div class="bs-header-title">Human Balance Sheet</div><div class="bs-header-sub">Index-based \xb7 from your L5 responses \xb7 '+scoreDate+' baseline</div></div>'+
     '<div class="bs-cols">'+
@@ -202,13 +267,16 @@ function bsHTML(){
     '</div>'+
   '</div>';
 }
+function bsAssetReal(name,val,desc){return '<div class="bs-item"><div class="bs-item-name">'+name+'</div><div class="bs-item-val asset">+'+fmtINR(val)+'</div><div class="bs-item-desc">'+desc+'</div></div>';}
+function bsLiabReal(name,val,desc){return '<div class="bs-item"><div class="bs-item-name">'+name+'</div><div class="bs-item-val liab">-'+fmtINR(val)+'</div><div class="bs-item-desc">'+desc+'</div></div>';}
 function bsAsset(name,val,desc){return '<div class="bs-item"><div class="bs-item-name">'+name+'</div><div class="bs-item-val asset">+'+val+'</div><div class="bs-item-desc">'+desc+'</div></div>';}
 function bsLiab(name,val,desc){return '<div class="bs-item"><div class="bs-item-name">'+name+'</div><div class="bs-item-val liab">-'+val+'</div><div class="bs-item-desc">'+desc+'</div></div>';}
 
 function intelText(){
   var ctx=industry?' in the '+industry+' sector':'';
-  if(nhwPos)return'An L5 score of <b>'+l5+'</b>'+ctx+' with a net-positive NHW of <b>+'+nhw+'</b> means your human capital base is accumulating, not depleting. Assets exceed liabilities. Present this alongside your financial balance sheet. "Our human balance sheet is net-positive" is a statement no CFO has ever heard from HR \u2014 and one that almost none of them can make.';
-  return'An L5 score of <b>'+l5+'</b>'+ctx+' with a net-negative NHW of <b>'+nhw+'</b> means liabilities are exceeding assets. Flight risk, skill debt, or growth gap \u2014 or all three \u2014 are consuming the human capital base faster than it is being built. The four actions above address this sequentially.';
+  var nhwDisplay=realL5?fmtINR(realL5.nhw):nhw;
+  if(nhwPos)return'An L5 score of <b>'+l5+'</b>'+ctx+' with a net-positive NHW of <b>+'+nhwDisplay+'</b> means your human capital base is accumulating, not depleting. Assets exceed liabilities. Present this alongside your financial balance sheet. "Our human balance sheet is net-positive" is a statement no CFO has ever heard from HR \u2014 and one that almost none of them can make.';
+  return'An L5 score of <b>'+l5+'</b>'+ctx+' with a net-negative NHW of <b>'+nhwDisplay+'</b> means liabilities are exceeding assets. Flight risk, skill debt, or growth gap \u2014 or all three \u2014 are consuming the human capital base faster than it is being built. The four actions above address this sequentially.';
 }
 
 var acts=[
@@ -222,8 +290,8 @@ var w=document.getElementById('main-wrap');
 var pdots=[{label:'L1',score:l1,href:'pillar-l1.html'},{label:'L2',score:l2,href:'pillar-l2.html'},{label:'L3',score:l3,href:'pillar-l3.html'},{label:'L4',score:l4,href:'pillar-l4.html'},{label:'L5',score:l5,href:'pillar-l5.html',active:true}];
 var nav='<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+p.score+'</span></a>';}).join('')+'</div><a href="humac-onboarding.html" class="pillar-forward">Humac Score \u2192</a></div>';
 var header='<div class="eyebrow">Vantage \xb7 Humac Score \xb7 L5 \xb7 10% weight</div><h1 class="page-title">The Human Balance Sheet</h1><p class="page-sub">'+(md&&industry?industry+' \xb7 ':'')+(md&&state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate:'Your L5 pillar intelligence')+'</p>';
-var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L5 Score</div><div class="ratio-num">'+l5+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div class="ratio-lbl">Net Human Worth</div><div class="nhw-num '+(nhwPos?'pos':'neg')+'">'+(nhwPos?'+':'')+nhw+'</div><div class="context">'+(nhwPos?'<b>Human assets exceed liabilities.</b> Your people investment is compounding, not depleting.':'<b>Human liabilities exceed assets.</b> Talent is depleting faster than it is accumulating.')+'<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' confidence \xb7 L5 carries 10% of Humac Score</div></div></div></div>';
-var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l5+'/100</div><div class="sl">L5 Score</div></div><div class="stat"><div class="sv '+(nhwPos?'sv-green':'sv-red')+'">'+(nhwPos?'+':'')+nhw+'</div><div class="sl">Net Human Worth</div></div><div class="stat"><div class="sv '+(q18==='low'?'sv-green':q18==='high'?'sv-red':'sv-cobalt')+'">'+(q18||'\u2014').charAt(0).toUpperCase()+(q18||'\u2014').slice(1)+'</div><div class="sl">Flight risk level</div></div><div class="stat"><div class="sv sv-gold">'+(q17>0?q17+' yr':'\u2014')+'</div><div class="sl">Avg tenure</div></div></div>';
+var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L5 Score</div><div class="ratio-num">'+l5+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div class="ratio-lbl">Net Human Worth</div><div class="nhw-num '+(nhwPos?'pos':'neg')+'">'+(nhwPos?'+':'')+(realL5?fmtINR(realL5.nhw):nhw)+'</div><div class="context">'+(nhwPos?'<b>Human assets exceed liabilities.</b> Your people investment is compounding, not depleting.':'<b>Human liabilities exceed assets.</b> Talent is depleting faster than it is accumulating.')+'<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' confidence \xb7 L5 carries 10% of Humac Score</div></div></div></div>';
+var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l5+'/100</div><div class="sl">L5 Score</div></div><div class="stat"><div class="sv '+(nhwPos?'sv-green':'sv-red')+'">'+(nhwPos?'+':'')+(realL5?fmtINR(realL5.nhw):nhw)+'</div><div class="sl">Net Human Worth</div></div><div class="stat"><div class="sv '+(q18==='low'?'sv-green':q18==='high'?'sv-red':'sv-cobalt')+'">'+(q18||'\u2014').charAt(0).toUpperCase()+(q18||'\u2014').slice(1)+'</div><div class="sl">Flight risk level</div></div><div class="stat"><div class="sv sv-gold">'+(q17>0?q17+' yr':'\u2014')+'</div><div class="sl">Avg tenure</div></div></div>';
 var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L5 Human Balance Sheet</div><div class="stmt-txt">'+intelText()+'</div></div>';
 var actions='<div class="section-eyebrow">What to do next</div><div class="section-title">Strengthening your Human Balance Sheet</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('');
 var complete='<div class="complete-card"><div class="complete-title">All Five Pillars Complete.</div><div class="complete-sub">L1 Value Ledger \xb7 L2 Talent Premium \xb7 L3 Org Vitals \xb7 L4 Human P&L \xb7 L5 Balance Sheet<br>Return to your Humac Score. Start with the pillar at the lowest score \u2014 that is where the highest-leverage action lives.</div><a href="humac-onboarding.html" class="complete-cta">Return to Humac Score \u2192</a></div>';
