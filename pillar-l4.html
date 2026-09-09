@@ -144,14 +144,50 @@ try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
 if(!hd){window.location.href='humac-onboarding.html';}
 var l1=hd.l1||0,l2=hd.l2||0,l3=hd.l3||0,l4=hd.l4||0,l5=hd.l5||0;
 var ra=hd.rawAnswers||{};
+var l4Mode=hd.l4Mode||'estimate';
 var q15Pct=(ra.q15!=null)?Number(ra.q15):0;
+
+function fmtINR(n){
+  var abs=Math.abs(n),sign=n<0?'-':'';
+  if(abs>=10000000)return sign+'\u20b9'+(abs/10000000).toFixed(2)+'Cr';
+  if(abs>=100000)return sign+'\u20b9'+(abs/100000).toFixed(1)+'L';
+  if(abs>=1000)return sign+'\u20b9'+Math.round(abs/1000)+'K';
+  return sign+'\u20b9'+Math.round(abs);
+}
+
+// Real Human P&L — identical formula to Revenue Fluent's original computePL()
+function computeRealL4(a){
+  var headcount=a.cq1_headcount||0, compBase=a.cq1_compbase||0;
+  var avgSalary=headcount>0?compBase/headcount:0;
+  var stars=a.cq1_stars||0, emerging=a.cq1_emerging||0, tenured5=a.cq1_tenured5||0, revHires24=a.cq4_revhires24||0;
+  var talentAcqValue=revHires24>0?(revHires24*avgSalary)*1.4:0;
+  var retSavings=stars>0?(stars*avgSalary*1.5)*0.3:0;
+  var perfUplift=emerging>0?(emerging*avgSalary)*0.08:0;
+  var culturePrem=tenured5>0?(tenured5*avgSalary)*0.06:0;
+  var totalRev=talentAcqValue+retSavings+perfUplift+culturePrem;
+  var acqCost=revHires24>0?(revHires24*avgSalary)*0.15:0;
+  var devInvest=emerging>0?(emerging*avgSalary)*0.04:0;
+  var hrFuncCost=compBase*0.04;
+  var totalCOGS=acqCost+devInvest+hrFuncCost;
+  var compliance=compBase*0.015;
+  var cultureSpend=compBase*0.02;
+  var totalOpEx=compliance+cultureSpend;
+  var hrInvestment=totalCOGS+totalOpEx;
+  var netProfit=totalRev-hrInvestment;
+  var ratio=hrInvestment>0?totalRev/hrInvestment:0;
+  return {talentAcqValue:talentAcqValue,retSavings:retSavings,perfUplift:perfUplift,culturePrem:culturePrem,totalRev:totalRev,
+          acqCost:acqCost,devInvest:devInvest,hrFuncCost:hrFuncCost,totalCOGS:totalCOGS,
+          compliance:compliance,cultureSpend:cultureSpend,totalOpEx:totalOpEx,
+          hrInvestment:hrInvestment,netProfit:netProfit,ratio:ratio};
+}
+var realL4=(l4Mode==='computed')?computeRealL4(ra):null;
 var hci=hd.hci||1,conf=hd.confidence||'medium';
 var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
 var industry='',state='';
 if(md){industry=md.industry||'';state=md.state||'';}
 var sb=(function(s){if(s<=25)return{name:'Minimum',color:'#E05C3A'};if(s<=50)return{name:'Emerging',color:'#a5b4fc'};if(s<=72)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};})(l4);
-var q15Ratio=(q15Pct/100).toFixed(2)+'x';
-var isPos=q15Pct>=100;
+var q15Ratio=realL4?realL4.ratio.toFixed(2)+'x':(q15Pct/100).toFixed(2)+'x';
+var isPos=realL4?realL4.ratio>=1:q15Pct>=100;
 var benchStr=industry&&industry.toLowerCase().includes('tech')?'2.0\u20132.5x':industry&&industry.toLowerCase().includes('service')?'1.8\u20132.2x':'1.5\u20132.0x';
 
 // P&L index values derived from q15Pct
@@ -169,6 +205,28 @@ var totalCost=hrInv;
 var netOp=totalRev-totalCost;
 
 function plHTML(){
+  if(realL4){
+    return '<div class="pl-wrap">'+
+      '<div class="pl-header"><div class="pl-header-title">Human P&amp;L Statement</div><div class="pl-header-sub">Real figures \xb7 '+q15Ratio+' HR return ratio \xb7 '+scoreDate+' baseline</div></div>'+
+      '<div class="pl-section-head"><span>Human Revenue</span><span>\u20b9</span></div>'+
+      plRowReal('Talent Acquisition Value','Revenue-role hires (24mo) \xd7 salary \xd7 1.40',realL4.talentAcqValue,true)+
+      plRowReal('Retention Savings','Stars \xd7 salary \xd7 1.5 \xd7 30%',realL4.retSavings,true)+
+      plRowReal('Performance Uplift','Emerging Talent \xd7 salary \xd7 8%',realL4.perfUplift,true)+
+      plRowReal('Culture Premium','Tenured 5+ yrs \xd7 salary \xd7 6%',realL4.culturePrem,true)+
+      '<div class="pl-subtotal"><div class="pl-subtotal-label">GROSS HUMAN REVENUE</div><div class="pl-subtotal-val pos">+'+fmtINR(realL4.totalRev)+'</div></div>'+
+      '<div class="pl-section-head"><span>Human COGS</span><span>\u20b9</span></div>'+
+      plRowReal('Acquisition Cost','Revenue-role hires \xd7 salary \xd7 15%',realL4.acqCost,false)+
+      plRowReal('Development Investment','Emerging Talent \xd7 salary \xd7 4%',realL4.devInvest,false)+
+      plRowReal('HR Function Cost','4% of total comp base',realL4.hrFuncCost,false)+
+      '<div class="pl-subtotal"><div class="pl-subtotal-label">TOTAL HUMAN COGS</div><div class="pl-subtotal-val neg">-'+fmtINR(realL4.totalCOGS)+'</div></div>'+
+      '<div class="pl-section-head"><span>Human OpEx</span><span>\u20b9</span></div>'+
+      plRowReal('Compliance & Admin','1.5% of total comp base',realL4.compliance,false)+
+      plRowReal('Culture & Engagement Spend','2% of total comp base',realL4.cultureSpend,false)+
+      '<div class="pl-subtotal"><div class="pl-subtotal-label">TOTAL HUMAN OPEX</div><div class="pl-subtotal-val neg">-'+fmtINR(realL4.totalOpEx)+'</div></div>'+
+      '<div class="pl-net-row"><div class="pl-net-label">HR Net Profit</div><div class="pl-net-val '+(realL4.netProfit>=0?'pos':'neg')+'">'+(realL4.netProfit>=0?'+':'')+fmtINR(realL4.netProfit)+'</div></div>'+
+      '<div class="pl-ratio-row"><div class="pl-ratio-desc">\u201cFor every \u20b91 this organisation invests in running HR, it returns '+q15Ratio+'.\u201d</div><div class="pl-ratio-val">'+q15Ratio+'</div></div>'+
+    '</div>';
+  }
   return '<div class="pl-wrap">'+
     '<div class="pl-header"><div class="pl-header-title">Human P&amp;L Statement</div><div class="pl-header-sub">Index-based \xb7 from your '+q15Ratio+' HR function return ratio \xb7 '+scoreDate+' baseline</div></div>'+
     '<div class="pl-section-head"><span>Human Revenue</span><span>Index</span></div>'+
@@ -185,6 +243,9 @@ function plHTML(){
     '<div class="pl-net-row"><div class="pl-net-label">HR Operating Profit</div><div class="pl-net-val '+(netOp>=0?'pos':'neg')+'">'+(q15Pct>0?(netOp>=0?'+':'')+netOp:'\u2014')+'</div></div>'+
     '<div class="pl-ratio-row"><div class="pl-ratio-desc">\u201cFor every \u20b9100 your HR function invests in running HR, it returns '+q15Ratio+' in measurable value.\u201d</div><div class="pl-ratio-val">'+q15Ratio+'</div></div>'+
   '</div>';
+}
+function plRowReal(label,desc,val,isRev){
+  return '<div class="pl-row"><div><div class="pl-row-label">'+label+'</div><div class="pl-row-desc">'+desc+'</div></div><div class="pl-row-val '+(isRev?'pos':'neg')+'">'+(isRev?'+':'-')+fmtINR(val)+'</div></div>';
 }
 function plRow(label,desc,val,isRev){
   return '<div class="pl-row"><div><div class="pl-row-label">'+label+'</div><div class="pl-row-desc">'+desc+'</div></div><div class="pl-row-val '+(isRev?'pos':'neg')+'">'+(q15Pct>0?(isRev?'+':'-')+val:'\u2014')+'</div></div>';
