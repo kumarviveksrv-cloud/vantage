@@ -68,12 +68,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .verdict-card.passed{border-left-color:rgba(74,222,128,.5)}
 .verdict-card.failed{border-left-color:rgba(224,92,58,.45)}
 .verdict-card.unanswered{border-left-color:rgba(99,102,241,.2)}
+.verdict-card.na{border-left-color:rgba(165,180,252,.3);border-left-style:dashed}
 .verdict-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:12px}
 .verdict-signal{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,243,255,.5);font-weight:500}
 .verdict-badge{font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;padding:3px 10px;border-radius:4px;font-weight:600}
 .verdict-badge.strong{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
 .verdict-badge.gap{background:rgba(224,92,58,.08);color:#E05C3A;border:1px solid rgba(224,92,58,.2)}
 .verdict-badge.pending{background:rgba(99,102,241,.08);color:#a5b4fc;border:1px solid rgba(99,102,241,.15)}
+.verdict-badge.na{background:rgba(165,180,252,.06);color:#a5b4fc;border:1px dashed rgba(165,180,252,.3)}
 .verdict-text{font-size:.86rem;color:var(--text-dim);line-height:1.7;margin-bottom:12px}
 .verdict-text b{color:#c4b5fd;font-weight:400}
 .verdict-action-lbl{font-family:var(--mono);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(165,180,252,.3);margin-bottom:5px}
@@ -160,6 +162,7 @@ var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{da
 var yesCount=realL2
   ?[realL2.promoScore,realL2.mgrScore,realL2.hireScore,realL2.selRetScore,realL2.hipoScore].filter(function(s){return s>=60;}).length
   :[q2,q3,q4,q5,q6].filter(function(v){return v==='yes';}).length;
+var answeredCount=realL2?5:[q2,q3,q4,q5,q6].filter(function(v){return v==='yes'||v==='no';}).length;
 var industry='',state='';
 if(md){industry=md.industry||'';state=md.state||'';}
 var sb=(function(s){if(s<=15)return{name:'Critical',color:'#E05C3A'};if(s<=33)return{name:'Emerging',color:'#a5b4fc'};if(s<=75)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};})(l2);
@@ -194,6 +197,9 @@ function verdictCard(v){
     var bdgClsReal=passedReal?'strong':'gap';
     return '<div class="verdict-card '+clsReal+'"><div class="verdict-top"><div class="verdict-signal">'+v.signal+'</div><div class="verdict-badge '+bdgClsReal+'">'+v.score+'%</div></div><div class="verdict-text">'+(passedReal?v.passText:v.failText)+'</div><div class="verdict-action-lbl">How to measure this</div><div class="verdict-action-txt">'+v.action+'</div></div>';
   }
+  if(v.q==='na'){
+    return '<div class="verdict-card na"><div class="verdict-top"><div class="verdict-signal">'+v.signal+'</div><div class="verdict-badge na">N/A this period</div></div><div class="verdict-text">You marked this as not applicable \u2014 the underlying event didn\u2019t occur this period, so there was nothing to assess. This was a deliberate answer, not a skipped question, and it correctly did not count against your L2 score.</div><div class="verdict-action-lbl">How to measure this next time</div><div class="verdict-action-txt">'+v.action+'</div></div>';
+  }
   var ans=v.q==='yes'||v.q==='no';var passed=v.q==='yes';
   var cls=!ans?'unanswered':passed?'passed':'failed';
   var bdgCls=!ans?'pending':passed?'strong':'gap';
@@ -211,10 +217,10 @@ var strongSigs=realL2
 
 function intelText(){
   var ctx=industry?' in the '+industry+' sector':'';
-  if(l2<=15)return'An L2 score of <b>'+l2+'</b>'+ctx+' signals all five talent quality dimensions need attention. Start with HiPo Identification \u2014 costs nothing, closes fastest \u2014 and exit tracking for selective retention. The verdict rows above have the specific measurement process for each signal.';
-  if(l2<=33)return'An L2 score of <b>'+l2+'</b>'+ctx+' with <b>'+yesCount+' of 5 signals</b> passing confirms real talent premium exists but is not yet systematized. Each failing signal above has a specific, time-bound measurement process. Pick the highest-impact one and start this week.';
-  if(l2<=75)return'An L2 score of <b>'+l2+'</b>'+ctx+' with <b>'+yesCount+' of 5 signals</b> passing puts your Talent Premium in positive territory. '+(gapSigs.length>0?'The failing signal \u2014 '+gapSigs[0].signal+' \u2014 is fixable with the measurement process above. One signal closed upgrades the score to the next band.':'All signals are reading strong. Systematize and present this as an organizational capability.');
-  return'An L2 score of <b>'+l2+'</b>'+ctx+' with all five signals passing is a full-strength Talent Premium read. Systematize it. Present it. Use it in senior hiring conversations as a proof point of organizational quality.';
+  if(l2<=15)return'An L2 score of <b>'+l2+'</b>'+ctx+' signals every measured talent quality dimension needs attention. Start with HiPo Identification \u2014 costs nothing, closes fastest \u2014 and exit tracking for selective retention. The verdict rows above have the specific measurement process for each signal.';
+  if(l2<=33)return'An L2 score of <b>'+l2+'</b>'+ctx+' with <b>'+yesCount+' of '+answeredCount+' signals</b> passing confirms real talent premium exists but is not yet systematized. Each failing signal above has a specific, time-bound measurement process. Pick the highest-impact one and start this week.';
+  if(l2<=75)return'An L2 score of <b>'+l2+'</b>'+ctx+' with <b>'+yesCount+' of '+answeredCount+' signals</b> passing puts your Talent Premium in positive territory. '+(gapSigs.length>0?'The failing signal \u2014 '+gapSigs[0].signal+' \u2014 is fixable with the measurement process above. One signal closed upgrades the score to the next band.':'All signals are reading strong. Systematize and present this as an organizational capability.');
+  return'An L2 score of <b>'+l2+'</b>'+ctx+' with '+(answeredCount===5?'all five signals':yesCount+' of '+answeredCount+' measured signals')+' passing is a full-strength Talent Premium read. Systematize it. Present it. Use it in senior hiring conversations as a proof point of organizational quality.';
 }
 
 var acts=[
@@ -225,7 +231,7 @@ var acts=[
 ];
 if(l2>75){
   acts=[
-    {title:'Publish your Talent Premium to leadership',body:yesCount+' of 5 signals passing is a rare reading. Present it: "Our talent quality is generating premium across all five dimensions." That is a board-level statement about your people investment.'},
+    {title:'Publish your Talent Premium to leadership',body:yesCount+' of '+answeredCount+' signals passing is a rare reading. Present it: "Our talent quality is generating premium across '+(answeredCount===5?'all five dimensions':'every dimension we can currently measure')+'." That is a board-level statement about your people investment.'},
     {title:'Set up a quarterly talent quality review',body:'L2 scores deteriorate when measurement stops. Build a quarterly review checking at least 2 signals with hard data. Selective Retention and HiPo Identification are most at risk of silent deterioration.'},
     {title:'Use Talent Premium as a recruitment differentiator',body:'Orgs where promotions work, managers raise the bar, and hires succeed attract better talent. Make your L2 findings part of your employer brand narrative in senior conversations.'},
     {title:'Benchmark against your next Humac check-in',body:'A strong L2 is a baseline, not a destination. Return in 90 days. Declining verdict signals appear here before they appear in attrition data. 6\u201312 months of lead time.'}
@@ -236,8 +242,8 @@ var w=document.getElementById('main-wrap');
 var pdots=[{label:'L1',score:l1,href:'pillar-l1.html'},{label:'L2',score:l2,href:'pillar-l2.html',active:true},{label:'L3',score:l3,href:'pillar-l3.html'},{label:'L4',score:l4,href:'pillar-l4.html'},{label:'L5',score:l5,href:'pillar-l5.html'}];
 var nav='<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+p.score+'</span></a>';}).join('')+'</div><a href="pillar-l3.html" class="pillar-forward">L3 Org Vitals \u2192</a></div>';
 var header='<div class="eyebrow">Vantage \xb7 Humac Score \xb7 L2 \xb7 15% weight</div><h1 class="page-title">The Talent Premium</h1><p class="page-sub">'+(md&&industry?industry+' \xb7 ':'')+(md&&state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate:'Your L2 pillar intelligence')+'</p>';
-var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L2 Score</div><div class="ratio-num">'+l2+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+yesCount+' of 5 talent quality signals passing</div><div class="context">What is the financial value of having <b>better-than-average people</b> at the same cost? Five verdict areas. Each one a measurable talent quality signal.<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' confidence \xb7 L2 carries 15% of Humac Score</div></div></div></div>';
-var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l2+'/100</div><div class="sl">L2 Score</div></div><div class="stat"><div class="sv '+(yesCount>=4?'sv-green':yesCount>=2?'sv-cobalt':'sv-red')+'">'+yesCount+'/5</div><div class="sl">Signals passing</div></div><div class="stat"><div class="sv '+(strongSigs.length>0?'sv-gold':'sv-dim')+'">'+(strongSigs.length>0?strongSigs[0].signal.split(' ')[0]:'\u2014')+'</div><div class="sl">Strongest signal</div></div><div class="stat"><div class="sv '+(gapSigs.length>0?'sv-red':'sv-green')+'">'+(gapSigs.length>0?gapSigs[0].signal.split(' ')[0]:'\u2713 All')+'</div><div class="sl">Priority gap</div></div></div>';
+var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L2 Score</div><div class="ratio-num">'+l2+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+yesCount+' of '+answeredCount+' talent quality signals passing</div><div class="context">What is the financial value of having <b>better-than-average people</b> at the same cost? Five verdict areas. Each one a measurable talent quality signal.<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' confidence \xb7 L2 carries 15% of Humac Score</div></div></div></div>';
+var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l2+'/100</div><div class="sl">L2 Score</div></div><div class="stat"><div class="sv '+(yesCount>=4?'sv-green':yesCount>=2?'sv-cobalt':'sv-red')+'">'+yesCount+'/'+answeredCount+'</div><div class="sl">Signals passing</div></div><div class="stat"><div class="sv '+(strongSigs.length>0?'sv-gold':'sv-dim')+'">'+(strongSigs.length>0?strongSigs[0].signal.split(' ')[0]:'\u2014')+'</div><div class="sl">Strongest signal</div></div><div class="stat"><div class="sv '+(gapSigs.length>0?'sv-red':'sv-green')+'">'+(gapSigs.length>0?gapSigs[0].signal.split(' ')[0]:'\u2713 All')+'</div><div class="sl">Priority gap</div></div></div>';
 var verdicts='<div class="verdicts-section"><div class="sec-head"><h2><span class="step">1</span>Five Verdict Areas \xb7 Talent Quality Signals</h2></div>'+VERDICTS.map(verdictCard).join('')+'</div>';
 var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L2 Talent Premium</div><div class="stmt-txt">'+intelText()+'</div></div>';
 var actions='<div class="section-eyebrow">What to do next</div><div class="section-title">Moving your Talent Premium forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('');
