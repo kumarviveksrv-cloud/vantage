@@ -896,7 +896,7 @@ function showScoreReveal(){
       document.getElementById('calc-loading').style.display='none';
       renderScoreReveal();
     }
-  },500);
+  },1000);
 }
 function renderScoreReveal(){
   var l1=(confidence.A==='computed')?Math.round(computeL1Real(answers)):Math.round(calcL1(answers.q1||0));
