@@ -464,6 +464,7 @@ function saveL3Update(){
   var band=getBandL3(draftHumac.raw);
   var mergedAnswers=Object.assign({},hd.rawAnswers||{});
   VITALS.forEach(function(v){v.signals.forEach(function(s){var val=getSignal(s.id);if(val!==null)mergedAnswers[s.id]=val?'yes':'no';});});
+  PEER_VITAL.signals.forEach(function(s){var val=getSignal(s.id);if(val!==null)mergedAnswers[s.id]=val?'yes':'no';});
   var l3Mode=computeDNA()!==null?'computed':'estimate';
 
   var scoreData=Object.assign({},hd,{
