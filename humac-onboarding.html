@@ -103,6 +103,8 @@ input[type=number]{-moz-appearance:textfield}
 .yn-btn:hover{border-color:var(--cobalt-border);color:var(--text-mid)}
 .yn-btn.selected-yes{background:rgba(99,102,241,.15);border-color:var(--cobalt);color:var(--cobalt)}
 .yn-btn.selected-no{background:rgba(224,92,58,.08);border-color:rgba(224,92,58,.3);color:#E05C3A}
+.yn-btn.yn-na{opacity:.55;font-size:.66rem;border-style:dashed}
+.yn-btn.selected-na{opacity:1;background:rgba(165,180,252,.08);border-color:rgba(165,180,252,.4);border-style:dashed;color:var(--text-mid)}
 .num-input{background:var(--bg3);border:1px solid var(--cobalt-border);color:var(--text);border-radius:8px;padding:10px 14px;font-family:var(--stat);font-size:1.0rem;width:100px;transition:border-color .15s;text-align:right;margin-top:4px}
 .num-input:focus{outline:none;border-color:var(--cobalt)}
 .num-label{font-family:var(--mono);font-size:.78rem;color:var(--text-dim);display:inline-block;margin-left:8px}
@@ -402,13 +404,13 @@ var BLOCKS=[
   },
   {id:'B',title:'Talent Premium',pillar:'L2',weight:'15% weight',
    desc:'Are people generating above-average returns relative to what they cost?',
-   note:'Professional judgment is the right instrument here. You do not need HRIS data \u2014 answer based on what you\u2019d tell a trusted colleague.',
+   note:'Professional judgment is the right instrument here. You do not need HRIS data \u2014 answer based on what you\u2019d tell a trusted colleague. In smaller organisations, one person\u2019s recall of individual promotions, hires, and departures often tracks reality closely. In larger, more distributed ones, no single person can accurately recall outcomes for hundreds of individuals \u2014 answer based on the part of the organisation you know best, not a guess at company-wide patterns you can\u2019t actually see.',
    formula:'<b>Five verdict areas &mdash; precise computation requires employee-level data:</b><br><br><b>Promotion Accuracy:</b> % of promoted employees above grade benchmark 6 months post-promotion.<br><b>Manager Quality:</b> % of managers outperforming their direct report average.<br><b>Hiring Quality:</b> % of hires in last 12 months above role performance baseline.<br><b>Selective Retention:</b> Are top performers staying longer than below-expectation contributors?<br><b>HiPo Identification:</b> Does a formal named HiPo list exist and get updated?',
    questions:[
-     {id:'q2',type:'yn',text:'When you think of people promoted in the last year, are most of them growing into the role \u2014 not just surviving it?',sub:'If you would be comfortable giving them a stretch assignment, they are performing.'},
+     {id:'q2',type:'yn',allowNA:true,text:'When you think of people promoted in the last year, are most of them growing into the role \u2014 not just surviving it?',sub:'If you would be comfortable giving them a stretch assignment, they are performing. If nobody was promoted this year, mark N/A rather than guessing.'},
      {id:'q3',type:'yn',text:'Do most of your managers actively raise the bar in their teams?',sub:'Managers who catch issues early, develop people, and hold standards count as Yes. If the team largely carries itself regardless of who manages it, answer No.'},
-     {id:'q4',type:'yn',text:'Of people you have hired in the last 12 months, is the majority genuinely working out \u2014 meeting or exceeding what you expected when you hired them?',sub:'If you would confidently recommend them for a new project, they count as Yes.'},
-     {id:'q5',type:'yn',text:'When you look at who has resigned in the last 12 months, is it mostly people you were relieved to see leave \u2014 rather than people you wished you could have kept?',sub:'If your best people are the ones walking out the door, answer No.'},
+     {id:'q4',type:'yn',allowNA:true,text:'Of people you have hired in the last 12 months, is the majority genuinely working out \u2014 meeting or exceeding what you expected when you hired them?',sub:'If you would confidently recommend them for a new project, they count as Yes. If nobody was hired in this period, mark N/A rather than guessing.'},
+     {id:'q5',type:'yn',allowNA:true,text:'When you look at who has resigned in the last 12 months, is it mostly people you were relieved to see leave \u2014 rather than people you wished you could have kept?',sub:'If your best people are the ones walking out the door, answer No. If nobody has resigned this period, mark N/A \u2014 that\u2019s not the same as a bad answer.'},
      {id:'q6',type:'yn',text:'Does your organisation have a named group of high-potential employees that leadership actively invests in differently \u2014 mentoring, accelerated projects, leadership exposure?',sub:'A spreadsheet with names counts. An informal conversation that happens every year does not.'}
    ],
    computedQuestions:[
@@ -579,7 +581,19 @@ function handleTemplateUpload(file){
 
 // ── CALCULATIONS ──────────────────────────────────────────────────────────────
 function calcL1(pct){var r=(pct||0)/100;if(r<=0.10)return 0;if(r>=1.20)return 100;if(r<=0.40)return((r-0.10)/0.30)*50;return 50+((r-0.40)/0.80)*50;}
-function calcL2(n){return[0,15,33,50,75,100][Math.max(0,Math.min(5,n))];}
+function calcL2Estimate(a){
+  var ids=['q2','q3','q4','q5','q6'];
+  var yes=0,total=0;
+  ids.forEach(function(id){
+    var v=a[id];
+    if(v==='yes'){yes++;total++;}
+    else if(v==='no'){total++;}
+    // 'na' or unanswered: excluded from the denominator entirely \u2014
+    // this is the whole point, an event that didn't occur this period
+    // shouldn't be forced into a judgment about it.
+  });
+  return total>0?Math.round((yes/total)*100):50;
+}
 function calcL3(n,total){return(n/(total||20))*100;}
 function calcL4(pct){var r=(pct||0)/100;if(r<=0)return 0;if(r>=3.0)return 100;if(r<=1.0)return(r/1.0)*50;return 50+((r-1.0)/2.0)*50;}
 function calcL5(qA,qBYears,qC){var base=(qA==='yes')?2.0:1.2;var yrs=Math.min(parseFloat(qBYears)||0,10);var mult=1+(yrs/10)*0.30;var adj=base*mult;var div={low:1.0,medium:1.2,high:1.5}[(qC||'').toLowerCase()]||1.0;var ratio=adj/div;var idx=(ratio-1.0)*20;if(idx<0)return 0;if(idx>=50)return 100;if(idx<=20)return 10+(idx/20)*40;return 50+((idx-20)/30)*50;}
@@ -679,7 +693,7 @@ function renderBlock(idx){
       qHTMLParts.push('<div class="q-category-header">'+q.category+'</div>'+(q.categoryNote?'<div class="q-category-note">'+q.categoryNote+'</div>':''));
     }
     if(q.type==='pct'){var val=answers[q.id]||'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div class="pct-input-wrap"><input class="pct-input" type="number" id="'+q.id+'" min="0" max="500" value="'+val+'" placeholder="0" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0;clearQError(\''+q.id+'\')"/><span class="pct-unit">%</span><span class="pct-hint">of total salary bill</span></div></div>');}
-    else if(q.type==='yn'){var val=answers[q.id];var hci=q.hci?'<span style="font-family:var(--mono);font-size:.68rem;color:rgba(99,102,241,.5);margin-left:6px">HCI</span>':'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+hci+'</div><div class="yesno-wrap"><button class="yn-btn '+(val==='yes'?'selected-yes':'')+'" onclick="setYN(\''+q.id+'\',\'yes\',this.closest(\'.yesno-wrap\'))">Yes</button><button class="yn-btn '+(val==='no'?'selected-no':'')+'" onclick="setYN(\''+q.id+'\',\'no\',this.closest(\'.yesno-wrap\'))">No</button></div></div>');}
+    else if(q.type==='yn'){var val=answers[q.id];var hci=q.hci?'<span style="font-family:var(--mono);font-size:.68rem;color:rgba(99,102,241,.5);margin-left:6px">HCI</span>':'';var naBtn=q.allowNA?'<button class="yn-btn yn-na '+(val==='na'?'selected-na':'')+'" onclick="setYN(\''+q.id+'\',\'na\',this)">N/A \u2014 didn\u2019t happen this period</button>':'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+hci+'</div><div class="yesno-wrap"><button class="yn-btn '+(val==='yes'?'selected-yes':'')+'" onclick="setYN(\''+q.id+'\',\'yes\',this)">Yes</button><button class="yn-btn '+(val==='no'?'selected-no':'')+'" onclick="setYN(\''+q.id+'\',\'no\',this)">No</button>'+naBtn+'</div></div>');}
     else if(q.type==='num'){var val=answers[q.id]||'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div><input class="num-input" type="number" id="'+q.id+'" min="0" max="'+(q.max||100000000)+'" value="'+val+'" placeholder="'+q.placeholder+'" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0;clearQError(\''+q.id+'\')"/><span class="num-label">'+q.unit+'</span></div></div>');}
     else if(q.type==='select'){var val=answers[q.id]||'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+'</div><select class="risk-select" id="'+q.id+'" onchange="answers[\''+q.id+'\']=this.value.toLowerCase();clearQError(\''+q.id+'\')">'+q.options.map(function(o){return '<option value="'+o.toLowerCase()+'" '+(val===o.toLowerCase()?'selected':'')+'>'+(o||q.placeholder)+'</option>';}).join('')+'</select></div>');}
   });
@@ -700,7 +714,7 @@ function renderBlock(idx){
 }
 
 function toggleFormula(){var btn=document.getElementById('ftoggle');var panel=document.getElementById('fpanel');btn.classList.toggle('open');panel.classList.toggle('open');}
-function setYN(qId,val,wrap){answers[qId]=val;wrap.querySelectorAll('.yn-btn').forEach(function(b){b.classList.remove('selected-yes','selected-no');});var t=wrap.querySelector('.yn-btn:'+(val==='yes'?'first-child':'last-child'));if(t)t.classList.add(val==='yes'?'selected-yes':'selected-no');clearQError(qId);}
+function setYN(qId,val,btn){answers[qId]=val;var wrap=btn.closest('.yesno-wrap');wrap.querySelectorAll('.yn-btn').forEach(function(b){b.classList.remove('selected-yes','selected-no','selected-na');});var cls=val==='yes'?'selected-yes':val==='no'?'selected-no':'selected-na';btn.classList.add(cls);clearQError(qId);}
 function clearQError(qId){var el=document.getElementById('q-wrap-'+qId);if(el)el.classList.remove('question-error');}
 function setConf(blockId,val){confidence[blockId]=val;var blk=BLOCKS.filter(function(x){return x.id===blockId;})[0];if(blk&&blk.computedQuestions){renderBlock(currentBlock);return;}var card=document.querySelector('.block-card');if(card){var c=card.querySelector('.computed-explain');var e=card.querySelector('.estimated-explain');if(c)c.style.opacity=val==='computed'?'1':'.35';if(e)e.style.opacity=val==='estimated'?'1':'.35';}document.querySelectorAll('.conf-btn').forEach(function(b){b.classList.remove('selected');});event.target.classList.add('selected');}
 function validateBlock(idx){
@@ -709,7 +723,7 @@ function validateBlock(idx){
   var missingIds=[];
   activeQuestions.forEach(function(q){
     var val=answers[q.id];
-    if(q.type==='yn'){if(val!=='yes'&&val!=='no')missingIds.push(q.id);}
+    if(q.type==='yn'){if(val!=='yes'&&val!=='no'&&val!=='na')missingIds.push(q.id);}
     else if(q.type==='select'){if(!val)missingIds.push(q.id);}
     else{if(val===undefined||val===null)missingIds.push(q.id);}
   });
@@ -900,7 +914,7 @@ function showScoreReveal(){
 }
 function renderScoreReveal(){
   var l1=(confidence.A==='computed')?Math.round(computeL1Real(answers)):Math.round(calcL1(answers.q1||0));
-  var l2=(confidence.B==='computed')?computeL2Real(answers):calcL2(countYes(['q2','q3','q4','q5','q6']));
+  var l2=(confidence.B==='computed')?computeL2Real(answers):calcL2Estimate(answers);
   var l3=Math.round(calcL3(countYes(['q7','q8','q9','q10','q11','q12','q13','q14','q19','q20','q21','q22','q23','q24','q25','q26','q27','q28','q29','q30','q31','q32','q33','q34','q35']),25));
   var l4=(confidence.D==='computed')?Math.round(computeL4Real(answers)):Math.round(calcL4(answers.q15||0));
   var l5=(confidence.E==='computed')?Math.round(computeL5Real(answers)):Math.round(calcL5(answers.q16,answers.q17,answers.q18));
