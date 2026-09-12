@@ -133,11 +133,11 @@
 
     <div class="doc-eyebrow">Legal</div>
     <h1 class="doc-title">Privacy Policy</h1>
-    <div class="doc-meta">Virorah Private Limited &nbsp;&middot;&nbsp; Last updated: 7 September 2026 &nbsp;&middot;&nbsp; Effective: 7 September 2026</div>
+    <div class="doc-meta">Virorah Private Limited &nbsp;&middot;&nbsp; Last updated: 12 September 2026 &nbsp;&middot;&nbsp; Effective: 12 September 2026</div>
 
     <div class="commitment-banner">
       <strong>Our Privacy Commitment</strong>
-      Your professional data is yours. We collect the minimum necessary to deliver a calibrated experience. We anonymise everything before AI processing. You can export or delete everything instantly. We do not sell your data. We do not use your data to train AI models. We do not share your data with advertisers.
+      Your professional data is yours. We collect the minimum necessary to deliver a calibrated experience. You can export or delete everything instantly. We do not sell your data. We do not use your data to train AI models. We do not share your data with advertisers. Read Section 4 below for exactly how your case narratives are currently handled before reaching our AI processing layer.
     </div>
 
     <div class="toc">
@@ -178,9 +178,9 @@
       <tbody>
         <tr>
           <td><strong>Identity &amp; Access</strong></td>
-          <td>Anonymised user ID (randomly generated, stored in browser localStorage)</td>
-          <td>Auto-generated on first access</td>
-          <td>To associate your records with your account without requiring personal identification</td>
+          <td>Email address, name, and authentication method (email/password or Google OAuth), via Clerk. A unique account identifier is used internally to link your records across the Platform.</td>
+          <td>Provided by you at sign-up, managed by Clerk, Inc.</td>
+          <td>To authenticate you, secure your account, and associate your records with it</td>
         </tr>
         <tr>
           <td><strong>MERIDIAN Profile</strong></td>
@@ -190,7 +190,7 @@
         </tr>
         <tr>
           <td><strong>Case Data</strong></td>
-          <td>Anonymised case narratives, case type, PACT assessment results, status, retrospective notes</td>
+          <td>Case narratives as you type them, case type, PACT assessment results, status, retrospective notes</td>
           <td>Provided by you when using the ER Case Navigator</td>
           <td>To build your Case Library and generate your monthly Debrief</td>
         </tr>
@@ -208,14 +208,14 @@
         </tr>
         <tr>
           <td><strong>Payment Data</strong></td>
-          <td>Subscription tier, payment status (processed entirely by Razorpay)</td>
-          <td>Via Razorpay on subscription</td>
-          <td>To manage your subscription. Virorah does not store card details.</td>
+          <td>Subscription tier and payment status. Payments are designed to be processed by Razorpay; Virorah does not store card details. This Policy will be updated to confirm live payment processing once fully deployed.</td>
+          <td>Via Razorpay, once payment processing is live</td>
+          <td>To manage your subscription</td>
         </tr>
       </tbody>
     </table>
 
-    <p><strong>What we do NOT collect:</strong> Your real name, email address (unless you contact us), employer name, employee names, or any other directly identifying personal information about you or third parties mentioned in your case narratives.</p>
+    <p><strong>What we do NOT collect:</strong> Your employer's name, or the names of colleagues or employees you mention in your case narratives — the Platform does not require or prompt for these, though nothing currently prevents you from typing them yourself (see Section 4). We do collect your own name and email address, via Clerk, as part of account authentication — this is required to sign in and cannot be avoided while using the Platform.</p>
 
     <h2 id="how-we-use">3. How We Use Your Data</h2>
     <p>We use your data exclusively for the following purposes:</p>
@@ -223,24 +223,20 @@
       <li><strong>Service Delivery:</strong> To provide calibrated AI assessments, frameworks, and intelligence outputs based on your MERIDIAN profile and inputs</li>
       <li><strong>Case Library:</strong> To store and display your case records for your professional reference</li>
       <li><strong>Monthly Debrief:</strong> To generate your monthly professional reflection from your case data</li>
-      <li><strong>Platform Improvement:</strong> Aggregated, anonymised usage patterns (not individual records) may be used to improve the Platform's models and user experience</li>
+      <li><strong>Platform Improvement:</strong> We do not currently run aggregated usage analytics. If we introduce this in future, it will be limited to anonymised, aggregated patterns — never individual case content — and this Policy will be updated first.</li>
       <li><strong>Subscription Management:</strong> To manage your subscription, process payments (via Razorpay), and communicate about your account</li>
       <li><strong>Legal Compliance:</strong> To comply with applicable Indian law, including the DPDP Act 2023 and the IT Act 2000</li>
     </ul>
     <p>We do not use your data for advertising. We do not sell your data to any third party. We do not use your individual case narratives or outputs to train AI models.</p>
 
     <h2 id="anonymisation">4. Anonymisation Before AI Processing</h2>
-    <p>This is one of the most important privacy protections in the Platform. Before any case narrative or situation description is sent to our AI processing layer (powered by Anthropic's Claude API), the Platform automatically anonymises your input:</p>
-    <ul>
-      <li>All person names are replaced with <strong>Role A, Role B, Role C</strong> in order of appearance</li>
-      <li>Company names are replaced with <strong>Company X</strong></li>
-      <li>Specific locations (cities, office names) are replaced with <strong>Location Y</strong></li>
-      <li>Other identifying details are replaced with generic equivalents</li>
-    </ul>
+    <p>Before any text you write is sent to our AI processing layer (Anthropic's Claude API), the Platform automatically identifies person names, company names, and specific locations, and replaces them with role-consistent placeholders — for example, "Manager A" and "Employee B" rather than real names, inferred from context so the underlying diagnostic still makes sense. This applies across every AI-powered tool on the Platform: the ER Case Navigator, HR Data Storyteller, Stakeholder Influence, Policy Compass, Conversation Simulator, and ARIA.</p>
     <div class="highlight">
-      The AI model (Anthropic's Claude) never receives your real name, your employer's name, or any directly identifying information. It receives only anonymised narratives and your MERIDIAN profile parameters (state, industry, org type — none of which identify you personally).
+      <strong style="display:block;margin-bottom:6px;color:#6366f1;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase">What happens if anonymisation cannot be completed</strong>
+      This step fails closed: if the anonymisation process cannot produce a safe result after a brief automatic retry, the Platform blocks that request entirely rather than sending your original text unredacted. You will see an error asking you to try again, not a silent fallback.
     </div>
-    <p>The original, non-anonymised narrative you type is stored only in your personal Airtable record and is never shared with any third party other than as described in Section 7.</p>
+    <p>For ARIA and the Conversation Simulator specifically — both ongoing conversations rather than single submissions — the Platform anonymises each new message as it is sent. Earlier turns in the same conversation are not re-processed on every new message, since they were already anonymised when originally sent.</p>
+    <p>Separately: your original text, exactly as you typed it, is stored in your own Airtable record and is not shared with any third party beyond what is described in Section 7. Only the anonymised version is sent to Anthropic.</p>
 
     <h2 id="legal-basis">5. Legal Basis for Processing — DPDP Act 2023</h2>
     <p>Under the Digital Personal Data Protection Act 2023, Virorah processes your personal data on the following legal bases:</p>
@@ -256,7 +252,7 @@
     <ul>
       <li><strong>Airtable (US servers):</strong> Your MERIDIAN profile, case records, and debrief data are stored in Airtable, a cloud database service. Airtable's servers are located in the United States (AWS us-east-1). By using the Platform, you explicitly consent to this cross-border transfer of your personal data to the United States.</li>
       <li><strong>Browser Storage:</strong> Your session data (access status, current-session MERIDIAN profile) is stored in your browser's sessionStorage and localStorage. This data never leaves your device except as described above.</li>
-      <li><strong>Anthropic (US servers):</strong> Anonymised case narratives are processed by Anthropic's Claude API, with servers in the United States. As described in Section 4, only anonymised data is sent to Anthropic. Under Anthropic's API terms, your data is not used to train their models.</li>
+      <li><strong>Anthropic (US servers):</strong> Anonymised text — with person names, company names, and locations replaced with role-consistent placeholders as described in Section 4 — is processed by Anthropic's Claude API, with servers in the United States. Under Anthropic's API terms, this data is not used to train their models.</li>
     </ul>
     <p>Virorah takes reasonable contractual and technical measures to ensure that cross-border transfers are made only to jurisdictions or entities that provide an adequate level of data protection. However, you should be aware that data protection laws in the United States differ from those in India.</p>
 
@@ -274,19 +270,19 @@
       <tbody>
         <tr>
           <td><strong>Anthropic, Inc.</strong></td>
-          <td>Anonymised case narratives, MERIDIAN parameters (state, industry, org type — no personal identifiers)</td>
+          <td>Anonymised text (person names, company names, and locations replaced with role-consistent placeholders — see Section 4), MERIDIAN parameters (state, industry, org type)</td>
           <td>AI processing and output generation</td>
           <td>United States</td>
         </tr>
         <tr>
           <td><strong>Airtable, Inc.</strong></td>
-          <td>User ID, MERIDIAN profile, case records, debrief records</td>
+          <td>Account identifier, MERIDIAN profile, case records, debrief records</td>
           <td>Data storage and retrieval</td>
           <td>United States</td>
         </tr>
         <tr>
           <td><strong>Razorpay Software Pvt. Ltd.</strong></td>
-          <td>Payment details (card information processed directly by Razorpay; Virorah receives only payment status)</td>
+          <td>Payment details, once payment processing is fully live. Card information is processed directly by Razorpay; Virorah receives only payment status.</td>
           <td>Payment processing</td>
           <td>India</td>
         </tr>
@@ -351,8 +347,8 @@
     <ul>
       <li>All data in transit is encrypted using HTTPS/TLS</li>
       <li>Access to Airtable data is restricted via API key authentication</li>
-      <li>Case narratives are anonymised before leaving your browser and before AI processing</li>
-      <li>No employee personal data or real names are stored on the Platform's servers</li>
+      <li>Text is anonymised — person names, company names, and specific locations replaced with role-consistent placeholders — before it reaches Anthropic's Claude API, across every AI-powered tool on the Platform (Section 4)</li>
+      <li>This step fails closed: if anonymisation cannot be completed safely, the request is blocked rather than sent unredacted</li>
       <li>Browser sessionStorage is cleared on sign-out</li>
     </ul>
     <p>No system is completely secure. In the event of a data breach that poses a risk to your rights, Virorah will notify affected users as required by the DPDP Act 2023 and report to the Data Protection Board of India within the prescribed timeframe.</p>
@@ -361,7 +357,7 @@
     <p>The Platform does not use advertising cookies, tracking cookies, or third-party analytics cookies. The Platform uses:</p>
     <ul>
       <li><strong>Browser sessionStorage:</strong> To maintain your session (access status, current MERIDIAN profile). Cleared when you close your browser or sign out.</li>
-      <li><strong>Browser localStorage:</strong> To store your anonymised user ID for data persistence across sessions. You can clear this by using the "Delete All My Data" function.</li>
+      <li><strong>Browser localStorage and Clerk session storage:</strong> Clerk, our authentication provider, manages sign-in session data in your browser to keep you logged in. This is managed by Clerk directly, not by Virorah's own servers.</li>
     </ul>
     <p>The Platform does not use Google Analytics, Meta Pixel, or any other third-party tracking technology.</p>
 
