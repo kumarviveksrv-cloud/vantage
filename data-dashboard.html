@@ -9,16 +9,6 @@
   <title>Data &amp; Privacy — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="vantage-theme.css"/>
-  <!-- SR18: vantage-theme.css above is the canonical palette + typography
-       source. No local :root block — page uses inline hex values
-       throughout, so theme.css adds tokens without conflict. Cormorant
-       Garamond applied to two headline moments only:
-         .page-title — "🔒 Data & Privacy"
-         .trust-title — "Your data stays yours. Always."
-       All .section-title card headers stay Bricolage — they are
-       dense functional section headers, not editorial headlines.
-       BONUS FIX: BASE URL corrected from old GitHub Pages URL to
-       vantage.virorah.com. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
@@ -82,14 +72,20 @@
     .status-msg{font-family:'JetBrains Mono',monospace;font-size:11px;margin-top:10px;padding:8px 12px;border-radius:6px;display:none}
     .status-success{background:rgba(99,102,241,0.08);color:#6366f1;border:1px solid rgba(99,102,241,0.2)}
     .status-error{background:rgba(255,77,109,0.08);color:#FF4D6D;border:1px solid rgba(255,77,109,0.2)}
+    .pending-banner{background:rgba(255,77,109,0.06);border:1px solid rgba(255,77,109,0.25);border-radius:12px;padding:18px 22px;margin-bottom:24px;display:none;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;animation:fadeIn .3s ease}
+    .pending-banner-text{font-size:13px;color:rgba(255,255,255,0.75);line-height:1.6}
+    .pending-banner-text strong{color:#FF4D6D}
     .modal-overlay{position:fixed;inset:0;background:rgba(5,4,16,0.9);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center}
-    .modal{background:#0d0b1e;border:1px solid rgba(255,77,109,0.25);border-radius:16px;padding:32px;max-width:420px;width:90%;text-align:center}
+    .modal{background:#0d0b1e;border:1px solid rgba(255,77,109,0.25);border-radius:16px;padding:32px;max-width:440px;width:90%;text-align:center}
     .modal-icon{font-size:40px;margin-bottom:16px}
     .modal-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;color:#fff}
-    .modal-text{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:24px}
+    .modal-text{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:20px}
+    .modal-confirm-input{width:100%;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,77,109,0.3);border-radius:8px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:14px;text-align:center;letter-spacing:.1em;margin-bottom:20px}
+    .modal-confirm-input:focus{outline:none;border-color:#FF4D6D}
     .modal-btns{display:flex;gap:12px;justify-content:center}
     .modal-confirm{padding:12px 28px;background:#FF4D6D;color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:8px;cursor:pointer;transition:opacity .2s}
     .modal-confirm:hover{opacity:.88}
+    .modal-confirm:disabled{opacity:.35;cursor:not-allowed}
     .modal-cancel{padding:12px 28px;background:transparent;color:rgba(255,255,255,0.5);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;border:1px solid rgba(255,255,255,0.1);border-radius:8px;cursor:pointer}
     .disclaimer{font-size:11px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;text-align:center;padding:16px 0;line-height:1.6;margin-top:8px}
     ::-webkit-scrollbar{width:4px}
@@ -173,14 +169,21 @@
     <div class="page-header">
       <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Data &amp; Privacy</div>
       <div class="page-title">&#x1F512; Data &amp; Privacy</div>
-      <div class="page-sub">Everything the Vantage holds about you. Full transparency. Full control.</div>
+      <div class="page-sub">Everything Vantage holds about you. Full transparency. Full control.</div>
+    </div>
+
+    <div class="pending-banner" id="pending-banner">
+      <div class="pending-banner-text">
+        <strong>Deletion scheduled.</strong> Your account and all data will be permanently deleted on <span id="pending-date">—</span>. Logging in here at any time before then cancels it.
+      </div>
+      <button class="action-btn btn-teal" onclick="cancelDeletion()" id="cancel-deletion-btn">Cancel Deletion</button>
     </div>
 
     <div class="trust-banner">
       <div class="trust-icon">&#x1F6E1;&#xFE0F;</div>
       <div>
         <div class="trust-title">Your data stays yours. Always.</div>
-        <div class="trust-text">Every case narrative is anonymised before processing — names, companies, and locations are stripped before any AI sees your data. Your professional record is stored in your personal Airtable workspace. You can export or delete everything instantly, at any time, for any reason.</div>
+        <div class="trust-text">Every AI-powered tool on the Platform — the ER Case Navigator, HR Data Storyteller, Stakeholder Influence, Policy Compass, Conversation Simulator, and ARIA — anonymises names, companies, and locations before any AI sees your data. Your professional record is stored under your own account. You can export or request deletion of everything at any time.</div>
       </div>
     </div>
 
@@ -191,14 +194,14 @@
         <div class="data-stat-sub">In your Case Library</div>
       </div>
       <div class="data-stat">
-        <div class="data-stat-label">Debriefs generated</div>
+        <div class="data-stat-label">Debrief this month</div>
         <div class="data-stat-value" id="stat-debriefs">&#8212;</div>
-        <div class="data-stat-sub">Monthly reflections</div>
+        <div class="data-stat-sub">Monthly reflection</div>
       </div>
       <div class="data-stat">
-        <div class="data-stat-label">Your user ID</div>
+        <div class="data-stat-label">Your account</div>
         <div class="data-stat-value" style="font-size:12px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.4);margin-top:4px" id="stat-userid">&#8212;</div>
-        <div class="data-stat-sub">Permanent identifier</div>
+        <div class="data-stat-sub">Signed in via Clerk</div>
       </div>
     </div>
 
@@ -206,14 +209,14 @@
       <div class="section-header">
         <div class="section-title"><span class="section-title-icon">&#x1F510;</span> How Your Data Is Protected</div>
       </div>
-      <div class="section-text">Every time you describe a situation in the ER Case Navigator, this is what happens before any AI processing:</div>
+      <div class="section-text">Every time you write a case narrative, situation, or question into any AI-powered tool, this is what happens before any AI processing:</div>
       <div class="anon-log">
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> All person names replaced with Role A, Role B, Role C</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Person names replaced with role-consistent placeholders (Manager A, Employee B)</div>
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Company names replaced with Company X</div>
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> Specific locations replaced with Location Y</div>
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> Anonymised text sent to Claude API — Anthropic never receives identifiable information</div>
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> Original narrative stored only in your personal Airtable record</div>
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> No data shared with third parties. Ever.</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Specific locations replaced with Location A, Location B</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> This step fails closed — if it can't complete safely, the request is blocked, never sent unredacted</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Original text stored only in your own account record</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> No data shared with third parties beyond what's in our Privacy Policy</div>
       </div>
     </div>
 
@@ -222,7 +225,7 @@
         <div class="section-title"><span class="section-title-icon">&#x1F9ED;</span> Your MERIDIAN Profile</div>
         <a href="onboarding.html" class="action-btn btn-ghost" style="font-size:12px;padding:8px 16px">Edit Profile</a>
       </div>
-      <div class="section-text">This is what the Vantage knows about your professional context. It calibrates every tool output to your specific reality.</div>
+      <div class="section-text">This is what Vantage knows about your professional context. It calibrates every tool output to your specific reality.</div>
       <div class="profile-grid" id="profile-grid">
         <div class="profile-field"><div class="profile-field-label">State</div><div class="profile-field-value" id="p-state">&#8212;</div></div>
         <div class="profile-field"><div class="profile-field-label">Industry</div><div class="profile-field-value" id="p-industry">&#8212;</div></div>
@@ -237,7 +240,7 @@
       <div class="section-header">
         <div class="section-title"><span class="section-title-icon">&#x1F4E6;</span> Export Your Data</div>
       </div>
-      <div class="section-text">Download everything the Vantage holds about you — your MERIDIAN profile, all cases, all Debriefs. Your professional record, portable forever. No lock-in.</div>
+      <div class="section-text">Download everything Vantage holds about you — your MERIDIAN profile, all cases, all Debriefs, your Ledger. Your professional record, portable forever. No lock-in.</div>
       <div class="btn-row">
         <button class="action-btn btn-teal" id="export-btn" onclick="exportData()">
           <span>&#x2193;</span> Export All My Data
@@ -246,11 +249,11 @@
       <div class="status-msg" id="export-status"></div>
     </div>
 
-    <div class="section" style="border-color:rgba(255,77,109,0.15)">
+    <div class="section" style="border-color:rgba(255,77,109,0.15)" id="delete-section">
       <div class="section-header">
-        <div class="section-title"><span class="section-title-icon">&#x1F5D1;&#xFE0F;</span> Delete All My Data</div>
+        <div class="section-title"><span class="section-title-icon">&#x1F5D1;&#xFE0F;</span> Delete Everything Permanently</div>
       </div>
-      <div class="section-text">Permanently delete everything — your cases, MERIDIAN profile, and Debriefs. This cannot be undone. Your user ID in localStorage will also be cleared.</div>
+      <div class="section-text">Requests permanent deletion of your cases, MERIDIAN profile, Debriefs, Ledger, and your login account itself. There is a 7-day grace period — logging in here before then cancels it. After 7 days, this cannot be undone.</div>
       <div class="btn-row">
         <button class="action-btn btn-danger" id="delete-btn" onclick="confirmDelete()">
           Delete Everything Permanently
@@ -263,11 +266,11 @@
       <div class="section-header">
         <div class="section-title"><span class="section-title-icon">&#x2696;&#xFE0F;</span> Legal &amp; Compliance</div>
       </div>
-      <div class="section-text">The Virorah Vantage complies with India's Digital Personal Data Protection Act 2023 (DPDP Act). Key rights:</div>
+      <div class="section-text">Virorah Vantage complies with India's Digital Personal Data Protection Act 2023 (DPDP Act). Key rights:</div>
       <div class="anon-log">
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to access your data — view all data held about you on this page</div>
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to correction — update your MERIDIAN profile anytime via Edit Profile</div>
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to erasure — delete all data instantly using the button above</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to erasure — request permanent deletion using the button above</div>
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to portability — export all your data in JSON format anytime</div>
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Data minimisation — only what you explicitly provide is stored</div>
       </div>
@@ -284,10 +287,11 @@
     <div class="modal">
       <div class="modal-icon">&#x26A0;&#xFE0F;</div>
       <div class="modal-title">Delete everything permanently?</div>
-      <div class="modal-text">This will permanently delete all your cases, MERIDIAN profile, and Debriefs from Airtable. Your local session will also be cleared. This cannot be undone.</div>
+      <div class="modal-text">This schedules permanent deletion of all your cases, MERIDIAN profile, Debriefs, Ledger entries, and your login account — in 7 days. Logging in here before then cancels it. Type <strong>DELETE</strong> below to confirm.</div>
+      <input type="text" class="modal-confirm-input" id="delete-confirm-input" placeholder="Type DELETE to confirm" oninput="checkDeleteConfirmInput()" autocomplete="off">
       <div class="modal-btns">
         <button class="modal-cancel" onclick="closeModal()">Cancel</button>
-        <button class="modal-confirm" onclick="executeDelete()">Yes, delete everything</button>
+        <button class="modal-confirm" id="modal-confirm-btn" onclick="executeDelete()" disabled>Yes, delete everything</button>
       </div>
     </div>
   </div>
@@ -300,51 +304,31 @@
       window.location.href = BASE + 'access.html';
     }
 
-    var meridianRaw = sessionStorage.getItem('sr_meridian');
-    var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
-    document.getElementById('meridian-chip-val').innerText =
-      (meridian.state || 'Not set') + ' \xb7 ' + (meridian.industry || 'Not set');
-
-    function getUserId() {
-      var uid = localStorage.getItem('sr_user_id');
-      if (!uid) {
-        uid = 'usr_' + Math.random().toString(36).substr(2,9) + '_' + Date.now();
-        localStorage.setItem('sr_user_id', uid);
-      }
-      return uid;
+    // Every call to the Worker needs a real, verified Clerk session token —
+    // the old version of this page used a self-generated random ID with no
+    // authentication at all, which the Worker's security layer now correctly
+    // rejects. This waits for Clerk to be ready before making any request.
+    function waitForClerk() {
+      return new Promise(function(resolve) {
+        (function check() {
+          if (window.Clerk && window.Clerk.session) resolve();
+          else setTimeout(check, 150);
+        })();
+      });
     }
 
-    function loadProfile() {
-      var uid = getUserId();
-      var shortId = uid.length > 24 ? uid.substring(0, 24) + '...' : uid;
-      document.getElementById('stat-userid').innerText = shortId;
-
-      if (meridian.state) {
-        document.getElementById('p-state').innerText = meridian.state || '\u2014';
-        document.getElementById('p-industry').innerText = meridian.industry || '\u2014';
-        document.getElementById('p-org-type').innerText = meridian.org_type || '\u2014';
-        document.getElementById('p-org-size').innerText = meridian.org_size || '\u2014';
-        document.getElementById('p-seniority').innerText = meridian.seniority || '\u2014';
-        document.getElementById('p-function').innerText = meridian.function || '\u2014';
-      }
-
-      fetch(WORKER, {
+    async function callWorker(toolPayload) {
+      await waitForClerk();
+      var token = await window.Clerk.session.getToken();
+      var res = await fetch(WORKER, {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ tool: 'get_cases', userId: uid })
-      }).then(function(r){ return r.json(); })
-        .then(function(d){
-          document.getElementById('stat-cases').innerText = d.success ? d.data.length : '0';
-        }).catch(function(){ document.getElementById('stat-cases').innerText = '\u2014'; });
-
-      fetch(WORKER, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ tool: 'get_debrief', userId: uid, month: String(new Date().getMonth()+1), year: String(new Date().getFullYear()) })
-      }).then(function(r){ return r.json(); })
-        .then(function(d){
-          document.getElementById('stat-debriefs').innerText = d.success && d.data.exists ? '1+' : '0';
-        }).catch(function(){ document.getElementById('stat-debriefs').innerText = '\u2014'; });
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? 'Bearer ' + token : ''
+        },
+        body: JSON.stringify(toolPayload)
+      });
+      return res.json();
     }
 
     function showStatus(id, msg, type) {
@@ -353,8 +337,54 @@
       el.className = 'status-msg ' + (type === 'success' ? 'status-success' : 'status-error');
       el.style.display = 'block';
       if (type === 'success') {
-        setTimeout(function(){ el.style.display = 'none'; }, 5000);
+        setTimeout(function(){ el.style.display = 'none'; }, 6000);
       }
+    }
+
+    async function loadEverything() {
+      await waitForClerk();
+      var user = window.Clerk.user;
+      var shortId = user && user.id ? (user.id.length > 24 ? user.id.substring(0, 24) + '...' : user.id) : '—';
+      document.getElementById('stat-userid').innerText = shortId;
+
+      // MERIDIAN profile — fetched fresh from the real backend, not trusted
+      // from a possibly-stale sessionStorage blob. The real API returns
+      // camelCase fields (orgType, hrFunction) — the previous version of this
+      // page read snake_case fields that the backend never actually sends.
+      try {
+        var meridianRes = await callWorker({ tool: 'get_meridian' });
+        if (meridianRes.success && meridianRes.data) {
+          var m = meridianRes.data;
+          document.getElementById('meridian-chip-val').innerText = (m.state || 'Not set') + ' \xb7 ' + (m.industry || 'Not set');
+          document.getElementById('p-state').innerText = m.state || '\u2014';
+          document.getElementById('p-industry').innerText = m.industry || '\u2014';
+          document.getElementById('p-org-type').innerText = m.orgType || '\u2014';
+          document.getElementById('p-org-size').innerText = m.orgSize || '\u2014';
+          document.getElementById('p-seniority').innerText = m.seniority || '\u2014';
+          document.getElementById('p-function').innerText = m.hrFunction || '\u2014';
+        }
+      } catch(e) { /* leave fields at placeholder dashes */ }
+
+      // Cases count
+      try {
+        var casesRes = await callWorker({ tool: 'get_cases' });
+        document.getElementById('stat-cases').innerText = casesRes.success ? casesRes.data.length : '0';
+      } catch(e) { document.getElementById('stat-cases').innerText = '\u2014'; }
+
+      // Debrief this month — the real field is hasDebrief, not exists
+      try {
+        var debriefRes = await callWorker({ tool: 'get_debrief' });
+        document.getElementById('stat-debriefs').innerText = (debriefRes.success && debriefRes.data && debriefRes.data.hasDebrief) ? 'Ready' : 'Not yet';
+      } catch(e) { document.getElementById('stat-debriefs').innerText = '\u2014'; }
+
+      // Pending deletion check
+      try {
+        var delStatus = await callWorker({ tool: 'get_deletion_status' });
+        if (delStatus.success && delStatus.data && delStatus.data.pending) {
+          document.getElementById('pending-date').innerText = delStatus.data.scheduledPurgeDate;
+          document.getElementById('pending-banner').style.display = 'flex';
+        }
+      } catch(e) { /* non-fatal — banner just won't show */ }
     }
 
     async function exportData() {
@@ -362,19 +392,14 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="rgba(99,102,241,0.3)" stroke-width="1.5"/><circle cx="8" cy="8" r="6" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="10 28" stroke-linecap="round"/></svg></span> Exporting...';
       try {
-        var res = await fetch(WORKER, {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ tool: 'export_user_data', userId: getUserId() })
-        });
-        var data = await res.json();
+        var data = await callWorker({ tool: 'export_user_data' });
         if (data.success) {
           var json = JSON.stringify(data.data, null, 2);
           var blob = new Blob([json], {type: 'application/json'});
           var url = URL.createObjectURL(blob);
           var a = document.createElement('a');
           a.href = url;
-          a.download = 'virorah-situation-room-data-' + new Date().toISOString().split('T')[0] + '.json';
+          a.download = 'vantage-data-export-' + new Date().toISOString().split('T')[0] + '.json';
           a.click();
           URL.revokeObjectURL(url);
           showStatus('export-status', '\u2713 Export downloaded successfully. Your data is yours.', 'success');
@@ -389,6 +414,8 @@
     }
 
     function confirmDelete() {
+      document.getElementById('delete-confirm-input').value = '';
+      document.getElementById('modal-confirm-btn').disabled = true;
       document.getElementById('modal-overlay').style.display = 'flex';
     }
 
@@ -396,32 +423,26 @@
       document.getElementById('modal-overlay').style.display = 'none';
     }
 
+    function checkDeleteConfirmInput() {
+      var val = document.getElementById('delete-confirm-input').value.trim();
+      document.getElementById('modal-confirm-btn').disabled = (val !== 'DELETE');
+    }
+
     async function executeDelete() {
       closeModal();
       var btn = document.getElementById('delete-btn');
       btn.disabled = true;
-      btn.innerText = 'Deleting...';
+      btn.innerText = 'Scheduling...';
       try {
-        var res = await fetch(WORKER, {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ tool: 'delete_user_data', userId: getUserId() })
-        });
-        var data = await res.json();
+        var data = await callWorker({ tool: 'request_account_deletion' });
         if (data.success) {
-          localStorage.removeItem('sr_user_id');
-          sessionStorage.removeItem('sr_meridian');
-          sessionStorage.removeItem('sr_onboarded');
-          document.getElementById('stat-cases').innerText = '0';
-          document.getElementById('stat-debriefs').innerText = '0';
-          showStatus('delete-status', '\u2713 All data deleted permanently. ' + (data.data.totalDeleted || 0) + ' records removed.', 'success');
-          btn.innerText = 'Deleted';
-          setTimeout(function(){
-            sessionStorage.clear();
-            window.location.href = BASE + 'access.html';
-          }, 3000);
+          var purgeDate = data.data.scheduledPurgeDate;
+          showStatus('delete-status', '\u2713 Deletion scheduled for ' + purgeDate + '. You can cancel by logging in before then.', 'success');
+          document.getElementById('pending-date').innerText = purgeDate;
+          document.getElementById('pending-banner').style.display = 'flex';
+          btn.innerText = 'Deletion Scheduled';
         } else {
-          showStatus('delete-status', 'Deletion failed: ' + (data.error || 'Unknown error'), 'error');
+          showStatus('delete-status', 'Request failed: ' + (data.error || 'Unknown error'), 'error');
           btn.disabled = false;
           btn.innerText = 'Delete Everything Permanently';
         }
@@ -432,7 +453,28 @@
       }
     }
 
-    loadProfile();
+    async function cancelDeletion() {
+      var btn = document.getElementById('cancel-deletion-btn');
+      btn.disabled = true;
+      btn.innerText = 'Cancelling...';
+      try {
+        var data = await callWorker({ tool: 'cancel_account_deletion' });
+        if (data.success) {
+          document.getElementById('pending-banner').style.display = 'none';
+          document.getElementById('delete-btn').disabled = false;
+          document.getElementById('delete-btn').innerText = 'Delete Everything Permanently';
+          showStatus('delete-status', '\u2713 Deletion cancelled. Your account is safe.', 'success');
+        } else {
+          btn.disabled = false;
+          btn.innerText = 'Cancel Deletion';
+        }
+      } catch(err) {
+        btn.disabled = false;
+        btn.innerText = 'Cancel Deletion';
+      }
+    }
+
+    loadEverything();
   </script>
 
   <script src="clerk-auth.js"></script>
