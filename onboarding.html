@@ -258,6 +258,10 @@
                   }).join('') +
                 '</div>' +
               '</div>' +
+              '<div>' +
+                '<label class="form-label">Actual Annual Attrition Rate (optional)</label>' +
+                '<input type="text" id="pol-attrition" placeholder="e.g. 14% — if provided, this replaces the generic industry benchmark everywhere it is used" value="' + (profile.policyAttritionRate||'') + '" oninput="profile.policyAttritionRate=this.value" />' +
+              '</div>' +
             '</div>' +
           '</div>';
         return;
@@ -323,7 +327,7 @@
         });
       } catch(e) {}
 
-      var policyFields = ['policyNoticePeriod','policyWarningProcess','policyTerminationAuth','policyDomesticEnquiry','policyStandingOrders'];
+      var policyFields = ['policyNoticePeriod','policyWarningProcess','policyTerminationAuth','policyDomesticEnquiry','policyStandingOrders','policyAttritionRate'];
       var policySet = policyFields.filter(function(f){ return profile[f]; }).length;
 
       document.getElementById('step-container').innerHTML =
@@ -339,7 +343,7 @@
             '<div class="ms-item"><div class="ms-label">Seniority</div><div class="ms-val">'+(profile.seniority||'Not set')+'</div></div>' +
             '<div class="ms-item"><div class="ms-label">Union Status</div><div class="ms-val">'+(profile.unionStatus||'Not set')+'</div></div>' +
             '<div class="ms-item"><div class="ms-label">HR Function</div><div class="ms-val">'+(profile.hrFunction||'Not set')+'</div></div>' +
-            '<div class="ms-item"><div class="ms-label">Policy Fields</div><div class="ms-val">'+(policySet)+' of 5 set</div></div>' +
+            '<div class="ms-item"><div class="ms-label">Policy Fields</div><div class="ms-val">'+(policySet)+' of 6 set</div></div>' +
           '</div>' +
           '<a href="dashboard.html" class="btn-enter">Enter Vantage &#x2192;</a>' +
         '</div>';
