@@ -9,19 +9,6 @@
   <title>MERIDIAN Setup — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="vantage-theme.css"/>
-  <!-- SR18: vantage-theme.css above is the canonical palette + typography
-       source. Local :root below KEPT INTACT as a fallback — same
-       pattern as every other SR18 page with a local :root. Cormorant
-       Garamond applied to two genuine headline moments only:
-         .header-title  — "Build your professional context."
-         .complete-title — "MERIDIAN is ready."
-       .step-title (the wizard question titles) stays Bricolage — they
-       are dense interactive question headers in the wizard UI, not
-       editorial headlines. The .complete-title is also used in the
-       dynamically rendered innerHTML in completeMERIDIAN(), which picks
-       up the class-level Cormorant automatically.
-       BONUS FIX: BASE URL corrected from old GitHub Pages URL to
-       vantage.virorah.com. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden}
@@ -121,7 +108,6 @@
   <div class="nav-btns" id="nav-btns">
     <button class="btn-back" id="btn-back" onclick="prevStep()" style="display:none">&#x2190; Back</button>
     <div style="display:flex;gap:10px;margin-left:auto">
-      <!-- Skip removed: skipping defeats MERIDIAN profile building -->
       <button class="btn-next" id="btn-next" onclick="nextStep()" disabled>Continue &#x2192;</button>
     </div>
   </div>
@@ -154,7 +140,7 @@
       {
         id:'industry', title:'What industry are you in?', sub:'Industry shapes everything from notice period norms to union density to typical ER case patterns.',
         type:'grid', cols:3,
-        options:['IT / SaaS','Banking / NBFC','Manufacturing','Healthcare / Pharma','Retail / FMCG','Consulting / Professional Services','Education / EdTech','Logistics / Supply Chain','Media / Entertainment','Government / PSU','Startup','Other']
+        options:['IT / SaaS','BPO / KPO','Banking / NBFC','Insurance','Manufacturing','Automobile / Auto Ancillary','Healthcare / Pharma','Retail / FMCG','Consulting / Professional Services','Education / EdTech','Logistics / Supply Chain','Telecom','Media / Entertainment','Real Estate / Construction','Aviation','Oil & Gas / Energy','Textiles / Apparel','Chemicals / Fertilizers','Agriculture / Agri-business','Government / PSU','Startup','Other']
       },
       {
         id:'orgType', title:'What type of organisation?', sub:'This determines which employment law provisions apply — registered factories, shops & establishments, or contract labour regulations.',
@@ -223,11 +209,9 @@
 
       document.getElementById('btn-back').style.display = currentStep > 0 ? 'block' : 'none';
       document.getElementById('btn-next').disabled = !profile[step.id] && step.type !== 'policy';
-      // Skip removed
 
       if (step.type === 'policy') {
         document.getElementById('btn-next').disabled = false;
-        // Skip removed
         container.innerHTML =
           '<div class="step-card">' +
             '<div class="step-num">Step ' + (currentStep + 1) + ' of ' + STEPS.length + '</div>' +
@@ -323,7 +307,6 @@
 
     async function completeMERIDIAN() {
       sessionStorage.setItem('sr_meridian', JSON.stringify(profile));
-      // Persist to localStorage so MERIDIAN survives sign-out and is restored on next login
       var _mEmail = sessionStorage.getItem('sr_user_email') || localStorage.getItem('sr_user_email') || '';
       if (_mEmail) { localStorage.setItem('sr_meridian_' + _mEmail, JSON.stringify(profile)); }
       document.getElementById('progress-fill').style.width = '100%';
