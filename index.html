@@ -4,16 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#050410">
-<title>Virorah Vantage — People decisions are financial decisions.</title>
+<title>Virorah Vantage — Enter the system.</title>
 <meta name="description" content="The intelligence platform for Indian HR professionals who want to lead in the language of business.">
 <link rel="icon" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vantage-cinematic.css">
+<link rel="stylesheet" href="vantage-cinematic-v4.css">
 </head>
 <body>
 <canvas id="world" aria-hidden="true"></canvas>
+<canvas id="cinemaCanvas" aria-hidden="true"></canvas>
+<div class="cinema-hud" aria-hidden="true"><span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span><span class="hud-readout left">VANTAGE // PRIVATE
+INTELLIGENCE LAYER</span><span class="hud-readout right">SIGNAL 07.4
+CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</span><span class="hud-meter"><i id="hudMeter"></i></span></div><div class="scene-tag" id="sceneTag">01 / THE DECISION</div>
 <div class="grain" aria-hidden="true"></div>
 <div class="scanlines" aria-hidden="true"></div>
 <div class="cursor-orb" aria-hidden="true"></div>
@@ -40,7 +45,7 @@
 </header>
 
 <main>
-<section class="hero cinematic-panel" id="top">
+<section class="hero cinematic-panel is-live" id="top">
   <div class="hero-field" aria-hidden="true"><div class="hero-ring r1"></div><div class="hero-ring r2"></div><div class="hero-ring r3"></div><div class="hero-core"></div></div>
   <div class="hero-copy">
     <div class="sysline"><span>INDIA / HR</span><span>CASE RECORDING ACTIVE</span><span id="liveClock">21:07:00</span></div>
@@ -51,6 +56,11 @@
     <div class="hero-foot"><span>PRIVATE BY DEFAULT</span><span>BUILT FOR INDIAN HR</span><span>YOUR RECORD, NOT YOUR COMPANY'S</span></div>
   </div>
   <div class="hero-scroll"><span>SCROLL TO ENTER</span><i></i></div>
+</section>
+
+<section class="cinematic-portal" aria-label="The Vantage portal">
+  <div class="portal-noise"></div><div class="portal-ring"></div><div class="portal-ring"></div><div class="portal-ring"></div><div class="portal-core"></div>
+  <div class="portal-copy"><span class="portal-kicker">VANTAGE / SYSTEM ENTRY</span><h2>The work is<br><em>connected.</em></h2><p>Every decision carries a shadow. Every conversation has a cost. Every choice becomes part of the professional record.</p></div>
 </section>
 
 <section class="signal-strip"><div class="signal-track"><span>EMPLOYEE RELATIONS</span><b>◆</b><span>POLICY</span><b>◆</b><span>BUSINESS IMPACT</span><b>◆</b><span>FINANCIAL EXPOSURE</span><b>◆</b><span>STAKEHOLDER INFLUENCE</span><b>◆</b><span>CAREER RECORD</span><b>◆</b><span>EMPLOYEE RELATIONS</span><b>◆</b><span>POLICY</span><b>◆</b><span>BUSINESS IMPACT</span><b>◆</b><span>FINANCIAL EXPOSURE</span></div></section>
@@ -141,6 +151,11 @@
 
 <section class="pricing cinematic-panel" id="pricing"><div class="section-index">09 / ACCESS</div><div class="pricing-head"><p class="eyebrow">PRIVATE INTELLIGENCE / SIMPLE ACCESS</p><h2>Bring the system<br><em>with you.</em></h2></div><div class="pricing-grid"><article class="price-card"><div class="price-label">CORE</div><div class="price">₹699<span>/month</span></div><p>Your everyday Vantage intelligence layer.</p><ul><li>ER Case Navigator (PACT)</li><li>Policy Compass</li><li>HR Data Storyteller (SIGNAL)</li><li>Conversation Simulator</li><li>Offer Intelligence</li><li>MERIDIAN Context Engine</li><li>Case Library + Monthly Debrief</li></ul><a href="access.html" class="btn btn-primary">Enter Vantage →</a></article><article class="price-card featured"><div class="price-glow"></div><div class="price-label">CONSULTANT</div><div class="price">₹1,499<span>/month</span></div><p>For HR professionals operating across rooms, clients and organisations.</p><ul><li>Everything in Core</li><li>Stakeholder Influence Builder</li><li>Full Humacity Financial Intelligence</li><li>Human P&amp;L + Human Balance Sheet</li><li>Priority ARIA voice access</li></ul><a href="access.html" class="btn btn-primary">Enter Vantage →</a></article></div><p class="pricing-note">No enterprise procurement. No annual lock-in. Your account is yours.</p></section>
 
+<section class="cinematic-portal portal-exit" aria-label="Vantage exit sequence">
+  <div class="portal-noise"></div><div class="portal-ring"></div><div class="portal-ring"></div><div class="portal-ring"></div><div class="portal-core"></div>
+  <div class="portal-copy"><span class="portal-kicker">SYSTEM MEMORY / PERSISTENT</span><h2>Tomorrow, the room<br>will still be <em>waiting.</em></h2><p>You'll walk in differently because the system came with you.</p></div>
+</section>
+
 <section class="final cinematic-panel"><div class="final-field"><div class="final-radial"></div></div><div class="final-copy"><p class="eyebrow">VANTAGE / PRIVATE INTELLIGENCE SYSTEM</p><h2>Do the work.<br>Keep the record.<br><em>Build the career.</em></h2><p>Walk into the next room with more than an answer.</p><a href="access.html" class="btn btn-primary magnetic">Enter Vantage <span>↗</span></a></div><div class="final-foot"><span>VIRORAH VANTAGE</span><span>INDIA / HR</span><span>© 2026 VIRORAH</span></div></section>
 </main>
 
@@ -151,5 +166,6 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
 <script src="vantage-cinematic.js"></script>
+<script src="vantage-cinematic-v4.js"></script>
 </body>
 </html>
