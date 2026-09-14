@@ -79,19 +79,23 @@
     .cost-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,0.70);margin-bottom:20px}
     .cost-headline{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(18px,2vw,26px);font-weight:700;color:rgba(244,243,255,0.6);margin-bottom:36px;line-height:1.4}
     .cost-headline strong{color:#f4f3ff}
-    .mock-card{background:var(--surface);border:1px solid var(--border-accent);border-radius:18px;padding:28px;position:relative;text-align:left;animation:float 7s ease-in-out infinite}
-    .mock-card::before{content:'';position:absolute;inset:-1px;border-radius:18px;background:linear-gradient(135deg,rgba(99,102,241,0.15),transparent 60%);z-index:-1;pointer-events:none}
+    .mock-card{background:linear-gradient(160deg, rgba(19,17,46,0.95) 0%, rgba(11,10,26,0.98) 100%);border:1px solid var(--border-accent);border-radius:20px;padding:30px;position:relative;text-align:left;animation:float 7s ease-in-out infinite, card-glow 4s ease-in-out infinite}
+    .mock-card::before{content:'';position:absolute;top:0;left:24px;right:24px;height:1px;background:linear-gradient(90deg,transparent,rgba(165,180,252,0.6),rgba(196,181,253,0.4),transparent)}
+    .mock-card::after{content:'';position:absolute;inset:-1px;border-radius:20px;background:linear-gradient(135deg,rgba(99,102,241,0.15),transparent 60%);z-index:-1;pointer-events:none}
+    @keyframes card-glow{0%,100%{box-shadow:0 30px 70px -25px rgba(0,0,0,0.7), 0 0 0 1px rgba(99,102,241,0.06)}50%{box-shadow:0 30px 70px -25px rgba(0,0,0,0.7), 0 0 0 1px rgba(99,102,241,0.18), 0 0 40px rgba(99,102,241,0.1)}}
     .mock-badge{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);padding:4px 10px;border-radius:4px;display:inline-block;margin-bottom:16px}
-    .mock-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;color:#f4f3ff}
-    .mock-risk{font-family:'JetBrains Mono',monospace;font-size:10px;color:#FF4D6D;background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.25);padding:3px 9px;border-radius:4px;display:inline-block;margin-bottom:18px}
-    .mock-exposure{background:#050410;border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:14px 18px;margin-bottom:14px}
-    .mock-expo-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
-    .mock-expo-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);line-height:1.65}
+    .mock-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;color:#f4f3ff}
+    .mock-risk{font-family:'JetBrains Mono',monospace;font-size:10px;color:#FF4D6D;background:rgba(255,77,109,0.12);border:1px solid rgba(255,77,109,0.3);padding:3px 9px;border-radius:4px;display:inline-block;margin-bottom:20px;box-shadow:0 0 16px rgba(255,77,109,0.15)}
+    .mock-exposure{background:rgba(3,2,10,0.55);border:1px solid rgba(99,102,241,0.25);border-radius:12px;padding:20px 22px;margin-bottom:14px;box-shadow:inset 0 2px 10px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03)}
+    .mock-expo-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+    .mock-expo-big{font-family:'Bricolage Grotesque',sans-serif;font-size:38px;font-weight:800;line-height:1.05;background:linear-gradient(135deg,#f4f3ff 0%,#c4b5fd 50%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px}
+    .mock-expo-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.04em;margin-bottom:14px}
+    .mock-expo-breakdown{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.75;padding-top:12px;border-top:1px solid rgba(99,102,241,0.14)}
     .mock-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .mock-mini{background:#050410;border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+    .mock-mini{background:rgba(3,2,10,0.55);border:1px solid var(--border);border-radius:10px;padding:14px 16px;box-shadow:inset 0 1px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.02)}
     .mock-mini-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
     .mock-mini-val{font-size:11px;color:rgba(244,243,255,0.5);line-height:1.5}
-    .mock-mini-val strong{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;display:block;margin-bottom:2px}
+    .mock-mini-val strong{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:13px;display:block;margin-bottom:3px}
     .stats-strip{position:relative;z-index:2;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(13,11,30,0.6);padding:36px 48px}
     .stats-inner{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
     .stat-item{text-align:center;position:relative}
@@ -346,7 +350,9 @@
       <div class="mock-risk">HIGH RISK</div>
       <div class="mock-exposure">
         <div class="mock-expo-label">Total Financial Exposure</div>
-        <div class="mock-expo-val">&#8377;28L &ndash; &#8377;35L estimated<br>Settlement &#8377;12L &middot; Legal &#8377;4L &middot; Replacement &#8377;8L<br>Productivity loss &#8377;4L&ndash;11L</div>
+        <div class="mock-expo-big">&#8377;28L&ndash;35L</div>
+        <div class="mock-expo-sub">estimated</div>
+        <div class="mock-expo-breakdown">Settlement &#8377;12L &middot; Legal &#8377;4L &middot; Replacement &#8377;8L<br>Productivity loss &#8377;4L&ndash;11L</div>
       </div>
       <div class="mock-row">
         <div class="mock-mini"><div class="mock-mini-label">Cost of Inaction</div><div class="mock-mini-val"><strong>&#8377;22L</strong>if case proceeds without documentation trail</div></div>
