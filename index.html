@@ -35,8 +35,10 @@
     .nav-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
     .nav-sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-top:1px}
     .nav-links{display:flex;align-items:center;gap:28px}
-    .nav-links a{font-size:13px;color:var(--grey);text-decoration:none;transition:color .2s}
+    .nav-links a{font-size:13px;color:var(--grey);text-decoration:none;transition:color .2s;position:relative;padding-bottom:2px}
+    .nav-links a::after{content:'';position:absolute;left:0;right:100%;bottom:0;height:1px;background:linear-gradient(90deg,var(--accent),var(--muted));transition:right .25s ease;box-shadow:0 0 8px rgba(99,102,241,0.5)}
     .nav-links a:hover{color:#f4f3ff}
+    .nav-links a:hover::after{right:0}
     .nav-cta{padding:10px 22px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer;text-decoration:none;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.4)}
     .nav-cta:hover{opacity:.88}
     .hero{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:140px 48px 100px;overflow:hidden;text-align:center}
@@ -220,7 +222,7 @@
     .footer-links a{font-size:12px;color:var(--dim);text-decoration:none;transition:color .2s}
     .footer-links a:hover{color:var(--muted)}
     .footer-copy{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace}
-    #neural-core{position:fixed;top:0;left:0;width:9px;height:9px;border-radius:50%;background:#a5b4fc;box-shadow:0 0 12px 3px rgba(165,180,252,.7);pointer-events:none;z-index:9999;transition:transform .25s ease}
+
     @media(max-width:960px){nav{padding:14px 24px}.nav-links{display:none}.hero{padding:110px 24px 72px}.alone-section{padding:72px 24px}.cost-section{padding:60px 24px 72px}.scenario-section{padding:0 24px 72px}.scenario-reveal-stats{grid-template-columns:1fr}.stats-strip{padding:28px 24px}.stats-inner{grid-template-columns:repeat(2,1fr);gap:20px}section{padding:72px 24px}.shift-wrapper{grid-template-columns:1fr;gap:24px}.shift-arrow-col{display:none}.tools-grid{grid-template-columns:1fr 1fr}.tool-card.wide{grid-column:span 1}.meridian-strip{padding:48px 24px}.meridian-inner{grid-template-columns:1fr}.humacity-inner{grid-template-columns:1fr}.pricing-grid{max-width:100%;grid-template-columns:1fr}.final-strip{padding:72px 24px}footer{flex-direction:column;gap:16px;text-align:center;padding:32px 24px;align-items:center}.footer-links{justify-content:center}}
     @media(max-width:600px){.tools-grid{grid-template-columns:1fr}.meridian-params{grid-template-columns:repeat(2,1fr)}.h-assets{grid-template-columns:1fr}.arg-card{grid-template-columns:1fr;gap:10px;padding:24px}.why-closing{padding:24px}.mock-row{grid-template-columns:1fr}}
     @media(max-width:480px){
@@ -271,7 +273,6 @@
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
-<div id="neural-core"></div>
 
 <nav>
   <div class="nav-logo" style="display:flex;align-items:center;cursor:pointer">
@@ -599,30 +600,6 @@
   }
   resize();init();draw();
   window.addEventListener('resize',function(){resize();init();});
-})();
-
-(function(){
-  // Gated to real pointer devices only — the original had no touch handling
-  // at all, so it sat as a static dot dead-center on every phone and tablet.
-  if (!window.matchMedia('(pointer: fine)').matches) return;
-
-  var core=document.getElementById('neural-core');
-  var mouseX=innerWidth/2,mouseY=innerHeight/2,curX=mouseX,curY=mouseY;
-  document.addEventListener('mousemove',function(e){mouseX=e.clientX;mouseY=e.clientY;});
-
-  var isHovering=false;
-  document.querySelectorAll('a,button').forEach(function(el){
-    el.addEventListener('mouseenter',function(){isHovering=true;});
-    el.addEventListener('mouseleave',function(){isHovering=false;});
-  });
-
-  function loop(){
-    curX+=(mouseX-curX)*0.18;curY+=(mouseY-curY)*0.18;
-    var scale=isHovering?2.4:1;
-    core.style.transform='translate3d('+curX+'px,'+curY+'px,0) translate(-50%,-50%) scale('+scale+')';
-    requestAnimationFrame(loop);
-  }
-  loop();
 })();
 
 // ── INTERACTIVE SCENARIO ─────────────────────────────────────────────────
