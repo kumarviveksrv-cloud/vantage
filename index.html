@@ -75,6 +75,27 @@
     .alone-close{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.06em;display:flex;align-items:center;gap:10px}
     .alone-close::before{content:'';width:18px;height:1px;background:var(--accent);opacity:.6}
     .cost-section{position:relative;z-index:2;padding:80px 48px 100px;background:linear-gradient(180deg,rgba(13,11,30,0.3) 0%,transparent 100%)}
+    .scenario-section{position:relative;z-index:2;padding:0 48px 100px}
+    .scenario-inner{max-width:640px;margin:0 auto;text-align:center}
+    .scenario-card{background:linear-gradient(160deg, rgba(19,17,46,0.95) 0%, rgba(11,10,26,0.98) 100%);border:1px solid var(--border-accent);border-radius:20px;padding:32px;text-align:left;position:relative;margin-top:36px;animation:card-glow 4s ease-in-out infinite}
+    .scenario-card::before{content:'';position:absolute;top:0;left:24px;right:24px;height:1px;background:linear-gradient(90deg,transparent,rgba(165,180,252,0.6),rgba(196,181,253,0.4),transparent)}
+    .scenario-setup{font-size:14px;color:rgba(244,243,255,0.75);line-height:1.75;margin-bottom:24px}
+    .scenario-setup strong{color:#f4f3ff}
+    .scenario-choices{display:flex;flex-direction:column;gap:10px}
+    .scenario-choice-btn{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:rgba(3,2,10,0.4);border:1px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif}
+    .scenario-choice-btn:hover{border-color:rgba(99,102,241,0.4);background:rgba(99,102,241,0.06)}
+    .scenario-choice-letter{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--muted);border:1px solid rgba(99,102,241,0.3);border-radius:6px;width:26px;height:26px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+    .scenario-choice-text{font-size:13px;color:rgba(244,243,255,0.75);line-height:1.5}
+    .scenario-reveal{display:none;margin-top:24px;padding-top:24px;border-top:1px solid rgba(99,102,241,0.14)}
+    .scenario-reveal.visible{display:block;animation:fadeUp .5s ease both}
+    .scenario-reveal-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+    .scenario-verdict-badge{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;padding:5px 12px;border-radius:5px;font-weight:600}
+    .scenario-reset-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(165,180,252,0.5);background:none;border:none;cursor:pointer;text-decoration:underline;transition:color .2s}
+    .scenario-reset-btn:hover{color:var(--muted)}
+    .scenario-reveal-headline{font-size:14px;color:rgba(244,243,255,0.8);line-height:1.7;margin-bottom:18px}
+    .scenario-reveal-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+    .scenario-cta-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.18);border-radius:12px;padding:16px 18px}
+    .scenario-cta-text{font-size:12px;color:var(--grey);line-height:1.5;flex:1;min-width:200px}
     .cost-inner{max-width:560px;margin:0 auto;text-align:center}
     .cost-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,0.70);margin-bottom:20px}
     .cost-headline{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(18px,2vw,26px);font-weight:700;color:rgba(244,243,255,0.6);margin-bottom:36px;line-height:1.4}
@@ -202,7 +223,7 @@
     #neural-core{position:fixed;top:0;left:0;width:9px;height:9px;border-radius:50%;background:#a5b4fc;box-shadow:0 0 12px 3px rgba(165,180,252,.7);pointer-events:none;z-index:9999}
     #neural-readout{position:fixed;top:0;left:0;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#a5b4fc;pointer-events:none;z-index:9999;opacity:0;transition:opacity .25s;white-space:nowrap;letter-spacing:.4px}
     #neural-canvas{position:fixed;inset:0;z-index:9997;pointer-events:none;width:100%;height:100%;max-width:100vw}
-    @media(max-width:960px){nav{padding:14px 24px}.nav-links{display:none}.hero{padding:110px 24px 72px}.alone-section{padding:72px 24px}.cost-section{padding:60px 24px 72px}.stats-strip{padding:28px 24px}.stats-inner{grid-template-columns:repeat(2,1fr);gap:20px}section{padding:72px 24px}.shift-wrapper{grid-template-columns:1fr;gap:24px}.shift-arrow-col{display:none}.tools-grid{grid-template-columns:1fr 1fr}.tool-card.wide{grid-column:span 1}.meridian-strip{padding:48px 24px}.meridian-inner{grid-template-columns:1fr}.humacity-inner{grid-template-columns:1fr}.pricing-grid{max-width:100%;grid-template-columns:1fr}.final-strip{padding:72px 24px}footer{flex-direction:column;gap:16px;text-align:center;padding:32px 24px;align-items:center}.footer-links{justify-content:center}}
+    @media(max-width:960px){nav{padding:14px 24px}.nav-links{display:none}.hero{padding:110px 24px 72px}.alone-section{padding:72px 24px}.cost-section{padding:60px 24px 72px}.scenario-section{padding:0 24px 72px}.scenario-reveal-stats{grid-template-columns:1fr}.stats-strip{padding:28px 24px}.stats-inner{grid-template-columns:repeat(2,1fr);gap:20px}section{padding:72px 24px}.shift-wrapper{grid-template-columns:1fr;gap:24px}.shift-arrow-col{display:none}.tools-grid{grid-template-columns:1fr 1fr}.tool-card.wide{grid-column:span 1}.meridian-strip{padding:48px 24px}.meridian-inner{grid-template-columns:1fr}.humacity-inner{grid-template-columns:1fr}.pricing-grid{max-width:100%;grid-template-columns:1fr}.final-strip{padding:72px 24px}footer{flex-direction:column;gap:16px;text-align:center;padding:32px 24px;align-items:center}.footer-links{justify-content:center}}
     @media(max-width:600px){.tools-grid{grid-template-columns:1fr}.meridian-params{grid-template-columns:repeat(2,1fr)}.h-assets{grid-template-columns:1fr}.arg-card{grid-template-columns:1fr;gap:10px;padding:24px}.why-closing{padding:24px}.mock-row{grid-template-columns:1fr}}
     @media(max-width:480px){
       .hero{padding:90px 20px 60px;min-height:auto}
@@ -357,6 +378,38 @@
       <div class="mock-row">
         <div class="mock-mini"><div class="mock-mini-label">Cost of Inaction</div><div class="mock-mini-val"><strong>&#8377;22L</strong>if case proceeds without documentation trail</div></div>
         <div class="mock-mini"><div class="mock-mini-label">Revenue Protected</div><div class="mock-mini-val"><strong>&#8377;18L</strong>preserved through correct process</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="scenario-section reveal" id="scenario-section">
+  <div class="scenario-inner">
+    <div class="cost-eyebrow">Now you decide</div>
+    <div class="cost-headline">Same situation. <strong>Four ways to handle it.</strong><br>Only one holds up if it's ever challenged.</div>
+    <div class="scenario-card">
+      <div class="mock-badge">Live Scenario &middot; ER Case Navigator</div>
+      <div class="scenario-setup">An employee has been absent without explanation for 7 days. He's been warned twice verbally, but there's no written warning on file. HR wants this closed out today.<br><br><strong>What do you do?</strong></div>
+      <div class="scenario-choices" id="scenario-choices">
+        <button class="scenario-choice-btn" data-choice="a" onclick="pickScenario('a')"><span class="scenario-choice-letter">A</span><span class="scenario-choice-text">Terminate immediately — the absence alone justifies it</span></button>
+        <button class="scenario-choice-btn" data-choice="b" onclick="pickScenario('b')"><span class="scenario-choice-letter">B</span><span class="scenario-choice-text">Issue a formal written warning, reassess in 3 days</span></button>
+        <button class="scenario-choice-btn" data-choice="c" onclick="pickScenario('c')"><span class="scenario-choice-letter">C</span><span class="scenario-choice-text">Initiate a domestic enquiry under standing orders</span></button>
+        <button class="scenario-choice-btn" data-choice="d" onclick="pickScenario('d')"><span class="scenario-choice-letter">D</span><span class="scenario-choice-text">Treat it as voluntary abandonment and close the file</span></button>
+      </div>
+      <div class="scenario-reveal" id="scenario-reveal">
+        <div class="scenario-reveal-top">
+          <div class="scenario-verdict-badge" id="scenario-verdict"></div>
+          <button class="scenario-reset-btn" onclick="resetScenario()">Try another choice</button>
+        </div>
+        <div class="scenario-reveal-headline" id="scenario-headline"></div>
+        <div class="scenario-reveal-stats">
+          <div class="mock-mini"><div class="mock-mini-label">Legal Exposure</div><div class="mock-mini-val"><strong id="scenario-legal"></strong><span id="scenario-legal-desc"></span></div></div>
+          <div class="mock-mini"><div class="mock-mini-label">Business Disruption</div><div class="mock-mini-val"><strong id="scenario-business"></strong><span id="scenario-business-desc"></span></div></div>
+        </div>
+        <div class="scenario-cta-row">
+          <span class="scenario-cta-text">This is exactly what ER Case Navigator walks you through in 60 seconds — for your actual case.</span>
+          <a href="demo.html" class="btn-primary" style="padding:12px 24px;font-size:13px">Try it on a real case &rarr;</a>
+        </div>
       </div>
     </div>
   </div>
@@ -587,6 +640,71 @@
   }
   loop();
 })();
+
+// ── INTERACTIVE SCENARIO ─────────────────────────────────────────────────
+// Deliberately plain JS, scoped to this one section, no libraries — this
+// runs only when a visitor actually clicks a choice, so it adds nothing to
+// initial page weight for the majority who are just scrolling past.
+var SCENARIO_OUTCOMES = {
+  a: {
+    verdict: 'HIGH RISK', verdictBg: 'rgba(255,77,109,0.12)', verdictColor: '#FF4D6D', verdictBorder: 'rgba(255,77,109,0.3)',
+    headline: 'No documentation trail exists. If this is ever challenged, reinstatement with back wages is the likely outcome — the absence is real, but the process to act on it isn\u2019t.',
+    legal: '\u20b918L\u201324L', legalDesc: 'likely settlement + legal cost if challenged',
+    business: 'High', businessDesc: 'sets a precedent the rest of the workforce will notice'
+  },
+  b: {
+    verdict: 'PARTIAL', verdictBg: 'rgba(165,180,252,0.1)', verdictColor: '#a5b4fc', verdictBorder: 'rgba(165,180,252,0.25)',
+    headline: 'A reasonable first move, but 7 days of undocumented absence needs more than one more warning cycle. This buys time without closing the actual gap.',
+    legal: '\u20b94L\u20138L', legalDesc: 'lower risk, but the case stays open',
+    business: 'Moderate', businessDesc: 'delays resolution without removing the exposure'
+  },
+  c: {
+    verdict: 'DEFENSIBLE', verdictBg: 'rgba(74,222,128,0.1)', verdictColor: '#4ade80', verdictBorder: 'rgba(74,222,128,0.25)',
+    headline: 'This is the procedurally correct path under certified standing orders — slower, but the one that actually holds up if it\u2019s ever challenged.',
+    legal: '\u20b91L\u20133L', legalDesc: 'process-driven, defensible either way',
+    business: 'Low', businessDesc: 'slower close, but the outcome is protected'
+  },
+  d: {
+    verdict: 'HIGH RISK', verdictBg: 'rgba(255,77,109,0.12)', verdictColor: '#FF4D6D', verdictBorder: 'rgba(255,77,109,0.3)',
+    headline: '\u201cVoluntary abandonment\u201d is a narrow legal doctrine. Assuming it applies without documented attempts to reach the employee first is the same exposure as an undocumented termination.',
+    legal: '\u20b915L\u201320L', legalDesc: 'the doctrine likely doesn\u2019t hold without more',
+    business: 'High', businessDesc: 'same reputational risk as choice A, just relabelled'
+  }
+};
+
+function pickScenario(choice) {
+  var o = SCENARIO_OUTCOMES[choice];
+  if (!o) return;
+
+  document.querySelectorAll('.scenario-choice-btn').forEach(function(btn) {
+    btn.style.opacity = (btn.getAttribute('data-choice') === choice) ? '1' : '0.35';
+    btn.disabled = true;
+  });
+
+  var badge = document.getElementById('scenario-verdict');
+  badge.textContent = o.verdict;
+  badge.style.background = o.verdictBg;
+  badge.style.color = o.verdictColor;
+  badge.style.border = '1px solid ' + o.verdictBorder;
+
+  document.getElementById('scenario-headline').textContent = o.headline;
+  document.getElementById('scenario-legal').textContent = o.legal;
+  document.getElementById('scenario-legal-desc').textContent = ' ' + o.legalDesc;
+  document.getElementById('scenario-business').textContent = o.business;
+  document.getElementById('scenario-business-desc').textContent = ' ' + o.businessDesc;
+
+  var reveal = document.getElementById('scenario-reveal');
+  reveal.classList.add('visible');
+  reveal.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function resetScenario() {
+  document.querySelectorAll('.scenario-choice-btn').forEach(function(btn) {
+    btn.style.opacity = '1';
+    btn.disabled = false;
+  });
+  document.getElementById('scenario-reveal').classList.remove('visible');
+}
 
 var reveals=document.querySelectorAll('.reveal');
 var revObs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.08});
