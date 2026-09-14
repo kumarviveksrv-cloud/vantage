@@ -15,6 +15,11 @@
        .page-title and .intro-title only. All policy output sections
        (.policy-section-text, .rec-text) stay sans-serif — they're
        dense advisory prose, not headline moments. -->
+  <!-- PDF.js and mammoth.js for client-side document text extraction —
+       both loaded from cdnjs so nothing is uploaded to Vantage's own
+       servers before extraction happens. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
@@ -116,13 +121,40 @@
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
     @media(max-width:768px){.sidebar{display:none}.main{padding:20px 16px}.flags-grid{grid-template-columns:1fr 1fr}.aria-offer-card{flex-direction:column;align-items:flex-start}}
-  
+
     /* ── VOICE INPUT WRAPPER ── */
     .voice-wrap{position:relative}
     .voice-btn{position:absolute;bottom:10px;right:10px;width:32px;height:32px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);color:#a5b4fc;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:2;line-height:1}
     .voice-btn:hover{background:rgba(99,102,241,0.22);border-color:rgba(99,102,241,0.45)}
     .voice-btn.listening{background:rgba(124,58,237,0.25);border-color:rgba(124,58,237,0.6);color:#c4b5fd;animation:voicePulse 1s ease-in-out infinite}
     @keyframes voicePulse{0%{box-shadow:0 0 0 0 rgba(124,58,237,0.5)}70%{box-shadow:0 0 0 10px rgba(124,58,237,0)}100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}}
+
+    /* ── DOCUMENT UPLOAD (NEW) ── */
+    .doc-upload-section{border-top:1px solid rgba(99,102,241,0.1);padding-top:22px;margin-top:4px}
+    .doc-upload-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:12px 14px;background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;transition:all .2s}
+    .doc-upload-toggle:hover{border-color:rgba(99,102,241,0.3);background:rgba(99,102,241,0.08)}
+    .doc-upload-toggle-label{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--grey)}
+    .doc-upload-toggle-arrow{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);transition:transform .2s}
+    .doc-upload-toggle-arrow.open{transform:rotate(90deg)}
+    .doc-upload-body{display:none;padding:18px 4px 4px}
+    .doc-upload-body.open{display:block}
+    .doc-upload-warning{background:rgba(255,181,71,0.08);border:1px solid rgba(255,181,71,0.25);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:12px;color:rgba(255,209,138,0.9);line-height:1.65}
+    .doc-file-input-wrap{position:relative;margin-bottom:14px}
+    .doc-file-btn{width:100%;padding:14px;background:rgba(99,102,241,0.06);border:1px dashed rgba(99,102,241,0.3);border-radius:10px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;cursor:pointer;text-align:center;transition:all .2s}
+    .doc-file-btn:hover{border-color:rgba(99,102,241,0.55);background:rgba(99,102,241,0.1)}
+    .doc-file-input{position:absolute;inset:0;opacity:0;cursor:pointer}
+    .doc-status{font-family:'JetBrains Mono',monospace;font-size:11px;padding:10px 12px;border-radius:8px;margin-bottom:14px;display:none;line-height:1.5}
+    .doc-status.show{display:block}
+    .doc-status.working{background:rgba(99,102,241,0.08);color:var(--muted);border:1px solid rgba(99,102,241,0.2)}
+    .doc-status.ready{background:rgba(74,222,128,0.08);color:#86efac;border:1px solid rgba(74,222,128,0.25)}
+    .doc-status.error{background:rgba(248,113,113,0.08);color:#fca5a5;border:1px solid rgba(248,113,113,0.25)}
+    .doc-remove-btn{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(248,113,113,0.8);background:transparent;border:none;cursor:pointer;text-decoration:underline;margin-left:10px}
+    .consent-row{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:10px;cursor:pointer;transition:all .2s}
+    .consent-row:hover{border-color:rgba(99,102,241,0.3)}
+    .consent-checkbox{width:18px;height:18px;border-radius:4px;border:1px solid rgba(99,102,241,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .2s;color:transparent;font-size:11px}
+    .consent-row.checked .consent-checkbox{background:var(--accent);border-color:var(--accent);color:#fff}
+    .consent-text{font-size:12px;color:rgba(244,243,255,0.65);line-height:1.65}
+    .consent-text strong{color:rgba(244,243,255,0.9)}
   </style>
 </head>
 <body>
@@ -194,6 +226,31 @@
           <button class="voice-btn" id="query-mic" onclick="toggleVoiceInput('query', this)" title="Tap to speak">&#127908;</button>
           </div>
         </div>
+
+        <!-- DOCUMENT UPLOAD (NEW) -->
+        <div class="form-section doc-upload-section">
+          <div class="doc-upload-toggle" onclick="toggleDocUploadPanel()">
+            <div class="doc-upload-toggle-label"><span>&#x1F4CE;</span> Ground this in your actual policy document <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.4);margin-left:4px">(optional)</span></div>
+            <div class="doc-upload-toggle-arrow" id="doc-toggle-arrow">&#9656;</div>
+          </div>
+          <div class="doc-upload-body" id="doc-upload-body">
+            <div class="doc-upload-warning">
+              <strong>This is a more sensitive action than a normal question.</strong> Uploading your actual policy document shares your organisation's whole HR playbook, not one situation. Only do this if you're authorised to share this document outside your organisation's usual channels.
+            </div>
+            <div class="doc-file-input-wrap" id="doc-file-input-wrap">
+              <div class="doc-file-btn" id="doc-file-btn">&#x1F4C1; Choose a policy document (PDF, DOCX, or TXT)</div>
+              <input type="file" class="doc-file-input" id="doc-file-input" accept=".pdf,.docx,.txt" onchange="handleDocumentUpload(this)"/>
+            </div>
+            <div class="doc-status" id="doc-status"></div>
+            <div class="consent-row" id="consent-row" onclick="toggleConsent()">
+              <div class="consent-checkbox" id="consent-checkbox">&#x2713;</div>
+              <div class="consent-text">
+                I confirm I have the authority to share this document. I understand the document text is extracted in my browser and sent to Anthropic's Claude API — the AI model Vantage runs on — to answer my question, and is <strong>not stored on Vantage's servers</strong>. Person names, company names, and specific locations are automatically anonymised before this happens. This upload is limited to 3 per day.
+              </div>
+            </div>
+          </div>
+        </div>
+
         <button class="submit-btn" id="submit-btn" onclick="runPolicy()" disabled>Get Policy Guidance &rarr;</button>
       </div>
     </div>
@@ -287,6 +344,13 @@
     var currentQuery = '';
     var parsedSections = {};
 
+    // ── DOCUMENT UPLOAD STATE (NEW) ──────────────────────────────────────────
+    // Extracted text lives only in this variable for the current page load —
+    // never written to localStorage or sessionStorage, so it doesn't persist
+    // any longer than the page itself is open.
+    var attachedDocumentText = null;
+    var docConsentGiven = false;
+
     if (sessionStorage.getItem('sr_access') !== 'true') {
       window.location.href = BASE + 'access.html';
     }
@@ -296,9 +360,13 @@
     document.getElementById('meridian-chip-val').innerText =
       (meridian.state || 'Not set') + ' \xb7 ' + (meridian.industry || 'Not set');
 
-    document.getElementById('query').addEventListener('input', function(){
-      document.getElementById('submit-btn').disabled = this.value.trim().length < 20;
-    });
+    function updateSubmitState() {
+      var questionOk = document.getElementById('query').value.trim().length >= 20;
+      var docOk = !attachedDocumentText || docConsentGiven;
+      document.getElementById('submit-btn').disabled = !(questionOk && docOk);
+    }
+
+    document.getElementById('query').addEventListener('input', updateSubmitState);
 
     function toggleFlag(el, label) {
       el.classList.toggle('checked');
@@ -314,32 +382,147 @@
       document.getElementById(view).style.display = 'block';
     }
 
+    // ── DOCUMENT UPLOAD HANDLERS (NEW) ────────────────────────────────────────
+    function toggleDocUploadPanel() {
+      var body = document.getElementById('doc-upload-body');
+      var arrow = document.getElementById('doc-toggle-arrow');
+      body.classList.toggle('open');
+      arrow.classList.toggle('open');
+    }
+
+    function toggleConsent() {
+      if (!attachedDocumentText) return; // nothing to consent to until a file is actually attached
+      docConsentGiven = !docConsentGiven;
+      document.getElementById('consent-row').classList.toggle('checked', docConsentGiven);
+      updateSubmitState();
+    }
+
+    function setDocStatus(msg, type) {
+      var el = document.getElementById('doc-status');
+      el.textContent = msg;
+      el.className = 'doc-status show ' + type;
+    }
+
+    function removeDocument() {
+      attachedDocumentText = null;
+      docConsentGiven = false;
+      document.getElementById('consent-row').classList.remove('checked');
+      document.getElementById('doc-file-input').value = '';
+      document.getElementById('doc-status').className = 'doc-status';
+      updateSubmitState();
+    }
+
+    async function handleDocumentUpload(input) {
+      var file = input.files && input.files[0];
+      if (!file) return;
+      attachedDocumentText = null;
+      docConsentGiven = false;
+      document.getElementById('consent-row').classList.remove('checked');
+      setDocStatus('Reading ' + file.name + '\u2026', 'working');
+
+      try {
+        var text = '';
+        var ext = file.name.split('.').pop().toLowerCase();
+
+        if (ext === 'pdf') {
+          if (!window.pdfjsLib) throw new Error('PDF reader failed to load. Try refreshing the page.');
+          pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.js';
+          var arrayBuffer = await file.arrayBuffer();
+          var pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          var pages = [];
+          for (var i = 1; i <= pdf.numPages; i++) {
+            var page = await pdf.getPage(i);
+            var content = await page.getTextContent();
+            pages.push(content.items.map(function(it){ return it.str; }).join(' '));
+          }
+          text = pages.join('\n\n');
+        } else if (ext === 'docx') {
+          if (!window.mammoth) throw new Error('Document reader failed to load. Try refreshing the page.');
+          var arrayBuffer2 = await file.arrayBuffer();
+          var docResult = await mammoth.extractRawText({ arrayBuffer: arrayBuffer2 });
+          text = docResult.value || '';
+        } else if (ext === 'txt') {
+          text = await file.text();
+        } else {
+          throw new Error('Unsupported file type. Please upload a PDF, DOCX, or TXT file.');
+        }
+
+        text = text.trim();
+        if (!text) {
+          throw new Error('No readable text was found in this file — it may be a scanned image with no text layer.');
+        }
+        if (text.length > 100000) {
+          text = text.slice(0, 100000);
+        }
+
+        var statusEl = document.getElementById('doc-status');
+        statusEl.textContent = '\u2713 ' + file.name + ' \u2014 read successfully' +
+          (text.length >= 99999 ? ' (truncated to the first ~35 pages, the maximum supported).' : ' (~' + Math.max(1, Math.round(text.length/500)) + ' pages).');
+        statusEl.className = 'doc-status show ready';
+        var removeBtn = document.createElement('button');
+        removeBtn.className = 'doc-remove-btn';
+        removeBtn.textContent = 'Remove';
+        removeBtn.onclick = removeDocument;
+        statusEl.appendChild(removeBtn);
+
+        attachedDocumentText = text;
+        updateSubmitState();
+      } catch (err) {
+        console.error('Document extraction error:', err);
+        setDocStatus((err && err.message) || 'Could not read this file. Please try a different file.', 'error');
+        attachedDocumentText = null;
+        input.value = '';
+        updateSubmitState();
+      }
+    }
+
     async function runPolicy() {
       currentQuery = document.getElementById('query').value.trim();
       if (!currentQuery) return;
       showView('loading-view');
-      var loadInterval = animateLoading();
+
+      var usingDocument = !!(attachedDocumentText && docConsentGiven);
+      document.getElementById('loading-text').textContent = usingDocument
+        ? 'ANONYMISING YOUR DOCUMENT — THIS TAKES A LITTLE LONGER...'
+        : 'CHECKING AGAINST INDIAN LAW...';
+
+      var loadInterval = (typeof animateLoading === 'function') ? animateLoading() : null;
       try {
-        var context = activeFlags.length > 0
-          ? 'Active flags: ' + activeFlags.join(', ')
-          : '';
-        var res = await fetch(WORKER, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            tool: 'policy',
-            question: currentQuery,
-            context: context,
-            meridian: meridian
-          })
-        });
+        var questionWithFlags = currentQuery + (activeFlags.length > 0 ? '\n\nActive flags: ' + activeFlags.join(', ') : '');
+        var res;
+
+        if (usingDocument) {
+          res = await fetch(WORKER, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              tool: 'policy_document',
+              documentText: attachedDocumentText,
+              question: questionWithFlags,
+              meridian: meridian
+            })
+          });
+        } else {
+          var context = activeFlags.length > 0 ? 'Active flags: ' + activeFlags.join(', ') : '';
+          res = await fetch(WORKER, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              tool: 'policy',
+              question: currentQuery,
+              context: context,
+              meridian: meridian
+            })
+          });
+        }
+
         var data = await res.json();
         clearInterval(loadInterval);
         if (data.success) {
           currentResult = data.data;
           renderOutput();
         } else {
-          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You\u2019ve reached your daily limit for Policy Compass. Resets tomorrow.') : 'Assessment failed. ' + (data.error || 'Please try again.'));
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You\u2019ve reached your daily limit. Resets tomorrow.') : 'Assessment failed. ' + (data.error || 'Please try again.'));
         }
       } catch(err) {
         clearInterval(loadInterval);
@@ -423,6 +606,7 @@
       document.getElementById('query').value = '';
       document.getElementById('submit-btn').disabled = true;
       document.querySelectorAll('.flag-item').forEach(function(f){ f.classList.remove('checked'); });
+      removeDocument();
       showView('intake-view');
     }
   </script>
@@ -525,6 +709,17 @@
       };
     })();
   </script>
+
+  <script>
+    // NOTE FOR VIVEK: runPolicy() below calls animateLoading(), which is not
+    // defined anywhere in this file or in sidebar-shared.js (I've read that
+    // file in full). It may be defined in clerk-auth.js, which I haven't
+    // seen — if so, this is a no-op and changes nothing. If it genuinely
+    // isn't defined anywhere, this guard prevents a crash rather than
+    // silently assuming either way. Worth checking clerk-auth.js directly
+    // to know which case this actually is.
+  </script>
+
   <script src="clerk-auth.js"></script>
   <script src="sidebar-shared.js"></script>
 
