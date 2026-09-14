@@ -59,17 +59,12 @@ if(finance&&!reduce){for(let i=0;i<26;i++){const p=document.createElement('span'
 /* ---------- record constellation ---------- */
 const record=$('#recordUniverse');if(record&&!reduce){record.addEventListener('pointermove',e=>{const r=record.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;record.querySelectorAll('.record-point').forEach((p,i)=>p.style.transform=`translate(${x*(i%2?15:-10)}px,${y*(i%2?10:-8)}px)`)});record.addEventListener('pointerleave',()=>record.querySelectorAll('.record-point').forEach(p=>p.style.transform=''))}
 
-/* ---------- Three.js ambient world ---------- */
-const canvas=$('#world');
-if(canvas&&window.THREE){
- const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.setClearColor(0x000000,0);
- const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,100);camera.position.z=8;
- const count=Math.min(1200,Math.floor(innerWidth*innerHeight/900));const geo=new THREE.BufferGeometry();const pos=new Float32Array(count*3),col=new Float32Array(count*3);for(let i=0;i<count;i++){const r=3+Math.random()*9,a=Math.random()*Math.PI*2,b=Math.acos(2*Math.random()-1);pos[i*3]=r*Math.sin(b)*Math.cos(a);pos[i*3+1]=r*Math.sin(b)*Math.sin(a);pos[i*3+2]=r*Math.cos(b);const c=new THREE.Color().setHSL(.69+Math.random()*.08,.55,.45+.3*Math.random());col[i*3]=c.r;col[i*3+1]=c.g;col[i*3+2]=c.b}geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('color',new THREE.BufferAttribute(col,3));const mat=new THREE.PointsMaterial({size:.025,transparent:true,opacity:.34,vertexColors:true,blending:THREE.AdditiveBlending,depthWrite:false});const points=new THREE.Points(geo,mat);scene.add(points);
- const sphere=new THREE.Mesh(new THREE.SphereGeometry(1.35,48,48),new THREE.MeshBasicMaterial({color:0x6366f1,transparent:true,opacity:.018,wireframe:true}));scene.add(sphere);
- let mx=0,my=0,sy=0,targetSy=0;addEventListener('pointermove',e=>{mx=(e.clientX/innerWidth-.5)*.8;my=(e.clientY/innerHeight-.5)*.5});addEventListener('scroll',()=>targetSy=scrollY*.00012,{passive:true});
- function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()}addEventListener('resize',resize);
- function tick(t){points.rotation.y=t*.000018+mx*.18;points.rotation.x=t*.000006+my*.1;sphere.rotation.x=t*.00008;sphere.rotation.y=t*.00012;camera.position.x+=(mx*1.3-camera.position.x)*.025;camera.position.y+=(-my*.8-camera.position.y)*.025;camera.position.z=8-targetSy;renderer.render(scene,camera);requestAnimationFrame(tick)}requestAnimationFrame(tick);
-}
+/* ---------- Three.js ambient world ----------
+   Disabled in the V4 bundle: vantage-cinematic-v4.js creates its own,
+   more elaborate WebGLRenderer targeting this same #world canvas. Running
+   both meant two independent Three.js scenes and render loops fighting
+   over a single canvas element — wasted GPU cost at best, a flickering,
+   undefined visual result at worst. V4's field fully supersedes this one. */
 
 /* ---------- navigation / anchor safety ---------- */
 $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.getAttribute('href'));if(target){e.preventDefault();if(lenis)lenis.scrollTo(target,{offset:-70});else target.scrollIntoView({behavior:'smooth'})}}));
