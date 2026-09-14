@@ -20,7 +20,6 @@
       --border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.28);
       --text:rgba(244,243,255,0.9);--grey:rgba(244,243,255,0.62);--dim:rgba(244,243,255,0.50)
     }
-    /* Prevent any child from causing horizontal overflow */
     *{max-width:100%}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
     @keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
@@ -56,6 +55,7 @@
     .hero-sub{font-size:clamp(15px,1.6vw,18px);color:var(--grey);line-height:1.8;max-width:580px;margin:0 auto 44px}
     .hero-sub strong{color:rgba(244,243,255,0.65);font-weight:500}
     .hero-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+    .hero-reassure{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(244,243,255,0.32);letter-spacing:.05em;margin-top:22px}
     .btn-primary{padding:16px 36px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:10px;cursor:pointer;text-decoration:none;display:inline-block;transition:opacity .2s,transform .2s;box-shadow:0 4px 28px rgba(99,102,241,0.45),0 0 0 1px rgba(99,102,241,0.15)}
     .btn-primary:hover{opacity:.9;transform:translateY(-1px)}
     .btn-outline{padding:16px 28px;background:transparent;color:rgba(244,243,255,0.7);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;border:1px solid rgba(244,243,255,0.1);border-radius:10px;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s}
@@ -92,25 +92,17 @@
     .mock-mini-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
     .mock-mini-val{font-size:11px;color:rgba(244,243,255,0.5);line-height:1.5}
     .mock-mini-val strong{color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;display:block;margin-bottom:2px}
-
-    /* STATS STRIP — canvas overlay per card */
     .stats-strip{position:relative;z-index:2;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(13,11,30,0.6);padding:36px 48px}
     .stats-inner{max-width:1140px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
     .stat-item{text-align:center;position:relative}
     .stat-num{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:var(--lavender);margin-bottom:6px;letter-spacing:-0.5px;position:relative;z-index:1}
-    
     .stat-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;line-height:1.5;position:relative;z-index:1}
-
-    /* SHIFT — canvas overlay */
     .shift-section-wrap{position:relative}
     .shift-glitch-canvas{position:absolute;inset:0;pointer-events:none;z-index:5;opacity:0}
-
-    /* MERIDIAN — canvas replace */
     .meridian-canvas-wrap{position:relative;min-height:260px}
     #meridian-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2}
     .meridian-params{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:28px;opacity:0;transition:opacity 1s ease 2.5s}
     .meridian-params.resolved{opacity:1}
-
     section{position:relative;z-index:2;padding:100px 48px}
     .section-inner{max-width:1140px;margin:0 auto}
     .section-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.10em;text-transform:uppercase;color:rgba(165,180,252,0.72);margin-bottom:14px}
@@ -208,8 +200,6 @@
     #neural-canvas{position:fixed;inset:0;z-index:9997;pointer-events:none;width:100%;height:100%;max-width:100vw}
     @media(max-width:960px){nav{padding:14px 24px}.nav-links{display:none}.hero{padding:110px 24px 72px}.alone-section{padding:72px 24px}.cost-section{padding:60px 24px 72px}.stats-strip{padding:28px 24px}.stats-inner{grid-template-columns:repeat(2,1fr);gap:20px}section{padding:72px 24px}.shift-wrapper{grid-template-columns:1fr;gap:24px}.shift-arrow-col{display:none}.tools-grid{grid-template-columns:1fr 1fr}.tool-card.wide{grid-column:span 1}.meridian-strip{padding:48px 24px}.meridian-inner{grid-template-columns:1fr}.humacity-inner{grid-template-columns:1fr}.pricing-grid{max-width:100%;grid-template-columns:1fr}.final-strip{padding:72px 24px}footer{flex-direction:column;gap:16px;text-align:center;padding:32px 24px;align-items:center}.footer-links{justify-content:center}}
     @media(max-width:600px){.tools-grid{grid-template-columns:1fr}.meridian-params{grid-template-columns:repeat(2,1fr)}.h-assets{grid-template-columns:1fr}.arg-card{grid-template-columns:1fr;gap:10px;padding:24px}.why-closing{padding:24px}.mock-row{grid-template-columns:1fr}}
-  
-    /* ── PWA STANDALONE + MOBILE LANDING FIX ────────────────── */
     @media(max-width:480px){
       .hero{padding:90px 20px 60px;min-height:auto}
       .hero-c3-line1{font-size:13px;margin-bottom:12px}
@@ -249,8 +239,6 @@
       footer{flex-direction:column;gap:14px;text-align:center;padding:24px 20px;align-items:center}
       .footer-links{justify-content:center;flex-wrap:wrap;gap:16px}
     }
-
-    /* PWA standalone mode — remove top padding conflict with status bar */
     @media(display-mode:standalone){
       nav{padding-top:env(safe-area-inset-top,16px)}
       .hero{padding-top:calc(env(safe-area-inset-top,0px) + 90px)}
@@ -285,16 +273,17 @@
   <div class="hero-inner">
     <div class="hero-eyebrow">Virorah Vantage</div>
     <div class="hero-c3">
-      <span class="hero-c3-line1">Every HR professional has a 9pm moment.</span>
-      <span class="hero-c3-line2"><span class="grad">A case that can't wait. A conversation that has to land right.<br>A call you'll be held accountable for —<br>whether or not you had the right support making it.</span><span class="cursor"></span></span>
-      <span class="hero-c3-line3">Now you do.</span>
+      <span class="hero-c3-line1">You'll do extraordinary work this year. In twelve months, you won't remember most of it — because nobody's ever built you a way to.</span>
+      <span class="hero-c3-line2"><span class="grad">Vantage remembers it for you.</span><span class="cursor"></span></span>
+      <span class="hero-c3-line3">Your own career record. Nobody else gets one of these.</span>
     </div>
     <div class="hero-divider"></div>
-    <p class="hero-sub">The intelligence platform built for Indian HR professionals who want to stop being treated as a cost centre — and start leading in the <strong>language of business.</strong></p>
+    <p class="hero-sub">A private, monthly record of every case you navigated and every rupee you protected — built automatically, calibrated to your exact state, industry, and role. <strong>Not bought by your company. Yours.</strong></p>
     <div class="hero-actions">
       <a href="demo.html" class="btn-primary">Enter Vantage &rarr;</a>
       <a href="access.html" class="btn-outline">Sign In</a>
     </div>
+    <div class="hero-reassure">No demo calls. No approval chain. No procurement cycle. Just yours.</div>
   </div>
 </div>
 
@@ -366,7 +355,6 @@
   </div>
 </div>
 
-<!-- STATS STRIP — sonar pulse animation -->
 <div class="stats-strip" id="stats-strip">
   <div class="stats-inner">
     <div class="stat-item"><div class="stat-num" id="sn0">&#8377;0L</div><div class="stat-label">Avg exposure per<br>ER case, India</div></div>
@@ -376,7 +364,6 @@
   </div>
 </div>
 
-<!-- SHIFT SECTION -->
 <section id="shift-section">
   <div class="section-inner reveal">
     <div class="section-eyebrow">The shift</div>
@@ -543,7 +530,6 @@
 </footer>
 
 <script>
-// ── PARTICLE BG ──────────────────────────────────────────────
 (function(){
   var c=document.getElementById('bg-canvas'),ctx=c.getContext('2d'),pts=[];
   function resize(){c.width=innerWidth;c.height=innerHeight;}
@@ -558,7 +544,6 @@
   window.addEventListener('resize',function(){resize();init();});
 })();
 
-// ── NEURAL CURSOR ────────────────────────────────────────────
 (function(){
   var canvas=document.getElementById('neural-canvas'),ctx=canvas.getContext('2d');
   function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
@@ -595,12 +580,10 @@
   loop();
 })();
 
-// ── REVEAL ON SCROLL ─────────────────────────────────────────
 var reveals=document.querySelectorAll('.reveal');
 var revObs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.08});
 reveals.forEach(function(r){revObs.observe(r);});
 
-// ── MERIDIAN PARAMS — populate on scroll, static final state ─
 (function(){
   var fired=false;
   var params=[
