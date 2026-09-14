@@ -158,6 +158,15 @@
     .tool-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px;transition:border-color .25s,transform .25s}
     .tool-card:hover{border-color:rgba(99,102,241,0.35);transform:translateY(-3px)}
     .tool-card.wide{grid-column:span 2}
+    .record-featured{background:linear-gradient(160deg, rgba(19,17,46,0.95) 0%, rgba(11,10,26,0.98) 100%);border:1px solid var(--border-accent);border-radius:20px;padding:36px;position:relative;margin-top:40px;margin-bottom:16px}
+    .record-featured::before{content:'';position:absolute;top:0;left:28px;right:28px;height:1px;background:linear-gradient(90deg,transparent,rgba(165,180,252,0.6),rgba(196,181,253,0.4),transparent)}
+    .record-featured-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);padding:4px 10px;border-radius:4px;display:inline-block;margin-bottom:16px}
+    .record-featured-name{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;color:#f4f3ff;margin-bottom:12px}
+    .record-featured-desc{font-size:14px;color:rgba(244,243,255,0.72);line-height:1.75;max-width:640px}
+    .record-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .record-mini{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+    .record-mini-name{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;color:#f4f3ff;margin-bottom:8px}
+    .record-mini-desc{font-size:12px;color:var(--grey);line-height:1.6}
     .tool-icon{font-size:22px;margin-bottom:14px}
     .tool-tag{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
     .tool-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;color:#f4f3ff}
@@ -228,7 +237,7 @@
     .footer-links a:hover{color:var(--muted)}
     .footer-copy{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace}
 
-    @media(max-width:960px){nav{padding:14px 24px}.nav-links{display:none}.hero{padding:110px 24px 72px}.alone-section{padding:72px 24px}.cost-section{padding:60px 24px 72px}.scenario-section{padding:0 24px 72px}.scenario-reveal-stats{grid-template-columns:1fr}.stats-strip{padding:28px 24px}.stats-inner{grid-template-columns:repeat(2,1fr);gap:20px}section{padding:72px 24px}.shift-wrapper{grid-template-columns:1fr;gap:24px}.shift-arrow-col{display:none}.tools-grid{grid-template-columns:1fr 1fr}.tool-card.wide{grid-column:span 1}.meridian-strip{padding:48px 24px}.meridian-inner{grid-template-columns:1fr}.humacity-inner{grid-template-columns:1fr}.pricing-grid{max-width:100%;grid-template-columns:1fr}.final-strip{padding:72px 24px}footer{flex-direction:column;gap:16px;text-align:center;padding:32px 24px;align-items:center}.footer-links{justify-content:center}}
+    @media(max-width:960px){nav{padding:14px 24px}.nav-links{display:none}.hero{padding:110px 24px 72px}.alone-section{padding:72px 24px}.cost-section{padding:60px 24px 72px}.scenario-section{padding:0 24px 72px}.scenario-reveal-stats{grid-template-columns:1fr}.stats-strip{padding:28px 24px}.stats-inner{grid-template-columns:repeat(2,1fr);gap:20px}section{padding:72px 24px}.shift-wrapper{grid-template-columns:1fr;gap:24px}.shift-arrow-col{display:none}.tools-grid{grid-template-columns:1fr 1fr}.tool-card.wide{grid-column:span 1}.record-grid{grid-template-columns:1fr}.meridian-strip{padding:48px 24px}.meridian-inner{grid-template-columns:1fr}.humacity-inner{grid-template-columns:1fr}.pricing-grid{max-width:100%;grid-template-columns:1fr}.final-strip{padding:72px 24px}footer{flex-direction:column;gap:16px;text-align:center;padding:32px 24px;align-items:center}.footer-links{justify-content:center}}
     @media(max-width:600px){.tools-grid{grid-template-columns:1fr}.meridian-params{grid-template-columns:repeat(2,1fr)}.h-assets{grid-template-columns:1fr}.arg-card{grid-template-columns:1fr;gap:10px;padding:24px}.why-closing{padding:24px}.mock-row{grid-template-columns:1fr}}
     @media(max-width:480px){
       .hero{padding:90px 20px 60px;min-height:auto}
@@ -326,6 +335,7 @@
     <div class="marquee-item"><div class="marquee-dot"></div>Org Vitals</div>
     <div class="marquee-item"><div class="marquee-dot"></div>Human Balance Sheet</div>
     <div class="marquee-item"><div class="marquee-dot"></div>ER Case Navigator</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Offer Intelligence</div>
     <div class="marquee-item"><div class="marquee-dot"></div>Policy Compass</div>
     <div class="marquee-item"><div class="marquee-dot"></div>Human P&amp;L</div>
     <div class="marquee-item"><div class="marquee-dot"></div>Case Library</div>
@@ -341,6 +351,7 @@
     <div class="marquee-item"><div class="marquee-dot"></div>Org Vitals</div>
     <div class="marquee-item"><div class="marquee-dot"></div>Human Balance Sheet</div>
     <div class="marquee-item"><div class="marquee-dot"></div>ER Case Navigator</div>
+    <div class="marquee-item"><div class="marquee-dot"></div>Offer Intelligence</div>
     <div class="marquee-item"><div class="marquee-dot"></div>Policy Compass</div>
     <div class="marquee-item"><div class="marquee-dot"></div>Human P&amp;L</div>
     <div class="marquee-item"><div class="marquee-dot"></div>Case Library</div>
@@ -462,8 +473,38 @@
       <div class="tool-card wide"><div class="tool-icon">&#9889;</div><div class="tool-tag">PACT Framework</div><div class="tool-name">ER Case Navigator</div><div class="tool-desc">Describe any employee relations situation. PACT assesses Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation — calibrated to BNS, BNSS, and your exact MERIDIAN context. Returns a full Humacity financial exposure in INR. Your legal and financial picture, in 60 seconds.</div></div>
       <div class="tool-card"><div class="tool-icon">&#127919;</div><div class="tool-tag">INFLUENCE Stack</div><div class="tool-name">Stakeholder Influence Builder</div><div class="tool-desc">Walk into any leadership conversation with a five-layer strategy and a single irrefutable rupee figure. Credibility, Data Anchor, Narrative, Risk Mirror, Decision Runway.</div></div>
       <div class="tool-card"><div class="tool-icon">&#128202;</div><div class="tool-tag">SIGNAL Framework</div><div class="tool-name">HR Data Storyteller</div><div class="tool-desc">Turn raw HR metrics into a CFO-ready narrative. Situation, Impact, Gap, Narrative, Action, Linkage. Your numbers finally speak the right language.</div></div>
-      <div class="tool-card"><div class="tool-icon">&#127917;</div><div class="tool-tag">Voice Simulation</div><div class="tool-name">Conversation Simulator</div><div class="tool-desc">Practice the hard conversation before you're in it. ARIA voices the stakeholder and coaches you on what to sharpen before the real meeting.</div></div>
+      <div class="tool-card"><div class="tool-icon">&#9878;&#65039;</div><div class="tool-tag">Retention Intelligence</div><div class="tool-name">Offer Intelligence</div><div class="tool-desc">A counter-offer on the table, or just a feeling something's shifted. Models the replacement cost, the break-even ceiling for matching, and the exact script for the business head and the employee — before you commit to a number.</div></div>
       <div class="tool-card"><div class="tool-icon">&#129517;</div><div class="tool-tag">Compliance Intelligence</div><div class="tool-name">Policy Compass</div><div class="tool-desc">India-specific policy guidance in 30 seconds. Always references BNS, BNSS, BSA. Never outdated IPC, CrPC, or Indian Evidence Act — repealed July 2024.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="proving-ground" style="padding-top:0">
+  <div class="section-inner reveal">
+    <div class="section-eyebrow">The Proving Ground</div>
+    <h2>Rehearse it before<br>you're actually in it.</h2>
+    <p class="section-sub">Not another report. A live conversation you can practice, get coached through, and walk into the real one already sharper.</p>
+    <div class="tools-grid">
+      <div class="tool-card"><div class="tool-icon">&#10022;</div><div class="tool-tag">Reflective Coaching</div><div class="tool-name">ARIA</div><div class="tool-desc">Talk through any hard call before or after you make it — from a counter-offer conversation to explaining a policy stance to a resistant manager. ARIA coaches, not just chats.</div></div>
+      <div class="tool-card"><div class="tool-icon">&#127917;</div><div class="tool-tag">Voice Simulation</div><div class="tool-name">Conversation Simulator</div><div class="tool-desc">Practice the hard conversation before you're in it. ARIA voices the stakeholder and coaches you on what to sharpen before the real meeting.</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="my-record" style="padding-top:0">
+  <div class="section-inner reveal">
+    <div class="section-eyebrow">My Record</div>
+    <h2>The part that's<br>actually yours.</h2>
+    <p class="section-sub">Every other tool helps you make the call. This is what remembers you made it.</p>
+    <div class="record-featured">
+      <div class="record-featured-tag">The Debrief</div>
+      <div class="record-featured-name">A written record of your year, built automatically.</div>
+      <div class="record-featured-desc">Every month, a real account of what you actually did — the cases you navigated, the calls you made, the value you protected, in your own numbers. Twelve months in, you have something no HR professional has ever had before: proof of a whole year of work, that belongs to you, not your employer.</div>
+    </div>
+    <div class="record-grid">
+      <div class="record-mini"><div class="record-mini-name">Humac Score</div><div class="record-mini-desc">Five pillars — Value Ledger, Talent Premium, Org Vitals, Human P&amp;L, Human Balance Sheet — turn your org's people data into one defensible number.</div></div>
+      <div class="record-mini"><div class="record-mini-name">Case Library</div><div class="record-mini-desc">Every case you've navigated, searchable and organised. Your own growing record of judgment calls.</div></div>
+      <div class="record-mini"><div class="record-mini-name">The Ledger</div><div class="record-mini-desc">Track what you predicted against what actually happened. The only way to know if your calls are getting sharper.</div></div>
     </div>
   </div>
 </section>
