@@ -3,10 +3,6 @@
 (function() {
 
   // ── VIRORAH VANTAGE LOGO MARK ────────────────────────────────────────────────
-  // Uses virorah-vantage-logo.png — same file as landing page nav.
-  // Horizontal format: V mark + VIRORAH + VANTAGE on one line.
-  // At 190px wide in sidebar → ~63px tall. Fits cleanly above nav items.
-  // Black bg removed by mix-blend-mode:screen. No separate badge needed.
   (function injectLogoMark() {
     var logoEl = document.querySelector('.logo');
     if (!logoEl) return;
@@ -33,7 +29,6 @@
   })();
 
   // ── GLOBAL COLOR SYSTEM OVERRIDE ─────────────────────────
-  // Unifies Vantage with PMS / Virorah Universe blue-indigo palette
   var styleOverride = document.createElement('style');
   styleOverride.textContent = [
     ':root {',
@@ -45,123 +40,73 @@
     '  --surface: #0d0b1e !important;',
     '  --card: #11102a !important;',
     '}',
-
-    // Sidebar active state
     '.nav-item.active, a.nav-item.active {',
     '  background: rgba(99,102,241,0.12) !important;',
     '  border-color: rgba(99,102,241,0.30) !important;',
     '  color: #a5b4fc !important;',
     '}',
-
-    // Sidebar hover
     '.nav-item:hover, a.nav-item:hover {',
     '  background: rgba(99,102,241,0.08) !important;',
     '  border-color: rgba(99,102,241,0.20) !important;',
     '  color: #c4b5fd !important;',
     '}',
-
-    // Nav section labels — updated from indigo (dark on dark, unreadable)
-    // to muted lavender which is inherently lighter and readable.
     '.nav-section {',
     '  color: rgba(165,180,252,0.65) !important;',
     '}',
-
-    // ── PLATFORM-WIDE LABEL READABILITY ────────────────────
-    // All small uppercase JetBrains Mono section labels use
-    // low-opacity dark indigo (rgba(99,102,241,0.55)) which has
-    // near-zero contrast on the #050410 dark background.
-    // Changed to muted lavender at readable opacity across every
-    // known label class on every page.
-
-    // Sidebar section headers — both class naming conventions
     '.nav-section, .ns {',
     '  color: rgba(165,180,252,0.65) !important;',
     '}',
-
-    // Dashboard card labels
     '.stat-label, .cal-month, .debrief-label, .welcome-label {',
     '  color: rgba(165,180,252,0.65) !important;',
     '}',
-
-    // Tool card tags and tier labels
     '.tool-tag, .tc-tag, .tc-tier, .pc-tier, .tc-label {',
     '  color: rgba(165,180,252,0.65) !important;',
     '}',
-
-    // Page section eyebrows and group headers
     '.section-label, .hero-eyebrow, .lookup-group-title {',
     '  color: rgba(165,180,252,0.65) !important;',
     '}',
-
-    // ARIA quick banner label, billing notice, card labels
     '.aria-quick-text .label, .billing-notice, .mc-label,',
     '.imc-name, .hist-mode, .tc-month, .cc-month, .cs-label,',
     '.panel-sub, .faq-label, .review-label, .debrief-label {',
     '  color: rgba(165,180,252,0.60) !important;',
     '}',
-
-    // MERIDIAN chip and related labels
     '.meridian-chip .ml, .meridian-chip .label,',
     '.m-header .label, .nav-badge-label {',
     '  color: rgba(165,180,252,0.70) !important;',
     '}',
-
-    // Teal accent buttons → indigo
     '[style*="00E5C3"], [style*="0,229,195"] {',
     '  --teal-replace: #6366f1;',
     '}',
-
-    // Primary buttons
     '.btn-primary, button.primary {',
     '  background: linear-gradient(135deg, #6366f1, #7c3aed) !important;',
     '  border-color: transparent !important;',
     '}',
-
-    // Teal text anywhere
     '[style*="color: #00E5C3"], [style*="color:#00E5C3"] {',
     '  color: #6366f1 !important;',
     '}',
-
-    // Card borders
     '.card, .tool-card, .case-card {',
     '  border-color: rgba(99,102,241,0.18) !important;',
     '}',
-
-    // Scrollbar
     '::-webkit-scrollbar-thumb {',
     '  background: linear-gradient(180deg, #6366f1, #7c3aed) !important;',
     '}',
-
-    // Sidebar border
     '.sidebar, #sidebar {',
     '  border-right-color: rgba(99,102,241,0.18) !important;',
     '  background: rgba(5,4,16,0.95) !important;',
     '}',
-
-    // ARIA teal glow → indigo
     '.aria-glow, .voice-indicator {',
     '  border-color: rgba(99,102,241,0.4) !important;',
     '  box-shadow: 0 0 20px rgba(99,102,241,0.25) !important;',
     '}',
-
-    // Humacity card teal border → indigo
     '.humacity-card, .humacity-block {',
     '  border-color: rgba(99,102,241,0.35) !important;',
     '}',
-
-    // Selection highlight
     '::selection {',
     '  background: rgba(99,102,241,0.35) !important;',
     '}',
-
-    // PWA banner teal → indigo
     '#pwa-banner {',
     '  border-color: rgba(99,102,241,0.3) !important;',
     '}',
-
-    // Icon column normalisation — emoji and Unicode symbols have different
-    // natural widths. Fixed min-width ensures text labels always start at
-    // the same horizontal position regardless of icon type.
     '.nav-item .icon, .nav-item .nav-icon, .ni .ic {',
     '  min-width: 20px !important;',
     '  display: inline-flex !important;',
@@ -169,49 +114,29 @@
     '  align-items: center !important;',
     '  flex-shrink: 0 !important;',
     '}',
-
-    // Default nav item base colour — pages built this session used 45% white.
-    // Dashboard uses 70%. This brings all pages to parity.
     '.nav-item, a.nav-item {',
     '  color: rgba(244,243,255,0.70) !important;',
     '}',
-
-    // ── ARIA-page class parity ─────────────────────────────
-    // ARIA uses .sb / .ni / .ns instead of .sidebar / .nav-item / .nav-section.
-    // The rules above target dashboard classes only, so they silently miss ARIA.
-    // These rules bring ARIA's sidebar to full brightness parity with the dashboard.
-
-    // Sidebar background — matches dashboard .sidebar override
     '.sb {',
     '  background: rgba(5,4,16,0.98) !important;',
     '  border-right-color: rgba(99,102,241,0.18) !important;',
     '}',
-
-    // Default nav item — dashboard is 70% white; ARIA was 45%
     '.ni, a.ni {',
     '  color: rgba(244,243,255,0.70) !important;',
     '}',
-
-    // Active nav item — mirrors .nav-item.active rule above
     '.ni.active, a.ni.active {',
     '  background: rgba(99,102,241,0.12) !important;',
     '  border-color: rgba(99,102,241,0.30) !important;',
     '  color: #a5b4fc !important;',
     '}',
-
-    // Hover nav item — mirrors .nav-item:hover rule above
     '.ni:hover, a.ni:hover {',
     '  background: rgba(99,102,241,0.08) !important;',
     '  border-color: rgba(99,102,241,0.20) !important;',
     '  color: #c4b5fd !important;',
     '}',
-
-    // Section headers — mirrors updated .nav-section rule above
     '.ns {',
     '  color: rgba(165,180,252,0.65) !important;',
     '}',
-
-    // Logo subtitle — dashboard is rgba(165,180,252,0.6); ARIA was rgba(255,255,255,.35)
     '.logo-sub {',
     '  color: rgba(165,180,252,0.55) !important;',
     '}',
@@ -219,18 +144,6 @@
   document.head.insertBefore(styleOverride, document.head.firstChild);
 
   // ── PLATFORM TOUR + OVERVIEW SECTION ─────────────────────
-  // Injects before the Dashboard link on every page.
-  // Platform Tour links to platform-tour.html (navigational walkthrough).
-  // About Vantage (separate nav item below) links to about.html (product story).
-  // Hides the raw Dashboard link — replaced by Home inside Overview.
-  //
-  // FIX (SR16): selector previously included ".sidebar a[href=\"dashboard.html\"]"
-  // with no class requirement on the anchor itself. On pages where the sidebar
-  // wrapper carries class "sidebar" but the dashboard link is the brand/logo
-  // anchor (class "sb-brand", not a nav item), that logo link matched and got
-  // hidden — killing the wordmark and injecting Overview above it instead of
-  // in the right place. Now requires the anchor itself to carry a genuine
-  // nav-item class (.ni or .nav-item), so brand/logo links are never matched.
   var dashLink = document.querySelector('.sb a.ni[href="dashboard.html"],a.ni[href="dashboard.html"],.sidebar a.nav-item[href="dashboard.html"],a.nav-item[href="dashboard.html"]');
   var alreadyHasOverview = document.getElementById('vs-overview');
   if (dashLink && !alreadyHasOverview) {
@@ -268,11 +181,10 @@
     overview.appendChild(aboutLink);
 
     dashLink.parentNode.insertBefore(overview, dashLink);
-    dashLink.style.display = 'none'; // replaced by Home in Overview
+    dashLink.style.display = 'none';
   }
 
   // ── LEDGER NAV INJECTION ──────────────────────────────────
-  // Injects The Ledger after Case Library on all pages.
   var clNavLink = document.querySelector('a[href="case-library.html"]');
   var alreadyHasLedger = document.querySelector('a[href="ledger.html"]');
   if (clNavLink && !alreadyHasLedger) {
@@ -288,8 +200,6 @@
   }
 
   // ── OFFER INTELLIGENCE NAV INJECTION ─────────────────────
-  // Injects Offer Intelligence after Stakeholder Influence on all pages.
-  // Handles both standard .nav-item and ARIA-page .ni class patterns.
   var siNavLink = document.querySelector('a[href="stakeholder-influence.html"]');
   var alreadyHasOI = document.querySelector('a[href="offer-intelligence.html"]');
   if (siNavLink && !alreadyHasOI) {
@@ -373,10 +283,6 @@
   }
 
   // ── PRICING LINK + BILLING STATUS ────────────────────────
-  // Billing status reads from localStorage['vantage_plan'].
-  // Soft launch default: 'Early Access' (amber) — no key exists yet.
-  // Post-Razorpay: payment handler writes { status:'active', tier:'core'|'consultant' }
-  // to localStorage['vantage_plan'] and the badge updates on next load automatically.
   var alreadyHasPricing = document.querySelector('a[href*="pricing"]');
   if (dataPrivacyLink && !alreadyHasPricing) {
     function _getBillingStatus() {
@@ -454,6 +360,9 @@
       'flex-wrap:wrap'
     ].join(';');
 
+    // FIX: dismiss button now calls a named function that restores the exact
+    // padding this banner added, instead of just removing the element and
+    // leaving .main permanently padded for the rest of the session.
     banner.innerHTML =
       '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">' +
         '<span style="font-size:16px;flex-shrink:0">⚠️</span>' +
@@ -463,7 +372,7 @@
           ' \u00a0\u00b7\u00a0 5 minutes.' +
         '</span>' +
       '</div>' +
-      '<button onclick="(function(){sessionStorage.setItem(\'meridian_banner_dismissed\',\'1\');var b=document.getElementById(\'meridian-warning-banner\');if(b)b.remove();})()" ' +
+      '<button onclick="window.vantageDismissMeridianBanner()" ' +
         'style="background:transparent;border:none;color:rgba(255,181,71,0.6);font-size:18px;cursor:pointer;flex-shrink:0;line-height:1;padding:0 4px">' +
         '\u00d7' +
       '</button>';
@@ -474,9 +383,25 @@
       var bannerEl = document.getElementById('meridian-warning-banner');
       var mainEl = document.querySelector('.main') || document.querySelector('main');
       if (bannerEl && mainEl) {
-        mainEl.style.paddingTop = (parseInt(mainEl.style.paddingTop || 0) + bannerEl.offsetHeight) + 'px';
+        var addedHeight = bannerEl.offsetHeight;
+        mainEl.setAttribute('data-meridian-banner-padding', String(addedHeight));
+        mainEl.style.paddingTop = (parseInt(mainEl.style.paddingTop || 0) + addedHeight) + 'px';
       }
     });
+
+    window.vantageDismissMeridianBanner = function() {
+      sessionStorage.setItem('meridian_banner_dismissed', '1');
+      var b = document.getElementById('meridian-warning-banner');
+      if (b) b.remove();
+      var mainEl = document.querySelector('.main') || document.querySelector('main');
+      if (mainEl) {
+        var addedHeight = parseInt(mainEl.getAttribute('data-meridian-banner-padding') || '0', 10);
+        if (addedHeight > 0) {
+          mainEl.style.paddingTop = (parseInt(mainEl.style.paddingTop || 0) - addedHeight) + 'px';
+          mainEl.removeAttribute('data-meridian-banner-padding');
+        }
+      }
+    };
   }
 
   // ── VIRORAH ATTRIBUTION ───────────────────────────────────
@@ -535,9 +460,15 @@
 
   function showInstallBanner() {
     if (document.getElementById('pwa-banner')) return;
+    // FIX: on mobile widths, the bottom nav now occupies the space this
+    // banner used to assume was empty. Sit the banner above the nav instead
+    // of colliding with it — matches the same safe-area-inset pattern the
+    // bottom nav itself uses, so both stay correctly clear of notched phones.
+    var isMobileWidth = window.innerWidth <= 768;
+    var bottomOffset = isMobileWidth ? 'calc(86px + env(safe-area-inset-bottom, 0px))' : '24px';
     var banner = document.createElement('div');
     banner.id = 'pwa-banner';
-    banner.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0d0b1e;border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.4);max-width:380px;width:calc(100% - 48px)';
+    banner.style.cssText = 'position:fixed;bottom:' + bottomOffset + ';left:50%;transform:translateX(-50%);background:#0d0b1e;border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.4);max-width:380px;width:calc(100% - 48px)';
     banner.innerHTML = '<div style="font-size:28px;flex-shrink:0">📱</div>' +
       '<div style="flex:1"><div style="font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:14px;color:#fff;margin-bottom:3px">Install Vantage</div>' +
       '<div style="font-size:12px;color:rgba(255,255,255,0.70);line-height:1.4">Add to home screen for instant access — works offline too.</div></div>' +
@@ -566,17 +497,12 @@
 
 
   // ── MOBILE BOTTOM NAV ────────────────────────────────────
-  // Injects a native-style bottom navigation bar on mobile only
-  // Replaces the hidden sidebar with a proper mobile nav pattern
-
   function injectMobileNav() {
     if (window.innerWidth > 768) return;
 
-    // Determine active page
     var path = window.location.pathname;
     function isActive(page) { return path.includes(page); }
 
-    // Bottom nav CSS
     var style = document.createElement('style');
     style.textContent = [
       '/* Mobile bottom nav */',
@@ -635,7 +561,6 @@
       '  .vbn-item:not(.active):hover .vbn-label {',
       '    color: rgba(244,243,255,0.6);',
       '  }',
-      '  /* More drawer overlay */',
       '  .vbn-drawer-overlay {',
       '    display: none;',
       '    position: fixed;',
@@ -658,6 +583,8 @@
       '    border-top: 1px solid rgba(99,102,241,0.25);',
       '    border-radius: 20px 20px 0 0;',
       '    padding: 12px 0 calc(80px + env(safe-area-inset-bottom, 0px)) 0;',
+      '    max-height: 75vh;',
+      '    overflow-y: auto;',
       '    animation: vbnSlideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);',
       '  }',
       '  .vbn-drawer-handle {',
@@ -673,15 +600,16 @@
       '    letter-spacing: 0.12em;',
       '    text-transform: uppercase;',
       '    color: rgba(99,102,241,0.6);',
-      '    padding: 0 20px 10px;',
-      '    border-bottom: 1px solid rgba(99,102,241,0.08);',
-      '    margin-bottom: 8px;',
+      '    padding: 10px 20px 8px;',
+      '  }',
+      '  .vbn-drawer-title:first-of-type {',
+      '    padding-top: 0;',
       '  }',
       '  .vbn-drawer-item {',
       '    display: flex;',
       '    align-items: center;',
       '    gap: 14px;',
-      '    padding: 14px 20px;',
+      '    padding: 12px 20px;',
       '    text-decoration: none;',
       '    color: rgba(244,243,255,0.65);',
       '    font-family: "Plus Jakarta Sans", sans-serif;',
@@ -704,7 +632,6 @@
       '    font-family: "JetBrains Mono", monospace;',
       '    letter-spacing: 0.04em;',
       '  }',
-      '  /* Push page content above bottom nav */',
       '  .main, main, .main-content, body > div:not(.vantage-bottom-nav):not(.vbn-drawer-overlay) {',
       '    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;',
       '  }',
@@ -712,7 +639,6 @@
     ].join('\n');
     document.head.appendChild(style);
 
-    // Build bottom nav HTML
     var navItems = [
       { icon: '\u229E', label: 'Home',    href: 'dashboard.html',         page: 'dashboard' },
       { icon: '\u26A1', label: 'Cases',   href: 'er-case-navigator.html', page: 'er-case-navigator' },
@@ -721,20 +647,78 @@
       { icon: '\u22EF', label: 'More',    href: null,                     page: 'more' },
     ];
 
-    var drawerItems = [
-      { icon: '\uD83C\uDFAD', label: 'Conversation Simulator', sub: 'Practice before the real thing', href: 'conversation-simulator.html', page: 'conversation-simulator' },
-      { icon: '\uD83D\uDCCA', label: 'HR Data Storyteller',    sub: 'SIGNAL framework',               href: 'hr-data-storyteller.html',   page: 'hr-data-storyteller' },
-      { icon: '\uD83E\uDDED', label: 'Policy Compass',         sub: 'BNS · BNSS · BSA',               href: 'policy-compass.html',        page: 'policy-compass' },
-      { icon: '\uD83C\uDFAF', label: 'Stakeholder Influence',  sub: 'INFLUENCE stack',                href: 'stakeholder-influence.html', page: 'stakeholder-influence' },
-      { icon: '\uD83D\uDCCB', label: 'The Debrief',            sub: 'Monthly intelligence brief',     href: 'debrief.html',               page: 'debrief' },
-      { icon: '\uD83D\uDD12', label: 'Data & Privacy',         sub: 'Your data settings',             href: 'data-dashboard.html',        page: 'data-dashboard' },
-      { icon: '\u21A9',        label: 'Sign Out',               sub: '',                               href: 'access.html',                page: 'signout', signout: true },
+    // FIX: this list previously had 7 flat items and had fallen out of sync
+    // with everything else this same file injects into the desktop sidebar
+    // over time — Offer Intelligence, The Ledger, MERIDIAN Profile, Pricing,
+    // Terms of Service, Privacy Policy, Humacity, Platform Tour, About
+    // Vantage, and Humac Score were all unreachable on mobile. Restructured
+    // as sections mirroring the desktop sidebar's own grouping, both to
+    // restore parity and because a flat 17-item list would be its own
+    // usability problem. A couple of icons were changed from what desktop
+    // uses for the same link, specifically where reusing the desktop icon
+    // would have collided with another item already in this same drawer
+    // (Humac Score vs HR Data Storyteller both use 📊 on desktop; About
+    // Vantage's ✦ collides with the ARIA bottom-tab icon above) — noted
+    // here so a future edit doesn't "fix" these back into a collision.
+    var drawerSections = [
+      {
+        title: 'Overview',
+        items: [
+          { icon: '\uD83D\uDDFA', label: 'Platform Tour', sub: 'Guided walkthrough', href: 'platform-tour.html', page: 'platform-tour' },
+          { icon: '\u2139\uFE0F', label: 'About Vantage', sub: '', href: 'about.html', page: 'about' },
+        ]
+      },
+      {
+        title: 'Core Tools',
+        items: [
+          { icon: '\uD83D\uDCCA', label: 'HR Data Storyteller', sub: 'SIGNAL framework', href: 'hr-data-storyteller.html', page: 'hr-data-storyteller' },
+          { icon: '\uD83C\uDFAF', label: 'Stakeholder Influence', sub: 'INFLUENCE stack', href: 'stakeholder-influence.html', page: 'stakeholder-influence' },
+          { icon: '\u2696\uFE0F', label: 'Offer Intelligence', sub: '', href: 'offer-intelligence.html', page: 'offer-intelligence' },
+        ]
+      },
+      {
+        title: 'Intelligence',
+        items: [
+          { icon: '\uD83E\uDDED', label: 'Policy Compass', sub: 'BNS \u00b7 BNSS \u00b7 BSA', href: 'policy-compass.html', page: 'policy-compass' },
+          { icon: '\uD83C\uDFAD', label: 'Conversation Simulator', sub: 'Practice before the real thing', href: 'conversation-simulator.html', page: 'conversation-simulator' },
+        ]
+      },
+      {
+        title: 'My Record',
+        items: [
+          { icon: '\uD83D\uDCDC', label: 'The Ledger', sub: '', href: 'ledger.html', page: 'ledger' },
+          { icon: '\uD83D\uDCCB', label: 'The Debrief', sub: 'Monthly intelligence brief', href: 'debrief.html', page: 'debrief' },
+          { icon: '\uD83D\uDCC8', label: 'Humac Score', sub: '', href: 'humac-onboarding.html', page: 'humac-onboarding' },
+        ]
+      },
+      {
+        title: 'Philosophy',
+        items: [
+          { icon: '\uD83C\uDF00', label: 'Humacity', sub: '', href: 'https://humacity.com', page: 'humacity', external: true },
+        ]
+      },
+      {
+        title: 'Legal',
+        items: [
+          { icon: '\uD83D\uDCC4', label: 'Terms of Service', sub: '', href: 'terms.html', page: 'terms' },
+          { icon: '\uD83D\uDD12', label: 'Privacy Policy', sub: '', href: 'privacy.html', page: 'privacy' },
+        ]
+      },
+      {
+        title: 'Account',
+        items: [
+          { icon: '\uD83E\uDDED', label: 'MERIDIAN Profile', sub: '', href: 'onboarding.html', page: 'onboarding' },
+          { icon: '\uD83E\uDE99', label: 'Pricing', sub: '', href: 'pricing.html', page: 'pricing' },
+          { icon: '\uD83D\uDD12', label: 'Data & Privacy', sub: 'Your data settings', href: 'data-dashboard.html', page: 'data-dashboard' },
+          { icon: '\u21A9', label: 'Sign Out', sub: '', href: 'access.html', page: 'signout', signout: true },
+        ]
+      },
     ];
 
-    // Check if any drawer item is active
-    var drawerActive = drawerItems.some(function(d) { return d.page !== 'signout' && path.includes(d.page); });
+    var drawerActive = drawerSections.some(function(sec) {
+      return sec.items.some(function(d) { return d.page !== 'signout' && path.includes(d.page); });
+    });
 
-    // Build nav
     var nav = document.createElement('div');
     nav.className = 'vantage-bottom-nav';
 
@@ -750,7 +734,6 @@
         a.innerHTML = '<span class="vbn-icon">' + item.icon + '</span><span class="vbn-label">' + item.label + '</span>';
         nav.appendChild(a);
       } else {
-        // More button
         var btn = document.createElement('button');
         btn.className = 'vbn-item' + (active ? ' active' : '');
         btn.innerHTML = '<span class="vbn-icon">' + item.icon + '</span><span class="vbn-label">' + item.label + '</span>';
@@ -761,31 +744,37 @@
 
     document.body.appendChild(nav);
 
-    // Build drawer overlay
     var overlay = document.createElement('div');
     overlay.className = 'vbn-drawer-overlay';
 
     var drawer = document.createElement('div');
     drawer.className = 'vbn-drawer';
-    drawer.innerHTML = '<div class="vbn-drawer-handle"></div><div class="vbn-drawer-title">More tools</div>';
+    drawer.innerHTML = '<div class="vbn-drawer-handle"></div>';
 
-    drawerItems.forEach(function(item) {
-      var active = item.page !== 'signout' && path.includes(item.page);
-      var a = document.createElement('a');
-      a.className = 'vbn-drawer-item' + (active ? ' active' : '');
-      a.href = item.href;
-      if (item.signout) { a.onclick = function() { sessionStorage.clear(); }; }
-      a.innerHTML = [
-        '<span class="vbn-drawer-icon">' + item.icon + '</span>',
-        '<span class="vbn-drawer-label">' + item.label + (item.sub ? '<br><span class="vbn-drawer-sub">' + item.sub + '</span>' : '') + '</span>',
-      ].join('');
-      drawer.appendChild(a);
+    drawerSections.forEach(function(section) {
+      var titleEl = document.createElement('div');
+      titleEl.className = 'vbn-drawer-title';
+      titleEl.textContent = section.title;
+      drawer.appendChild(titleEl);
+
+      section.items.forEach(function(item) {
+        var active = item.page !== 'signout' && path.includes(item.page);
+        var a = document.createElement('a');
+        a.className = 'vbn-drawer-item' + (active ? ' active' : '');
+        a.href = item.href;
+        if (item.external) a.target = '_blank';
+        if (item.signout) { a.onclick = function() { sessionStorage.clear(); }; }
+        a.innerHTML = [
+          '<span class="vbn-drawer-icon">' + item.icon + '</span>',
+          '<span class="vbn-drawer-label">' + item.label + (item.sub ? '<br><span class="vbn-drawer-sub">' + item.sub + '</span>' : '') + '</span>',
+        ].join('');
+        drawer.appendChild(a);
+      });
     });
 
     overlay.appendChild(drawer);
     document.body.appendChild(overlay);
 
-    // Drawer toggle
     overlay.addEventListener('click', function(e) {
       if (e.target === overlay) closeDrawer();
     });
@@ -797,13 +786,11 @@
     function openDrawer()  { overlay.classList.add('open'); }
     function closeDrawer() { overlay.classList.remove('open'); }
 
-    // Close drawer on nav item click
     drawer.querySelectorAll('.vbn-drawer-item').forEach(function(el) {
       el.addEventListener('click', closeDrawer);
     });
   }
 
-  // Run on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', injectMobileNav);
   } else {
@@ -816,19 +803,11 @@
 
 
   // ── LOCATION CLOCK ─────────────────────────────────────────────────────────
-  // Displays live time, date, and user-selected city/state/country.
-  // Privacy-first: no geolocation. User picks from a list. Stored in localStorage.
-  // Architecture: timezone (IANA key) drives time. Location display (city/state/country)
-  // is a separate label. Adding global cities later = add rows to LOCATIONS array only.
-
   (function() {
     var LS_KEY = 'vantage_clock_location';
     var clockInterval = null;
     var clockEl = null;
 
-    // ── LOCATION DATA ─────────────────────────────────────────────────────────
-    // Format: [City, State, Country, IANA Timezone]
-    // India phase: all IST (Asia/Kolkata). Global phase: add new rows with correct tz.
     var LOCATIONS = [
       ['Agra',             'Uttar Pradesh',     'India', 'Asia/Kolkata'],
       ['Ahmedabad',        'Gujarat',           'India', 'Asia/Kolkata'],
@@ -890,8 +869,6 @@
       ['Warangal',         'Telangana',         'India', 'Asia/Kolkata'],
     ];
 
-    // ── HELPERS ───────────────────────────────────────────────────────────────
-
     function getStoredLocation() {
       try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); }
       catch(e) { return null; }
@@ -917,8 +894,6 @@
       } catch(e) { return '-- --- ----'; }
     }
 
-    // ── CLOCK TICK ────────────────────────────────────────────────────────────
-
     function tick() {
       var loc = getStoredLocation();
       if (!loc || !clockEl) return;
@@ -933,8 +908,6 @@
       tick();
       clockInterval = setInterval(tick, 1000);
     }
-
-    // ── CITY PICKER MODAL ─────────────────────────────────────────────────────
 
     function openPicker() {
       if (document.getElementById('vclock-modal')) return;
@@ -970,11 +943,9 @@
 
       overlay.addEventListener('click', function(e) { if (e.target === overlay) closePicker(); });
 
-      // Close button
       var closeBtn = document.getElementById('vclock-close-btn');
       if (closeBtn) closeBtn.addEventListener('click', closePicker);
 
-      // Escape key
       function handleEsc(e) { if (e.key === 'Escape') { closePicker(); document.removeEventListener('keydown', handleEsc); } }
       document.addEventListener('keydown', handleEsc);
 
@@ -1028,8 +999,6 @@
       if (m) m.remove();
     }
 
-    // ── CLOCK WIDGET RENDER ───────────────────────────────────────────────────
-
     function refreshClockWidget() {
       if (!clockEl) return;
       var loc = getStoredLocation();
@@ -1051,7 +1020,6 @@
     }
 
     function injectClock() {
-      // Anchor: .meridian-chip — the sidebar footer card present on all tool pages
       var chip = document.querySelector('.meridian-chip');
       if (!chip || document.getElementById('vantage-clock')) return;
 
@@ -1068,7 +1036,6 @@
       ].join(';');
 
       clockEl.innerHTML = [
-        // ── Set state: location configured ──
         '<div class="vclock-main" style="display:' + (loc ? 'block' : 'none') + '">',
           '<div class="vclock-time" style="font-family:Space Grotesk,monospace;font-size:17px;font-weight:700;color:#a5b4fc;letter-spacing:0.02em;line-height:1">',
             (loc ? fmtTime(loc.timezone) : ''),
@@ -1083,7 +1050,6 @@
             '<button id="vclock-edit-btn" style="background:transparent;border:none;cursor:pointer;color:rgba(99,102,241,0.4);font-size:11px;padding:0 0 0 8px;flex-shrink:0;line-height:1;transition:color 0.15s" title="Change location">&#9998;</button>',
           '</div>',
         '</div>',
-        // ── Empty state: no location set ──
         '<div class="vclock-noloc" style="display:' + (loc ? 'none' : 'flex') + ';align-items:center;gap:10px;cursor:pointer" id="vclock-noloc-btn">',
           '<span style="font-size:15px;flex-shrink:0;opacity:0.5">&#128336;</span>',
           '<div>',
@@ -1093,22 +1059,18 @@
         '</div>',
       ].join('');
 
-      // Inject just before the meridian-chip in the DOM
       chip.parentNode.insertBefore(clockEl, chip);
 
-      // Bind events
       var editBtn  = document.getElementById('vclock-edit-btn');
       var nolocBtn = document.getElementById('vclock-noloc-btn');
       if (editBtn)  editBtn.addEventListener('click', openPicker);
       if (nolocBtn) nolocBtn.addEventListener('click', openPicker);
 
-      // Expose globally for any page-level code that needs it
       window._vclockOpen = openPicker;
 
       if (loc) startClock();
     }
 
-    // Run after DOM is ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', injectClock);
     } else {
@@ -1119,16 +1081,6 @@
   // ── END LOCATION CLOCK ─────────────────────────────────────────────────────
 
   // ── LEGAL SECTION → BELOW ACCOUNT ─────────────────────────────────────────
-  // Legal (Terms, Privacy) belongs at the very bottom, below Account.
-  // DOM move runs after all injections so it catches both hardcoded and
-  // injected Legal sections correctly.
-  //
-  // FIX (SR16): section header lookup previously checked only ".nav-section, .ns" —
-  // it never checked ".sb-section", even though movePolicyCompass() and
-  // injectHumacLink() below were both updated for that class. Any page using the
-  // .sb-section styling system (e.g. humac-onboarding.html) had Legal/Account
-  // silently never repositioned because this function found zero matching headers
-  // and returned early every time. Now checks all three header classes.
   (function() {
     function moveLegalSection() {
       var sections = document.querySelectorAll('.nav-section, .ns, .sb-section');
@@ -1145,7 +1097,6 @@
         return el.classList.contains('nav-section') || el.classList.contains('ns') || el.classList.contains('sb-section');
       }
 
-      // Collect Legal header + its nav items
       var legalEls = [legalHeader];
       var cursor = legalHeader.nextElementSibling;
       while (cursor && !isSectionHeader(cursor)) {
@@ -1153,8 +1104,6 @@
         cursor = cursor.nextElementSibling;
       }
 
-      // Find the last element in the Account section
-      // (stops at meridian-chip, clock widget, or end of sidebar)
       var accountEnd = accountHeader;
       cursor = accountHeader.nextElementSibling;
       while (cursor &&
@@ -1166,7 +1115,6 @@
         cursor = cursor.nextElementSibling;
       }
 
-      // Move Legal (header + items) to just after Account section ends
       var insertAfter = accountEnd;
       legalEls.forEach(function(el) {
         insertAfter.parentNode.insertBefore(el, insertAfter.nextSibling);
@@ -1183,15 +1131,11 @@
   // ── END LEGAL SECTION MOVE ─────────────────────────────────────────────────
 
   // ── POLICY COMPASS → CORE TOOLS ────────────────────────────────────────────
-  // Policy Compass is a direct-use tool, not an intelligence layer.
-  // Moves it from the Intelligence section to Core Tools on every page via DOM,
-  // so no individual HTML files need updating.
   (function() {
     function movePolicyCompass() {
       var policyLink = document.querySelector('a[href*="policy-compass"]');
       if (!policyLink) return;
 
-      // Find the Core Tools section header (handles .nav-section, .ns, and .sb-section)
       var sections = document.querySelectorAll('.nav-section, .ns, .sb-section');
       var coreHeader = null;
       sections.forEach(function(s) {
@@ -1200,7 +1144,6 @@
       });
       if (!coreHeader) return;
 
-      // Walk forward from Core Tools to find the last nav item before the next section
       var cursor = coreHeader.nextElementSibling;
       var lastCoreItem = coreHeader;
       while (cursor && !cursor.classList.contains('nav-section') && !cursor.classList.contains('ns') && !cursor.classList.contains('sb-section')) {
@@ -1208,7 +1151,6 @@
         cursor = cursor.nextElementSibling;
       }
 
-      // Only move if it's not already in the right place
       if (lastCoreItem.nextSibling !== policyLink) {
         lastCoreItem.parentNode.insertBefore(policyLink, lastCoreItem.nextSibling);
       }
@@ -1223,13 +1165,10 @@
   // ── END POLICY COMPASS MOVE ────────────────────────────────────────────────
 
   // ── HUMAC SCORE LINK → MY RECORD SECTION ───────────────────────────────────
-  // Injects Humac Score link into the My Record section on every page
   (function() {
     function injectHumacLink() {
-      // Don't inject if already present
       if (document.querySelector('a[href*="humac-onboarding"]')) return;
 
-      // Find My Record section (handles both class systems)
       var sections = document.querySelectorAll('.nav-section, .ns, .sb-section');
       var myRecordHeader = null;
       sections.forEach(function(s) {
@@ -1238,7 +1177,6 @@
       });
       if (!myRecordHeader) return;
 
-      // Create the Humac Score link matching the page's nav style
       var isOldStyle = !!document.querySelector('.sb-item');
       var link = document.createElement('a');
       link.href = 'humac-onboarding.html';
@@ -1251,7 +1189,6 @@
         link.innerHTML = '<span class="icon">📊</span> Humac Score';
       }
 
-      // Insert as first item under My Record
       var firstItem = myRecordHeader.nextElementSibling;
       if (firstItem) {
         myRecordHeader.parentNode.insertBefore(link, firstItem);
