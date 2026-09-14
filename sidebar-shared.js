@@ -338,7 +338,28 @@
     return currentPath.includes(page);
   });
 
-  var meridianConfigured = !!sessionStorage.getItem('sr_meridian');
+  // FIX: sessionStorage['sr_meridian'] only gets set during onboarding's own
+  // completion flow within that session — it does not survive a closed
+  // browser. A returning user with a genuinely saved profile would see this
+  // return empty on a fresh session and get a false "your results will be
+  // generic" warning, even though real MERIDIAN data exists in the backend.
+  // Falls back to the cross-session localStorage backup, and repopulates
+  // sessionStorage from it so any OTHER code on the page reading
+  // sr_meridian directly (e.g. the meridian-chip display) also self-heals,
+  // not just this one check.
+  function isMeridianConfigured() {
+    if (sessionStorage.getItem('sr_meridian')) return true;
+    var email = sessionStorage.getItem('sr_user_email') || localStorage.getItem('sr_user_email');
+    if (email) {
+      var backup = localStorage.getItem('sr_meridian_' + email);
+      if (backup) {
+        sessionStorage.setItem('sr_meridian', backup);
+        return true;
+      }
+    }
+    return false;
+  }
+  var meridianConfigured = isMeridianConfigured();
   var bannerDismissed = !!sessionStorage.getItem('meridian_banner_dismissed');
 
   if (isToolPage && !meridianConfigured && !bannerDismissed) {
@@ -499,11 +520,17 @@
   // ── MOBILE BOTTOM NAV ────────────────────────────────────
   function injectMobileNav() {
     if (window.innerWidth > 768) return;
+    // FIX: no other injection in this file lacks this check — without it,
+    // any second call to this function (e.g. from the resize fix below)
+    // would create a duplicate nav bar, duplicate style tag, and duplicate
+    // drawer overlay stacking on top of the originals.
+    if (document.querySelector('.vantage-bottom-nav')) return;
 
     var path = window.location.pathname;
     function isActive(page) { return path.includes(page); }
 
     var style = document.createElement('style');
+    style.id = 'vantage-bottom-nav-style';
     style.textContent = [
       '/* Mobile bottom nav */',
       '.vantage-bottom-nav {',
@@ -798,7 +825,21 @@
   }
   window.addEventListener('resize', function() {
     var existing = document.querySelector('.vantage-bottom-nav');
-    if (window.innerWidth > 768 && existing) existing.remove();
+    if (window.innerWidth > 768 && existing) {
+      // FIX: previously only removed the nav bar itself, leaving the style
+      // tag and drawer overlay orphaned in the DOM even in this already-
+      // handled direction.
+      existing.remove();
+      var styleEl = document.getElementById('vantage-bottom-nav-style');
+      if (styleEl) styleEl.remove();
+      var overlayEl = document.querySelector('.vbn-drawer-overlay');
+      if (overlayEl) overlayEl.remove();
+    } else if (window.innerWidth <= 768 && !existing) {
+      // FIX: the opposite direction was entirely unhandled — shrinking back
+      // down to mobile width (e.g. rotating a tablet, or resizing a desktop
+      // window) never restored the nav once it had been removed.
+      injectMobileNav();
+    }
   });
 
 
