@@ -704,7 +704,7 @@
         ]
       },
       {
-        title: 'Intelligence',
+        title: 'The Proving Ground',
         items: [
           { icon: '\uD83E\uDDED', label: 'Policy Compass', sub: 'BNS \u00b7 BNSS \u00b7 BSA', href: 'policy-compass.html', page: 'policy-compass' },
           { icon: '\uD83C\uDFAD', label: 'Conversation Simulator', sub: 'Practice before the real thing', href: 'conversation-simulator.html', page: 'conversation-simulator' },
@@ -1204,6 +1204,34 @@
     }
   })();
   // ── END POLICY COMPASS MOVE ────────────────────────────────────────────────
+
+  // ── "INTELLIGENCE" SECTION → "THE PROVING GROUND" ────────────────────────
+  // Renamed because "Intelligence" as a section label collided with "Offer
+  // Intelligence" living in a different section (Core Tools) — a user
+  // seeing a tool literally named "Offer Intelligence" would reasonably
+  // expect it inside a section literally labelled "Intelligence," which
+  // wasn't true. The new name describes what ARIA and Conversation
+  // Simulator actually are — live rehearsal and coaching sessions, not
+  // single-shot generated reports — matching how PACT and MERIDIAN are
+  // named for what they mean, not just how they sound.
+  (function() {
+    function renameIntelligenceSection() {
+      var sections = document.querySelectorAll('.nav-section, .ns, .sb-section');
+      sections.forEach(function(s) {
+        var t = s.textContent.trim().toUpperCase();
+        if (t === 'INTELLIGENCE') {
+          s.textContent = 'The Proving Ground';
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renameIntelligenceSection);
+    } else {
+      renameIntelligenceSection();
+    }
+  })();
+  // ── END INTELLIGENCE RENAME ───────────────────────────────────────────────
 
   // ── HUMAC SCORE LINK → MY RECORD SECTION ───────────────────────────────────
   (function() {
