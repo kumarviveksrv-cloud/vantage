@@ -142,7 +142,7 @@
     .shift-colhead.after{color:var(--muted);background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.2)}
     .shift-card{border-radius:12px;padding:18px 22px;font-size:13px;line-height:1.7;position:relative;overflow:hidden}
     .shift-card.before{background:rgba(244,243,255,0.02);border:1px solid rgba(244,243,255,0.05);color:var(--grey);font-style:italic;transition:opacity 0.8s ease,filter 0.8s ease}
-    .shift-card.after{background:var(--surface);border:1px solid rgba(99,102,241,0.18);color:rgba(244,243,255,0.72)}
+    .shift-card.after{background:var(--surface);border:1px solid rgba(99,102,241,0.18);color:rgba(244,243,255,0.72);opacity:0;transform:translateY(14px);transition:opacity 0.6s ease,transform 0.6s ease}
     .shift-card.after.revealed{opacity:1;transform:translateY(0)}
     .shift-card.before.degraded{opacity:0.18;filter:blur(1.5px) saturate(0)}
     .rupee{font-family:'JetBrains Mono',monospace;color:var(--muted);font-style:normal;font-size:13px}
@@ -414,10 +414,10 @@
 
 <div class="stats-strip" id="stats-strip">
   <div class="stats-inner">
-    <div class="stat-item"><div class="stat-num" id="sn0">&#8377;0L</div><div class="stat-label">Avg exposure per<br>ER case, India</div></div>
-    <div class="stat-item"><div class="stat-num" id="sn1">0</div><div class="stat-label">Intelligence tools<br>India-calibrated</div></div>
-    <div class="stat-item"><div class="stat-num" id="sn2">0</div><div class="stat-label">MERIDIAN context<br>parameters</div></div>
-    <div class="stat-item"><div class="stat-num" id="sn3">0</div><div class="stat-label">HUMANCE asset<br>classes tracked</div></div>
+    <div class="stat-item"><div class="stat-num" id="sn0" data-target="35" data-prefix="&#8377;" data-suffix="L">&#8377;0L</div><div class="stat-label">Avg exposure per<br>ER case, India</div></div>
+    <div class="stat-item"><div class="stat-num" id="sn1" data-target="5" data-prefix="" data-suffix="">0</div><div class="stat-label">Intelligence tools<br>India-calibrated</div></div>
+    <div class="stat-item"><div class="stat-num" id="sn2" data-target="7" data-prefix="" data-suffix="">0</div><div class="stat-label">MERIDIAN context<br>parameters</div></div>
+    <div class="stat-item"><div class="stat-num" id="sn3" data-target="5" data-prefix="" data-suffix="">0</div><div class="stat-label">Humac Score<br>pillars tracked</div></div>
   </div>
 </div>
 
@@ -666,6 +666,75 @@ function resetScenario() {
   });
   document.getElementById('scenario-reveal').classList.remove('visible');
 }
+
+// ── STATS COUNT-UP ────────────────────────────────────────────────────────
+// Fixes a real bug, not just adding polish: these four numbers had no JS
+// behind them at all and permanently showed zero to every visitor.
+(function(){
+  var fired = false;
+  function countUp(el) {
+    var target = parseInt(el.getAttribute('data-target'), 10);
+    var prefix = el.getAttribute('data-prefix') || '';
+    var suffix = el.getAttribute('data-suffix') || '';
+    var start = 0, duration = 1100, startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var progress = Math.min((ts - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var val = Math.round(start + (target - start) * eased);
+      el.textContent = prefix + val + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var strip = document.getElementById('stats-strip');
+  if (!strip) return;
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting && !fired) {
+        fired = true;
+        strip.querySelectorAll('.stat-num').forEach(countUp);
+      }
+    });
+  }, {threshold:0.4});
+  obs.observe(strip);
+})();
+
+// ── SHIFT SECTION: STAGGERED TRANSFORMATION REVEAL ──────────────────────
+// The CSS for this (.degraded, .lit, .revealed) already existed — nothing
+// ever triggered it. Wiring it up as a staggered sequence rather than all
+// at once is what makes it read as a transformation instead of a list.
+(function(){
+  var fired = false;
+  var pairs = [
+    {before:'sb0', arrow:'sa0', after:'saf0'},
+    {before:'sb1', arrow:'sa1', after:'saf1'},
+    {before:'sb2', arrow:'sa2', after:'saf2'}
+  ];
+  function runSequence() {
+    pairs.forEach(function(p, i) {
+      setTimeout(function(){
+        var b = document.getElementById(p.before);
+        var a = document.getElementById(p.arrow);
+        var f = document.getElementById(p.after);
+        if (b) b.classList.add('degraded');
+        if (a) a.classList.add('lit');
+        if (f) f.classList.add('revealed');
+      }, i * 550);
+    });
+  }
+  var wrap = document.getElementById('shift-wrapper');
+  if (!wrap) return;
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting && !fired) {
+        fired = true;
+        runSequence();
+      }
+    });
+  }, {threshold:0.35});
+  obs.observe(wrap);
+})();
 
 var reveals=document.querySelectorAll('.reveal');
 var revObs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.08});
