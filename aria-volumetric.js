@@ -49,7 +49,7 @@
 
   const scene=new THREE.Scene();
   const camera=new THREE.PerspectiveCamera(34,1,.1,100);
-  camera.position.set(0,0,7.8);
+  camera.position.set(0,0,6.9);
   const group=new THREE.Group();
   scene.add(group);
 
@@ -134,14 +134,14 @@
           p+=dir*scatter*0.55;
           vec4 mv=modelViewMatrix*vec4(p,1.);
           gl_Position=projectionMatrix*mv;
-          gl_PointSize=(1.35+2.1*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
+          gl_PointSize=(1.75+2.6*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
           vColor=mix(color,uStateColor,uStateMix);
         }`,
       fragmentShader:`varying vec3 vColor;
         void main(){
           float d=length(gl_PointCoord-.5);
           float a=smoothstep(.5,.02,d);
-          gl_FragColor=vec4(vColor,a*.82);
+          gl_FragColor=vec4(vColor,a*.94);
         }`
     });
     facePoints=new THREE.Points(geo,mat);
@@ -167,7 +167,7 @@
       const g=new THREE.TorusGeometry(r,.006,5,180);
       const m=new THREE.MeshBasicMaterial({color:j%2?0x6366f1:0xc4b5fd,transparent:true,opacity:j===1?.32:.18,blending:THREE.AdditiveBlending});
       const o=new THREE.Mesh(g,m);
-      o.rotation.x=Math.PI/2;
+      o.rotation.x=Math.PI/2-.4;
       o.position.z=-.35+j*.12;
       group.add(o);
       rings.push(o);
@@ -177,7 +177,7 @@
     const coreDot=new THREE.Mesh(new THREE.SphereGeometry(.08,20,20),new THREE.MeshBasicMaterial({color:0xc4b5fd,transparent:true,opacity:.8,blending:THREE.AdditiveBlending}));
     core.add(coreDot);
     const coreRing=new THREE.Mesh(new THREE.TorusGeometry(.22,.006,6,80),new THREE.MeshBasicMaterial({color:0xe6ddff,transparent:true,opacity:.55,blending:THREE.AdditiveBlending}));
-    coreRing.rotation.x=Math.PI/2;
+    coreRing.rotation.x=Math.PI/2-.4;
     core.add(coreRing);
     core.position.set(0,-1.93,.2);
     group.add(core);
