@@ -76,7 +76,7 @@
   const shoulder=new THREE.Mesh(new THREE.SphereGeometry(1.9,24,12),new THREE.MeshStandardMaterial({color:0x07070d,roughness:1}));shoulder.scale.set(1.25,.5,.65);shoulder.position.y=-2.2;face.add(shoulder);
   const eyeMat=new THREE.MeshBasicMaterial({color:0xe7e2ff,transparent:true,opacity:.9});
   const irisMat=new THREE.MeshBasicMaterial({color:0x8ea0ff,transparent:true,opacity:.95});
-  [-.48,.48].forEach(x=>{const eye=new THREE.Mesh(new THREE.SphereGeometry(.18,16,12),eyeMat);eye.scale.set(1,.55,.55);eye.position.set(x,.28,1.01);face.add(eye);const iris=new THREE.Mesh(new THREE.SphereGeometry(.075,12,8),irisMat);iris.position.set(x,.28,1.16);face.add(iris)});
+  [-.48,.48].forEach(x=>{const eye=new THREE.Mesh(new THREE.SphereGeometry(.18,16,12),eyeMat);eye.scale.set(1,.55,.55);eye.position.set(x,.28,1.01);face.add(eye);const iris=new THREE.Mesh(new THREE.SphereGeometry(.075,12,8),irisMat);iris.position.set(x,.28,1.16);iris.userData.baseX=x;face.add(iris)});
   const nose=new THREE.Mesh(new THREE.ConeGeometry(.12,.55,12),skin);nose.rotation.x=Math.PI/2;nose.position.set(0,-.02,1.02);face.add(nose);
   const mouth=new THREE.Mesh(new THREE.TorusGeometry(.24,.012,8,24,Math.PI),new THREE.MeshBasicMaterial({color:0xc4b5fd,transparent:true,opacity:.35}));mouth.rotation.z=Math.PI;mouth.position.set(0,-.55,1.03);face.add(mouth);
   const faceAura=new THREE.Mesh(new THREE.SphereGeometry(2.1,32,20),new THREE.MeshBasicMaterial({color:0x6366f1,transparent:true,opacity:.055,blending:THREE.AdditiveBlending,depthWrite:false}));faceAura.scale.set(.8,1.05,.55);face.add(faceAura);
@@ -101,9 +101,8 @@
       face.rotation.y+=(mx*.32-face.rotation.y)*.04;face.rotation.x+=(-my*.18-face.rotation.x)*.04;
       faceAura.scale.x=.8+Math.sin(t*1.2)*.025;faceAura.scale.y=1.05+Math.sin(t*1.1)*.025;
       facePoints.forEach((p,i)=>{const a=t*.18+i*.11;p.position.y+=Math.sin(a)*.0007;p.rotation.z+=.002});
-      /* subtle eye focus */
-      face.children.filter(x=>x===irisMat).forEach(()=>{});
-      face.children.forEach(o=>{if(o.material===irisMat)o.position.x+=(Math.max(-.055,Math.min(.055,mx*.09))-0)*.03});
+      /* subtle eye focus — eases toward a target offset from each iris's own base x, rather than accumulating forever */
+      face.children.forEach(o=>{if(o.material===irisMat){const target=o.userData.baseX+Math.max(-.055,Math.min(.055,mx*.09));o.position.x+=(target-o.position.x)*.06;}});
     }
     dp.rotation.y=t*.012;dp.rotation.x=Math.sin(t*.2)*.02;renderer.render(scene,camera);requestAnimationFrame(animate)}
   setPhaseOffice();
