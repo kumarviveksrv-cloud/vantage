@@ -76,5 +76,5 @@
     light.intensity=3.7+Math.sin(t*1.4)*.35;screen.material.opacity=.48+Math.sin(t*1.1)*.12;
     rain.rotation.z=Math.sin(t*.2)*.003;
     dp.rotation.y=t*.012;dp.rotation.x=Math.sin(t*.2)*.02;renderer.render(scene,camera);requestAnimationFrame(animate)}
-  later(()=>{active=true;start=performance.now();pro.classList.add('active','phase-pressure');skip?.classList.add('show');requestAnimationFrame(animate)},5200);
+  later(()=>{active=true;start=performance.now();pro.classList.add('active','phase-pressure');skip?.classList.add('show');requestAnimationFrame(animate)},900);
 })();
