@@ -1,6 +1,5 @@
 /* VANTAGE 7.1 / THE 21:00 PROLOGUE */
-#prologue{position:fixed;inset:0;z-index:180;background:#010106;color:#f5f3ff;opacity:0;visibility:hidden;pointer-events:none;overflow:hidden;transition:opacity .9s ease,visibility .9s ease}
-#prologue.active{opacity:1;visibility:visible;pointer-events:auto}
+#prologue{position:fixed;inset:0;z-index:180;background:#010106;color:#f5f3ff;overflow:hidden}
 #prologueCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .prologue-vignette{position:absolute;inset:0;background:radial-gradient(circle at 50% 48%,transparent 12%,rgba(0,0,0,.12) 42%,rgba(0,0,0,.78) 100%);pointer-events:none}
 .prologue-grid{position:absolute;inset:0;background:linear-gradient(rgba(196,181,253,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(196,181,253,.02) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(circle at center,#000,transparent 75%);opacity:.45;pointer-events:none}
@@ -10,10 +9,10 @@
 .prologue-signal{position:absolute;top:100px;left:32px;width:260px;font:8px/1.7 'JetBrains Mono';letter-spacing:.08em;color:rgba(196,181,253,.4);text-transform:uppercase;opacity:0;transform:translateY(10px);transition:opacity .7s,transform .7s}
 .prologue-signal span{display:block;border-top:1px solid rgba(196,181,253,.08);padding:8px 0}.prologue-signal b{color:rgba(244,243,255,.7);font-weight:500;float:right}
 .prologue-copy{position:absolute;left:50%;bottom:11vh;transform:translateX(-50%);width:min(820px,calc(100% - 48px));text-align:center;pointer-events:none}
-.prologue-kicker{font:8px 'JetBrains Mono';letter-spacing:.22em;color:rgba(196,181,253,.42);text-transform:uppercase;opacity:0;transform:translateY(10px);transition:opacity .8s,transform .8s}
+.prologue-kicker{font:11px 'JetBrains Mono';letter-spacing:.22em;color:rgba(196,181,253,.88);text-transform:uppercase;opacity:0;transform:translateY(10px);transition:opacity .8s,transform .8s}
 .prologue-message{font:500 clamp(28px,4.5vw,62px)/1.05 'Cormorant Garamond',serif;letter-spacing:-.01em;margin:18px auto 0;max-width:780px;opacity:0;transform:translateY(20px);transition:opacity 1s,transform 1s}
 .prologue-message em{color:#c4b5fd;font-weight:500}
-.prologue-sub{font:9px 'JetBrains Mono';letter-spacing:.14em;color:rgba(196,181,253,.38);margin-top:18px;opacity:0;transition:opacity .8s}
+.prologue-sub{font:12px 'JetBrains Mono';letter-spacing:.14em;color:rgba(196,181,253,.82);margin-top:18px;opacity:0;transition:opacity .8s}
 .prologue-note{position:absolute;right:32px;top:100px;width:220px;text-align:right;font:8px/1.8 'JetBrains Mono';letter-spacing:.1em;color:rgba(196,181,253,.35);opacity:0;transform:translateY(10px);transition:opacity .8s,transform .8s}
 .prologue-note strong{display:block;color:rgba(244,243,255,.62);font-weight:500}
 .prologue-skip{position:absolute;right:28px;bottom:26px;border:1px solid rgba(196,181,253,.13);background:rgba(3,2,9,.5);color:rgba(196,181,253,.6);font:8px 'JetBrains Mono';letter-spacing:.12em;padding:9px 11px;border-radius:5px;cursor:pointer;opacity:0;transition:opacity .6s,background .2s,border-color .2s}
@@ -26,6 +25,8 @@
 .face-ui{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .9s}
 #prologue.phase-face .face-ui{opacity:1}
 .face-label{position:absolute;top:50%;left:32px;transform:translateY(-50%);font:8px/1.7 'JetBrains Mono';letter-spacing:.16em;color:rgba(196,181,253,.35);text-transform:uppercase}
+.face-portrait{position:absolute;top:46%;left:50%;transform:translate(-50%,-56%);width:min(38vw,420px);max-width:82vw;pointer-events:none;filter:drop-shadow(0 0 70px rgba(99,102,241,.4));animation:facePortraitBreathe 6.5s ease-in-out infinite}
+@keyframes facePortraitBreathe{0%,100%{filter:drop-shadow(0 0 70px rgba(99,102,241,.4));transform:translate(-50%,-56%) scale(1)}50%{filter:drop-shadow(0 0 100px rgba(99,102,241,.6));transform:translate(-50%,-56%) scale(1.03)}}
 .face-label b{display:block;color:rgba(244,243,255,.66);font-weight:500;margin-top:7px}
 .face-question{position:absolute;left:50%;bottom:13vh;transform:translateX(-50%);width:min(900px,calc(100% - 48px));text-align:center}
 .face-question .q1,.face-question .q2{display:block;font:500 clamp(28px,4.6vw,68px)/1.02 'Cormorant Garamond',serif;letter-spacing:-.01em;opacity:0;transform:translateY(15px);transition:opacity 1s,transform 1s}
@@ -34,7 +35,7 @@
 
 .prologue-fade{position:absolute;inset:0;background:#010106;opacity:0;pointer-events:none;transition:opacity 1.1s ease}.prologue-fade.on{opacity:1}
 @keyframes proPulse{50%{opacity:.25;transform:scale(.7)}}
-@media(max-width:900px){.prologue-top{left:20px;right:20px}.prologue-signal{left:20px;top:78px;width:190px}.prologue-note{right:20px;top:78px;width:170px}.face-label{display:none}.prologue-copy,.face-question{bottom:14vh}.prologue-message,.face-question .q1,.face-question .q2{font-size:clamp(30px,8vw,54px)}}
+@media(max-width:900px){.prologue-top{left:20px;right:20px}.prologue-signal{left:20px;top:78px;width:190px}.prologue-note{right:20px;top:78px;width:170px}.face-label{display:none}.face-portrait{width:min(58vw,340px);top:40%}.prologue-copy,.face-question{bottom:14vh}.prologue-message,.face-question .q1,.face-question .q2{font-size:clamp(30px,8vw,54px)}}
 @media(max-width:560px){.prologue-top{font-size:6px}.prologue-top>span:last-child{display:none}.prologue-signal{width:160px;font-size:6px}.prologue-note{width:150px;font-size:6px}.prologue-copy,.face-question{width:calc(100% - 32px);bottom:16vh}.prologue-message,.face-question .q1,.face-question .q2{font-size:11vw}.prologue-skip{right:16px;bottom:16px}.prologue-grid{background-size:55px 55px}}
 @media(prefers-reduced-motion:reduce){#prologue{display:none}}
 
