@@ -1,0 +1,42 @@
+/* VANTAGE 7.1 / THE 21:00 PROLOGUE */
+#prologue{position:fixed;inset:0;z-index:180;background:#010106;color:#f5f3ff;opacity:0;visibility:hidden;pointer-events:none;overflow:hidden;transition:opacity .9s ease,visibility .9s ease}
+#prologue.active{opacity:1;visibility:visible;pointer-events:auto}
+#prologueCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.prologue-vignette{position:absolute;inset:0;background:radial-gradient(circle at 50% 48%,transparent 12%,rgba(0,0,0,.12) 42%,rgba(0,0,0,.78) 100%);pointer-events:none}
+.prologue-grid{position:absolute;inset:0;background:linear-gradient(rgba(196,181,253,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(196,181,253,.02) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(circle at center,#000,transparent 75%);opacity:.45;pointer-events:none}
+.prologue-top{position:absolute;top:26px;left:32px;right:32px;display:flex;justify-content:space-between;align-items:center;font:8px 'JetBrains Mono';letter-spacing:.18em;color:rgba(196,181,253,.52);text-transform:uppercase}
+.prologue-time{display:flex;gap:10px;align-items:center}.prologue-time i{width:5px;height:5px;border-radius:50%;background:#ff6b81;box-shadow:0 0 14px rgba(255,107,129,.8);animation:proPulse 1.5s infinite}
+.prologue-time strong{font-weight:500;color:rgba(244,243,255,.72)}
+.prologue-signal{position:absolute;top:100px;left:32px;width:260px;font:8px/1.7 'JetBrains Mono';letter-spacing:.08em;color:rgba(196,181,253,.4);text-transform:uppercase;opacity:0;transform:translateY(10px);transition:opacity .7s,transform .7s}
+.prologue-signal span{display:block;border-top:1px solid rgba(196,181,253,.08);padding:8px 0}.prologue-signal b{color:rgba(244,243,255,.7);font-weight:500;float:right}
+.prologue-copy{position:absolute;left:50%;bottom:11vh;transform:translateX(-50%);width:min(820px,calc(100% - 48px));text-align:center;pointer-events:none}
+.prologue-kicker{font:8px 'JetBrains Mono';letter-spacing:.22em;color:rgba(196,181,253,.42);text-transform:uppercase;opacity:0;transform:translateY(10px);transition:opacity .8s,transform .8s}
+.prologue-message{font:500 clamp(28px,4.5vw,62px)/1.05 'Cormorant Garamond',serif;letter-spacing:-.01em;margin:18px auto 0;max-width:780px;opacity:0;transform:translateY(20px);transition:opacity 1s,transform 1s}
+.prologue-message em{color:#c4b5fd;font-weight:500}
+.prologue-sub{font:9px 'JetBrains Mono';letter-spacing:.14em;color:rgba(196,181,253,.38);margin-top:18px;opacity:0;transition:opacity .8s}
+.prologue-note{position:absolute;right:32px;top:100px;width:220px;text-align:right;font:8px/1.8 'JetBrains Mono';letter-spacing:.1em;color:rgba(196,181,253,.35);opacity:0;transform:translateY(10px);transition:opacity .8s,transform .8s}
+.prologue-note strong{display:block;color:rgba(244,243,255,.62);font-weight:500}
+.prologue-skip{position:absolute;right:28px;bottom:26px;border:1px solid rgba(196,181,253,.13);background:rgba(3,2,9,.5);color:rgba(196,181,253,.6);font:8px 'JetBrains Mono';letter-spacing:.12em;padding:9px 11px;border-radius:5px;cursor:pointer;opacity:0;transition:opacity .6s,background .2s,border-color .2s}
+.prologue-skip.show{opacity:1}.prologue-skip:hover{border-color:rgba(196,181,253,.3);background:rgba(99,102,241,.08)}
+#prologue.phase-pressure .prologue-signal,#prologue.phase-pressure .prologue-note{opacity:1;transform:none}
+#prologue.phase-pressure .prologue-kicker{opacity:1;transform:none}
+#prologue.phase-pressure .prologue-message{opacity:1;transform:none}
+#prologue.phase-pressure .prologue-sub{opacity:1;transition-delay:.3s}
+#prologue.phase-face{background:#010106}
+.face-ui{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .9s}
+#prologue.phase-face .face-ui{opacity:1}
+.face-label{position:absolute;top:50%;left:32px;transform:translateY(-50%);font:8px/1.7 'JetBrains Mono';letter-spacing:.16em;color:rgba(196,181,253,.35);text-transform:uppercase}
+.face-label b{display:block;color:rgba(244,243,255,.66);font-weight:500;margin-top:7px}
+.face-question{position:absolute;left:50%;bottom:13vh;transform:translateX(-50%);width:min(900px,calc(100% - 48px));text-align:center}
+.face-question .q1,.face-question .q2{display:block;font:500 clamp(28px,4.6vw,68px)/1.02 'Cormorant Garamond',serif;letter-spacing:-.01em;opacity:0;transform:translateY(15px);transition:opacity 1s,transform 1s}
+.face-question .q1{color:rgba(244,243,255,.76)}.face-question .q2{color:#c4b5fd;margin-top:5px;transition-delay:.65s}
+#prologue.face-speak .face-question .q1,#prologue.face-speak .face-question .q2{opacity:1;transform:none}
+.voice-button{position:absolute;right:30px;bottom:26px;pointer-events:auto;border:1px solid rgba(196,181,253,.16);background:rgba(3,2,9,.6);color:rgba(244,243,255,.7);font:8px 'JetBrains Mono';letter-spacing:.12em;padding:10px 13px;border-radius:5px;cursor:pointer;backdrop-filter:blur(10px);transition:.2s}
+.voice-button:hover{border-color:rgba(196,181,253,.4);color:#fff}.voice-button.on{border-color:rgba(117,245,187,.3);color:#75f5bb}
+.prologue-fade{position:absolute;inset:0;background:#010106;opacity:0;pointer-events:none;transition:opacity 1.1s ease}.prologue-fade.on{opacity:1}
+@keyframes proPulse{50%{opacity:.25;transform:scale(.7)}}
+@media(max-width:900px){.prologue-top{left:20px;right:20px}.prologue-signal{left:20px;top:78px;width:190px}.prologue-note{right:20px;top:78px;width:170px}.face-label{display:none}.prologue-copy,.face-question{bottom:14vh}.prologue-message,.face-question .q1,.face-question .q2{font-size:clamp(30px,8vw,54px)}}
+@media(max-width:560px){.prologue-top{font-size:6px}.prologue-top>span:last-child{display:none}.prologue-signal{width:160px;font-size:6px}.prologue-note{width:150px;font-size:6px}.prologue-copy,.face-question{width:calc(100% - 32px);bottom:16vh}.prologue-message,.face-question .q1,.face-question .q2{font-size:11vw}.prologue-skip,.voice-button{right:16px;bottom:16px}.prologue-grid{background-size:55px 55px}}
+@media(prefers-reduced-motion:reduce){#prologue{display:none}}
+
+#prologue.phase-pressure .prologue-signal span:nth-child(1){transition-delay:.15s}#prologue.phase-pressure .prologue-signal span:nth-child(2){transition-delay:.55s}#prologue.phase-pressure .prologue-signal span:nth-child(3){transition-delay:.95s}#prologue.phase-pressure .prologue-signal span:nth-child(4){transition-delay:1.35s}

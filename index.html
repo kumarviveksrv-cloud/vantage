@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vantage-cinematic.css">
 <link rel="stylesheet" href="vantage-cinematic-v4.css">
+<link rel="stylesheet" href="vantage-prologue.css">
 </head>
 <body>
 <canvas id="world" aria-hidden="true"></canvas>
@@ -42,6 +43,23 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 
 
 
+<div id="prologue" aria-label="Vantage 21:00 prologue">
+  <canvas id="prologueCanvas" aria-hidden="true"></canvas>
+  <div class="prologue-grid"></div><div class="prologue-vignette"></div>
+  <div class="prologue-top"><span>VANTAGE / 21:00</span><span class="prologue-time"><i></i><strong>PRIVATE HR DECISION / LIVE</strong></span></div>
+  <div class="prologue-signal"><span>INCOMING <b>HIGH PRIORITY</b></span><span>EMPLOYEE RELATIONS <b>CASE 2841</b></span><span>MANAGER <b>NEEDS CLOSURE</b></span><span>DOCUMENTATION <b>INCOMPLETE</b></span></div>
+  <div class="prologue-note"><strong>09:18 PM</strong>The office is mostly empty.<br>The decision isn't.</div>
+  <div class="prologue-copy"><div class="prologue-kicker">SOMEWHERE TONIGHT / HR</div><div class="prologue-message">The decision has arrived.<br><em>And you're the one holding it.</em></div><div class="prologue-sub">NO ESCALATION PATH DETECTED · NO SECOND PAIR OF EYES</div></div>
+  <div class="face-ui">
+    <div class="face-label">ARIA / INTELLIGENCE PRESENCE<b>OBSERVING</b></div>
+    <div class="face-question"><span class="q1">When everyone comes to HR with a problem...</span><span class="q2">who does HR go to?</span></div>
+    <button class="voice-button" id="voiceButton">ACTIVATE VOICE</button>
+  </div>
+  <button class="prologue-skip" id="prologueSkip">SKIP PROLOGUE ↗</button>
+  <audio id="prologueVoice" preload="auto" src="prologue-voice.wav"></audio>
+  <div class="prologue-fade"></div>
+</div>
+
 <header class="nav" id="nav">
   <a class="brand" href="index.html" aria-label="Virorah Vantage home">
     <img src="virorah-vantage-logo.png" alt="Virorah Vantage">
@@ -62,7 +80,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
     <p class="hero-kicker split-reveal">SOMEWHERE TONIGHT, AN HR DECISION IS BEING MADE.</p>
     <h1 class="hero-title"><span class="line dim">You're still working.</span><span class="line">Let's make sure</span><span class="line accent">you're not working alone.</span></h1>
     <p class="hero-deck">Vantage is a private intelligence system for the person sitting between <em>people</em>, <em>policy</em>, and <em>the business</em>.</p>
-    <div class="hero-actions"><a href="#experience" class="btn btn-primary magnetic">Enter the system <span>→</span></a><a href="access.html" class="btn btn-ghost magnetic">Enter Vantage <span>↗</span></a><a href="#decision" class="btn btn-ghost magnetic">See the system <span>↓</span></a></div>
+    <div class="hero-actions"><a href="#decision" class="btn btn-primary magnetic">Enter the system <span>→</span></a><a href="access.html" class="btn btn-ghost magnetic">Enter Vantage <span>↗</span></a><a href="#decision" class="btn btn-ghost magnetic">See the system <span>↓</span></a></div>
     <div class="hero-foot"><span>PRIVATE BY DEFAULT</span><span>BUILT FOR INDIAN HR</span><span>YOUR RECORD, NOT YOUR COMPANY'S</span></div>
   </div>
   <div class="hero-scroll"><span>SCROLL TO ENTER</span><i></i></div>
@@ -187,5 +205,6 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
 <script src="vantage-cinematic.js"></script>
 <script src="vantage-cinematic-v4.js"></script>
+<script src="vantage-prologue.js"></script>
 </body>
 </html>
