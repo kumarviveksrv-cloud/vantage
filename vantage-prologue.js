@@ -18,6 +18,10 @@
       drawn texture styled like a real dashboard (header bar, sidebar,
       content rows, a small chart, one highlighted "alert" row) so it
       actually reads as software rather than a blank glowing rectangle.
+
+   NOTE: this is ChatGPT's version of the screen redesign, adopted as
+   the working baseline since it's what's actually live and confirmed
+   working. My own simpler two-metric screen version is not used here.
 */
 (function(){
   'use strict';
