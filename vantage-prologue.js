@@ -337,7 +337,7 @@
   const rainSpeeds=[];
   for(let i=0;i<55;i++){
     const m=new THREE.Mesh(new THREE.BoxGeometry(.008,.28+Math.random()*.5,.008),new THREE.MeshBasicMaterial({color:0x7783d7,transparent:true,opacity:.08+Math.random()*.1}));
-    m.position.set(1+Math.random()*3.8,-.1+Math.random()*4,-4.2);
+    m.position.set(1.3+Math.random()*3.2,.75+Math.random()*3,-4.2);
     m.rotation.z=-.12;
     rain.add(m);
     rainSpeeds.push(1.6+Math.random()*1.8);
@@ -377,7 +377,11 @@
     if(t-lastScreenTick>.055){lastScreenTick=t;screenTexObj.tick();}
     rain.children.forEach((drop,i)=>{
       drop.position.y-=rainSpeeds[i]*dt;
-      if(drop.position.y<-1.6){drop.position.y=3.6+Math.random()*.6;drop.position.x=1+Math.random()*3.8;}
+      // Confined to the window's own vertical span (roughly y:0.65–3.85)
+      // instead of falling well below it into the wall area outside the
+      // window — this is what kept rain visible in the dark panel below
+      // the window rather than reading as happening outside it.
+      if(drop.position.y<.7){drop.position.y=3.7+Math.random()*.15;drop.position.x=1.3+Math.random()*3.2;}
     });
     renderer.render(scene,camera);requestAnimationFrame(animate)}
   // Previously this fired on a blind 900ms timer with no idea whether the
@@ -395,21 +399,13 @@
     pro.classList.add('active','phase-pressure');skip?.classList.add('show');
     requestAnimationFrame(animate);
   }
-  const boot=$('#boot');
-  if(boot){
-    if(boot.classList.contains('done')){
-      later(startReveal,300);
-    }else{
-      let started=false;
-      const bootObs=new MutationObserver(()=>{
-        if(!started&&boot.classList.contains('done')){
-          started=true;bootObs.disconnect();later(startReveal,300);
-        }
-      });
-      bootObs.observe(boot,{attributes:true,attributeFilter:['class']});
-      later(()=>{if(!started){started=true;bootObs.disconnect();startReveal();}},4500);
-    }
-  }else{
-    later(startReveal,900);
-  }
+  // A previous version of this tried to watch #boot for a .done class
+  // before revealing, on the theory that a boot countdown screen sitting
+  // above the prologue might mask its reveal. That was a guess made
+  // without the actual boot script to confirm the class name existed —
+  // it didn't fire reliably, so the 4.5s safety-net fallback ended up
+  // firing every time instead of the intended ~300ms path, turning a
+  // brief pause into a multi-second blank screen. Back to a plain, short,
+  // predictable delay.
+  later(startReveal,900);
 })();
