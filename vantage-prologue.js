@@ -398,6 +398,22 @@
     active=true;start=performance.now();lockScroll(true);
     pro.classList.add('active','phase-pressure');skip?.classList.add('show');
     requestAnimationFrame(animate);
+    // Spectacle countdown for the last 3 seconds before endPrologue()
+    // fires (still triggered by the existing elapsed>9500 check inside
+    // animate() below, unchanged) — makes the wait itself feel
+    // intentional and dramatic instead of just an unexplained pause
+    // right before the page appears.
+    const countNum=$('#prologueCountNum');
+    function tick(n){
+      if(!countNum)return;
+      countNum.textContent=n;
+      countNum.classList.remove('tick');
+      void countNum.offsetWidth;
+      countNum.classList.add('tick');
+    }
+    later(()=>{pro.classList.add('countdown');tick(3);},6500);
+    later(()=>{tick(2);},7500);
+    later(()=>{tick(1);},8500);
   }
   // A previous version of this tried to watch #boot for a .done class
   // before revealing, on the theory that a boot countdown screen sitting
