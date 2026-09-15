@@ -3,6 +3,13 @@
 .god-field:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 49.95%,rgba(196,181,253,.035) 50%,transparent 50.05%),linear-gradient(0deg,transparent 49.95%,rgba(196,181,253,.025) 50%,transparent 50.05%);opacity:.55;pointer-events:none}
 .god-field:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,transparent 0 18%,rgba(0,0,0,.18) 50%,rgba(0,0,0,.72) 100%);pointer-events:none;z-index:3}
 #godCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;display:block;pointer-events:none}
+/* While the section is anywhere on screen, pin the canvas to the actual
+   browser viewport instead of the scrolling section box. The globe is
+   rendered once at a fixed size; without this, which slice of that
+   rendering you see depends on scroll position within the section, so
+   the globe appears to drift and clip as you scroll. Pinned, it always
+   renders relative to what's actually visible. */
+.god-field.is-awake #godCanvas{position:fixed;left:0;top:0;right:0;bottom:0;width:100vw;height:100vh}
 .god-scan{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.34;background:repeating-linear-gradient(0deg,transparent 0 5px,rgba(196,181,253,.012) 6px 7px);mix-blend-mode:screen}
 .god-noise{position:absolute;inset:-50%;z-index:2;pointer-events:none;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");animation:godNoise .2s steps(2) infinite}@keyframes godNoise{to{transform:translate3d(2%,1%,0)}}
 .god-top{position:absolute;left:clamp(24px,5vw,72px);right:clamp(24px,5vw,72px);top:clamp(28px,6vh,60px);z-index:5;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}
