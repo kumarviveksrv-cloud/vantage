@@ -95,7 +95,7 @@
   position:relative;z-index:2;
   display:flex;justify-content:space-between;gap:20px;
   margin-bottom:44px;
-  color:rgba(196,181,253,.38);
+  color:rgba(196,181,253,.58);
   font:8px 'JetBrains Mono',monospace;letter-spacing:.15em;
 }
 .console-topline span:nth-child(2){color:rgba(117,245,187,.5)}
@@ -111,8 +111,8 @@
   margin-bottom:58px;
 }
 .console-head h2{
-  font:700 clamp(44px,6.2vw,88px)/.88 'Cormorant Garamond',serif;
-  letter-spacing:-.06em;margin:0;
+  font:700 clamp(44px,6.2vw,88px)/1.05 'Cormorant Garamond',serif;
+  letter-spacing:-.01em;margin:0;
 }
 .console-head h2 em{
   font-family:'Cormorant Garamond';font-weight:500;color:#c4b5fd;
@@ -147,14 +147,14 @@
   position:relative;
   padding:19px 15px;
   border-top:1px solid rgba(196,181,253,.06);
-  color:rgba(196,181,253,.35);
+  color:rgba(196,181,253,.65);
   cursor:pointer;
   transition:.35s;
 }
 .console-module:last-child{border-bottom:1px solid rgba(196,181,253,.06)}
-.console-module b{display:block;font:9px 'JetBrains Mono';margin-bottom:12px;color:rgba(196,181,253,.2)}
+.console-module b{display:block;font:9px 'JetBrains Mono';margin-bottom:12px;color:rgba(196,181,253,.55)}
 .console-module span{display:block;font:8px 'JetBrains Mono';letter-spacing:.1em}
-.console-module small{display:block;font:7px 'JetBrains Mono';margin-top:6px;color:rgba(196,181,253,.2)}
+.console-module small{display:block;font:7px 'JetBrains Mono';margin-top:6px;color:rgba(196,181,253,.45)}
 .console-module.active,.console-module:hover{
   color:#f4f3ff;background:linear-gradient(90deg,rgba(99,102,241,.13),transparent);
 }
@@ -167,7 +167,7 @@
 .console-main{min-width:0;padding:22px}
 .console-status{
   display:flex;gap:20px;align-items:center;flex-wrap:wrap;
-  color:rgba(196,181,253,.34);
+  color:rgba(196,181,253,.58);
   font:7px 'JetBrains Mono';letter-spacing:.13em;
   border-bottom:1px solid rgba(196,181,253,.07);
   padding-bottom:16px;
@@ -229,7 +229,7 @@
 @keyframes v5Core{50%{transform:scale(1.08);opacity:.15}}
 .console-core span{font:7px 'JetBrains Mono';letter-spacing:.13em;color:rgba(125,211,252,.65)}
 .console-core strong{font:700 31px 'Space Grotesk',sans-serif;letter-spacing:-.04em;margin:5px 0}
-.console-core small{font:7px 'JetBrains Mono';color:rgba(196,181,253,.35)}
+.console-core small{font:7px 'JetBrains Mono';color:rgba(196,181,253,.55)}
 
 .telemetry-card{
   position:absolute;min-width:145px;padding:11px 13px;
@@ -239,7 +239,7 @@
   box-shadow:0 18px 50px rgba(0,0,0,.35);
   transition:.5s cubic-bezier(.16,1,.3,1);
 }
-.telemetry-card small,.telemetry-card b{display:block;font:7px 'JetBrains Mono';letter-spacing:.11em;color:rgba(196,181,253,.32)}
+.telemetry-card small,.telemetry-card b{display:block;font:7px 'JetBrains Mono';letter-spacing:.11em;color:rgba(196,181,253,.62)}
 .telemetry-card strong{display:block;font:600 13px 'DM Sans',sans-serif;margin:5px 0}
 .telemetry-card b{color:rgba(125,211,252,.55)}
 .tc-employee{left:5%;top:14%}.tc-manager{right:5%;top:13%}
@@ -264,12 +264,12 @@
 .console-control{
   min-height:72px;text-align:left;padding:13px 15px;
   border:0;border-right:1px solid rgba(196,181,253,.07);
-  background:rgba(255,255,255,.008);color:rgba(196,181,253,.38);
+  background:rgba(255,255,255,.008);color:rgba(196,181,253,.72);
   cursor:pointer;transition:.3s;
 }
 .console-control:last-child{border-right:0}
 .console-control span{display:block;font:8px 'JetBrains Mono';letter-spacing:.1em}
-.console-control small{display:block;margin-top:6px;font:7px 'JetBrains Mono';color:rgba(196,181,253,.2)}
+.console-control small{display:block;margin-top:6px;font:7px 'JetBrains Mono';color:rgba(196,181,253,.48)}
 .console-control:hover,.console-control.active{
   background:rgba(99,102,241,.08);color:#f4f3ff;
   box-shadow:inset 0 -2px 0 rgba(125,211,252,.65);
@@ -282,7 +282,7 @@
 }
 .console-output>div{padding:15px;border-right:1px solid rgba(196,181,253,.07)}
 .console-output>div:last-child{border-right:0}
-.console-output small{display:block;font:7px 'JetBrains Mono';color:rgba(196,181,253,.27);letter-spacing:.1em}
+.console-output small{display:block;font:7px 'JetBrains Mono';color:rgba(196,181,253,.58);letter-spacing:.1em}
 .console-output strong{display:block;margin-top:7px;font:600 12px 'DM Sans',sans-serif;letter-spacing:-.02em}
 #vectorProcess{color:var(--v5-green)}
 #vectorExposure{color:#c4b5fd}
