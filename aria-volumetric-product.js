@@ -1,19 +1,18 @@
-/* aria-volumetric-product.js — v2
-   Bigger face (97% fill), properly centred.
-   Samples aria-reference.png via hidden canvas.
-   Kills ring CSS immediately on load.
+/* aria-volumetric-product.js — v3
+   Properly moving particles driven by aria-reference.png.
 */
 (function(){
 'use strict';
 
-// Kill rings right away
 const ks=document.createElement('style');
 ks.textContent='.aria-ring,.aria-room::after,.aria-room::before,.orbit-ring{display:none!important;animation:none!important;}';
 document.head.appendChild(ks);
 
-// State colours
 const COLS={idle:[99,102,241],listening:[124,58,237],thinking:[165,180,252],speaking:[232,121,249]};
-const ENERGY={idle:.3,listening:.65,thinking:.45,speaking:1.1};
+// Energy drives HOW FAR particles drift from their base position
+// idle=subtle drift, speaking=dramatic scatter
+const ENERGY={idle:1.2,listening:2.2,thinking:1.6,speaking:4.0};
+
 let state='idle',activeRGB=[...COLS.idle],targetRGB=[...COLS.idle];
 
 function watchState(){
@@ -28,19 +27,14 @@ function watchState(){
   upd();
 }
 
-let canvas,ctx,W=0,H=0;
-let rawParts=[],parts=[];
+let canvas,ctx,W=0,H=0,rawParts=[],parts=[];
 
 function setupCanvas(){
   canvas=document.getElementById('ariaVolumetricCanvas');
   if(!canvas){
     canvas=document.createElement('canvas');
     canvas.id='ariaVolumetricCanvas';
-    Object.assign(canvas.style,{
-      position:'absolute',inset:'0',
-      width:'100%',height:'100%',
-      zIndex:'4',pointerEvents:'none',display:'block'
-    });
+    Object.assign(canvas.style,{position:'absolute',inset:'0',width:'100%',height:'100%',zIndex:'4',pointerEvents:'none',display:'block'});
     const room=document.querySelector('.aria-room')||document.body;
     const old=room.querySelector('img');
     if(old)old.style.display='none';
@@ -49,7 +43,6 @@ function setupCanvas(){
   ctx=canvas.getContext('2d');
 }
 
-// Use getBoundingClientRect for accurate post-layout dimensions
 function measure(){
   const p=canvas.parentElement;
   if(!p)return;
@@ -63,9 +56,9 @@ function measure(){
 
 function sampleImage(img){
   const SMAX=260;
-  const aspect=img.width/img.height;
-  const sw=aspect>=1?SMAX:Math.round(SMAX*aspect);
-  const sh=aspect>=1?Math.round(SMAX/aspect):SMAX;
+  const asp=img.width/img.height;
+  const sw=asp>=1?SMAX:Math.round(SMAX*asp);
+  const sh=asp>=1?Math.round(SMAX/asp):SMAX;
   const off=document.createElement('canvas');
   off.width=sw;off.height=sh;
   const oc=off.getContext('2d');
@@ -91,35 +84,33 @@ function sampleImage(img){
 
 function rebuildPositions(){
   if(!rawParts.length||!W||!H)return;
-
-  // Tight bounding box of sampled face pixels
   let x0=1,x1=0,y0=1,y1=0;
   rawParts.forEach(p=>{
     if(p.nx<x0)x0=p.nx;if(p.nx>x1)x1=p.nx;
     if(p.ny<y0)y0=p.ny;if(p.ny>y1)y1=p.ny;
   });
-  const iW=x1-x0||1,iH=y1-y0||1,iAspect=iW/iH;
-
-  // Fill 96% of the container — no more tiny faces
-  const aW=W*.96, aH=H*.96;
+  const iW=x1-x0||1,iH=y1-y0||1,iAsp=iW/iH;
+  const aW=W*.96,aH=H*.96;
   let dW,dH;
-  if(aW/aH>iAspect){dH=aH;dW=dH*iAspect;}
-  else{dW=aW;dH=dW/iAspect;}
-
-  // Explicit centre — horizontal and vertical
-  const oX=(W-dW)*.5;
-  const oY=(H-dH)*.5;
+  if(aW/aH>iAsp){dH=aH;dW=dH*iAsp;}else{dW=aW;dH=dW/iAsp;}
+  const oX=(W-dW)*.5, oY=(H-dH)*.5;
 
   parts=rawParts.map(p=>{
     const bx=oX+((p.nx-x0)/iW)*dW;
     const by=oY+((p.ny-y0)/iH)*dH;
     return{
-      x:bx+(Math.random()-.5)*2,y:by+(Math.random()-.5)*2,
-      bx,by,
-      vx:(Math.random()-.5)*.45,vy:(Math.random()-.5)*.45,
-      size:.5+p.lum*1.4,
-      alpha:.22+p.lum*.62,
+      x:bx,y:by,bx,by,
+      // Assign each particle a unique drift direction and speed
+      // vx/vy determine WHERE it drifts — range gives variety
+      vx:(Math.random()-.5)*1.4,
+      vy:(Math.random()-.5)*1.4,
+      // Personal oscillation phase offset so particles don't all move in sync
       ph:Math.random()*Math.PI*2,
+      // Phase speed variation — different particles oscillate at different rates
+      spd:.03+Math.random()*.04,
+      size:.8+p.lum*1.9,
+      alpha:.28+p.lum*.65,
+      lum:p.lum,
     };
   });
 }
@@ -137,53 +128,67 @@ function lerp(a,b,t){return a+(b-a)*t;}
 
 function animate(){
   requestAnimationFrame(animate);
-  // Recheck dimensions every frame — zero-cost if unchanged
   measure();
-  if(!W||!H)return;
+  if(!W||!H||!parts.length)return;
   ctx.clearRect(0,0,W,H);
 
   for(let i=0;i<3;i++)activeRGB[i]=lerp(activeRGB[i],targetRGB[i],.022);
   const[r,g,b]=activeRGB.map(v=>Math.round(v));
-  const energy=ENERGY[state]||.3;
+  const energy=ENERGY[state]||1.2;
 
+  // Ambient glow behind face
   const grd=ctx.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.55);
   grd.addColorStop(0,`rgba(${r},${g},${b},.07)`);
   grd.addColorStop(1,'rgba(0,0,0,0)');
   ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
 
   parts.forEach(p=>{
-    p.ph+=.014*(1+energy*.4);
-    const drift=energy*.75;
-    p.x+=p.vx*drift*Math.sin(p.ph*1.1);
-    p.y+=p.vy*drift*Math.cos(p.ph*.92);
-    p.x+=(p.bx-p.x)*.028;
-    p.y+=(p.by-p.y)*.028;
-    const a=p.alpha*(.78+.22*Math.sin(p.ph));
-    ctx.fillStyle=`rgba(${r},${g},${b},${a})`;
+    // Advance personal phase
+    p.ph+=p.spd;
+
+    // ── THE ACTUAL MOTION ────────────────────────────────
+    // Each particle drifts sinusoidally around its base position.
+    // amplitude = vx * energy / SPRING — tuned so idle gives ~8-12px drift,
+    // speaking gives ~35-50px scatter.
+    const SPRING=0.018;
+    const dx=p.vx*energy*Math.sin(p.ph);
+    const dy=p.vy*energy*Math.cos(p.ph*.87);
+    p.x+=dx;
+    p.y+=dy;
+    // Spring pulls back toward base — weak enough to allow real visible drift
+    p.x+=(p.bx-p.x)*SPRING;
+    p.y+=(p.by-p.y)*SPRING;
+    // ─────────────────────────────────────────────────────
+
+    // Brightness pulse tied to phase
+    const pulsedAlpha=p.alpha*(.72+.28*Math.sin(p.ph*1.4));
+
+    // Subtle glow on brighter particles
+    if(p.lum>.65){
+      ctx.shadowBlur=5;
+      ctx.shadowColor=`rgba(${r},${g},${b},.45)`;
+    } else {
+      ctx.shadowBlur=0;
+    }
+
+    ctx.fillStyle=`rgba(${r},${g},${b},${pulsedAlpha})`;
     ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
   });
+  ctx.shadowBlur=0;
 }
 
 function init(){
   setupCanvas();
   watchState();
-
-  // Wait two frames for DOM layout to settle before measuring
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     measure();
     const img=new Image();
     img.src='aria-reference.png';
-    img.onload=function(){
-      // Measure again after image load — layout may have shifted
-      measure();
-      sampleImage(img);
-      // Rebuild if size changes on first resize event
-      window.addEventListener('resize',()=>{
-        setTimeout(()=>{measure();rebuildPositions();},80);
-      });
-      animate();
-    };
+    img.onload=function(){measure();sampleImage(img);animate();};
     img.onerror=function(){measure();buildFallback();animate();};
+    window.addEventListener('resize',()=>{
+      setTimeout(()=>{measure();rebuildPositions();},80);
+    });
   }));
 }
 
