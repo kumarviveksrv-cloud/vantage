@@ -10,7 +10,7 @@ html.prologue-lock,body.prologue-lock{overflow:hidden!important;height:100%!impo
 .prologue-time strong{font-weight:500;color:rgba(244,243,255,.72)}
 .prologue-signal{position:absolute;top:100px;left:32px;width:260px;font:8px/1.7 'JetBrains Mono';letter-spacing:.08em;color:rgba(196,181,253,.4);text-transform:uppercase;opacity:0;transform:translateY(10px);transition:opacity .7s,transform .7s}
 .prologue-signal span{display:block;border-top:1px solid rgba(196,181,253,.08);padding:8px 0}.prologue-signal b{color:rgba(244,243,255,.7);font-weight:500;float:right}
-.prologue-copy{position:absolute;left:50%;bottom:11vh;transform:translateX(-50%);width:min(820px,calc(100% - 48px));text-align:center;pointer-events:none}
+.prologue-copy{position:absolute;left:50%;bottom:6vh;transform:translateX(-50%);width:min(820px,calc(100% - 48px));text-align:center;pointer-events:none}
 .prologue-kicker{font:11px 'JetBrains Mono';letter-spacing:.9em;color:rgba(196,181,253,.88);text-transform:uppercase;opacity:0;filter:blur(8px);transition:opacity 1.8s ease,letter-spacing 1.8s ease,filter 1.8s ease}
 .prologue-message{font:500 clamp(28px,4.5vw,62px)/1.05 'Cormorant Garamond',serif;letter-spacing:-.01em;margin:18px auto 0;max-width:780px;opacity:0;filter:blur(14px);transform:scale(1.04);transition:opacity 2.2s ease,filter 2.2s ease,transform 2.2s ease}
 .prologue-message em{color:#c4b5fd;font-weight:500}
