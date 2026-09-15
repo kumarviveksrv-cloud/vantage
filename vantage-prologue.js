@@ -365,7 +365,7 @@
   let lastMs=null;
   let lastScreenTick=0;
   function animate(ms){if(!active)return;const t=ms*.001;const elapsed=ms-start;
-    if(elapsed>7500)endPrologue();
+    if(elapsed>9000)endPrologue();
     const dt=lastMs===null?.016:Math.min(.05,(ms-lastMs)*.001);
     lastMs=ms;
     camera.position.x+=(mx*.35-camera.position.x)*.015;camera.position.y+=(1.1-my*.18-camera.position.y)*.015;camera.lookAt(.2,.5,0);
@@ -399,7 +399,7 @@
     pro.classList.add('active','phase-pressure');skip?.classList.add('show');
     requestAnimationFrame(animate);
     // Spectacle countdown for the last 3 seconds before endPrologue()
-    // fires (still triggered by the existing elapsed>7500 check inside
+    // fires (still triggered by the existing elapsed>9000 check inside
     // animate() below, unchanged) — makes the wait itself feel
     // intentional and dramatic instead of just an unexplained pause
     // right before the page appears.
@@ -411,9 +411,9 @@
       void countNum.offsetWidth;
       countNum.classList.add('tick');
     }
-    later(()=>{pro.classList.add('countdown');tick(3);},4500);
-    later(()=>{tick(2);},5500);
-    later(()=>{tick(1);},6500);
+    later(()=>{pro.classList.add('countdown');tick(3);},6000);
+    later(()=>{tick(2);},7000);
+    later(()=>{tick(1);},8000);
   }
   // A previous version of this tried to watch #boot for a .done class
   // before revealing, on the theory that a boot countdown screen sitting
