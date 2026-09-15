@@ -12,7 +12,7 @@ function sceneProgress(){const y=scrollY+innerHeight*.5;let idx=0;cinematicSecti
 addEventListener('scroll',sceneProgress,{passive:true});addEventListener('resize',sceneProgress);sceneProgress();
 
 /* Make headings breathe into view */
-if(window.gsap&&!reduce&&window.ScrollTrigger){gsap.registerPlugin(ScrollTrigger);$$('h1,h2').forEach((el)=>{const words=el.textContent.trim().split(/\s+/);el.innerHTML=words.map((w,i)=>`<span class="kinetic-word"><span style="animation-delay:${i*35}ms">${w}</span></span>`).join(' ');gsap.to(el.querySelectorAll('.kinetic-word span'),{y:0,opacity:1,stagger:.035,duration:.8,ease:'power4.out',scrollTrigger:{trigger:el,start:'top 86%',once:true}})});
+if(window.gsap&&!reduce&&window.ScrollTrigger){gsap.registerPlugin(ScrollTrigger);$$('h1,h2').forEach((el)=>{if(el.classList.contains('hero-title'))return;let raw=el.innerHTML.replace(/<br\s*\/?>/gi,' ').replace(/<em>/gi,'\u0001').replace(/<\/em>/gi,'\u0002').replace(/<[^>]+>/g,'');const words=raw.trim().split(/\s+/).filter(Boolean);el.innerHTML=words.map((w,i)=>{const html=w.replace(/\u0001/g,'<em>').replace(/\u0002/g,'</em>');return `<span class="kinetic-word"><span style="animation-delay:${i*35}ms">${html}</span></span>`}).join(' ');gsap.to(el.querySelectorAll('.kinetic-word span'),{y:0,opacity:1,stagger:.035,duration:.8,ease:'power4.out',scrollTrigger:{trigger:el,start:'top 86%',once:true}})});
 $$('.cinematic-panel,.cinematic-portal').forEach((s,i)=>gsap.fromTo(s,{opacity:.78},{opacity:1,duration:.8,scrollTrigger:{trigger:s,start:'top 90%',end:'top 50%',scrub:true}}));
 }
 
@@ -28,7 +28,7 @@ function resize(){D=Math.min(devicePixelRatio,1.5);W=innerWidth;H=innerHeight;cv
 resize();addEventListener('resize',resize);addEventListener('pointermove',e=>{mx=(e.clientX/W-.5);my=(e.clientY/H-.5)},{passive:true});
 function frame(){t+=.016;ctx.clearRect(0,0,W,H);const sy=scrollY/(document.body.scrollHeight-innerHeight||1);ctx.globalCompositeOperation='lighter';
 for(let i=0;i<N;i++){const p=pts[i];p.a+=p.v;let x=(p.x-.5)*W*(.55+p.z*.8)+mx*45*p.z;let y=(p.y-.5)*H*(.55+p.z*.8)+my*35*p.z;const drift=Math.sin(t*.7+i)*18*p.z;x+=drift;y+=Math.cos(t*.5+i)*10*p.z;
-const r=p.s*p.z*(1.2+Math.sin(t*1.5+i)*.25);ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=`rgba(${125+Math.floor(70*p.z)},${105+Math.floor(70*p.z)},${246},${.07+.18*p.z})`;ctx.fill();
+const r=p.s*p.z*(1.2+Math.sin(t*1.5+i)*.25);ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=`rgba(${125+Math.floor(70*p.z)},${105+Math.floor(70*p.z)},${246},${.22+.33*p.z})`;ctx.fill();
 if(i%9===0){ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.sin(p.a)*90*p.z,y+Math.cos(p.a)*90*p.z);ctx.strokeStyle=`rgba(125,211,252,${.015+.035*p.z})`;ctx.stroke()}}
 /* a horizontal scan that follows the page's progress */
 const scan=((t*70)+(sy*H*2))%(H+120)-60;ctx.fillStyle='rgba(125,211,252,.018)';ctx.fillRect(0,scan,W,1);requestAnimationFrame(frame)}frame();}
@@ -42,7 +42,7 @@ const group=new THREE.Group();s.add(group);
 const count=Math.min(2200,Math.floor(innerWidth*innerHeight/480));const g=new THREE.BufferGeometry(),pos=new Float32Array(count*3),col=new Float32Array(count*3),size=new Float32Array(count);
 for(let i=0;i<count;i++){const a=Math.random()*Math.PI*2,rad=2.4+Math.pow(Math.random(),.55)*8.5,yy=(Math.random()-.5)*5.8;pos[i*3]=Math.cos(a)*rad;pos[i*3+1]=yy;pos[i*3+2]=Math.sin(a)*rad;const hue=Math.random()>.78?.53:.7+Math.random()*.08;const cc=new THREE.Color().setHSL(hue,.65,.45+.35*Math.random());col[i*3]=cc.r;col[i*3+1]=cc.g;col[i*3+2]=cc.b;size[i]=Math.random()*1.4+.4}
 g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('color',new THREE.BufferAttribute(col,3));g.setAttribute('aSize',new THREE.BufferAttribute(size,1));
-const m=new THREE.PointsMaterial({size:.024,transparent:true,opacity:.28,vertexColors:true,blending:THREE.AdditiveBlending,depthWrite:false});const p=new THREE.Points(g,m);group.add(p);
+const m=new THREE.PointsMaterial({size:.026,transparent:true,opacity:.62,vertexColors:true,blending:THREE.AdditiveBlending,depthWrite:false});const p=new THREE.Points(g,m);group.add(p);
 const torus=new THREE.Mesh(new THREE.TorusGeometry(1.8,.006,12,160),new THREE.MeshBasicMaterial({color:0x8b5cf6,transparent:true,opacity:.24,blending:THREE.AdditiveBlending}));torus.rotation.x=Math.PI/2.3;group.add(torus);
 const torus2=torus.clone();torus2.scale.setScalar(1.8);torus2.material=torus.material.clone();torus2.material.opacity=.12;group.add(torus2);
 let tx=0,ty=0,sx=0;addEventListener('pointermove',e=>{tx=(e.clientX/innerWidth-.5);ty=(e.clientY/innerHeight-.5)},{passive:true});addEventListener('scroll',()=>sx=scrollY*.0001,{passive:true});
