@@ -26,7 +26,7 @@
   camera.position.set(0,0,12);
   const world=new THREE.Group(); scene.add(world);
 
-  const state={energy:.5,locked:null,mx:0,my:0,scroll:0,onScreen:false};
+  const state={energy:.5,locked:null,mx:0,my:0,scroll:0,onScreen:false,baseY:0};
   const palette={base:new THREE.Color('#8ea0ff'),cyan:new THREE.Color('#7dd3fc'),lav:new THREE.Color('#c4b5fd'),green:new THREE.Color('#75f5bb'),amber:new THREE.Color('#ffb547'),red:new THREE.Color('#ff6b81')};
 
   // Central intelligence core: nested shells, not a literal glowing ball.
@@ -119,7 +119,34 @@
   $('#caseReset')?.addEventListener('click',()=>{root.dataset.state='';state.energy=.5;state.locked=null;phaseEl.textContent='OBSERVING';signalEl.textContent='LISTENING';riskEl.textContent='UNRESOLVED';energyEl.textContent='.50';memoryEl.textContent='LISTENING';command.textContent='FIELD / AWAITING DECISION';setAccent(palette.lav);});
   addEventListener('vantage:decision',e=>decisionUpdate(e.detail||{}));
 
-  function resize(){const w=root.clientWidth||innerWidth,h=root.clientHeight||innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()}
+  function resize(){
+    const w=root.clientWidth||innerWidth,h=root.clientHeight||innerHeight;
+    renderer.setSize(w,h);
+    const aspect=w/h;
+    camera.aspect=aspect;
+    // The scene's rings and orbiting nodes extend out to roughly radius
+    // 3.7 from center. With a fixed camera distance, that fit fine on
+    // wide desktop aspect ratios, but on narrow mobile portrait screens
+    // the effective horizontal field of view shrinks (vertical FOV is
+    // fixed, so aspect<1 narrows the horizontal frustum), leaving the
+    // outer rings and furthest-orbiting nodes wider than the visible
+    // frame — exactly the left/right overflow seen on phones. Pulling
+    // the camera back as aspect narrows keeps the same scene fitting
+    // inside frame; Math.max(12,...) keeps desktop/tablet exactly as
+    // they were, since the computed distance there is already smaller
+    // than the base 12.
+    const vHalfRad=(camera.fov/2)*(Math.PI/180);
+    const neededDist=3.3/(Math.tan(vHalfRad)*aspect);
+    camera.position.z=Math.min(22,Math.max(12,neededDist));
+    // On narrow portrait screens the headline text sits near the top of
+    // the section (see CSS) while the sphere was always vertically
+    // centered — on a short desktop-style layout that's fine, but on a
+    // tall mobile viewport the headline can wrap onto enough lines to
+    // physically overlap the sphere. Nudging the whole scene down a bit
+    // on portrait ratios gives the headline clear space above it.
+    state.baseY=aspect<1?-.9:0;
+    camera.updateProjectionMatrix();
+  }
   addEventListener('resize',resize);
   addEventListener('pointermove',e=>{const r=root.getBoundingClientRect();state.mx=(e.clientX-r.left)/r.width-.5;state.my=(e.clientY-r.top)/r.height-.5},{passive:true});
   resize();
@@ -159,7 +186,7 @@
       world.rotation.y+=(state.mx*.13-world.rotation.y)*.025;
       world.rotation.x+=(-state.my*.07-world.rotation.x)*.025;
       world.position.x+=(state.mx*.22-world.position.x)*.02;
-      world.position.y+=(-state.my*.12-world.position.y)*.02;
+      world.position.y+=((state.baseY||0)-state.my*.12-world.position.y)*.02;
       core.rotation.x=t*.18;core.rotation.y=t*.27;
       coreShell.scale.setScalar(1+Math.sin(t*1.8)*.035*state.energy);
       coreAura.scale.setScalar(1+Math.sin(t*1.2)*.08*state.energy);
