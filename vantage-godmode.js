@@ -125,7 +125,24 @@
   resize();
   addEventListener('scroll',()=>{const r=root.getBoundingClientRect();state.scroll=Math.max(0,Math.min(1,(innerHeight-r.top)/(innerHeight+r.height)));},{passive:true});
 
-  const io=new IntersectionObserver(es=>{es.forEach(e=>{root.classList.toggle('is-awake',e.isIntersecting);state.onScreen=e.isIntersecting;if(e.isIntersecting)resize();});}, {threshold:.1});io.observe(root);
+  // Debounced: entering triggers instantly, but leaving only actually
+  // removes .is-awake after a short sustained absence. Without this, any
+  // noisy source of repeated intersection callbacks (smooth-scroll
+  // libraries like Lenis do continuous micro-adjustments even at rest)
+  // toggles .is-awake many times a second, which yanks the CSS opacity
+  // transition back and forth before it ever completes — visible as a
+  // flicker instead of a fade, and as the section appearing to blink
+  // in and out while the page hasn't actually scrolled anywhere.
+  let awakeLeaveTimer=null;
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{
+    if(e.isIntersecting){
+      if(awakeLeaveTimer){clearTimeout(awakeLeaveTimer);awakeLeaveTimer=null;}
+      if(!state.onScreen){state.onScreen=true;root.classList.add('is-awake');resize();}
+    }else if(state.onScreen&&!awakeLeaveTimer){
+      awakeLeaveTimer=setTimeout(()=>{state.onScreen=false;root.classList.remove('is-awake');awakeLeaveTimer=null;},250);
+    }
+  });}, {threshold:.1});
+  io.observe(root);
 
   function projectNode(n){
     const v=n.position.clone();v.project(camera);
