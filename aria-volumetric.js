@@ -100,22 +100,17 @@
         const dL=Math.hypot(nx-EYE_L[0],ny-EYE_L[1]),dR=Math.hypot(nx-EYE_R[0],ny-EYE_R[1]);
         const wL=Math.exp(-(dL*dL)/(2*EYE_SIGMA*EYE_SIGMA)),wR=Math.exp(-(dR*dR)/(2*EYE_SIGMA*EYE_SIGMA));
         const eyeWeight=Math.max(wL,wR);
-        // This system uses additive blending, so a "darker" particle
-        // colour just renders fainter — there's no way to paint an
-        // actually dark shape by lowering colour values. A dark, ominous
-        // eye instead has to be an actual VOID in the particle field: a
-        // small gap with almost nothing in it, ringed by a bright, dense
-        // boundary (the eyelid/socket edge). ringWeight peaks in a thin
-        // band around each eye (not at its exact centre) to build that
-        // boundary; the pupilVoid multiplier then actively suppresses
-        // whatever density remains in the very centre, carving the hole.
-        // General edge-contrast is also pulled back from before so the
-        // jawline and other facial edges stop competing with the eyes
-        // for attention.
-        const eyeCenterDist=Math.min(dL,dR);
-        const ringWeight=Math.exp(-((eyeCenterDist-.22)**2)/(2*.09*.09));
-        let a=central*.18+br*.34+Math.min(1,contrast*2.6)*.28+ringWeight*.58;
-        if(eyeCenterDist<.09)a*=.12;
+        // Contrast defines features (eye/nose/lip edges), scaled down
+        // toward the outer edge of the face using `central` — this is
+        // what keeps eyes/nose/lips well-defined while suppressing the
+        // jawline and hair-boundary specifically, since those sit in
+        // the lower-weighted outer region. A prior attempt tried to
+        // carve an actual dark void at the pupils (additive blending
+        // can't render "darker", only "fainter", so a void was the only
+        // way to get a genuinely dark eye) — reverted: it read as
+        // alien rather than ominous, so eyes go back to a plain density
+        // boost via eyeWeight instead.
+        const a=central*.18+br*.32+Math.min(1,contrast*2.8)*(.2+.34*central)+eyeWeight*.18;
         if(a<.28||Math.random()>Math.min(1,.24+a*.9))continue;
         const depth=(br-.45)*.9+(1-radial)*.7+(Math.random()-.5)*.32;
         pos.push(nx,ny,depth);
