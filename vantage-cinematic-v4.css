@@ -339,3 +339,5 @@
 @media (prefers-reduced-motion:reduce){
   .console-bg,.console-sweep,.console-core:before,.console-core:after{animation:none!important}
 }
+
+.portal-ring,.console-radar-ring{display:none!important}
