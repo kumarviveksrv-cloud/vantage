@@ -29,6 +29,22 @@
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const pro=$('#prologue');
   if(!pro||reduce)return;
+
+  // Skip the prologue entirely for anyone arriving back at the landing
+  // page having already seen it this session — most commonly someone
+  // clicking "Back to Vantage" from demo.html, but this also covers
+  // any other return visit (browser back button, a bookmark, etc.)
+  // within the same session. Checking document.referrer catches the
+  // demo-page case even on a browser that's never set the session flag
+  // before; the sessionStorage flag (set once the prologue actually
+  // finishes or gets skipped, below) catches every case after that.
+  const cameFromDemo=/\/demo\.html/i.test(document.referrer||'');
+  const alreadySeen=sessionStorage.getItem('vantage_prologue_seen')==='1';
+  if(cameFromDemo||alreadySeen){
+    pro.style.display='none';
+    document.body.classList.add('prologue-complete');
+    return;
+  }
   const canvas=$('#prologueCanvas');
   const skip=$('#prologueSkip');
   let active=false, timers=[];
@@ -43,7 +59,7 @@
   addEventListener('wheel',preventScroll,{passive:false});
   addEventListener('touchmove',preventScroll,{passive:false});
 
-  function endPrologue(){if(!active)return;active=false;clearTimers();lockScroll(false);pro.classList.remove('active','phase-pressure');pro.classList.add('ending');const fade=$('.prologue-fade');if(fade)fade.classList.add('on');setTimeout(()=>{pro.style.display='none';document.body.classList.add('prologue-complete');},1100)}
+  function endPrologue(){if(!active)return;active=false;clearTimers();lockScroll(false);pro.classList.remove('active','phase-pressure');pro.classList.add('ending');const fade=$('.prologue-fade');if(fade)fade.classList.add('on');sessionStorage.setItem('vantage_prologue_seen','1');setTimeout(()=>{pro.style.display='none';document.body.classList.add('prologue-complete');},1100)}
   skip?.addEventListener('click',endPrologue);
 
   /* ---------- Three.js scene ---------- */
