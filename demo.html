@@ -459,35 +459,39 @@
   }
 
   function renderPACT(r) {
-    var riskClass = getRiskClass(r.overallRisk);
+    var scores = r.pact_scores || {};
+    var protocol = r.protocol || {};
+    var riskClass = getRiskClass(scores.overallRisk);
     var dims = ['process','accountability','consequence','trust'];
     var labels = ['P — Process Integrity','A — Accountability Clarity','C — Consequence Mapping','T — Trust Preservation'];
     var pactCards = dims.map(function(d,i){
-      var p = r.pact[d] || {};
+      var p = scores[d] || {};
       var sc = getScoreClass(p.score);
       var points = (p.points||[]).slice(0,2).map(function(pt){ return '<div class="pact-point"><div class="pact-dot"></div><div>'+pt+'</div></div>'; }).join('');
       return '<div class="pact-card"><div class="pact-dim">'+labels[i]+'<span class="pact-score '+sc+'">'+(p.score||'Medium')+' RISK</span></div><div class="pact-status">'+(p.status||'')+'</div>'+points+'</div>';
     }).join('');
 
-    var humacity = '';
-    if (r.humacity) {
-      var h = r.humacity;
-      var assets = (h.assetsAtRisk||[]).slice(0,2).map(function(a){
-        return '<div style="font-size:12px;color:var(--grey);margin-bottom:6px"><span style="color:var(--muted);font-family:JetBrains Mono,monospace;font-size:10px">'+(a.asset||'')+'</span> &mdash; '+(a.impact||'')+'</div>';
+    var financial = '';
+    if (protocol.financial) {
+      var fin = protocol.financial;
+      var breakdown = (fin.breakdown||[]).slice(0,3).map(function(b){
+        return '<div style="font-size:12px;color:var(--grey);margin-bottom:6px">'+b+'</div>';
       }).join('');
-      humacity = '<div class="humacity-card"><div class="hc-header"><div class="hc-badge">HUMACITY</div><div class="hc-title">Financial Impact</div></div><div class="hc-exposure"><div class="hc-label">Total Financial Exposure</div><div class="hc-val">'+(h.financialExposure||'')+'</div></div>'+assets+'<div class="hc-row"><div class="hc-block"><div class="hc-block-label red">Cost of Inaction</div><div class="hc-block-text">'+(h.costOfInaction||'')+'</div></div><div class="hc-block"><div class="hc-block-label green">Revenue Protected</div><div class="hc-block-text">'+(h.revenueProtected||'')+'</div></div></div></div>';
+      financial = '<div class="humacity-card"><div class="hc-header"><div class="hc-badge">HUMAC '+(fin.pillar||'')+'</div><div class="hc-title">Financial Exposure</div></div><div class="hc-exposure"><div class="hc-label">Range &middot; '+(fin.confidence||'')+' Confidence</div><div class="hc-val">'+(fin.range||'')+'</div></div>'+breakdown+'</div>';
     }
 
-    var steps = (r.nextSteps||[]).slice(0,4).map(function(s,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+s+'</div></div>'; }).join('');
+    var stepItems = [protocol.recommendation, protocol.communication, protocol.aria].filter(Boolean);
+    var stepLabels = ['Recommendation', 'What to Say', 'Practice With ARIA'];
+    var steps = stepItems.map(function(s,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text"><b style="color:#f4f3ff">'+stepLabels[i]+':</b> '+s+'</div></div>'; }).join('');
 
     document.getElementById('pact-output').innerHTML =
       '<div class="risk-banner risk-'+riskClass+'">' +
-        '<div><div class="risk-title">'+r.overallRisk+' Risk &mdash; Misconduct Case</div><div class="risk-sub">'+(r.overallNarrative||'')+'</div></div>' +
-        '<div class="risk-badge badge-'+riskClass+'">'+(r.overallRisk||'').toUpperCase()+'</div>' +
+        '<div><div class="risk-title">'+(scores.overallRisk||'')+' Risk &mdash; Misconduct Case</div><div class="risk-sub">'+(scores.overallNarrative||'')+'</div></div>' +
+        '<div class="risk-badge badge-'+riskClass+'">'+(scores.overallRisk||'').toUpperCase()+'</div>' +
       '</div>' +
       '<div class="pact-grid">'+pactCards+'</div>' +
-      humacity +
-      '<div class="steps-card"><div class="steps-title">Recommended Next Steps</div>'+steps+'</div>' +
+      financial +
+      '<div class="steps-card"><div class="steps-title">Unified Decision Protocol</div>'+steps+'</div>' +
       '<div class="demo-cta"><div class="demo-cta-title">Your real cases need real answers.</div><div class="demo-cta-sub">On the full platform, you describe your own situation. PACT reads your MERIDIAN profile — your state, industry, org type, union status — and returns calibrated guidance for your exact reality.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See what else is inside</a></div></div>';
 
     document.getElementById('pact-output').style.display = 'block';
@@ -510,21 +514,30 @@
   }
 
   function renderSIGNAL(r) {
+    var signal = r.signal || {};
     var dimKeys = ['situation','impact','gap','narrative','action','linkage'];
     var dimLabels = ['S — Situation','I — Impact','G — Gap','N — Narrative','A — Action','L — Linkage'];
     var dimClasses = ['dim-s','dim-i','dim-g','dim-n','dim-a','dim-l'];
+    var dimText = {
+      situation: signal.situation ? signal.situation.narrative : '',
+      impact: signal.impact ? signal.impact.narrative : '',
+      gap: signal.gap ? signal.gap.narrative : '',
+      narrative: signal.narrative ? signal.narrative.boardroomVersion : '',
+      action: (signal.action && signal.action.immediate) ? signal.action.immediate.join(' ') : '',
+      linkage: signal.linkage ? signal.linkage.businessOutcome : ''
+    };
     var signalCards = dimKeys.map(function(k,i){
-      return '<div class="signal-card"><div class="sig-dim '+dimClasses[i]+'">'+dimLabels[i]+'</div><div class="sig-content">'+(r.signal ? (r.signal[k]||'') : '')+'</div></div>';
+      return '<div class="signal-card"><div class="sig-dim '+dimClasses[i]+'">'+dimLabels[i]+'</div><div class="sig-content">'+(dimText[k]||'')+'</div></div>';
     }).join('');
 
-    var anchor = r.dataAnchor || {};
-    var talkingPts = (r.talkingPoints||[]).slice(0,3).map(function(tp,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+tp+'</div></div>'; }).join('');
+    var immediateActions = (signal.action && signal.action.immediate) ? signal.action.immediate : [];
+    var talkingPts = immediateActions.slice(0,3).map(function(tp,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+tp+'</div></div>'; }).join('');
 
     document.getElementById('signal-output').innerHTML =
-      '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : (anchor.number||''))+'</div><div class="anchor-ctx">'+(r.headline || anchor.context || 'The number that opens the room.')+'</div></div>' +
+      '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : '')+'</div><div class="anchor-ctx">'+(r.headline || 'The number that opens the room.')+'</div></div>' +
       '<div class="signal-grid">'+signalCards+'</div>' +
-      '<div class="steps-card"><div class="steps-title">Talking Points &mdash; For the Q&amp;A</div>'+talkingPts+'</div>' +
-      '<div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(r.signal && r.signal.narrative ? r.signal.narrative.cfoVersion : '')+'</div></div>' +
+      '<div class="steps-card"><div class="steps-title">Immediate Actions &mdash; This Week</div>'+talkingPts+'</div>' +
+      '<div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(signal.narrative ? signal.narrative.cfoVersion : '')+'</div></div>' +
       '<div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. SIGNAL builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See all six tools</a></div></div>';
 
     document.getElementById('signal-output').style.display = 'block';
