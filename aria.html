@@ -17,7 +17,14 @@
          .aria-name — the "✦ ARIA" identity mark floating over the face
          .ec-title  — "ARIA is ready." the empty-chat state headline
        Everything else stays as-is: panel-title, intro-heading, and
-       chat bubble text all stay sans-serif. -->
+       chat bubble text all stay sans-serif.
+
+       SR19: the old static aria-face.png image + 2D "Matrix rain" canvas
+       overlay have been removed. #aria-canvas is now driven by
+       aria-volumetric-product.js — a real particle-sampled face (same
+       technique as the landing page's ARIA teaser), reactive to this
+       page's actual idle/listening/thinking/speaking state rather than
+       decorative. See that file for the full explanation. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
@@ -221,7 +228,6 @@
 
     <!-- FACE AREA -->
     <div class="face-area">
-      <img id="aria-face-img" src="https://raw.githubusercontent.com/kumarviveksrv-cloud/vantage/refs/heads/main/aria-face.png" alt="ARIA" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center center;z-index:0;background:#050410;" />
       <canvas id="aria-canvas"></canvas>
 
       <!-- Top bar floats over canvas -->
@@ -359,140 +365,6 @@
     var mr = sessionStorage.getItem('sr_meridian');
     var meridian = mr ? JSON.parse(mr) : {};
     document.getElementById('mcv').innerText = (meridian.state||'Not set')+' \xb7 '+(meridian.industry||'Not set');
-
-    // ── PHOTOREALISTIC FACE + MATRIX OVERLAY ────────────────
-    function initFace() {
-      var canvas = document.getElementById('aria-canvas');
-      var ctx = canvas.getContext('2d');
-      var W, H, cx, cy, sc;
-
-      function resize() {
-        W = canvas.parentElement.clientWidth;
-        H = canvas.parentElement.clientHeight;
-        canvas.width = W; canvas.height = H;
-        cx = W / 2; cy = H / 2;
-        sc = Math.min(W, H) / 560;
-      }
-      resize();
-      window.addEventListener('resize', resize);
-
-      var CHARS = '\u30F6\u30F7\u30F8\u30F9\u30FA\u30FB\u30FC\u30FD\u30FE\u30FF\u30A1\u30A2\u30A3\u30A4\u30A5\u30A6\u30A7\u30A8\u30A9\u30AA\u30AB\u30AC\u30AD\u30AE\u30AF\u30B0\u30B1\u30B2\u30B3\u30B4\u30B5\u30B6\u30B7\u30B8\u30B9\u30BA\u30BB\u30BC\u30BD\u30BE\u30BF\u30C0\u30C1\u30C2\u30C3\u30C4\u30C5\u30C6\u30C7\u30C8\u30C9\u30CA\u30CB\u30CC\u30CD\u30CE\u30CF\u30D0\u30D1\u30D2\u30D3\u30D4\u30D5\u30D6\u30D7\u30D8\u30D9\u30DA\u30DB\u30DC\u30DD\u30DE\u30DF\u30E0\u30E1\u30E2\u30E3\u30E4\u30E5\u30E6\u30E7\u30E8\u30E9\u30EA\u30EB\u30EC\u30ED\u30EE\u30EF\u30F0\u30F1\u30F2\u30F3\u30F4\u30F5\u30F60123456789';
-      var COL = 18;
-      var cols, drops;
-      function resetRain() {
-        cols = Math.floor(W / COL);
-        drops = [];
-        for (var i = 0; i < cols; i++) drops[i] = Math.floor(Math.random() * (-(H / COL)));
-      }
-      resetRain();
-      window.addEventListener('resize', resetRain);
-
-      var scanY = 0, glowPhase = 0, rainTick = 0;
-      var currentColor = {r:99, g:102, b:241};
-      var targetColor  = {r:99, g:102, b:241};
-
-      window._ariaSetColor = function(r,g,b) { targetColor={r:r,g:g,b:b}; };
-
-      function teal(a) { return 'rgba('+Math.round(currentColor.r)+','+Math.round(currentColor.g)+','+Math.round(currentColor.b)+','+a+')'; }
-
-      function drawRain() {
-        var speaking = ariaState === 'speaking';
-        ctx.font = (COL - 3) + 'px monospace';
-        for (var i = 0; i < cols; i++) {
-          var y = drops[i] * COL;
-          if (drops[i] > 0 && y < H) {
-            var ch = CHARS[Math.floor(Math.random() * CHARS.length)];
-            ctx.fillStyle = speaking ? teal(0.65) : teal(0.35);
-            ctx.fillText(ch, i * COL, y);
-            if (drops[i] > 1) {
-              ctx.fillStyle = speaking ? teal(0.28) : teal(0.14);
-              ctx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], i * COL, y - COL);
-            }
-          }
-          if (rainTick % 1 === 0) {
-            if (y > H && Math.random() > 0.974) drops[i] = 0;
-            drops[i]++;
-          }
-        }
-      }
-
-      function drawOverlay() {
-        var s = sc;
-        var speaking = ariaState === 'speaking';
-        glowPhase += speaking ? 0.07 : 0.02;
-
-        scanY += speaking ? 0.8 : 0.4;
-        if (scanY > H) scanY = 0;
-        var scanAlpha = speaking ? 0.18 + Math.sin(glowPhase) * 0.06 : 0.08 + Math.sin(glowPhase) * 0.03;
-        var sg = ctx.createLinearGradient(0, scanY - 3, 0, scanY + 3);
-        sg.addColorStop(0, 'rgba(99,102,241,0)');
-        sg.addColorStop(0.5, 'rgba(99,102,241,' + scanAlpha + ')');
-        sg.addColorStop(1, 'rgba(99,102,241,0)');
-        ctx.fillStyle = sg;
-        ctx.fillRect(0, scanY - 3, W, 6);
-
-        var scanY2 = (scanY + H * 0.4) % H;
-        var sg2 = ctx.createLinearGradient(0, scanY2 - 2, 0, scanY2 + 2);
-        sg2.addColorStop(0, 'rgba(124,58,237,0)');
-        sg2.addColorStop(0.5, 'rgba(124,58,237,' + (scanAlpha * 0.5) + ')');
-        sg2.addColorStop(1, 'rgba(124,58,237,0)');
-        ctx.fillStyle = sg2;
-        ctx.fillRect(0, scanY2 - 2, W, 4);
-
-        if (speaking) {
-          var eyePulse = (Math.sin(glowPhase * 3) + 1) * 0.5;
-          var eyeAlpha = 0.2 + eyePulse * 0.3;
-          var eyeY = H * 0.40;
-          var eyeW = W * 0.10;
-          var eyeH = H * 0.035;
-          ctx.save();
-          ctx.shadowBlur = 20 + eyePulse * 15;
-          ctx.shadowColor = teal(0.9);
-          ctx.strokeStyle = teal(eyeAlpha);
-          ctx.lineWidth = 1.5;
-          ctx.beginPath(); ctx.ellipse(W * 0.38, eyeY, eyeW, eyeH, 0, 0, Math.PI * 2); ctx.stroke();
-          ctx.beginPath(); ctx.ellipse(W * 0.62, eyeY, eyeW, eyeH, 0, 0, Math.PI * 2); ctx.stroke();
-          ctx.restore();
-        }
-
-        if (speaking) {
-          var auraAlpha = 0.06 + Math.sin(glowPhase * 2) * 0.04;
-          var ag = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(W, H) * 0.45);
-          ag.addColorStop(0, teal(auraAlpha));
-          ag.addColorStop(0.6, teal(auraAlpha * 0.3));
-          ag.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = ag;
-          ctx.fillRect(0, 0, W, H);
-        }
-
-        var b = 8 * s, bsz = 16 * s;
-        ctx.strokeStyle = teal(0.5); ctx.lineWidth = 1.5 * s;
-        ctx.shadowBlur = 0;
-        var corners = [[b, b + bsz, b, b, b + bsz, b], [W - b, b + bsz, W - b, b, W - b - bsz, b], [b, H - b - bsz, b, H - b, b + bsz, H - b], [W - b, H - b - bsz, W - b, H - b, W - b - bsz, H - b]];
-        corners.forEach(function(c) {
-          ctx.beginPath(); ctx.moveTo(c[0], c[1]); ctx.lineTo(c[2], c[3]); ctx.lineTo(c[4], c[5]); ctx.stroke();
-        });
-
-        ctx.fillStyle = teal(0.4); ctx.font = (7 * s) + 'px monospace';
-        ctx.fillText('ARIA.v2', b + 2, b - 1 * s);
-        ctx.fillText('ONLINE', W - b - 40 * s, b - 1 * s);
-        ctx.fillText('MERIDIAN ' + (meridian.state || '').toUpperCase(), b + 2, H - b + 9 * s);
-      }
-
-      function loop() {
-        currentColor.r += (targetColor.r - currentColor.r) * 0.04;
-        currentColor.g += (targetColor.g - currentColor.g) * 0.04;
-        currentColor.b += (targetColor.b - currentColor.b) * 0.04;
-
-        ctx.clearRect(0, 0, W, H);
-        drawRain();
-        rainTick++;
-        drawOverlay();
-        requestAnimationFrame(loop);
-      }
-      loop();
-    }
-    initFace();
 
     // ── VOICE SYSTEM ─────────────────────────────────────────
     var ariaState='idle', curMode='case_partner', hist=[];
@@ -890,6 +762,8 @@
 
   })();
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
+  <script src="aria-volumetric-product.js"></script>
   <script src="clerk-auth.js"></script>
   <script src="sidebar-shared.js"></script>
 </body>
