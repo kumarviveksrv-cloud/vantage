@@ -321,9 +321,17 @@
     let progress=0;
     if(ariaSection){
       const r=ariaSection.getBoundingClientRect();
-      const total=r.height+innerHeight;
-      const scrolled=innerHeight-r.top;
-      progress=Math.min(1,Math.max(0,scrolled/total));
+      // Standard scroll-through mapping: 0 when the section's top edge
+      // reaches the top of the viewport (it now fills the screen),
+      // 1 when the section's bottom edge reaches the top of the
+      // viewport (fully scrolled past). This confines the four-word
+      // sequence to the distance you actually spend with the section
+      // on screen, instead of the much longer approach/leave distance
+      // — the previous formula spent most of its 0..1 range on scroll
+      // you do before the section is even comfortably in view, so the
+      // face was only reachable for a fraction of a second.
+      const denom=Math.max(1,r.height-innerHeight);
+      progress=Math.min(1,Math.max(0,(-r.top)/denom));
     }
     const stage=progress*(shapePositions.length-1);
     const segIndex=Math.min(shapePositions.length-2,Math.floor(stage));
