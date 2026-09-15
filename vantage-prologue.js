@@ -1,5 +1,6 @@
 /* VANTAGE 7.1 / THE 21:00 PROLOGUE
-   Procedural office pressure scene, then a static ARIA portrait (aria-face.png) for the face phase. */
+   Procedural office pressure scene. Single phase — the face/ARIA-question
+   phase was retired; that hook line now lives at the top of the hero. */
 (function(){
   'use strict';
   const $=(s,p=document)=>p.querySelector(s);
@@ -8,10 +9,10 @@
   if(!pro||reduce)return;
   const canvas=$('#prologueCanvas');
   const skip=$('#prologueSkip');
-  let active=false, phase='office', timers=[];
+  let active=false, timers=[];
   const later=(fn,ms)=>{const id=setTimeout(fn,ms);timers.push(id);return id};
   function clearTimers(){timers.forEach(clearTimeout);timers=[]}
-  function endPrologue(){if(!active)return;active=false;clearTimers();pro.classList.remove('active','phase-pressure','phase-face','face-speak');pro.classList.add('ending');const fade=$('.prologue-fade');if(fade)fade.classList.add('on');setTimeout(()=>{pro.style.display='none';document.body.classList.add('prologue-complete');},1100)}
+  function endPrologue(){if(!active)return;active=false;clearTimers();pro.classList.remove('active','phase-pressure');pro.classList.add('ending');const fade=$('.prologue-fade');if(fade)fade.classList.add('on');setTimeout(()=>{pro.style.display='none';document.body.classList.add('prologue-complete');},1100)}
   skip?.addEventListener('click',endPrologue);
 
   /* ---------- Three.js scene ---------- */
@@ -67,21 +68,13 @@
 
   let mx=0,my=0;addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5},{passive:true});
   function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()}addEventListener('resize',resize);
-  let start=performance.now(),faceMode=false;
-  function setPhaseOffice(){phase='office';pro.classList.remove('phase-face','face-speak');pro.classList.add('phase-pressure');office.visible=true}
-  function setPhaseFace(){phase='face';faceMode=true;office.visible=false;pro.classList.remove('phase-pressure');pro.classList.add('phase-face');later(()=>pro.classList.add('face-speak'),650)}
+  let start=performance.now();
   function animate(ms){if(!active)return;const t=ms*.001;const elapsed=ms-start;
-    if(elapsed>7200&&phase==='office')setPhaseFace();
-    if(elapsed>12500&&phase==='face')endPrologue();
-    if(phase==='office'){
-      const p=Math.min(1,Math.max(0,(elapsed-500)/8200));camera.position.x+=(mx*.35-camera.position.x)*.015;camera.position.y+=(1.1-my*.18-camera.position.y)*.015;camera.lookAt(.2,.5,0);
-      office.rotation.y=Math.sin(t*.12)*.025;office.position.x=Math.sin(t*.3)*.02;
-      light.intensity=3.7+Math.sin(t*1.4)*.35;screen.material.opacity=.48+Math.sin(t*1.1)*.12;
-      rain.rotation.z=Math.sin(t*.2)*.003;
-    }else{
-      camera.position.x+=(mx*.65-camera.position.x)*.035;camera.position.y+=(.1-my*.3-camera.position.y)*.035;camera.position.z+= (6.9-camera.position.z)*.02;camera.lookAt(0,-.15,.2);
-    }
+    if(elapsed>9500)endPrologue();
+    camera.position.x+=(mx*.35-camera.position.x)*.015;camera.position.y+=(1.1-my*.18-camera.position.y)*.015;camera.lookAt(.2,.5,0);
+    office.rotation.y=Math.sin(t*.12)*.025;office.position.x=Math.sin(t*.3)*.02;
+    light.intensity=3.7+Math.sin(t*1.4)*.35;screen.material.opacity=.48+Math.sin(t*1.1)*.12;
+    rain.rotation.z=Math.sin(t*.2)*.003;
     dp.rotation.y=t*.012;dp.rotation.x=Math.sin(t*.2)*.02;renderer.render(scene,camera);requestAnimationFrame(animate)}
-  setPhaseOffice();
   later(()=>{active=true;start=performance.now();pro.classList.add('active','phase-pressure');skip?.classList.add('show');requestAnimationFrame(animate)},5200);
 })();
