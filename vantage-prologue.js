@@ -8,22 +8,11 @@
   if(!pro||reduce)return;
   const canvas=$('#prologueCanvas');
   const skip=$('#prologueSkip');
-  const voice=$('#voiceButton');
-  const audio=$('#prologueVoice');
   let active=false, phase='office', timers=[];
   const later=(fn,ms)=>{const id=setTimeout(fn,ms);timers.push(id);return id};
   function clearTimers(){timers.forEach(clearTimeout);timers=[]}
   function endPrologue(){if(!active)return;active=false;clearTimers();pro.classList.remove('active','phase-pressure','phase-face','face-speak');pro.classList.add('ending');const fade=$('.prologue-fade');if(fade)fade.classList.add('on');setTimeout(()=>{pro.style.display='none';document.body.classList.add('prologue-complete');},1100)}
   skip?.addEventListener('click',endPrologue);
-
-  /* ---------- audio: deliberately user-unlocked ---------- */
-  let voiceOn=false;
-  function unlockVoice(){
-    if(!audio)return;
-    audio.volume=.82;
-    audio.play().then(()=>{voiceOn=true;voice?.classList.add('on');if(voice)voice.textContent='VOICE / PLAYING'}).catch((err)=>{console.error('Prologue voice playback failed:',err.name,err.message);if(voice)voice.textContent='VOICE UNAVAILABLE'});
-  }
-  voice?.addEventListener('click',unlockVoice);
 
   /* ---------- Three.js scene ---------- */
   if(!canvas||!window.THREE)return;
@@ -81,13 +70,12 @@
   const mouth=new THREE.Mesh(new THREE.TorusGeometry(.24,.012,8,24,Math.PI),new THREE.MeshBasicMaterial({color:0xc4b5fd,transparent:true,opacity:.35}));mouth.rotation.z=Math.PI;mouth.position.set(0,-.55,1.03);face.add(mouth);
   const faceAura=new THREE.Mesh(new THREE.SphereGeometry(2.1,32,20),new THREE.MeshBasicMaterial({color:0x6366f1,transparent:true,opacity:.055,blending:THREE.AdditiveBlending,depthWrite:false}));faceAura.scale.set(.8,1.05,.55);face.add(faceAura);
   const facePoints=[];for(let i=0;i<160;i++){const a=Math.random()*Math.PI*2,rad=1.7+Math.random()*.8,y=(Math.random()-.5)*3;const p=new THREE.Mesh(new THREE.SphereGeometry(.012,5,5),new THREE.MeshBasicMaterial({color:i%6===0?0x7dd3fc:0xc4b5fd,transparent:true,opacity:.35}));p.position.set(Math.cos(a)*rad,y,Math.sin(a)*rad*.45);face.add(p);facePoints.push(p)}
-  audio?.addEventListener('timeupdate',()=>{if(mouth&&audio.duration){const speaking=Math.sin(audio.currentTime*22);mouth.scale.y=1+Math.max(0,speaking)*.7;mouth.scale.x=1+Math.max(0,-speaking)*.18}});
   const faceLight=new THREE.PointLight(0x8ea0ff,3.2,6);faceLight.position.set(0,1.2,3);face.add(faceLight);
   let mx=0,my=0;addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5},{passive:true});
   function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()}addEventListener('resize',resize);
   let start=performance.now(),faceMode=false;
   function setPhaseOffice(){phase='office';pro.classList.remove('phase-face','face-speak');pro.classList.add('phase-pressure');office.visible=true;face.visible=false}
-  function setPhaseFace(){phase='face';faceMode=true;office.visible=false;face.visible=true;pro.classList.remove('phase-pressure');pro.classList.add('phase-face');later(()=>pro.classList.add('face-speak'),650);later(()=>{if(voice&&!voiceOn){voice.classList.add('show');voice.textContent='ACTIVATE VOICE'}},900)}
+  function setPhaseFace(){phase='face';faceMode=true;office.visible=false;face.visible=true;pro.classList.remove('phase-pressure');pro.classList.add('phase-face');later(()=>pro.classList.add('face-speak'),650)}
   function animate(ms){if(!active)return;const t=ms*.001;const elapsed=ms-start;
     if(elapsed>7200&&phase==='office')setPhaseFace();
     if(elapsed>12500&&phase==='face')endPrologue();
