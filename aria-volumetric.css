@@ -1,0 +1,13 @@
+/* VANTAGE // ARIA VOLUMETRIC INTELLIGENCE
+   Renders inside the existing .aria-figure box in the ARIA section.
+   Deliberately scoped to this one element only — the original
+   standalone prototype set html/body/background globally, which
+   would have broken every other section on the page had it been
+   pasted in as-is. */
+#ariaVolumetricCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 1.4s ease}
+#ariaVolumetricCanvas.is-ready{opacity:1}
+.aria-reaction{position:absolute;left:50%;bottom:9%;transform:translateX(-50%);text-align:center;opacity:0;transition:opacity .6s ease,transform .6s ease;pointer-events:none;max-width:80%}
+.aria-reaction.live{opacity:1;transform:translateX(-50%) translateY(-4px)}
+.aria-reaction b{display:block;font:11px 'JetBrains Mono';letter-spacing:.18em;text-transform:uppercase;color:rgba(196,181,253,.7);margin-bottom:6px}
+.aria-reaction span{display:block;font:16px 'Cormorant Garamond';font-style:italic;color:rgba(244,243,255,.92)}
+@media(prefers-reduced-motion:reduce){#ariaVolumetricCanvas{display:none}}
