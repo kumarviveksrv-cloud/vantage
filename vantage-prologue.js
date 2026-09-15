@@ -57,6 +57,14 @@
   const city=new THREE.Group();office.add(city);for(let i=0;i<45;i++){const m=new THREE.Mesh(new THREE.BoxGeometry(.025,.025,.025),new THREE.MeshBasicMaterial({color:i%5===0?0xc4b5fd:0x5258a8,transparent:true,opacity:.35}));m.position.set(1+Math.random()*4.4,.2+Math.random()*3.6,-4.18);city.add(m)}
   const dust=new THREE.BufferGeometry(),count=520,pos=new Float32Array(count*3);for(let i=0;i<count;i++){pos[i*3]=(Math.random()-.5)*12;pos[i*3+1]=(Math.random()-.5)*6;pos[i*3+2]=(Math.random()-.5)*5-1}dust.setAttribute('position',new THREE.BufferAttribute(pos,3));const dp=new THREE.Points(dust,new THREE.PointsMaterial({color:0xc4b5fd,size:.018,transparent:true,opacity:.24,blending:THREE.AdditiveBlending,depthWrite:false}));scene.add(dp);
 
+  // Precompile every material's shader program right now, off-screen, instead of
+  // letting it happen on the first real frame. With this many distinct materials
+  // in the office scene, first-time shader compilation can stall the very first
+  // rendered frame for a second or more on typical hardware — which is exactly
+  // the multi-second black gap before the office appears. compile() forces that
+  // cost to happen now, silently, well before the 5.2s reveal.
+  renderer.compile(scene, camera);
+
   let mx=0,my=0;addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5},{passive:true});
   function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()}addEventListener('resize',resize);
   let start=performance.now(),faceMode=false;
