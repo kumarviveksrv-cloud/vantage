@@ -67,103 +67,38 @@ if(!reduce){$$('a,button').forEach(el=>{el.addEventListener('pointerenter',()=>r
 /* Navigation */
 $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.getAttribute('href'));if(!target)return;e.preventDefault();target.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})}));
 })();
-
-
-/* ============================================================
-   VANTAGE V5 / INTELLIGENCE CONSOLE
-   Additive layer. Existing corrected V4 engines remain intact.
-   ============================================================ */
-(function(){
-  'use strict';
-  const $=(s,p=document)=>p.querySelector(s), $$=(s,p=document)=>[...p.querySelectorAll(s)];
-  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const consoleRoot=$('#live-console');
-  const shell=$('#consoleShell');
-  const time=$('#consoleTime');
-  const confidence=$('#consoleConfidence');
-  const coreStatus=$('#coreStatus');
-  const coreSub=$('#coreSub');
-  const money=$('#consoleMoney');
-  const vectorTitle=$('#vectorTitle');
-  const vectorExposure=$('#vectorExposure');
-  const vectorProcess=$('#vectorProcess');
-  const vectorVelocity=$('#vectorVelocity');
-
-  const states={
-    baseline:{confidence:'72.4%',status:'READING CASE',sub:'CONTEXT INCOMPLETE',money:'₹18.4L',title:'PROCESS BEFORE OUTCOME',exposure:'₹18L–₹24L',process:'WEAK',velocity:'HIGH'},
-    warning:{confidence:'86.8%',status:'CONTEXT UPDATED',sub:'DOCUMENTATION ATTACHED',money:'₹8.2L',title:'CREATE THE RECORD FIRST',exposure:'₹4L–₹8L',process:'PARTIAL',velocity:'MEDIUM'},
-    union:{confidence:'93.1%',status:'ENVIRONMENT CHANGED',sub:'COLLECTIVE CONTEXT ACTIVE',money:'₹6.7L',title:'PROCESS BECOMES THE DECISION',exposure:'₹1L–₹4L',process:'STRONG',velocity:'LOW'},
-    closure:{confidence:'79.6%',status:'PRESSURE SIGNAL DETECTED',sub:'OUTCOME VS. PROCESS',money:'₹12.6L',title:'SEPARATE URGENCY FROM RISK',exposure:'₹8L–₹16L',process:'PARTIAL',velocity:'HIGH'}
-  };
-
-  function updateConsole(key){
-    const s=states[key]||states.baseline;
-    if(consoleRoot)consoleRoot.classList.add('is-thinking');
-    [confidence,coreStatus,coreSub,money,vectorTitle,vectorExposure,vectorProcess,vectorVelocity].forEach(el=>{if(el)el.style.opacity='.25'});
-    setTimeout(()=>{
-      if(confidence)confidence.textContent='CONFIDENCE '+s.confidence;
-      if(coreStatus)coreStatus.textContent=s.status;
-      if(coreSub)coreSub.textContent=s.sub;
-      if(money)money.textContent=s.money;
-      if(vectorTitle)vectorTitle.textContent=s.title;
-      if(vectorExposure)vectorExposure.textContent=s.exposure;
-      if(vectorProcess)vectorProcess.textContent=s.process;
-      if(vectorVelocity)vectorVelocity.textContent=s.velocity;
-      [confidence,coreStatus,coreSub,money,vectorTitle,vectorExposure,vectorProcess,vectorVelocity].forEach(el=>{if(el)el.style.opacity='1'});
-      if(consoleRoot)consoleRoot.classList.remove('is-thinking');
-    },reduce?0:280);
-  }
-
-  $$('.console-control').forEach(btn=>btn.addEventListener('click',()=>{
-    $$('.console-control').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    updateConsole(btn.dataset.state);
-  }));
-
-  $$('.console-module').forEach(mod=>mod.addEventListener('click',()=>{
-    $$('.console-module').forEach(m=>m.classList.remove('active'));
-    mod.classList.add('active');
-    const map={case:'baseline',context:'warning',risk:'union',business:'closure'};
-    updateConsole(map[mod.dataset.module]||'baseline');
-  }));
-
-  function tick(){
-    if(time){
-      const d=new Date();
-      time.textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(v=>String(v).padStart(2,'0')).join(':');
-    }
-  }
-  tick();setInterval(tick,1000);
-
-  if(shell && !reduce && innerWidth>800){
-    shell.addEventListener('pointermove',e=>{
-      const r=shell.getBoundingClientRect();
-      const x=(e.clientX-r.left)/r.width-.5;
-      const y=(e.clientY-r.top)/r.height-.5;
-      shell.style.transform=`perspective(1800px) rotateX(${y*-1.4}deg) rotateY(${x*1.7}deg)`;
-      $$('.telemetry-card',shell).forEach((card,i)=>{
-        card.style.transform=`translate(${x*(i%2?10:-10)}px,${y*(i%2?8:-8)}px)`;
-      });
-    });
-    shell.addEventListener('pointerleave',()=>{
-      shell.style.transform='';
-      $$('.telemetry-card',shell).forEach(card=>card.style.transform='');
-    });
-  }
-
-  if(window.gsap && window.ScrollTrigger && !reduce){
-    gsap.from('.v5-console .console-shell',{
-      y:70,opacity:0,duration:1.2,ease:'power4.out',
-      scrollTrigger:{trigger:'.v5-console',start:'top 75%',once:true}
-    });
-    gsap.from('.v5-console .telemetry-card',{
-      scale:.8,opacity:0,stagger:.1,duration:.8,ease:'back.out(1.6)',
-      scrollTrigger:{trigger:'.v5-console',start:'top 65%',once:true}
-    });
-    gsap.to('.v5-console .console-radar',{
-      rotation:18,
-      scrollTrigger:{trigger:'.v5-console',start:'top bottom',end:'bottom top',scrub:true}
-    });
-  }
+/* VANTAGE V6 / CINEMATIC EXPERIENCE ENGINE */
+(function(){'use strict';
+const $=(s,p=document)=>p.querySelector(s), $$=(s,p=document)=>[...p.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const exp=$('#experience'); if(!exp)return;
+const status=$('#v6Status'), enter=$('#v6Enter'), coreText=$('#v6CoreText'), engine=$('#v6EngineState');
+const state=$('#v6State'),confidence=$('#v6Confidence'),risk=$('#v6Risk'),recommendation=$('#v6Recommendation'),signal=$('#v6Signal');
+let active=false, phase=0, rafId=0;
+function clock(){const d=new Date(); const t=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':'); const c=$('#v6Clock'); if(c)c.textContent=t} clock(); setInterval(clock,1000);
+function setStatus(s){if(status)status.textContent=s}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+async function initialise(){if(active)return; active=true; exp.classList.add('engaged'); enter.disabled=true; enter.classList.add('processing');
+ const steps=[['READING HUMAN SIGNAL','LISTENING'],['RESOLVING MANAGER PRESSURE','MAPPING'],['LOADING STATE CONTEXT','CALIBRATING'],['CHECKING PROCESS INTEGRITY','TESTING'],['MODELLING BUSINESS EXPOSURE','COMPUTING'],['CONTEXT RESOLVED','READY']];
+ for(let i=0;i<steps.length;i++){setStatus(steps[i][0]); if(coreText)coreText.textContent=steps[i][1]; signal.textContent=(7.4+i*.31).toFixed(1); exp.style.setProperty('--phase',i); await sleep(reduce?80:420)}
+ engine.textContent='LIVE'; state.textContent='CONTEXT RESOLVED'; confidence.textContent='94%'; risk.textContent='MATERIAL'; recommendation.textContent='PROCESS FIRST'; exp.classList.add('resolved');
+ await sleep(reduce?50:650); setStatus('DECISION FIELD ONLINE');
+}
+enter&&enter.addEventListener('click',initialise);
+if(!reduce){
+ let mx=0,my=0; addEventListener('pointermove',e=>{mx=(e.clientX/innerWidth-.5);my=(e.clientY/innerHeight-.5);exp.style.setProperty('--mx',mx);exp.style.setProperty('--my',my)},{passive:true});
+ const nodes=$$('.v6-node',exp); function drift(t){if(!exp.classList.contains('engaged')){rafId=requestAnimationFrame(drift);return} nodes.forEach((n,i)=>{const d=(i%2?1:-1); n.style.transform=`translate3d(${mx*(12+i*2)*d}px,${my*(9+i)*d}px,0)`}); rafId=requestAnimationFrame(drift)} rafId=requestAnimationFrame(drift);
+}
+// Scroll turns the experience from invitation into a transition rather than a normal section.
+if(window.gsap&&window.ScrollTrigger&&!reduce){
+ gsap.timeline({scrollTrigger:{trigger:exp,start:'top top',end:'bottom top',scrub:1}})
+  .to('.v6-center',{y:-180,scale:.82,opacity:.18},0)
+  .to('.v6-constellation',{scale:1.55,rotation:8,opacity:.78},0)
+  .to('.v6-command',{x:0,opacity:1},.22)
+  .to('.v6-grid-floor',{rotateX:68,scale:1.4,y:120},0);
+ gsap.utils.toArray('.v6-node').forEach((n,i)=>gsap.fromTo(n,{opacity:0,scale:.5},{opacity:1,scale:1,duration:.8,delay:i*.07,scrollTrigger:{trigger:exp,start:'top 65%',once:true}}));
+ gsap.fromTo('.v6-future',{opacity:0,y:80,rotateX:18},{opacity:1,y:0,rotateX:0,stagger:.12,scrollTrigger:{trigger:'.v6-futures',start:'top 70%',end:'top 35%',scrub:1}});
+}
+// Accessibility / mobile: allow the story to progress with a tap.
+$$('.v6-node').forEach(n=>n.addEventListener('click',()=>{if(!active)initialise()}));
 })();
