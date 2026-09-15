@@ -62,38 +62,71 @@
   const base=new THREE.Mesh(new THREE.BoxGeometry(2.25,.08,1.45),mat(0x161621,.35,.35));base.rotation.x=-.04;laptop.add(base);
   const screenFrame=new THREE.Mesh(new THREE.BoxGeometry(2.05,1.35,.08),mat(0x080811,.45,.5));screenFrame.position.set(0,.72,-.63);screenFrame.rotation.x=-.02;laptop.add(screenFrame);
 
-  // Canvas-drawn "dashboard" texture instead of a flat glowing plane —
-  // header bar, sidebar rows, content rows, a small bar chart, and one
-  // highlighted row (echoing the "documentation incomplete" tension
-  // from the copy elsewhere in the prologue).
+  // Canvas-drawn "dashboard" texture with actual bright, legible
+  // numbers rather than abstract dark bars — the previous version used
+  // low-opacity muted colors that read as nearly blank at the screen's
+  // actual on-screen size. redraw() gets called periodically from the
+  // render loop with slightly shifted numbers and texture.needsUpdate,
+  // which is what makes it read as live telemetry rather than a static
+  // image.
   function buildScreenTexture(){
     const c=document.createElement('canvas');c.width=512;c.height=314;
     const x=c.getContext('2d');
-    x.fillStyle='#0c0a1e';x.fillRect(0,0,512,314);
-    x.fillStyle='#1a1638';x.fillRect(0,0,512,32);
-    x.fillStyle='#ff6b81';x.beginPath();x.arc(18,16,4,0,Math.PI*2);x.fill();
-    x.fillStyle='#4b4480';x.fillRect(36,11,110,10);
-    x.fillStyle='#141130';x.fillRect(0,32,116,282);
-    for(let i=0;i<7;i++){
-      x.fillStyle=i===2?'#7c83ff':'#302a5c';
-      x.fillRect(14,50+i*30,88,13);
+    const state={exposure:18.4,risk:62,cases:47};
+    let phase=0;
+    function redraw(){
+      x.fillStyle='#0c0a1e';x.fillRect(0,0,512,314);
+      x.fillStyle='#211c4a';x.fillRect(0,0,512,32);
+      x.fillStyle='#ff6b81';x.beginPath();x.arc(18,16,4,0,Math.PI*2);x.fill();
+      x.fillStyle='#a79cf0';x.font='11px monospace';x.textAlign='left';x.textBaseline='middle';
+      x.fillText('CASE 2841 / LIVE',34,17);
+      x.fillStyle='#171340';x.fillRect(0,32,112,282);
+      const labels=['CASE','RISK','COMP','PLCY','TEAM','FLOW','MEMO'];
+      labels.forEach((lab,i)=>{
+        x.fillStyle=i===2?'#8b90ff':'#2c2760';
+        x.fillRect(12,48+i*30,88,15);
+        x.fillStyle=i===2?'#0c0a1e':'#9f98d6';
+        x.font='bold 9px monospace';
+        x.fillText(lab,19,48+i*30+8);
+      });
+      const metrics=[
+        ['LEGAL EXPOSURE','\u20B9'+state.exposure.toFixed(1)+'L','#ff9fb0'],
+        ['RISK SCORE',Math.round(state.risk)+'%','#c4b5fd'],
+        ['CASES LOGGED',String(Math.round(state.cases)),'#8be9c8']
+      ];
+      metrics.forEach((m,i)=>{
+        const mx=132+i*122;
+        x.fillStyle='rgba(196,181,253,.14)';x.fillRect(mx,48,110,72);
+        x.fillStyle='#a79cf0';x.font='8px monospace';x.fillText(m[0],mx+9,66);
+        x.fillStyle=m[2];x.font='bold 22px monospace';x.fillText(m[1],mx+9,98);
+      });
+      x.strokeStyle='rgba(160,166,255,.85)';x.lineWidth=1.6;x.beginPath();
+      for(let i=0;i<58;i++){
+        const px=132+i*3.6;
+        const py=176+Math.sin(i*.42+phase)*15+Math.sin(i*.15+phase*1.6)*6;
+        if(i===0)x.moveTo(px,py);else x.lineTo(px,py);
+      }
+      x.stroke();
+      for(let i=0;i<3;i++){
+        const y=228+i*24;
+        x.fillStyle=i===1?'rgba(255,107,129,.6)':'rgba(196,181,253,.28)';
+        x.fillRect(132,y,296-(i*28),11);
+      }
     }
-    for(let i=0;i<6;i++){
-      const y=48+i*40;
-      x.fillStyle=i===3?'rgba(255,107,129,.55)':'rgba(196,181,253,.22)';
-      x.fillRect(134,y,300-((i%3)*36),12);
-      x.fillStyle='rgba(196,181,253,.12)';
-      x.fillRect(134,y+18,200-((i%2)*54),7);
-    }
-    [28,52,19,64,42].forEach((h,i)=>{
-      x.fillStyle='rgba(139,146,255,.5)';
-      x.fillRect(356+i*22,296-h,14,h);
-    });
+    redraw();
     const tex=new THREE.CanvasTexture(c);
     tex.colorSpace=THREE.SRGBColorSpace;
-    return tex;
+    return {tex,tick(){
+      phase+=.4;
+      state.exposure=Math.max(12,state.exposure+(Math.random()-.5)*.4);
+      state.risk=Math.max(38,Math.min(88,state.risk+(Math.random()-.5)*4));
+      if(Math.random()<.06)state.cases+=1;
+      redraw();
+      tex.needsUpdate=true;
+    }};
   }
-  const screenMat=new THREE.MeshBasicMaterial({map:buildScreenTexture(),transparent:true,opacity:.92});
+  const screenTexObj=buildScreenTexture();
+  const screenMat=new THREE.MeshBasicMaterial({map:screenTexObj.tex,transparent:true,opacity:.96});
   const screen=new THREE.Mesh(new THREE.PlaneGeometry(1.8,1.1),screenMat);screen.position.set(0,.72,-.675);screen.rotation.x=-.02;laptop.add(screen);
 
   const mug=new THREE.Mesh(new THREE.CylinderGeometry(.22,.18,.38,24),mat(0x161622,.35,.15));mug.position.set(-1.75,.17,.25);office.add(mug);
@@ -140,13 +173,15 @@
   function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()}addEventListener('resize',resize);
   let start=performance.now();
   let lastMs=null;
+  let lastScreenTick=0;
   function animate(ms){if(!active)return;const t=ms*.001;const elapsed=ms-start;
     if(elapsed>9500)endPrologue();
     const dt=lastMs===null?.016:Math.min(.05,(ms-lastMs)*.001);
     lastMs=ms;
     camera.position.x+=(mx*.35-camera.position.x)*.015;camera.position.y+=(1.1-my*.18-camera.position.y)*.015;camera.lookAt(.2,.5,0);
     office.rotation.y=Math.sin(t*.12)*.025;office.position.x=Math.sin(t*.3)*.02;
-    light.intensity=3.7+Math.sin(t*1.4)*.35;screen.material.opacity=.8+Math.sin(t*1.1)*.08;
+    light.intensity=3.7+Math.sin(t*1.4)*.35;screen.material.opacity=.92+Math.sin(t*1.1)*.04;
+    if(t-lastScreenTick>.35){lastScreenTick=t;screenTexObj.tick();}
     rain.children.forEach((drop,i)=>{
       drop.position.y-=rainSpeeds[i]*dt;
       if(drop.position.y<-1.6){drop.position.y=3.6+Math.random()*.6;drop.position.x=1+Math.random()*3.8;}
