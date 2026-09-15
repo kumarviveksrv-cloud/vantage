@@ -62,52 +62,253 @@
   const base=new THREE.Mesh(new THREE.BoxGeometry(2.25,.08,1.45),mat(0x161621,.35,.35));base.rotation.x=-.04;laptop.add(base);
   const screenFrame=new THREE.Mesh(new THREE.BoxGeometry(2.05,1.35,.08),mat(0x080811,.45,.5));screenFrame.position.set(0,.72,-.63);screenFrame.rotation.x=-.02;laptop.add(screenFrame);
 
-  // Canvas-drawn "dashboard" texture with actual bright, legible
-  // numbers rather than abstract dark bars — the previous version used
-  // low-opacity muted colors that read as nearly blank at the screen's
-  // actual on-screen size. redraw() gets called periodically from the
-  // render loop with slightly shifted numbers and texture.needsUpdate,
-  // which is what makes it read as live telemetry rather than a static
-  // image.
+  /* ---------- Live laptop intelligence display ----------
+     This is intentionally not a generic dashboard. The laptop is the first
+     visible manifestation of Vantage: a tiny, believable decision system
+     doing work in the room. All motion is deterministic and tied to the
+     Case 2841 narrative rather than random-number jitter.
+  */
   function buildScreenTexture(){
-    const c=document.createElement('canvas');c.width=512;c.height=314;
+    const c=document.createElement('canvas');
+    c.width=1024;c.height=600;
     const x=c.getContext('2d');
-    const state={exposure:18.4,risk:62};
+    const W=c.width,H=c.height;
+
+    const base={
+      risk:62,
+      exposure:18.4,
+      process:43,
+      evidence:58,
+      context:71,
+      pressure:78
+    };
     let phase=0;
+    let lastStage=-1;
+
+    const rgba=(r,g,b,a)=>`rgba(${r},${g},${b},${a})`;
+    const cyan=[142,214,255], violet=[180,164,255], amber=[255,180,91], red=[255,101,126];
+
+    function glowText(text,px,py,font,color,blur=10){
+      x.save();
+      x.font=font;x.textAlign='left';x.textBaseline='middle';
+      x.shadowColor=color;x.shadowBlur=blur;
+      x.fillStyle=color;x.fillText(text,px,py);
+      x.restore();
+    }
+
+    function line(ax,ay,bx,by,color,width=1,alpha=.5){
+      x.save();x.strokeStyle=rgba(...color,alpha);x.lineWidth=width;
+      x.beginPath();x.moveTo(ax,ay);x.lineTo(bx,by);x.stroke();x.restore();
+    }
+
+    function node(cx,cy,r,label,value,active=true){
+      x.save();
+      x.beginPath();x.arc(cx,cy,r,0,Math.PI*2);
+      x.fillStyle=rgba(5,8,20,.82);x.fill();
+      x.lineWidth=1.5;x.strokeStyle=active?rgba(...cyan,.72):rgba(...violet,.24);x.stroke();
+      if(active){
+        x.beginPath();x.arc(cx,cy,r+5+Math.sin(phase*2.2+cx*.01)*1.5,0,Math.PI*2);
+        x.strokeStyle=rgba(...cyan,.12);x.lineWidth=1;x.stroke();
+      }
+      x.beginPath();x.arc(cx,cy,3.5,0,Math.PI*2);
+      x.fillStyle=active?rgba(...cyan,.95):rgba(...violet,.45);x.fill();
+      x.font='600 13px monospace';x.fillStyle=rgba(218,222,255,.72);
+      x.textAlign='center';x.textBaseline='top';x.fillText(label,cx,cy+r+10);
+      if(value){
+        x.font='500 11px monospace';x.fillStyle=rgba(170,184,226,.48);
+        x.fillText(value,cx,cy+r+27);
+      }
+      x.restore();
+    }
+
+    function metric(label,value,unit,y,color,bar){
+      x.font='600 12px monospace';x.fillStyle=rgba(...color,.62);x.textAlign='left';x.textBaseline='middle';
+      x.fillText(label,676,y);
+      x.font='500 25px monospace';x.fillStyle=rgba(240,242,255,.92);
+      x.fillText(value,676,y+29);
+      if(unit){
+        x.font='500 10px monospace';x.fillStyle=rgba(177,185,218,.46);
+        x.fillText(unit,676+Math.max(52,String(value).length*15),y+29);
+      }
+      x.fillStyle=rgba(160,170,210,.08);x.fillRect(676,y+50,292,4);
+      const bw=Math.max(0,Math.min(1,bar))*292;
+      x.fillStyle=rgba(...color,.58);x.fillRect(676,y+50,bw,4);
+      x.fillStyle=rgba(...color,.14);x.fillRect(676,y+50,bw,4);
+    }
+
     function redraw(){
-      x.fillStyle='#120f2e';x.fillRect(0,0,512,314);
-      x.fillStyle='#2a2460';x.fillRect(0,0,512,30);
-      x.fillStyle='#ff6b81';x.beginPath();x.arc(16,15,4,0,Math.PI*2);x.fill();
-      x.fillStyle='#b7aef5';x.font='bold 11px monospace';x.textAlign='left';x.textBaseline='middle';
-      x.fillText('CASE 2841 // LIVE MONITOR',32,15);
-      x.fillStyle='rgba(196,181,253,.16)';x.fillRect(20,46,230,150);
-      x.fillStyle='#9d94e8';x.font='bold 13px monospace';x.fillText('RISK SCORE',34,68);
-      x.fillStyle='#c9c1ff';x.font='bold 64px monospace';x.fillText(Math.round(state.risk)+'%',30,142);
-      x.fillStyle='rgba(255,159,176,.16)';x.fillRect(262,46,230,150);
-      x.fillStyle='#ffb2c1';x.font='bold 13px monospace';x.fillText('EXPOSURE',276,68);
-      x.fillStyle='#ffd3dc';x.font='bold 44px monospace';x.fillText('\u20B9'+state.exposure.toFixed(1)+'L',272,140);
-      x.strokeStyle='#9aa3ff';x.lineWidth=3;x.beginPath();
-      for(let i=0;i<58;i++){
-        const px=20+i*8.6;
-        const py=250+Math.sin(i*.42+phase)*22+Math.sin(i*.15+phase*1.6)*9;
+      phase+=.045;
+
+      const risk=base.risk + Math.sin(phase*.72)*2.2 + Math.sin(phase*1.83)*.8;
+      const exposure=base.exposure + Math.sin(phase*.46)*.32;
+      const process=base.process + Math.sin(phase*.63)*3;
+      const evidence=base.evidence + Math.sin(phase*.39+1.1)*4;
+      const context=base.context + Math.sin(phase*.52+2)*2.5;
+      const pressure=base.pressure + Math.sin(phase*.58)*3;
+
+      /* Deep glass substrate */
+      x.clearRect(0,0,W,H);
+      const bg=x.createLinearGradient(0,0,W,H);
+      bg.addColorStop(0,'#060916');bg.addColorStop(.52,'#0b1020');bg.addColorStop(1,'#050711');
+      x.fillStyle=bg;x.fillRect(0,0,W,H);
+
+      /* Fine computational grid */
+      x.strokeStyle=rgba(126,154,205,.055);x.lineWidth=1;
+      for(let gx=0;gx<=W;gx+=32){x.beginPath();x.moveTo(gx,0);x.lineTo(gx,H);x.stroke()}
+      for(let gy=0;gy<=H;gy+=32){x.beginPath();x.moveTo(0,gy);x.lineTo(W,gy);x.stroke()}
+
+      /* Top system rail */
+      x.fillStyle=rgba(111,122,181,.12);x.fillRect(0,0,W,48);
+      x.fillStyle=rgba(112,207,255,.85);x.fillRect(18,18,5,12);
+      x.font='600 14px monospace';x.fillStyle=rgba(220,226,255,.82);
+      x.textAlign='left';x.textBaseline='middle';
+      x.fillText('VANTAGE',34,24);
+      x.font='500 10px monospace';x.fillStyle=rgba(169,181,223,.48);
+      x.fillText('PRIVATE INTELLIGENCE / CASE 2841',134,24);
+
+      x.textAlign='right';x.fillStyle=rgba(116,238,193,.74);
+      x.fillText('● LIVE',978,24);
+
+      /* Case rail */
+      x.font='500 9px monospace';x.textAlign='left';x.fillStyle=rgba(163,175,217,.42);
+      x.fillText('EMPLOYEE RELATIONS',24,70);
+      x.fillStyle=rgba(232,235,255,.74);x.fillText('ABSENCE / 07 DAYS',24,88);
+      x.fillStyle=rgba(163,175,217,.42);x.fillText('PROCESS STATE',24,108);
+      x.fillStyle=rgba(232,235,255,.74);x.fillText('DOCUMENTATION INCOMPLETE',24,126);
+
+      /* Central decision topology */
+      const cx=382,cy=314;
+      const nodes=[
+        [382,168,36,'POLICY','STATE'],
+        [222,314,36,'PEOPLE','CASE'],
+        [382,460,36,'PROCESS','GAPS'],
+        [542,314,36,'BUSINESS','PRESSURE']
+      ];
+      nodes.forEach(n=>line(cx,cy,n[0],n[1],cyan,1.2,.22));
+      line(222,314,382,168,violet,1,.10);
+      line(382,168,542,314,amber,1,.10);
+      line(542,314,382,460,amber,1,.10);
+      line(382,460,222,314,cyan,1,.10);
+
+      /* Data packets moving through the graph */
+      nodes.forEach((n,i)=>{
+        const a=Math.atan2(n[1]-cy,n[0]-cx);
+        const d=56+((phase*26+i*37)%104);
+        const px=cx+Math.cos(a)*d,py=cy+Math.sin(a)*d;
+        x.beginPath();x.arc(px,py,2.5,0,Math.PI*2);
+        x.fillStyle=rgba(...(i===2?amber:cyan),.9);x.fill();
+      });
+
+      x.save();
+      x.beginPath();x.arc(cx,cy,66+Math.sin(phase*1.4)*2,0,Math.PI*2);
+      x.strokeStyle=rgba(...violet,.16);x.lineWidth=1;x.stroke();
+      x.beginPath();x.arc(cx,cy,46,phase,phase+Math.PI*1.45);
+      x.strokeStyle=rgba(...cyan,.66);x.lineWidth=2;x.stroke();
+      x.beginPath();x.arc(cx,cy,29,-phase*.7,-phase*.7+Math.PI*.85);
+      x.strokeStyle=rgba(...amber,.5);x.lineWidth=1;x.stroke();
+      x.beginPath();x.arc(cx,cy,7,0,Math.PI*2);
+      x.fillStyle=rgba(157,196,255,.16);x.fill();
+      x.beginPath();x.arc(cx,cy,3,0,Math.PI*2);
+      x.fillStyle=rgba(206,232,255,.95);x.fill();
+      x.restore();
+
+      nodes.forEach(n=>node(n[0],n[1],n[2],n[3],n[4],true));
+
+      x.font='500 9px monospace';x.textAlign='center';x.fillStyle=rgba(173,183,220,.44);
+      x.fillText('DECISION FIELD',cx,cy+82);
+
+      /* Right telemetry column */
+      line(646,66,646,550,violet,1,.12);
+      metric('RISK',Math.round(risk)+'','/100',84,red,risk/100);
+      metric('EXPOSURE','₹'+exposure.toFixed(1)+'L','EST.',186,amber,Math.min(1,exposure/24));
+      metric('PROCESS',Math.round(process)+'%','COMPLETE',288,cyan,process/100);
+      metric('EVIDENCE',Math.round(evidence)+'%','COVERAGE',390,violet,evidence/100);
+      metric('PRESSURE',Math.round(pressure)+'%','MANAGER',492,amber,pressure/100);
+
+      /* Bottom live trace */
+      x.fillStyle=rgba(112,207,255,.035);x.fillRect(18,540,610,42);
+      x.font='500 8px monospace';x.textAlign='left';x.fillStyle=rgba(157,173,218,.36);
+      x.fillText('DECISION SIGNAL / LIVE',28,552);
+      x.strokeStyle=rgba(...cyan,.52);x.lineWidth=1.4;x.beginPath();
+      for(let i=0;i<88;i++){
+        const px=28+i*6.55;
+        const py=570+Math.sin(i*.34+phase*2.3)*4+Math.sin(i*.11+phase*.9)*6;
         if(i===0)x.moveTo(px,py);else x.lineTo(px,py);
       }
       x.stroke();
+
+      /* Tiny event stream */
+      x.font='500 8px monospace';x.textAlign='right';
+      x.fillStyle=rgba(168,181,221,.35);
+      const events=['CONTEXT INGESTED','POLICY INDEX READY','EVIDENCE GAP DETECTED','MANAGER PRESSURE HIGH'];
+      const eventIndex=Math.floor(phase*.34)%events.length;
+      x.fillText(events[eventIndex],972,566);
+
+      /* scan sweep */
+      const sy=60+((phase*48)%500);
+      const scan=x.createLinearGradient(0,sy-18,0,sy+18);
+      scan.addColorStop(0,'rgba(111,207,255,0)');
+      scan.addColorStop(.5,'rgba(111,207,255,.10)');
+      scan.addColorStop(1,'rgba(111,207,255,0)');
+      x.fillStyle=scan;x.fillRect(0,sy-18,W,36);
+
+      /* subtle display bloom */
+      const vignette=x.createRadialGradient(W*.5,H*.5,80,W*.5,H*.5,570);
+      vignette.addColorStop(0,'rgba(0,0,0,0)');
+      vignette.addColorStop(1,'rgba(0,0,0,.42)');
+      x.fillStyle=vignette;x.fillRect(0,0,W,H);
     }
+
     redraw();
     const tex=new THREE.CanvasTexture(c);
     tex.colorSpace=THREE.SRGBColorSpace;
-    return {tex,tick(){
-      phase+=.4;
-      state.exposure=Math.max(12,state.exposure+(Math.random()-.5)*.4);
-      state.risk=Math.max(38,Math.min(88,state.risk+(Math.random()-.5)*4));
-      redraw();
-      tex.needsUpdate=true;
-    }};
+    tex.minFilter=THREE.LinearFilter;
+    tex.magFilter=THREE.LinearFilter;
+    return {
+      tex,
+      tick(){
+        redraw();
+        tex.needsUpdate=true;
+      }
+    };
   }
+
   const screenTexObj=buildScreenTexture();
-  const screenMat=new THREE.MeshBasicMaterial({map:screenTexObj.tex,transparent:true,opacity:.96});
-  const screen=new THREE.Mesh(new THREE.PlaneGeometry(1.8,1.1),screenMat);screen.position.set(0,.72,-.675);screen.rotation.x=-.02;laptop.add(screen);
+  const screenMat=new THREE.MeshBasicMaterial({
+    map:screenTexObj.tex,
+    transparent:true,
+    opacity:.98,
+    toneMapped:false
+  });
+
+  const screen=new THREE.Mesh(
+    new THREE.PlaneGeometry(1.84,1.08),
+    screenMat
+  );
+  screen.position.set(0,.72,-.675);
+  screen.rotation.x=-.02;
+  laptop.add(screen);
+
+  /* Physical screen bloom: the light is attached to the laptop rather than
+     painted into the texture, so the display feels emissive in the room. */
+  const screenGlowMat=new THREE.MeshBasicMaterial({
+    color:0x6e7dff,
+    transparent:true,
+    opacity:.085,
+    blending:THREE.AdditiveBlending,
+    depthWrite:false
+  });
+  const screenGlow=new THREE.Mesh(
+    new THREE.PlaneGeometry(2.18,1.42),
+    screenGlowMat
+  );
+  screenGlow.position.set(0,.72,-.70);
+  screenGlow.rotation.x=-.02;
+  laptop.add(screenGlow);
+
+  const screenLight=new THREE.PointLight(0x7185ff,1.35,2.8);
+  screenLight.position.set(0,.74,-.48);
+  laptop.add(screenLight);
 
   const mug=new THREE.Mesh(new THREE.CylinderGeometry(.22,.18,.38,24),mat(0x161622,.35,.15));mug.position.set(-1.75,.17,.25);office.add(mug);
   const phone=new THREE.Mesh(new THREE.BoxGeometry(.52,.035,.95),mat(0x07070c,.2,.4));phone.position.set(1.8,.14,.5);phone.rotation.z=-.12;office.add(phone);
@@ -160,8 +361,11 @@
     lastMs=ms;
     camera.position.x+=(mx*.35-camera.position.x)*.015;camera.position.y+=(1.1-my*.18-camera.position.y)*.015;camera.lookAt(.2,.5,0);
     office.rotation.y=Math.sin(t*.12)*.025;office.position.x=Math.sin(t*.3)*.02;
-    light.intensity=3.7+Math.sin(t*1.4)*.35;screen.material.opacity=.92+Math.sin(t*1.1)*.04;
-    if(t-lastScreenTick>.35){lastScreenTick=t;screenTexObj.tick();}
+    light.intensity=3.7+Math.sin(t*1.4)*.35;
+    screen.material.opacity=.95+Math.sin(t*1.1)*.025;
+    screenGlow.material.opacity=.065+Math.sin(t*1.7)*.018;
+    screenLight.intensity=1.15+Math.sin(t*1.5)*.18;
+    if(t-lastScreenTick>.055){lastScreenTick=t;screenTexObj.tick();}
     rain.children.forEach((drop,i)=>{
       drop.position.y-=rainSpeeds[i]*dt;
       if(drop.position.y<-1.6){drop.position.y=3.6+Math.random()*.6;drop.position.x=1+Math.random()*3.8;}
