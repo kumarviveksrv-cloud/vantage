@@ -19,6 +19,14 @@
 <div class="cinema-hud" aria-hidden="true"><span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span><span class="hud-readout left">VANTAGE // PRIVATE
 INTELLIGENCE LAYER</span><span class="hud-readout right">SIGNAL 07.4
 CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</span><span class="hud-meter"><i id="hudMeter"></i></span></div><div class="scene-tag" id="sceneTag">01 / THE DECISION</div>
+
+<div class="intel-rail" id="intelRail" aria-hidden="true">
+  <div class="intel-rail-head"><i></i><span>INTELLIGENCE / LIVE</span></div>
+  <div class="intel-row"><span>CONTEXT</span><b id="intelContext">07.4</b><i><em></em></i></div>
+  <div class="intel-row"><span>SIGNAL</span><b id="intelSignal">LISTENING</b><i><em></em></i></div>
+  <div class="intel-row"><span>RISK</span><b id="intelRisk">UNRESOLVED</b><i><em></em></i></div>
+  <div class="intel-row"><span>MEMORY</span><b id="intelMemory">ACTIVE</b><i><em></em></i></div>
+</div>
 <div class="grain" aria-hidden="true"></div>
 <div class="scanlines" aria-hidden="true"></div>
 <div class="cursor-orb" aria-hidden="true"></div>
@@ -33,53 +41,6 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 </div>
 
 
-<!-- VANTAGE V6 / CINEMATIC EXPERIENCE -->
-<section class="v6-experience" id="experience" aria-label="Vantage cinematic intelligence experience">
-  <div class="v6-starfield"></div>
-  <div class="v6-scan"></div>
-  <div class="v6-topline"><span>VANTAGE / PRIVATE INTELLIGENCE SYSTEM</span><span id="v6Clock">00:00:00</span><span>SESSION 01 / LIVE</span></div>
-  <div class="v6-status"><i></i><span id="v6Status">AWAITING INPUT</span></div>
-  <div class="v6-center">
-    <div class="v6-kicker">THE LANDING PAGE IS THE DEMONSTRATION</div>
-    <div class="v6-title"><span>People.</span><span>Policy.</span><span class="hot">Pressure.</span><span>Consequences.</span></div>
-    <p class="v6-sub">Watch the system assemble context before it gives you an answer.</p>
-    <button class="v6-enter" id="v6Enter"><span>INITIALISE DECISION</span><b>↗</b></button>
-  </div>
-  <div class="v6-telemetry left">
-    <span>LIVE SIGNAL</span><b id="v6Signal">07.4</b><small>HUMAN / POLICY / BUSINESS</small>
-  </div>
-  <div class="v6-telemetry right">
-    <span>MEMORY</span><b>ACTIVE</b><small>PRIVATE / PERSISTENT</small>
-  </div>
-  <div class="v6-grid-floor"></div>
-  <div class="v6-constellation" id="v6Constellation">
-    <div class="v6-node n1"><small>EMPLOYEE</small><b>CASE 2841</b></div>
-    <div class="v6-node n2"><small>MANAGER</small><b>CLOSURE</b></div>
-    <div class="v6-node n3"><small>STATE</small><b>MAHARASHTRA</b></div>
-    <div class="v6-node n4"><small>POLICY</small><b>STANDING ORDERS</b></div>
-    <div class="v6-node n5"><small>BUSINESS</small><b>VELOCITY</b></div>
-    <div class="v6-node n6"><small>EXPOSURE</small><b>₹18.4L</b></div>
-    <div class="v6-core"><span>VANTAGE</span><strong id="v6CoreText">LISTENING</strong><i></i></div>
-  </div>
-  <div class="v6-command" id="v6Command">
-    <div class="v6-command-head"><span>DECISION ENGINE</span><span id="v6EngineState">STANDBY</span></div>
-    <div class="v6-command-row"><span>STATE</span><b id="v6State">UNRESOLVED</b></div>
-    <div class="v6-command-row"><span>CONFIDENCE</span><b id="v6Confidence">--</b></div>
-    <div class="v6-command-row"><span>RISK</span><b id="v6Risk">--</b></div>
-    <div class="v6-command-row"><span>RECOMMENDATION</span><b id="v6Recommendation">--</b></div>
-  </div>
-</section>
-<section class="v6-futures" aria-label="Decision futures">
-  <div class="v6-futures-head"><span>02 / POSSIBLE FUTURES</span><p>One decision creates multiple trajectories.</p></div>
-  <div class="v6-future-stage" id="v6FutureStage">
-    <div class="v6-axis"></div><div class="v6-origin"><span>NOW</span></div>
-    <div class="v6-future fA"><span>A / TERMINATE</span><b>₹18–24L</b><small>HIGH EXPOSURE</small></div>
-    <div class="v6-future fB"><span>B / WARN + REASSESS</span><b>₹4–8L</b><small>PARTIAL RISK</small></div>
-    <div class="v6-future fC"><span>C / DOMESTIC ENQUIRY</span><b>₹1–3L</b><small>DEFENSIBLE</small></div>
-    <div class="v6-future fD"><span>D / ABANDONMENT</span><b>₹15–20L</b><small>PROCEDURAL RISK</small></div>
-    <div class="v6-future-caption"><strong>VANTAGE DOESN'T PREDICT THE FUTURE.</strong><span>IT SHOWS YOU THE TRAJECTORIES BEFORE YOU CHOOSE ONE.</span></div>
-  </div>
-</section>
 
 <header class="nav" id="nav">
   <a class="brand" href="index.html" aria-label="Virorah Vantage home">
@@ -101,7 +62,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
     <p class="hero-kicker split-reveal">SOMEWHERE TONIGHT, AN HR DECISION IS BEING MADE.</p>
     <h1 class="hero-title"><span class="line dim">You're still working.</span><span class="line">Let's make sure</span><span class="line accent">you're not working alone.</span></h1>
     <p class="hero-deck">Vantage is a private intelligence system for the person sitting between <em>people</em>, <em>policy</em>, and <em>the business</em>.</p>
-    <div class="hero-actions"><a href="#experience" class="btn btn-primary magnetic">Enter the experience <span>→</span></a><a href="access.html" class="btn btn-ghost magnetic">Enter Vantage <span>↗</span></a><a href="#decision" class="btn btn-ghost magnetic">See the system <span>↓</span></a></div>
+    <div class="hero-actions"><a href="#experience" class="btn btn-primary magnetic">Enter the system <span>→</span></a><a href="access.html" class="btn btn-ghost magnetic">Enter Vantage <span>↗</span></a><a href="#decision" class="btn btn-ghost magnetic">See the system <span>↓</span></a></div>
     <div class="hero-foot"><span>PRIVATE BY DEFAULT</span><span>BUILT FOR INDIAN HR</span><span>YOUR RECORD, NOT YOUR COMPANY'S</span></div>
   </div>
   <div class="hero-scroll"><span>SCROLL TO ENTER</span><i></i></div>
@@ -109,7 +70,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 
 <section class="cinematic-portal" aria-label="The Vantage portal">
   <div class="portal-noise"></div><div class="portal-ring"></div><div class="portal-ring"></div><div class="portal-ring"></div><div class="portal-core"></div>
-  <div class="portal-copy"><span class="portal-kicker">VANTAGE / SYSTEM ENTRY</span><h2>The work is<br><em>connected.</em></h2><p>Every decision carries a shadow. Every conversation has a cost. Every choice becomes part of the professional record.</p></div>
+  <div class="portal-copy"><span class="portal-kicker">THE SYSTEM IS ALREADY WORKING</span><h2>Intelligence begins<br><em>before the answer.</em></h2><p>Context is gathered. Signals are weighed. Consequences begin to separate. You only see the result because the work underneath it is already happening.</p><div class="portal-readouts"><span>CONTEXT <b>RESOLVING</b></span><span>DECISION FIELD <b>ONLINE</b></span><span>MEMORY <b>PERSISTENT</b></span></div></div>
 </section>
 
 <section class="signal-strip"><div class="signal-track"><span>EMPLOYEE RELATIONS</span><b>◆</b><span>POLICY</span><b>◆</b><span>BUSINESS IMPACT</span><b>◆</b><span>FINANCIAL EXPOSURE</span><b>◆</b><span>STAKEHOLDER INFLUENCE</span><b>◆</b><span>CAREER RECORD</span><b>◆</b><span>EMPLOYEE RELATIONS</span><b>◆</b><span>POLICY</span><b>◆</b><span>BUSINESS IMPACT</span><b>◆</b><span>FINANCIAL EXPOSURE</span></div></section>
@@ -118,7 +79,17 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   <div class="section-index">01 / THE DECISION</div>
   <div class="decision-head"><div><p class="eyebrow">THE HR UNIVERSE</p><h2>A people decision is<br><em>never just a people decision.</em></h2></div><p class="lede">One employee. One manager. One policy. One number the CFO will eventually ask about. Vantage connects the pieces before you choose the outcome.</p></div>
   <div class="decision-stage" id="decisionStage">
-    <div class="decision-lines"></div>
+    <div class="decision-lines"></div><div class="decision-causality" aria-hidden="true">
+      <svg viewBox="0 0 1000 620" preserveAspectRatio="none">
+        <defs><linearGradient id="decisionFlow" x1="0" x2="1"><stop offset="0" stop-color="#7dd3fc" stop-opacity="0"/><stop offset=".5" stop-color="#c4b5fd" stop-opacity=".55"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>
+        <path d="M180 150 C340 190 390 270 500 310"/><path d="M820 145 C670 190 620 270 500 310"/><path d="M180 470 C330 420 390 350 500 310"/><path d="M820 475 C675 425 615 350 500 310"/>
+      </svg>
+      <div class="field-readout fr1">PROCESS <b id="fieldProcess">WAITING</b></div>
+      <div class="field-readout fr2">EXPOSURE <b id="fieldExposure">—</b></div>
+      <div class="field-readout fr3">IMPACT <b id="fieldImpact">—</b></div>
+      <div class="field-readout fr4">DEFENSIBILITY <b id="fieldDefensibility">—</b></div>
+    </div>
+    <div class="decision-state" id="decisionState"><span>FIELD STATE</span><b>AWAITING CHOICE</b></div>
     <div class="node node-person"><small>EMPLOYEE</small><strong>CASE 2841</strong><i>7 days absent</i></div>
     <div class="node node-manager"><small>MANAGER</small><strong>“Can we close this?”</strong><i>09:18 PM</i></div>
     <div class="node node-policy"><small>POLICY</small><strong>Standing Orders</strong><i>Process integrity</i></div>
