@@ -119,7 +119,7 @@
   $('#caseReset')?.addEventListener('click',()=>{root.dataset.state='';state.energy=.5;state.locked=null;phaseEl.textContent='OBSERVING';signalEl.textContent='LISTENING';riskEl.textContent='UNRESOLVED';energyEl.textContent='.50';memoryEl.textContent='LISTENING';command.textContent='FIELD / AWAITING DECISION';setAccent(palette.lav);});
   addEventListener('vantage:decision',e=>decisionUpdate(e.detail||{}));
 
-  function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()}
+  function resize(){const w=root.clientWidth||innerWidth,h=root.clientHeight||innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()}
   addEventListener('resize',resize);
   addEventListener('pointermove',e=>{const r=root.getBoundingClientRect();state.mx=(e.clientX-r.left)/r.width-.5;state.my=(e.clientY-r.top)/r.height-.5},{passive:true});
   resize();
