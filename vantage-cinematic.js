@@ -53,7 +53,7 @@ const typing=$('#ariaTyping');if(typing&&!reduce){const phrase='“Let’s look 
 $$('.tool-tile').forEach(tile=>tile.addEventListener('pointermove',e=>{const r=tile.getBoundingClientRect();tile.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');tile.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%')}));
 
 /* ---------- finance particles ---------- */
-const finance=$('#financeField');
+const finance=$('#financeField'); 
 if(finance&&!reduce){for(let i=0;i<26;i++){const p=document.createElement('span');p.style.cssText=`position:absolute;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;border-radius:50%;background:rgba(196,181,253,${.18+Math.random()*.4});left:${5+Math.random()*90}%;top:${8+Math.random()*84}%;filter:blur(.2px);box-shadow:0 0 10px rgba(99,102,241,.5)`;finance.appendChild(p);gsap.to(p,{x:(Math.random()-.5)*120,y:(Math.random()-.5)*100,duration:3+Math.random()*5,repeat:-1,yoyo:true,ease:'sine.inOut',delay:-Math.random()*4})}}
 
 /* ---------- record constellation ---------- */
