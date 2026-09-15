@@ -1,44 +1,40 @@
-/* VANTAGE // ARIA VOLUMETRIC INTELLIGENCE — Phase 1
-   Builds on the base particle-face integration with three additions:
+/* VANTAGE // ARIA VOLUMETRIC INTELLIGENCE — Phase 2
+   Adds scroll-triggered dissolution on top of Phase 1's decision-
+   reactivity, coherence, and eye-pull.
 
-   1. EYE-PULL: particles near the two approximate eye positions get
-      extra displacement toward the cursor, on top of the whole-field
-      parallax every particle already has, so the eyes read as
-      "following" more than the rest of the face. The eye center
-      coordinates below are estimates in the same normalized face
-      space the sampler already uses — nudge eyeL/eyeR if they read
-      off-target once you can see it live.
+   HOW THE MORPH WORKS
+   Every shape ARIA can take — her face, and each of the words PEOPLE,
+   POLICY, BUSINESS, CONTEXT — is sampled down to the exact same fixed
+   particle count (PARTICLE_COUNT). Each particle keeps a fixed
+   identity (its color, its "seed" for the idle wave motion, its
+   eye-weight) for the whole session; only its POSITION changes
+   depending on which shape is currently showing. This is what makes
+   it a dissolve rather than a cross-fade: it's the same particles
+   relocating, not one cloud fading out while another fades in.
 
-   2. COHERENCE: if the cursor hasn't moved near ARIA in a while, the
-      particle field gradually loses cohesion (each particle drifts
-      along its own random seed direction) and dims; moving the mouse
-      back over her eases it back to fully formed. Idle alone never
-      drops coherence below .55 — she should always read as
-      recognizably a face, just less "settled" when idle. A risky
-      decision can push the cap lower still (see below).
+   The words are sampled the same way the face is — rendered to an
+   offscreen canvas, then the lit-up (alpha) pixels become candidate
+   points, exactly parallel to how the face sampler uses brightness.
 
-   3. DECISION-REACTIVITY: this is the real point. A MutationObserver
-      watches #caseMachine's data-outcome attribute — the same
-      attribute the site's own case-navigator logic already sets when
-      a visitor picks A/B/C/D — and shifts ARIA's color mix, field
-      agitation, and coherence ceiling accordingly (defensible = calm
-      green tint + full coherence available, risk = red tint +
-      agitation + a lower coherence ceiling so she visibly can't fully
-      "settle", partial = amber tint + mild agitation). A second
-      observer watches #resultTitle's text and mirrors it into a
-      small caption near ARIA, so what she "says" is always the real
-      result the site already computed — nothing here invents new
-      copy or duplicates the decision logic.
+   Scroll position within the .aria section maps to a continuous
+   "stage" value across 4 segments: face→PEOPLE→POLICY→BUSINESS→
+   CONTEXT. Only two shapes are ever bound to the GPU at once (the
+   current segment's start and end); blending between them is a
+   single mix() in the vertex shader driven by a uniform, so nothing
+   is recomputed per-frame except that one number. The position
+   buffers themselves only get rewritten on the (rare) frame where
+   you cross from one segment into the next.
 
-   Deliberately NOT built here: scroll-linked dissolution into
-   PEOPLE / POLICY / BUSINESS / CONTEXT text. That needs its own
-   particle-text sampling system and is a separate piece of work.
+   Scrolling past the section leaves her resting as CONTEXT — this is
+   meant to read as a one-way dissolve into the underlying concepts,
+   not a loop back to her face.
 */
 (function(){
   'use strict';
   if(!window.THREE)return;
   const figure=document.querySelector('.aria-figure');
   const canvas=document.getElementById('ariaVolumetricCanvas');
+  const ariaSection=document.querySelector('.aria');
   if(!figure||!canvas)return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
 
@@ -64,19 +60,59 @@
   const target=new THREE.Vector2();
   let facePoints,haloPoints,rings,built=false,t=0;
 
-  // Approximate eye centers in the same normalized face space the
-  // sampler below uses (nx roughly -1.6..1.6, ny roughly -2..2, top of
-  // frame positive). Tune these two points if the eye-pull reads
-  // off-target once visible.
+  const PARTICLE_COUNT=6000;
+  const WORDS=['PEOPLE','POLICY','BUSINESS','CONTEXT'];
   const EYE_L=[-0.42,0.8],EYE_R=[0.42,0.8],EYE_SIGMA=0.28;
 
-  // Real-application-state colors, matching the same hex values the
-  // rest of the site already uses for defensible / risk / partial.
   const STATE_COLOR={
     defensible:new THREE.Color(0x75f5bb),
     risk:new THREE.Color(0xff4d6d),
     partial:new THREE.Color(0xffb547)
   };
+
+  // Renders one word to an offscreen canvas and returns exactly
+  // `count` sampled positions from its lit pixels, in the same
+  // normalized coordinate space the face sampler uses.
+  function sampleWordPositions(text,count){
+    const w=600,h=160;
+    const c=document.createElement('canvas');
+    c.width=w;c.height=h;
+    const ctx=c.getContext('2d');
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle='#fff';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    let size=130;
+    ctx.font=`700 ${size}px 'Space Grotesk',sans-serif`;
+    while(ctx.measureText(text).width>w*0.86&&size>24){
+      size-=2;
+      ctx.font=`700 ${size}px 'Space Grotesk',sans-serif`;
+    }
+    ctx.fillText(text,w/2,h/2);
+    const d=ctx.getImageData(0,0,w,h).data;
+    const cand=[];
+    for(let y=0;y<h;y++){
+      for(let x=0;x<w;x++){
+        const a=d[(y*w+x)*4+3];
+        if(a>120){
+          const nx=(x/(w-1)-.5)*3.3;
+          const ny=(.5-y/(h-1))*.9;
+          cand.push(nx,ny,(Math.random()-.5)*.3);
+        }
+      }
+    }
+    const n=cand.length/3;
+    const out=new Float32Array(count*3);
+    if(n===0)return out;
+    for(let i=0;i<count;i++){
+      const j=Math.floor(Math.random()*n)*3;
+      out[i*3]=cand[j];out[i*3+1]=cand[j+1];out[i*3+2]=cand[j+2];
+    }
+    return out;
+  }
+
+  let shapePositions=null; // [face, PEOPLE, POLICY, BUSINESS, CONTEXT]
+  let currentSeg=-1;
 
   function build(tex){
     const img=tex.image,w=180,h=180;
@@ -85,7 +121,10 @@
     const ctx=sample.getContext('2d',{willReadFrequently:true});
     ctx.drawImage(img,0,0,w,h);
     const d=ctx.getImageData(0,0,w,h).data;
-    const pos=[],col=[],seed=[],eyeW=[];
+    // Collect every eligible face pixel first (same brightness/central
+    // filtering as before), THEN sample a fixed count from that pool —
+    // this is what makes the face's particle count match the words'.
+    const cand=[];
     for(let y=0;y<h;y++){
       for(let x=0;x<w;x++){
         const i=(y*w+x)*4,r=d[i]/255,g=d[i+1]/255,b=d[i+2]/255;
@@ -96,19 +135,37 @@
         const a=br*.75+central*.22;
         if(a<.28||Math.random()>Math.min(1,.24+a*.9))continue;
         const depth=(br-.45)*.9+(1-radial)*.7+(Math.random()-.5)*.32;
-        pos.push(nx,ny,depth);
-        seed.push(Math.random()*Math.PI*2,.5+Math.random()*1.5,depth);
-        col.push(.5+.3*b,.32+.22*b,.92+.06*r);
         const dL=Math.hypot(nx-EYE_L[0],ny-EYE_L[1]),dR=Math.hypot(nx-EYE_R[0],ny-EYE_R[1]);
         const wL=Math.exp(-(dL*dL)/(2*EYE_SIGMA*EYE_SIGMA)),wR=Math.exp(-(dR*dR)/(2*EYE_SIGMA*EYE_SIGMA));
-        eyeW.push(Math.max(wL,wR));
+        cand.push([nx,ny,depth,.5+.3*b,.32+.22*b,.92+.06*r,Math.random()*Math.PI*2,.5+Math.random()*1.5,depth,Math.max(wL,wR)]);
       }
     }
+    const N=PARTICLE_COUNT;
+    const facePos=new Float32Array(N*3),col=new Float32Array(N*3),seed=new Float32Array(N*3),eyeW=new Float32Array(N);
+    const idxPool=cand.length?Array.from({length:cand.length},(_,i)=>i):[0];
+    for(let i=idxPool.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      const tmp=idxPool[i];idxPool[i]=idxPool[j];idxPool[j]=tmp;
+    }
+    for(let i=0;i<N;i++){
+      const c=cand.length?cand[idxPool[i%idxPool.length]]:[0,0,0,.6,.4,.9,0,1,0,0];
+      facePos[i*3]=c[0];facePos[i*3+1]=c[1];facePos[i*3+2]=c[2];
+      col[i*3]=c[3];col[i*3+1]=c[4];col[i*3+2]=c[5];
+      seed[i*3]=c[6];seed[i*3+1]=c[7];seed[i*3+2]=c[8];
+      eyeW[i]=c[9];
+    }
+
+    shapePositions=[facePos];
+    WORDS.forEach(word=>shapePositions.push(sampleWordPositions(word,N)));
+
     const geo=new THREE.BufferGeometry();
-    geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+    geo.setAttribute('position',new THREE.Float32BufferAttribute(facePos.slice(),3));
+    geo.setAttribute('aPosA',new THREE.Float32BufferAttribute(facePos.slice(),3));
+    geo.setAttribute('aPosB',new THREE.Float32BufferAttribute(shapePositions[1].slice(),3));
     geo.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
     geo.setAttribute('aSeed',new THREE.Float32BufferAttribute(seed,3));
     geo.setAttribute('aEyeWeight',new THREE.Float32BufferAttribute(eyeW,1));
+
     const mat=new THREE.ShaderMaterial({
       transparent:true,depthWrite:false,vertexColors:true,blending:THREE.AdditiveBlending,
       uniforms:{
@@ -116,13 +173,15 @@
         uMouse:{value:mouse},
         uCoherence:{value:1},
         uStateColor:{value:new THREE.Color(0xc4b5fd)},
-        uStateMix:{value:0}
+        uStateMix:{value:0},
+        uMorph:{value:0}
       },
-      vertexShader:`attribute vec3 aSeed;attribute float aEyeWeight;varying vec3 vColor;
+      vertexShader:`attribute vec3 aPosA;attribute vec3 aPosB;attribute vec3 aSeed;attribute float aEyeWeight;
+        varying vec3 vColor;
         uniform float uTime;uniform vec2 uMouse;uniform float uCoherence;
-        uniform vec3 uStateColor;uniform float uStateMix;
+        uniform vec3 uStateColor;uniform float uStateMix;uniform float uMorph;
         void main(){
-          vec3 p=position;
+          vec3 p=mix(aPosA,aPosB,uMorph);
           float wave=sin(uTime*aSeed.y+aSeed.x+p.y*1.7)*.018;
           p.z+=wave;
           p.x+=uMouse.x*(0.05+abs(p.z)*.015);
@@ -212,8 +271,6 @@
   });},{threshold:.15});
   io.observe(figure);
 
-  // Decision-reactivity: watch the real state the site's own
-  // case-navigator logic sets, rather than duplicating it.
   let targetStateMix=0,currentStateMix=0,currentStateColor=new THREE.Color(0xc4b5fd);
   let targetAgitation=0,currentAgitation=0;
   let stateCoherenceCap=1;
@@ -259,11 +316,37 @@
     mirrorReaction();
   }
 
+  function updateMorph(){
+    if(!shapePositions||!facePoints)return;
+    let progress=0;
+    if(ariaSection){
+      const r=ariaSection.getBoundingClientRect();
+      const total=r.height+innerHeight;
+      const scrolled=innerHeight-r.top;
+      progress=Math.min(1,Math.max(0,scrolled/total));
+    }
+    const stage=progress*(shapePositions.length-1);
+    const segIndex=Math.min(shapePositions.length-2,Math.floor(stage));
+    const segFrac=stage-segIndex;
+    if(segIndex!==currentSeg){
+      currentSeg=segIndex;
+      const attrA=facePoints.geometry.attributes.aPosA;
+      const attrB=facePoints.geometry.attributes.aPosB;
+      attrA.array.set(shapePositions[segIndex]);
+      attrA.needsUpdate=true;
+      attrB.array.set(shapePositions[segIndex+1]);
+      attrB.needsUpdate=true;
+    }
+    facePoints.material.uniforms.uMorph.value=segFrac;
+  }
+
   function animate(){
     requestAnimationFrame(animate);
     if(!onScreen)return;
     t+=.012;
     mouse.lerp(target,.055);
+
+    updateMorph();
 
     const idleMs=performance.now()-lastMoveAt;
     const idleTarget=idleMs>1400?.55:1;
@@ -290,7 +373,7 @@
     if(rings)rings.forEach((r,i)=>{
       const speed=1+currentAgitation*1.6;
       r.rotation.z=t*(.045+i*.012)*speed*(i%2?1:-1);
-      r.rotation.x=Math.PI/2+Math.sin(t*.25+i)*.03;
+      r.rotation.x=Math.PI/2-.4+Math.sin(t*.25+i)*.03;
       r.material.opacity=.12+(.12*Math.sin(t*(1.4+currentAgitation*1.2)+i*.7)+.12);
     });
     renderer.render(scene,camera);
