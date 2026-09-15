@@ -34,21 +34,12 @@ if(i%9===0){ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.sin(p.a)*90*p.z,y+
 const scan=((t*70)+(sy*H*2))%(H+120)-60;ctx.fillStyle='rgba(125,211,252,.018)';ctx.fillRect(0,scan,W,1);requestAnimationFrame(frame)}frame();}
 
 /* WebGL scene: a more aggressive field than V3 */
-const world=$('#world');
-if(world&&window.THREE&&!reduce){
-const r=new THREE.WebGLRenderer({canvas:world,alpha:true,antialias:true,powerPreference:'high-performance'});r.setPixelRatio(Math.min(devicePixelRatio,1.7));r.setSize(innerWidth,innerHeight);r.setClearColor(0,0);
-const s=new THREE.Scene(),c=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,100);c.position.z=7.5;
-const group=new THREE.Group();s.add(group);
-const count=Math.min(2200,Math.floor(innerWidth*innerHeight/480));const g=new THREE.BufferGeometry(),pos=new Float32Array(count*3),col=new Float32Array(count*3),size=new Float32Array(count);
-for(let i=0;i<count;i++){const a=Math.random()*Math.PI*2,rad=2.4+Math.pow(Math.random(),.55)*8.5,yy=(Math.random()-.5)*5.8;pos[i*3]=Math.cos(a)*rad;pos[i*3+1]=yy;pos[i*3+2]=Math.sin(a)*rad;const hue=Math.random()>.78?.53:.7+Math.random()*.08;const cc=new THREE.Color().setHSL(hue,.65,.45+.35*Math.random());col[i*3]=cc.r;col[i*3+1]=cc.g;col[i*3+2]=cc.b;size[i]=Math.random()*1.4+.4}
-g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('color',new THREE.BufferAttribute(col,3));g.setAttribute('aSize',new THREE.BufferAttribute(size,1));
-const m=new THREE.PointsMaterial({size:.026,transparent:true,opacity:.62,vertexColors:true,blending:THREE.AdditiveBlending,depthWrite:false});const p=new THREE.Points(g,m);group.add(p);
-//REMOVED: //REMOVED: const torus=new THREE.Mesh(new THREE.TorusGeometry(1.8,.006,12,160),new THREE.MeshBasicMaterial({color:0x8b5cf6,transparent:true,opacity:.24,blending:THREE.AdditiveBlending}));torus.rotation.x=Math.PI/2.3;group.add(torus);
-//REMOVED: //REMOVED: const torus2=torus.clone();torus2.scale.setScalar(1.8);torus2.material=torus.material.clone();torus2.material.opacity=.12;group.add(torus2);
-let tx=0,ty=0,sx=0;addEventListener('pointermove',e=>{tx=(e.clientX/innerWidth-.5);ty=(e.clientY/innerHeight-.5)},{passive:true});addEventListener('scroll',()=>sx=scrollY*.0001,{passive:true});
-function resize(){r.setSize(innerWidth,innerHeight);c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix()}addEventListener('resize',resize);
-function tick(ms){const q=ms*.001;p.rotation.y=q*.035+tx*.18;p.rotation.x=Math.sin(q*.12)*.035+ty*.08;group.rotation.z=Math.sin(q*.07)*.025;c.position.x+=(tx*.8-c.position.x)*.02;c.position.y+=(-ty*.45-c.position.y)*.02;c.position.z=7.5-sx;r.render(s,c);requestAnimationFrame(tick)}requestAnimationFrame(tick);
-}
+/* WebGL scattered-star point cloud removed here — replaced by the
+   fibonacci-sphere labeled-node network in vantage-star-globe.js,
+   which now owns the #world canvas. Kept as a separate file (rather
+   than folded into this one) since this was an explicit one-off
+   experiment to try — easy to drop the <script> tag and fall back to
+   nothing, or swap back to this exact block, if it doesn't land. */
 
 /* Interactive decision field: alter the world state, not only the card */
 const machine=$('#caseMachine');
