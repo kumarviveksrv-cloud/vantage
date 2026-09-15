@@ -72,46 +72,27 @@
   function buildScreenTexture(){
     const c=document.createElement('canvas');c.width=512;c.height=314;
     const x=c.getContext('2d');
-    const state={exposure:18.4,risk:62,cases:47};
+    const state={exposure:18.4,risk:62};
     let phase=0;
     function redraw(){
-      x.fillStyle='#0c0a1e';x.fillRect(0,0,512,314);
-      x.fillStyle='#211c4a';x.fillRect(0,0,512,32);
-      x.fillStyle='#ff6b81';x.beginPath();x.arc(18,16,4,0,Math.PI*2);x.fill();
-      x.fillStyle='#a79cf0';x.font='11px monospace';x.textAlign='left';x.textBaseline='middle';
-      x.fillText('CASE 2841 / LIVE',34,17);
-      x.fillStyle='#171340';x.fillRect(0,32,112,282);
-      const labels=['CASE','RISK','COMP','PLCY','TEAM','FLOW','MEMO'];
-      labels.forEach((lab,i)=>{
-        x.fillStyle=i===2?'#8b90ff':'#2c2760';
-        x.fillRect(12,48+i*30,88,15);
-        x.fillStyle=i===2?'#0c0a1e':'#9f98d6';
-        x.font='bold 9px monospace';
-        x.fillText(lab,19,48+i*30+8);
-      });
-      const metrics=[
-        ['LEGAL EXPOSURE','\u20B9'+state.exposure.toFixed(1)+'L','#ff9fb0'],
-        ['RISK SCORE',Math.round(state.risk)+'%','#c4b5fd'],
-        ['CASES LOGGED',String(Math.round(state.cases)),'#8be9c8']
-      ];
-      metrics.forEach((m,i)=>{
-        const mx=132+i*122;
-        x.fillStyle='rgba(196,181,253,.14)';x.fillRect(mx,48,110,72);
-        x.fillStyle='#a79cf0';x.font='8px monospace';x.fillText(m[0],mx+9,66);
-        x.fillStyle=m[2];x.font='bold 22px monospace';x.fillText(m[1],mx+9,98);
-      });
-      x.strokeStyle='rgba(160,166,255,.85)';x.lineWidth=1.6;x.beginPath();
+      x.fillStyle='#120f2e';x.fillRect(0,0,512,314);
+      x.fillStyle='#2a2460';x.fillRect(0,0,512,30);
+      x.fillStyle='#ff6b81';x.beginPath();x.arc(16,15,4,0,Math.PI*2);x.fill();
+      x.fillStyle='#b7aef5';x.font='bold 11px monospace';x.textAlign='left';x.textBaseline='middle';
+      x.fillText('CASE 2841 // LIVE MONITOR',32,15);
+      x.fillStyle='rgba(196,181,253,.16)';x.fillRect(20,46,230,150);
+      x.fillStyle='#9d94e8';x.font='bold 13px monospace';x.fillText('RISK SCORE',34,68);
+      x.fillStyle='#c9c1ff';x.font='bold 64px monospace';x.fillText(Math.round(state.risk)+'%',30,142);
+      x.fillStyle='rgba(255,159,176,.16)';x.fillRect(262,46,230,150);
+      x.fillStyle='#ffb2c1';x.font='bold 13px monospace';x.fillText('EXPOSURE',276,68);
+      x.fillStyle='#ffd3dc';x.font='bold 44px monospace';x.fillText('\u20B9'+state.exposure.toFixed(1)+'L',272,140);
+      x.strokeStyle='#9aa3ff';x.lineWidth=3;x.beginPath();
       for(let i=0;i<58;i++){
-        const px=132+i*3.6;
-        const py=176+Math.sin(i*.42+phase)*15+Math.sin(i*.15+phase*1.6)*6;
+        const px=20+i*8.6;
+        const py=250+Math.sin(i*.42+phase)*22+Math.sin(i*.15+phase*1.6)*9;
         if(i===0)x.moveTo(px,py);else x.lineTo(px,py);
       }
       x.stroke();
-      for(let i=0;i<3;i++){
-        const y=228+i*24;
-        x.fillStyle=i===1?'rgba(255,107,129,.6)':'rgba(196,181,253,.28)';
-        x.fillRect(132,y,296-(i*28),11);
-      }
     }
     redraw();
     const tex=new THREE.CanvasTexture(c);
@@ -120,7 +101,6 @@
       phase+=.4;
       state.exposure=Math.max(12,state.exposure+(Math.random()-.5)*.4);
       state.risk=Math.max(38,Math.min(88,state.risk+(Math.random()-.5)*4));
-      if(Math.random()<.06)state.cases+=1;
       redraw();
       tex.needsUpdate=true;
     }};
