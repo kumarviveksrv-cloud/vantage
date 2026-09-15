@@ -375,5 +375,36 @@
       if(drop.position.y<-1.6){drop.position.y=3.6+Math.random()*.6;drop.position.x=1+Math.random()*3.8;}
     });
     dp.rotation.y=t*.012;dp.rotation.x=Math.sin(t*.2)*.02;renderer.render(scene,camera);requestAnimationFrame(animate)}
-  later(()=>{active=true;start=performance.now();lockScroll(true);pro.classList.add('active','phase-pressure');skip?.classList.add('show');requestAnimationFrame(animate)},900);
+  // Previously this fired on a blind 900ms timer with no idea whether the
+  // boot countdown screen (#boot, which sits ABOVE the prologue) was still
+  // covering it. If boot ran long, the prologue's entire 2.4s blur-to-clear
+  // reveal played out silently underneath boot, so by the time boot cleared
+  // the prologue was already fully sharp — no visible fade, everything
+  // (office, dust, city lights) appearing at once instead of easing in.
+  // Now it watches boot directly and only starts revealing once boot has
+  // actually signalled it's done (matching the .boot.done convention used
+  // elsewhere on the site), with a safety-net timeout in case boot doesn't
+  // exist or never adds that class for some reason.
+  function startReveal(){
+    active=true;start=performance.now();lockScroll(true);
+    pro.classList.add('active','phase-pressure');skip?.classList.add('show');
+    requestAnimationFrame(animate);
+  }
+  const boot=$('#boot');
+  if(boot){
+    if(boot.classList.contains('done')){
+      later(startReveal,300);
+    }else{
+      let started=false;
+      const bootObs=new MutationObserver(()=>{
+        if(!started&&boot.classList.contains('done')){
+          started=true;bootObs.disconnect();later(startReveal,300);
+        }
+      });
+      bootObs.observe(boot,{attributes:true,attributeFilter:['class']});
+      later(()=>{if(!started){started=true;bootObs.disconnect();startReveal();}},4500);
+    }
+  }else{
+    later(startReveal,900);
+  }
 })();
