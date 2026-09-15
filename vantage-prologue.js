@@ -21,7 +21,7 @@
   function unlockVoice(){
     if(!audio)return;
     audio.volume=.82;
-    audio.play().then(()=>{voiceOn=true;voice?.classList.add('on');if(voice)voice.textContent='VOICE / PLAYING'}).catch(()=>{});
+    audio.play().then(()=>{voiceOn=true;voice?.classList.add('on');if(voice)voice.textContent='VOICE / PLAYING'}).catch((err)=>{console.error('Prologue voice playback failed:',err.name,err.message);if(voice)voice.textContent='VOICE UNAVAILABLE'});
   }
   voice?.addEventListener('click',unlockVoice);
 
