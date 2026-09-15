@@ -7,7 +7,7 @@ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const boot=$('#boot'), log=$('#bootLog'), nav=$('#nav');
 const logs=['INITIALISING PRIVATE INTELLIGENCE LAYER','LOADING INDIA / HR CONTEXT','CONNECTING DECISION FIELD','MERIDIAN CONTEXT ENGINE READY','ARIA SIMULATION ENVIRONMENT READY','HUMACITY FINANCIAL LAYER READY','VANTAGE RECORD: PRIVATE / ACTIVE'];
 let li=0; const logTimer=setInterval(()=>{if(li<logs.length){log.insertAdjacentHTML('beforeend','<div>› '+logs[li++]+'</div>');}else clearInterval(logTimer)},260);
-setTimeout(()=>{boot.classList.add('done');nav.classList.add('ready');},8000);
+setTimeout(()=>{boot.classList.add('done');nav.classList.add('ready');},5000);
 
 /* ---------- live clock ---------- */
 function clock(){const d=new Date();const t=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');const el=$('#liveClock');if(el)el.textContent=t;const bt=$('#bootTime');if(bt)bt.textContent=t.slice(0,5)}
