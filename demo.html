@@ -432,6 +432,13 @@
   var BASE = 'https://vantage.virorah.com/';
   var demoMeridian = { state:'Maharashtra', industry:'IT / SaaS', orgType:'Corporate / Pvt Ltd', orgSize:'251 – 1,000', seniority:'HR Manager', unionStatus:'Non-unionised', hrFunction:'Employee Relations specialist' };
 
+  // Artificial delay so the demo feels like a real analysis is running, since
+  // the underlying response is a static object returned instantly with zero
+  // API latency. Slight randomization avoids every run feeling identically
+  // timed.
+  function wait(ms) { return new Promise(function(resolve){ setTimeout(resolve, ms); }); }
+  function demoDelay() { return 3400 + Math.random() * 1200; } // ~3.4s–4.6s
+
   var TOOL_IDS = ['pact','signal','influence','policy','offer','practice','aria'];
   function switchTool(tool) {
     TOOL_IDS.forEach(function(t){ document.getElementById('tab-'+t).classList.remove('active'); document.getElementById(t+'-tool').style.display = 'none'; });
@@ -452,6 +459,7 @@
         body: JSON.stringify({ isDemo:true, tool:'pact', narrative:'Rohan Mehta, Senior Software Engineer, 5 years tenure. Badge records confirm he marked attendance as present on 14 days over the past 3 months when he was not in office. Evidence gathered. No prior warnings on record. Line manager wants to proceed with immediate termination.', caseType:'Misconduct', stakeholders:'Senior Software Engineer (5 years tenure), Line Manager, HR', meridian:demoMeridian })
       });
       var data = await res.json();
+      await wait(demoDelay());
       document.getElementById('pact-loading').style.display = 'none';
       if (data.success) renderPACT(data.data);
       else { document.getElementById('pact-run-btn').disabled = false; alert('Error: ' + (data.error||'Try again')); }
@@ -507,6 +515,7 @@
         body: JSON.stringify({ isDemo:true, tool:'signal', audience:'CFO / Finance', context:'Engineering attrition has gone from 14% to 22% in one quarter. Leadership thinks it is a market issue. I need to present to the CFO next week and change that narrative. He responds to numbers and cost arguments. I need approval for a ₹22L retention programme.', ask:'Approval for ₹22L retention investment for engineering cohort', metrics:{ attrition:'22', timeToHire:'58', engagement:'54', openPositions:'18', avgCTC:'14' }, meridian:demoMeridian })
       });
       var data = await res.json();
+      await wait(demoDelay());
       document.getElementById('signal-loading').style.display = 'none';
       if (data.success) renderSIGNAL(data.data);
       else { document.getElementById('signal-run-btn').disabled = false; alert('Error: ' + (data.error||'Try again')); }
@@ -553,6 +562,7 @@
         body: JSON.stringify({ isDemo:true, tool:'influence', stakeholderType:'VP Engineering', situation:'Priya Nair has a competing offer 32% above her current CTC and owns the payments migration solo.', ask:'Approve a retention counter-offer', meridian:demoMeridian })
       });
       var data = await res.json();
+      await wait(demoDelay());
       document.getElementById('influence-loading').style.display = 'none';
       if (data.success) renderInfluence(data.data);
       else { document.getElementById('influence-run-btn').disabled = false; alert('Error: ' + (data.error||'Try again')); }
@@ -581,6 +591,7 @@
         body: JSON.stringify({ isDemo:true, tool:'policy', question:'Can we terminate someone right after a failed PIP without a separate notice period?', meridian:demoMeridian })
       });
       var data = await res.json();
+      await wait(demoDelay());
       document.getElementById('policy-loading').style.display = 'none';
       if (data.success) renderPolicy(data.data);
       else { document.getElementById('policy-run-btn').disabled = false; alert('Error: ' + (data.error||'Try again')); }
@@ -604,6 +615,7 @@
         body: JSON.stringify({ isDemo:true, tool:'offer_intelligence', flow:'counter_offer', currentCTC:2200000, offerCTC:2900000, performanceBand:'A', tenureYears:4, roleCriticality:'High', meridian:demoMeridian })
       });
       var data = await res.json();
+      await wait(demoDelay());
       document.getElementById('offer-loading').style.display = 'none';
       if (data.success) renderOffer(data.data);
       else { document.getElementById('offer-run-btn').disabled = false; alert('Error: ' + (data.error||'Try again')); }
