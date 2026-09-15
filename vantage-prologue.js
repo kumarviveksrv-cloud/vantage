@@ -285,7 +285,7 @@
     new THREE.PlaneGeometry(1.84,1.08),
     screenMat
   );
-  screen.position.set(0,.72,-.675);
+  screen.position.set(0,.72,-.585);
   screen.rotation.x=-.02;
   laptop.add(screen);
 
@@ -302,12 +302,12 @@
     new THREE.PlaneGeometry(2.18,1.42),
     screenGlowMat
   );
-  screenGlow.position.set(0,.72,-.70);
+  screenGlow.position.set(0,.72,-.575);
   screenGlow.rotation.x=-.02;
   laptop.add(screenGlow);
 
   const screenLight=new THREE.PointLight(0x7185ff,1.35,2.8);
-  screenLight.position.set(0,.74,-.48);
+  screenLight.position.set(0,.74,-.40);
   laptop.add(screenLight);
 
   const mug=new THREE.Mesh(new THREE.CylinderGeometry(.22,.18,.38,24),mat(0x161622,.35,.15));mug.position.set(-1.75,.17,.25);office.add(mug);
