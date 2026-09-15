@@ -407,5 +407,5 @@
   // firing every time instead of the intended ~300ms path, turning a
   // brief pause into a multi-second blank screen. Back to a plain, short,
   // predictable delay.
-  later(startReveal,900);
+  later(startReveal,100);
 })();
