@@ -224,7 +224,7 @@
     try {
       var res = await fetch(WORKER, {
         method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ tool:'pact', narrative:'Rohan Mehta, Senior Software Engineer, 5 years tenure. Badge records confirm he marked attendance as present on 14 days over the past 3 months when he was not in office. Evidence gathered. No prior warnings on record. Line manager wants to proceed with immediate termination.', caseType:'Misconduct', stakeholders:'Senior Software Engineer (5 years tenure), Line Manager, HR', meridian:demoMeridian })
+        body: JSON.stringify({ isDemo:true, tool:'pact', narrative:'Rohan Mehta, Senior Software Engineer, 5 years tenure. Badge records confirm he marked attendance as present on 14 days over the past 3 months when he was not in office. Evidence gathered. No prior warnings on record. Line manager wants to proceed with immediate termination.', caseType:'Misconduct', stakeholders:'Senior Software Engineer (5 years tenure), Line Manager, HR', meridian:demoMeridian })
       });
       var data = await res.json();
       document.getElementById('pact-loading').style.display = 'none';
@@ -275,7 +275,7 @@
     try {
       var res = await fetch(WORKER, {
         method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ tool:'signal', audience:'CFO / Finance', context:'Engineering attrition has gone from 14% to 22% in one quarter. Leadership thinks it is a market issue. I need to present to the CFO next week and change that narrative. He responds to numbers and cost arguments. I need approval for a ₹22L retention programme.', ask:'Approval for ₹22L retention investment for engineering cohort', metrics:{ attrition:'22', timeToHire:'58', engagement:'54', openPositions:'18', avgCTC:'14' }, meridian:demoMeridian })
+        body: JSON.stringify({ isDemo:true, tool:'signal', audience:'CFO / Finance', context:'Engineering attrition has gone from 14% to 22% in one quarter. Leadership thinks it is a market issue. I need to present to the CFO next week and change that narrative. He responds to numbers and cost arguments. I need approval for a ₹22L retention programme.', ask:'Approval for ₹22L retention investment for engineering cohort', metrics:{ attrition:'22', timeToHire:'58', engagement:'54', openPositions:'18', avgCTC:'14' }, meridian:demoMeridian })
       });
       var data = await res.json();
       document.getElementById('signal-loading').style.display = 'none';
