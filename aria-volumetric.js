@@ -73,23 +73,45 @@
     const ctx=sample.getContext('2d',{willReadFrequently:true});
     ctx.drawImage(img,0,0,w,h);
     const d=ctx.getImageData(0,0,w,h).data;
+    // Brightness alone gives a soft, evenly-filled cloud with no
+    // legible structure — it can't tell smooth cheek skin from the
+    // edge of an eyelid. What actually reads as a facial FEATURE is
+    // local contrast: the boundary where dark meets light. Precompute
+    // brightness for every pixel once so each pixel can be compared
+    // against its neighbors below.
+    const bright=new Float32Array(w*h);
+    for(let y=0;y<h;y++){
+      for(let x=0;x<w;x++){
+        const i=(y*w+x)*4;
+        bright[y*w+x]=.2126*d[i]/255+.7152*d[i+1]/255+.0722*d[i+2]/255;
+      }
+    }
     const pos=[],col=[],seed=[],eyeW=[];
     for(let y=0;y<h;y++){
       for(let x=0;x<w;x++){
-        const i=(y*w+x)*4,r=d[i]/255,g=d[i+1]/255,b=d[i+2]/255;
-        const br=.2126*r+.7152*g+.0722*b;
+        const idx=y*w+x,i=idx*4,r=d[i]/255,g=d[i+1]/255,b=d[i+2]/255;
+        const br=bright[idx];
+        const brL=x>0?bright[idx-1]:br,brR=x<w-1?bright[idx+1]:br;
+        const brU=y>0?bright[idx-w]:br,brD=y<h-1?bright[idx+w]:br;
+        const contrast=Math.abs(br-brL)+Math.abs(br-brR)+Math.abs(br-brU)+Math.abs(br-brD);
         const nx=(x/(w-1)-.5)*3.15,ny=(.5-y/(h-1))*4.0;
         const radial=Math.sqrt((nx/1.65)**2+(ny/2.0)**2);
         const central=Math.max(0,1-radial*.72);
-        const a=br*.75+central*.22;
+        const dL=Math.hypot(nx-EYE_L[0],ny-EYE_L[1]),dR=Math.hypot(nx-EYE_R[0],ny-EYE_R[1]);
+        const wL=Math.exp(-(dL*dL)/(2*EYE_SIGMA*EYE_SIGMA)),wR=Math.exp(-(dR*dR)/(2*EYE_SIGMA*EYE_SIGMA));
+        const eyeWeight=Math.max(wL,wR);
+        // Weighted mostly toward contrast now, with brightness/central
+        // as a base fill so the face doesn't turn into pure line-art
+        // with gaps in flat areas, plus a guaranteed small boost right
+        // at the eyes so they read clearly even if this particular
+        // photo's eye contrast is soft.
+        const a=central*.16+br*.32+Math.min(1,contrast*3.4)*.52+eyeWeight*.18;
         if(a<.28||Math.random()>Math.min(1,.24+a*.9))continue;
         const depth=(br-.45)*.9+(1-radial)*.7+(Math.random()-.5)*.32;
         pos.push(nx,ny,depth);
         seed.push(Math.random()*Math.PI*2,.5+Math.random()*1.5,depth);
         col.push(.5+.3*b,.32+.22*b,.92+.06*r);
-        const dL=Math.hypot(nx-EYE_L[0],ny-EYE_L[1]),dR=Math.hypot(nx-EYE_R[0],ny-EYE_R[1]);
-        const wL=Math.exp(-(dL*dL)/(2*EYE_SIGMA*EYE_SIGMA)),wR=Math.exp(-(dR*dR)/(2*EYE_SIGMA*EYE_SIGMA));
-        eyeW.push(Math.max(wL,wR));
+        eyeW.push(eyeWeight);
       }
     }
     const geo=new THREE.BufferGeometry();
