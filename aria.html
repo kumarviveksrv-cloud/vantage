@@ -38,7 +38,7 @@
 
     /* SIDEBAR */
     .sb{width:220px;flex-shrink:0;background:rgba(13,11,30,.98);border-right:1px solid rgba(99,102,241,.08);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto;z-index:20}
-    .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
+    .logo{display:flex;align-items:center;padding:8px 4px 14px;cursor:pointer;position:sticky;top:0;z-index:5;background:rgba(13,11,30,.98);border-bottom:1px solid rgba(99,102,241,.06);margin-bottom:14px}
     .logo-dot{width:8px;height:8px;border-radius:50%;background:#6366f1;box-shadow:0 0 10px #6366f1;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
     .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700}
     .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:2px}
@@ -202,10 +202,9 @@
 <body>
 
   <div class="sb">
-    <div class="logo" onclick="window.location.href='dashboard.html'">
-      <div class="logo-dot"></div>
-      <div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div>
-    </div>
+    <a class="logo" href="index.html">
+      <img src="virorah-vantage-logo.png" alt="Virorah Vantage" style="height:48px;width:auto;display:block;mix-blend-mode:screen;filter:brightness(1.05);">
+    </a>
     <a href="dashboard.html" class="ni"><span class="ic">⊞</span>Dashboard</a>
     <div class="ns">Core Tools</div>
     <a href="er-case-navigator.html" class="ni"><span class="ic">⚡</span>ER Case Navigator</a>
