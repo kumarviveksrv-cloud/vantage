@@ -254,21 +254,27 @@
   // once the section first comes into view; disappears for good the
   // moment the cursor actually enters the box, or immediately if a
   // real decision result already exists (that always takes priority).
-  let hintDismissed=false;
   function hasRealResult(){
     return !!(resultTitle&&resultTitle.textContent.trim()&&resultTitle.textContent.trim()!=='The system is waiting.');
   }
   function showHint(){
-    if(hintDismissed||!reaction||hasRealResult())return;
+    if(!reaction||hasRealResult())return;
     reactionBadge.textContent='ARIA';
     reactionText.textContent='Move your cursor over her — she notices.';
     reaction.classList.add('live');
   }
-  figure.addEventListener('pointerenter',()=>{
-    if(hintDismissed)return;
-    hintDismissed=true;
-    if(!hasRealResult())reaction.classList.remove('live');
-  },{once:true});
+  function hideHint(){
+    if(!reaction||hasRealResult())return;
+    reaction.classList.remove('live');
+  }
+  // Toggles every time, rather than dismissing once — the hint hides
+  // while hovering (no need to keep telling you what you're already
+  // doing) and reappears the moment the cursor leaves, so it keeps
+  // reminding anyone who moves away that the box is interactive.
+  // Both guard against hasRealResult() so a real decision outcome is
+  // never overwritten by the hint text either way.
+  figure.addEventListener('pointerenter',hideHint);
+  figure.addEventListener('pointerleave',showHint);
 
   function mirrorReaction(){
     if(!resultTitle||!resultBadge||!reaction)return;
