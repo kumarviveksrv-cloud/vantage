@@ -341,3 +341,7 @@
 }
 
 .portal-ring,.console-radar-ring{display:none!important}
+
+/* SR16 NUCLEAR FIX: hide all fixed overlays interfering with text */
+#cinemaCanvas{display:none!important}
+.cinema-hud{display:none!important}
