@@ -195,7 +195,7 @@
   },{passive:true});
   addEventListener('resize',resize);
 
-  let onScreen=false,leaveTimer=null;
+  let onScreen=false,leaveTimer=null,hintShown=false;
   const io=new IntersectionObserver(es=>{es.forEach(e=>{
     if(e.isIntersecting){
       if(leaveTimer){clearTimeout(leaveTimer);leaveTimer=null;}
@@ -206,6 +206,7 @@
           built=true;
           new THREE.TextureLoader().load('aria-reference.png',build);
         }
+        if(!hintShown){hintShown=true;showHint();}
       }
     }else if(onScreen&&!leaveTimer){
       leaveTimer=setTimeout(()=>{onScreen=false;leaveTimer=null;},250);
@@ -241,6 +242,29 @@
 
   const resultTitle=document.getElementById('resultTitle');
   const resultBadge=document.getElementById('resultBadge');
+
+  // A nudge so people realize the box is interactive at all — text
+  // rather than an animated gimmick, since a clear one-line invitation
+  // is more reliably understood than a self-playing demo motion. Shown
+  // once the section first comes into view; disappears for good the
+  // moment the cursor actually enters the box, or immediately if a
+  // real decision result already exists (that always takes priority).
+  let hintDismissed=false;
+  function hasRealResult(){
+    return !!(resultTitle&&resultTitle.textContent.trim()&&resultTitle.textContent.trim()!=='The system is waiting.');
+  }
+  function showHint(){
+    if(hintDismissed||!reaction||hasRealResult())return;
+    reactionBadge.textContent='ARIA';
+    reactionText.textContent='Move your cursor over her — she notices.';
+    reaction.classList.add('live');
+  }
+  figure.addEventListener('pointerenter',()=>{
+    if(hintDismissed)return;
+    hintDismissed=true;
+    if(!hasRealResult())reaction.classList.remove('live');
+  },{once:true});
+
   function mirrorReaction(){
     if(!resultTitle||!resultBadge||!reaction)return;
     const title=resultTitle.textContent.trim();
