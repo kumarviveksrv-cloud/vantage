@@ -577,7 +577,7 @@
   function renderPolicy(r) {
     document.getElementById('policy-output').innerHTML =
       '<div class="policy-output">'+(r.response||'').replace(/\\n/g,'<br>')+'</div>' +
-      '<div class="demo-cta"><div class="demo-cta-title">Ask your own policy question.</div><div class="demo-cta-sub">On the full platform, Policy Compass answers calibrated to your MERIDIAN profile and your company\\'s own policy guardrails.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
+      '<div class="demo-cta"><div class="demo-cta-title">Ask your own policy question.</div><div class="demo-cta-sub">On the full platform, Policy Compass answers calibrated to your MERIDIAN profile and your company\'s own policy guardrails.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
     document.getElementById('policy-output').style.display = 'block';
   }
 
@@ -604,7 +604,7 @@
       '<div class="anchor-block"><div class="anchor-num">'+(rc.total||'')+'</div><div class="anchor-ctx">Projected replacement cost if this employee leaves</div></div>' +
       '<div class="steps-card"><div class="steps-title">Recommendation: '+(rec.primary||'')+' at '+(rec.figure||'')+'</div><div class="step-text" style="padding-left:0">'+(rec.rationale||'')+'</div></div>' +
       '<div class="humacity-card"><div class="hc-header"><div class="hc-badge">HUMACITY</div><div class="hc-title">Break-Even Ceiling</div></div><div class="hc-exposure"><div class="hc-label">Two-Year Cumulative Ceiling</div><div class="hc-val">'+(r.financialModel?r.financialModel.breakEvenCeiling:'')+'</div></div></div>' +
-      '<div class="demo-cta"><div class="demo-cta-title">Model your own retention decision.</div><div class="demo-cta-sub">On the full platform, you enter your own employee\\'s numbers and get the full break-even model, scenarios, and both conversation scripts.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
+      '<div class="demo-cta"><div class="demo-cta-title">Model your own retention decision.</div><div class="demo-cta-sub">On the full platform, you enter your own employee\'s numbers and get the full break-even model, scenarios, and both conversation scripts.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
     document.getElementById('offer-output').style.display = 'block';
   }
 </script>
