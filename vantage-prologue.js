@@ -344,7 +344,12 @@
   }
   /* distant city points */
   const city=new THREE.Group();office.add(city);for(let i=0;i<45;i++){const m=new THREE.Mesh(new THREE.BoxGeometry(.025,.025,.025),new THREE.MeshBasicMaterial({color:i%5===0?0xc4b5fd:0x5258a8,transparent:true,opacity:.35}));m.position.set(1+Math.random()*4.4,.2+Math.random()*3.6,-4.18);city.add(m)}
-  const dust=new THREE.BufferGeometry(),count=520,pos=new Float32Array(count*3);for(let i=0;i<count;i++){pos[i*3]=(Math.random()-.5)*12;pos[i*3+1]=(Math.random()-.5)*6;pos[i*3+2]=(Math.random()-.5)*5-1}dust.setAttribute('position',new THREE.BufferAttribute(pos,3));const dp=new THREE.Points(dust,new THREE.PointsMaterial({color:0xc4b5fd,size:.018,transparent:true,opacity:.24,blending:THREE.AdditiveBlending,depthWrite:false}));scene.add(dp);
+  // The ambient "dust"/star particle field has been removed entirely per
+  // request — it previously spanned almost the full frame width and read
+  // as a starfield covering the whole scene, which wasn't wanted at any
+  // density. The distant city-light cluster above is unrelated (a small,
+  // contained "lights through the window" detail) and stays.
+
 
   // Precompile every material's shader program right now, off-screen, instead of
   // letting it happen on the first real frame. With this many distinct materials
@@ -374,7 +379,7 @@
       drop.position.y-=rainSpeeds[i]*dt;
       if(drop.position.y<-1.6){drop.position.y=3.6+Math.random()*.6;drop.position.x=1+Math.random()*3.8;}
     });
-    dp.rotation.y=t*.012;dp.rotation.x=Math.sin(t*.2)*.02;renderer.render(scene,camera);requestAnimationFrame(animate)}
+    renderer.render(scene,camera);requestAnimationFrame(animate)}
   // Previously this fired on a blind 900ms timer with no idea whether the
   // boot countdown screen (#boot, which sits ABOVE the prologue) was still
   // covering it. If boot ran long, the prologue's entire 2.4s blur-to-clear
