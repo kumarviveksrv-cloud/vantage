@@ -111,7 +111,7 @@
         // alien rather than ominous, so eyes go back to a plain density
         // boost via eyeWeight instead.
         const a=central*.18+br*.32+Math.min(1,contrast*2.8)*(.2+.34*central)+eyeWeight*.18;
-        if(a<.28||Math.random()>Math.min(1,.24+a*.9))continue;
+        if(a<.16||Math.random()>Math.min(1,.40+a*.9))continue;
         const depth=(br-.45)*.9+(1-radial)*.7+(Math.random()-.5)*.32;
         pos.push(nx,ny,depth);
         seed.push(Math.random()*Math.PI*2,.5+Math.random()*1.5,depth);
@@ -149,7 +149,7 @@
           p+=dir*scatter*0.55;
           vec4 mv=modelViewMatrix*vec4(p,1.);
           gl_Position=projectionMatrix*mv;
-          gl_PointSize=(1.75+2.6*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
+          gl_PointSize=(2.8+4.5*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
           vColor=mix(color,uStateColor,uStateMix);
         }`,
       fragmentShader:`varying vec3 vColor;
@@ -161,7 +161,7 @@
     });
     facePoints=new THREE.Points(geo,mat);
     facePoints.position.y=.05;
-    facePoints.scale.set(.94,.94,.94);
+    facePoints.scale.set(1.08,1.08,1.08);
     group.add(facePoints);
 
     const count=9000,hp=new Float32Array(count*3),hc=new Float32Array(count*3);
