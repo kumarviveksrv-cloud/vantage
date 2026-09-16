@@ -6,7 +6,7 @@
    presence rather than splitting attention across five shapes in a
    tight box.
 
-   What's here:
+   What's here: 
    - EYE-PULL: particles near the two approximate eye positions get
      extra displacement toward the cursor, on top of the whole-field
      parallax every particle already has.
