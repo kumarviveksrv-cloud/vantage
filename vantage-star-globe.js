@@ -1,6 +1,5 @@
-/* VANTAGE // AMBIENT STAR FIELD
-   Full-page background star field on #world canvas.
-   Single colour (white/near-white), small uniform dots — matches PMS platform. */
+/* VANTAGE // AMBIENT STAR FIELD — performance-tuned
+   Throttled to 30fps, no per-frame gradients, pauses when hidden. */
 (function(){
   'use strict';
   const canvas = document.getElementById('world');
@@ -9,8 +8,11 @@
 
   const ctx = canvas.getContext('2d');
   let W, H, stars = [], mouse = {x:0, y:0};
+  const STAR_COUNT = 500;  // reduced from 700
 
-  const STAR_COUNT = 700;
+  // Force GPU compositing on the canvas
+  canvas.style.willChange = 'transform';
+  canvas.style.transform = 'translateZ(0)';
 
   function rand(min, max){ return min + Math.random() * (max - min); }
 
@@ -21,16 +23,16 @@
       stars.push({
         x:    Math.random() * W,
         y:    Math.random() * H,
-        r:    tier > 0.93 ? rand(0.8, 1.1)    // bright
-            : tier > 0.75 ? rand(0.4, 0.7)    // medium
-            :               rand(0.1, 0.35),   // dim tiny
-        a:    tier > 0.93 ? rand(0.55, 0.82)
-            : tier > 0.75 ? rand(0.25, 0.5)
-            :               rand(0.08, 0.22),
-        dx:   rand(-0.001, 0.001),
-        dy:   rand(-0.0007, 0.0007),
-        prlx: rand(0.002, 0.012),
-        twinkleSpeed: rand(0.006, 0.02),
+        r:    tier > 0.93 ? rand(0.7, 1.0)
+            : tier > 0.75 ? rand(0.35, 0.6)
+            :               rand(0.1, 0.3),
+        a:    tier > 0.93 ? rand(0.5, 0.78)
+            : tier > 0.75 ? rand(0.2, 0.45)
+            :               rand(0.06, 0.2),
+        dx:   rand(-0.0008, 0.0008),
+        dy:   rand(-0.0005, 0.0005),
+        prlx: rand(0.001, 0.008),
+        twinkleSpeed: rand(0.004, 0.015),
         twinklePhase: Math.random() * Math.PI * 2,
       });
     }
@@ -42,14 +44,29 @@
     buildStars();
   }
 
+  // Throttle to 30fps — halves GPU load vs 60fps
+  let lastFrame = 0;
+  const INTERVAL = 1000 / 30;
   let t = 0;
-  function draw(){
+  let visible = true;
+
+  document.addEventListener('visibilitychange', () => {
+    visible = document.visibilityState === 'visible';
+  });
+
+  function draw(now){
+    requestAnimationFrame(draw);
+    if(!visible) return;
+    const delta = now - lastFrame;
+    if(delta < INTERVAL) return;
+    lastFrame = now - (delta % INTERVAL);
+    t += 0.03;
+
     ctx.clearRect(0, 0, W, H);
-    t += 0.016;
 
     for(let i = 0; i < stars.length; i++){
       const s = stars[i];
-      const twinkle = 0.88 + 0.12 * Math.sin(t * s.twinkleSpeed * 60 + s.twinklePhase);
+      const twinkle = 0.88 + 0.12 * Math.sin(t * s.twinkleSpeed * 30 + s.twinklePhase);
       const px = (mouse.x / W - 0.5) * s.prlx * W;
       const py = (mouse.y / H - 0.5) * s.prlx * H;
 
@@ -60,37 +77,20 @@
       if(s.y < 0) s.y = H;
       if(s.y > H) s.y = 0;
 
-      const a = s.a * twinkle;
-      const x = s.x + px;
-      const y = s.y + py;
-
-      // Subtle white glow for the largest stars only — no colour
-      if(s.r > 0.75){
-        const grd = ctx.createRadialGradient(x, y, 0, x, y, s.r * 2.8);
-        grd.addColorStop(0, `rgba(220,228,255,${(a * 0.35).toFixed(3)})`);
-        grd.addColorStop(1, 'rgba(220,228,255,0)');
-        ctx.beginPath();
-        ctx.arc(x, y, s.r * 2.8, 0, Math.PI * 2);
-        ctx.fillStyle = grd;
-        ctx.fill();
-      }
-
-      // Star dot — single near-white colour
+      // Plain filled circle — no per-frame gradient
       ctx.beginPath();
-      ctx.arc(x, y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(220,228,255,${a.toFixed(3)})`;
+      ctx.arc(s.x + px, s.y + py, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(220,228,255,${(s.a * twinkle).toFixed(2)})`;
       ctx.fill();
     }
-
-    requestAnimationFrame(draw);
   }
 
   window.addEventListener('resize', resize, {passive:true});
-  window.addEventListener('pointermove', function(e){
+  window.addEventListener('pointermove', e => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
   }, {passive:true});
 
   resize();
-  draw();
+  requestAnimationFrame(draw);
 })();
