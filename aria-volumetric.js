@@ -170,12 +170,15 @@
     canvas.classList.add('is-ready');
   }
 
-  let lastMoveAt=performance.now();
+  let lastMoveAt=0; // starts at 0 so face is scattered until cursor enters
+  let cursorInside=false;
+  figure.addEventListener('pointerenter',()=>{cursorInside=true;lastMoveAt=performance.now();});
+  figure.addEventListener('pointerleave',()=>{cursorInside=false;});
   addEventListener('pointermove',e=>{
     const r=figure.getBoundingClientRect();
     target.x=((e.clientX-r.left)/r.width-.5)*2;
     target.y=((e.clientY-r.top)/r.height-.5)*-2;
-    lastMoveAt=performance.now();
+    if(cursorInside)lastMoveAt=performance.now();
   },{passive:true});
   addEventListener('resize',resize);
 
@@ -231,24 +234,14 @@
   const resultTitle=document.getElementById('resultTitle');
   const resultBadge=document.getElementById('resultBadge');
 
-  // A nudge so people realize the box is interactive at all — text
-  // rather than an animated gimmick, since a clear one-line invitation
-  // is more reliably understood than a self-playing demo motion. Shown
-  // once the section first comes into view; disappears for good the
-  // moment the cursor actually enters the box, or immediately if a
-  // real decision result already exists (that always takes priority).
-  function hasRealResult(){
-    return !!(resultTitle&&resultTitle.textContent.trim()&&resultTitle.textContent.trim()!=='The system is waiting.');
-  }
   function showHint(){
-    if(!reaction||hasRealResult())return;
+    if(!reaction)return;
     reactionBadge.textContent='ARIA';
     reactionText.textContent='Move your cursor over her — she notices.';
     reaction.classList.add('live');
   }
   function hideHint(){
-    if(!reaction||hasRealResult())return;
-    reaction.classList.remove('live');
+    // hint stays — cursor is inside, face forming
   }
   // Toggles every time, rather than dismissing once — the hint hides
   // while hovering (no need to keep telling you what you're already
@@ -256,25 +249,6 @@
   // reminding anyone who moves away that the box is interactive.
   // Both guard against hasRealResult() so a real decision outcome is
   // never overwritten by the hint text either way.
-  figure.addEventListener('pointerenter',hideHint);
-  figure.addEventListener('pointerleave',showHint);
-
-  function mirrorReaction(){
-    if(!resultTitle||!resultBadge||!reaction)return;
-    const title=resultTitle.textContent.trim();
-    const badge=resultBadge.textContent.trim();
-    if(!title||title==='The system is waiting.'){
-      reaction.classList.remove('live');
-      return;
-    }
-    reactionBadge.textContent='ARIA · '+badge;
-    reactionText.textContent=title;
-    reaction.classList.add('live');
-  }
-  if(resultTitle){
-    new MutationObserver(mirrorReaction).observe(resultTitle,{childList:true,characterData:true,subtree:true});
-    mirrorReaction();
-  }
 
   function animate(){
     requestAnimationFrame(animate);
