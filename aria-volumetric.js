@@ -1,17 +1,17 @@
 /* VANTAGE // ARIA
-   ARIA VOLUMETRIC v5
+   ARIA VOLUMETRIC v6
 
-   Face-first architecture:
-   The uploaded ARIA portrait is the identity source. We do NOT attempt
-   to hallucinate facial geometry from luminance or hand-written landmarks.
+   Particle reconstruction architecture.
+   The reference image is used ONLY as a source map for particle targets.
+   The photograph itself is never rendered.
 
-   The portrait remains visible as a holographic image layer, while a
-   restrained particle veil, scan shimmer, depth drift and orbital field
-   create the volumetric treatment around it.
+   Interaction:
+   - Cursor away: ARIA dissolves into a loose, animated particle cloud.
+   - Cursor over the face: particles are attracted into the photographic face.
+   - Cursor leaves: the face disperses back into the field.
 
    Only this file should be replaced.
 */
-
 (function(){
   'use strict';
 
@@ -23,52 +23,37 @@
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
 
   const renderer=new THREE.WebGLRenderer({
-    canvas,
-    antialias:true,
-    alpha:true,
-    powerPreference:'high-performance'
+    canvas, antialias:true, alpha:true, powerPreference:'high-performance'
   });
-
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.setClearColor(0,0);
 
   const scene=new THREE.Scene();
-  const camera=new THREE.PerspectiveCamera(28,1,.1,100);
-  camera.position.set(0,0,7.2);
+  const camera=new THREE.PerspectiveCamera(29,1,.1,100);
+  camera.position.set(0,0,7.4);
 
   const root=new THREE.Group();
-  const faceRoot=new THREE.Group();
+  const particleRoot=new THREE.Group();
   const fieldRoot=new THREE.Group();
-  root.add(faceRoot);
-  root.add(fieldRoot);
+  root.add(particleRoot,fieldRoot);
   scene.add(root);
 
-  const mouse=new THREE.Vector2();
-  const target=new THREE.Vector2();
-
-  let portrait=null;
-  let particles=null;
-  let ambientPoints=null;
-  let rings=[];
-  let built=false;
-  let onScreen=false;
-  let t=0;
-  let lastMoveAt=performance.now();
+  const pointer=new THREE.Vector2(0,0);
+  const pointerTarget=new THREE.Vector2(0,0);
+  let pointerInside=false, targetCoherence=0, coherence=0;
+  let t=0, onScreen=false, built=false, particles=null, ambient=null;
+  const rings=[];
 
   const STATE_COLOR={
     defensible:new THREE.Color(0x72f6bd),
     risk:new THREE.Color(0xff526f),
     partial:new THREE.Color(0xffb95c),
-    neutral:new THREE.Color(0x9fdcff)
+    neutral:new THREE.Color(0x8fc9ff)
   };
-
-  let targetStateMix=0;
-  let currentStateMix=0;
+  let targetStateMix=0, currentStateMix=0;
   let currentStateColor=STATE_COLOR.neutral.clone();
-  let targetAgitation=0;
-  let currentAgitation=0;
-  let coherenceLimit=1;
+  let targetAgitation=0, currentAgitation=0, coherenceLimit=1;
 
   function resize(){
     const w=Math.max(1,figure.clientWidth||560);
@@ -77,354 +62,286 @@
     camera.aspect=w/h;
     camera.updateProjectionMatrix();
   }
-
-  function hash(x,y){
-    return Math.abs(Math.sin(x*127.1+y*311.7)*43758.5453)%1;
+  function hash(n){
+    const x=Math.sin(n*127.1+311.7)*43758.5453123;
+    return x-Math.floor(x);
+  }
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+  function smoothstep(a,b,x){
+    const q=clamp((x-a)/(b-a),0,1);
+    return q*q*(3-2*q);
   }
 
   function build(texture){
     const img=texture.image;
-    const iw=img.naturalWidth||img.videoWidth||img.width||1;
-    const ih=img.naturalHeight||img.videoHeight||img.height||1;
+    const iw=img.naturalWidth||img.width||1;
+    const ih=img.naturalHeight||img.height||1;
     const aspect=iw/ih;
 
-    /*
-      The image itself is the face. This is deliberate. Facial identity is
-      too important to reconstruct from guessed landmarks.
-    */
-    const imageMaterial=new THREE.ShaderMaterial({
-      transparent:true,
-      depthWrite:false,
-      uniforms:{
-        uMap:{value:texture},
-        uTime:{value:0},
-        uMouse:{value:mouse},
-        uStateColor:{value:currentStateColor.clone()},
-        uStateMix:{value:0},
-        uAgitation:{value:0}
-      },
-      vertexShader:`
-        varying vec2 vUv;
-        uniform float uTime;
-        uniform vec2 uMouse;
+    const SW=300, SH=Math.max(300,Math.round(SW/aspect));
+    const source=document.createElement('canvas');
+    source.width=SW; source.height=SH;
+    const ctx=source.getContext('2d',{willReadFrequently:true});
+    ctx.drawImage(img,0,0,SW,SH);
+    const data=ctx.getImageData(0,0,SW,SH).data;
 
-        void main(){
-          vUv=uv;
-          vec3 p=position;
-
-          p.x += uMouse.x*.018;
-          p.y += uMouse.y*.014;
-          p.z += sin(uTime*.55 + uv.y*5.0)*.008;
-
-          gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);
-        }
-      `,
-      fragmentShader:`
-        uniform sampler2D uMap;
-        uniform float uTime;
-        uniform vec3 uStateColor;
-        uniform float uStateMix;
-        uniform float uAgitation;
-        varying vec2 vUv;
-
-        void main(){
-          vec4 tex=texture2D(uMap,vUv);
-          float lum=dot(tex.rgb,vec3(.2126,.7152,.0722));
-
-          /* Remove the near-black photographic surround, not the face. */
-          float bg=smoothstep(.012,.075,lum);
-
-          /* Cool the photograph into ARIA's luminous blue/cyan language. */
-          vec3 cool=vec3(
-            lum*.42 + tex.b*.34,
-            lum*.68 + tex.g*.22,
-            lum*.96 + tex.r*.12
-          );
-
-          /* Keep enough original tonal information for a recognisable face. */
-          vec3 hologram=mix(tex.rgb,cool,.68);
-          hologram=mix(hologram,uStateColor,uStateMix*.22);
-
-          /* Fine scan movement, intentionally subtle. */
-          float scan=0.965 + 0.035*sin(vUv.y*900.0-uTime*5.0);
-          float shimmer=0.975 + 0.025*sin(vUv.x*47.0+uTime*1.7);
-
-          /* A little edge falloff keeps the rectangular source invisible. */
-          float edgeX=smoothstep(.015,.09,vUv.x)*smoothstep(.015,.09,1.0-vUv.x);
-          float edgeY=smoothstep(.01,.08,vUv.y)*smoothstep(.01,.08,1.0-vUv.y);
-          float edge=edgeX*edgeY;
-
-          float alpha=bg*.72*scan*shimmer*edge;
-          alpha*=1.0-uAgitation*.055;
-
-          gl_FragColor=vec4(hologram,alpha);
-        }
-      `
-    });
-
-    const imageHeight=4.72;
-    const imageWidth=imageHeight*aspect;
-    const plane=new THREE.Mesh(
-      new THREE.PlaneGeometry(imageWidth,imageHeight,1,1),
-      imageMaterial
-    );
-
-    plane.position.y=.10;
-    plane.position.z=-.18;
-    portrait=plane;
-    faceRoot.add(plane);
-
-    /*
-      Particle veil sampled directly from the same photograph.
-      Particles sit ON the photographic face, so they cannot invent a new
-      anatomy. They simply add the volumetric / holographic surface.
-    */
-    const sampleCanvas=document.createElement('canvas');
-    const SW=260;
-    const SH=Math.max(260,Math.round(SW/aspect));
-    sampleCanvas.width=SW;
-    sampleCanvas.height=SH;
-
-    const sctx=sampleCanvas.getContext('2d',{willReadFrequently:true});
-    sctx.drawImage(img,0,0,SW,SH);
-    const data=sctx.getImageData(0,0,SW,SH).data;
-
-    const pp=[];
-    const pc=[];
-    const ps=[];
-    const pf=[];
-
-    /* Every visible source pixel has a chance to contribute. */
-    for(let y=0;y<SH;y++){
-      for(let x=0;x<SW;x++){
-        const i=(y*SW+x)*4;
-        const r=data[i]/255;
-        const g=data[i+1]/255;
-        const b=data[i+2]/255;
-        const lum=.2126*r+.7152*g+.0722*b;
-
-        if(lum<.045)continue;
-
-        const edge=Math.min(x,SW-1-x,y,SH-1-y);
-        const edgeFactor=Math.min(1,edge/18);
-        const p=.075 + lum*.20 + edgeFactor*.025;
-        if(hash(x,y)>p)continue;
-
-        const nx=x/(SW-1)-.5;
-        const ny=.5-y/(SH-1);
-        const z=.02 + lum*.22 + (hash(x+9,y+3)-.5)*.055;
-
-        pp.push(nx*imageWidth,ny*imageHeight+.10,z+.02);
-
-        const sparkle=.72+lum*.42;
-        pc.push(.34*sparkle,.72*sparkle,1.0*sparkle);
-        ps.push(hash(x+17,y+7)*6.283, .7+hash(x+31,y+13)*1.4, hash(x+47,y+29));
-        pf.push(lum);
-      }
+    const lum=new Float32Array(SW*SH);
+    for(let y=0;y<SH;y++) for(let x=0;x<SW;x++){
+      const i=(y*SW+x)*4;
+      lum[y*SW+x]=.2126*(data[i]/255)+.7152*(data[i+1]/255)+.0722*(data[i+2]/255);
     }
 
-    const pg=new THREE.BufferGeometry();
-    pg.setAttribute('position',new THREE.Float32BufferAttribute(pp,3));
-    pg.setAttribute('color',new THREE.Float32BufferAttribute(pc,3));
-    pg.setAttribute('aSeed',new THREE.Float32BufferAttribute(ps,3));
-    pg.setAttribute('aLight',new THREE.Float32BufferAttribute(pf,1));
+    /*
+      Sample both luminous facial volume and high-contrast structure.
+      This preserves eyes, brows, nostrils, lips and hair boundaries.
+    */
+    const candidates=[];
+    for(let y=2;y<SH-2;y++) for(let x=2;x<SW-2;x++){
+      const idx=y*SW+x, l=lum[idx];
+      const gx=Math.abs(lum[idx+2]-lum[idx-2]);
+      const gy=Math.abs(lum[idx+SW*2]-lum[idx-SW*2]);
+      const edge=Math.min(1,Math.sqrt(gx*gx+gy*gy)*4.6);
+      const local=(
+        Math.abs(l-lum[idx-2])+Math.abs(l-lum[idx+2])+
+        Math.abs(l-lum[idx-SW*2])+Math.abs(l-lum[idx+SW*2])
+      )*.25;
+      const score=l*.70+edge*.72+local*.75;
+      if(score<.055)continue;
 
-    const pm=new THREE.ShaderMaterial({
-      transparent:true,
-      depthWrite:false,
-      vertexColors:true,
+      const cx=x/(SW-1)-.5, cy=.5-y/(SH-1);
+      const central=1-Math.min(1,Math.sqrt((cx/.58)**2+(cy/.63)**2));
+      const probability=clamp(.045+score*.24+Math.max(0,central)*.055,0,.42);
+      if(hash(idx*1.17)>probability)continue;
+      candidates.push({x,y,score,l,edge});
+    }
+
+    /*
+      A small deterministic facial-detail pass makes the target robust at
+      the relatively small 560x600 display size.
+    */
+    function addZone(cx,cy,rx,ry,count,seed){
+      for(let i=0;i<count;i++){
+        const a=hash(seed+i*2.31)*Math.PI*2;
+        const r=Math.sqrt(hash(seed+i*4.73));
+        const x=Math.round(clamp(cx+Math.cos(a)*rx*r,2,SW-3));
+        const y=Math.round(clamp(cy+Math.sin(a)*ry*r,2,SH-3));
+        const idx=y*SW+x;
+        candidates.push({x,y,score:.95,l:lum[idx],edge:1});
+      }
+    }
+    addZone(SW*.385,SH*.392,SW*.070,SH*.027,280,101);
+    addZone(SW*.615,SH*.392,SW*.070,SH*.027,280,202);
+    addZone(SW*.385,SH*.350,SW*.085,SH*.022,180,303);
+    addZone(SW*.615,SH*.350,SW*.085,SH*.022,180,404);
+    addZone(SW*.500,SH*.485,SW*.038,SH*.095,260,505);
+    addZone(SW*.500,SH*.620,SW*.090,SH*.035,260,606);
+
+    const MAX=10500;
+    if(candidates.length>MAX){
+      candidates.sort((a,b)=>b.score-a.score);
+      candidates.length=MAX;
+    }
+
+    const count=candidates.length;
+    const targetPos=new Float32Array(count*3);
+    const scatterPos=new Float32Array(count*3);
+    const color=new Float32Array(count*3);
+    const seedAttr=new Float32Array(count*4);
+    const lightAttr=new Float32Array(count);
+    const imageHeight=4.75, imageWidth=imageHeight*aspect;
+
+    for(let i=0;i<count;i++){
+      const p=candidates[i];
+      const nx=p.x/(SW-1)-.5, ny=.5-p.y/(SH-1);
+      const depth=(p.l-.5)*.24+p.edge*.08;
+
+      targetPos[i*3]=nx*imageWidth;
+      targetPos[i*3+1]=ny*imageHeight-.02;
+      targetPos[i*3+2]=depth;
+
+      /* Completely independent cloud coordinates. */
+      const a=hash(i*7.31)*Math.PI*2;
+      const r=.35+Math.pow(hash(i*13.17),.45)*2.25;
+      scatterPos[i*3]=Math.cos(a)*r*(.78+hash(i*23.1)*.55);
+      scatterPos[i*3+1]=(hash(i*19.43)-.5)*4.9;
+      scatterPos[i*3+2]=-.65+(hash(i*29.7)-.5)*1.9;
+
+      const src=(p.y*SW+p.x)*4;
+      const rr=data[src]/255, gg=data[src+1]/255, bb=data[src+2]/255;
+      const brightness=.72+p.l*.48;
+      color[i*3]=clamp((rr*.18+bb*.40)*brightness,.08,1);
+      color[i*3+1]=clamp((gg*.28+bb*.62)*brightness,.14,1);
+      color[i*3+2]=clamp((bb*.72+rr*.12)*brightness,.32,1);
+
+      seedAttr[i*4]=hash(i*31.1)*Math.PI*2;
+      seedAttr[i*4+1]=hash(i*37.2);
+      seedAttr[i*4+2]=hash(i*41.3);
+      seedAttr[i*4+3]=hash(i*43.7);
+      lightAttr[i]=clamp(p.score,.05,1.35);
+    }
+
+    const geometry=new THREE.BufferGeometry();
+    geometry.setAttribute('aTarget',new THREE.Float32BufferAttribute(targetPos,3));
+    geometry.setAttribute('aScatter',new THREE.Float32BufferAttribute(scatterPos,3));
+    geometry.setAttribute('color',new THREE.Float32BufferAttribute(color,3));
+    geometry.setAttribute('aSeed',new THREE.Float32BufferAttribute(seedAttr,4));
+    geometry.setAttribute('aLight',new THREE.Float32BufferAttribute(lightAttr,1));
+
+    const material=new THREE.ShaderMaterial({
+      transparent:true, depthWrite:false, vertexColors:true,
       blending:THREE.AdditiveBlending,
       uniforms:{
-        uTime:{value:0},
-        uMouse:{value:mouse},
-        uCoherence:{value:1},
+        uTime:{value:0}, uCoherence:{value:0}, uMouse:{value:pointer},
         uStateColor:{value:currentStateColor.clone()},
-        uStateMix:{value:0},
-        uAgitation:{value:0}
+        uStateMix:{value:0}, uAgitation:{value:0}
       },
       vertexShader:`
-        attribute vec3 aSeed;
+        attribute vec3 aTarget;
+        attribute vec3 aScatter;
+        attribute vec4 aSeed;
         attribute float aLight;
         varying vec3 vColor;
         varying float vLight;
         uniform float uTime;
-        uniform vec2 uMouse;
         uniform float uCoherence;
+        uniform vec2 uMouse;
         uniform vec3 uStateColor;
         uniform float uStateMix;
         uniform float uAgitation;
 
         void main(){
-          vec3 p=position;
+          vec3 p=mix(aScatter,aTarget,uCoherence);
+          float scatter=1.0-uCoherence;
 
-          float drift=1.0-uCoherence;
-          p.x += sin(uTime*.65+aSeed.x+p.y*1.3)*.008;
-          p.y += cos(uTime*.52+aSeed.x+p.x*1.1)*.006;
-          p.z += sin(uTime*.8+aSeed.y)*.012;
+          p.x+=sin(uTime*.58+aSeed.x+p.y*.8)*(.025+.055*scatter);
+          p.y+=cos(uTime*.47+aSeed.x+p.x*.65)*(.022+.045*scatter);
+          p.z+=sin(uTime*.72+aSeed.y*7.0)*(.018+.035*scatter);
 
-          vec3 dir=normalize(vec3(
-            sin(aSeed.x*2.0),
-            cos(aSeed.x*1.6),
-            sin(aSeed.y*1.7)
-          )+.0001);
-          p += dir*drift*(.035+aLight*.035);
-
-          p.x += uMouse.x*.028;
-          p.y += uMouse.y*.020;
+          p.x+=uMouse.x*.035*(.35+.65*uCoherence);
+          p.y+=uMouse.y*.028*(.35+.65*uCoherence);
 
           if(uAgitation>.001){
-            p += dir*uAgitation*.018*sin(uTime*2.0+aSeed.x);
+            vec3 d=normalize(vec3(
+              sin(aSeed.x*2.1),cos(aSeed.x*1.7),sin(aSeed.y*5.0)
+            )+.0001);
+            p+=d*uAgitation*(.018+.04*scatter)*sin(uTime*2.0+aSeed.z*6.28);
           }
 
           vec4 mv=modelViewMatrix*vec4(p,1.0);
           gl_Position=projectionMatrix*mv;
-
           float depth=1.0/(1.0+abs(mv.z)*.55);
-          gl_PointSize=(1.15+2.25*depth)*(0.72+aLight*.72);
+          float size=(1.05+2.15*depth)*(0.72+aLight*.76);
+          size*=.86+.32*uCoherence;
+          gl_PointSize=size;
 
-          vColor=mix(color,uStateColor,uStateMix*.45);
+          vColor=mix(color,uStateColor,uStateMix*.34);
           vLight=aLight;
         }
       `,
       fragmentShader:`
         varying vec3 vColor;
         varying float vLight;
-
         void main(){
           float d=length(gl_PointCoord-.5);
-          float a=smoothstep(.5,.05,d);
-          float core=smoothstep(.18,0.0,d);
-          gl_FragColor=vec4(vColor,(a*.50+core*.24)*(.52+vLight*.40));
+          float soft=1.0-smoothstep(.05,.5,d);
+          float core=1.0-smoothstep(0.0,.22,d);
+          float alpha=(soft*.48+core*.28)*(.34+vLight*.56);
+          gl_FragColor=vec4(vColor,alpha);
         }
       `
     });
 
-    particles=new THREE.Points(pg,pm);
-    faceRoot.add(particles);
+    particles=new THREE.Points(geometry,material);
+    particleRoot.add(particles);
 
-    /* Sparse halo particles outside the face. */
-    const ambientCount=1050;
+    const ambientCount=1450;
     const ap=new Float32Array(ambientCount*3);
     const ac=new Float32Array(ambientCount*3);
-
     for(let i=0;i<ambientCount;i++){
-      const a=Math.random()*Math.PI*2;
-      const radius=2.05+Math.pow(Math.random(),.65)*1.0;
-      ap[i*3]=Math.cos(a)*radius;
-      ap[i*3+1]=(Math.random()-.5)*3.65;
-      ap[i*3+2]=-.20+(Math.random()-.5)*.9;
-
-      const bright=.45+Math.random()*.45;
-      ac[i*3]=.20*bright;
-      ac[i*3+1]=.48*bright;
-      ac[i*3+2]=.95*bright;
+      const a=hash(i*3.3)*Math.PI*2;
+      const r=1.15+Math.pow(hash(i*5.7),.48)*2.15;
+      ap[i*3]=Math.cos(a)*r;
+      ap[i*3+1]=(hash(i*8.1)-.5)*4.7;
+      ap[i*3+2]=-.85+(hash(i*9.9)-.5)*1.8;
+      const q=.35+hash(i*11.2)*.55;
+      ac[i*3]=.10*q; ac[i*3+1]=.34*q; ac[i*3+2]=.82*q;
     }
-
     const ag=new THREE.BufferGeometry();
     ag.setAttribute('position',new THREE.Float32BufferAttribute(ap,3));
     ag.setAttribute('color',new THREE.Float32BufferAttribute(ac,3));
+    ambient=new THREE.Points(ag,new THREE.PointsMaterial({
+      size:.010,transparent:true,opacity:.16,vertexColors:true,
+      blending:THREE.AdditiveBlending,depthWrite:false
+    }));
+    fieldRoot.add(ambient);
 
-    const am=new THREE.PointsMaterial({
-      size:.009,
-      transparent:true,
-      opacity:.22,
-      vertexColors:true,
-      blending:THREE.AdditiveBlending,
-      depthWrite:false
-    });
-
-    ambientPoints=new THREE.Points(ag,am);
-    fieldRoot.add(ambientPoints);
-
-    /* Three quiet orbital rings, kept behind the actual face. */
-    [1.72,2.08,2.42].forEach((radius,index)=>{
-      const g=new THREE.TorusGeometry(radius,.0045,5,180);
+    [1.72,2.10,2.48].forEach((radius,index)=>{
+      const g=new THREE.TorusGeometry(radius,.004,5,180);
       const m=new THREE.MeshBasicMaterial({
-        color:index===1?0x6f9dff:0xb9c8ff,
-        transparent:true,
-        opacity:index===1?.14:.055,
-        blending:THREE.AdditiveBlending,
-        depthWrite:false
+        color:index===1?0x78a9ff:0xb9caff,
+        transparent:true,opacity:index===1?.10:.035,
+        blending:THREE.AdditiveBlending,depthWrite:false
       });
       const ring=new THREE.Mesh(g,m);
       ring.rotation.x=Math.PI/2-.38;
-      ring.position.y=.08;
-      ring.position.z=-.48+index*.08;
+      ring.position.y=-.02;
+      ring.position.z=-.70+index*.10;
       fieldRoot.add(ring);
       rings.push(ring);
     });
-
     canvas.classList.add('is-ready');
   }
 
   const observer=new IntersectionObserver(entries=>{
     entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        onScreen=true;
-        resize();
-        if(!built){
-          built=true;
-          new THREE.TextureLoader().load(
-            'aria-reference.png',
-            tex=>{
-              tex.colorSpace=THREE.SRGBColorSpace;
-              build(tex);
-            },
-            undefined,
-            ()=>{}
-          );
-        }
-      }else{
-        onScreen=false;
+      onScreen=entry.isIntersecting;
+      if(onScreen&&!built){
+        built=true; resize();
+        new THREE.TextureLoader().load(
+          'aria-reference.png',
+          tex=>{tex.colorSpace=THREE.SRGBColorSpace;build(tex);},
+          undefined, ()=>{}
+        );
       }
     });
   },{threshold:.12});
-
   observer.observe(figure);
-  addEventListener('resize',resize);
 
-  addEventListener('pointermove',e=>{
+  addEventListener('resize',resize);
+  figure.addEventListener('pointerenter',()=>{pointerInside=true;});
+  figure.addEventListener('pointerleave',()=>{
+    pointerInside=false; pointerTarget.set(0,0);
+  });
+  figure.addEventListener('pointermove',e=>{
     const r=figure.getBoundingClientRect();
-    if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)return;
-    target.x=((e.clientX-r.left)/r.width-.5)*2;
-    target.y=((e.clientY-r.top)/r.height-.5)*-2;
-    lastMoveAt=performance.now();
+    pointerTarget.x=((e.clientX-r.left)/r.width-.5)*2;
+    pointerTarget.y=((e.clientY-r.top)/r.height-.5)*-2;
   },{passive:true});
 
   /* Preserve existing ER decision reactivity. */
   const caseMachine=document.getElementById('caseMachine');
-
   function applyOutcome(outcome){
     if(outcome==='C'){
-      targetStateMix=.20;
-      currentStateColor=STATE_COLOR.defensible;
-      targetAgitation=0;
-      coherenceLimit=1;
+      targetStateMix=.20; currentStateColor=STATE_COLOR.defensible;
+      targetAgitation=0; coherenceLimit=1;
     }else if(outcome==='A'||outcome==='D'){
-      targetStateMix=.38;
-      currentStateColor=STATE_COLOR.risk;
-      targetAgitation=1;
-      coherenceLimit=.62;
+      targetStateMix=.38; currentStateColor=STATE_COLOR.risk;
+      targetAgitation=1; coherenceLimit=.82;
     }else if(outcome==='B'){
-      targetStateMix=.28;
-      currentStateColor=STATE_COLOR.partial;
-      targetAgitation=.48;
-      coherenceLimit=.82;
+      targetStateMix=.28; currentStateColor=STATE_COLOR.partial;
+      targetAgitation=.48; coherenceLimit=.90;
     }else{
-      targetStateMix=0;
-      targetAgitation=0;
-      coherenceLimit=1;
+      targetStateMix=0; targetAgitation=0;
+      currentStateColor=STATE_COLOR.neutral; coherenceLimit=1;
     }
   }
-
   if(caseMachine){
     applyOutcome(caseMachine.dataset.outcome||'');
-    new MutationObserver(()=>applyOutcome(caseMachine.dataset.outcome||'')).observe(
-      caseMachine,{attributes:true,attributeFilter:['data-outcome']}
-    );
+    new MutationObserver(()=>applyOutcome(caseMachine.dataset.outcome||''))
+      .observe(caseMachine,{attributes:true,attributeFilter:['data-outcome']});
   }
 
-  /* Preserve ARIA result mirror. */
+  /* Preserve ARIA result mirror and interaction hint. */
   const reaction=document.getElementById('ariaReaction');
   const reactionBadge=document.getElementById('ariaReactionBadge');
   const reactionText=document.getElementById('ariaReactionText');
@@ -432,88 +349,75 @@
   const resultBadge=document.getElementById('resultBadge');
 
   function hasRealResult(){
-    return !!(resultTitle&&resultTitle.textContent.trim()&&resultTitle.textContent.trim()!=='The system is waiting.');
+    return !!(resultTitle&&resultTitle.textContent.trim()&&
+      resultTitle.textContent.trim()!=='The system is waiting.');
   }
-
   function showHint(){
     if(!reaction||hasRealResult())return;
     reactionBadge.textContent='ARIA';
     reactionText.textContent='Move your cursor over her — she notices.';
     reaction.classList.add('live');
   }
-
   function hideHint(){
     if(!reaction||hasRealResult())return;
     reaction.classList.remove('live');
   }
-
   function mirrorReaction(){
     if(!resultTitle||!resultBadge||!reaction)return;
     const title=resultTitle.textContent.trim();
     const badge=resultBadge.textContent.trim();
-    if(!title||title==='The system is waiting.'){
-      reaction.classList.remove('live');
-      return;
-    }
+    if(!title||title==='The system is waiting.'){showHint();return;}
     reactionBadge.textContent='ARIA · '+badge;
     reactionText.textContent=title;
     reaction.classList.add('live');
   }
-
   figure.addEventListener('pointerenter',hideHint);
   figure.addEventListener('pointerleave',showHint);
-
   if(resultTitle){
-    new MutationObserver(mirrorReaction).observe(resultTitle,{childList:true,characterData:true,subtree:true});
+    new MutationObserver(mirrorReaction).observe(
+      resultTitle,{childList:true,characterData:true,subtree:true}
+    );
     mirrorReaction();
   }
+  showHint();
 
   function animate(){
     requestAnimationFrame(animate);
     if(!onScreen)return;
-
     t+=.012;
-    mouse.lerp(target,.055);
+    pointer.lerp(pointerTarget,.075);
 
-    const idle=performance.now()-lastMoveAt>1500;
-    const coherenceTarget=Math.min(idle?.58:1,coherenceLimit);
+    /* Hover near the face = assemble. Move away = dissolve. */
+    const d=Math.sqrt(pointerTarget.x*pointerTarget.x+
+      Math.pow(pointerTarget.y-.02,2));
+    const proximity=pointerInside ? 1-smoothstep(.25,.78,d) : 0;
+    targetCoherence=proximity*coherenceLimit;
+    coherence+=(targetCoherence-coherence)*.065;
 
     currentAgitation+=(targetAgitation-currentAgitation)*.025;
     currentStateMix+=(targetStateMix-currentStateMix)*.035;
 
-    faceRoot.rotation.y+=(mouse.x*.055-faceRoot.rotation.y)*.032;
-    faceRoot.rotation.x+=(mouse.y*.032-faceRoot.rotation.x)*.032;
-    faceRoot.position.x+=(mouse.x*.055-faceRoot.position.x)*.025;
-    faceRoot.position.y+=(.10+mouse.y*.035-faceRoot.position.y)*.025;
-
-    if(portrait){
-      const u=portrait.material.uniforms;
-      u.uTime.value=t;
-      u.uStateMix.value=currentStateMix;
-      u.uAgitation.value=currentAgitation;
-      u.uStateColor.value.lerp(currentStateColor,.035);
-    }
+    particleRoot.rotation.y+=(pointer.x*.045-particleRoot.rotation.y)*.028;
+    particleRoot.rotation.x+=(pointer.y*.028-particleRoot.rotation.x)*.028;
+    particleRoot.position.x+=(pointer.x*.045-particleRoot.position.x)*.025;
+    particleRoot.position.y+=(pointer.y*.032-particleRoot.position.y)*.025;
 
     if(particles){
       const u=particles.material.uniforms;
-      u.uTime.value=t;
-      u.uCoherence.value+=(coherenceTarget-u.uCoherence.value)*.045;
-      u.uStateMix.value=currentStateMix;
-      u.uAgitation.value=currentAgitation;
+      u.uTime.value=t; u.uCoherence.value=coherence; u.uMouse.value=pointer;
+      u.uStateMix.value=currentStateMix; u.uAgitation.value=currentAgitation;
       u.uStateColor.value.lerp(currentStateColor,.035);
     }
-
-    if(ambientPoints){
-      ambientPoints.rotation.y=t*.012*(1+currentAgitation);
-      ambientPoints.material.opacity=.18+Math.sin(t*.70)*.018;
+    if(ambient){
+      ambient.rotation.y=t*.012*(1+currentAgitation*.8);
+      ambient.material.opacity=.13+.09*(1-coherence);
     }
-
     rings.forEach((ring,index)=>{
-      const speed=1+currentAgitation*1.15;
-      ring.rotation.z=t*(.028+index*.009)*speed*(index%2?1:-1);
+      ring.rotation.z=t*(.024+index*.008)*(index%2?1:-1);
       ring.rotation.x=Math.PI/2-.38+Math.sin(t*.20+index)*.012;
+      ring.material.opacity=(index===1?.045:.018)+
+        coherence*(index===1?.085:.035);
     });
-
     renderer.render(scene,camera);
   }
 
