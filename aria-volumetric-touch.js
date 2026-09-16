@@ -1,186 +1,231 @@
-/* aria-volumetric-touch.js — v3
-   Mobile touch cursor + particle convergence + auto-breathing + JARVIS glow overlay.
+/* aria-volumetric-touch.js — v4
+   JARVIS glow via CSS injection (reliable + always visible)
+   + touch cursor orb + synthetic mouse events + auto-breathing
    Load after aria-volumetric.js in index.html.
 */
 (function(){
 'use strict';
 
+/* ══════════════════════════════════════════════════════════════
+   1. JARVIS GLOW  — pure CSS, no canvas z-index issues
+   ══════════════════════════════════════════════════════════════ */
+var css = document.createElement('style');
+css.textContent = [
+  /* Breathing box-shadow glow on the ARIA room border + interior */
+  '@keyframes ariaJarvis{',
+  '  0%,100%{',
+  '    box-shadow:',
+  '      inset 0 0  80px rgba(99,102,241,.22),',
+  '      inset 0 0 180px rgba(99,102,241,.10),',
+  '      0 0 40px rgba(99,102,241,.06);',
+  '  }',
+  '  50%{',
+  '    box-shadow:',
+  '      inset 0 0 130px rgba(99,102,241,.45),',
+  '      inset 0 0 260px rgba(99,102,241,.20),',
+  '      0 0 80px rgba(99,102,241,.15),',
+  '      0 0 160px rgba(124,58,237,.07);',
+  '  }',
+  '}',
+  '.aria-room{',
+  '  box-shadow:inset 0 0 80px rgba(99,102,241,.22),inset 0 0 180px rgba(99,102,241,.10)!important;',
+  '  animation:ariaJarvis 4.5s ease-in-out infinite!important;',
+  '}',
+
+  /* Face-centre radial corona (sits behind the particle canvas) */
+  '@keyframes ariaCore{',
+  '  0%,100%{opacity:.55;transform:translate(-50%,-50%) scale(.92);}',
+  '  50%{opacity:1;transform:translate(-50%,-50%) scale(1.08);}',
+  '}',
+  '.aria-glow-core{',
+  '  position:absolute;top:47%;left:50%;',
+  '  transform:translate(-50%,-50%);',
+  '  width:320px;height:420px;border-radius:50%;',
+  '  background:radial-gradient(ellipse,rgba(99,102,241,.28) 0%,rgba(124,58,237,.10) 40%,transparent 70%);',
+  '  animation:ariaCore 4s ease-in-out infinite;',
+  '  pointer-events:none;z-index:0;',
+  '}',
+
+  /* Scan line sweeping top to bottom */
+  '@keyframes ariaScan{',
+  '  0%{top:-3px;opacity:0}',
+  '  4%{opacity:1}',
+  '  96%{opacity:.85}',
+  '  100%{top:100%;opacity:0}',
+  '}',
+  '.aria-scan-line{',
+  '  position:absolute;left:0;right:0;height:2px;top:0;',
+  '  background:linear-gradient(90deg,transparent,rgba(196,181,253,.75) 30%,rgba(196,181,253,.75) 70%,transparent);',
+  '  box-shadow:0 0 8px rgba(196,181,253,.5);',
+  '  animation:ariaScan 3.4s linear infinite;',
+  '  pointer-events:none;z-index:6;',
+  '}',
+
+  /* Touch-active surge — class added/removed by JS */
+  '.aria-room.aria-active{',
+  '  box-shadow:',
+  '    inset 0 0 160px rgba(99,102,241,.65),',
+  '    inset 0 0 320px rgba(124,58,237,.28),',
+  '    0 0 120px rgba(99,102,241,.22),',
+  '    0 0 240px rgba(124,58,237,.10)!important;',
+  '  transition:box-shadow .3s ease!important;',
+  '}',
+  '.aria-room.aria-active .aria-glow-core{',
+  '  opacity:1.4!important;',
+  '  animation-duration:1.8s!important;',
+  '}',
+].join('\n');
+document.head.appendChild(css);
+
+/* Inject DOM elements into .aria-room */
+function injectGlowEls(){
+  var room = document.querySelector('.aria-room');
+  if(!room || room.dataset.glowInjected) return;
+  room.dataset.glowInjected = '1';
+
+  var core = document.createElement('div');
+  core.className = 'aria-glow-core';
+  room.insertBefore(core, room.firstChild);
+
+  var scan = document.createElement('div');
+  scan.className = 'aria-scan-line';
+  room.appendChild(scan);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   2. TOUCH CURSOR ORB
+   ══════════════════════════════════════════════════════════════ */
 var IS_TOUCH = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 
-/* ── VISIBLE TOUCH CURSOR ──────────────────────────────────────── */
 var orb = document.createElement('div');
 orb.id = 'aria-touch-orb';
 Object.assign(orb.style,{
   position:'fixed',width:'22px',height:'22px',borderRadius:'50%',
-  border:'1px solid rgba(196,181,253,.55)',background:'rgba(99,102,241,.07)',
-  boxShadow:'0 0 14px rgba(99,102,241,.45),0 0 28px rgba(99,102,241,.18)',
+  border:'1px solid rgba(196,181,253,.55)',background:'rgba(99,102,241,.08)',
+  boxShadow:'0 0 14px rgba(99,102,241,.5),0 0 28px rgba(99,102,241,.2)',
   pointerEvents:'none',zIndex:'99999',transform:'translate(-50%,-50%)',
-  transition:'opacity .2s,width .15s,height .15s',opacity:'0',
-  left:'-100px',top:'-100px',willChange:'left,top'
+  transition:'opacity .2s,width .12s,height .12s,box-shadow .12s',
+  opacity:'0',left:'-100px',top:'-100px',willChange:'left,top'
 });
 document.body.appendChild(orb);
 
-function orbAt(x,y,press){
+function orbMove(x,y,press){
   orb.style.left=x+'px'; orb.style.top=y+'px'; orb.style.opacity='1';
-  orb.style.width=press?'36px':'22px'; orb.style.height=press?'36px':'22px';
-  orb.style.boxShadow=press
-    ?'0 0 22px rgba(99,102,241,.7),0 0 44px rgba(99,102,241,.3)'
-    :'0 0 14px rgba(99,102,241,.45),0 0 28px rgba(99,102,241,.18)';
+  if(press){
+    orb.style.width='38px'; orb.style.height='38px';
+    orb.style.boxShadow='0 0 24px rgba(99,102,241,.8),0 0 48px rgba(99,102,241,.35)';
+  } else {
+    orb.style.width='22px'; orb.style.height='22px';
+    orb.style.boxShadow='0 0 14px rgba(99,102,241,.5),0 0 28px rgba(99,102,241,.2)';
+  }
 }
 function orbHide(){ orb.style.opacity='0'; }
 
-/* ── TARGET DISCOVERY ──────────────────────────────────────────── */
-function findTarget(){
+/* ══════════════════════════════════════════════════════════════
+   3. SYNTHETIC MOUSE EVENTS → particle convergence
+   ══════════════════════════════════════════════════════════════ */
+function findAriaTarget(){
   return document.querySelector('.aria-figure')||
          document.querySelector('.aria-room')||
-         document.querySelector('[class*="aria-"]');
+         document.querySelector('[class*="aria-figure"]');
 }
 
-function fireAt(type,cx,cy){
-  var ev={bubbles:true,cancelable:true,clientX:cx||0,clientY:cy||0,view:window};
-  [findTarget(),document,window].forEach(function(el){
-    if(el) el.dispatchEvent(new MouseEvent(type,ev));
-  });
+function fireMouseAt(type, cx, cy){
+  var opts={bubbles:true,cancelable:true,clientX:cx||0,clientY:cy||0,view:window};
+  var ev=new MouseEvent(type,opts);
+  // Fire on the target element, document, and window so any listener catches it
+  var t=findAriaTarget(); if(t) t.dispatchEvent(ev);
+  document.dispatchEvent(new MouseEvent(type,opts));
+  window.dispatchEvent(new MouseEvent(type,opts));
 }
 
-/* ── TOUCH EVENTS ──────────────────────────────────────────────── */
+function setRoomActive(on){
+  var room=document.querySelector('.aria-room');
+  if(room) room.classList[on?'add':'remove']('aria-active');
+}
+
+/* ══════════════════════════════════════════════════════════════
+   4. EVENT WIRING
+   ══════════════════════════════════════════════════════════════ */
 var lastTouch=0, fingerDown=false;
+
 if(IS_TOUCH){
   document.addEventListener('touchstart',function(e){
     fingerDown=true; lastTouch=Date.now();
-    var t=e.touches[0]; orbAt(t.clientX,t.clientY,true);
-    fireAt('mouseenter',t.clientX,t.clientY);
-    fireAt('mousemove', t.clientX,t.clientY);
+    var t=e.touches[0];
+    orbMove(t.clientX,t.clientY,true);
+    setRoomActive(true);
+    fireMouseAt('mouseenter',t.clientX,t.clientY);
+    fireMouseAt('mousemove', t.clientX,t.clientY);
   },{passive:true});
+
   document.addEventListener('touchmove',function(e){
     lastTouch=Date.now();
-    var t=e.touches[0]; orbAt(t.clientX,t.clientY,false);
-    fireAt('mousemove',t.clientX,t.clientY);
+    var t=e.touches[0];
+    orbMove(t.clientX,t.clientY,false);
+    fireMouseAt('mousemove',t.clientX,t.clientY);
   },{passive:true});
+
   document.addEventListener('touchend',function(){
-    fingerDown=false; lastTouch=Date.now(); orbHide();
-    fireAt('mouseleave',0,0);
+    fingerDown=false; lastTouch=Date.now();
+    orbHide(); setRoomActive(false);
+    fireMouseAt('mouseleave',0,0);
   },{passive:true});
+
   document.addEventListener('touchcancel',function(){
-    fingerDown=false; orbHide(); fireAt('mouseleave',0,0);
+    fingerDown=false; orbHide(); setRoomActive(false);
+    fireMouseAt('mouseleave',0,0);
   },{passive:true});
 }
 
-/* ── JARVIS GLOW OVERLAY (landing page) ──────────────────────── */
-function setupGlow(){
-  var target=findTarget(); if(!target) return;
-  var rect=target.getBoundingClientRect();
-  if(!rect.width) return;
-
-  var gc=document.createElement('canvas');
-  gc.id='aria-glow-canvas';
-  Object.assign(gc.style,{
-    position:'absolute',inset:'0',width:'100%',height:'100%',
-    zIndex:'2',pointerEvents:'none',display:'block'
-  });
-  // Insert above the particle canvas
-  var existing=target.querySelector('canvas');
-  if(existing&&existing.nextSibling) target.insertBefore(gc,existing.nextSibling);
-  else target.appendChild(gc);
-
-  var gctx=gc.getContext('2d');
-  var GW=0,GH=0,gPh=0,sPh=0;
-  var hovering=false, hoverX=0, hoverY=0;
-
-  function resize(){
-    var r=target.getBoundingClientRect();
-    GW=gc.width=Math.round(r.width)||560;
-    GH=gc.height=Math.round(r.height)||600;
-  }
-  resize();
-  new ResizeObserver(resize).observe(target);
-
-  // Track hover/touch state
-  target.addEventListener('mouseenter',function(e){hovering=true;hoverX=e.clientX;hoverY=e.clientY;});
-  target.addEventListener('mousemove', function(e){hoverX=e.clientX;hoverY=e.clientY;});
-  target.addEventListener('mouseleave',function(){hovering=false;});
-  document.addEventListener('touchstart',function(){hovering=true; lastTouch=Date.now();},{passive:true});
-  document.addEventListener('touchend',  function(){hovering=false;},{passive:true});
-
-  var CYCLE=380; // frames per full breath
-
-  function drawFrame(){
-    requestAnimationFrame(drawFrame);
-    gPh++;
-    gctx.clearRect(0,0,GW,GH);
-
-    var idle=Date.now()-lastTouch>2000&&!hovering;
-    var breathPulse=(Math.sin((gPh/CYCLE)*Math.PI*2)+1)*0.5; // 0→1→0
-    var intensity=hovering||!idle?1.0:0.22+breathPulse*0.38;
-
-    // Face centre (approximate for landing page)
-    var fx=GW*.5, fy=GH*.38;
-
-    // Corona
-    var c1=gctx.createRadialGradient(fx,fy,0,fx,fy,Math.max(GW,GH)*.55);
-    c1.addColorStop(0,  'rgba(99,102,241,'+(0.14*intensity)+')');
-    c1.addColorStop(.28,'rgba(99,102,241,'+(0.05*intensity)+')');
-    c1.addColorStop(1,  'rgba(0,0,0,0)');
-    gctx.fillStyle=c1; gctx.fillRect(0,0,GW,GH);
-
-    // Tight halo
-    var c2=gctx.createRadialGradient(fx,fy,0,fx,fy,Math.min(GW,GH)*.28);
-    c2.addColorStop(0,  'rgba(124,58,237,'+(0.22*intensity)+')');
-    c2.addColorStop(.6, 'rgba(99,102,241,'+(0.06*intensity)+')');
-    c2.addColorStop(1,  'rgba(0,0,0,0)');
-    gctx.fillStyle=c2; gctx.fillRect(0,0,GW,GH);
-
-    // Scan line (on hover/touch or at breath peak)
-    if(intensity>0.45){
-      sPh+=0.003*(1+intensity*.5);
-      var sy=(sPh%1)*GH;
-      var sg=gctx.createLinearGradient(0,sy-5,0,sy+5);
-      sg.addColorStop(0,'rgba(0,0,0,0)');
-      sg.addColorStop(.5,'rgba(196,181,253,'+(0.5*intensity)+')');
-      sg.addColorStop(1,'rgba(0,0,0,0)');
-      gctx.fillStyle=sg; gctx.fillRect(0,sy-5,GW,10);
-    }
-
-    // Touch/hover burst
-    if(hovering){
-      var burst=Math.max(0,Math.sin(gPh*.18))*.14;
-      var c3=gctx.createRadialGradient(fx,fy,0,fx,fy,Math.min(GW,GH)*.2);
-      c3.addColorStop(0,'rgba(196,181,253,'+burst+')');
-      c3.addColorStop(1,'rgba(0,0,0,0)');
-      gctx.fillStyle=c3; gctx.fillRect(0,0,GW,GH);
-    }
-  }
-  drawFrame();
+// Desktop hover surge
+var room=document.querySelector('.aria-room');
+if(room){
+  room.addEventListener('mouseenter',function(){ setRoomActive(true); });
+  room.addEventListener('mouseleave',function(){ setRoomActive(false); });
 }
 
-/* ── AUTO-BREATHING CURSOR (mobile idle) ──────────────────────── */
-function startBreathing(){
-  if(!IS_TOUCH) return;
-  var bPh=0, CYCLE2=380;
+/* ══════════════════════════════════════════════════════════════
+   5. AUTO-BREATHING (mobile idle — orb circles the face)
+   ══════════════════════════════════════════════════════════════ */
+if(IS_TOUCH){
+  var bPh=0;
   (function breathe(){
     requestAnimationFrame(breathe);
     if(fingerDown||Date.now()-lastTouch<2200) return;
     bPh++;
-    var pulse=(Math.sin((bPh/CYCLE2)*Math.PI*2)+1)*0.5;
-    var target=findTarget(); if(!target) return;
-    var rect=target.getBoundingClientRect();
-    var cx=rect.left+rect.width*.5, cy=rect.top+rect.height*.38;
+    var pulse=(Math.sin(bPh/380*Math.PI*2)+1)*0.5;
+    var t=findAriaTarget(); if(!t) return;
+    var r=t.getBoundingClientRect(); if(!r.width) return;
+    var cx=r.left+r.width*.5, cy=r.top+r.height*.4;
     if(pulse>0.05){
-      var rX=rect.width*.14*pulse, rY=rect.height*.06*pulse;
-      var a=(bPh/CYCLE2)*Math.PI*2*.65;
-      var px=cx+Math.cos(a)*rX, py=cy+Math.sin(a)*rY;
+      var px=cx+Math.cos(bPh/380*Math.PI*2*.65)*r.width*.13*pulse;
+      var py=cy+Math.sin(bPh/380*Math.PI*2*.65)*r.height*.07*pulse;
       orb.style.left=px+'px'; orb.style.top=py+'px';
-      orb.style.opacity=String(pulse*.35);
-      fireAt('mousemove',px,py);
+      orb.style.opacity=String(pulse*.3);
+      fireMouseAt('mousemove',px,py);
     } else {
-      orbHide(); fireAt('mouseleave',0,0);
+      orbHide(); fireMouseAt('mouseleave',0,0);
     }
   })();
 }
 
-setTimeout(function(){
-  setupGlow();
-  startBreathing();
-},900);
+/* ══════════════════════════════════════════════════════════════
+   6. INIT
+   ══════════════════════════════════════════════════════════════ */
+function init(){
+  injectGlowEls();
+  // Also wire desktop hover after injection
+  var r=document.querySelector('.aria-room');
+  if(r&&!r.dataset.hoverWired){
+    r.dataset.hoverWired='1';
+    r.addEventListener('mouseenter',function(){setRoomActive(true);});
+    r.addEventListener('mouseleave',function(){setRoomActive(false);});
+  }
+}
+
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+else init();
+setTimeout(init,800); // retry after aria-volumetric.js settles
 
 })();
