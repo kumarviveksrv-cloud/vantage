@@ -134,7 +134,7 @@
           p.y+=uMouse.y*aEyeWeight*0.06;
           float scatter=1.0-uCoherence;
           vec3 dir=normalize(vec3(sin(aSeed.x*3.1),cos(aSeed.x*2.3+aSeed.y),sin(aSeed.y*1.7))+0.0001);
-          p+=dir*scatter*0.55;
+          p+=dir*scatter*0.38;
           vec4 mv=modelViewMatrix*vec4(p,1.);
           gl_Position=projectionMatrix*mv;
           gl_PointSize=(1.75+2.6*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
@@ -208,12 +208,16 @@
 
   function applyOutcome(outcome){
     if(outcome==='C'){
+      // Defensible: calm, fully coherent, green — clearest face
       targetStateMix=.22;currentStateColor=STATE_COLOR.defensible;targetAgitation=0;stateCoherenceCap=1;
     }else if(outcome==='A'||outcome==='D'){
-      targetStateMix=.4;currentStateColor=STATE_COLOR.risk;targetAgitation=1;stateCoherenceCap=.6;
+      // High risk: red, agitated — face stays readable but feels unstable
+      targetStateMix=.4;currentStateColor=STATE_COLOR.risk;targetAgitation=.45;stateCoherenceCap=.82;
     }else if(outcome==='B'){
-      targetStateMix=.3;currentStateColor=STATE_COLOR.partial;targetAgitation=.5;stateCoherenceCap=.8;
+      // Partial: amber, slight scatter — face mostly clear
+      targetStateMix=.3;currentStateColor=STATE_COLOR.partial;targetAgitation=.2;stateCoherenceCap=.91;
     }else{
+      // No selection: pure lavender, perfectly coherent
       targetStateMix=0;targetAgitation=0;stateCoherenceCap=1;
     }
   }
