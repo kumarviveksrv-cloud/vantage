@@ -452,7 +452,7 @@
       .then(function(r){return r.json();})
       .then(function(data){
         rmTyping();
-        if(data.success){var r=data.data.response;hist.push({role:'assistant',content:r});addMsg('aria',r);speak(r);}
+        if(data.success){   var r=(data.data&&data.data.response)||data.response||(data.content&&data.content[0]&&data.content[0].text)||data.text||'';   if(!r){setState('idle');addMsg('aria','Response unavailable. Please try again.');return;}   hist.push({role:'assistant',content:r});addMsg('aria',r);speak(r); }
         else{setState('idle');var _em=data.error==='USAGE_LIMIT'?(data.message||'You\u2019ve reached your 50-message daily limit for ARIA. She\u2019ll be back tomorrow.'):'Something went wrong. Please try again.';addMsg('aria',_em);}
       })
       .catch(function(){rmTyping();setState('idle');addMsg('aria','Connection error. Please check your network.');});
