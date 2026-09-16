@@ -1,6 +1,6 @@
 /* VANTAGE V4 / CINEMATIC SYSTEM
    Built as a visual layer over the V3 experience. */
-:root{--void:#000000;--ink:#f5f3ff;--muted:#a8a4bd;--dim:#5f5a74;--violet:#7c3aed;--indigo:#6366f1;--cyan:#7dd3fc;--line:rgba(211,202,255,.11);--glass:rgba(9,7,22,.64)}
+:root{--void:#050410;--ink:#f5f3ff;--muted:#a8a4bd;--dim:#5f5a74;--violet:#7c3aed;--indigo:#6366f1;--cyan:#7dd3fc;--line:rgba(211,202,255,.11);--glass:rgba(9,7,22,.64)}
 *{box-sizing:border-box}html{background:var(--void);scroll-behavior:auto}body{overflow-x:hidden;background:radial-gradient(circle at 50% 0,#040305 0,#010102 42%,#000000 100%)}
 #world{opacity:.75;mix-blend-mode:screen;filter:saturate(.85)}
 #cinemaCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;mix-blend-mode:screen;opacity:.9}
