@@ -1,276 +1,275 @@
-/* aria-volumetric-product.js — v5
-   Fixes: uses existing #aria-canvas (not .aria-room which doesn't exist in aria.html)
-   Mouse events on .face-area (canvas has pointer-events:none)
-   Chin positioned above mic button.
+/* VANTAGE // ARIA VOLUMETRIC INTELLIGENCE — Product Page (aria.html)
+   Ditto port of aria-volumetric.js for the product page.
+   Only differences from the landing-page original:
+   - Canvas:  #aria-canvas  (not #ariaVolumetricCanvas)
+   - Figure:  .face-area    (not .aria-figure)
+   - States:  #slbl className (idle/listening/thinking/speaking)
+              replaces the caseMachine / data-outcome system
+   - No IntersectionObserver — face-area is always on-screen
+   - Touch support added for mobile
+   Everything else — shader, sampling algo, eye-pull, coherence,
+   halo, torus rings — is pixel-identical to the landing page.
 */
 (function(){
-'use strict';
+  'use strict';
+  if(!window.THREE)return;
 
-const ks=document.createElement('style');
-ks.textContent='.aria-ring,.aria-room::after,.aria-room::before,.orbit-ring{display:none!important;animation:none!important;}';
-document.head.appendChild(ks);
+  const figure = document.querySelector('.face-area');
+  const canvas  = document.getElementById('aria-canvas');
+  if(!figure||!canvas)return;
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
 
-const COLS={idle:[99,102,241],listening:[124,58,237],thinking:[165,180,252],speaking:[232,121,249]};
-const ENERGY={idle:1.0,listening:1.8,thinking:1.3,speaking:3.2};
-let state='idle',activeRGB=[...COLS.idle],targetRGB=[...COLS.idle];
+  // Fade-in on first render
+  canvas.style.opacity   = '0';
+  canvas.style.transition= 'opacity 1.8s ease';
 
-function watchState(){
-  const el=document.getElementById('slbl');
-  if(!el)return;
-  const upd=()=>{
-    const c=el.className;
-    state=c.includes('listening')?'listening':c.includes('thinking')?'thinking':c.includes('speaking')?'speaking':'idle';
-    targetRGB=[...COLS[state]];
+  const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.setClearColor(0,0);
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(34,1,.1,100);
+  camera.position.set(0,0,6.9);
+  const group  = new THREE.Group();
+  scene.add(group);
+
+  function resize(){
+    const w=figure.clientWidth||560, h=figure.clientHeight||650;
+    renderer.setSize(w,h);
+    camera.aspect=w/h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  addEventListener('resize',resize);
+
+  const mouse  = new THREE.Vector2();
+  const tgt    = new THREE.Vector2();
+  let facePoints,haloPoints,rings,t=0;
+
+  // Eye positions in normalised scene space — identical to landing page
+  const EYE_L=[-0.42,0.8], EYE_R=[0.42,0.8], EYE_SIGMA=0.28;
+
+  // ── STATE COLOURS ────────────────────────────────────────
+  const SCOLS = {
+    idle:      new THREE.Color(0xc4b5fd),
+    listening: new THREE.Color(0x7c3aed),
+    thinking:  new THREE.Color(0x6366f1),
+    speaking:  new THREE.Color(0xe879f9),
   };
-  new MutationObserver(upd).observe(el,{attributes:true,attributeFilter:['class']});
-  upd();
-}
+  const SCFG = {
+    idle:      {mix:0,    agitation:0,    cap:1.0},
+    listening: {mix:0.28, agitation:0.30, cap:0.82},
+    thinking:  {mix:0.32, agitation:0.65, cap:0.68},
+    speaking:  {mix:0.38, agitation:0.22, cap:0.92},
+  };
+  let tStateMix=0, cStateMix=0;
+  let cStateColor=new THREE.Color(0xc4b5fd);
+  let tAgitation=0, cAgitation=0;
+  let coherenceCap=1;
 
-let canvas,ctx,W=0,H=0,rawParts=[],parts=[];
-let mx=-9999,my=-9999;
-let faceX=0,faceY=0;  // face centre — set in rebuildPositions, used by glow
-let glowPh=0,scanPh=0; // glow animation phase
-
-function setupCanvas(){
-  // aria.html already has <canvas id="aria-canvas"> — use it
-  canvas = document.getElementById('aria-canvas') || document.getElementById('ariaVolumetricCanvas');
-
-  if(!canvas){
-    canvas=document.createElement('canvas');
-    canvas.id='ariaVolumetricCanvas';
-    Object.assign(canvas.style,{position:'absolute',inset:'0',width:'100%',height:'100%',zIndex:'4',pointerEvents:'none',display:'block'});
-    const container=document.querySelector('.face-area')||document.querySelector('.aria-room')||document.body;
-    container.appendChild(canvas);
+  function applyState(s){
+    const cfg=SCFG[s]||SCFG.idle;
+    tStateMix=cfg.mix; tAgitation=cfg.agitation; coherenceCap=cfg.cap;
+    cStateColor.copy(SCOLS[s]||SCOLS.idle);
   }
-
-  ctx=canvas.getContext('2d');
-
-  // Mouse events on .face-area — canvas has pointer-events:none so we track the parent
-  const faceArea=document.querySelector('.face-area')||canvas.parentElement||document.body;
-  faceArea.addEventListener('mousemove',e=>{
-    const r=canvas.getBoundingClientRect();
-    mx=e.clientX-r.left; my=e.clientY-r.top;
-  });
-  faceArea.addEventListener('mouseleave',()=>{mx=-9999;my=-9999;});
-
-  // Touch support — same repulsion, finger = cursor
-  faceArea.addEventListener('touchmove',e=>{
-    const t=e.touches[0];
-    const r=canvas.getBoundingClientRect();
-    mx=t.clientX-r.left; my=t.clientY-r.top;
-  },{passive:true});
-  faceArea.addEventListener('touchend',()=>{mx=-9999;my=-9999;},{passive:true});
-  faceArea.addEventListener('touchcancel',()=>{mx=-9999;my=-9999;},{passive:true});
-
-  // Auto-breathing on mobile — cursor orbits face center when idle
-  if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
-    let lastTouch=0,breathPh=0;
-    faceArea.addEventListener('touchstart',()=>{lastTouch=Date.now();},{passive:true});
-    faceArea.addEventListener('touchmove',()=>{lastTouch=Date.now();},{passive:true});
-    (function breathe(){
-      requestAnimationFrame(breathe);
-      if(Date.now()-lastTouch<2200||mx!==-9999)return; // finger active or real cursor present
-      breathPh+=0.014;
-      const pulse=(Math.sin(breathPh)+1)*0.5;
-      // Orbit a small ellipse around face center — drives the repulsion gently
-      mx=W*0.5+Math.cos(breathPh*0.7)*W*0.12*pulse;
-      my=H*0.42+Math.sin(breathPh*0.7)*H*0.06*pulse;
-    })();
-  }
-}
-
-function measure(){
-  const p=canvas.parentElement;
-  if(!p)return;
-  const r=p.getBoundingClientRect();
-  const w=Math.round(r.width)||p.offsetWidth||880;
-  const h=Math.round(r.height)||p.offsetHeight||650;
-  if(w===W&&h===H)return;
-  W=canvas.width=w; H=canvas.height=h;
-}
-
-function sampleImage(img){
-  const SMAX=260;
-  const asp=img.width/img.height;
-  const sw=asp>=1?SMAX:Math.round(SMAX*asp);
-  const sh=asp>=1?Math.round(SMAX/asp):SMAX;
-  const off=document.createElement('canvas');
-  off.width=sw;off.height=sh;
-  const oc=off.getContext('2d');
-  oc.drawImage(img,0,0,sw,sh);
-  const d=oc.getImageData(0,0,sw,sh).data;
-  rawParts=[];
-  for(let y=0;y<sh;y+=2){
-    for(let x=0;x<sw;x+=2){
-      const i=(y*sw+x)*4;
-      if(d[i+3]<80)continue;
-      const lum=d[i]*.299+d[i+1]*.587+d[i+2]*.114;
-      if(lum<28||lum>250)continue;
-      rawParts.push({nx:x/sw,ny:y/sh,lum:lum/255});
-    }
-  }
-  if(rawParts.length>8000){
-    const f=8000/rawParts.length;
-    rawParts=rawParts.filter(()=>Math.random()<f);
-  }
-  rebuildPositions();
-}
-
-function rebuildPositions(){
-  if(!rawParts.length||!W||!H)return;
-  let x0=1,x1=0,y0=1,y1=0;
-  rawParts.forEach(p=>{
-    if(p.nx<x0)x0=p.nx;if(p.nx>x1)x1=p.nx;
-    if(p.ny<y0)y0=p.ny;if(p.ny>y1)y1=p.ny;
-  });
-  const iW=x1-x0||1,iH=y1-y0||1,iAsp=iW/iH;
-  const aW=W*.95,aH=H*.95;
-  let dW,dH;
-  if(aW/aH>iAsp){dH=aH;dW=dH*iAsp;}else{dW=aW;dH=dW/iAsp;}
-
-  // Chin above mic: mic-area is position:absolute;bottom:16px, micb is 72px tall
-  // So mic top edge is at H-16-72=H-88. Put face bottom at H-88-8=H-96 (8px gap)
-  const oX=(W-dW)*.5;
-  const oY=Math.max(0, H-96-dH);
-  // Store face centre for glow system
-  faceX=oX+dW*.5; faceY=oY+dH*.32;
-
-  parts=rawParts.map(p=>{
-    const bx=oX+((p.nx-x0)/iW)*dW;
-    const by=oY+((p.ny-y0)/iH)*dH;
-    return{
-      x:bx,y:by,bx,by,
-      vx:(Math.random()-.5)*1.2,vy:(Math.random()-.5)*1.2,
-      ph:Math.random()*Math.PI*2,
-      spd:.03+Math.random()*.04,
-      size:.25+p.lum*.75,   // thin — matches landing page ARIA teaser
-      alpha:.25+p.lum*.55,
-      lum:p.lum,
+  // Watch #slbl className
+  const slbl=document.getElementById('slbl');
+  if(slbl){
+    const watchSlbl=()=>{
+      const c=slbl.className;
+      applyState(c.includes('listening')?'listening':c.includes('thinking')?'thinking':c.includes('speaking')?'speaking':'idle');
     };
-  });
-}
-
-function buildFallback(){
-  rawParts=[];
-  for(let i=0;i<3000;i++){
-    const a=Math.random()*Math.PI*2,r=Math.random();
-    rawParts.push({nx:.15+r*.7*Math.cos(a)*.42+.43,ny:.1+r*.8*Math.sin(a)*.55+.42,lum:.3+r*.5});
+    new MutationObserver(watchSlbl).observe(slbl,{attributes:true,attributeFilter:['class']});
+    watchSlbl();
   }
-  rebuildPositions();
-}
+  // Also hookable from aria.html's setState()
+  window._ariaSetState=applyState;
 
-function lerp(a,b,t){return a+(b-a)*t;}
+  // ── IMAGE SAMPLING ───────────────────────────────────────
+  // Identical algorithm to aria-volumetric.js — local contrast
+  // gives legible facial features instead of a flat brightness blob.
+  function build(tex){
+    const img=tex.image, W=180, H=180;
+    const smp=document.createElement('canvas');
+    smp.width=W; smp.height=H;
+    const sctx=smp.getContext('2d',{willReadFrequently:true});
+    sctx.drawImage(img,0,0,W,H);
+    const d=sctx.getImageData(0,0,W,H).data;
 
-/* ─── JARVIS GLOW ───────────────────────────────────────────
-   Layers drawn before particles so they sit behind the face:
-   1. Wide corona  — always present, scales with state
-   2. Tight halo   — close-in face warmth
-   3. Scan line    — listening / speaking only
-   4. Speaking burst — snap flash at voice peaks
-*/
-function drawGlow(r,g,b){
-  glowPh+=0.02;
-  // Glow intensity per state
-  var INT={idle:.28,listening:.55,thinking:.68,speaking:1.35};
-  var base=INT[state]||.28;
-  var pulse=base*(0.82+0.18*Math.sin(glowPh*1.8));
-
-  if(!faceX||!faceY)return;
-
-  // 1. Wide corona (reaches most of canvas)
-  var c1=ctx.createRadialGradient(faceX,faceY,0,faceX,faceY,Math.max(W,H)*.58);
-  c1.addColorStop(0,  'rgba('+r+','+g+','+b+','+(0.13*pulse)+')');
-  c1.addColorStop(.3, 'rgba('+r+','+g+','+b+','+(0.05*pulse)+')');
-  c1.addColorStop(1,  'rgba(0,0,0,0)');
-  ctx.fillStyle=c1; ctx.fillRect(0,0,W,H);
-
-  // 2. Tight halo (face-shaped warmth)
-  var hr=Math.min(W,H)*.3;
-  var c2=ctx.createRadialGradient(faceX,faceY,0,faceX,faceY,hr);
-  c2.addColorStop(0,  'rgba('+r+','+g+','+b+','+(0.25*pulse)+')');
-  c2.addColorStop(.5, 'rgba('+r+','+g+','+b+','+(0.08*pulse)+')');
-  c2.addColorStop(1,  'rgba(0,0,0,0)');
-  ctx.fillStyle=c2; ctx.fillRect(0,0,W,H);
-
-  // 3. Scan line — listening and above
-  if(base>=.5){
-    scanPh+=0.004*(1+pulse*.4);
-    var sy=(scanPh%1)*H;
-    var sa=0.55*pulse;
-    var sg=ctx.createLinearGradient(0,sy-5,0,sy+5);
-    sg.addColorStop(0,'rgba(0,0,0,0)');
-    sg.addColorStop(.5,'rgba('+r+','+g+','+b+','+sa+')');
-    sg.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=sg; ctx.fillRect(0,sy-5,W,10);
-  }
-
-  // 4. Speaking burst flash
-  if(state==='speaking'){
-    var burst=Math.max(0,Math.sin(glowPh*5))*.18;
-    var c3=ctx.createRadialGradient(faceX,faceY,0,faceX,faceY,Math.min(W,H)*.22);
-    c3.addColorStop(0,'rgba('+r+','+g+','+b+','+burst+')');
-    c3.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=c3; ctx.fillRect(0,0,W,H);
-  }
-}
-
-const REPEL_R=90, REPEL_F=4.5;
-
-function animate(){
-  requestAnimationFrame(animate);
-  measure();
-  if(!W||!H||!parts.length)return;
-  ctx.clearRect(0,0,W,H);
-
-  for(let i=0;i<3;i++)activeRGB[i]=lerp(activeRGB[i],targetRGB[i],.022);
-  const[r,g,b]=activeRGB.map(v=>Math.round(v));
-  const energy=ENERGY[state]||1.0;
-
-  const grd=ctx.createRadialGradient(W*.5,H*.5,0,W*.5,H*.5,Math.max(W,H)*.55);
-  grd.addColorStop(0,`rgba(${r},${g},${b},.06)`);
-  grd.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
-
-  // JARVIS glow layers (behind particles)
-  drawGlow(r,g,b);
-
-  const SPRING=0.018;
-  parts.forEach(p=>{
-    p.ph+=p.spd;
-    p.x+=p.vx*energy*Math.sin(p.ph);
-    p.y+=p.vy*energy*Math.cos(p.ph*.87);
-    p.x+=(p.bx-p.x)*SPRING;
-    p.y+=(p.by-p.y)*SPRING;
-
-    // Cursor repulsion
-    const ddx=p.x-mx,ddy=p.y-my;
-    const dist=Math.sqrt(ddx*ddx+ddy*ddy);
-    if(dist<REPEL_R&&dist>0.5){
-      const force=(1-dist/REPEL_R)*REPEL_F;
-      p.x+=(ddx/dist)*force;
-      p.y+=(ddy/dist)*force;
+    const bright=new Float32Array(W*H);
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+      const i=(y*W+x)*4;
+      bright[y*W+x]=.2126*d[i]/255+.7152*d[i+1]/255+.0722*d[i+2]/255;
     }
 
-    const al=p.alpha*(.72+.28*Math.sin(p.ph*1.4));
-    ctx.fillStyle=`rgba(${r},${g},${b},${al})`;
-    ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
-  });
-}
+    const pos=[],col=[],seed=[],eyeW=[];
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+      const idx=y*W+x, i=idx*4;
+      const r=d[i]/255, g=d[i+1]/255, b=d[i+2]/255;
+      const br=bright[idx];
+      const brL=x>0?bright[idx-1]:br, brR=x<W-1?bright[idx+1]:br;
+      const brU=y>0?bright[idx-W]:br, brD=y<H-1?bright[idx+W]:br;
+      const contrast=Math.abs(br-brL)+Math.abs(br-brR)+Math.abs(br-brU)+Math.abs(br-brD);
+      const nx=(x/(W-1)-.5)*3.15, ny=(.5-y/(H-1))*4.0;
+      const radial=Math.sqrt((nx/1.65)**2+(ny/2.0)**2);
+      const central=Math.max(0,1-radial*.72);
+      const dL=Math.hypot(nx-EYE_L[0],ny-EYE_L[1]);
+      const dR=Math.hypot(nx-EYE_R[0],ny-EYE_R[1]);
+      const wL=Math.exp(-(dL*dL)/(2*EYE_SIGMA**2));
+      const wR=Math.exp(-(dR*dR)/(2*EYE_SIGMA**2));
+      const eyeWeight=Math.max(wL,wR);
+      const a=central*.18+br*.32+Math.min(1,contrast*2.8)*(.2+.34*central)+eyeWeight*.18;
+      if(a<.28||Math.random()>Math.min(1,.24+a*.9))continue;
+      const depth=(br-.45)*.9+(1-radial)*.7+(Math.random()-.5)*.32;
+      pos.push(nx,ny,depth);
+      seed.push(Math.random()*Math.PI*2,.5+Math.random()*1.5,depth);
+      col.push(.5+.3*b,.32+.22*b,.92+.06*r);
+      eyeW.push(eyeWeight);
+    }
 
-function init(){
-  setupCanvas();
-  watchState();
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    measure();
-    const img=new Image();
-    img.src='aria-reference.png';
-    img.onload=function(){measure();sampleImage(img);animate();};
-    img.onerror=function(){measure();buildFallback();animate();};
-    window.addEventListener('resize',()=>{setTimeout(()=>{measure();rebuildPositions();},80);});
-  }));
-}
+    const geo=new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
+    geo.setAttribute('color',    new THREE.Float32BufferAttribute(col,3));
+    geo.setAttribute('aSeed',    new THREE.Float32BufferAttribute(seed,3));
+    geo.setAttribute('aEyeWeight',new THREE.Float32BufferAttribute(eyeW,1));
 
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
-else init();
+    // Shader — pixel-identical to landing page
+    const mat=new THREE.ShaderMaterial({
+      transparent:true,depthWrite:false,vertexColors:true,
+      blending:THREE.AdditiveBlending,
+      uniforms:{
+        uTime:      {value:0},
+        uMouse:     {value:mouse},
+        uCoherence: {value:1},
+        uStateColor:{value:new THREE.Color(0xc4b5fd)},
+        uStateMix:  {value:0},
+      },
+      vertexShader:`attribute vec3 aSeed;attribute float aEyeWeight;varying vec3 vColor;
+        uniform float uTime;uniform vec2 uMouse;uniform float uCoherence;
+        uniform vec3 uStateColor;uniform float uStateMix;
+        void main(){
+          vec3 p=position;
+          float wave=sin(uTime*aSeed.y+aSeed.x+p.y*1.7)*.018;
+          p.z+=wave;
+          p.x+=uMouse.x*(0.05+abs(p.z)*.015);
+          p.y+=uMouse.y*(0.035+abs(p.z)*.012);
+          p.x+=uMouse.x*aEyeWeight*0.09;
+          p.y+=uMouse.y*aEyeWeight*0.06;
+          float scatter=1.0-uCoherence;
+          vec3 dir=normalize(vec3(sin(aSeed.x*3.1),cos(aSeed.x*2.3+aSeed.y),sin(aSeed.y*1.7))+0.0001);
+          p+=dir*scatter*0.55;
+          vec4 mv=modelViewMatrix*vec4(p,1.);
+          gl_Position=projectionMatrix*mv;
+          gl_PointSize=(1.75+2.6*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
+          vColor=mix(color,uStateColor,uStateMix);}`,
+      fragmentShader:`varying vec3 vColor;
+        void main(){
+          float d=length(gl_PointCoord-.5);
+          float a=smoothstep(.5,.02,d);
+          gl_FragColor=vec4(vColor,a*.94);}`
+    });
 
+    facePoints=new THREE.Points(geo,mat);
+    facePoints.position.y=.05;
+    facePoints.scale.set(.94,.94,.94);
+    group.add(facePoints);
+
+    // Halo — identical
+    const N=9000,hp=new Float32Array(N*3),hc=new Float32Array(N*3);
+    for(let i=0;i<N;i++){
+      const u=Math.random(),a=Math.random()*Math.PI*2,rr=1.7+Math.pow(u,.5)*2.2;
+      hp[i*3]=Math.cos(a)*rr;hp[i*3+1]=(Math.random()-.5)*4.4;hp[i*3+2]=(Math.random()-.5)*1.8;
+      hc[i*3]=.55+Math.random()*.25;hc[i*3+1]=.35+Math.random()*.2;hc[i*3+2]=.85+Math.random()*.15;
+    }
+    const hg=new THREE.BufferGeometry();
+    hg.setAttribute('position',new THREE.Float32BufferAttribute(hp,3));
+    hg.setAttribute('color',new THREE.Float32BufferAttribute(hc,3));
+    haloPoints=new THREE.Points(hg,new THREE.PointsMaterial({
+      size:.018,transparent:true,opacity:.55,vertexColors:true,
+      blending:THREE.AdditiveBlending,depthWrite:false}));
+    group.add(haloPoints);
+
+    // Torus rings — identical
+    rings=[];
+    [1.5,1.85,2.2,2.65].forEach((r,j)=>{
+      const m=new THREE.MeshBasicMaterial({
+        color:j%2?0x6366f1:0xc4b5fd,transparent:true,
+        opacity:j===1?.32:.18,blending:THREE.AdditiveBlending});
+      const o=new THREE.Mesh(new THREE.TorusGeometry(r,.006,5,180),m);
+      o.rotation.x=Math.PI/2-.4;
+      o.position.z=-.35+j*.12;
+      group.add(o); rings.push(o);
+    });
+
+    canvas.style.opacity='1'; // fade in
+  }
+
+  // ── CURSOR / TOUCH INPUT ─────────────────────────────────
+  let lastMoveAt=performance.now();
+
+  figure.addEventListener('pointermove',e=>{
+    const r=figure.getBoundingClientRect();
+    tgt.x=((e.clientX-r.left)/r.width-.5)*2;
+    tgt.y=((e.clientY-r.top)/r.height-.5)*-2;
+    lastMoveAt=performance.now();
+  },{passive:true});
+
+  figure.addEventListener('touchmove',e=>{
+    const touch=e.touches[0];
+    const r=figure.getBoundingClientRect();
+    tgt.x=((touch.clientX-r.left)/r.width-.5)*2;
+    tgt.y=((touch.clientY-r.top)/r.height-.5)*-2;
+    lastMoveAt=performance.now();
+  },{passive:true});
+
+  // ── BOOT ─────────────────────────────────────────────────
+  new THREE.TextureLoader().load('aria-reference.png',build);
+
+  // ── RENDER LOOP ──────────────────────────────────────────
+  function animate(){
+    requestAnimationFrame(animate);
+    t+=.012;
+    mouse.lerp(tgt,.055);
+
+    const idleMs=performance.now()-lastMoveAt;
+    // Product page: never drop below 0.72 coherence —
+    // user is mid-conversation, face should stay legible
+    const idleFloor=({'idle':.72,'listening':.82,'thinking':.68,'speaking':.88})[
+      slbl?( slbl.className.includes('listening')?'listening':
+             slbl.className.includes('thinking')?'thinking':
+             slbl.className.includes('speaking')?'speaking':'idle' ):'idle'
+    ]||.72;
+    const idleTarget=idleMs>1400?idleFloor:1;
+    const coherenceTarget=Math.min(idleTarget,coherenceCap);
+
+    cAgitation+=(tAgitation-cAgitation)*.025;
+    cStateMix +=(tStateMix -cStateMix )*.04;
+
+    group.rotation.y+=(mouse.x*.09 -group.rotation.y)*.035;
+    group.rotation.x+=(mouse.y*.055-group.rotation.x)*.035;
+    group.position.x+=(mouse.x*.12 -group.position.x)*.025;
+    group.position.y+=(mouse.y*.08 -group.position.y)*.025;
+
+    if(facePoints){
+      const u=facePoints.material.uniforms;
+      u.uTime.value=t;
+      u.uCoherence.value+=(coherenceTarget-u.uCoherence.value)*.04;
+      u.uStateMix.value=cStateMix;
+      u.uStateColor.value.copy(cStateColor);
+    }
+    if(haloPoints){
+      haloPoints.rotation.y=t*.035*(1+cAgitation*1.4);
+      haloPoints.rotation.z=Math.sin(t*.2*(1+cAgitation))*.025;
+    }
+    if(rings)rings.forEach((r,i)=>{
+      const sp=1+cAgitation*1.6;
+      r.rotation.z=t*(.045+i*.012)*sp*(i%2?1:-1);
+      r.rotation.x=Math.PI/2-.4+Math.sin(t*.25+i)*.03;
+      r.material.opacity=.12+(.12*Math.sin(t*(1.4+cAgitation*1.2)+i*.7)+.12);
+    });
+
+    renderer.render(scene,camera);
+  }
+  requestAnimationFrame(animate);
 })();
