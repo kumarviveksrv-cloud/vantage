@@ -98,8 +98,8 @@
         const dL=Math.hypot(nx-EYE_L[0],ny-EYE_L[1]),dR=Math.hypot(nx-EYE_R[0],ny-EYE_R[1]);
         const wL=Math.exp(-(dL*dL)/(2*EYE_SIGMA*EYE_SIGMA)),wR=Math.exp(-(dR*dR)/(2*EYE_SIGMA*EYE_SIGMA));
         const eyeWeight=Math.max(wL,wR);
-        const a=central*.18+br*.32+Math.min(1,contrast*3.2)*(.2+.36*central)+eyeWeight*.18;
-        if(a<.28||Math.random()>Math.min(1,.24+a*.9))continue;
+        const a=central*.18+br*.32+Math.min(1,contrast*3.8)*(.2+.38*central)+eyeWeight*.22;
+        if(a<.14||Math.random()>Math.min(1,.42+a*.9))continue;
         const depth=(br-.45)*.9+(1-radial)*.7+(Math.random()-.5)*.32;
         pos.push(nx,ny,depth);
         seed.push(Math.random()*Math.PI*2,.5+Math.random()*1.5,depth);
@@ -134,10 +134,10 @@
           p.y+=uMouse.y*aEyeWeight*0.06;
           float scatter=1.0-uCoherence;
           vec3 dir=normalize(vec3(sin(aSeed.x*3.1),cos(aSeed.x*2.3+aSeed.y),sin(aSeed.y*1.7))+0.0001);
-          p+=dir*scatter*0.38;
+          p+=dir*scatter*0.28;
           vec4 mv=modelViewMatrix*vec4(p,1.);
           gl_Position=projectionMatrix*mv;
-          gl_PointSize=(1.75+2.6*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
+          gl_PointSize=(2.8+4.2*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
           vColor=mix(color,uStateColor,uStateMix);
         }`,
       fragmentShader:`varying vec3 vColor;
@@ -212,7 +212,7 @@
       targetStateMix=.22;currentStateColor=STATE_COLOR.defensible;targetAgitation=0;stateCoherenceCap=1;
     }else if(outcome==='A'||outcome==='D'){
       // High risk: red, agitated — face stays readable but feels unstable
-      targetStateMix=.4;currentStateColor=STATE_COLOR.risk;targetAgitation=.45;stateCoherenceCap=.82;
+      targetStateMix=.4;currentStateColor=STATE_COLOR.risk;targetAgitation=.45;stateCoherenceCap=.88;
     }else if(outcome==='B'){
       // Partial: amber, slight scatter — face mostly clear
       targetStateMix=.3;currentStateColor=STATE_COLOR.partial;targetAgitation=.2;stateCoherenceCap=.91;
