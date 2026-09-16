@@ -1,138 +1,147 @@
-/* aria-volumetric-touch.js
-   Drop-in mobile companion for aria-volumetric.js on the landing page.
-   Load it AFTER aria-volumetric.js in index.html.
-
-   Option 1 — Touch as cursor:
-     touchstart → particles converge to face (simulates mouseenter)
-     touchend   → particles scatter back   (simulates mouseleave)
-     touchmove  → updates position without blocking scroll
-
-   Option 3 — Auto-breathing:
-     On mobile, when nobody is touching, particles pulse in and out
-     on a 5-second cycle so ARIA looks alive during passive scroll.
-
-   Dispatches real MouseEvent objects so whatever listener is in
-   aria-volumetric.js (mousemove / mouseenter / mouseleave) picks
-   them up without any changes to that file.
+/* aria-volumetric-touch.js — v2
+   Mobile touch cursor (glowing orb following finger) + particle convergence + auto-breathing.
+   Load after aria-volumetric.js in index.html. No changes to that file needed.
 */
 (function(){
-  'use strict';
+'use strict';
 
-  var MOBILE = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+// Only run on touch devices
+var IS_TOUCH = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+if(!IS_TOUCH) return;
 
-  function ready(fn){
-    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',fn);
-    else fn();
-  }
+/* ── 1. VISIBLE TOUCH CURSOR (the orb that follows the finger) ── */
+var orb = document.createElement('div');
+orb.id = 'aria-touch-orb';
+Object.assign(orb.style, {
+  position:       'fixed',
+  width:          '22px',
+  height:         '22px',
+  borderRadius:   '50%',
+  border:         '1px solid rgba(196,181,253,.55)',
+  background:     'rgba(99,102,241,.07)',
+  boxShadow:      '0 0 14px rgba(99,102,241,.45), 0 0 28px rgba(99,102,241,.18)',
+  pointerEvents:  'none',
+  zIndex:         '99999',
+  transform:      'translate(-50%,-50%)',
+  transition:     'opacity .2s, width .15s, height .15s, box-shadow .2s',
+  opacity:        '0',
+  willChange:     'left, top',
+  left:           '-100px',
+  top:            '-100px',
+});
+document.body.appendChild(orb);
 
-  function findTarget(){
-    // Try every likely container in order of specificity
-    return document.querySelector('.aria-figure') ||
-           document.querySelector('.aria-room')   ||
-           document.querySelector('.aria canvas') ||
-           document.querySelector('canvas');
-  }
+function orbShow(x, y){
+  orb.style.left    = x + 'px';
+  orb.style.top     = y + 'px';
+  orb.style.opacity = '1';
+}
+function orbHide(){
+  orb.style.opacity = '0';
+}
+function orbPress(){
+  orb.style.width      = '36px';
+  orb.style.height     = '36px';
+  orb.style.boxShadow  = '0 0 22px rgba(99,102,241,.7), 0 0 44px rgba(99,102,241,.3)';
+}
+function orbRelease(){
+  orb.style.width      = '22px';
+  orb.style.height     = '22px';
+  orb.style.boxShadow  = '0 0 14px rgba(99,102,241,.45), 0 0 28px rgba(99,102,241,.18)';
+}
 
-  function fire(el, type, cx, cy){
-    var ev = new MouseEvent(type, {
-      bubbles:true, cancelable:true,
-      clientX: cx||0, clientY: cy||0,
-      view: window
-    });
-    el.dispatchEvent(ev);
-    // Also fire on the canvas inside in case the listener lives there
-    var cv = el.querySelector('canvas') || el;
-    if(cv !== el) cv.dispatchEvent(ev.constructor
-      ? new MouseEvent(type,{bubbles:true,cancelable:true,clientX:cx||0,clientY:cy||0})
-      : ev);
-  }
-
-  ready(function(){
-    // Give aria-volumetric.js 800ms to finish its own init
-    setTimeout(function(){
-      var target = findTarget();
-      if(!target){ console.warn('[aria-touch] No ARIA target found'); return; }
-
-      var lastTouchTime = 0;
-      var fingerDown    = false;
-
-      /* ── OPTION 1: TOUCH AS CURSOR ──────────────────────── */
-      target.addEventListener('touchstart', function(e){
-        fingerDown    = true;
-        lastTouchTime = Date.now();
-        var t = e.touches[0];
-        // mouseenter triggers convergence in most particle-face implementations
-        fire(target, 'mouseenter', t.clientX, t.clientY);
-        fire(target, 'mousemove',  t.clientX, t.clientY);
-      }, {passive:true});
-
-      target.addEventListener('touchmove', function(e){
-        lastTouchTime = Date.now();
-        var t = e.touches[0];
-        // Update position — doesn't block scroll (passive:true)
-        fire(target, 'mousemove', t.clientX, t.clientY);
-      }, {passive:true});
-
-      target.addEventListener('touchend', function(){
-        fingerDown    = false;
-        lastTouchTime = Date.now();
-        fire(target, 'mouseleave', 0, 0);
-      }, {passive:true});
-
-      target.addEventListener('touchcancel', function(){
-        fingerDown    = false;
-        fire(target, 'mouseleave', 0, 0);
-      }, {passive:true});
-
-      /* ── OPTION 3: AUTO-BREATHING (mobile idle) ─────────── */
-      if(!MOBILE) return; // desktop already has cursor; skip breathing
-
-      var IDLE_AFTER   = 2200;  // ms after last touch before breathing starts
-      var CYCLE        = 5000;  // full in-out cycle duration in ms
-      var breathPhase  = 0;
-      var animId;
-
-      function breathe(){
-        var now = Date.now();
-        if(fingerDown || now - lastTouchTime < IDLE_AFTER){
-          animId = requestAnimationFrame(breathe);
-          return;
-        }
-
-        breathPhase += (2 * Math.PI) / (CYCLE / (1000/60));
-
-        var rect = target.getBoundingClientRect();
-        var cx   = rect.left + rect.width  * 0.50;
-        var cy   = rect.top  + rect.height * 0.42;
-
-        // Gentle oval orbit → makes the "converge" strength pulse in and out
-        // sin goes 0→1→0→-1→0 over one cycle; we use (sin+1)/2 so it's 0→1→0
-        // The cursor orbits a small ellipse whose radius matches the pulse
-        var pulse  = (Math.sin(breathPhase) + 1) * 0.5;      // 0→1→0
-        var rX     = rect.width  * 0.18 * pulse;
-        var rY     = rect.height * 0.08 * pulse;
-        var angle  = breathPhase * 0.7;
-
-        var px = cx + Math.cos(angle) * rX;
-        var py = cy + Math.sin(angle) * rY;
-
-        if(pulse > 0.05){
-          // Finger "hovering" over face → convergence
-          fire(target, 'mousemove', px, py);
-        } else {
-          // Between pulses → scatter
-          fire(target, 'mouseleave', 0, 0);
-        }
-
-        animId = requestAnimationFrame(breathe);
-      }
-
-      // Start breathing after initial idle period
-      setTimeout(function(){
-        animId = requestAnimationFrame(breathe);
-      }, IDLE_AFTER);
-
-    }, 800);
+/* ── 2. SYNTHETIC MOUSE EVENTS → ARIA particle convergence ─────── */
+// Dispatch to the element AND bubble up to document/window so the
+// particle script catches it regardless of where its listener sits.
+function fireMouseAt(type, cx, cy){
+  var opts = {bubbles:true, cancelable:true, clientX:cx||0, clientY:cy||0, view:window};
+  [findTarget(), document, window].forEach(function(el){
+    if(el) el.dispatchEvent(new MouseEvent(type, opts));
   });
+}
+
+function findTarget(){
+  return document.querySelector('.aria-figure') ||
+         document.querySelector('.aria-room')   ||
+         document.querySelector('.aria section') ||
+         document.querySelector('[class*="aria"]');
+}
+
+/* ── 3. EVENT LISTENERS ──────────────────────────────────────────── */
+document.addEventListener('touchstart', function(e){
+  var t = e.touches[0];
+  orbShow(t.clientX, t.clientY);
+  orbPress();
+  fireMouseAt('mouseenter', t.clientX, t.clientY);
+  fireMouseAt('mousemove',  t.clientX, t.clientY);
+}, {passive:true});
+
+document.addEventListener('touchmove', function(e){
+  var t = e.touches[0];
+  orb.style.left = t.clientX + 'px';
+  orb.style.top  = t.clientY + 'px';
+  fireMouseAt('mousemove', t.clientX, t.clientY);
+}, {passive:true});
+
+document.addEventListener('touchend', function(){
+  orbRelease();
+  orbHide();
+  fireMouseAt('mouseleave', 0, 0);
+}, {passive:true});
+
+document.addEventListener('touchcancel', function(){
+  orbRelease();
+  orbHide();
+  fireMouseAt('mouseleave', 0, 0);
+}, {passive:true});
+
+/* ── 4. AUTO-BREATHING (idle state — face pulses while nobody touches) ── */
+var lastTouch    = 0;
+var breathPhase  = 0;
+var IDLE_AFTER   = 2000;  // ms of no touch before breathing starts
+var CYCLE_FRAMES = 380;   // frames per full in-out pulse (~6s at 60fps)
+
+document.addEventListener('touchstart', function(){ lastTouch = Date.now(); }, {passive:true});
+document.addEventListener('touchmove',  function(){ lastTouch = Date.now(); }, {passive:true});
+document.addEventListener('touchend',   function(){ lastTouch = Date.now(); }, {passive:true});
+
+function breathe(){
+  requestAnimationFrame(breathe);
+
+  // Only breathe when idle
+  if(Date.now() - lastTouch < IDLE_AFTER) return;
+
+  breathPhase++;
+  var pulse = (Math.sin((breathPhase / CYCLE_FRAMES) * Math.PI * 2) + 1) * 0.5; // 0→1→0
+
+  // Find the ARIA canvas centre
+  var target = findTarget();
+  if(!target) return;
+  var rect = target.getBoundingClientRect();
+  if(!rect.width) return;
+
+  var cx = rect.left + rect.width  * 0.5;
+  var cy = rect.top  + rect.height * 0.42;
+
+  if(pulse > 0.05){
+    // Small oval orbit scaled by pulse amplitude
+    var rX = rect.width  * 0.15 * pulse;
+    var rY = rect.height * 0.07 * pulse;
+    var a  = (breathPhase / CYCLE_FRAMES) * Math.PI * 2 * 0.6;
+    var px = cx + Math.cos(a) * rX;
+    var py = cy + Math.sin(a) * rY;
+
+    // Move orb to show the breathing position visually
+    orbShow(px, py);
+    orb.style.opacity = String(pulse * 0.45); // very subtle
+    fireMouseAt('mousemove', px, py);
+  } else {
+    orbHide();
+    fireMouseAt('mouseleave', 0, 0);
+  }
+}
+
+// Wait for aria-volumetric.js to init, then start breathing
+setTimeout(function(){ requestAnimationFrame(breathe); }, 1200);
 
 })();
