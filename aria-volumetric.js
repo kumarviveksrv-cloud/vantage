@@ -134,7 +134,7 @@
           p.y+=uMouse.y*aEyeWeight*0.06;
           float scatter=1.0-uCoherence;
           vec3 dir=normalize(vec3(sin(aSeed.x*3.1),cos(aSeed.x*2.3+aSeed.y),sin(aSeed.y*1.7))+0.0001);
-          p+=dir*scatter*0.28;
+          p+=dir*scatter*scatter*5.0;
           vec4 mv=modelViewMatrix*vec4(p,1.);
           gl_Position=projectionMatrix*mv;
           gl_PointSize=(2.8+4.2*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
@@ -283,7 +283,7 @@
     mouse.lerp(target,.055);
 
     const idleMs=performance.now()-lastMoveAt;
-    const idleTarget=idleMs>1400?.55:1;
+    const idleTarget=idleMs>1400?.10:1;
     const coherenceTarget=Math.min(idleTarget,stateCoherenceCap);
     currentAgitation+=(targetAgitation-currentAgitation)*.02;
     currentStateMix+=(targetStateMix-currentStateMix)*.03;
@@ -296,7 +296,7 @@
     if(facePoints){
       const u=facePoints.material.uniforms;
       u.uTime.value=t;
-      u.uCoherence.value+=(coherenceTarget-u.uCoherence.value)*.04;
+      u.uCoherence.value+=(coherenceTarget-u.uCoherence.value)*.07;
       u.uStateMix.value=currentStateMix;
       u.uStateColor.value.copy(currentStateColor);
     }
