@@ -50,6 +50,31 @@ function setupCanvas(){
     mx=e.clientX-r.left; my=e.clientY-r.top;
   });
   faceArea.addEventListener('mouseleave',()=>{mx=-9999;my=-9999;});
+
+  // Touch support — same repulsion, finger = cursor
+  faceArea.addEventListener('touchmove',e=>{
+    const t=e.touches[0];
+    const r=canvas.getBoundingClientRect();
+    mx=t.clientX-r.left; my=t.clientY-r.top;
+  },{passive:true});
+  faceArea.addEventListener('touchend',()=>{mx=-9999;my=-9999;},{passive:true});
+  faceArea.addEventListener('touchcancel',()=>{mx=-9999;my=-9999;},{passive:true});
+
+  // Auto-breathing on mobile — cursor orbits face center when idle
+  if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+    let lastTouch=0,breathPh=0;
+    faceArea.addEventListener('touchstart',()=>{lastTouch=Date.now();},{passive:true});
+    faceArea.addEventListener('touchmove',()=>{lastTouch=Date.now();},{passive:true});
+    (function breathe(){
+      requestAnimationFrame(breathe);
+      if(Date.now()-lastTouch<2200||mx!==-9999)return; // finger active or real cursor present
+      breathPh+=0.014;
+      const pulse=(Math.sin(breathPh)+1)*0.5;
+      // Orbit a small ellipse around face center — drives the repulsion gently
+      mx=W*0.5+Math.cos(breathPh*0.7)*W*0.12*pulse;
+      my=H*0.42+Math.sin(breathPh*0.7)*H*0.06*pulse;
+    })();
+  }
 }
 
 function measure(){
