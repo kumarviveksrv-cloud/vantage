@@ -1,8 +1,6 @@
 /* VANTAGE // AMBIENT STAR FIELD
    Full-page background star field on #world canvas.
-   Matches PMS platform star density — 700 stars,
-   varying size and brightness, subtle mouse parallax.
-   Pure Canvas 2D — no Three.js, no dependencies. */
+   Single colour (white/near-white), small uniform dots — matches PMS platform. */
 (function(){
   'use strict';
   const canvas = document.getElementById('world');
@@ -10,15 +8,9 @@
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const ctx = canvas.getContext('2d');
-  let W, H, stars = [], mouse = {x:0, y:0}, animId;
+  let W, H, stars = [], mouse = {x:0, y:0};
 
   const STAR_COUNT = 700;
-  const COLORS = [
-    'rgba(255,255,255,',    // white
-    'rgba(196,181,253,',    // lavender
-    'rgba(125,211,252,',    // cyan
-    'rgba(165,180,252,',    // blue
-  ];
 
   function rand(min, max){ return min + Math.random() * (max - min); }
 
@@ -29,17 +21,16 @@
       stars.push({
         x:    Math.random() * W,
         y:    Math.random() * H,
-        r:    tier > 0.92 ? rand(1.2, 2.0)       // bright large
-            : tier > 0.72 ? rand(0.6, 1.2)       // medium
-            :               rand(0.2, 0.6),       // dim small
-        a:    tier > 0.92 ? rand(0.6, 0.9)
-            : tier > 0.72 ? rand(0.3, 0.65)
-            :               rand(0.12, 0.35),
-        col:  COLORS[Math.floor(Math.random() * COLORS.length)],
-        dx:   rand(-0.0015, 0.0015),  // very slow drift
-        dy:   rand(-0.001,  0.001),
-        prlx: rand(0.003, 0.018),     // parallax depth
-        twinkleSpeed: rand(0.008, 0.025),
+        r:    tier > 0.93 ? rand(0.8, 1.1)    // bright
+            : tier > 0.75 ? rand(0.4, 0.7)    // medium
+            :               rand(0.1, 0.35),   // dim tiny
+        a:    tier > 0.93 ? rand(0.55, 0.82)
+            : tier > 0.75 ? rand(0.25, 0.5)
+            :               rand(0.08, 0.22),
+        dx:   rand(-0.001, 0.001),
+        dy:   rand(-0.0007, 0.0007),
+        prlx: rand(0.002, 0.012),
+        twinkleSpeed: rand(0.006, 0.02),
         twinklePhase: Math.random() * Math.PI * 2,
       });
     }
@@ -58,15 +49,10 @@
 
     for(let i = 0; i < stars.length; i++){
       const s = stars[i];
-
-      // Twinkle
-      const twinkle = 0.85 + 0.15 * Math.sin(t * s.twinkleSpeed * 60 + s.twinklePhase);
-
-      // Mouse parallax (subtle)
+      const twinkle = 0.88 + 0.12 * Math.sin(t * s.twinkleSpeed * 60 + s.twinklePhase);
       const px = (mouse.x / W - 0.5) * s.prlx * W;
       const py = (mouse.y / H - 0.5) * s.prlx * H;
 
-      // Slow drift
       s.x += s.dx;
       s.y += s.dy;
       if(s.x < 0) s.x = W;
@@ -78,25 +64,25 @@
       const x = s.x + px;
       const y = s.y + py;
 
-      // Glow for larger stars
-      if(s.r > 0.9){
-        const grd = ctx.createRadialGradient(x, y, 0, x, y, s.r * 3.5);
-        grd.addColorStop(0, s.col + (a * 0.55) + ')');
-        grd.addColorStop(1, s.col + '0)');
+      // Subtle white glow for the largest stars only — no colour
+      if(s.r > 0.75){
+        const grd = ctx.createRadialGradient(x, y, 0, x, y, s.r * 2.8);
+        grd.addColorStop(0, `rgba(220,228,255,${(a * 0.35).toFixed(3)})`);
+        grd.addColorStop(1, 'rgba(220,228,255,0)');
         ctx.beginPath();
-        ctx.arc(x, y, s.r * 3.5, 0, Math.PI * 2);
+        ctx.arc(x, y, s.r * 2.8, 0, Math.PI * 2);
         ctx.fillStyle = grd;
         ctx.fill();
       }
 
-      // Star dot
+      // Star dot — single near-white colour
       ctx.beginPath();
       ctx.arc(x, y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = s.col + a + ')';
+      ctx.fillStyle = `rgba(220,228,255,${a.toFixed(3)})`;
       ctx.fill();
     }
 
-    animId = requestAnimationFrame(draw);
+    requestAnimationFrame(draw);
   }
 
   window.addEventListener('resize', resize, {passive:true});
