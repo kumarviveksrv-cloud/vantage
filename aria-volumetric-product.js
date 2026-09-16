@@ -192,15 +192,6 @@
 
     // Torus rings — identical
     rings=[];
-    [1.5,1.85,2.2,2.65].forEach((r,j)=>{
-      const m=new THREE.MeshBasicMaterial({
-        color:j%2?0x6366f1:0xc4b5fd,transparent:true,
-        opacity:j===1?.32:.18,blending:THREE.AdditiveBlending});
-      const o=new THREE.Mesh(new THREE.TorusGeometry(r,.006,5,180),m);
-      o.rotation.x=Math.PI/2-.4;
-      o.position.z=-.35+j*.12;
-      group.add(o); rings.push(o);
-    });
 
     canvas.style.opacity='1'; // fade in
   }
