@@ -28,6 +28,8 @@ function watchState(){
 
 let canvas,ctx,W=0,H=0,rawParts=[],parts=[];
 let mx=-9999,my=-9999;
+let faceX=0,faceY=0;  // face centre — set in rebuildPositions, used by glow
+let glowPh=0,scanPh=0; // glow animation phase
 
 function setupCanvas(){
   // aria.html already has <canvas id="aria-canvas"> — use it
@@ -130,6 +132,8 @@ function rebuildPositions(){
   // So mic top edge is at H-16-72=H-88. Put face bottom at H-88-8=H-96 (8px gap)
   const oX=(W-dW)*.5;
   const oY=Math.max(0, H-96-dH);
+  // Store face centre for glow system
+  faceX=oX+dW*.5; faceY=oY+dH*.32;
 
   parts=rawParts.map(p=>{
     const bx=oX+((p.nx-x0)/iW)*dW;
@@ -157,6 +161,59 @@ function buildFallback(){
 
 function lerp(a,b,t){return a+(b-a)*t;}
 
+/* ─── JARVIS GLOW ───────────────────────────────────────────
+   Layers drawn before particles so they sit behind the face:
+   1. Wide corona  — always present, scales with state
+   2. Tight halo   — close-in face warmth
+   3. Scan line    — listening / speaking only
+   4. Speaking burst — snap flash at voice peaks
+*/
+function drawGlow(r,g,b){
+  glowPh+=0.02;
+  // Glow intensity per state
+  var INT={idle:.28,listening:.55,thinking:.68,speaking:1.35};
+  var base=INT[state]||.28;
+  var pulse=base*(0.82+0.18*Math.sin(glowPh*1.8));
+
+  if(!faceX||!faceY)return;
+
+  // 1. Wide corona (reaches most of canvas)
+  var c1=ctx.createRadialGradient(faceX,faceY,0,faceX,faceY,Math.max(W,H)*.58);
+  c1.addColorStop(0,  'rgba('+r+','+g+','+b+','+(0.13*pulse)+')');
+  c1.addColorStop(.3, 'rgba('+r+','+g+','+b+','+(0.05*pulse)+')');
+  c1.addColorStop(1,  'rgba(0,0,0,0)');
+  ctx.fillStyle=c1; ctx.fillRect(0,0,W,H);
+
+  // 2. Tight halo (face-shaped warmth)
+  var hr=Math.min(W,H)*.3;
+  var c2=ctx.createRadialGradient(faceX,faceY,0,faceX,faceY,hr);
+  c2.addColorStop(0,  'rgba('+r+','+g+','+b+','+(0.25*pulse)+')');
+  c2.addColorStop(.5, 'rgba('+r+','+g+','+b+','+(0.08*pulse)+')');
+  c2.addColorStop(1,  'rgba(0,0,0,0)');
+  ctx.fillStyle=c2; ctx.fillRect(0,0,W,H);
+
+  // 3. Scan line — listening and above
+  if(base>=.5){
+    scanPh+=0.004*(1+pulse*.4);
+    var sy=(scanPh%1)*H;
+    var sa=0.55*pulse;
+    var sg=ctx.createLinearGradient(0,sy-5,0,sy+5);
+    sg.addColorStop(0,'rgba(0,0,0,0)');
+    sg.addColorStop(.5,'rgba('+r+','+g+','+b+','+sa+')');
+    sg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=sg; ctx.fillRect(0,sy-5,W,10);
+  }
+
+  // 4. Speaking burst flash
+  if(state==='speaking'){
+    var burst=Math.max(0,Math.sin(glowPh*5))*.18;
+    var c3=ctx.createRadialGradient(faceX,faceY,0,faceX,faceY,Math.min(W,H)*.22);
+    c3.addColorStop(0,'rgba('+r+','+g+','+b+','+burst+')');
+    c3.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=c3; ctx.fillRect(0,0,W,H);
+  }
+}
+
 const REPEL_R=90, REPEL_F=4.5;
 
 function animate(){
@@ -173,6 +230,9 @@ function animate(){
   grd.addColorStop(0,`rgba(${r},${g},${b},.06)`);
   grd.addColorStop(1,'rgba(0,0,0,0)');
   ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+
+  // JARVIS glow layers (behind particles)
+  drawGlow(r,g,b);
 
   const SPRING=0.018;
   parts.forEach(p=>{
