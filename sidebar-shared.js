@@ -12,7 +12,7 @@
       s.id = 'vantage-logo-css';
       s.textContent = [
         '.logo{flex-direction:row !important;align-items:center !important;',
-        'gap:0 !important;padding:4px 0 !important;margin-bottom:16px !important;cursor:pointer}',
+        'gap:0 !important;padding:4px 0 !important;margin-bottom:16px !important;cursor:pointer;background:transparent !important;}',
         '.vl-logo{width:190px;height:auto;display:block;flex-shrink:0}'
       ].join('');
       document.head.appendChild(s);
