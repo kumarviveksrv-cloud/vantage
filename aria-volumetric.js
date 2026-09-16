@@ -79,38 +79,21 @@
     // local contrast: the boundary where dark meets light. Precompute
     // brightness for every pixel once so each pixel can be compared
     // against its neighbors below.
-    const bright=new Float32Array(w*h);
-    for(let y=0;y<h;y++){
-      for(let x=0;x<w;x++){
-        const i=(y*w+x)*4;
-        bright[y*w+x]=.2126*d[i]/255+.7152*d[i+1]/255+.0722*d[i+2]/255;
-      }
-    }
     const pos=[],col=[],seed=[],eyeW=[];
     for(let y=0;y<h;y++){
       for(let x=0;x<w;x++){
         const idx=y*w+x,i=idx*4,r=d[i]/255,g=d[i+1]/255,b=d[i+2]/255;
-        const br=bright[idx];
-        const brL=x>0?bright[idx-1]:br,brR=x<w-1?bright[idx+1]:br;
-        const brU=y>0?bright[idx-w]:br,brD=y<h-1?bright[idx+w]:br;
-        const contrast=Math.abs(br-brL)+Math.abs(br-brR)+Math.abs(br-brU)+Math.abs(br-brD);
+        const br=.2126*r+.7152*g+.0722*b;
         const nx=(x/(w-1)-.5)*3.15,ny=(.5-y/(h-1))*4.0;
         const radial=Math.sqrt((nx/1.65)**2+(ny/2.0)**2);
         const central=Math.max(0,1-radial*.72);
         const dL=Math.hypot(nx-EYE_L[0],ny-EYE_L[1]),dR=Math.hypot(nx-EYE_R[0],ny-EYE_R[1]);
         const wL=Math.exp(-(dL*dL)/(2*EYE_SIGMA*EYE_SIGMA)),wR=Math.exp(-(dR*dR)/(2*EYE_SIGMA*EYE_SIGMA));
         const eyeWeight=Math.max(wL,wR);
-        // Contrast defines features (eye/nose/lip edges), scaled down
-        // toward the outer edge of the face using `central` — this is
-        // what keeps eyes/nose/lips well-defined while suppressing the
-        // jawline and hair-boundary specifically, since those sit in
-        // the lower-weighted outer region. A prior attempt tried to
-        // carve an actual dark void at the pupils (additive blending
-        // can't render "darker", only "fainter", so a void was the only
-        // way to get a genuinely dark eye) — reverted: it read as
-        // alien rather than ominous, so eyes go back to a plain density
-        // boost via eyeWeight instead.
-        const a=central*.18+br*.32+Math.min(1,contrast*2.8)*(.2+.34*central)+eyeWeight*.18;
+        // Brightness-based sampling (works correctly with holographic reference image).
+        // Pure brightness concentrates particles in the bright face center;
+        // radial central weight suppresses peripheral ring/bokeh noise naturally.
+        const a=br*.75+central*.22+eyeWeight*.08;
         if(a<.28||Math.random()>Math.min(1,.24+a*.9))continue;
         const depth=(br-.45)*.9+(1-radial)*.7+(Math.random()-.5)*.32;
         pos.push(nx,ny,depth);
