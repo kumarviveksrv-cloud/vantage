@@ -6,7 +6,7 @@
    presence rather than splitting attention across five shapes in a
    tight box.
 
-   What's here: 
+   What's here:
    - EYE-PULL: particles near the two approximate eye positions get
      extra displacement toward the cursor, on top of the whole-field
      parallax every particle already has.
@@ -90,10 +90,7 @@
         const dL=Math.hypot(nx-EYE_L[0],ny-EYE_L[1]),dR=Math.hypot(nx-EYE_R[0],ny-EYE_R[1]);
         const wL=Math.exp(-(dL*dL)/(2*EYE_SIGMA*EYE_SIGMA)),wR=Math.exp(-(dR*dR)/(2*EYE_SIGMA*EYE_SIGMA));
         const eyeWeight=Math.max(wL,wR);
-        // Brightness-based sampling (works correctly with holographic reference image).
-        // Pure brightness concentrates particles in the bright face center;
-        // radial central weight suppresses peripheral ring/bokeh noise naturally.
-        const a=br*.75+central*.22+eyeWeight*.08;
+        const a=br*.75+central*.22+eyeWeight*.12;
         if(a<.28||Math.random()>Math.min(1,.24+a*.9))continue;
         const depth=(br-.45)*.9+(1-radial)*.7+(Math.random()-.5)*.32;
         pos.push(nx,ny,depth);
@@ -161,15 +158,6 @@
     group.add(haloPoints);
 
     rings=[];
-    [1.5,1.85,2.2,2.65].forEach((r,j)=>{
-      const g=new THREE.TorusGeometry(r,.006,5,180);
-      const m=new THREE.MeshBasicMaterial({color:j%2?0x6366f1:0xc4b5fd,transparent:true,opacity:j===1?.32:.18,blending:THREE.AdditiveBlending});
-      const o=new THREE.Mesh(g,m);
-      o.rotation.x=Math.PI/2-.4;
-      o.position.z=-.35+j*.12;
-      group.add(o);
-      rings.push(o);
-    });
 
     canvas.classList.add('is-ready');
   }
