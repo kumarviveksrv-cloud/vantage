@@ -59,7 +59,7 @@
   addEventListener('wheel',preventScroll,{passive:false});
   addEventListener('touchmove',preventScroll,{passive:false});
 
-  function endPrologue(){if(!active)return;active=false;clearTimers();lockScroll(false);pro.classList.remove('active','phase-pressure');pro.classList.add('ending');const fade=$('.prologue-fade');if(fade)fade.classList.add('on');sessionStorage.setItem('vantage_prologue_seen','1');setTimeout(()=>{pro.style.display='none';document.body.classList.add('prologue-complete');},1100)}
+  function endPrologue(){if(!active)return;active=false;clearTimers();lockScroll(false);pro.classList.remove('active','phase-pressure');pro.classList.add('ending');const fade=$('.prologue-fade');if(fade)fade.classList.add('on');sessionStorage.setItem('vantage_prologue_seen','1');sessionStorage.setItem('vantage_tada','1');setTimeout(()=>{pro.style.display='none';document.body.classList.add('prologue-complete');},1100)}
   skip?.addEventListener('click',endPrologue);
 
   /* ---------- Three.js scene ---------- */
