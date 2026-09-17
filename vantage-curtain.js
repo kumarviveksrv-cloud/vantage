@@ -23,12 +23,14 @@
    Session key: vantage_q_v6
    Fixes: ta-da only on real prologue end (not skip/refresh)
    New: Demo button question intercept + persistent Questions modal
+   SR18: +3s timer (10s total), Reflect hidden during prologue/boot,
+         section-aware nudge on Reflect button
 */
 (function(){
   'use strict';
 
   const Q_KEY = 'vantage_q_v6';
-  const DELAY = 7000;
+  const DELAY = 10000;
 
   // ── Fibonacci hero globe ────────────────────────────────────────────────
   (function initGlobe(){
@@ -63,10 +65,10 @@
 
   // ── Question data ───────────────────────────────────────────────────────
   const CARDS = [
-    { trigger:'.humacity.cinematic-panel', pre:'A question for you', q:'Do you know the rupee value of the work you did last quarter?', sub:'Not headcount. Not engagement scores. The actual financial contribution HR made to the business.' },
-    { trigger:'.record.cinematic-panel',   pre:'Before you scroll',  q:'When you leave this organisation — what do you take with you?', sub:'Every decision navigated. Every case closed. Every difficult conversation held. Is any of it saved anywhere?' },
-    { trigger:'.meridian.cinematic-panel', pre:'A question for you', q:'The intelligence you\'re using right now — does it actually know your reality?', sub:'Or is it answering someone else\'s question, dressed up to look like yours?' },
-    { trigger:'.aria.cinematic-panel',     pre:'One last question',  q:'What would you do if you had a brilliant HR colleague available at 9pm tonight?', sub:'Not a chatbot. Someone who knows your context, your policies, your history — and asks the right questions back.' },
+    { trigger:'.humacity.cinematic-panel', pre:'A question for you', q:'Do you know the rupee value of the work you did last quarter?', sub:'Not headcount. Not engagement scores. The actual financial contribution HR made to the business.', nudge:'A question about Humacity' },
+    { trigger:'.record.cinematic-panel',   pre:'Before you scroll',  q:'When you leave this organisation \u2014 what do you take with you?', sub:'Every decision navigated. Every case closed. Every difficult conversation held. Is any of it saved anywhere?', nudge:'A question about your Record' },
+    { trigger:'.meridian.cinematic-panel', pre:'A question for you', q:'The intelligence you\'re using right now \u2014 does it actually know your reality?', sub:'Or is it answering someone else\u2019s question, dressed up to look like yours?', nudge:'A question about MERIDIAN' },
+    { trigger:'.aria.cinematic-panel',     pre:'One last question',  q:'What would you do if you had a brilliant HR colleague available at 9pm tonight?', sub:'Not a chatbot. Someone who knows your context, your policies, your history \u2014 and asks the right questions back.', nudge:'A question about ARIA' },
   ];
 
   // ── Shared overlay builder ──────────────────────────────────────────────
@@ -77,7 +79,7 @@
       <p id="q-pre"></p>
       <h2 id="q-question"></h2>
       <p id="q-sub"></p>
-      <div id="q-actions"><button id="q-skip">Reveal <span>↓</span></button><p id="q-hint">or wait — the answer is below</p></div>
+      <div id="q-actions"><button id="q-skip">Reveal <span>\u2193</span></button><p id="q-hint">or wait \u2014 the answer is below</p></div>
     </div>
     <div id="q-bar"><div id="q-fill"></div></div>`;
   document.body.appendChild(ov);
@@ -149,8 +151,8 @@
   // Shows a question before going to demo.html
   const DEMO_CARD = {
     pre: 'Before you step in',
-    q: 'What\'s the HR challenge you\'re dealing with tonight?',
-    sub: 'Vantage works best when it knows your situation. Think about it — then step inside.'
+    q: 'What\u2019s the HR challenge you\u2019re dealing with tonight?',
+    sub: 'Vantage works best when it knows your situation. Think about it \u2014 then step inside.'
   };
 
   document.querySelectorAll('a[href="demo.html"], .nav-cta[href="demo.html"]').forEach(btn=>{
@@ -161,16 +163,13 @@
     });
   });
 
-  // ── Ta-da reveal (prologue → landing) ──────────────────────────────────
-  // ONLY triggers when vantage_tada flag is set by real prologue dismiss
-  // NOT on refresh/skip (where prologue-complete is added without the flag)
+  // ── Ta-da reveal (prologue -> landing) ──────────────────────────────────
   const tadaOverlay = document.getElementById('tada-overlay');
   if(tadaOverlay){
     tadaOverlay.style.display = 'none';
     const obs = new MutationObserver(()=>{
       if(!document.body.classList.contains('prologue-complete')) return;
       obs.disconnect();
-      // KEY CHECK: only show ta-da if the flag was explicitly set by endPrologue
       if(!sessionStorage.getItem('vantage_tada')) return;
       sessionStorage.removeItem('vantage_tada');
       const logo = document.getElementById('tada-logoimg');
@@ -193,18 +192,99 @@
   }
 
   // ── Persistent Questions modal ──────────────────────────────────────────
-  // Floating purple button + modal with all 4 questions
   const qBtn = document.createElement('button');
   qBtn.id = 'questions-fab';
-  qBtn.innerHTML = '<span>✦</span> Reflect';
+  qBtn.innerHTML = '<span>\u2726</span> Reflect';
   qBtn.title = 'Revisit the questions';
+  /* SR18: start hidden until prologue/boot are done */
+  qBtn.style.display = 'none';
   document.body.appendChild(qBtn);
+
+  /* SR18: show Reflect only after prologue is dismissed or skipped */
+  function revealReflect(){
+    /* Don't show during prologue or boot */
+    const prologue = document.getElementById('prologue');
+    const boot = document.getElementById('boot');
+    const prologueGone = !prologue || prologue.style.display === 'none' || getComputedStyle(prologue).display === 'none' || getComputedStyle(prologue).opacity === '0' || document.body.classList.contains('prologue-complete');
+    const bootGone = !boot || boot.style.display === 'none' || getComputedStyle(boot).display === 'none' || getComputedStyle(boot).opacity === '0';
+    if(prologueGone && bootGone){
+      qBtn.style.display = '';
+      return true;
+    }
+    return false;
+  }
+  /* Try immediately, then watch for prologue-complete class */
+  if(!revealReflect()){
+    const reflectObs = new MutationObserver(()=>{
+      if(revealReflect()) reflectObs.disconnect();
+    });
+    reflectObs.observe(document.body, {attributes:true, attributeFilter:['class']});
+    /* Also check on visibility changes (prologue uses display:none) */
+    const reflectTimer = setInterval(()=>{
+      if(revealReflect()){ clearInterval(reflectTimer); }
+    }, 500);
+    /* Safety: stop checking after 30s */
+    setTimeout(()=>clearInterval(reflectTimer), 30000);
+  }
+
+  /* SR18: Nudge tooltip element */
+  const nudgeTip = document.createElement('div');
+  nudgeTip.id = 'reflect-nudge';
+  nudgeTip.style.cssText = 'position:fixed;bottom:70px;right:24px;background:rgba(99,102,241,.88);color:#fff;font:12px "DM Sans",sans-serif;padding:8px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .4s,transform .4s;transform:translateY(8px);z-index:8999;white-space:nowrap;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(99,102,241,.35);';
+  document.body.appendChild(nudgeTip);
+
+  /* SR18: Section-aware nudge on Reflect button */
+  let currentNudge = -1, nudgeTimeout = null;
+  function showNudge(text){
+    nudgeTip.textContent = text;
+    nudgeTip.style.opacity = '1';
+    nudgeTip.style.transform = 'translateY(0)';
+    qBtn.classList.add('reflect-pulse');
+    clearTimeout(nudgeTimeout);
+    nudgeTimeout = setTimeout(hideNudge, 4000);
+  }
+  function hideNudge(){
+    nudgeTip.style.opacity = '0';
+    nudgeTip.style.transform = 'translateY(8px)';
+    qBtn.classList.remove('reflect-pulse');
+  }
+
+  /* Only nudge for returning visitors who already saw the curtains */
+  if(sessionStorage.getItem(Q_KEY)){
+    const nudgeIO = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        const i = CARDS.findIndex(c=>e.target.matches(c.trigger));
+        if(i === -1) return;
+        if(e.isIntersecting && currentNudge !== i && qBtn.style.display !== 'none'){
+          currentNudge = i;
+          showNudge(CARDS[i].nudge);
+        } else if(!e.isIntersecting && currentNudge === i){
+          currentNudge = -1;
+          hideNudge();
+        }
+      });
+    },{threshold:0.2});
+    CARDS.forEach(c=>{const el=document.querySelector(c.trigger);if(el)nudgeIO.observe(el);});
+  }
+
+  /* SR18: pulse animation CSS injected */
+  const pulseStyle = document.createElement('style');
+  pulseStyle.textContent = `
+    @keyframes reflectPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,.5); }
+      50% { box-shadow: 0 0 0 12px rgba(124,58,237,0); }
+    }
+    #questions-fab.reflect-pulse {
+      animation: reflectPulse 1.5s ease-in-out 3;
+    }
+  `;
+  document.head.appendChild(pulseStyle);
 
   const qModal = document.createElement('div');
   qModal.id = 'questions-modal';
   qModal.innerHTML = `
     <div id="questions-modal-inner">
-      <button id="questions-modal-close">×</button>
+      <button id="questions-modal-close">\u00d7</button>
       <p id="qm-pre">Four questions for the HR professional</p>
       <h3 id="qm-heading">Sit with these.</h3>
       <div id="qm-cards">
@@ -213,7 +293,7 @@
             <span class="qm-num">0${i+1}</span>
             <p class="qm-q">${c.q}</p>
             <p class="qm-sub">${c.sub}</p>
-            <button class="qm-explore" data-index="${i}">Explore this section ↓</button>
+            <button class="qm-explore" data-index="${i}">Explore this section \u2193</button>
           </div>
         `).join('')}
       </div>
@@ -221,6 +301,7 @@
   document.body.appendChild(qModal);
 
   qBtn.addEventListener('click', ()=>{
+    hideNudge();
     qModal.classList.add('qm-open');
     document.body.style.overflow = 'hidden';
   });
@@ -242,7 +323,7 @@
         const el = document.querySelector(CARDS[i].trigger);
         if(el){
           el.scrollIntoView({behavior:'smooth', block:'center'});
-          setTimeout(()=>showOverlay(CARDS[i], 7000), 600);
+          setTimeout(()=>showOverlay(CARDS[i], DELAY), 600);
         }
       }, 400);
     });
