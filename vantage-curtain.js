@@ -5,6 +5,8 @@
       if(!el.classList.contains('accent')) return;
       el.style.cssText += [
         'display:block',
+        'font-style:italic',
+        "font-family:'Cormorant Garamond',serif",
         'background:linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%)',
         '-webkit-background-clip:text',
         'background-clip:text',
