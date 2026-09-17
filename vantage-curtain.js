@@ -4,7 +4,7 @@
 (function(){
   'use strict';
 
-  const SEEN = 'vantage_q_seen';
+  const SEEN = 'vantage_q_v4';
   const DELAY = 5000; // 5 seconds
 
   if(sessionStorage.getItem(SEEN)) return;
