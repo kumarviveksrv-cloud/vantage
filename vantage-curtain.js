@@ -1,90 +1,50 @@
-/* VANTAGE // CURTAIN RAISER
-   Scroll-triggered reveal: atmospheric moment between sections.
-   Each curtain sweeps a line, then the next section opens like a blind rising.
-*/
+/* VANTAGE // CURTAIN RAISER v2 — simplified, reliable */
 (function(){
   'use strict';
   if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
 
-  // ── Curtain sweep animation ─────────────────────────────────────────────
-  const curtains = document.querySelectorAll('.curtain-moment');
-  const revealSections = document.querySelectorAll('.reveal-section, .sim-room, .cta-moment');
-
-  // Set all reveal sections to pre-reveal state
-  revealSections.forEach(s => {
-    s.style.clipPath = 'inset(100% 0 0 0)';
-    s.style.transition = 'none';
-  });
-
-  // Curtain IntersectionObserver — triggers sweep + section reveal
+  // ── Curtain sweep + text reveal ─────────────────────────────────────────
   const curtainIO = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if(!entry.isIntersecting) return;
-      const curtain = entry.target;
-      if(curtain.dataset.triggered) return;
-      curtain.dataset.triggered = 'true';
+      if(!entry.isIntersecting || entry.target.dataset.done) return;
+      entry.target.dataset.done = '1';
+      const sweep = entry.target.querySelector('.curtain-sweep');
+      const line  = entry.target.querySelector('.curtain-line');
+      const pip   = entry.target.querySelector('.curtain-pip');
+      setTimeout(() => { if(sweep) sweep.classList.add('sweep-active'); }, 100);
+      setTimeout(() => { if(line)  line.classList.add('line-active'); },  500);
+      setTimeout(() => { if(pip)   pip.classList.add('pip-active'); },    1100);
+    });
+  }, { threshold: 0.35 });
 
-      // 1. Animate the sweep line
-      const sweep = curtain.querySelector('.curtain-sweep');
-      const line = curtain.querySelector('.curtain-line');
-      const pip = curtain.querySelector('.curtain-pip');
+  document.querySelectorAll('.curtain-moment').forEach(c => curtainIO.observe(c));
 
-      setTimeout(() => {
-        if(sweep) sweep.classList.add('sweep-active');
-        if(line) line.classList.add('line-active');
-        if(pip) pip.classList.add('pip-active');
-      }, 200);
-
-      // 2. Find and reveal the NEXT .reveal-section
-      let next = curtain.nextElementSibling;
-      while(next && !next.classList.contains('reveal-section') && 
-            !next.classList.contains('sim-room') && 
-            !next.classList.contains('cta-moment')) {
-        next = next.nextElementSibling;
-      }
-      if(next) {
-        setTimeout(() => {
-          next.style.transition = 'clip-path 1.1s cubic-bezier(0.77,0,0.175,1)';
-          next.style.clipPath = 'inset(0 0 0 0)';
-        }, 900);
+  // ── Section reveal — simple opacity + rise ──────────────────────────────
+  const sectionIO = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting) {
+        entry.target.classList.add('is-revealed');
+        sectionIO.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.4 });
+  }, { threshold: 0.08 });
 
-  curtains.forEach(c => curtainIO.observe(c));
+  document.querySelectorAll('.reveal-section, .sim-room, .cta-moment').forEach(s => {
+    sectionIO.observe(s);
+  });
 
-  // ── Sim room threshold crossing ─────────────────────────────────────────
+  // ── Sim room atmospheric entry ──────────────────────────────────────────
   const simRoom = document.querySelector('.sim-room');
   if(simRoom) {
     const simIO = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if(entry.isIntersecting) {
           simRoom.classList.add('sim-entered');
-        }
-      });
-    }, { threshold: 0.2 });
-    simIO.observe(simRoom);
-  }
-
-  // ── Hero section — no clip needed, always visible ──────────────────────
-  const hero = document.querySelector('.hero');
-  if(hero) {
-    hero.style.clipPath = 'none';
-  }
-
-  // ── First reveal section (humacity) shows after scroll past hero ────────
-  const firstReveal = document.querySelector('.reveal-section');
-  if(firstReveal) {
-    const firstIO = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if(entry.isIntersecting) {
-          firstReveal.style.transition = 'clip-path 1.1s cubic-bezier(0.77,0,0.175,1)';
-          firstReveal.style.clipPath = 'inset(0 0 0 0)';
-          firstIO.disconnect();
+          simIO.disconnect();
         }
       });
     }, { threshold: 0.15 });
-    firstIO.observe(firstReveal);
+    simIO.observe(simRoom);
   }
 
 })();
