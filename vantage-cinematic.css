@@ -716,3 +716,19 @@ p em, .lede em, .hero-deck em, .body-copy em,
   text-shadow: 0 0 22px rgba(139,92,246,0.6), 0 0 44px rgba(99,102,241,0.25) !important;
   filter: none !important;
 }
+
+
+/* ═══ Global .line and .accent — use anywhere for gradient text ════════════
+   <span class="line accent">Text here</span> gives gradient purple on any section.
+   .line = display:block (prevents wrapping issues)
+   .accent = lavender→indigo→rose gradient, same as hero
+   ════════════════════════════════════════════════════════════════════════ */
+.line { display: block; }
+.accent {
+  background: linear-gradient(135deg, #c4b5fd 0%, #6366f1 40%, #e879f9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px rgba(139,92,246,0.35));
+}
