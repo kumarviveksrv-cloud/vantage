@@ -103,3 +103,103 @@
   -webkit-background-clip: unset !important;
   background-clip: unset !important;
 }
+
+
+/* ── SR17 — Vantage Record section redesign ─────────────────────────────── */
+
+/* Stat cards — premium glassmorphic with gradient border glow */
+.record-point {
+  position: absolute;
+  background: linear-gradient(135deg, rgba(15,12,35,0.94), rgba(5,4,16,0.88));
+  border: 1px solid rgba(196,181,253,0.18);
+  padding: 16px 20px;
+  border-radius: 12px;
+  min-width: 140px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 24px rgba(99,102,241,0.06), inset 0 1px 0 rgba(196,181,253,0.08);
+  backdrop-filter: blur(16px);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.record-point:hover {
+  border-color: rgba(196,181,253,0.32);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 40px rgba(99,102,241,0.14);
+}
+
+/* The number — gradient, glowing, unmissable */
+.record-point b {
+  display: block;
+  font: 700 clamp(24px,2.8vw,38px)/1 'Space Grotesk', sans-serif;
+  background: linear-gradient(135deg, #e9e4ff, #c4b5fd, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+/* Context label — sentence case, readable, not screaming */
+.record-point small {
+  display: block;
+  font: 400 12px/1.5 'DM Sans', sans-serif;
+  color: rgba(244,243,255,0.58);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-bottom: 10px;
+}
+
+/* Tool tag pill */
+.rp-tag {
+  display: inline-block;
+  font: 500 9px 'JetBrains Mono', monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(196,181,253,0.45);
+  background: rgba(99,102,241,0.08);
+  border: 1px solid rgba(196,181,253,0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* Record core — stronger glow, more presence */
+.record-core {
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background: radial-gradient(circle, rgba(99,102,241,0.24), rgba(5,4,16,0.97) 68%);
+  border: 1px solid rgba(196,181,253,0.30);
+  z-index: 2;
+  box-shadow: 0 0 80px rgba(99,102,241,0.22), 0 0 160px rgba(99,102,241,0.08), inset 0 0 60px rgba(139,92,246,0.14);
+}
+.record-core span {
+  font: 11px 'JetBrains Mono', monospace;
+  color: rgba(196,181,253,0.5);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.record-core strong {
+  display: block;
+  font: 700 18px/1.1 'Space Grotesk', sans-serif;
+  letter-spacing: 0.05em;
+  margin: 4px 0;
+}
+.record-core em {
+  font: italic 11px 'Cormorant Garamond', serif;
+  color: rgba(196,181,253,0.4) !important;
+  text-shadow: none !important;
+  letter-spacing: 0.04em;
+  display: block;
+  margin-top: 4px;
+}
+
+/* Orbit rings — more visible, slightly faster */
+.record-orbit {
+  position: absolute;
+  border: 1px solid rgba(196,181,253,0.14);
+  border-radius: 50%;
+  transform: rotateX(65deg) rotateZ(-15deg);
+}
+.ro1 { width:330px; height:330px; animation: spinrecord 16s linear infinite; border-color: rgba(196,181,253,0.18); }
+.ro2 { width:520px; height:520px; animation: spinrecord 26s linear infinite reverse; }
+.ro3 { width:700px; height:700px; animation: spinrecord 38s linear infinite; border-color: rgba(99,102,241,0.1); }
