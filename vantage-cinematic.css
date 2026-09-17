@@ -723,23 +723,12 @@ p em, .lede em, .hero-deck em, .body-copy em,
    .line = display:block (prevents wrapping issues)
    .accent = lavender→indigo→rose gradient, same as hero
    ════════════════════════════════════════════════════════════════════════ */
-.line { display: block !important; }
+.line { display: block; }
 .accent {
-  background: linear-gradient(135deg, #c4b5fd 0%, #6366f1 40%, #e879f9 100%) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
-  /* No filter — was causing dark rectangle artifacts on sibling buttons */
-}
-
-
-/* ══ SR17 FINAL — span.line.accent global override ══════════════════════ */
-h1 span.accent, h2 span.accent, h3 span.accent, p span.accent {
-  display: block !important;
-  background: linear-gradient(135deg, #c4b5fd 0%, #6366f1 40%, #e879f9 100%) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
+  background: linear-gradient(135deg, #c4b5fd 0%, #6366f1 40%, #e879f9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px rgba(139,92,246,0.35));
 }
