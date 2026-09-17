@@ -18,7 +18,7 @@ $$('.cinematic-panel,.cinematic-portal').forEach((s,i)=>gsap.fromTo(s,{opacity:.
 
 /* Floating film frames: visual fragments without pretending to be product screenshots */
 function addFilmFrames(target){if(!target||innerWidth<700)return;const frag=document.createDocumentFragment();for(let i=1;i<=4;i++){const d=document.createElement('div');d.className='film-frame f'+i;d.setAttribute('aria-hidden','true');frag.appendChild(d)}target.appendChild(frag)}
-addFilmFrames($('.hero'));addFilmFrames($('.aria'));addFilmFrames($('.humacity'));
+addFilmFrames($('.hero'));addFilmFrames($('.aria'));addFilmFrames($('.humacity'));addFilmFrames($('.record'));addFilmFrames($('.meridian'));addFilmFrames($('.sim-room'));
 
 /* 2D cinematic particle / light field */
 const cv=$('#cinemaCanvas');
