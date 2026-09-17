@@ -295,17 +295,8 @@
 }
 
 /* ── Section reveal: opacity + rise ────────────────────────────────────── */
-.reveal-section,
-.cta-moment {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 1s ease, transform 1s ease;
-}
-.reveal-section.is-revealed,
-.cta-moment.is-revealed {
-  opacity: 1;
-  transform: none;
-}
+
+
 
 /* ── Virtual Simulation Room ─────────────────────────────────────────────── */
 .sim-room {
@@ -317,11 +308,7 @@
   transform: translateY(30px);
   transition: opacity 1.2s ease, transform 1.2s ease;
 }
-.sim-room.is-revealed,
-.sim-room.sim-entered {
-  opacity: 1;
-  transform: none;
-}
+
 
 .sim-threshold {
   text-align: center;
@@ -614,17 +601,16 @@
 }
 
 /* Section fade-in reveal */
-.reveal-section, .sim-room, .cta-moment {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.9s ease, transform 0.9s ease;
-}
-.reveal-section.is-revealed, .sim-room.is-revealed, .cta-moment.is-revealed {
-  opacity: 1;
-  transform: none;
-}
+
+
 
 @media(max-width:768px){
   .q-inner { padding: 0 24px; gap: 18px; }
   .q-question { font-size: clamp(24px,7vw,38px); }
 }
+
+
+/* ── Sections always visible — curtain cards are the reveal mechanic ─────── */
+.reveal-section { opacity: 1 !important; transform: none !important; }
+.sim-room { opacity: 1 !important; transform: none !important; }
+.cta-moment.is-revealed { opacity: 1 !important; transform: none !important; }
