@@ -203,3 +203,226 @@
 .ro1 { width:330px; height:330px; animation: spinrecord 16s linear infinite; border-color: rgba(196,181,253,0.18); }
 .ro2 { width:520px; height:520px; animation: spinrecord 26s linear infinite reverse; }
 .ro3 { width:700px; height:700px; animation: spinrecord 38s linear infinite; border-color: rgba(99,102,241,0.1); }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   VANTAGE CURTAIN RAISER — atmospheric transitions between sections
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.curtain-moment {
+  min-height: 55vh;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+}
+
+.curtain-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  text-align: center;
+  padding: 0 40px;
+}
+
+/* The sweep line — animates left to right */
+.curtain-sweep {
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c4b5fd, #6366f1, transparent);
+  transition: width 0.9s cubic-bezier(0.77, 0, 0.175, 1);
+  max-width: 600px;
+  align-self: stretch;
+  box-shadow: 0 0 12px rgba(196,181,253,0.4);
+}
+.curtain-sweep.sweep-active { width: 100%; }
+
+/* The atmospheric teaser line */
+.curtain-line {
+  font: italic clamp(18px,2.2vw,28px) 'Cormorant Garamond', serif;
+  color: transparent;
+  letter-spacing: -0.01em;
+  margin: 0;
+  transition: color 0.8s ease 0.5s;
+  max-width: 680px;
+  line-height: 1.4;
+}
+.curtain-line.line-active {
+  color: rgba(196,181,253,0.62);
+  text-shadow: 0 0 30px rgba(139,92,246,0.25);
+}
+
+/* The progress pip — pulses after line appears */
+.curtain-pip {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(196,181,253,0.3);
+  transform: scale(0);
+  transition: transform 0.4s ease 1.1s, background 0.4s ease 1.1s;
+}
+.curtain-pip.pip-active {
+  transform: scale(1);
+  background: rgba(196,181,253,0.65);
+  box-shadow: 0 0 12px rgba(139,92,246,0.5);
+  animation: pipPulse 2s ease-in-out infinite 1.2s;
+}
+@keyframes pipPulse {
+  50% { box-shadow: 0 0 24px rgba(139,92,246,0.7); transform: scale(1.4); }
+}
+
+/* ── Virtual Simulation Room ─────────────────────────────────────────────── */
+.sim-room {
+  min-height: 100vh;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 80px 6vw 120px;
+}
+
+.sim-threshold {
+  text-align: center;
+  margin-bottom: 70px;
+  position: relative;
+  z-index: 10;
+}
+.sim-pre {
+  font: 11px 'JetBrains Mono', monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(196,181,253,0.55);
+  margin: 0 0 16px;
+}
+.sim-heading {
+  font: 700 clamp(36px,5vw,68px)/1.1 'Cormorant Garamond', serif;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px;
+}
+.sim-sub {
+  font: 14px 'DM Sans', sans-serif;
+  color: rgba(244,243,255,0.55);
+  margin: 0;
+}
+
+/* 3D grid floor */
+.sim-floor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.floor-grid {
+  position: absolute;
+  bottom: 0;
+  left: -30%;
+  right: -30%;
+  height: 55%;
+  background-image:
+    linear-gradient(rgba(99,102,241,0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,102,241,0.12) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(600px) rotateX(72deg);
+  transform-origin: bottom center;
+  mask-image: linear-gradient(transparent, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.3) 100%);
+}
+.floor-glow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 300px;
+  background: radial-gradient(ellipse at bottom, rgba(99,102,241,0.18), transparent 70%);
+}
+
+/* Ghost ARIA silhouette behind case machine */
+.sim-aria-ghost {
+  position: absolute;
+  left: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 280px;
+  height: 380px;
+  background: radial-gradient(ellipse, rgba(99,102,241,0.1), transparent 70%);
+  border-radius: 50%;
+  filter: blur(20px);
+  z-index: 2;
+}
+
+.sim-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.sim-room .case-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 6vw;
+  align-items: center;
+}
+
+/* Sim room entry animation */
+.sim-room { opacity: 0; transform: translateY(40px); }
+.sim-room.sim-entered { opacity: 1; transform: none; transition: opacity 1.2s ease, transform 1.2s ease; }
+
+/* ── CTA Moment ─────────────────────────────────────────────────────────── */
+.cta-moment {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-field { position: absolute; inset: 0; }
+.cta-radial {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(99,102,241,0.18), transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(139,92,246,0.07), transparent 55%);
+}
+.cta-copy { position: relative; z-index: 2; }
+.cta-copy h2 {
+  font: 700 clamp(36px,5.5vw,78px)/1.1 'Cormorant Garamond', serif;
+  letter-spacing: -0.02em;
+  margin: 20px 0 20px;
+}
+.cta-sub {
+  font: 14px 'DM Sans', sans-serif;
+  color: rgba(244,243,255,0.6);
+  margin: 0 0 40px;
+}
+.cta-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.btn-cta {
+  font-size: 14px !important;
+  padding: 18px 32px !important;
+  box-shadow: 0 0 60px rgba(99,102,241,0.35), 0 0 120px rgba(99,102,241,0.15) !important;
+}
+.btn-cta:hover {
+  box-shadow: 0 0 80px rgba(99,102,241,0.55), 0 0 160px rgba(99,102,241,0.22) !important;
+  transform: translateY(-3px) !important;
+}
+.cta-note {
+  margin-top: 24px;
+  font: 11px 'JetBrains Mono', monospace;
+  letter-spacing: 0.1em;
+  color: rgba(196,181,253,0.3);
+}
+
+@media(max-width:900px){
+  .curtain-moment { min-height: 40vh; }
+  .sim-room .case-grid { grid-template-columns: 1fr; }
+  .sim-aria-ghost { display: none; }
+  .cta-copy h2 { font-size: clamp(30px,8vw,52px); }
+}
