@@ -66,9 +66,16 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   <button class="nav-menu" aria-label="Open menu"><span></span><span></span></button>
 </header>
 
+<div id="tada-overlay" aria-hidden="true">
+  <canvas id="tada-canvas"></canvas>
+  <div id="tada-logo">
+    <img src="virorah-vantage-logo.png" alt="Virorah Vantage" id="tada-logoimg">
+  </div>
+</div>
 <main><main>
 <section class="hero cinematic-panel is-live" id="top">
   <div class="hero-field" aria-hidden="true">
+    <canvas id="heroGlobe"></canvas>
     <div class="hero-ring r1"></div><div class="hero-ring r2"></div>
     <div class="hero-ring r3"></div><div class="hero-core"></div>
   </div>
@@ -90,6 +97,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <a href="demo.html" class="btn btn-primary magnetic">Try the Demo — it's live <span>→</span></a>
       <a href="access.html" class="btn btn-ghost magnetic">Sign In <span>↗</span></a>
     </div>
+    <a href="#" id="prologue-back" onclick="sessionStorage.removeItem('vantage_prologue_seen');location.reload();return false;">← Watch the opening sequence</a>
     <div class="hero-foot">
       <span>PRIVATE BY DEFAULT</span>
       <span>BUILT FOR INDIAN HR</span>
