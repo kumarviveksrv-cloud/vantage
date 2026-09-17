@@ -1,3 +1,25 @@
+/* GRADIENT FIX — applies inline styles directly, bypasses all CSS/SW issues */
+(function applyGradients(){
+  function run(){
+    document.querySelectorAll('span.accent, .line.accent, span.line').forEach(el=>{
+      if(!el.classList.contains('accent')) return;
+      el.style.cssText += [
+        'display:block',
+        'background:linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%)',
+        '-webkit-background-clip:text',
+        'background-clip:text',
+        'color:transparent',
+        '-webkit-text-fill-color:transparent',
+      ].join(';');
+    });
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',run);
+  } else { run(); }
+  // Also run after full page load in case of late rendering
+  window.addEventListener('load',run);
+})();
+
 /* VANTAGE // CURTAIN RAISER v6
    Session key: vantage_q_v6
    Fixes: ta-da only on real prologue end (not skip/refresh)
