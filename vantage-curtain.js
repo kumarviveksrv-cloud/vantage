@@ -330,12 +330,19 @@
   const overlay = document.getElementById('tada-overlay');
   if(!overlay) return;
 
-  // Only run if prologue just finished
-  if(!sessionStorage.getItem('vantage_tada')){
-    overlay.style.display = 'none';
-    return;
-  }
-  sessionStorage.removeItem('vantage_tada');
+  // Always hidden initially
+  overlay.style.display = 'none';
+
+  // Watch for prologue-complete class on body (added by vantage-prologue.js)
+  const observer = new MutationObserver(() => {
+    if(document.body.classList.contains('prologue-complete')){
+      observer.disconnect();
+      runTada();
+    }
+  });
+  observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+  function runTada(){
 
   const canvas = document.getElementById('tada-canvas');
   const logo = document.getElementById('tada-logo');
@@ -349,14 +356,14 @@
   // Phase 2: Particle explosion from logo position
   setTimeout(()=>{
     if(logo) logo.style.opacity = '0';
-    runTadaExplosion(canvas, ()=>{
+    runExplosion(canvas, ()=>{
       // Phase 3: Overlay fades out
       overlay.classList.add('tada-out');
       setTimeout(()=>{ overlay.style.display='none'; }, 700);
     });
   }, 1000);
 
-  function runTadaExplosion(cnv, done){
+  function runExplosion(cnv, done){
     if(!cnv || typeof THREE === 'undefined'){ done(); return; }
     const W = window.innerWidth, H = window.innerHeight;
     cnv.width = W; cnv.height = H;
