@@ -26,7 +26,7 @@ if(orb && innerWidth>900 && !reduce){addEventListener('pointermove',e=>{orb.styl
 if(window.gsap && window.ScrollTrigger && !reduce){$$('.decision-head,.case-intro,.case-machine,.section-head,.meridian-copy,.aria-copy,.humacity-copy,.record-head,.difference-grid,.pricing-head,.price-card').forEach(el=>gsap.from(el,{y:45,opacity:0,duration:1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 82%',once:true}}));
  gsap.to('.hero-copy',{y:-80,opacity:.35,scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
  gsap.to('.hero-field',{scale:1.35,rotation:15,scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
- gsap.fromTo('.interlude-word',{x:'-10vw'},{x:'10vw',scrollTrigger:{trigger:'.interlude',start:'top bottom',end:'bottom top',scrub:true}});
+ 
 }
 
 /* ---------- decision field ---------- */
