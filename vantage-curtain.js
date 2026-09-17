@@ -1,18 +1,15 @@
 /* GRADIENT FIX — applies inline styles directly, bypasses all CSS/SW issues */
 (function applyGradients(){
   function run(){
-    document.querySelectorAll('span.accent, .line.accent, span.line').forEach(el=>{
-      if(!el.classList.contains('accent')) return;
-      el.style.cssText += [
-        'display:block',
-        'font-style:italic',
-        "font-family:'Cormorant Garamond',serif",
-        'background:linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%)',
-        '-webkit-background-clip:text',
-        'background-clip:text',
-        'color:transparent',
-        '-webkit-text-fill-color:transparent',
-      ].join(';');
+    document.querySelectorAll('span.accent').forEach(el=>{
+      el.style.setProperty('display','block','important');
+      el.style.setProperty('font-style','italic','important');
+      el.style.setProperty('font-family',"'Cormorant Garamond',serif",'important');
+      el.style.setProperty('background','linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%)','important');
+      el.style.setProperty('-webkit-background-clip','text','important');
+      el.style.setProperty('background-clip','text','important');
+      el.style.setProperty('color','transparent','important');
+      el.style.setProperty('-webkit-text-fill-color','transparent','important');
     });
   }
   if(document.readyState==='loading'){
