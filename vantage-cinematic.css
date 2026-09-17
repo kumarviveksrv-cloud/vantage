@@ -78,5 +78,23 @@
 .record-payoff p{font:400 15px/1.6 'DM Sans',sans-serif;color:rgba(196,181,253,.6)}
 
 
-/* ── SR17 — Global em gradient (signature purple) ──────────────────────── */
-.portal-copy h2 em,.portal-copy p em,.interlude p em,.lede em,.body-copy em,.diff-yours em,.aria-tagline em,.aria-actions-label em{background:linear-gradient(135deg,#c4b5fd,#a78bfa,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:italic}
+
+
+/* ── SR17 — Em gradient (purple signature, all sections) ───────────────────
+   display:inline-block is essential: without it, background-clip:text only
+   applies to the first line box of inline elements, making all words after
+   the first invisible. inline-block creates a single box covering all words. */
+.cinematic-panel em,
+.portal-copy em,
+.hero-deck em,
+.interlude p em,
+.record-payoff em,
+.diff-yours em {
+  display: inline-block;
+  background: linear-gradient(135deg, #c4b5fd, #a78bfa, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-style: italic;
+  color: transparent;
+}
