@@ -5,7 +5,7 @@
   'use strict';
 
   const SEEN = 'vantage_q_v4';
-  const DELAY = 5000; // 5 seconds
+  const DELAY = 7000; // 7 seconds — enough time to read // 5 seconds
 
   if(sessionStorage.getItem(SEEN)) return;
   if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
@@ -227,4 +227,179 @@
     if(el) io.observe(el);
   });
 
+})();
+
+/* ── HERO FIBONACCI GLOBE ─────────────────────────────────────────────── */
+(function initHeroGlobe(){
+  const canvas = document.getElementById('heroGlobe');
+  if(!canvas || typeof THREE === 'undefined') return;
+
+  const section = canvas.closest('.hero');
+  if(!section) return;
+
+  let W = section.offsetWidth || window.innerWidth;
+  let H = section.offsetHeight || window.innerHeight;
+
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.setClearColor(0,0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(42, W/H, 0.1, 100);
+  camera.position.z = 5.5;
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  // Fibonacci sphere
+  const N = 260;
+  const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+  const pts = [];
+  const posArr = [];
+
+  for(let i = 0; i < N; i++){
+    const theta = goldenAngle * i;
+    const phi = Math.acos(1 - 2*(i+0.5)/N);
+    const x = Math.sin(phi)*Math.cos(theta) * 2.2;
+    const y = Math.sin(phi)*Math.sin(theta) * 2.2;
+    const z = Math.cos(phi) * 2.2;
+    pts.push(x,y,z);
+    posArr.push(new THREE.Vector3(x,y,z));
+  }
+
+  // Nodes
+  const nodGeo = new THREE.BufferGeometry();
+  nodGeo.setAttribute('position', new THREE.Float32BufferAttribute(pts,3));
+  const nodMat = new THREE.PointsMaterial({
+    size:0.04, color:0xc4b5fd, transparent:true, opacity:0.65,
+    blending:THREE.AdditiveBlending, depthWrite:false
+  });
+  group.add(new THREE.Points(nodGeo, nodMat));
+
+  // Connecting lines
+  const linePts = [];
+  const MAX_D = 0.72;
+  for(let i=0;i<N;i++){
+    for(let j=i+1;j<N;j++){
+      if(posArr[i].distanceTo(posArr[j]) < MAX_D){
+        linePts.push(posArr[i].x,posArr[i].y,posArr[i].z,
+                     posArr[j].x,posArr[j].y,posArr[j].z);
+      }
+    }
+  }
+  const lineGeo = new THREE.BufferGeometry();
+  lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePts,3));
+  const lineMat = new THREE.LineBasicMaterial({
+    color:0x6366f1, transparent:true, opacity:0.14,
+    blending:THREE.AdditiveBlending
+  });
+  group.add(new THREE.LineSegments(lineGeo, lineMat));
+
+  // Mouse parallax
+  let mx = 0, my = 0;
+  window.addEventListener('pointermove',e=>{
+    mx = (e.clientX/window.innerWidth - 0.5);
+    my = (e.clientY/window.innerHeight - 0.5);
+  },{passive:true});
+
+  // Pause when hero not visible (perf)
+  let visible = true;
+  const visIO = new IntersectionObserver(e=>{visible=e[0].isIntersecting;},{threshold:0.01});
+  visIO.observe(section);
+
+  // Throttled 30fps
+  let last = 0;
+  (function tick(now){
+    requestAnimationFrame(tick);
+    if(!visible || now - last < 33) return;
+    last = now;
+    group.rotation.y += 0.0018 + mx*0.001;
+    group.rotation.x += 0.0004 + my*0.0005;
+    renderer.render(scene,camera);
+  })(0);
+
+  window.addEventListener('resize',()=>{
+    W = section.offsetWidth; H = section.offsetHeight;
+    renderer.setSize(W,H); camera.aspect=W/H; camera.updateProjectionMatrix();
+  },{passive:true});
+})();
+
+/* ── TA-DA REVEAL (prologue → landing page) ─────────────────────────────── */
+(function tadaReveal(){
+  const overlay = document.getElementById('tada-overlay');
+  if(!overlay) return;
+
+  // Only run if prologue just finished
+  if(!sessionStorage.getItem('vantage_tada')){
+    overlay.style.display = 'none';
+    return;
+  }
+  sessionStorage.removeItem('vantage_tada');
+
+  const canvas = document.getElementById('tada-canvas');
+  const logo = document.getElementById('tada-logo');
+  overlay.style.display = 'flex';
+
+  // Phase 1: Show logo for 0.8s
+  setTimeout(()=>{
+    if(logo) logo.classList.add('tada-logo-pulse');
+  }, 200);
+
+  // Phase 2: Particle explosion from logo position
+  setTimeout(()=>{
+    if(logo) logo.style.opacity = '0';
+    runTadaExplosion(canvas, ()=>{
+      // Phase 3: Overlay fades out
+      overlay.classList.add('tada-out');
+      setTimeout(()=>{ overlay.style.display='none'; }, 700);
+    });
+  }, 1000);
+
+  function runTadaExplosion(cnv, done){
+    if(!cnv || typeof THREE === 'undefined'){ done(); return; }
+    const W = window.innerWidth, H = window.innerHeight;
+    cnv.width = W; cnv.height = H;
+    cnv.style.opacity = '1';
+
+    const rdr = new THREE.WebGLRenderer({canvas:cnv, antialias:false, alpha:true});
+    rdr.setSize(W,H); rdr.setClearColor(0,0);
+
+    const scn = new THREE.Scene();
+    const cam = new THREE.OrthographicCamera(-W/2,W/2,H/2,-H/2,1,100);
+    cam.position.z=10;
+
+    const COUNT = 6000;
+    const pos = new Float32Array(COUNT*3);
+    const col = new Float32Array(COUNT*3);
+    const vel = [];
+    const pal=[[0.769,0.714,0.992],[0.388,0.4,0.945],[0.655,0.545,0.98],[0.91,0.475,0.976]];
+
+    for(let i=0;i<COUNT;i++){
+      pos[i*3]=0; pos[i*3+1]=0; pos[i*3+2]=0;
+      const angle=Math.random()*Math.PI*2;
+      const spd=4+Math.random()*22;
+      vel.push({vx:Math.cos(angle)*spd, vy:Math.sin(angle)*spd});
+      const c=pal[Math.floor(Math.random()*pal.length)];
+      col[i*3]=c[0]; col[i*3+1]=c[1]; col[i*3+2]=c[2];
+    }
+
+    const geo=new THREE.BufferGeometry();
+    geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+    const mat=new THREE.PointsMaterial({size:3,vertexColors:true,transparent:true,opacity:1,blending:THREE.AdditiveBlending,depthWrite:false});
+    scn.add(new THREE.Points(geo,mat));
+
+    let f=0,TOTAL=70;
+    (function go(){
+      f++;
+      const t=f/TOTAL, e=t*t;
+      for(let i=0;i<COUNT;i++){pos[i*3]+=vel[i].vx*(1+e*4);pos[i*3+1]+=vel[i].vy*(1+e*4);}
+      geo.attributes.position.needsUpdate=true;
+      mat.opacity=Math.max(0,1-e*1.3);
+      rdr.render(scn,cam);
+      if(f<TOTAL) requestAnimationFrame(go);
+      else{ rdr.dispose(); geo.dispose(); mat.dispose(); cnv.style.opacity='0'; done(); }
+    })();
+  }
 })();
