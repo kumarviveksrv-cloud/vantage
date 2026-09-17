@@ -461,3 +461,170 @@
   .sim-aria-ghost { display: none; }
   .cta-copy h2 { font-size: clamp(30px,8vw,50px); }
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   VANTAGE QUESTION CURTAIN — soul-searching reveal cards
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.q-curtain {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #050410;
+  overflow: hidden;
+  cursor: pointer;
+  z-index: 5;
+  /* Slide UP to reveal section underneath */
+  transform: translateY(0);
+  transition: transform 0.85s cubic-bezier(0.77,0,0.175,1);
+}
+
+/* Atmospheric background */
+.q-curtain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 60%, rgba(99,102,241,0.09), transparent 45%),
+    radial-gradient(ellipse at 80% 40%, rgba(196,181,253,0.06), transparent 45%);
+  pointer-events: none;
+}
+
+/* The reveal — slides up, section shows beneath */
+.q-curtain.revealing {
+  transform: translateY(-100%);
+  pointer-events: none;
+}
+
+.q-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 22px;
+  padding: 0 max(40px, 10vw);
+  max-width: 780px;
+  position: relative;
+  z-index: 2;
+}
+
+.q-pre {
+  font: 11px 'JetBrains Mono', monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(196,181,253,0.45);
+  margin: 0;
+  animation: qFadeIn 0.8s ease 0.3s both;
+}
+
+.q-question {
+  font: 500 clamp(28px,4vw,58px)/1.2 'Cormorant Garamond', serif;
+  letter-spacing: -0.02em;
+  color: rgba(244,243,255,0.95);
+  margin: 0;
+  animation: qFadeIn 0.9s ease 0.5s both;
+}
+
+.q-sub {
+  font: 400 clamp(13px,1.4vw,16px)/1.7 'DM Sans', sans-serif;
+  color: rgba(244,243,255,0.45);
+  margin: 0;
+  max-width: 580px;
+  animation: qFadeIn 0.9s ease 0.8s both;
+}
+
+.q-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  animation: qFadeIn 0.9s ease 1.1s both;
+}
+
+.q-skip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border: 1px solid rgba(196,181,253,0.25);
+  border-radius: 8px;
+  background: rgba(99,102,241,0.08);
+  color: rgba(196,181,253,0.85);
+  font: 600 12px 'DM Sans', sans-serif;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.q-skip:hover {
+  background: rgba(99,102,241,0.16);
+  border-color: rgba(196,181,253,0.45);
+  color: #fff;
+}
+.q-skip span { font-size: 14px; }
+
+.q-hint {
+  font: 11px 'JetBrains Mono', monospace;
+  letter-spacing: 0.1em;
+  color: rgba(196,181,253,0.25);
+  margin: 0;
+}
+
+/* Countdown bar at bottom */
+.q-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(196,181,253,0.08);
+}
+.q-bar-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #c4b5fd, #6366f1, #e879f9);
+  box-shadow: 0 0 12px rgba(196,181,253,0.4);
+}
+
+@keyframes qFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── Section stacking — curtain slides up over section ──────────────────── */
+/* Sections sit BEHIND their curtain card using negative margin */
+.humacity.cinematic-panel,
+.record.cinematic-panel,
+.meridian.cinematic-panel,
+.aria.cinematic-panel {
+  margin-top: -100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* After curtain removes itself, section snaps to natural position */
+.humacity.cinematic-panel.is-revealed,
+.record.cinematic-panel.is-revealed,
+.meridian.cinematic-panel.is-revealed,
+.aria.cinematic-panel.is-revealed {
+  margin-top: 0;
+  transition: margin-top 0s;
+}
+
+/* Section fade-in reveal */
+.reveal-section, .sim-room, .cta-moment {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.reveal-section.is-revealed, .sim-room.is-revealed, .cta-moment.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media(max-width:768px){
+  .q-inner { padding: 0 24px; gap: 18px; }
+  .q-question { font-size: clamp(24px,7vw,38px); }
+}
