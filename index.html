@@ -14,6 +14,166 @@
 <link rel="stylesheet" href="vantage-cinematic-v4.css">
 <link rel="stylesheet" href="vantage-prologue.css">
 <link rel="stylesheet" href="aria-volumetric.css">
+<style>
+/* SR18 — visual enhancement batch */
+
+/* Item 5: ARIA identity text — make readable and prominent */
+.aria-eyebrow {
+  font-size: clamp(12px,1.15vw,16px) !important;
+  letter-spacing: .09em !important;
+  color: rgba(196,181,253,.88) !important;
+  opacity: 1 !important;
+  text-transform: none !important;
+  font-weight: 400 !important;
+}
+.aria-ally {
+  font-size: clamp(18px,1.8vw,26px) !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  color: rgba(255,255,255,.92) !important;
+  letter-spacing: .02em !important;
+  opacity: 1 !important;
+  line-height: 1.2 !important;
+}
+
+/* Item 7+9: Record section text prominence */
+.record-head .eyebrow {
+  font-size: clamp(13px,1.3vw,18px) !important;
+  color: rgba(196,181,253,.9) !important;
+  letter-spacing: .09em !important;
+  opacity: 1 !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+}
+.record-example-label {
+  font-size: clamp(16px,1.6vw,22px) !important;
+  color: rgba(196,181,253,.78) !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  opacity: 1 !important;
+  text-align: center;
+  margin: 36px auto 52px;
+  display: block;
+}
+
+/* Item 11: Pricing section */
+.pricing-block {
+  padding: clamp(80px,10vw,140px) clamp(24px,6vw,100px);
+  border-top: 1px solid rgba(196,181,253,.07);
+  position: relative;
+  z-index: 1;
+}
+.pricing-head {
+  text-align: center;
+  margin-bottom: clamp(48px,6vw,80px);
+}
+.pricing-head .lede {
+  max-width: 500px;
+  margin: 20px auto 0;
+  opacity: .7;
+}
+.pricing-grid {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+  max-width: 880px;
+  margin: 0 auto 40px;
+}
+.pricing-card {
+  background: rgba(196,181,253,.04);
+  border: 1px solid rgba(196,181,253,.1);
+  border-radius: 20px;
+  padding: 40px 32px;
+  flex: 1;
+  min-width: 280px;
+  max-width: 400px;
+  text-align: left;
+  position: relative;
+  transition: border-color .3s, background .3s;
+}
+.pricing-card:hover { border-color: rgba(196,181,253,.24); }
+.pricing-card--featured {
+  border-color: rgba(124,58,237,.38);
+  background: rgba(99,102,241,.055);
+}
+.plan-badge {
+  position: absolute;
+  top: -13px;
+  left: 32px;
+  background: linear-gradient(135deg,#c4b5fd,#6366f1);
+  color: #050410;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+.plan-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .22em;
+  color: rgba(196,181,253,.55);
+  margin-bottom: 14px;
+}
+.plan-price { margin-bottom: 14px; line-height: 1; }
+.price-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(34px,3.8vw,50px);
+  font-weight: 700;
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 50%,#e879f9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.price-period {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: rgba(255,255,255,.35);
+  margin-left: 4px;
+}
+.plan-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: rgba(255,255,255,.5);
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px;
+}
+.plan-features li {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: rgba(255,255,255,.68);
+  padding: 7px 0 7px 18px;
+  border-bottom: 1px solid rgba(196,181,253,.06);
+  position: relative;
+}
+.plan-features li::before {
+  content: '◆';
+  font-size: 6px;
+  color: rgba(196,181,253,.45);
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.pricing-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: rgba(255,255,255,.28);
+  text-align: center;
+  margin-top: 16px;
+}
+</style>
 </head>
 <body>
 <canvas id="world" aria-hidden="true"></canvas>
@@ -60,7 +220,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   </a>
   <div class="nav-status"><i></i><span>VANTAGE / ONLINE</span></div>
   <nav>
-    <a href="#system">System</a><a href="#tools">Tools</a><a href="#humacity">Humacity</a><a href="pricing.html">Pricing</a>
+    <a href="#system">System</a><a href="#aria">ARIA</a><a href="#humacity">Humacity</a><a href="#pricing">Pricing</a>
   </nav>
   <div class="nav-actions"><a class="nav-sign" href="access.html">Sign in</a><a class="nav-cta" href="demo.html">Try the Demo <b>↗</b></a></div>
   <button class="nav-menu" aria-label="Open menu"><span></span><span></span></button>
@@ -169,7 +329,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 </div>
 <section class="record cinematic-panel reveal-section" id="record">
   <div class="section-index">02 / VANTAGE RECORD</div>
-  <div class="record-head"><p class="eyebrow">Your career lives here — not in the HRIS</p><h2>The record the org never built for you.</h2><p class="lede">Every decision you made. Every difficult conversation you navigated. Every rupee you protected. Vantage quietly turns the work you already do into a career record that is yours — across every org, every role, every year you've given to this profession.</p><p class="record-sub">The company owns the HRIS. <strong>Your Vantage Record belongs to you.</strong></p></div>
+  <div class="record-head"><p class="eyebrow">Your career lives here — not in the HRIS</p><h2>The record the org never built <span class="line accent">for you.</span></h2><p class="lede">Every decision you made. Every difficult conversation you navigated. Every rupee you protected. Vantage quietly turns the work you already do into a career record that is yours — across every org, every role, every year you've given to this profession.</p><p class="record-sub">The company owns the HRIS. <span class="line accent">Your Vantage Record belongs to you.</span></p></div>
   <p class="record-example-label">What your first year on Vantage can look like</p>
   <div class="record-universe" id="recordUniverse">
   <div class="record-orbit ro1"></div>
@@ -222,7 +382,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 <section class="meridian cinematic-panel reveal-section" id="system">
   <div class="section-index">03 / MERIDIAN</div>
   <div class="meridian-grid">
-    <div class="meridian-copy"><p class="eyebrow">CONTEXT ENGINE / 07 VARIABLES</p><h2>Generic HR intelligence<br>stops here.</h2><p class="lede">The answer changes when the environment changes. MERIDIAN maps the context around your decision, then calibrates the advice to the reality you are actually operating in.</p><div class="context-readout"><span>INPUTS</span><b id="meridianStatus">CALIBRATING...</b><div class="readout-line"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>
+    <div class="meridian-copy"><p class="eyebrow">CONTEXT ENGINE / 07 VARIABLES</p><h2>Generic HR intelligence<br><span class="line accent">stops here.</span></h2><p class="lede">The answer changes when the environment changes. MERIDIAN maps the context around your decision, then calibrates the advice to the reality you are actually operating in.</p><div class="context-readout"><span>INPUTS</span><b id="meridianStatus">CALIBRATING...</b><div class="readout-line"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>
     <div class="meridian-orbit" id="meridianOrbit"><canvas id="meridianGlobeCanvas" aria-hidden="true"></canvas><div class="orbit-glow"></div><div class="orbit-ring o1"></div><div class="orbit-ring o2"></div><div class="orbit-ring o3"></div><div class="orbit-core"><span>MERIDIAN</span><strong>PRECISION<br>ADVICE</strong><small>CONTEXT RESOLVED</small></div><div class="orbit-label l1">STATE<br><b>MAHARASHTRA</b></div><div class="orbit-label l2">INDUSTRY<br><b>IT / SAAS</b></div><div class="orbit-label l3">ORG TYPE<br><b>CORPORATE</b></div><div class="orbit-label l4">ORG SIZE<br><b>251–1000</b></div><div class="orbit-label l5">SENIORITY<br><b>HR MANAGER</b></div><div class="orbit-label l6">UNION<br><b>NON-UNION</b></div><div class="orbit-label l7">FUNCTION<br><b>ER SPECIALIST</b></div></div>
   </div>
 </section>
@@ -365,6 +525,49 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
     <p class="cta-note">No enterprise procurement. No annual lock-in. Your account is yours.</p>
   </div>
 </section>
+
+<section class="pricing-block cinematic-panel reveal-section" id="pricing">
+  <div class="pricing-head">
+    <p class="eyebrow">Simple, honest pricing</p>
+    <h2>Your private intelligence<br><span class="line accent">system, activated.</span></h2>
+    <p class="lede">No enterprise procurement. No IT approvals.<br>Your account belongs to you — not your organisation.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="plan-label">CORE</div>
+      <div class="plan-price"><span class="price-num">&#8377;699</span><span class="price-period">/month</span></div>
+      <p class="plan-desc">For HR professionals who want their own private intelligence layer.</p>
+      <ul class="plan-features">
+        <li>ER Case Navigator (PACT)</li>
+        <li>HR Data Storyteller (SIGNAL)</li>
+        <li>Stakeholder Influence Builder</li>
+        <li>Offer Intelligence</li>
+        <li>Policy Compass</li>
+        <li>MERIDIAN profile (7 variables)</li>
+        <li>Humac Score + Vantage Record</li>
+        <li>ARIA + Conversation Simulator</li>
+        <li>Monthly Debrief + Case Library</li>
+      </ul>
+      <a href="access.html" class="btn btn-ghost magnetic">Start free trial <span>&#8594;</span></a>
+    </div>
+    <div class="pricing-card pricing-card--featured">
+      <div class="plan-badge">FOR CONSULTANTS</div>
+      <div class="plan-label">CONSULTANT</div>
+      <div class="plan-price"><span class="price-num">&#8377;1,499</span><span class="price-period">/month</span></div>
+      <p class="plan-desc">For advisors managing intelligence across multiple client engagements.</p>
+      <ul class="plan-features">
+        <li>Everything in Core</li>
+        <li>Multi-client dashboard</li>
+        <li>Per-client MERIDIAN profiles</li>
+        <li>Per-client Case Library + Debriefs</li>
+        <li>Client-level Humac Score</li>
+      </ul>
+      <a href="access.html" class="btn btn-primary magnetic">Start free trial <span>&#8594;</span></a>
+    </div>
+  </div>
+  <p class="pricing-note">7-day free trial &nbsp;&#183;&nbsp; Cancel anytime &nbsp;&#183;&nbsp; No annual lock-in &nbsp;&#183;&nbsp; Your record stays yours</p>
+</section>
+
 
 <section class="final cinematic-panel"><div class="final-field"><div class="final-radial"></div></div><div class="final-copy"><p class="eyebrow">VANTAGE / Private intelligence system</p><h2>Do the work.<br>Keep the record.<br><span class="line accent">Build the career.</span></h2><p>Walk into the next room with more than an answer.</p><a href="access.html" class="btn btn-primary magnetic">Enter Vantage <span>↗</span></a></div><div class="final-foot"><span>VIRORAH VANTAGE</span><span>INDIA / HR</span><span>© 2026 Virorah Private Limited. All rights reserved.</span></div></section>
 </main></main>
