@@ -7,7 +7,7 @@ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* Scene HUD */
 const hudMeter=$('#hudMeter'),sceneTag=$('#sceneTag'),root=document.documentElement;
 const scenes=[['01','THE DECISION'],['02','DECISION FIELD'],['03','CONTEXT'],['04','ARIA'],['05','SYSTEM'],['06','HUMACITY'],['07','VANTAGE RECORD'],['08','THE DIFFERENCE'],['09','ACCESS'],['10','EXIT']];
-const cinematicSections=$$('.decision,.case,.meridian,.aria,.tools,.humacity,.record,.difference,.pricing,.final');
+const cinematicSections=$$('.meridian,.aria,.tools,.humacity,.record,.difference,.pricing,.final,.sim-room,.cta-moment');
 function sceneProgress(){const y=scrollY+innerHeight*.5;let idx=0;cinematicSections.forEach((s,i)=>{if(y>=s.offsetTop)idx=i});const s=scenes[Math.min(idx,scenes.length-1)]||scenes[0];if(sceneTag)sceneTag.textContent=s[0]+' / '+s[1];if(hudMeter)hudMeter.style.width=Math.min(100,(y/(document.body.scrollHeight-innerHeight))*100)+'%'}
 addEventListener('scroll',sceneProgress,{passive:true});addEventListener('resize',sceneProgress);sceneProgress();
 
@@ -50,7 +50,7 @@ const finance=$('#financeField');
 if(finance&&!reduce&&window.gsap){for(let i=0;i<44;i++){const p=document.createElement('i');p.className='finance-particle';p.style.cssText=`position:absolute;width:${1+Math.random()*3}px;height:${1+Math.random()*3}px;border-radius:50%;left:${5+Math.random()*85}%;top:${8+Math.random()*84}%;background:rgba(196,181,253,${.2+Math.random()*.45});box-shadow:0 0 12px rgba(99,102,241,.45);pointer-events:none`;finance.appendChild(p);gsap.to(p,{x:(82-p.offsetLeft/finance.clientWidth*100)*4,y:(52-p.offsetTop/finance.clientHeight*100)*3,duration:2.5+Math.random()*4,repeat:-1,ease:'none',delay:-Math.random()*5})}}
 
 /* Scroll-driven camera energy */
-if(window.gsap&&!reduce&&window.ScrollTrigger){gsap.to('.decision-stage',{rotationX:2,scrollTrigger:{trigger:'.decision',start:'top bottom',end:'bottom top',scrub:true}});gsap.to('.meridian-orbit',{rotation:6,scrollTrigger:{trigger:'.meridian',start:'top bottom',end:'bottom top',scrub:true}});gsap.to('.aria-room',{rotationY:-3,scrollTrigger:{trigger:'.aria',start:'top bottom',end:'bottom top',scrub:true}});gsap.to('.finance-field',{rotationY:2,scrollTrigger:{trigger:'.humacity',start:'top bottom',end:'bottom top',scrub:true}});gsap.to('.record-universe',{rotationZ:1.5,scrollTrigger:{trigger:'.record',start:'top bottom',end:'bottom top',scrub:true}})}
+if(window.gsap&&!reduce&&window.ScrollTrigger){if(document.querySelector('.decision-stage')){gsap.to('.decision-stage',{rotationX:2,scrollTrigger:{trigger:'.decision-stage',start:'top bottom',end:'bottom top',scrub:true}});}gsap.to('.meridian-orbit',{rotation:6,scrollTrigger:{trigger:'.meridian',start:'top bottom',end:'bottom top',scrub:true}});gsap.to('.aria-room',{rotationY:-3,scrollTrigger:{trigger:'.aria',start:'top bottom',end:'bottom top',scrub:true}});gsap.to('.finance-field',{rotationY:2,scrollTrigger:{trigger:'.humacity',start:'top bottom',end:'bottom top',scrub:true}});gsap.to('.record-universe',{rotationZ:1.5,scrollTrigger:{trigger:'.record',start:'top bottom',end:'bottom top',scrub:true}})}
 
 /* HUD fades on hoverable content */
 if(!reduce){$$('a,button').forEach(el=>{el.addEventListener('pointerenter',()=>root.classList.add('interface-focus'));el.addEventListener('pointerleave',()=>root.classList.remove('interface-focus'))})}
@@ -90,12 +90,12 @@ $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.ge
    const key=btn.dataset.choice,o=outcomes[key];
    if(stage){stage.dataset.state=o.state;$('.decision-state b',stage).textContent=o.signal}
    if(machine)machine.dataset.outcome=key;
-   field.process.textContent=o.process;field.exposure.textContent=o.exposure;field.impact.textContent=o.impact;field.def.textContent=o.def;
+   if(field.process)field.process.textContent=o.process;if(field.exposure)field.exposure.textContent=o.exposure;if(field.impact)field.impact.textContent=o.impact;if(field.def)field.def.textContent=o.def;
    setRail('risk',o.risk);setRail('signal',o.signal);setSystem(o.state);focus();
    document.documentElement.style.setProperty('--system-risk',o.state==='risk'?'.8':o.state==='partial'?'.35':'.05');
    document.documentElement.style.setProperty('--system-energy',o.state==='risk'?'.9':o.state==='defensible'?'.65':'.5');
  }));
- $('#caseReset')?.addEventListener('click',()=>{if(stage){stage.dataset.state='';$('.decision-state b',stage).textContent='AWAITING CHOICE'}if(machine)machine.dataset.outcome='';field.process.textContent='WAITING';field.exposure.textContent='—';field.impact.textContent='—';field.def.textContent='—';setRail('risk','UNRESOLVED');setRail('signal','LISTENING');setSystem('');});
+ $('#caseReset')?.addEventListener('click',()=>{if(stage){stage.dataset.state='';$('.decision-state b',stage).textContent='AWAITING CHOICE'}if(machine)machine.dataset.outcome='';if(field.process)field.process.textContent='WAITING';if(field.exposure)field.exposure.textContent='—';if(field.impact)field.impact.textContent='—';if(field.def)field.def.textContent='—';setRail('risk','UNRESOLVED');setRail('signal','LISTENING');setSystem('');});
  // Meridian becomes a context lock sequence.
  const meridian=$('.meridian'),status=$('#meridianStatus');
  if(meridian){const labels=$$('.orbit-label',meridian);const observer=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){meridian.dataset.calibrated='true';setRail('context','RESOLVED');setRail('signal','PRECISION');setTimeout(()=>setRail('signal','READY'),900);observer.disconnect()}},{threshold:.35});observer.observe(meridian)}
@@ -107,7 +107,7 @@ $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.ge
  const record=$('.record');if(record){const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){record.dataset.memory='active';setRail('memory','PERSISTENT');setTimeout(()=>setRail('memory','BUILDING'),700);io.disconnect()}},{threshold:.3});io.observe(record)}
  // HUD bottom readout evolves with the scene.
  const hudBottom=$('.hud-readout.bottom');
- if(hudBottom&&window.ScrollTrigger&&!reduce){ScrollTrigger.create({trigger:'.decision',start:'top 70%',onEnter:()=>hudBottom.textContent='DECISION FIELD / LIVE',onLeaveBack:()=>hudBottom.textContent='SYSTEM MEMORY / ACTIVE'});ScrollTrigger.create({trigger:'.meridian',start:'top 70%',onEnter:()=>hudBottom.textContent='CONTEXT / RESOLVING'});ScrollTrigger.create({trigger:'.aria',start:'top 70%',onEnter:()=>hudBottom.textContent='ARIA / REHEARSAL'});ScrollTrigger.create({trigger:'.humacity',start:'top 70%',onEnter:()=>hudBottom.textContent='HUMACITY / FINANCIAL MODEL'});ScrollTrigger.create({trigger:'.record',start:'top 70%',onEnter:()=>hudBottom.textContent='VANTAGE RECORD / MEMORY'});}
+ if(hudBottom&&window.ScrollTrigger&&!reduce){ScrollTrigger.create({trigger:'.humacity',start:'top 70%',onEnter:()=>hudBottom.textContent='PEOPLE FINANCIAL INTELLIGENCE',onLeaveBack:()=>hudBottom.textContent='SYSTEM MEMORY / ACTIVE'});ScrollTrigger.create({trigger:'.meridian',start:'top 70%',onEnter:()=>hudBottom.textContent='CONTEXT / RESOLVING'});ScrollTrigger.create({trigger:'.aria',start:'top 70%',onEnter:()=>hudBottom.textContent='ARIA / REHEARSAL'});ScrollTrigger.create({trigger:'.humacity',start:'top 70%',onEnter:()=>hudBottom.textContent='HUMACITY / FINANCIAL MODEL'});ScrollTrigger.create({trigger:'.record',start:'top 70%',onEnter:()=>hudBottom.textContent='VANTAGE RECORD / MEMORY'});}
  // Make portal rings respond to system energy.
  if(!reduce){addEventListener('pointermove',e=>{document.documentElement.style.setProperty('--system-precision',String(Math.min(1,Math.abs(e.clientX/innerWidth-.5)*.8+.35)))},{passive:true})}
 })();
