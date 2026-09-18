@@ -440,3 +440,63 @@
 
   window.addEventListener('resize',()=>{resize();makePts();},{passive:true});
 })();
+
+/* Vantage Record — Intelligence Dossier scroll animation (SR18) */
+(function initDossier(){
+  'use strict';
+  const dossier = document.getElementById('recordDossier');
+  if(!dossier) return;
+
+  const entries  = [...dossier.querySelectorAll('.dos-entry')];
+  const progress = document.getElementById('dosProgress');
+  const percent  = document.getElementById('dosPercent');
+  const total    = document.getElementById('dosTotal');
+  let fired = false;
+
+  function countUp(el, target, suffix, duration){
+    const start = performance.now();
+    (function step(now){
+      const t = Math.min(1,(now-start)/duration);
+      const ease = t<.5 ? 2*t*t : -1+(4-2*t)*t;
+      el.textContent = '₹' + (ease*target).toFixed(1) + 'L';
+      if(t<1) requestAnimationFrame(step);
+    })(start);
+  }
+
+  function countPercent(el, target, duration){
+    const start = performance.now();
+    (function step(now){
+      const t = Math.min(1,(now-start)/duration);
+      const ease = t<.5 ? 2*t*t : -1+(4-2*t)*t;
+      el.textContent = Math.round(ease*target) + '%';
+      if(t<1) requestAnimationFrame(step);
+    })(start);
+  }
+
+  function run(){
+    if(fired) return; fired = true;
+
+    // Progress bar + percent counter
+    setTimeout(()=>{
+      if(progress){ progress.style.width = '73%'; }
+      if(percent)  countPercent(percent, 73, 2200);
+    }, 200);
+
+    // Entries stagger in
+    entries.forEach((entry, i)=>{
+      setTimeout(()=>{ entry.classList.add('dos-visible'); }, 400 + i * 520);
+    });
+
+    // Total counter fires after last entry
+    const lastDelay = 400 + entries.length * 520 + 200;
+    setTimeout(()=>{
+      if(total) countUp(total, 18.4, 2000);
+    }, lastDelay);
+  }
+
+  const section = document.querySelector('.record.cinematic-panel');
+  if(!section) return;
+  new IntersectionObserver(es=>{
+    if(es[0].isIntersecting) run();
+  },{threshold:0.25}).observe(section);
+})();
