@@ -2168,9 +2168,15 @@
   async function run(){
     console.log('[HeroSeq] run() started');
 
-    /* 1. Tagline types out (mixed em) */
-    await typeMixedLine(tagline, "Your intelligence ally at work. ", "Not the org's — yours.", 32, 'Tagline');
-    await delay(400);
+    /* Deliberate blank pause before anything types — makes the START of
+       the reveal unmistakable, since tagline was the step most likely
+       to be missed (shortest, earliest, easiest to blink past). */
+    await delay(500);
+
+    /* 1. Tagline types out (mixed em) — slowed from 32ms to 58ms/char,
+       nearly doubling visible duration (~1.8s -> ~3.3s) */
+    await typeMixedLine(tagline, "Your intelligence ally at work. ", "Not the org's — yours.", 58, 'Tagline');
+    await delay(500);
 
     /* 2. Kicker fades in */
     await fadeIn(kicker, 650);
