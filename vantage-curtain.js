@@ -661,3 +661,27 @@
     if(es[0].isIntersecting) run();
   }, {threshold: 0.2}).observe(section);
 })();
+
+/* Sim-room classified briefing — lines appear one by one on scroll (SR18) */
+(function initSimRoom(){
+  'use strict';
+  const brief = document.getElementById('simBrief');
+  if(!brief) return;
+  const lines = [...brief.querySelectorAll('.sb-line')];
+  let fired = false;
+
+  function run(){
+    if(fired) return; fired = true;
+    lines.forEach((line, i) => {
+      setTimeout(() => {
+        line.classList.add('sb-visible');
+      }, i * 280);
+    });
+  }
+
+  const section = document.querySelector('.sim-room');
+  if(!section) return;
+  new IntersectionObserver(es => {
+    if(es[0].isIntersecting) run();
+  }, {threshold: 0.15}).observe(section);
+})();
