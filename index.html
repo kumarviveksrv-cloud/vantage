@@ -916,6 +916,129 @@
   font-variant-numeric: lining-nums !important;
   font-feature-settings: "lnum" 1 !important;
 }
+
+/* ═══ SIM-ROOM REBUILD (SR18) ═══ */
+
+/* Heading: two-tier — plain pre-line + gradient accent */
+.sim-heading-pre {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: clamp(18px,2vw,26px) !important;
+  font-weight: 400 !important;
+  color: rgba(255,255,255,.55) !important;
+  font-style: normal !important;
+  display: block !important;
+  margin-bottom: 6px !important;
+  -webkit-text-fill-color: rgba(255,255,255,.55) !important;
+  background: none !important;
+}
+
+/* Classified briefing panel */
+.sim-brief {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 36px;
+  border: 1px solid rgba(124,58,237,.2);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  background: rgba(8,7,24,.75);
+}
+.sb-line {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(124,58,237,.1);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity .45s ease, transform .45s ease;
+}
+.sb-line:last-child { border-bottom: none; }
+.sb-line.sb-visible { opacity: 1; transform: translateX(0); }
+.sb-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: .2em;
+  color: rgba(196,181,253,.45);
+  min-width: 88px;
+  flex-shrink: 0;
+}
+.sb-val {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,.65);
+  flex: 1;
+  line-height: 1.4;
+}
+.sb-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .18em;
+  padding: 3px 9px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.sb-live {
+  background: rgba(239,68,68,.14);
+  border: 1px solid rgba(239,68,68,.28);
+  color: rgba(252,165,165,.9);
+}
+.sb-ok {
+  background: rgba(52,211,153,.1);
+  border: 1px solid rgba(52,211,153,.22);
+  color: rgba(110,231,183,.9);
+}
+.sb-warn {
+  background: rgba(251,191,36,.1);
+  border: 1px solid rgba(251,191,36,.22);
+  color: rgba(252,211,77,.9);
+}
+
+/* Intelligence result panel */
+.result-intelligence {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(196,181,253,.1);
+}
+.result-intelligence.ri-active { display: flex; }
+.ri-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .2em;
+  color: rgba(196,181,253,.42);
+  display: block;
+  margin-bottom: 5px;
+}
+.ri-label--aria { color: rgba(168,85,247,.55); }
+.ri-expnum {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(24px,2.8vw,36px);
+  font-weight: 700;
+  background: linear-gradient(90deg,#c084fc,#8b5cf6,#6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  display: block;
+}
+.ri-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: rgba(255,255,255,.68);
+  line-height: 1.65;
+  margin: 0;
+}
+.ri-text--aria {
+  font-style: italic;
+  color: rgba(196,181,253,.78);
+  border-left: 2px solid rgba(124,58,237,.35);
+  padding-left: 12px;
+}
 </style>
 </head>
 <body>
@@ -1337,9 +1460,34 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 
 <section class="sim-room" id="simRoom">
   <div class="sim-threshold">
-    <p class="sim-pre">The system is live</p>
-    <h2 class="sim-heading">Step inside.<br><span class="line accent">The case is waiting.</span></h2>
-    <p class="sim-sub">A real case. A real decision. Vantage shows you what sits underneath it.</p>
+    <!-- Classified briefing: 4 lines appear before the room is entered -->
+    <div class="sim-brief" id="simBrief">
+      <div class="sb-line" data-d="0">
+        <span class="sb-key">CASE</span>
+        <span class="sb-val">2841 / Employee Relations / Manager escalation</span>
+        <span class="sb-badge sb-live">ACTIVE</span>
+      </div>
+      <div class="sb-line" data-d="1">
+        <span class="sb-key">CONTEXT</span>
+        <span class="sb-val">Maharashtra &middot; IT/SaaS &middot; 251&ndash;1000 &middot; HR Manager &middot; Non-union</span>
+        <span class="sb-badge sb-ok">MERIDIAN LOCKED</span>
+      </div>
+      <div class="sb-line" data-d="2">
+        <span class="sb-key">SIGNAL</span>
+        <span class="sb-val">Documentation gap detected &middot; Procedural risk elevated &middot; Manager under pressure</span>
+        <span class="sb-badge sb-warn">FLAG</span>
+      </div>
+      <div class="sb-line" data-d="3">
+        <span class="sb-key">INTELLIGENCE</span>
+        <span class="sb-val">PACT engine active &middot; 4 paths mapped &middot; Financial exposure quantified</span>
+        <span class="sb-badge sb-ok">READY</span>
+      </div>
+    </div>
+    <h2 class="sim-heading">
+      <span class="sim-heading-pre">Generic HR intelligence gives you an answer.</span><br>
+      <span class="line accent">Vantage shows you everything underneath it.</span>
+    </h2>
+    <p class="sim-sub">Select a path below. The intelligence field activates.</p>
   </div>
   <div class="sim-floor" aria-hidden="true">
     <div class="floor-grid"></div>
@@ -1394,6 +1542,20 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <div><small>Process</small><strong id="resultProcess">—</strong></div>
             </div>
             <a href="er-case-navigator.html" class="result-link">Open the full Case Navigator →</a>
+          <div class="result-intelligence" id="resultIntelligence">
+            <div class="ri-exposure">
+              <span class="ri-label">FINANCIAL EXPOSURE</span>
+              <span class="ri-expnum" id="resultExpNum">—</span>
+            </div>
+            <div class="ri-pact">
+              <span class="ri-label">PACT ASSESSMENT</span>
+              <p class="ri-text" id="resultPact">—</p>
+            </div>
+            <div class="ri-aria">
+              <span class="ri-label ri-label--aria">ARIA ASKS</span>
+              <p class="ri-text ri-text--aria" id="resultAria">—</p>
+            </div>
+          </div>
           </div>
         </div>
       </div>
