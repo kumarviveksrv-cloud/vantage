@@ -2069,20 +2069,14 @@
   document.addEventListener('webkitfullscreenchange', onFsChange);
 })();
 
-/* ═══ HERO CINEMATIC SEQUENCE — typewriter/fade orchestration (SR18.6) ═══
-   Rebuilt slower and more deliberate per feedback:
-   1. Tagline types out (slow, ~55ms/char)
-   2. Kicker fades in (slow, 1200ms)
-   3. H1 line 1 (dim) types out (slow, ~60ms/char)
-   4. H1 lines 2+3 (accent) fade in WORD BY WORD, not as whole lines
+/* ═══ HERO CINEMATIC SEQUENCE — typewriter/fade orchestration (SR18.7) ═══
+   Reverted to the exact confirmed spec after the word-by-word rewrite
+   caused tagline and accent lines to never reach opacity:1 at all.
+   1. Tagline types out (32ms/char)
+   2. Kicker fades in (650ms)
+   3. H1 line 1 (dim) types out (34ms/char)
+   4. H1 lines 2+3 (accent) fade in together (800ms)
    5. "Enter Vantage." typewriter fires (existing initHeroEnter logic)
-
-   Defensive fix: tagline/kicker were reported as "already visible, no
-   animation seen" — almost certainly the browser coalescing/dropping
-   paint frames right as it tears down the heavy prologue WebGL scene
-   and the ta-da particle burst. A settle delay plus an explicit double
-   rAF sync before each phase forces the browser to actually paint the
-   hidden state before revealing it, so no phase can visually "skip".
 */
 (function initHeroSequence(){
   'use strict';
@@ -2096,13 +2090,8 @@
   if(!lineDim || !lineAccents.length) return;
 
   const delay = ms => new Promise(r => setTimeout(r, ms));
-  /* Two nested rAFs guarantee the browser has actually painted the
-     current state before the next step begins — prevents frame
-     coalescing from making a fast change look instantaneous. */
-  const paint = () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   const hide  = el => el && el.style.setProperty('opacity','0','important');
 
-  /* Hide everything that will be sequenced, before first paint settles */
   hide(tagline);
   hide(kicker);
   hide(lineDim);
@@ -2110,9 +2099,7 @@
 
   async function typeMixedLine(el, plainText, emText, speed){
     el.textContent = '';
-    await paint();
     el.style.setProperty('opacity','1','important');
-    await paint();
     const plainSpan = document.createElement('span');
     el.appendChild(plainSpan);
     for(let i=0;i<=plainText.length;i++){
@@ -2131,76 +2118,44 @@
 
   async function typeSimpleLine(el, text, speed){
     el.textContent = '';
-    await paint();
     el.style.setProperty('opacity','1','important');
-    await paint();
     for(let i=0;i<=text.length;i++){
       el.textContent = text.slice(0,i);
       await delay(speed);
     }
   }
 
-  async function fadeIn(el, duration){
-    await paint();
-    el.style.transition = 'opacity '+duration+'ms ease';
-    await paint();
-    el.style.setProperty('opacity','1','important');
-    await delay(duration);
-  }
-
-  /* Word-by-word fade: wraps each word in the line's own span, fades
-     each in sequence with a stagger, preserving the line's italic
-     accent styling on every word. */
-  async function fadeInWords(el, wordDelay, wordDuration){
-    const text = el.textContent.trim();
-    const words = text.split(/\s+/);
-    el.textContent = '';
-    await paint();
-    el.style.setProperty('opacity','1','important');
-    const spans = words.map((w,i)=>{
-      const span = document.createElement('span');
-      span.textContent = w + (i < words.length-1 ? '\u00A0' : '');
-      span.style.opacity = '0';
-      span.style.display = 'inline-block';
-      span.style.transition = 'opacity '+wordDuration+'ms ease, transform '+wordDuration+'ms ease';
-      span.style.transform = 'translateY(6px)';
-      el.appendChild(span);
-      return span;
+  function fadeIn(el, duration){
+    return new Promise(resolve=>{
+      el.style.transition = 'opacity '+duration+'ms ease';
+      requestAnimationFrame(()=>{
+        el.style.setProperty('opacity','1','important');
+        setTimeout(resolve, duration);
+      });
     });
-    await paint();
-    for(const span of spans){
-      span.style.opacity = '1';
-      span.style.transform = 'translateY(0)';
-      await delay(wordDelay);
-    }
-    await delay(wordDuration);
   }
 
   async function run(){
-    /* Settle beat: lets the browser finish tearing down the prologue's
-       WebGL scene and the ta-da particle burst before anything starts
-       animating, so the very first phase doesn't get swallowed. */
-    await delay(350);
-    await paint();
+    /* 1. Tagline types out (mixed em) */
+    await typeMixedLine(tagline, "Your intelligence ally at work. ", "Not the org's — yours.", 32);
+    await delay(400);
 
-    /* 1. Tagline types out (mixed em), slow */
-    await typeMixedLine(tagline, "Your intelligence ally at work. ", "Not the org's — yours.", 55);
-    await delay(600);
-
-    /* 2. Kicker fades in, slow */
-    await fadeIn(kicker, 1200);
-    await delay(900);
-
-    /* 3. H1 line 1 (dim) types out, slow */
-    await typeSimpleLine(lineDim, 'Every HR professional has had that 9 pm moment.', 60);
-    await delay(500);
-
-    /* 4. H1 lines 2+3 (accent) fade in WORD BY WORD, one line after the other */
-    for(const line of lineAccents){
-      await fadeInWords(line, 140, 450);
-      await delay(300);
-    }
+    /* 2. Kicker fades in */
+    await fadeIn(kicker, 650);
     await delay(700);
+
+    /* 3. H1 line 1 (dim) types out */
+    await typeSimpleLine(lineDim, 'Every HR professional has had that 9 pm moment.', 34);
+    await delay(350);
+
+    /* 4. H1 lines 2+3 (accent) fade in together */
+    lineAccents.forEach(el=>{
+      el.style.transition = 'opacity 800ms ease';
+    });
+    requestAnimationFrame(()=>{
+      lineAccents.forEach(el=> el.style.setProperty('opacity','1','important'));
+    });
+    await delay(1000);
 
     /* 5. "Enter Vantage." typewriter sequence (existing logic) */
     if(window._heroEnterRun) window._heroEnterRun();
@@ -2236,5 +2191,9 @@
     });
   }
 
-  waitForLandingReveal().then(() => setTimeout(run, 400));
+  /* Small settle buffer (600ms, was 400ms) so the browser has a beat to
+     finish tearing down the prologue's WebGL scene before the first
+     typewriter starts — reduces risk of the tagline appearing to "snap"
+     to its final state on a busy frame. */
+  waitForLandingReveal().then(() => setTimeout(run, 600));
 })();
