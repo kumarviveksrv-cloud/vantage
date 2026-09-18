@@ -1227,6 +1227,26 @@
 .prologue-copy, .prologue-skip, .prologue-countdown,
 .prologue-fade { position: relative; z-index: 3; }
 .prologue-grid, .prologue-vignette { z-index: 2; }
+
+/* Reflect modal scrollbar — purple gradient, matches platform palette */
+.reflect-body::-webkit-scrollbar {
+  width: 6px !important;
+}
+.reflect-body::-webkit-scrollbar-track {
+  background: rgba(10,9,30,.6) !important;
+  border-radius: 3px !important;
+}
+.reflect-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg,#c084fc,#8b5cf6,#6366f1) !important;
+  border-radius: 3px !important;
+}
+.reflect-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg,#d8b4fe,#a78bfa,#818cf8) !important;
+}
+.reflect-body {
+  scrollbar-color: #8b5cf6 rgba(10,9,30,.6) !important;
+  scrollbar-width: thin !important;
+}
 </style>
 </head>
 <body>
