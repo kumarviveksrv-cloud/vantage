@@ -1119,35 +1119,3 @@
     document.dispatchEvent(relay);
   }, {passive: true});
 })();
-
-/* Sim-heading alignment — JS measures actual rendered positions and sets offset
-   precisely so heading top-edge = case-machine card top-edge (SR18) */
-(function alignSimHeading(){
-  'use strict';
-
-  function run(){
-    const heading     = document.querySelector('.sim-heading');
-    const caseMachine = document.querySelector('.case-machine');
-    if(!heading || !caseMachine) return;
-
-    /* Reset any prior offset so measurement is clean */
-    heading.style.marginTop = '';
-    heading.style.paddingTop = '';
-
-    const hRect = heading.getBoundingClientRect();
-    const mRect = caseMachine.getBoundingClientRect();
-    const gap   = mRect.top - hRect.top;
-
-    if(gap > 0){
-      heading.style.marginTop = gap + 'px';
-    } else if(gap < 0){
-      /* heading is below machine — pull it up */
-      heading.style.marginTop = gap + 'px';
-    }
-  }
-
-  /* Run once layout is complete, and again on resize/zoom */
-  if(document.readyState === 'complete') setTimeout(run, 120);
-  else window.addEventListener('load', ()=>setTimeout(run, 120));
-  window.addEventListener('resize', run, {passive:true});
-})();
