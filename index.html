@@ -1691,22 +1691,26 @@
 .cor-choices {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  grid-template-rows: 1fr 1fr;
+  gap: 14px;
   width: 100%;
   margin-bottom: 28px;
+}
+@media (max-width: 700px) {
+  .cor-choices { grid-template-columns: 1fr; grid-template-rows: none; }
 }
 .cor-choice {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 28px 22px;
+  padding: 20px 18px;
   border: 1px solid rgba(124,58,237,.2);
   border-radius: 10px;
   background: rgba(12,10,32,.6);
   cursor: pointer;
   transition: all .35s ease;
-  gap: 10px;
+  gap: 8px;
 }
 .cor-choice:hover {
   border-color: rgba(124,58,237,.5);
@@ -2528,6 +2532,16 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-text">Start domestic enquiry</span>
               <span class="cor-choice-risk">process / defensible</span>
             </div>
+            <div class="cor-choice" data-room="1" data-pick="C">
+              <span class="cor-choice-letter">C</span>
+              <span class="cor-choice-text">Option C</span>
+              <span class="cor-choice-risk">placeholder</span>
+            </div>
+            <div class="cor-choice" data-room="1" data-pick="D">
+              <span class="cor-choice-letter">D</span>
+              <span class="cor-choice-text">Option D</span>
+              <span class="cor-choice-risk">placeholder</span>
+            </div>
           </div>
           <div class="cor-result" id="corResult1"></div>
           <div class="cor-next" data-next="2" style="display:none;">Proceed to Door 2 <span>→</span></div>
@@ -2562,6 +2576,16 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-letter">B</span>
               <span class="cor-choice-text">Reconstruct the trail</span>
               <span class="cor-choice-risk">signal / protected</span>
+            </div>
+            <div class="cor-choice" data-room="2" data-pick="C">
+              <span class="cor-choice-letter">C</span>
+              <span class="cor-choice-text">Option C</span>
+              <span class="cor-choice-risk">placeholder</span>
+            </div>
+            <div class="cor-choice" data-room="2" data-pick="D">
+              <span class="cor-choice-letter">D</span>
+              <span class="cor-choice-text">Option D</span>
+              <span class="cor-choice-risk">placeholder</span>
             </div>
           </div>
           <div class="cor-result" id="corResult2"></div>
@@ -2598,6 +2622,16 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-text">Pull the Human P&amp;L</span>
               <span class="cor-choice-risk">quantified / defensible</span>
             </div>
+            <div class="cor-choice" data-room="3" data-pick="C">
+              <span class="cor-choice-letter">C</span>
+              <span class="cor-choice-text">Option C</span>
+              <span class="cor-choice-risk">placeholder</span>
+            </div>
+            <div class="cor-choice" data-room="3" data-pick="D">
+              <span class="cor-choice-letter">D</span>
+              <span class="cor-choice-text">Option D</span>
+              <span class="cor-choice-risk">placeholder</span>
+            </div>
           </div>
           <div class="cor-result" id="corResult3"></div>
           <div class="cor-next" data-next="4" style="display:none;">Proceed to Door 4 <span>→</span></div>
@@ -2633,6 +2667,16 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-text">Run ARIA rehearsal</span>
               <span class="cor-choice-risk">simulated / prepared</span>
             </div>
+            <div class="cor-choice" data-room="4" data-pick="C">
+              <span class="cor-choice-letter">C</span>
+              <span class="cor-choice-text">Option C</span>
+              <span class="cor-choice-risk">placeholder</span>
+            </div>
+            <div class="cor-choice" data-room="4" data-pick="D">
+              <span class="cor-choice-letter">D</span>
+              <span class="cor-choice-text">Option D</span>
+              <span class="cor-choice-risk">placeholder</span>
+            </div>
           </div>
           <div class="cor-result" id="corResult4"></div>
           <div class="cor-next" data-next="5" style="display:none;">Proceed to Door 5 <span>→</span></div>
@@ -2667,6 +2711,16 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-letter">B</span>
               <span class="cor-choice-text">Open your Vantage Record</span>
               <span class="cor-choice-risk">accumulated / yours</span>
+            </div>
+            <div class="cor-choice" data-room="5" data-pick="C">
+              <span class="cor-choice-letter">C</span>
+              <span class="cor-choice-text">Option C</span>
+              <span class="cor-choice-risk">placeholder</span>
+            </div>
+            <div class="cor-choice" data-room="5" data-pick="D">
+              <span class="cor-choice-letter">D</span>
+              <span class="cor-choice-text">Option D</span>
+              <span class="cor-choice-risk">placeholder</span>
             </div>
           </div>
           <div class="cor-result" id="corResult5"></div>
