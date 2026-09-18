@@ -1339,6 +1339,128 @@
 
 /* Rain region now handled by ctx.clip() in curtain.js */
 
+
+/* ═══ SIM-ROOM RADICAL REDESIGN (SR18.3) ═══ */
+
+/* Force case-grid to single column, centered */
+.sim-room .case-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0 !important;
+  max-width: 100% !important;
+}
+
+/* Case intro — centered film title card */
+.sim-room .case-intro {
+  text-align: center !important;
+  max-width: 680px !important;
+  margin: 0 auto 32px !important;
+  padding: 32px 0 !important;
+  border-bottom: 1px solid rgba(124,58,237,.15) !important;
+}
+.sim-room .case-intro .eyebrow { text-align: center !important; }
+.sim-room .case-intro h2 {
+  text-align: center !important;
+  font-size: clamp(32px,4vw,56px) !important;
+}
+.sim-room .case-intro p { text-align: center !important; max-width: 520px !important; margin: 16px auto !important; }
+.sim-room .case-meta {
+  justify-content: center !important;
+  gap: 24px !important;
+  margin-top: 20px !important;
+}
+
+/* Case machine — full width, centered */
+.sim-room .case-machine {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Decision field — horizontal row of 4 cards */
+.sim-room .case-options {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 14px !important;
+  margin: 24px 0 !important;
+}
+.sim-room .case-option {
+  flex-direction: column !important;
+  text-align: center !important;
+  padding: 20px 14px !important;
+  min-height: 110px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 10px !important;
+  cursor: pointer !important;
+  transition: all .3s ease !important;
+}
+.sim-room .case-option:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 0 20px rgba(124,58,237,.3) !important;
+}
+.sim-room .case-option .opt-letter {
+  margin: 0 auto 6px !important;
+}
+.sim-room .case-option .opt-label {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+.sim-room .case-option .opt-tag {
+  font-size: 9px !important;
+  opacity: .5 !important;
+  display: block !important;
+  margin-top: 4px !important;
+}
+
+/* Hide the old instructional text inside case-machine */
+.sim-room .case-machine > .case-head .case-hint { display: none !important; }
+
+/* Result section — full width dramatic reveal */
+.sim-room .case-result {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 28px !important;
+  margin-top: 20px !important;
+}
+
+/* Intelligence panel — horizontal layout */
+.result-intelligence.ri-active {
+  display: grid !important;
+  grid-template-columns: 200px 1fr 1fr !important;
+  gap: 24px !important;
+  align-items: start !important;
+}
+.ri-exposure {
+  text-align: center !important;
+  padding: 16px !important;
+  border-right: 1px solid rgba(196,181,253,.12) !important;
+}
+
+/* Sim-threshold heading — tighter spacing */
+.sim-heading {
+  margin-bottom: 4px !important;
+}
+.sim-threshold {
+  margin-bottom: 16px !important;
+}
+
+/* Case machine header — centered */
+.sim-room .case-head {
+  text-align: center !important;
+}
+.sim-room .case-head h3 {
+  text-align: center !important;
+}
+
+@media (max-width: 800px) {
+  .sim-room .case-options {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .result-intelligence.ri-active {
+    grid-template-columns: 1fr !important;
+  }
+}
 </style>
 </head>
 <body>
