@@ -500,3 +500,67 @@
     if(es[0].isIntersecting) run();
   },{threshold:0.25}).observe(section);
 })();
+
+/* Humac Score Synthesis — scroll-triggered build (SR18) */
+(function initHumacSynthesis(){
+  'use strict';
+  const panel = document.getElementById('humacSynthesis');
+  if(!panel) return;
+  const forces   = [...panel.querySelectorAll('.hs-force')];
+  const scorePnl = document.getElementById('humacScorePanel');
+  const numEl    = document.getElementById('humacNum');
+  const fillEl   = document.getElementById('humacFill');
+  const statusEl = document.getElementById('humacStatus');
+  const verdict  = document.getElementById('humacVerdict');
+  let fired = false;
+
+  function countUp(el, target, dur){
+    const t0 = performance.now();
+    (function step(now){
+      const t = Math.min(1,(now-t0)/dur);
+      const e = t<.5 ? 2*t*t : -1+(4-2*t)*t;
+      el.textContent = Math.round(e*target);
+      if(t<1) requestAnimationFrame(step);
+    })(t0);
+  }
+
+  const STATUS = [
+    'CALIBRATING L1: VALUE LEDGER...',
+    'CALIBRATING L2: TALENT PREMIUM...',
+    'CALIBRATING L3: ORG VITALS...',
+    'CALIBRATING L4: HUMAN P&L...',
+    'CALIBRATING L5: NET HUMAN WORTH...',
+  ];
+
+  function run(){
+    if(fired) return; fired = true;
+    const GAP = 500;
+
+    forces.forEach((f, i) => {
+      setTimeout(() => {
+        f.classList.add('hf-visible');
+        const bar = f.querySelector('.hsf-fill');
+        if(bar) bar.style.width = bar.dataset.w + '%';
+        if(statusEl) statusEl.textContent = STATUS[i];
+      }, 300 + i * GAP);
+    });
+
+    // Score panel fires after last force
+    const scoreAt = 300 + forces.length * GAP + 300;
+    setTimeout(() => {
+      if(scorePnl) scorePnl.classList.add('hsp-visible');
+      if(statusEl) statusEl.textContent = 'SYNTHESIS COMPLETE · 84 / 100';
+      if(fillEl)   fillEl.style.width = '84%';
+      if(numEl)    countUp(numEl, 84, 2000);
+      setTimeout(() => {
+        if(verdict) verdict.textContent = 'Strong · Improving · Boardroom-ready';
+      }, 2200);
+    }, scoreAt);
+  }
+
+  const section = document.querySelector('.humacity.cinematic-panel');
+  if(!section) return;
+  new IntersectionObserver(es => {
+    if(es[0].isIntersecting) run();
+  }, {threshold: 0.2}).observe(section);
+})();
