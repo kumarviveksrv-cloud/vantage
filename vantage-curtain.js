@@ -2098,6 +2098,7 @@
      needs its own reveal beat, not the typewriter treatment. Not part of
      the required-elements check since it's fine if absent. */
   const heroContext = h1.querySelector('.hero-context');
+  const heroDeck = document.querySelector('.hero-deck');
   if(!lineDim || !lineAccents.length){
     console.log('[HeroSeq] Missing h1 lines, aborting');
     return;
@@ -2120,6 +2121,7 @@
   hide(lineDim);
   lineAccents.forEach(hideKeepText);
   if(heroContext) hideKeepText(heroContext);
+  if(heroDeck) hideKeepText(heroDeck);
   console.log('[HeroSeq] Initial hide applied. tagline.textContent =', JSON.stringify(tagline.textContent));
   console.log('[HeroSeq] Accent lines text preserved:', lineAccents.map(el=>el.textContent));
 
@@ -2226,6 +2228,54 @@
     await delay(wordDuration);
   }
 
+  /* Word-by-word fade for a line with a leading <em> segment (e.g.
+     "HR for HR" ) followed by plain text. The em words are wrapped in
+     a real <em> element so they keep the existing .hero-deck em
+     styling (gradient/glow), while the rest are plain spans — both
+     sets fade in as one continuous word-by-word sequence. */
+  async function fadeInWordsMixed(el, emText, plainText, wordDelay, wordDuration){
+    el.textContent = '';
+    el.style.setProperty('opacity','1','important');
+
+    const emWords    = emText.trim().split(/\s+/).filter(Boolean);
+    const plainWords = plainText.trim().split(/\s+/).filter(Boolean);
+    const allSpans = [];
+
+    if(emWords.length){
+      const emWrap = document.createElement('em');
+      el.appendChild(emWrap);
+      emWords.forEach((w,i)=>{
+        const span = document.createElement('span');
+        span.textContent = w + (i < emWords.length-1 ? '\u00A0' : '');
+        span.style.opacity = '0';
+        span.style.display = 'inline-block';
+        span.style.transition = 'opacity '+wordDuration+'ms ease, transform '+wordDuration+'ms ease';
+        span.style.transform = 'translateY(6px)';
+        emWrap.appendChild(span);
+        allSpans.push(span);
+      });
+    }
+
+    plainWords.forEach((w,i)=>{
+      const span = document.createElement('span');
+      span.textContent = (i===0 ? '\u00A0' : '') + w + (i < plainWords.length-1 ? '\u00A0' : '');
+      span.style.opacity = '0';
+      span.style.display = 'inline-block';
+      span.style.transition = 'opacity '+wordDuration+'ms ease, transform '+wordDuration+'ms ease';
+      span.style.transform = 'translateY(6px)';
+      el.appendChild(span);
+      allSpans.push(span);
+    });
+
+    void el.offsetHeight;
+    for(const span of allSpans){
+      span.style.opacity = '1';
+      span.style.transform = 'translateY(0)';
+      await delay(wordDelay);
+    }
+    await delay(wordDuration);
+  }
+
   async function run(){
     console.log('[HeroSeq] run() started');
 
@@ -2263,9 +2313,26 @@
     }
     await delay(600);
 
-    /* 5. "Enter Vantage." typewriter sequence (existing logic) */
-    console.log('[HeroSeq] run() complete, handing off to heroEnter');
-    if(window._heroEnterRun) window._heroEnterRun();
+    /* 5. "Enter Vantage." typewriter sequence (existing logic) — now
+       AWAITED so hero-deck can reveal only after it finishes, instead
+       of firing in parallel. */
+    console.log('[HeroSeq] Handing off to heroEnter');
+    if(window._heroEnterRun) await window._heroEnterRun();
+
+    /* 6. hero-deck ("HR for HR — the private intelligence ally...")
+       fades in word by word. em portion built from the original
+       <em> element's text; plain portion is whatever textContent
+       remains after that. */
+    if(heroDeck){
+      await delay(400);
+      const emEl = heroDeck.querySelector('em');
+      const emText = emEl ? emEl.textContent : '';
+      const fullText = heroDeck.textContent;
+      const plainText = emEl ? fullText.slice(emText.length) : fullText;
+      await fadeInWordsMixed(heroDeck, emText, plainText, 85, 380);
+    }
+
+    console.log('[HeroSeq] run() complete');
   }
 
   function waitForLandingReveal(){
@@ -2306,6 +2373,7 @@
     hide(lineDim);
     lineAccents.forEach(hideKeepText);
     if(heroContext) hideKeepText(heroContext);
+    if(heroDeck) hideKeepText(heroDeck);
     console.log('[HeroSeq] Re-hidden right before run(). tagline.textContent =', JSON.stringify(tagline.textContent));
     console.log('[HeroSeq] Accent lines text still intact:', lineAccents.map(el=>el.textContent));
     setTimeout(run, 600);
