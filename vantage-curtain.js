@@ -997,15 +997,8 @@
   }
 
   async function run(){
-    /* Cycles 1 & 2: type full text, hold, erase — VANTAGE in caps */
-    for(let cycle = 0; cycle < 2; cycle++){
-      await typeIn(heText, 'Enter VANTAGE.', 58);
-      await delay(480);
-      await typeOut(heText, 26);
-      await delay(200);
-    }
-
-    /* Cycle 3: "Enter " in heText, "VANTAGE" in heVantage, "." in heDot */
+    /* Type once — "Enter " into heText, "VANTAGE" into heVantage,
+       "." into heDot. No erase/retype cycles. */
     await typeIn(heText, 'Enter ', 58);
     await typeIn(heVantage, 'VANTAGE', 58);
     await typeIn(heDot, '.', 58);
