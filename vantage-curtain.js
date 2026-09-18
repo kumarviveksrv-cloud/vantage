@@ -379,3 +379,64 @@
   }
 
 })();
+
+
+/* ARIA room — ambient particle cloud (SR18) */
+(function initAriaAmbient(){
+  'use strict';
+  const canvas=document.getElementById('ariaAmbient');
+  if(!canvas) return;
+  const room=canvas.closest('.aria-room');
+  if(!room) return;
+  const ctx=canvas.getContext('2d');
+  let W=0,H=0,pts=null,anim=null;
+
+  function resize(){
+    W=room.offsetWidth||500; H=room.offsetHeight||600;
+    canvas.width=W; canvas.height=H;
+  }
+
+  function makePts(){
+    pts=Array.from({length:220},()=>({
+      x:Math.random()*W, y:Math.random()*H,
+      r:0.4+Math.random()*1.6,
+      vx:(Math.random()-.5)*.25,
+      vy:(Math.random()-.5)*.25,
+      a:0.08+Math.random()*.28,
+      phase:Math.random()*Math.PI*2,
+    }));
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const t=performance.now()/1000;
+    pts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<-2)p.x=W+2; if(p.x>W+2)p.x=-2;
+      if(p.y<-2)p.y=H+2; if(p.y>H+2)p.y=-2;
+      const alpha=Math.max(0,p.a+Math.sin(t*1.2+p.phase)*.1);
+      /* lavender-to-indigo drift based on x position */
+      const u=p.x/W;
+      const r=Math.round(168-u*44); // 168→124
+      const g=Math.round(85-u*27);  // 85→58
+      const b=Math.round(247-u*10); // 247→237
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${r},${g},${b},${alpha})`;
+      ctx.fill();
+    });
+    anim=requestAnimationFrame(draw);
+  }
+
+  const section=document.querySelector('.aria.cinematic-panel');
+  if(!section) return;
+  new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting){
+      resize(); if(!pts)makePts(); if(!anim)draw();
+    } else {
+      if(anim){cancelAnimationFrame(anim);anim=null;}
+    }
+  },{threshold:0.05}).observe(section);
+
+  window.addEventListener('resize',()=>{resize();makePts();},{passive:true});
+})();
