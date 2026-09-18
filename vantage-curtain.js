@@ -1043,8 +1043,8 @@
     /* Hide message + sub initially — reveal after kicker types */
     const message = pro.querySelector('.prologue-message');
     const sub = pro.querySelector('.prologue-sub');
-    if(message){ message.style.opacity='0'; message.style.transition='opacity 1.3s ease'; }
-    if(sub){ sub.style.opacity='0'; sub.style.transition='opacity 1.3s ease'; }
+    if(message){ message.style.setProperty('opacity','0','important'); message.style.transition='opacity 1.3s ease'; }
+    if(sub){ sub.style.setProperty('opacity','0','important'); sub.style.transition='opacity 1.3s ease'; }
 
     const kicker = pro.querySelector('.prologue-kicker');
     if(!kicker) return;
@@ -1062,8 +1062,8 @@
         setTimeout(type, 68);
       } else {
         /* Cursor blinks, then reveal message, then sub */
-        setTimeout(()=>{ if(message) message.style.opacity='1'; }, 900);
-        setTimeout(()=>{ if(sub)     sub.style.opacity='1';     }, 2400);
+        setTimeout(()=>{ if(message) message.style.setProperty('opacity','1','important'); }, 900);
+        setTimeout(()=>{ if(sub)     sub.style.setProperty('opacity','1','important');     }, 2400);
         setTimeout(()=>{ cur.style.opacity='0'; cur.style.transition='opacity .4s'; }, 2800);
       }
     }
