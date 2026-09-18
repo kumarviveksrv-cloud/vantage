@@ -223,9 +223,17 @@
       if(!sessionStorage.getItem('vantage_tada')) return;
       sessionStorage.removeItem('vantage_tada');
 
-      /* Step 1: blank dark screen + type "Initiating Vantage..." */
-      if(initOverlay && initTextEl){
+      /* ═══ SR18 SEQUENCE: Prologue → Typewriter → Curtain Raiser → Landing ═══
+         Each stage dims in, does its thing, dims out.
+         Init-overlay stays BLACK until curtain raiser is confirmed active.
+         If curtain raiser was already seen this session, skip to doTada. */
+
+      const curtainAlreadySeen = sessionStorage.getItem('vantage_q_v6');
+
+      if(initOverlay && initTextEl && !curtainAlreadySeen){
+        /* ── STAGE 2: "Initiating Vantage..." typewriter ── */
         initOverlay.classList.add('init-active');
+        initOverlay.style.opacity = '1';
         initTextEl.textContent = '';
         const msg = 'Initiating Vantage...';
         let idx = 0;
@@ -233,21 +241,78 @@
           if(idx <= msg.length){ initTextEl.textContent = msg.slice(0, idx); idx++; }
           else {
             clearInterval(typer);
-            /* Longer hold so user reads the text */
+            /* Hold 1.8s so user reads it */
             setTimeout(()=>{
-              /* Dim OUT — slow fade */
-              initOverlay.style.transition = 'opacity 1.1s ease';
+              /* Fade the typewriter TEXT only — overlay stays black */
+              initTextEl.style.transition = 'opacity .8s ease';
+              initTextEl.style.opacity = '0';
+
+              /* ── STAGE 3: Wait for curtain raiser to activate ── */
+              /* vantage-cinematic.js fires #q-overlay on its own schedule
+                 after prologue-complete. We poll until it's active, THEN
+                 fade the init-overlay to reveal it. Zero flash. */
+              let polls = 0;
+              const maxPolls = 120; /* 120 × 50ms = 6s safety net */
+              const poller = setInterval(()=>{
+                polls++;
+                const qov = document.getElementById('q-overlay');
+                const isActive = qov && (qov.classList.contains('active') || qov.style.display === 'flex');
+
+                if(isActive || polls >= maxPolls){
+                  clearInterval(poller);
+
+                  if(isActive){
+                    /* Curtain raiser is ready underneath — dim out init-overlay */
+                    initOverlay.style.transition = 'opacity 1s ease';
+                    initOverlay.style.opacity = '0';
+                    setTimeout(()=>{
+                      initOverlay.classList.remove('init-active');
+                      initOverlay.style.opacity = '';
+                      initOverlay.style.transition = '';
+                      initTextEl.style.opacity = '';
+                      initTextEl.style.transition = '';
+                    }, 1050);
+                  } else {
+                    /* Safety: curtain raiser never appeared — fall through to doTada */
+                    initOverlay.style.transition = 'opacity 1s ease';
+                    initOverlay.style.opacity = '0';
+                    setTimeout(()=>{
+                      initOverlay.classList.remove('init-active');
+                      initOverlay.style.opacity = '';
+                      initOverlay.style.transition = '';
+                      initTextEl.style.opacity = '';
+                      initTextEl.style.transition = '';
+                      doTada();
+                    }, 1050);
+                  }
+                }
+              }, 50);
+            }, 1800);
+          }
+        }, 95);
+
+      } else if(initOverlay && initTextEl && curtainAlreadySeen){
+        /* Curtain already seen — do the typewriter → doTada flow */
+        initOverlay.classList.add('init-active');
+        initTextEl.textContent = '';
+        const msg2 = 'Initiating Vantage...';
+        let idx2 = 0;
+        const typer2 = setInterval(()=>{
+          if(idx2 <= msg2.length){ initTextEl.textContent = msg2.slice(0, idx2); idx2++; }
+          else {
+            clearInterval(typer2);
+            setTimeout(()=>{
+              initOverlay.style.transition = 'opacity 1s ease';
               initOverlay.style.opacity = '0';
               setTimeout(()=>{
                 initOverlay.classList.remove('init-active');
                 initOverlay.style.opacity = '';
                 initOverlay.style.transition = '';
-                /* Dim IN — ta-da fades in cinematically */
                 doTada();
-              }, 1150);
+              }, 1050);
             }, 1800);
           }
-        }, 95);  /* slower type: 95ms/char */
+        }, 95);
       } else { doTada(); }
 
       function doTada(){
