@@ -262,7 +262,33 @@
           if(logo) logo.style.opacity = '0';
           runParticles(document.getElementById('tada-canvas'), ()=>{
             tadaOverlay.classList.add('tada-out');
-            setTimeout(()=>{ tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 650);
+            /* Wait for curtain raiser to be active before hiding ta-da —
+               eliminates the bare-landing-page flash between the two */
+            (function waitForCurtain(){
+              const qov = document.getElementById('q-overlay');
+              /* If curtain raiser already seen or doesn't exist, hide normally */
+              if(!qov || sessionStorage.getItem('vantage_q_v6')){
+                setTimeout(()=>{ tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 650);
+                return;
+              }
+              /* Already active — hide ta-da immediately */
+              if(qov.classList.contains('active') || qov.style.display==='flex'){
+                setTimeout(()=>{ tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 80);
+                return;
+              }
+              /* Watch for curtain raiser to activate, then hide ta-da */
+              const obs = new MutationObserver(()=>{
+                if(qov.classList.contains('active') || qov.style.display==='flex'){
+                  obs.disconnect();
+                  clearTimeout(safety);
+                  /* Small pause so curtain raiser renders before ta-da disappears */
+                  setTimeout(()=>{ tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 100);
+                }
+              });
+              obs.observe(qov,{attributes:true,attributeFilter:['class','style']});
+              /* Safety: hide ta-da after 3.5s regardless (user already saw the curtain) */
+              const safety=setTimeout(()=>{ obs.disconnect(); tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 3500);
+            })();
           });
         }, 1100);
       }
@@ -1092,4 +1118,36 @@
     });
     document.dispatchEvent(relay);
   }, {passive: true});
+})();
+
+/* Sim-heading alignment — JS measures actual rendered positions and sets offset
+   precisely so heading top-edge = case-machine card top-edge (SR18) */
+(function alignSimHeading(){
+  'use strict';
+
+  function run(){
+    const heading     = document.querySelector('.sim-heading');
+    const caseMachine = document.querySelector('.case-machine');
+    if(!heading || !caseMachine) return;
+
+    /* Reset any prior offset so measurement is clean */
+    heading.style.marginTop = '';
+    heading.style.paddingTop = '';
+
+    const hRect = heading.getBoundingClientRect();
+    const mRect = caseMachine.getBoundingClientRect();
+    const gap   = mRect.top - hRect.top;
+
+    if(gap > 0){
+      heading.style.marginTop = gap + 'px';
+    } else if(gap < 0){
+      /* heading is below machine — pull it up */
+      heading.style.marginTop = gap + 'px';
+    }
+  }
+
+  /* Run once layout is complete, and again on resize/zoom */
+  if(document.readyState === 'complete') setTimeout(run, 120);
+  else window.addEventListener('load', ()=>setTimeout(run, 120));
+  window.addEventListener('resize', run, {passive:true});
 })();
