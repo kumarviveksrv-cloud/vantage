@@ -210,8 +210,11 @@
     });
   });
 
-  // ── Ta-da reveal (prologue -> landing) ──────────────────────────────────
+  // ── Ta-da reveal — with "Initiating Vantage..." interstitial (SR18) ──────────
   const tadaOverlay = document.getElementById('tada-overlay');
+  const initOverlay = document.getElementById('init-overlay');
+  const initTextEl  = document.getElementById('init-text');
+
   if(tadaOverlay){
     tadaOverlay.style.display = 'none';
     const obs = new MutationObserver(()=>{
@@ -219,21 +222,43 @@
       obs.disconnect();
       if(!sessionStorage.getItem('vantage_tada')) return;
       sessionStorage.removeItem('vantage_tada');
-      const logo = document.getElementById('tada-logoimg');
-      tadaOverlay.style.display = 'flex';
-      setTimeout(()=>{
-        if(logo) logo.style.filter = 'drop-shadow(0 0 80px rgba(196,181,253,0.9)) drop-shadow(0 0 40px rgba(99,102,241,0.6))';
-      }, 200);
-      setTimeout(()=>{
-        if(logo) logo.style.opacity = '0';
-        runParticles(document.getElementById('tada-canvas'), ()=>{
-          tadaOverlay.classList.add('tada-out');
-          setTimeout(()=>{
-            tadaOverlay.style.display = 'none';
-            tadaOverlay.classList.remove('tada-out');
-          }, 650);
-        });
-      }, 1100);
+
+      /* Step 1: blank dark screen + type "Initiating Vantage..." */
+      if(initOverlay && initTextEl){
+        initOverlay.classList.add('init-active');
+        initTextEl.textContent = '';
+        const msg = 'Initiating Vantage...';
+        let idx = 0;
+        const typer = setInterval(()=>{
+          if(idx <= msg.length){ initTextEl.textContent = msg.slice(0, idx); idx++; }
+          else {
+            clearInterval(typer);
+            setTimeout(()=>{
+              initOverlay.style.transition = 'opacity .55s ease';
+              initOverlay.style.opacity = '0';
+              setTimeout(()=>{
+                initOverlay.classList.remove('init-active');
+                initOverlay.style.opacity = '';
+                initOverlay.style.transition = '';
+                doTada();
+              }, 560);
+            }, 700);
+          }
+        }, 52);
+      } else { doTada(); }
+
+      function doTada(){
+        const logo = document.getElementById('tada-logoimg');
+        tadaOverlay.style.display = 'flex';
+        setTimeout(()=>{ if(logo) logo.style.filter = 'drop-shadow(0 0 80px rgba(196,181,253,0.9)) drop-shadow(0 0 40px rgba(99,102,241,0.6))'; }, 200);
+        setTimeout(()=>{
+          if(logo) logo.style.opacity = '0';
+          runParticles(document.getElementById('tada-canvas'), ()=>{
+            tadaOverlay.classList.add('tada-out');
+            setTimeout(()=>{ tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 650);
+          });
+        }, 1100);
+      }
     });
     obs.observe(document.body,{attributes:true,attributeFilter:['class']});
   }
