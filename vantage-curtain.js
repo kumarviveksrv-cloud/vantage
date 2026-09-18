@@ -295,6 +295,7 @@
         tadaOverlay.style.opacity = '1';
         tadaOverlay.style.transition = '';
         tadaOverlay.style.display = 'flex';
+        console.log('[TaDa] Logo overlay shown at', performance.now().toFixed(0)+'ms');
 
         /* Logo glow applies almost immediately, while its own entrance
            animation is still settling in. */
@@ -302,11 +303,12 @@
 
         /* Stars fire in the EXACT SAME instant the logo appears — no
            setTimeout, no delay of any kind. Called synchronously,
-           same tick as display:flex above. If a gap was still visible
-           after the previous fix, it could only have been a stale
-           cached copy of this script — there is now nothing left to
-           delay this call at all. */
+           same tick as display:flex above. Shader is prewarmed during
+           the prologue (see prewarmParticleShader above) so this call
+           shouldn't stall on first-time GPU shader compilation either. */
+        console.log('[TaDa] Calling runParticles at', performance.now().toFixed(0)+'ms');
         runParticles(document.getElementById('tada-canvas'), ()=>{
+            console.log('[TaDa] Particles finished at', performance.now().toFixed(0)+'ms');
             /* Particles have finished — now hold the logo alone for a
                beat so the reveal still gets room to breathe, before
                dissolving into the landing page. */
@@ -469,10 +471,52 @@
   });
 
   // ── Shared particle explosion ───────────────────────────────────────────
+  /* Prewarm: compiles the EXACT SAME shader/material this particle
+     burst uses, on the SAME canvas element, but WITHOUT starting the
+     animation or touching canvas visibility — just enough to force
+     the GPU driver to compile and cache the shader program well
+     before it's actually needed. Called once, early, during the
+     13-second prologue (see call site below), so whatever stall
+     shader compilation causes happens silently off-screen instead of
+     during the actual ta-da reveal. */
+  function prewarmParticleShader(){
+    const canvas = document.getElementById('tada-canvas');
+    if(!canvas || typeof THREE === 'undefined') return;
+    try{
+      const rdr = new THREE.WebGLRenderer({canvas, antialias:false, alpha:true});
+      rdr.setSize(innerWidth, innerHeight);
+      const scene = new THREE.Scene();
+      const cam = new THREE.OrthographicCamera(-innerWidth/2, innerWidth/2, innerHeight/2, -innerHeight/2, 1, 100);
+      cam.position.z = 10;
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(30), 3));
+      geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(30), 3));
+      const mat = new THREE.PointsMaterial({size:2.5, vertexColors:true, transparent:true, opacity:1, blending:THREE.AdditiveBlending, depthWrite:false});
+      scene.add(new THREE.Points(geo, mat));
+      rdr.compile(scene, cam);
+      /* Dispose immediately — this was only ever about warming the
+         shader cache, not producing anything visible. */
+      geo.dispose(); mat.dispose(); rdr.dispose();
+    }catch(e){ /* non-fatal — worst case, ta-da just compiles live as before */ }
+  }
+  /* Fire once the prologue is actually active (canvas + THREE are
+     guaranteed available by then), giving up to ~13 seconds of idle
+     time before doTada() ever needs this shader for real. */
+  (function scheduleParticlePrewarm(){
+    const pro = document.getElementById('prologue');
+    if(!pro){ setTimeout(prewarmParticleShader, 1000); return; }
+    if(pro.classList.contains('active')){ prewarmParticleShader(); return; }
+    const obs = new MutationObserver(()=>{
+      if(pro.classList.contains('active')){ obs.disconnect(); prewarmParticleShader(); }
+    });
+    obs.observe(pro, {attributes:true, attributeFilter:['class']});
+  })();
+
   function runParticles(canvas, done){
     if(!canvas||typeof THREE==='undefined'){done&&done();return;}
     const W=innerWidth,H=innerHeight;
     canvas.width=W;canvas.height=H;canvas.style.opacity='1';
+    console.log('[runParticles] Setup starting at', performance.now().toFixed(0)+'ms');
     const rdr=new THREE.WebGLRenderer({canvas,antialias:false,alpha:true});
     rdr.setSize(W,H);rdr.setClearColor(0,0);
     const scene=new THREE.Scene();
@@ -490,9 +534,18 @@
     geo.setAttribute('color',new THREE.BufferAttribute(col,3));
     const mat=new THREE.PointsMaterial({size:2.5,vertexColors:true,transparent:true,opacity:1,blending:THREE.AdditiveBlending,depthWrite:false});
     scene.add(new THREE.Points(geo,mat));
-    let f=0,T=60;
+    /* Force shader compilation to happen HERE, synchronously, right
+       before the animation loop starts. If prewarmParticleShader()
+       already compiled this same shader during the prologue, this
+       should be near-instant; if not (prewarm failed/was skipped),
+       whatever compile stall exists happens here, timed below. */
+    console.log('[runParticles] Calling rdr.compile at', performance.now().toFixed(0)+'ms');
+    rdr.compile(scene,cam);
+    console.log('[runParticles] rdr.compile returned at', performance.now().toFixed(0)+'ms');
+    let f=0,T=60,loggedFirstFrame=false;
     (function go(){
       f++;const t=f/T,e=t*t;
+      if(!loggedFirstFrame){ loggedFirstFrame=true; console.log('[runParticles] First animation frame at', performance.now().toFixed(0)+'ms'); }
       for(let i=0;i<COUNT;i++){pos[i*3]+=vel[i].vx*(1+e*4);pos[i*3+1]+=vel[i].vy*(1+e*4);}
       geo.attributes.position.needsUpdate=true;
       mat.opacity=Math.max(0,1-e*1.2);
@@ -1106,160 +1159,15 @@
    diagonal streaks that fall continuously over the photo background. */
 (function initPrologueRain(){
   'use strict';
-  /* Remove the static CSS rain div and replace with a canvas */
+  /* DISABLED — after multiple attempts, canvas-drawn rain confined to
+     the window region still read as falling inside the room rather
+     than outside the glass, regardless of how precisely the window
+     boundaries were measured. Removing entirely rather than continuing
+     to guess. The static prologue-bg.png photo already has rain
+     streaks baked into the image itself, so the scene isn't bare
+     without this on top of it. */
   const rainDiv = document.querySelector('.prologue-rain');
-  if(!rainDiv) return;
-  const pro = rainDiv.parentNode;
-
-  const canvas = document.createElement('canvas');
-  canvas.id = 'prologueRainCanvas';
-  canvas.setAttribute('aria-hidden','true');
-  canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;';
-  pro.insertBefore(canvas, rainDiv);
-  rainDiv.remove();
-
-  const ctx = canvas.getContext('2d');
-  const photoEl = pro.querySelector('.prologue-photo');
-
-  /* prologue-bg.png natural size — used to replicate the CSS
-     "background-size:cover; background-position:center center" crop
-     math in JS, since the visible portion of the photo shifts with
-     the viewport's aspect ratio. */
-  const IMG_W = 1672, IMG_H = 941;
-  const IMG_ASPECT = IMG_W / IMG_H;
-
-  /* Boundaries re-measured directly against the photo with a 10% grid
-     overlay for precision (previous estimates were visually close but
-     not accurate enough — window left edge is at ~0.205, not ~0.125,
-     and the person's silhouette extends further at the shoulders/chair
-     than first measured). */
-  const WINDOW = { x0: 0.205, y0: 0.0, x1: 0.98, y1: 0.72 };
-  const PERSON_LEVELS = [
-    { y: 0.30, xl: 0.485, xr: 0.515 },
-    { y: 0.40, xl: 0.455, xr: 0.545 },
-    { y: 0.55, xl: 0.40,  xr: 0.62  },
-    { y: 0.70, xl: 0.30,  xr: 0.73  }
-  ];
-
-  let cover = { renderW:0, renderH:0, offsetX:0, offsetY:0 };
-  let regionRects = []; /* canvas-pixel rects rain drops are confined to */
-
-  function computeCover(cw, ch){
-    const containerAspect = cw / ch;
-    if(containerAspect > IMG_ASPECT){
-      const renderW = cw, renderH = cw / IMG_ASPECT;
-      return { renderW, renderH, offsetX: 0, offsetY: (ch - renderH) / 2 };
-    } else {
-      const renderH = ch, renderW = ch * IMG_ASPECT;
-      return { renderW, renderH, offsetX: (cw - renderW) / 2, offsetY: 0 };
-    }
-  }
-  function mapPt(fx, fy){
-    return {
-      x: cover.offsetX + fx * cover.renderW,
-      y: cover.offsetY + fy * cover.renderH
-    };
-  }
-
-  function resize(){
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    /* Use the ACTUAL rendered box of .prologue-photo for the cover-math
-       container, rather than assuming it exactly equals the viewport —
-       removes any dependency on unseen layout/padding in prologue.css
-       that could otherwise misalign the canvas against the photo. */
-    let containerW = canvas.width, containerH = canvas.height, containerLeft = 0, containerTop = 0;
-    if(photoEl){
-      const r = photoEl.getBoundingClientRect();
-      if(r.width > 0 && r.height > 0){
-        containerW = r.width; containerH = r.height;
-        containerLeft = r.left; containerTop = r.top;
-      }
-    }
-    const c = computeCover(containerW, containerH);
-    /* Offset the cover result by the photo element's own position
-       relative to the canvas (which is always full-viewport) */
-    cover = { renderW: c.renderW, renderH: c.renderH, offsetX: c.offsetX + containerLeft, offsetY: c.offsetY + containerTop };
-
-    const leftMinX = Math.min(...PERSON_LEVELS.map(p=>p.xl));
-    const winTL = mapPt(WINDOW.x0, WINDOW.y0);
-    const leftBR = mapPt(leftMinX, WINDOW.y1);
-    const rightMaxX = Math.max(...PERSON_LEVELS.map(p=>p.xr));
-    const rightTL = mapPt(rightMaxX, WINDOW.y0);
-    const winBR = mapPt(WINDOW.x1, WINDOW.y1);
-    const topTL = mapPt(leftMinX, WINDOW.y0);
-    const topBR = mapPt(rightMaxX, PERSON_LEVELS[0].y);
-
-    regionRects = [
-      { x: winTL.x,  y: winTL.y,  w: leftBR.x - winTL.x,  h: leftBR.y - winTL.y },
-      { x: rightTL.x, y: rightTL.y, w: winBR.x - rightTL.x, h: winBR.y - rightTL.y },
-      { x: topTL.x,  y: topTL.y,  w: topBR.x - topTL.x,   h: topBR.y - topTL.y }
-    ].filter(r => r.w > 4 && r.h > 4);
-  }
-  resize();
-  window.addEventListener('resize', resize, {passive:true});
-
-  /* Distribute drops across the three regions weighted by area, each
-     drop confined to its OWN assigned region so none ever need to be
-     clipped away mid-frame (cheaper, and guarantees correctness even
-     before clip() would have caught it). */
-  function pickRegion(){
-    const total = regionRects.reduce((s,r)=>s+r.w*r.h, 0);
-    let r = Math.random() * total;
-    for(const reg of regionRects){
-      r -= reg.w * reg.h;
-      if(r <= 0) return reg;
-    }
-    return regionRects[regionRects.length-1];
-  }
-  function spawnIn(reg){
-    return {
-      region: reg,
-      x: reg.x + Math.random() * reg.w,
-      y: reg.y + Math.random() * reg.h,
-      len:   14 + Math.random() * 22,
-      speed: 11 + Math.random() * 9,
-      op:    0.14 + Math.random() * 0.22,
-      w:     0.4  + Math.random() * 0.5
-    };
-  }
-  const drops = Array.from({length: 260}, () => spawnIn(pickRegion()));
-
-  let animating = false;
-  function frame(){
-    if(!animating) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drops.forEach(d=>{
-      const reg = d.region;
-      ctx.beginPath();
-      ctx.moveTo(d.x, d.y);
-      ctx.lineTo(d.x - d.len * 0.12, d.y + d.len);
-      ctx.strokeStyle = `rgba(160,180,220,${d.op})`;
-      ctx.lineWidth = d.w;
-      ctx.stroke();
-      d.y += d.speed;
-      d.x -= d.speed * 0.07;
-      /* Reset within the SAME region once past its bottom edge */
-      if(d.y > reg.y + reg.h + d.len){
-        d.y = reg.y - d.len - Math.random() * 40;
-        d.x = reg.x + Math.random() * reg.w;
-      }
-    });
-    requestAnimationFrame(frame);
-  }
-
-  /* Start/stop with prologue active state */
-  const prologueEl = document.getElementById('prologue');
-  if(prologueEl){
-    const obs2 = new MutationObserver(()=>{
-      if(prologueEl.classList.contains('active') && !animating){
-        animating = true; frame();
-      }
-      if(!prologueEl.classList.contains('active')){ animating = false; }
-    });
-    obs2.observe(prologueEl, {attributes:true, attributeFilter:['class']});
-  }
+  if(rainDiv) rainDiv.remove();
 })();
 
 /* ARIA mouseenter — face forms the moment cursor enters the box (SR18) */
