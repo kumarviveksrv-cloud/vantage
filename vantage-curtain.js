@@ -233,27 +233,30 @@
           if(idx <= msg.length){ initTextEl.textContent = msg.slice(0, idx); idx++; }
           else {
             clearInterval(typer);
+            /* Longer hold so user reads the text */
             setTimeout(()=>{
-              initOverlay.style.transition = 'opacity .55s ease';
+              /* Dim OUT — slow fade */
+              initOverlay.style.transition = 'opacity 1.1s ease';
               initOverlay.style.opacity = '0';
               setTimeout(()=>{
-                /* doTada() starts BEFORE init-overlay gets display:none
-                 so ta-da sits above the fading overlay — no bare landing page */
+                initOverlay.classList.remove('init-active');
+                initOverlay.style.opacity = '';
+                initOverlay.style.transition = '';
+                /* Dim IN — ta-da fades in cinematically */
                 doTada();
-                setTimeout(()=>{
-                  initOverlay.classList.remove('init-active');
-                  initOverlay.style.opacity = '';
-                  initOverlay.style.transition = '';
-                }, 60);
-              }, 560);
-            }, 700);
+              }, 1150);
+            }, 1800);
           }
-        }, 52);
+        }, 95);  /* slower type: 95ms/char */
       } else { doTada(); }
 
       function doTada(){
         const logo = document.getElementById('tada-logoimg');
+        /* Dim IN — ta-da fades in, not abrupt */
+        tadaOverlay.style.opacity = '0';
+        tadaOverlay.style.transition = 'opacity .85s ease';
         tadaOverlay.style.display = 'flex';
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{ tadaOverlay.style.opacity='1'; }));
         setTimeout(()=>{ if(logo) logo.style.filter = 'drop-shadow(0 0 80px rgba(196,181,253,0.9)) drop-shadow(0 0 40px rgba(99,102,241,0.6))'; }, 200);
         setTimeout(()=>{
           if(logo) logo.style.opacity = '0';
@@ -932,11 +935,30 @@
   const obs = new MutationObserver(()=>{
     if(!pro.classList.contains('active') || fired) return;
     fired = true; obs.disconnect();
+
+    /* Force prologue-copy to bottom via inline style — overrides prologue.css */
+    const copy = pro.querySelector('.prologue-copy');
+    if(copy){
+      copy.style.position = 'absolute';
+      copy.style.top = 'auto';
+      copy.style.bottom = '90px';
+      copy.style.left = '50%';
+      copy.style.transform = 'translateX(-50%)';
+      copy.style.width = '82%';
+      copy.style.maxWidth = '760px';
+      copy.style.textAlign = 'center';
+    }
+
+    /* Hide message + sub initially — reveal after kicker types */
+    const message = pro.querySelector('.prologue-message');
+    const sub = pro.querySelector('.prologue-sub');
+    if(message){ message.style.opacity='0'; message.style.transition='opacity 1.3s ease'; }
+    if(sub){ sub.style.opacity='0'; sub.style.transition='opacity 1.3s ease'; }
+
     const kicker = pro.querySelector('.prologue-kicker');
     if(!kicker) return;
     const text = kicker.textContent.trim();
     kicker.textContent = '';
-    /* cursor span */
     const cur = document.createElement('span');
     cur.style.cssText = 'display:inline-block;border-right:2px solid rgba(196,181,253,.6);margin-left:1px;animation:heCursorBlink .65s step-end infinite;';
     kicker.appendChild(cur);
@@ -948,7 +970,9 @@
         idx++;
         setTimeout(type, 68);
       } else {
-        /* cursor blinks 4 more times then fades */
+        /* Cursor blinks, then reveal message, then sub */
+        setTimeout(()=>{ if(message) message.style.opacity='1'; }, 900);
+        setTimeout(()=>{ if(sub)     sub.style.opacity='1';     }, 2400);
         setTimeout(()=>{ cur.style.opacity='0'; cur.style.transition='opacity .4s'; }, 2800);
       }
     }
@@ -996,6 +1020,11 @@
   function frame(){
     if(!animating) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    /* Clip rain to the window region of the photo only */
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(canvas.width*.17, canvas.height*.02, canvas.width*.67, canvas.height*.70);
+    ctx.clip();
     drops.forEach(d=>{
       ctx.beginPath();
       /* Slight diagonal — matches the rain angle in the photo */
@@ -1011,6 +1040,7 @@
         d.x = Math.random() * (canvas.width + 80);
       }
     });
+    ctx.restore(); /* end window clip */
     requestAnimationFrame(frame);
   }
 
