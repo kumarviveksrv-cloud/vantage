@@ -20,11 +20,12 @@
       el.style.setProperty('display','block','important');
       el.style.setProperty('font-style','italic','important');
       el.style.setProperty('font-family',"'Cormorant Garamond',serif",'important');
-      el.style.setProperty('background','linear-gradient(90deg,#c4b5fd 0%,#818cf8 30%,#a78bfa 65%,#e879f9 100%)','important');
+      el.style.setProperty('background','linear-gradient(90deg,#a855f7 0%,#7c3aed 45%,#6366f1 100%)','important');
       el.style.setProperty('-webkit-background-clip','text','important');
       el.style.setProperty('background-clip','text','important');
       el.style.setProperty('color','transparent','important');
       el.style.setProperty('-webkit-text-fill-color','transparent','important');
+      el.style.setProperty('font-weight','700','important');
     });
   }
   if(document.readyState==='loading'){
