@@ -1076,6 +1076,7 @@
   flex-direction: column;
 }
 #init-overlay.init-active { display: flex; }
+#init-overlay { z-index: 8800 !important; } /* must be below #tada-overlay */
 #init-text {
   font-family: 'JetBrains Mono', monospace !important;
   font-size: clamp(13px,1.4vw,18px) !important;
