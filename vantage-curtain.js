@@ -685,3 +685,61 @@
     if(es[0].isIntersecting) run();
   }, {threshold: 0.15}).observe(section);
 })();
+
+/* "Enter Vantage." — typewriter × 3 then Vantage blinks forever (SR18) */
+(function initHeroEnter(){
+  'use strict';
+  const wrap = document.getElementById('heroEnter');
+  if(!wrap) return;
+
+  /* Build DOM: [heText][heVantage][cursor] */
+  const heText    = document.createElement('span');
+  heText.id       = 'heText';
+  const heVantage = document.createElement('span');
+  heVantage.id    = 'heVantage';
+  const heCursor  = document.createElement('span');
+  heCursor.className = 'he-cursor';
+  heCursor.textContent = '|';
+  wrap.appendChild(heText);
+  wrap.appendChild(heVantage);
+  wrap.appendChild(heCursor);
+
+  const delay = ms => new Promise(r => setTimeout(r, ms));
+
+  async function typeIn(el, text, speed){
+    for(let i = 0; i <= text.length; i++){
+      el.textContent = text.slice(0, i);
+      await delay(speed);
+    }
+  }
+
+  async function typeOut(el, speed){
+    const t = el.textContent;
+    for(let i = t.length; i >= 0; i--){
+      el.textContent = t.slice(0, i);
+      await delay(speed);
+    }
+  }
+
+  async function run(){
+    /* Cycles 1 & 2: type full text, hold, erase */
+    for(let cycle = 0; cycle < 2; cycle++){
+      await typeIn(heText, 'Enter Vantage.', 58);
+      await delay(480);
+      await typeOut(heText, 26);
+      await delay(200);
+    }
+
+    /* Cycle 3: "Enter " in heText, then "Vantage." in heVantage */
+    await typeIn(heText, 'Enter ', 58);
+    await typeIn(heVantage, 'Vantage.', 58);
+    await delay(520);
+
+    /* Cursor off — Vantage blinks forever */
+    heCursor.style.animation = 'none';
+    heCursor.style.opacity   = '0';
+    heVantage.classList.add('he-blink');
+  }
+
+  window.addEventListener('load', () => setTimeout(run, 900));
+})();
