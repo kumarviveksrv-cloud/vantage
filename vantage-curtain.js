@@ -874,3 +874,40 @@
     obs2.observe(prologueEl, {attributes:true, attributeFilter:['class']});
   }
 })();
+
+/* ARIA mouseenter — face forms the moment cursor enters the box (SR18) */
+(function initAriaMouseEnter(){
+  'use strict';
+  const ariaRoom = document.querySelector('.aria-room');
+  if(!ariaRoom) return;
+
+  ariaRoom.addEventListener('mouseenter', e => {
+    const rect = ariaRoom.getBoundingClientRect();
+    /* Fire a synthetic mousemove at box centre to seed the face */
+    ['mousemove','pointermove'].forEach(type => {
+      const ev = new MouseEvent(type, {
+        clientX: rect.left + rect.width  * .5,
+        clientY: rect.top  + rect.height * .45,
+        bubbles: true,
+        cancelable: true
+      });
+      ariaRoom.dispatchEvent(ev);
+      document.dispatchEvent(ev);
+    });
+  });
+
+  /* Also fire on every tiny mousemove within the box — throttled to 30fps */
+  let last = 0;
+  ariaRoom.addEventListener('mousemove', e => {
+    const now = performance.now();
+    if(now - last < 33) return;
+    last = now;
+    /* Re-dispatch on document so aria-volumetric.js picks it up
+       regardless of which element it listens on */
+    const relay = new MouseEvent('mousemove', {
+      clientX: e.clientX, clientY: e.clientY,
+      bubbles: true, cancelable: true
+    });
+    document.dispatchEvent(relay);
+  }, {passive: true});
+})();
