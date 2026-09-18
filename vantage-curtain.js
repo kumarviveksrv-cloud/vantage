@@ -571,12 +571,45 @@
     const scoreAt = 300 + forces.length * GAP + 300;
     setTimeout(() => {
       if(scorePnl) scorePnl.classList.add('hsp-visible');
-      if(statusEl) statusEl.textContent = 'SYNTHESIS COMPLETE · 84 / 100';
-      if(fillEl)   fillEl.style.width = '84%';
-      if(numEl)    countUp(numEl, 84, 2000);
-      setTimeout(() => {
-        if(verdict) verdict.textContent = 'Strong · Improving · Boardroom-ready';
-      }, 2200);
+
+      // 1. Raw Humac Score
+      if(fillEl) fillEl.style.width = '84%';
+      if(numEl)  countUp(numEl, 84, 2000);
+      setTimeout(()=>{
+        const v = document.getElementById('humacVerdict');
+        if(v) v.textContent = 'Value Generating';
+      }, 2100);
+
+      // 2. HCI-Adjusted (84 × 0.94 = ~79)
+      setTimeout(()=>{
+        const hci = document.getElementById('humacHCI');
+        const hcix = document.getElementById('humacHCIx');
+        if(hci)  countUp(hci, 79, 1600);
+        if(hcix) {
+          let t0 = performance.now();
+          (function tick(now){
+            const t = Math.min(1,(now-t0)/1600);
+            const e = t<.5?2*t*t:-1+(4-2*t)*t;
+            if(hcix) hcix.textContent = (0.5+e*.44).toFixed(2)+'x';
+            if(t<1) requestAnimationFrame(tick);
+            else if(hcix) hcix.textContent = '0.94x';
+          })(t0);
+        }
+      }, 400);
+
+      // 3. Trajectory Index
+      setTimeout(()=>{
+        const tNum = document.getElementById('humacTrajNum');
+        const tSt  = document.getElementById('humacTrajStatus');
+        if(tNum){ let t0=performance.now();(function tick(now){const t=Math.min(1,(now-t0)/1400);const e=t<.5?2*t*t:-1+(4-2*t)*t;tNum.textContent='+'+Math.round(e*6);if(t<1)requestAnimationFrame(tick);})(t0);}
+        setTimeout(()=>{if(tSt) tSt.textContent='Improving';}, 1500);
+      }, 800);
+
+      // 4. Tagline
+      setTimeout(()=>{
+        const tag = document.getElementById('humacTagline');
+        if(tag) tag.textContent = 'This is what your organisation’s human capital position looks like when it speaks the CFO’s language.';
+      }, 2500);
     }, scoreAt);
   }
 
