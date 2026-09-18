@@ -574,6 +574,102 @@
   pointer-events: none;
   z-index: -1;
 }
+
+/* ═══ HUMAC SCORE SYNTHESIS PANEL (SR18) ═══ */
+.humac-synthesis {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: rgba(7,6,22,.82);
+  border: 1px solid rgba(124,58,237,.22);
+  border-radius: 20px;
+  padding: clamp(20px,2.8vw,36px);
+  backdrop-filter: blur(18px);
+  position: relative;
+  overflow: hidden;
+  align-self: start;
+}
+.humac-synthesis::before {
+  content:'';position:absolute;
+  top:-50px;left:-50px;right:-50px;height:140px;
+  background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.13) 0%,transparent 65%);
+  pointer-events:none;
+}
+.hs-intro { border-bottom:1px solid rgba(196,181,253,.08);padding-bottom:14px; }
+.hs-eyebrow {
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  letter-spacing:.24em;color:rgba(196,181,253,.4);display:block;margin-bottom:5px;
+}
+.hs-subtitle {
+  font-family:'DM Sans',sans-serif;font-size:clamp(12px,1.2vw,15px);
+  color:rgba(255,255,255,.65);line-height:1.5;
+}
+.hs-subtitle em { font-style:italic;color:rgba(196,181,253,.82); }
+
+/* 2-column force grid */
+.hs-forces-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+.hs-force {
+  background:rgba(124,58,237,.06);
+  border:1px solid rgba(124,58,237,.12);
+  border-radius:11px;padding:14px;
+  opacity:0;transform:translateY(10px);
+  transition:opacity .45s ease,transform .45s ease,border-color .4s,background .4s;
+}
+.hs-force.hf-visible {
+  opacity:1;transform:translateY(0);
+  border-color:rgba(124,58,237,.28);
+  background:rgba(124,58,237,.09);
+}
+.hs-force--wide { grid-column:1/-1; }
+.hsf-top { display:flex;justify-content:space-between;align-items:center;margin-bottom:7px; }
+.hsf-id {
+  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.18em;
+  color:rgba(168,85,247,.85);background:rgba(124,58,237,.18);
+  padding:2px 7px;border-radius:4px;
+}
+.hsf-pts { font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;color:rgba(196,181,253,.45); }
+.hsf-name {
+  font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.16em;
+  color:rgba(255,255,255,.45);margin-bottom:6px;
+}
+.hsf-metric {
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(18px,2vw,24px);font-weight:700;
+  background:linear-gradient(90deg,#c084fc,#8b5cf6);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;
+  line-height:1;margin-bottom:5px;
+}
+.hsf-desc { font-family:'DM Sans',sans-serif;font-size:10px;color:rgba(255,255,255,.35);line-height:1.4;margin-bottom:9px; }
+.hsf-bar { height:2px;background:rgba(196,181,253,.08);border-radius:2px;overflow:hidden; }
+.hsf-fill { height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#c084fc);border-radius:2px;transition:width 1.1s cubic-bezier(.25,.46,.45,.94); }
+
+/* Score panel */
+.hs-score-panel {
+  background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.28);
+  border-radius:14px;padding:18px 20px;
+  display:flex;gap:18px;align-items:center;
+  opacity:0;transition:opacity .6s ease;
+}
+.hs-score-panel.hsp-visible { opacity:1; }
+.hsp-left { flex-shrink:0; }
+.hsp-label {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.22em;color:rgba(196,181,253,.4);display:block;margin-bottom:3px;
+}
+.hsp-display { display:flex;align-items:baseline;gap:2px;margin-bottom:5px; }
+.hsp-num {
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(34px,3.8vw,48px);font-weight:700;
+  background:linear-gradient(90deg,#c084fc,#8b5cf6,#6366f1);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;line-height:1;
+}
+.hsp-denom { font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(196,181,253,.3); }
+.hsp-status { font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.14em;color:rgba(168,85,247,.65);display:block; }
+.hsp-right { flex:1;min-width:0; }
+.hsp-track { height:5px;background:rgba(196,181,253,.08);border-radius:5px;overflow:hidden;margin-bottom:6px; }
+.hsp-fill { height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#8b5cf6,#c084fc);border-radius:5px;transition:width 2s cubic-bezier(.25,.46,.45,.94); }
+.hsp-legend { display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.08em;color:rgba(255,255,255,.18);margin-bottom:7px; }
+.hsp-verdict { font-family:'DM Sans',sans-serif;font-size:11px;color:rgba(196,181,253,.75);font-style:italic;min-height:15px; }
 </style>
 </head>
 <body>
@@ -694,31 +790,64 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
         <div><small>Manager load</small><b>182 hrs</b></div>
       </div>
     </div>
-    <div class="finance-field" id="financeField">
-      <svg viewBox="0 0 760 600" preserveAspectRatio="none">
-        <defs>
-          <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/>
-          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <linearGradient id="flow" x1="0" x2="1">
-            <stop offset="0"/><stop offset="1" stop-color="#a5b4fc"/>
-          </linearGradient>
-        </defs>
-        <path class="flow-path" d="M90 120 C250 40 260 250 390 210 S570 150 680 280"/>
-        <path class="flow-path" d="M80 400 C220 470 300 350 410 390 S560 480 680 360"/>
-        <path class="flow-path" d="M180 540 C250 430 380 510 470 430 S590 320 690 180"/>
-        <g class="finance-nodes">
-          <g class="fnode" transform="translate(90 120)"><circle r="22"/><text y="48">Employee</text></g>
-          <g class="fnode" transform="translate(390 210)"><circle r="18"/><text y="44">Attrition</text></g>
-          <g class="fnode" transform="translate(680 280)"><circle r="24"/><text y="50">Ramp time</text></g>
-          <g class="fnode" transform="translate(80 400)"><circle r="20"/><text y="46">Manager load</text></g>
-          <g class="fnode" transform="translate(410 390)"><circle r="18"/><text y="44">Productivity</text></g>
-          <g class="fnode money" transform="translate(690 360)"><circle r="32"/><text y="58">&#8377; 81.7L</text></g>
-        </g>
-      </svg>
-      <div class="finance-caption">
-        <span>HUMAN P&amp;L</span>
-        <strong>&#8377;81.7L</strong>
-        <small>Estimated organisational impact</small>
+    <div class="humac-synthesis" id="humacSynthesis">
+      <div class="hs-intro">
+        <span class="hs-eyebrow">HOW THE HUMAC SCORE IS BUILT</span>
+        <p class="hs-subtitle">Five forces. One number. <em>The only language the boardroom trusts.</em></p>
+      </div>
+      <div class="hs-forces-grid">
+        <div class="hs-force" data-index="0">
+          <div class="hsf-top"><span class="hsf-id">L1</span><span class="hsf-pts">+18 pts</span></div>
+          <div class="hsf-name">VALUE LEDGER</div>
+          <div class="hsf-metric">&#8377;3.8x</div>
+          <div class="hsf-desc">Return per &#8377; invested in people</div>
+          <div class="hsf-bar"><div class="hsf-fill" data-w="76"></div></div>
+        </div>
+        <div class="hs-force" data-index="1">
+          <div class="hsf-top"><span class="hsf-id">L2</span><span class="hsf-pts">+18 pts</span></div>
+          <div class="hsf-name">TALENT PREMIUM</div>
+          <div class="hsf-metric">+22%</div>
+          <div class="hsf-desc">Above-market performance premium</div>
+          <div class="hsf-bar"><div class="hsf-fill" data-w="80"></div></div>
+        </div>
+        <div class="hs-force" data-index="2">
+          <div class="hsf-top"><span class="hsf-id">L3</span><span class="hsf-pts">+18 pts</span></div>
+          <div class="hsf-name">ORG VITALS</div>
+          <div class="hsf-metric">7.4 / 10</div>
+          <div class="hsf-desc">Organisational health index</div>
+          <div class="hsf-bar"><div class="hsf-fill" data-w="74"></div></div>
+        </div>
+        <div class="hs-force" data-index="3">
+          <div class="hsf-top"><span class="hsf-id">L4</span><span class="hsf-pts">+16 pts</span></div>
+          <div class="hsf-name">HUMAN P&amp;L</div>
+          <div class="hsf-metric">&#8377;18.4L</div>
+          <div class="hsf-desc">Net human gross margin this year</div>
+          <div class="hsf-bar"><div class="hsf-fill" data-w="72"></div></div>
+        </div>
+        <div class="hs-force hs-force--wide" data-index="4">
+          <div class="hsf-top"><span class="hsf-id">L5</span><span class="hsf-pts">+14 pts</span></div>
+          <div class="hsf-name">NET HUMAN WORTH</div>
+          <div class="hsf-metric">&#8377;81.7L</div>
+          <div class="hsf-desc">Human capital balance sheet position</div>
+          <div class="hsf-bar"><div class="hsf-fill" data-w="68"></div></div>
+        </div>
+      </div>
+      <div class="hs-score-panel" id="humacScorePanel">
+        <div class="hsp-left">
+          <span class="hsp-label">HUMAC SCORE</span>
+          <div class="hsp-display">
+            <span class="hsp-num" id="humacNum">0</span>
+            <span class="hsp-denom">&thinsp;/ 100</span>
+          </div>
+          <span class="hsp-status" id="humacStatus">AWAITING FORCES...</span>
+        </div>
+        <div class="hsp-right">
+          <div class="hsp-track"><div class="hsp-fill" id="humacFill"></div></div>
+          <div class="hsp-legend">
+            <span>WEAK</span><span>MODERATE</span><span>STRONG</span>
+          </div>
+          <div class="hsp-verdict" id="humacVerdict"></div>
+        </div>
       </div>
     </div>
   </div>
