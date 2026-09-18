@@ -1910,6 +1910,60 @@
   color: #fff;
   background: rgba(124,58,237,.12);
 }
+
+/* Fullscreen hint for Intelligence Corridor */
+.cor-fullscreen-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.cor-fs-desktop {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: rgba(196,181,253,.45);
+  letter-spacing: .03em;
+}
+.cor-fs-desktop kbd {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(196,181,253,.75);
+  background: rgba(124,58,237,.12);
+  border: 1px solid rgba(124,58,237,.25);
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin: 0 2px;
+}
+.cor-fs-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: rgba(196,181,253,.6);
+  background: rgba(124,58,237,.08);
+  border: 1px solid rgba(124,58,237,.22);
+  border-radius: 20px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all .3s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cor-fs-btn:hover {
+  background: rgba(124,58,237,.18);
+  border-color: #8b5cf6;
+  color: #fff;
+}
+.cor-fs-icon { font-size: 14px; }
+/* On desktop, show both hint and button. On mobile, hide F11 hint */
+@media (max-width: 768px) {
+  .cor-fs-desktop { display: none; }
+}
+/* Once fullscreen is active, hide the hint entirely */
+.cor-fullscreen-hint.fs-active { display: none; }
 </style>
 </head>
 <body>
@@ -2366,6 +2420,13 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
     <!-- Section eyebrow -->
     <div class="cor-eyebrow">
       <span class="section-index">05 / INTELLIGENCE CORRIDOR</span>
+    </div>
+    <div class="cor-fullscreen-hint" id="corFsHint">
+      <span class="cor-fs-desktop">Press <kbd>F11</kbd> for the full immersive experience</span>
+      <button class="cor-fs-btn" id="corFsBtn" aria-label="Toggle fullscreen">
+        <span class="cor-fs-icon">&#x26F6;</span>
+        <span class="cor-fs-label">Go fullscreen</span>
+      </button>
     </div>
 
     <!-- Room viewport — only one room visible at a time -->
