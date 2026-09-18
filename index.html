@@ -331,18 +331,17 @@
   background: linear-gradient(90deg,#c084fc 0%,#8b5cf6 50%,#6366f1 100%) !important;
 }
 
-/* ARIA ambient particle canvas */
+/* ARIA ambient particle canvas — z-index:-1 keeps it behind face canvas */
 #ariaAmbient {
   position: absolute;
   inset: 0;
   width: 100% !important;
   height: 100% !important;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
   opacity: 1;
 }
-.aria-room { position: relative; overflow: hidden; }
-.aria-figure, .aria-reaction, .aria-light, .aria-grid { position: relative; z-index: 1; }
+.aria-room { position: relative; } /* overflow:hidden removed — was clipping face */
 
 /* ═══ VANTAGE RECORD — Intelligence Dossier (SR18) ═══ */
 .record-dossier-wrap {
