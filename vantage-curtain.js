@@ -1184,3 +1184,181 @@
     document.dispatchEvent(relay);
   }, {passive: true});
 })();
+
+
+/* ═══ INTELLIGENCE CORRIDOR — 5 Doors Interactive Experience (SR18.3) ═══ */
+(function initCorridor(){
+  'use strict';
+  const viewport = document.getElementById('corViewport');
+  if(!viewport) return;
+
+  const OUTCOMES = {
+    '1A': {
+      verdict:'HIGH EXPOSURE', vclass:'risk', num:'\u20b921L',
+      text:'No documented warnings precede this termination. Without a paper trail, tribunal challenge is near-certain. This path cannot be legally defended in Maharashtra under the Industrial Disputes Act.',
+      aria:'Are the two verbal warnings logged anywhere, even informally? That single detail changes everything here.'
+    },
+    '1B': {
+      verdict:'DEFENSIBLE', vclass:'ok', num:'\u20b92L',
+      text:'Domestic enquiry creates the strongest procedural record possible. It satisfies natural justice requirements and produces an outcome that survives tribunal scrutiny. PACT recommends this path.',
+      aria:'Shall I draft the enquiry notice for tonight? I have the precedent cases for Maharashtra IT-sector ready.'
+    },
+    '2A': {
+      verdict:'MATERIAL RISK', vclass:'warn', num:'34%',
+      text:'Case proceeds with a known evidence gap. If the employee challenges the process, the absence of documentation becomes the central vulnerability. Signal score: weak.',
+      aria:'Two witnesses exist. A signed statement from either one, even retrospective, moves your evidence score from 34% to 71%.'
+    },
+    '2B': {
+      verdict:'PROTECTED', vclass:'ok', num:'78%',
+      text:'Verbal warnings logged retroactively via witness statements. SIGNAL engine verifies the reconstruction against 4 compliance checkpoints. Evidence trail now defensible.',
+      aria:'I have found 3 similar cases in your jurisdiction where retrospective witness documentation held up in tribunal.'
+    },
+    '3A': {
+      verdict:'WEAK ARGUMENT', vclass:'risk', num:'?',
+      text:'Subjective estimates do not survive boardroom scrutiny. The CFO will benchmark your number against market data you cannot produce. You lose credibility on the next ask.',
+      aria:'Would it help to see what the CFO actually sees when they open their own P&L? The gap between your language and theirs is the problem.'
+    },
+    '3B': {
+      verdict:'QUANTIFIED', vclass:'ok', num:'\u20b918.4L',
+      text:'Net human value computed across 5 Humacity pillars. Replacement cost \u20b98.2L, ramp time 4.6 months, manager load 182 hours. The CFO now has a number they can benchmark.',
+      aria:'This is what your organisation\'s human capital position looks like when it speaks the CFO\'s language.'
+    },
+    '4A': {
+      verdict:'UNPREPARED', vclass:'risk', num:'0/3',
+      text:'The COO will ask about precedent, exposure, and your recommendation. You will not have structured answers for any of them. Confidence drops the moment she probes.',
+      aria:'I can tell you right now: she will open with the precedent question. Do you want to hear it before she asks it?'
+    },
+    '4B': {
+      verdict:'REHEARSED', vclass:'ok', num:'3/3',
+      text:'3 likely objections anticipated. Counter-arguments prepared. ARIA simulated the COO\'s communication style based on 14 past interactions. Confidence: high.',
+      aria:'The third objection is the one most people miss. Want me to run it one more time before tomorrow?'
+    },
+    '5A': {
+      verdict:'RESET', vclass:'risk', num:'0',
+      text:'9 months of decisions, conversations, exposure calculations, stakeholder rehearsals. All of it gone. You start from zero. The new manager inherits nothing.',
+      aria:'Every decision you navigated. Every rupee you protected. Is any of it saved anywhere?'
+    },
+    '5B': {
+      verdict:'ACCUMULATED', vclass:'ok', num:'47',
+      text:'47 decisions documented. 12 policy calls. 4 stakeholder rehearsals. \u20b918.4L career capital. Your Vantage Record belongs to you, across every org, every role, every year.',
+      aria:'Your next organisation will see 9 months of intelligence, not a blank resume. That is what a career record looks like.'
+    }
+  };
+
+  const D = window._vDash;
+
+  /* ── Door click: open animation ── */
+  document.querySelectorAll('.cor-lock').forEach(lock => {
+    lock.addEventListener('click', e => {
+      e.stopPropagation();
+      const doorNum = lock.dataset.door;
+      const door = document.getElementById('corDoor' + doorNum);
+      if(!door) return;
+
+      /* Unlock animation */
+      lock.querySelector('.cor-lock-icon').textContent = '\uD83D\uDD13';
+      door.classList.add('open');
+
+      /* After door swings open, reveal room content */
+      setTimeout(() => {
+        const room = document.getElementById('corRoom' + doorNum);
+        if(room) room.classList.add('entered');
+      }, 900);
+    });
+  });
+
+  /* ── Choice click: show result ── */
+  document.querySelectorAll('.cor-choice').forEach(choice => {
+    choice.addEventListener('click', () => {
+      const room = choice.dataset.room;
+      const pick = choice.dataset.pick;
+      const key = room + pick;
+      const outcome = OUTCOMES[key];
+      if(!outcome) return;
+
+      /* Highlight picked, dim other */
+      const parent = choice.parentElement;
+      parent.querySelectorAll('.cor-choice').forEach(c => {
+        if(c === choice) c.classList.add('picked');
+        else c.classList.add('dimmed');
+      });
+
+      /* Build result HTML */
+      const resultEl = document.getElementById('corResult' + room);
+      if(!resultEl) return;
+
+      resultEl.innerHTML = '<div class="cor-result-inner">' +
+        '<span class="cor-ri-verdict ' + outcome.vclass + '">' + outcome.verdict + '</span>' +
+        '<span class="cor-ri-num">' + outcome.num + '</span>' +
+        '<p class="cor-ri-text">' + outcome.text + '</p>' +
+        '<p class="cor-ri-aria">' + outcome.aria + '</p>' +
+        '</div>';
+
+      /* Animate open */
+      requestAnimationFrame(() => {
+        resultEl.classList.add('cor-result-open');
+      });
+
+      /* Scan line across result */
+      if(D && D.scan) setTimeout(() => D.scan(resultEl.querySelector('.cor-result-inner'), 650), 200);
+
+      /* Scramble the big number */
+      const numSpan = resultEl.querySelector('.cor-ri-num');
+      if(numSpan && D && D.str){
+        const final = numSpan.textContent;
+        numSpan.textContent = '';
+        setTimeout(() => D.str(numSpan, final, 600), 350);
+      }
+
+      /* Show next door button (or final CTA for room 5) */
+      setTimeout(() => {
+        const nextBtn = choice.closest('.cor-room').querySelector('.cor-next');
+        const finalEl = choice.closest('.cor-room').querySelector('.cor-final');
+        if(nextBtn) { nextBtn.style.display = 'block'; nextBtn.style.animation = 'roomFadeIn .5s ease both'; }
+        if(finalEl) { finalEl.style.display = 'block'; finalEl.style.animation = 'roomFadeIn .5s ease both'; }
+
+        /* Update progress pip */
+        const pip = document.querySelector('.cor-pip[data-r="' + room + '"]');
+        if(pip) { pip.classList.remove('active'); pip.classList.add('done'); }
+      }, 1200);
+    });
+  });
+
+  /* ── Next door: transition to next room ── */
+  document.querySelectorAll('.cor-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const nextRoom = btn.dataset.next;
+      const currentRoom = btn.closest('.cor-room');
+
+      /* Fade out current room */
+      currentRoom.style.transition = 'opacity .5s ease, transform .5s ease';
+      currentRoom.style.opacity = '0';
+      currentRoom.style.transform = 'translateY(-20px) scale(.97)';
+
+      setTimeout(() => {
+        currentRoom.classList.remove('active');
+        currentRoom.style.opacity = '';
+        currentRoom.style.transform = '';
+        currentRoom.style.transition = '';
+
+        /* Activate next room */
+        const next = document.getElementById('corRoom' + nextRoom);
+        if(next){
+          next.classList.add('active');
+          /* Activate the progress pip */
+          const pip = document.querySelector('.cor-pip[data-r="' + nextRoom + '"]');
+          if(pip) pip.classList.add('active');
+          /* Also mark lines as done */
+          const lines = document.querySelectorAll('.cor-line');
+          const lineIdx = parseInt(nextRoom) - 2;
+          if(lines[lineIdx]) lines[lineIdx].classList.add('done');
+        }
+
+        /* Scroll section into view */
+        const section = document.getElementById('simRoom');
+        if(section) section.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 550);
+    });
+  });
+
+})();
