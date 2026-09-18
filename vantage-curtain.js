@@ -768,3 +768,109 @@
 
   window.addEventListener('load', () => setTimeout(run, 900));
 })();
+
+/* ── Prologue JS typewriter on .prologue-kicker (SR18) ──────────────────────
+   CSS typewriter was unreliable against prologue.css specificity.
+   This watches for #prologue.active then types the kicker text. */
+(function initPrologueTypewriter(){
+  'use strict';
+  const pro = document.getElementById('prologue');
+  if(!pro) return;
+  let fired = false;
+  const obs = new MutationObserver(()=>{
+    if(!pro.classList.contains('active') || fired) return;
+    fired = true; obs.disconnect();
+    const kicker = pro.querySelector('.prologue-kicker');
+    if(!kicker) return;
+    const text = kicker.textContent.trim();
+    kicker.textContent = '';
+    /* cursor span */
+    const cur = document.createElement('span');
+    cur.style.cssText = 'display:inline-block;border-right:2px solid rgba(196,181,253,.6);margin-left:1px;animation:heCursorBlink .65s step-end infinite;';
+    kicker.appendChild(cur);
+    let idx = 0;
+    function type(){
+      if(idx <= text.length){
+        kicker.textContent = text.slice(0, idx);
+        kicker.appendChild(cur);
+        idx++;
+        setTimeout(type, 68);
+      } else {
+        /* cursor blinks 4 more times then fades */
+        setTimeout(()=>{ cur.style.opacity='0'; cur.style.transition='opacity .4s'; }, 2800);
+      }
+    }
+    setTimeout(type, 700);
+  });
+  obs.observe(pro, {attributes:true, attributeFilter:['class']});
+})();
+
+/* ── Prologue canvas rain overlay (SR18) ────────────────────────────────────
+   Replaces the CSS gradient rain (not convincing). Canvas draws actual
+   diagonal streaks that fall continuously over the photo background. */
+(function initPrologueRain(){
+  'use strict';
+  /* Remove the static CSS rain div and replace with a canvas */
+  const rainDiv = document.querySelector('.prologue-rain');
+  if(!rainDiv) return;
+  const pro = rainDiv.parentNode;
+
+  const canvas = document.createElement('canvas');
+  canvas.id = 'prologueRainCanvas';
+  canvas.setAttribute('aria-hidden','true');
+  canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;';
+  pro.insertBefore(canvas, rainDiv);
+  rainDiv.remove();
+
+  function resize(){
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize, {passive:true});
+
+  const ctx = canvas.getContext('2d');
+  /* Build 180 drops with varied opacity, length, speed */
+  const drops = Array.from({length:180}, ()=>({
+    x:     Math.random() * window.innerWidth,
+    y:     Math.random() * window.innerHeight,
+    len:   14 + Math.random() * 22,
+    speed: 11 + Math.random() * 9,
+    op:    0.04 + Math.random() * 0.10,
+    w:     0.4  + Math.random() * 0.5
+  }));
+
+  let animating = false;
+  function frame(){
+    if(!animating) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drops.forEach(d=>{
+      ctx.beginPath();
+      /* Slight diagonal — matches the rain angle in the photo */
+      ctx.moveTo(d.x, d.y);
+      ctx.lineTo(d.x - d.len * 0.12, d.y + d.len);
+      ctx.strokeStyle = `rgba(160,180,220,${d.op})`;
+      ctx.lineWidth = d.w;
+      ctx.stroke();
+      d.y += d.speed;
+      d.x -= d.speed * 0.07;
+      if(d.y > canvas.height + d.len){
+        d.y = -d.len - Math.random() * 40;
+        d.x = Math.random() * (canvas.width + 80);
+      }
+    });
+    requestAnimationFrame(frame);
+  }
+
+  /* Start/stop with prologue active state */
+  const prologueEl = document.getElementById('prologue');
+  if(prologueEl){
+    const obs2 = new MutationObserver(()=>{
+      if(prologueEl.classList.contains('active') && !animating){
+        animating = true; frame();
+      }
+      if(!prologueEl.classList.contains('active')){ animating = false; }
+    });
+    obs2.observe(prologueEl, {attributes:true, attributeFilter:['class']});
+  }
+})();
