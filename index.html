@@ -343,6 +343,237 @@
 }
 .aria-room { position: relative; overflow: hidden; }
 .aria-figure, .aria-reaction, .aria-light, .aria-grid { position: relative; z-index: 1; }
+
+/* ═══ VANTAGE RECORD — Intelligence Dossier (SR18) ═══ */
+.record-dossier-wrap {
+  position: relative;
+  max-width: 720px;
+  margin: clamp(48px,6vw,80px) auto;
+}
+.record-dossier {
+  background: rgba(8,7,24,.88);
+  border: 1px solid rgba(124,58,237,.28);
+  border-radius: 20px;
+  padding: clamp(28px,4vw,48px);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 0 100px rgba(99,102,241,.1), 0 0 0 1px rgba(196,181,253,.04), 0 32px 64px rgba(0,0,0,.5);
+  position: relative;
+  overflow: hidden;
+}
+.record-dossier::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: -60px; right: -60px;
+  height: 180px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Header */
+.dos-header { margin-bottom: 32px; }
+.dos-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.dos-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .28em;
+  color: rgba(196,181,253,.45);
+}
+.dos-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .16em;
+  color: rgba(168,85,247,.8);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dos-pulse {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #a855f7;
+  box-shadow: 0 0 8px #a855f7;
+  display: inline-block;
+  animation: dosPulse 2s ease-in-out infinite;
+}
+@keyframes dosPulse {
+  0%,100% { opacity: 1; box-shadow: 0 0 8px #a855f7; }
+  50% { opacity: .4; box-shadow: 0 0 2px #a855f7; }
+}
+.dos-meta-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.dos-meta-row span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.28);
+}
+.dos-meta-row em { color: rgba(196,181,253,.4); font-style: normal; }
+.dos-progress-track {
+  height: 2px;
+  background: rgba(196,181,253,.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.dos-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#7c3aed,#a855f7);
+  border-radius: 2px;
+  transition: width 2.2s cubic-bezier(.25,.46,.45,.94);
+}
+.dos-progress-label {
+  display: flex;
+  justify-content: space-between;
+}
+.dos-progress-label span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.25);
+}
+#dosPercent { color: rgba(168,85,247,.7) !important; }
+
+/* Entries */
+.dos-entries { display: flex; flex-direction: column; gap: 0; }
+.dos-entry {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .55s ease, transform .55s ease;
+  border-left: 2px solid rgba(124,58,237,.2);
+  padding: 20px 0 20px 22px;
+  position: relative;
+}
+.dos-entry + .dos-entry { border-top: 1px solid rgba(196,181,253,.05); }
+.dos-entry::before {
+  content: '';
+  position: absolute;
+  left: -5px; top: 24px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(124,58,237,.4);
+  border: 1px solid rgba(124,58,237,.6);
+  transition: background .3s, box-shadow .3s;
+}
+.dos-entry.dos-visible { opacity: 1; transform: translateY(0); }
+.dos-entry.dos-visible::before {
+  background: #7c3aed;
+  box-shadow: 0 0 12px rgba(124,58,237,.7);
+}
+.dos-entry--final { border-left-color: rgba(168,85,247,.45) !important; }
+.dos-entry--final.dos-visible::before {
+  background: #a855f7;
+  box-shadow: 0 0 16px rgba(168,85,247,.8);
+}
+.dos-entry-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.dos-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .18em;
+  color: rgba(196,181,253,.4);
+}
+.dos-type {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .14em;
+  color: rgba(168,85,247,.75);
+}
+.dos-entry-title {
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: clamp(14px,1.45vw,18px) !important;
+  color: rgba(255,255,255,.88) !important;
+  line-height: 1.6 !important;
+  margin: 0 0 10px !important;
+  font-weight: 400 !important;
+}
+.dos-entry-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.dos-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .15em;
+  color: rgba(196,181,253,.75);
+  background: rgba(124,58,237,.15);
+  border: 1px solid rgba(124,58,237,.3);
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+.dos-outcome {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: rgba(255,255,255,.42);
+}
+.dos-impact {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: rgba(196,181,253,.65);
+  margin-top: 8px;
+}
+.dos-impact strong { color: #a855f7; font-weight: 700; }
+
+/* Footer */
+.dos-footer {
+  border-top: 1px solid rgba(196,181,253,.08);
+  margin-top: 28px;
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dos-total-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .2em;
+  color: rgba(196,181,253,.38);
+  display: block;
+  margin-bottom: 6px;
+}
+.dos-total-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(32px,3.5vw,48px);
+  font-weight: 700;
+  background: linear-gradient(90deg,#a855f7 0%,#7c3aed 45%,#6366f1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  display: block;
+}
+.dos-stamp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .22em;
+  color: rgba(124,58,237,.22);
+  border: 1px solid rgba(124,58,237,.14);
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-align: center;
+  line-height: 1.6;
+}
+.dos-glow {
+  position: absolute;
+  inset: -80px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,.07) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: -1;
+}
 </style>
 </head>
 <body>
@@ -500,47 +731,82 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 <section class="record cinematic-panel reveal-section" id="record">
   <div class="section-index">02 / VANTAGE RECORD</div>
   <div class="record-head"><p class="eyebrow">Your career lives here — not in the HRIS</p><h2>The record the org never built <span class="line accent">for you.</span></h2><p class="lede">Every decision you made. Every difficult conversation you navigated. Every rupee you protected. Vantage quietly turns the work you already do into a career record that is yours — across every org, every role, every year you've given to this profession.</p><p class="record-sub">The company owns the HRIS. <span class="line accent">Your Vantage Record belongs to you.</span></p></div>
-  <p class="record-example-label">What your first year on Vantage can look like</p>
-  <div class="record-universe" id="recordUniverse">
-  <div class="record-orbit ro1"></div>
-  <div class="record-orbit ro2"></div>
-  <div class="record-orbit ro3"></div>
-  <div class="record-core">
-    <span>YOUR</span>
-    <strong>VANTAGE<br>RECORD</strong>
-    <em>it follows you</em>
+  <div class="record-dossier-wrap">
+    <div class="record-dossier" id="recordDossier">
+      <div class="dos-header">
+        <div class="dos-title-row">
+          <span class="dos-label">VANTAGE RECORD</span>
+          <span class="dos-status"><i class="dos-pulse"></i>ACTIVE · BUILDING</span>
+        </div>
+        <div class="dos-meta-row">
+          <span>PROFESSIONAL / <em>CONFIDENTIAL</em></span>
+          <span>ID: VR-2025-0847</span>
+        </div>
+        <div class="dos-progress-track"><div class="dos-progress-fill" id="dosProgress"></div></div>
+        <div class="dos-progress-label"><span>Career capital documented</span><span id="dosPercent">0%</span></div>
+      </div>
+
+      <div class="dos-entries" id="dosEntries">
+        <div class="dos-entry" data-index="0">
+          <div class="dos-entry-head">
+            <span class="dos-date">14 JAN 2025</span>
+            <span class="dos-type">ER CASE FILED</span>
+          </div>
+          <p class="dos-entry-title">Employee absent 7 days. Manager in crisis. You held the room.</p>
+          <div class="dos-entry-foot">
+            <span class="dos-tag">CASE LIBRARY</span>
+            <span class="dos-outcome">Written warning issued — process documented</span>
+          </div>
+          <div class="dos-impact">Financial exposure avoided <strong>₹4.2L</strong></div>
+        </div>
+
+        <div class="dos-entry" data-index="1">
+          <div class="dos-entry-head">
+            <span class="dos-date">08 MAR 2025</span>
+            <span class="dos-type">CONVERSATION REHEARSED · #17</span>
+          </div>
+          <p class="dos-entry-title">Stakeholder alignment call. CFO convinced. Policy passed boardroom review.</p>
+          <div class="dos-entry-foot">
+            <span class="dos-tag">SIMULATOR</span>
+            <span class="dos-outcome">17 conversations logged this quarter</span>
+          </div>
+        </div>
+
+        <div class="dos-entry" data-index="2">
+          <div class="dos-entry-head">
+            <span class="dos-date">APR 2025</span>
+            <span class="dos-type">MONTHLY DEBRIEF #09</span>
+          </div>
+          <p class="dos-entry-title">9 months on Vantage. 47 decisions on record. 12 policy calls — every one defensible.</p>
+          <div class="dos-entry-foot">
+            <span class="dos-tag">DEBRIEF</span>
+            <span class="dos-outcome">Intelligence summary compiled and filed</span>
+          </div>
+        </div>
+
+        <div class="dos-entry dos-entry--final" data-index="3">
+          <div class="dos-entry-head">
+            <span class="dos-date">YEAR 1 COMPLETE</span>
+            <span class="dos-type">RECORD CERTIFIED</span>
+          </div>
+          <p class="dos-entry-title">Six stakeholder wins. Nine debriefs. Forty-seven cases. A career — documented.</p>
+          <div class="dos-entry-foot">
+            <span class="dos-tag">HUMACITY</span>
+            <span class="dos-outcome">Total impact calculated and verified</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dos-footer">
+        <div class="dos-total-block">
+          <span class="dos-total-label">TOTAL CAREER CAPITAL DOCUMENTED</span>
+          <span class="dos-total-value" id="dosTotal">₹0L</span>
+        </div>
+        <div class="dos-stamp">VANTAGE<br>PRIVATE</div>
+      </div>
+    </div>
+    <div class="dos-glow"></div>
   </div>
-  <div class="record-point p1">
-    <b>47</b>
-    <small>ER cases<br>navigated</small>
-    <span class="rp-tag">case library</span>
-  </div>
-  <div class="record-point p2">
-    <b>₹18.4L</b>
-    <small>financial exposure<br>avoided</small>
-    <span class="rp-tag">humacity</span>
-  </div>
-  <div class="record-point p3">
-    <b>17</b>
-    <small>conversations<br>rehearsed</small>
-    <span class="rp-tag">simulator</span>
-  </div>
-  <div class="record-point p4">
-    <b>12</b>
-    <small>policy decisions<br>on record</small>
-    <span class="rp-tag">policy compass</span>
-  </div>
-  <div class="record-point p5">
-    <b>06</b>
-    <small>stakeholder<br>wins mapped</small>
-    <span class="rp-tag">influence</span>
-  </div>
-  <div class="record-point p6">
-    <b>09</b>
-    <small>monthly debriefs<br>generated</small>
-    <span class="rp-tag">debrief</span>
-  </div>
-</div>
   <div class="record-links"><a href="case-library.html" class="text-link">Open your Case Library →</a><a href="debrief.html" class="text-link">Read your monthly Debrief →</a></div>
   <div class="record-payoff"><p>You've built careers. Navigated crises. Protected organisations.</p><strong>Now you have proof.<br><span class="line accent">And it's yours to keep.</span></strong></div>
 </section>
