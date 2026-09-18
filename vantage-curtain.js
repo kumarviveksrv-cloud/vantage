@@ -2069,40 +2069,64 @@
   document.addEventListener('webkitfullscreenchange', onFsChange);
 })();
 
-/* ═══ HERO CINEMATIC SEQUENCE — typewriter/fade orchestration (SR18.7) ═══
-   Reverted to the exact confirmed spec after the word-by-word rewrite
-   caused tagline and accent lines to never reach opacity:1 at all.
-   1. Tagline types out (32ms/char)
-   2. Kicker fades in (650ms)
-   3. H1 line 1 (dim) types out (34ms/char)
-   4. H1 lines 2+3 (accent) fade in together (800ms)
-   5. "Enter Vantage." typewriter fires (existing initHeroEnter logic)
+/* ═══ HERO CINEMATIC SEQUENCE — typewriter/fade orchestration (SR18.8) ═══
+   Tagline specifically has resisted every previous fix while kicker/h1/
+   accent lines work fine — the strong signal is that something OUTSIDE
+   this file (vantage-cinematic.js/css, not in this session) touches
+   .hero-tagline independently and restores its content after this
+   script clears it. Two defenses added:
+   1. textContent is cleared (not just opacity) at both hide() time AND
+      again immediately before typing starts — if something restores
+      the text in between, this re-clears it right before the loop.
+   2. console.log breadcrumbs at every phase so if this still fails,
+      we get exact proof of what's happening instead of another guess.
 */
 (function initHeroSequence(){
   'use strict';
   const tagline = document.querySelector('.hero-tagline');
   const kicker  = document.querySelector('.hero-kicker');
   const h1      = document.querySelector('.hero-title');
-  if(!tagline || !kicker || !h1) return;
+  if(!tagline || !kicker || !h1){
+    console.log('[HeroSeq] Missing element(s), aborting:', {tagline:!!tagline, kicker:!!kicker, h1:!!h1});
+    return;
+  }
 
   const lineDim     = h1.querySelector('.line.dim');
   const lineAccents = [...h1.querySelectorAll('.line.accent')];
-  if(!lineDim || !lineAccents.length) return;
+  if(!lineDim || !lineAccents.length){
+    console.log('[HeroSeq] Missing h1 lines, aborting');
+    return;
+  }
 
   const delay = ms => new Promise(r => setTimeout(r, ms));
-  const hide  = el => el && el.style.setProperty('opacity','0','important');
+  const hide  = el => { el.style.setProperty('opacity','0','important'); el.textContent=''; };
 
+  /* Hide + clear immediately at script parse time */
   hide(tagline);
   hide(kicker);
   hide(lineDim);
   lineAccents.forEach(hide);
+  console.log('[HeroSeq] Initial hide applied. tagline.textContent =', JSON.stringify(tagline.textContent));
 
-  async function typeMixedLine(el, plainText, emText, speed){
+  async function typeMixedLine(el, plainText, emText, speed, label){
+    /* Defensive re-clear immediately before typing — in case something
+       external restored the content between initial hide and now. */
+    if(el.textContent.trim() !== ''){
+      console.log('['+label+'] Content was restored before typing started:', JSON.stringify(el.textContent));
+    }
     el.textContent = '';
     el.style.setProperty('opacity','1','important');
+    console.log('['+label+'] Cleared and starting type. Current textContent =', JSON.stringify(el.textContent));
+
     const plainSpan = document.createElement('span');
     el.appendChild(plainSpan);
     for(let i=0;i<=plainText.length;i++){
+      /* Guard: if el's children were wiped out from under us mid-loop
+         (e.g. by an external script resetting innerHTML), re-attach. */
+      if(!plainSpan.isConnected){
+        console.log('['+label+'] plainSpan was detached mid-type! Re-attaching.');
+        el.appendChild(plainSpan);
+      }
       plainSpan.textContent = plainText.slice(0,i);
       await delay(speed);
     }
@@ -2110,19 +2134,25 @@
       const emSpan = document.createElement('em');
       el.appendChild(emSpan);
       for(let i=0;i<=emText.length;i++){
+        if(!emSpan.isConnected){
+          console.log('['+label+'] emSpan was detached mid-type! Re-attaching.');
+          el.appendChild(emSpan);
+        }
         emSpan.textContent = emText.slice(0,i);
         await delay(speed);
       }
     }
+    console.log('['+label+'] Typing complete. Final textContent =', JSON.stringify(el.textContent));
   }
 
-  async function typeSimpleLine(el, text, speed){
+  async function typeSimpleLine(el, text, speed, label){
     el.textContent = '';
     el.style.setProperty('opacity','1','important');
     for(let i=0;i<=text.length;i++){
       el.textContent = text.slice(0,i);
       await delay(speed);
     }
+    console.log('['+label+'] done');
   }
 
   function fadeIn(el, duration){
@@ -2136,8 +2166,10 @@
   }
 
   async function run(){
+    console.log('[HeroSeq] run() started');
+
     /* 1. Tagline types out (mixed em) */
-    await typeMixedLine(tagline, "Your intelligence ally at work. ", "Not the org's — yours.", 32);
+    await typeMixedLine(tagline, "Your intelligence ally at work. ", "Not the org's — yours.", 32, 'Tagline');
     await delay(400);
 
     /* 2. Kicker fades in */
@@ -2145,19 +2177,18 @@
     await delay(700);
 
     /* 3. H1 line 1 (dim) types out */
-    await typeSimpleLine(lineDim, 'Every HR professional has had that 9 pm moment.', 34);
+    await typeSimpleLine(lineDim, 'Every HR professional has had that 9 pm moment.', 34, 'H1-dim');
     await delay(350);
 
     /* 4. H1 lines 2+3 (accent) fade in together */
-    lineAccents.forEach(el=>{
-      el.style.transition = 'opacity 800ms ease';
-    });
+    lineAccents.forEach(el=>{ el.style.transition = 'opacity 800ms ease'; });
     requestAnimationFrame(()=>{
       lineAccents.forEach(el=> el.style.setProperty('opacity','1','important'));
     });
     await delay(1000);
 
     /* 5. "Enter Vantage." typewriter sequence (existing logic) */
+    console.log('[HeroSeq] run() complete, handing off to heroEnter');
     if(window._heroEnterRun) window._heroEnterRun();
   }
 
@@ -2191,9 +2222,14 @@
     });
   }
 
-  /* Small settle buffer (600ms, was 400ms) so the browser has a beat to
-     finish tearing down the prologue's WebGL scene before the first
-     typewriter starts — reduces risk of the tagline appearing to "snap"
-     to its final state on a busy frame. */
-  waitForLandingReveal().then(() => setTimeout(run, 600));
+  /* Re-hide right before run(), in case anything restored content
+     during the wait for landing reveal (could be 0-15+ seconds). */
+  waitForLandingReveal().then(() => {
+    hide(tagline);
+    hide(kicker);
+    hide(lineDim);
+    lineAccents.forEach(hide);
+    console.log('[HeroSeq] Re-hidden right before run(). tagline.textContent =', JSON.stringify(tagline.textContent));
+    setTimeout(run, 600);
+  });
 })();
