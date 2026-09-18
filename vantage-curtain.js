@@ -1012,7 +1012,8 @@
     heVantage.classList.add('he-blink');
   }
 
-  window.addEventListener('load', () => setTimeout(run, 900));
+  /* Exposed for the master hero sequence orchestrator to call at the right time */
+  window._heroEnterRun = run;
 })();
 
 /* ── Prologue JS typewriter on .prologue-kicker (SR18) ──────────────────────
@@ -1905,4 +1906,102 @@
   }
   document.addEventListener('fullscreenchange', onFsChange);
   document.addEventListener('webkitfullscreenchange', onFsChange);
+})();
+/* ═══ HERO CINEMATIC SEQUENCE — typewriter/fade orchestration (SR18.5) ═══
+   1. Tagline types out
+   2. Kicker fades in
+   3. H1 line 1 (dim) types out
+   4. H1 lines 2+3 (accent) fade in together
+   5. "Enter Vantage." typewriter fires (existing initHeroEnter logic)
+*/
+(function initHeroSequence(){
+  'use strict';
+  const tagline = document.querySelector('.hero-tagline');
+  const kicker  = document.querySelector('.hero-kicker');
+  const h1      = document.querySelector('.hero-title');
+  if(!tagline || !kicker || !h1) return;
+
+  const lineDim    = h1.querySelector('.line.dim');
+  const lineAccents= h1.querySelectorAll('.line.accent');
+  if(!lineDim || !lineAccents.length) return;
+
+  const delay = ms => new Promise(r => setTimeout(r, ms));
+  const hide  = el => el && el.style.setProperty('opacity','0','important');
+  const show  = el => el && el.style.setProperty('opacity','1','important');
+
+  /* Hide everything that will be sequenced, before first paint settles */
+  hide(tagline);
+  hide(kicker);
+  hide(lineDim);
+  lineAccents.forEach(hide);
+
+  /* Type a line that may contain one <em> segment — preserves the em styling
+     by typing into two sequential child spans rather than touching innerHTML
+     char-by-char (which would repeatedly destroy/rebuild the em tag). */
+  async function typeMixedLine(el, plainText, emText, speed){
+    el.textContent = '';
+    el.style.setProperty('opacity','1','important');
+    const plainSpan = document.createElement('span');
+    el.appendChild(plainSpan);
+    for(let i=0;i<=plainText.length;i++){
+      plainSpan.textContent = plainText.slice(0,i);
+      await delay(speed);
+    }
+    if(emText){
+      const emSpan = document.createElement('em');
+      el.appendChild(emSpan);
+      for(let i=0;i<=emText.length;i++){
+        emSpan.textContent = emText.slice(0,i);
+        await delay(speed);
+      }
+    }
+  }
+
+  async function typeSimpleLine(el, text, speed){
+    el.textContent = '';
+    el.style.setProperty('opacity','1','important');
+    for(let i=0;i<=text.length;i++){
+      el.textContent = text.slice(0,i);
+      await delay(speed);
+    }
+  }
+
+  function fadeIn(el, duration){
+    return new Promise(resolve=>{
+      el.style.transition = 'opacity '+duration+'ms ease';
+      requestAnimationFrame(()=>{
+        el.style.setProperty('opacity','1','important');
+        setTimeout(resolve, duration);
+      });
+    });
+  }
+
+  async function run(){
+    /* 1. Tagline types out (mixed em) */
+    await typeMixedLine(tagline, "Your intelligence ally at work. ", "Not the org's — yours.", 32);
+    await delay(400);
+
+    /* 2. Kicker fades in */
+    await fadeIn(kicker, 650);
+    await delay(700);
+
+    /* 3. H1 line 1 (dim) types out */
+    await typeSimpleLine(lineDim, 'Every HR professional has had that 9 pm moment.', 34);
+    await delay(350);
+
+    /* 4. H1 lines 2+3 (accent) fade in together */
+    lineAccents.forEach(el=>{
+      el.style.transition = 'opacity 800ms ease';
+    });
+    requestAnimationFrame(()=>{
+      lineAccents.forEach(el=> el.style.setProperty('opacity','1','important'));
+    });
+    await delay(1000);
+
+    /* 5. "Enter Vantage." typewriter sequence (existing logic) */
+    await delay(300);
+    if(window._heroEnterRun) window._heroEnterRun();
+  }
+
+  window.addEventListener('load', () => setTimeout(run, 400));
 })();
