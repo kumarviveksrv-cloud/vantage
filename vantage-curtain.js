@@ -1213,6 +1213,7 @@
       });
     }
     const t0=performance.now();
+    const maxD=Math.hypot(cv.width,cv.height)*.6;
     ctx.fillStyle='#050410';ctx.fillRect(0,0,cv.width,cv.height);
     function frame(now){
       const el=now-t0,p=el/duration;
@@ -1222,7 +1223,6 @@
       const acc=1+p*12;
       stars.forEach(s=>{
         s.d+=s.sp*acc;
-        const maxD=Math.hypot(cv.width,cv.height)*.6;
         if(s.d>maxD){s.d=0;s.a=Math.random()*Math.PI*2;}
         const x=cx+Math.cos(s.a)*s.d,y=cy+Math.sin(s.a)*s.d;
         const len=s.sp*acc*4;
