@@ -1824,6 +1824,93 @@
   .cor-door { width: 240px; height: 300px; }
   .cor-choices { grid-template-columns: 1fr; }
 }
+
+/* ── BIGGER DOORS + CASE SELECTOR (SR18.4) ── */
+.cor-door {
+  width: min(520px, 80vw) !important;
+  height: min(560px, 75vh) !important;
+}
+.cor-lock-icon { font-size: 56px !important; }
+.cor-lock-label { font-size: 10px !important; margin-top: 14px !important; }
+.cor-door-tag { font-size: 10px !important; margin-top: 18px !important; }
+.cor-door-panel::after {
+  width: 36px !important; height: 36px !important;
+}
+
+/* Wormhole full-screen canvas */
+#wormholeCanvas {
+  position: fixed; inset: 0;
+  width: 100vw; height: 100vh;
+  z-index: 9990;
+  pointer-events: none;
+  display: none;
+}
+#wormholeCanvas.wh-active { display: block; }
+
+/* Case selector */
+.cor-case-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 32px;
+}
+.cor-case-select h3 {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: clamp(18px,2vw,24px) !important;
+  color: rgba(255,255,255,.75) !important;
+  font-weight: 400 !important;
+  font-style: italic !important;
+}
+.cor-case-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.cor-case-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: rgba(196,181,253,.6);
+  border: 1px solid rgba(124,58,237,.22);
+  border-radius: 20px;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: all .3s;
+  background: rgba(12,10,32,.5);
+}
+.cor-case-pill:hover {
+  border-color: rgba(124,58,237,.5);
+  color: #fff;
+  background: rgba(124,58,237,.12);
+}
+.cor-case-pill.active {
+  border-color: #8b5cf6;
+  color: #fff;
+  background: rgba(124,58,237,.2);
+  box-shadow: 0 0 16px rgba(139,92,246,.35);
+}
+
+/* Restart button */
+.cor-restart {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .15em;
+  color: rgba(196,181,253,.6);
+  border: 1px solid rgba(124,58,237,.22);
+  border-radius: 6px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all .3s;
+  background: transparent;
+  margin-top: 12px;
+}
+.cor-restart:hover {
+  border-color: #8b5cf6;
+  color: #fff;
+  background: rgba(124,58,237,.12);
+}
 </style>
 </head>
 <body>
@@ -2252,6 +2339,18 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 <section class="sim-room cinematic-panel reveal-section" id="simRoom">
   <div class="corridor" id="corridor">
 
+    <!-- Case selector -->
+    <div class="cor-case-select" id="corCaseSelect">
+      <h3>Choose a scenario to enter</h3>
+      <div class="cor-case-pills" id="corCasePills">
+        <div class="cor-case-pill active" data-case="0">TERMINATION</div>
+        <div class="cor-case-pill" data-case="1">POSH / HARASSMENT</div>
+        <div class="cor-case-pill" data-case="2">RESTRUCTURING</div>
+        <div class="cor-case-pill" data-case="3">PERFORMANCE / PIP</div>
+        <div class="cor-case-pill" data-case="4">WAGE COMPLIANCE</div>
+      </div>
+    </div>
+
     <!-- Progress bar -->
     <div class="cor-progress">
       <div class="cor-pip active" data-r="1">1</div>
@@ -2447,6 +2546,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
           <div class="cor-final" style="display:none;">
             <p class="cor-final-line">Five doors. Five decisions. One system that remembers all of them.</p>
             <a href="demo.html" class="btn btn-primary magnetic">Enter Vantage <span>→</span></a>
+            <button class="cor-restart" id="corRestart">RESTART THE CORRIDOR</button>
           </div>
         </div>
       </div>
@@ -2534,5 +2634,6 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 <script src="vantage-meridian-globe.js"></script>
 <script src="vantage-autoselect.js"></script>
 <script src="vantage-curtain.js"></script>
+<canvas id="wormholeCanvas" aria-hidden="true"></canvas>
 </body>
 </html>
