@@ -884,6 +884,32 @@
   font-feature-settings: "lnum" 1 !important;
 }
 
+
+/* Hero urgency interlude — smaller, prose weight, DM Sans, sits between accent spans */
+.hero-context {
+  font-family: 'DM Sans', sans-serif !important;
+  font-style: normal !important;
+  font-size: clamp(14px,1.5vw,19px) !important;
+  font-weight: 300 !important;
+  opacity: 0.62 !important;
+  letter-spacing: .02em !important;
+  margin: 6px 0 !important;
+  background: none !important;
+  -webkit-text-fill-color: rgba(255,255,255,.62) !important;
+  color: rgba(255,255,255,.62) !important;
+}
+
+/* "Enter Vantage." — stage direction, bridge between question and answer */
+.hero-enter {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-size: clamp(20px,2.2vw,28px) !important;
+  font-weight: 400 !important;
+  color: rgba(196,181,253,.88) !important;
+  letter-spacing: .04em !important;
+  margin: 16px 0 8px !important;
+  opacity: 1 !important;
+}
 </style>
 </head>
 <body>
@@ -959,10 +985,11 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
     <h1 class="hero-title">
       <span class="line dim">Every HR professional has had that 9 pm moment.</span>
       <span class="line accent">A case that won't hold.</span>
-      <span class="line accent">Who does HR go to?</span>
+      <span class="line dim hero-context">The manager wants closure. The policy is unclear. The clock is running.</span>
+      <span class="line accent">Who does HR go to for help?</span>
     </h1>
-    <p class="hero-deck">The manager wants closure. The policy is unclear. The clock is running.<br>
-    <em>Vantage is HR for HR</em> — the private intelligence ally built for the profession that carries everyone else, and has nowhere to take their own.</p>
+    <p class="hero-enter">Enter Vantage.</p>
+    <p class="hero-deck"><em>HR for HR</em> — the private intelligence ally built for the profession that carries everyone else, and has nowhere to take their own.</p>
     <div class="hero-actions">
       <a href="demo.html" class="btn btn-primary magnetic">Try the Demo — it's live <span>→</span></a>
       <a href="access.html" class="btn btn-ghost magnetic">Sign In <span>↗</span></a>
