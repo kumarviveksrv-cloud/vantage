@@ -1092,22 +1092,7 @@
 }
 @keyframes initCursor { 0%,100%{opacity:1} 50%{opacity:0} }
 
-/* Prologue typewriter on kicker (CSS, single-line) */
-.prologue-kicker {
-  overflow: hidden !important;
-  white-space: nowrap !important;
-  width: fit-content !important;
-  margin: 0 auto 24px !important;
-  border-right: 2px solid rgba(196,181,253,.55) !important;
-  animation:
-    prologueType 2.2s steps(27, end) .8s both,
-    prologueCursor .65s step-end .8s 4 forwards !important;
-}
-@keyframes prologueType { from{width:0} to{width:100%} }
-@keyframes prologueCursor {
-  from,to{border-color:rgba(196,181,253,.55)}
-  50%{border-color:transparent}
-}
+/* Prologue kicker typewriter handled by JS in curtain.js */
 
 /* Prologue text shifted down — doesn't cover the office scene */
 .prologue-copy {
@@ -1222,11 +1207,14 @@
   50% { opacity: 1; transform: scale(1.03); }
 }
 
-/* Ensure text overlay sits above everything */
-.prologue-top, .prologue-signal, .prologue-note,
-.prologue-copy, .prologue-skip, .prologue-countdown,
-.prologue-fade { position: relative; z-index: 3; }
-.prologue-grid, .prologue-vignette { z-index: 2; }
+/* Ensure text overlays sit above photo/rain (z:0-1). NO position override —
+   prologue-css already sets absolute/fixed on these elements. */
+.prologue-top, .prologue-note,
+.prologue-copy, .prologue-countdown { z-index: 5 !important; }
+.prologue-signal { z-index: 5 !important; }
+.prologue-skip   { z-index: 10 !important; }
+.prologue-fade   { z-index: 8 !important; }
+.prologue-grid, .prologue-vignette { z-index: 2 !important; }
 
 /* Reflect modal scrollbar — purple gradient, matches platform palette */
 .reflect-body::-webkit-scrollbar {
@@ -1361,7 +1349,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   <div class="section-index">01 / HUMACITY</div>
   <div class="humacity-grid">
     <div class="humacity-copy">
-      <p class="eyebrow">People Financial Intelligence</p>
+      <p class="eyebrow">People financial intelligence</p>
       <h2 class="humacity-headline">You don't just protect the business.<br>
       <span class="line accent">You fund it.</span></h2>
       <p class="humacity-concept"><span class="line accent">Now you can prove it.</span></p>
