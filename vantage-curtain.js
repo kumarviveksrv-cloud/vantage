@@ -2206,9 +2206,20 @@
     const words = text.split(/\s+/);
     el.textContent = '';
     el.style.setProperty('opacity','1','important');
+    /* .line.accent's purple gradient relies on background-clip:text
+       painted on the element whose direct text it clips to. Once we
+       wrap each word in its own inline-block span, the PARENT has no
+       direct text nodes left, and background-clip:text stops clipping
+       correctly through nested inline-block boxes — the words render
+       with color:transparent and nothing else, i.e. invisible. Fix:
+       give each word span its OWN copy of the same gradient, so every
+       word clips its own background independently of the parent. */
+    const gradientCSS = 'background:linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%);'+
+      '-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;';
     const spans = words.map((w,i)=>{
       const span = document.createElement('span');
       span.textContent = w + (i < words.length-1 ? '\u00A0' : '');
+      span.style.cssText = gradientCSS;
       span.style.opacity = '0';
       span.style.display = 'inline-block';
       span.style.transition = 'opacity '+wordDuration+'ms ease, transform '+wordDuration+'ms ease';
