@@ -59,7 +59,10 @@
   scene.add(group);
 
   function resize(){
-    const w=figure.clientWidth||260,h=figure.clientHeight||350;
+    /* getBoundingClientRect gives true CSS px at any browser zoom level */
+    const rect=figure.getBoundingClientRect();
+    const w=Math.round(rect.width)||figure.clientWidth||260;
+    const h=Math.round(rect.height)||figure.clientHeight||350;
     renderer.setSize(w,h);
     camera.aspect=w/h;
     camera.updateProjectionMatrix();
@@ -206,6 +209,8 @@
     if(cursorInside)lastMoveAt=performance.now();
   },{passive:true});
   addEventListener('resize',resize);
+  /* ResizeObserver: fires on layout change AND browser zoom change */
+  if(window.ResizeObserver) new ResizeObserver(()=>resize()).observe(figure);
 
   let onScreen=false,leaveTimer=null,hintShown=false;
   const io=new IntersectionObserver(es=>{es.forEach(e=>{
@@ -213,7 +218,8 @@
       if(leaveTimer){clearTimeout(leaveTimer);leaveTimer=null;}
       if(!onScreen){
         onScreen=true;
-        resize();
+        /* Delay resize so layout is fully settled before measuring */
+        setTimeout(resize,60);
         if(!built){
           built=true;
           new THREE.TextureLoader().load('aria-reference.png',build);
