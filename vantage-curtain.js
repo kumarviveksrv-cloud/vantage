@@ -246,11 +246,11 @@
          each scene calls directly into the next. */
 
       if(initOverlay && initTextEl){
-        /* "Initiating Vantage..." typewriter */
+        /* "INITIATING VANTAGE..." typewriter — all caps */
         initOverlay.classList.add('init-active');
         initOverlay.style.opacity = '1';
         initTextEl.textContent = '';
-        const msg = 'Initiating Vantage...';
+        const msg = 'INITIATING VANTAGE...';
         let idx = 0;
         const typer = setInterval(()=>{
           if(idx <= msg.length){ initTextEl.textContent = msg.slice(0, idx); idx++; }
@@ -260,11 +260,16 @@
               initTextEl.style.transition = 'opacity .8s ease';
               initTextEl.style.opacity = '0';
               setTimeout(()=>{
-                /* tada-overlay paints its own opaque #050410 background
-                   at a much higher z-index than init-overlay, so calling
-                   doTada() now and removing init-overlay a beat later
-                   has zero gap and zero landing-page flash between the
-                   two — tada-overlay is already covering everything. */
+                /* doTada() now pins the overlay at FULL opacity from its
+                   very first frame (no overlay-level fade-in at all —
+                   only the logo graphic itself fades, via its own
+                   existing CSS animation). This removes any window,
+                   however small, where the overlay could be anything
+                   less than 100% opaque — which is what caused the
+                   reported split-second landing-page flash: the old
+                   version faded the WHOLE overlay in from opacity 0,
+                   and for that fraction of a second it was translucent
+                   enough to let landing show through underneath. */
                 doTada();
                 setTimeout(()=>{
                   initOverlay.classList.remove('init-active');
@@ -272,7 +277,7 @@
                   initOverlay.style.transition = '';
                   initTextEl.style.opacity = '';
                   initTextEl.style.transition = '';
-                }, 150);
+                }, 60);
               }, 800);
             }, 1800);
           }
@@ -283,22 +288,31 @@
 
       function doTada(){
         const logo = document.getElementById('tada-logoimg');
-        /* Dim IN — ta-da fades in, not abrupt */
-        tadaOverlay.style.opacity = '0';
-        tadaOverlay.style.transition = 'opacity .85s ease';
+        /* Overlay itself: instantly fully opaque, no fade — eliminates
+           any transparency window that could expose the landing page
+           underneath. The "dim in" feel now comes purely from the
+           logo's own existing tadaLogoIn CSS animation (fade+scale). */
+        tadaOverlay.style.opacity = '1';
+        tadaOverlay.style.transition = '';
         tadaOverlay.style.display = 'flex';
-        requestAnimationFrame(()=>requestAnimationFrame(()=>{ tadaOverlay.style.opacity='1'; }));
-        setTimeout(()=>{ if(logo) logo.style.filter = 'drop-shadow(0 0 80px rgba(196,181,253,0.9)) drop-shadow(0 0 40px rgba(99,102,241,0.6))'; }, 200);
+
+        /* Extended hold — let the logo have its own moment before the
+           particle dissolve begins (was 1100ms, now ~2900ms: +1.8s). */
+        setTimeout(()=>{ if(logo) logo.style.filter = 'drop-shadow(0 0 80px rgba(196,181,253,0.9)) drop-shadow(0 0 40px rgba(99,102,241,0.6))'; }, 300);
         setTimeout(()=>{
           if(logo) logo.style.opacity = '0';
           runParticles(document.getElementById('tada-canvas'), ()=>{
+            /* Slower dissolve into landing — override the default
+               0.65s tadaFadeOut animation with a longer one (+0.75s). */
+            tadaOverlay.style.setProperty('animation', 'tadaFadeOut 1.4s ease both', 'important');
             tadaOverlay.classList.add('tada-out');
-            /* Curtain raiser has ALREADY been shown and dismissed by
-               this point (it's what called doTada() in the first
-               place) — no more waiting needed, just hide normally. */
-            setTimeout(()=>{ tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 650);
+            setTimeout(()=>{
+              tadaOverlay.style.display='none';
+              tadaOverlay.classList.remove('tada-out');
+              tadaOverlay.style.removeProperty('animation');
+            }, 1450);
           });
-        }, 1100);
+        }, 2900);
       }
     });
     obs.observe(document.body,{attributes:true,attributeFilter:['class']});
@@ -917,6 +931,15 @@
   const heCursor  = document.createElement('span');
   heCursor.className = 'he-cursor';
   heCursor.textContent = '|';
+  /* The .he-cursor CSS class blinks via its own animation the instant
+     it's in the DOM — since this whole element is created at page
+     load but run() (the actual typing) doesn't fire until much later
+     (after the full hero sequence), the cursor was blinking uselessly
+     at the "Enter VANTAGE" spot for the entire multi-second buildup
+     before its own turn ever came. Pin it invisible until run() is
+     ready to reveal it. */
+  heCursor.style.opacity = '0';
+  heCursor.style.animation = 'none';
   wrap.appendChild(heText);
   wrap.appendChild(heVantage);
   wrap.appendChild(heDot);
@@ -940,6 +963,11 @@
   }
 
   async function run(){
+    /* Reveal + start the cursor's blink right as typing actually
+       begins — not a moment before. */
+    heCursor.style.opacity = '';
+    heCursor.style.animation = '';
+
     /* Type once — "Enter " into heText, "VANTAGE" into heVantage,
        "." into heDot. No erase/retype cycles. */
     await typeIn(heText, 'Enter ', 58);
@@ -982,11 +1010,49 @@
       copy.style.textAlign = 'center';
     }
 
-    /* Hide message + sub initially — reveal after kicker types */
+    /* Hide sub initially — message now reveals word-by-word after kicker types */
     const message = pro.querySelector('.prologue-message');
     const sub = pro.querySelector('.prologue-sub');
-    if(message){ message.style.setProperty('opacity','0','important'); message.style.transition='opacity 1.3s ease'; }
     if(sub){ sub.style.setProperty('opacity','0','important'); sub.style.transition='opacity 1.3s ease'; }
+
+    /* Word-by-word reveal for the message line — preserves the <br> and
+       the italic <em>Alone.</em> on its own line, styled the same as
+       the source HTML. Built once here since message.textContent will
+       be cleared and rebuilt as individual word spans. */
+    function revealMessageWords(el, wordDelay, wordDuration){
+      if(!el) return Promise.resolve();
+      /* Original: "Somewhere in it, a decision is still being made.<br><em>Alone.</em>" */
+      const plainPart = 'Somewhere in it, a decision is still being made.';
+      const emPart = 'Alone.';
+      el.innerHTML = '';
+      el.style.setProperty('opacity','1','important');
+      const plainWords = plainPart.split(/\s+/);
+      const spans = [];
+      plainWords.forEach((w,i)=>{
+        const span = document.createElement('span');
+        span.textContent = w + (i < plainWords.length-1 ? '\u00A0' : '');
+        span.style.cssText = 'opacity:0;display:inline-block;transition:opacity '+wordDuration+'ms ease, transform '+wordDuration+'ms ease;transform:translateY(5px);';
+        el.appendChild(span);
+        spans.push(span);
+      });
+      el.appendChild(document.createElement('br'));
+      const emWrap = document.createElement('em');
+      el.appendChild(emWrap);
+      const emSpan = document.createElement('span');
+      emSpan.textContent = emPart;
+      emSpan.style.cssText = 'opacity:0;display:inline-block;transition:opacity '+wordDuration+'ms ease, transform '+wordDuration+'ms ease;transform:translateY(5px);';
+      emWrap.appendChild(emSpan);
+      spans.push(emSpan);
+
+      void el.offsetHeight;
+      return (async () => {
+        for(const span of spans){
+          span.style.opacity = '1';
+          span.style.transform = 'translateY(0)';
+          await new Promise(r => setTimeout(r, wordDelay));
+        }
+      })();
+    }
 
     const kicker = pro.querySelector('.prologue-kicker');
     if(!kicker) return;
@@ -1003,10 +1069,12 @@
         idx++;
         setTimeout(type, 68);
       } else {
-        /* Cursor blinks, then reveal message, then sub */
-        setTimeout(()=>{ if(message) message.style.setProperty('opacity','1','important'); }, 900);
-        setTimeout(()=>{ if(sub)     sub.style.setProperty('opacity','1','important');     }, 2400);
-        setTimeout(()=>{ cur.style.opacity='0'; cur.style.transition='opacity .4s'; }, 2800);
+        /* Cursor blinks, then reveal message word-by-word, then sub */
+        setTimeout(()=>{
+          revealMessageWords(message, 190, 480);
+        }, 900);
+        setTimeout(()=>{ if(sub)     sub.style.setProperty('opacity','1','important');     }, 3400);
+        setTimeout(()=>{ cur.style.opacity='0'; cur.style.transition='opacity .4s'; }, 3800);
       }
     }
     setTimeout(type, 700);
@@ -1031,36 +1099,115 @@
   pro.insertBefore(canvas, rainDiv);
   rainDiv.remove();
 
+  const ctx = canvas.getContext('2d');
+
+  /* prologue-bg.png natural size — used to replicate the CSS
+     "background-size:cover; background-position:center center" crop
+     math in JS, since the visible portion of the photo shifts with
+     the viewport's aspect ratio. Six previous attempts hardcoded
+     percentages of the CANVAS itself, which only happened to be
+     correct at one specific aspect ratio and drifted at every other
+     screen size. */
+  const IMG_W = 1672, IMG_H = 941;
+  const IMG_ASPECT = IMG_W / IMG_H;
+
+  /* Window region + person-silhouette exclusion, measured directly
+     against the actual photo (fractions of the ORIGINAL image, 0-1).
+     The person is a widening silhouette (narrow at the head, wide at
+     the shoulders) sitting INSIDE the rectangular window area — a
+     single rectangular clip can never exclude a person-shaped region,
+     which is why rain kept "falling on him" no matter how the window
+     rectangle itself was adjusted. This traces an actual trapezoid
+     around him and cuts it out of the window rectangle. */
+  const WINDOW = { x0: 0.125, y0: 0.0, x1: 0.95, y1: 0.70 };
+  const PERSON_LEVELS = [
+    { y: 0.26, xl: 0.49, xr: 0.51 },
+    { y: 0.40, xl: 0.44, xr: 0.63 },
+    { y: 0.55, xl: 0.41, xr: 0.67 },
+    { y: 0.72, xl: 0.20, xr: 0.78 }
+  ];
+
+  let cover = { renderW:0, renderH:0, offsetX:0, offsetY:0 };
+  let regionRects = []; /* canvas-pixel rects rain drops are confined to */
+
+  function computeCover(cw, ch){
+    const containerAspect = cw / ch;
+    if(containerAspect > IMG_ASPECT){
+      const renderW = cw, renderH = cw / IMG_ASPECT;
+      return { renderW, renderH, offsetX: 0, offsetY: (ch - renderH) / 2 };
+    } else {
+      const renderH = ch, renderW = ch * IMG_ASPECT;
+      return { renderW, renderH, offsetX: (cw - renderW) / 2, offsetY: 0 };
+    }
+  }
+  /* Map an image-fraction point (0-1, 0-1) to canvas pixel coordinates
+     through the current cover transform. */
+  function mapPt(fx, fy){
+    return {
+      x: cover.offsetX + fx * cover.renderW,
+      y: cover.offsetY + fy * cover.renderH
+    };
+  }
+
   function resize(){
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
+    cover = computeCover(canvas.width, canvas.height);
+
+    /* Left strip: window-left to person's left edge, full window height */
+    const leftMinX = Math.min(...PERSON_LEVELS.map(p=>p.xl));
+    const winTL = mapPt(WINDOW.x0, WINDOW.y0);
+    const leftBR = mapPt(leftMinX, WINDOW.y1);
+    /* Right strip: person's right edge to window-right, full window height */
+    const rightMaxX = Math.max(...PERSON_LEVELS.map(p=>p.xr));
+    const rightTL = mapPt(rightMaxX, WINDOW.y0);
+    const winBR = mapPt(WINDOW.x1, WINDOW.y1);
+    /* Top strip: directly above the person's head, window-top to head-top */
+    const topTL = mapPt(leftMinX, WINDOW.y0);
+    const topBR = mapPt(rightMaxX, PERSON_LEVELS[0].y);
+
+    regionRects = [
+      { x: winTL.x,  y: winTL.y,  w: leftBR.x - winTL.x,  h: leftBR.y - winTL.y },
+      { x: rightTL.x, y: rightTL.y, w: winBR.x - rightTL.x, h: winBR.y - rightTL.y },
+      { x: topTL.x,  y: topTL.y,  w: topBR.x - topTL.x,   h: topBR.y - topTL.y }
+    ].filter(r => r.w > 4 && r.h > 4); /* drop degenerate slivers */
   }
   resize();
   window.addEventListener('resize', resize, {passive:true});
 
-  const ctx = canvas.getContext('2d');
-  /* Build 180 drops with varied opacity, length, speed */
-  const drops = Array.from({length:280}, ()=>({
-    x:     Math.random() * window.innerWidth,
-    y:     Math.random() * window.innerHeight,
-    len:   14 + Math.random() * 22,
-    speed: 11 + Math.random() * 9,
-    op:    0.14 + Math.random() * 0.22,
-    w:     0.4  + Math.random() * 0.5
-  }));
+  /* Distribute drops across the three regions weighted by area, each
+     drop confined to its OWN assigned region so none ever need to be
+     clipped away mid-frame (cheaper, and guarantees correctness even
+     before clip() would have caught it). */
+  function pickRegion(){
+    const total = regionRects.reduce((s,r)=>s+r.w*r.h, 0);
+    let r = Math.random() * total;
+    for(const reg of regionRects){
+      r -= reg.w * reg.h;
+      if(r <= 0) return reg;
+    }
+    return regionRects[regionRects.length-1];
+  }
+  function spawnIn(reg){
+    return {
+      region: reg,
+      x: reg.x + Math.random() * reg.w,
+      y: reg.y + Math.random() * reg.h,
+      len:   14 + Math.random() * 22,
+      speed: 11 + Math.random() * 9,
+      op:    0.14 + Math.random() * 0.22,
+      w:     0.4  + Math.random() * 0.5
+    };
+  }
+  const drops = Array.from({length: 260}, () => spawnIn(pickRegion()));
 
   let animating = false;
   function frame(){
     if(!animating) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    /* Clip rain to the window region of the photo only */
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(canvas.width*.17, canvas.height*.02, canvas.width*.67, canvas.height*.70);
-    ctx.clip();
     drops.forEach(d=>{
+      const reg = d.region;
       ctx.beginPath();
-      /* Slight diagonal — matches the rain angle in the photo */
       ctx.moveTo(d.x, d.y);
       ctx.lineTo(d.x - d.len * 0.12, d.y + d.len);
       ctx.strokeStyle = `rgba(160,180,220,${d.op})`;
@@ -1068,12 +1215,12 @@
       ctx.stroke();
       d.y += d.speed;
       d.x -= d.speed * 0.07;
-      if(d.y > canvas.height + d.len){
-        d.y = -d.len - Math.random() * 40;
-        d.x = Math.random() * (canvas.width + 80);
+      /* Reset within the SAME region once past its bottom edge */
+      if(d.y > reg.y + reg.h + d.len){
+        d.y = reg.y - d.len - Math.random() * 40;
+        d.x = reg.x + Math.random() * reg.w;
       }
     });
-    ctx.restore(); /* end window clip */
     requestAnimationFrame(frame);
   }
 
