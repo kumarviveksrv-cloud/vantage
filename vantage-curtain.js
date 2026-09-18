@@ -1,6 +1,21 @@
 /* GRADIENT FIX — applies inline styles directly, bypasses all CSS/SW issues */
 (function applyGradients(){
   function run(){
+    /* Hero CTA buttons — setProperty beats any CSS !important */
+    const heroBtns=document.querySelectorAll('.hero-actions a');
+    if(heroBtns[0]){
+      heroBtns[0].style.setProperty('background','linear-gradient(135deg,#7c3aed 0%,#6366f1 100%)','important');
+      heroBtns[0].style.setProperty('color','#fff','important');
+      heroBtns[0].style.setProperty('border','none','important');
+      heroBtns[0].style.setProperty('opacity','1','important');
+      heroBtns[0].style.setProperty('box-shadow','0 4px 28px rgba(124,58,237,.55),0 1px 0 rgba(196,181,253,.2) inset','important');
+    }
+    if(heroBtns[1]){
+      heroBtns[1].style.setProperty('border','1.5px solid rgba(196,181,253,.6)','important');
+      heroBtns[1].style.setProperty('color','rgba(196,181,253,.92)','important');
+      heroBtns[1].style.setProperty('background','rgba(196,181,253,.07)','important');
+      heroBtns[1].style.setProperty('opacity','1','important');
+    }
     document.querySelectorAll('span.accent').forEach(el=>{
       el.style.setProperty('display','block','important');
       el.style.setProperty('font-style','italic','important');
