@@ -2003,5 +2003,50 @@
     if(window._heroEnterRun) window._heroEnterRun();
   }
 
-  window.addEventListener('load', () => setTimeout(run, 400));
+  /* CRITICAL: 'load' fires while the prologue overlay is still covering the
+     page (often 11+ seconds before the landing page is actually visible) —
+     firing the sequence there means it completes silently behind the
+     prologue and the user never sees any of the typewriter/fade effects.
+     This waits for the real moment the landing page becomes visible:
+     the curtain raiser (#q-overlay) being shown then dismissed on a first
+     visit, or a short grace window on a repeat visit where it never shows. */
+  function waitForLandingReveal(){
+    return new Promise(resolve=>{
+      const firstVisit = !sessionStorage.getItem('vantage_prologue_seen');
+      const qov = document.getElementById('q-overlay');
+      let done = false;
+      function finish(){ if(done) return; done = true; resolve(); }
+
+      if(!qov){
+        /* No curtain raiser on the page at all */
+        setTimeout(finish, firstVisit ? 12000 : 300);
+        return;
+      }
+
+      function isActive(){
+        return qov.classList.contains('active') || qov.style.display === 'flex';
+      }
+
+      let sawActive = isActive();
+      const obs = new MutationObserver(()=>{
+        if(isActive()){ sawActive = true; }
+        else if(sawActive){ obs.disconnect(); finish(); }
+      });
+      obs.observe(qov, {attributes:true, attributeFilter:['class','style']});
+
+      if(!firstVisit){
+        /* Repeat visit: curtain raiser usually won't show again this
+           session. Give it a brief window in case it does, else proceed. */
+        setTimeout(()=>{ if(!sawActive){ obs.disconnect(); finish(); } }, 800);
+      }
+      /* First visit: no early fallback — genuinely wait for the real
+         dismissal, since prologue + "Initiating Vantage" + curtain raiser
+         legitimately take 11-15+ seconds before landing is visible. */
+
+      /* Absolute safety net regardless of path */
+      setTimeout(()=>{ obs.disconnect(); finish(); }, 20000);
+    });
+  }
+
+  waitForLandingReveal().then(() => setTimeout(run, 400));
 })();
