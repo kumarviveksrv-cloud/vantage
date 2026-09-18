@@ -259,15 +259,6 @@
           if(logo) logo.style.opacity = '0';
           runParticles(document.getElementById('tada-canvas'), ()=>{
             tadaOverlay.classList.add('tada-out');
-            /* Activate curtain raiser 350ms before ta-da hides —
-               it sits above landing but below ta-da during ta-da fade-out */
-            setTimeout(()=>{
-              const qov = document.getElementById('q-overlay');
-              if(qov && !sessionStorage.getItem('vantage_q_v6') && !qov.classList.contains('active')){
-                qov.style.display = 'flex';
-                qov.classList.add('active');
-              }
-            }, 280);
             setTimeout(()=>{ tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 650);
           });
         }, 1100);
