@@ -1,5 +1,27 @@
-/* GRADIENT FIX — applies inline styles directly, bypasses all CSS/SW issues */
+/* GRADIENT FIX — reads exact color from the 'you' em element, applies it everywhere */
 (function applyGradients(){
+  /* Canonical gradient source: the <em>you</em> in the sim-case h2
+     That element is styled by vantage-cinematic.css — we copy it exactly */
+  const FALLBACK = 'linear-gradient(135deg,#c4b5fd 0%,#6366f1 100%)';
+
+  function getSourceGradient(){
+    const ref = document.querySelector('.case-intro h2 em') ||
+                document.querySelector('h2 em') ||
+                document.querySelector('.sim-case h2 em');
+    if(!ref) return FALLBACK;
+    const cs  = window.getComputedStyle(ref);
+    const bg  = cs.getPropertyValue('background-image');
+    /* If em has a gradient, use it verbatim */
+    if(bg && bg !== 'none' && bg.includes('gradient')) return bg;
+    /* Otherwise, build a gradient from the em's solid color */
+    const col = cs.getPropertyValue('-webkit-text-fill-color') ||
+                cs.getPropertyValue('color') || '';
+    if(col && col !== 'transparent' && col !== 'rgba(0, 0, 0, 0)'){
+      return 'linear-gradient(135deg,' + col + ' 0%,#6366f1 100%)';
+    }
+    return FALLBACK;
+  }
+
   function run(){
     /* Hero CTA buttons — setProperty beats any CSS !important */
     const heroBtns=document.querySelectorAll('.hero-actions a');
@@ -16,22 +38,22 @@
       heroBtns[1].style.setProperty('background','rgba(196,181,253,.07)','important');
       heroBtns[1].style.setProperty('opacity','1','important');
     }
+    const grad = getSourceGradient();
     document.querySelectorAll('span.accent').forEach(el=>{
       el.style.setProperty('display','block','important');
       el.style.setProperty('font-style','italic','important');
       el.style.setProperty('font-family',"'Cormorant Garamond',serif",'important');
-      el.style.setProperty('background','linear-gradient(90deg,#c084fc 0%,#8b5cf6 50%,#6366f1 100%)','important');
+      el.style.setProperty('background', grad,'important');
       el.style.setProperty('-webkit-background-clip','text','important');
       el.style.setProperty('background-clip','text','important');
       el.style.setProperty('color','transparent','important');
       el.style.setProperty('-webkit-text-fill-color','transparent','important');
-      el.style.setProperty('font-weight','700','important');
+      /* font-weight intentionally NOT set — let each element's own weight show */
     });
   }
   if(document.readyState==='loading'){
     document.addEventListener('DOMContentLoaded',run);
   } else { run(); }
-  // Also run after full page load in case of late rendering
   window.addEventListener('load',run);
 })();
 
