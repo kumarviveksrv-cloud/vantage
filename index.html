@@ -783,6 +783,100 @@
   font-family:'DM Sans',sans-serif;font-size:11px;
   color:rgba(255,255,255,.38);font-style:italic;
 }
+
+/* Hero kicker — DM Sans instead of JetBrains Mono; "9" reads editorial not AI */
+.hero-kicker {
+  font-family: 'DM Sans', sans-serif !important;
+  font-weight: 300 !important;
+  letter-spacing: .04em !important;
+}
+
+/* Humac Score — enriched 3-metric panel */
+.hsp-trio {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+.hsp-metric {
+  flex: 1;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hsp-metric--primary { flex: 1.4; }
+.hsp-divider-v {
+  width: 1px;
+  background: rgba(196,181,253,.1);
+  flex-shrink: 0;
+  margin: 10px 0;
+}
+.hsp-mlabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .22em;
+  color: rgba(196,181,253,.4);
+  display: block;
+  margin-bottom: 2px;
+}
+.hsp-mval { display: flex; align-items: baseline; gap: 2px; }
+.hsp-num--adj {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(28px,3vw,40px);
+  font-weight: 700;
+  background: linear-gradient(90deg,#a78bfa,#6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+.hsp-traj { align-items: baseline; gap: 3px; }
+.hsp-traj-arrow {
+  font-size: 18px;
+  color: #34d399;
+  line-height: 1;
+}
+.hsp-num--traj {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(26px,2.8vw,38px);
+  font-weight: 700;
+  color: #34d399;
+  -webkit-text-fill-color: #34d399 !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  line-height: 1;
+}
+.hsp-traj-unit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(52,211,153,.6);
+}
+.hsp-mdesc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  color: rgba(255,255,255,.38);
+  line-height: 1.4;
+}
+.hsp-mfooter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .12em;
+  color: rgba(196,181,253,.4);
+  margin-top: 2px;
+}
+.hsp-tagline {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,.42);
+  font-style: italic;
+  text-align: center;
+  padding: 12px 20px 16px;
+  border-top: 1px solid rgba(196,181,253,.07);
+  margin: 0;
+  min-height: 18px;
+}
 </style>
 </head>
 <body>
@@ -946,21 +1040,45 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
         </div>
       </div>
       <div class="hs-score-panel" id="humacScorePanel">
-        <div class="hsp-left">
-          <span class="hsp-label">HUMAC SCORE</span>
-          <div class="hsp-display">
-            <span class="hsp-num" id="humacNum">0</span>
-            <span class="hsp-denom">&thinsp;/ 100</span>
+        <div class="hsp-trio">
+
+          <div class="hsp-metric hsp-metric--primary">
+            <span class="hsp-mlabel">HUMAC SCORE</span>
+            <div class="hsp-mval">
+              <span class="hsp-num" id="humacNum">0</span>
+              <span class="hsp-denom">&thinsp;/ 100</span>
+            </div>
+            <span class="hsp-mdesc">Across 5 pillars</span>
+            <div class="hsp-track"><div class="hsp-fill" id="humacFill"></div></div>
+            <span class="hsp-verdict" id="humacVerdict"></span>
           </div>
-          <span class="hsp-status" id="humacStatus">AWAITING FORCES...</span>
-        </div>
-        <div class="hsp-right">
-          <div class="hsp-track"><div class="hsp-fill" id="humacFill"></div></div>
-          <div class="hsp-legend">
-            <span>WEAK</span><span>MODERATE</span><span>STRONG</span>
+
+          <div class="hsp-divider-v"></div>
+
+          <div class="hsp-metric">
+            <span class="hsp-mlabel">HCI-ADJUSTED</span>
+            <div class="hsp-mval">
+              <span class="hsp-num hsp-num--adj" id="humacHCI">0</span>
+            </div>
+            <span class="hsp-mdesc">Human Confidence Index: <span id="humacHCIx">0.00x</span></span>
+            <span class="hsp-mfooter">3 of 5 pillars computed</span>
           </div>
-          <div class="hsp-verdict" id="humacVerdict"></div>
+
+          <div class="hsp-divider-v"></div>
+
+          <div class="hsp-metric">
+            <span class="hsp-mlabel">TRAJECTORY</span>
+            <div class="hsp-mval hsp-traj" id="humacTraj">
+              <span class="hsp-traj-arrow">&#8593;</span>
+              <span class="hsp-num hsp-num--traj" id="humacTrajNum">+0</span>
+              <span class="hsp-traj-unit">pts</span>
+            </div>
+            <span class="hsp-mdesc">vs. Q2 baseline of 78</span>
+            <span class="hsp-mfooter" id="humacTrajStatus">Establishing...</span>
+          </div>
+
         </div>
+        <p class="hsp-tagline" id="humacTagline"></p>
       </div>
     </div>
   </div>
