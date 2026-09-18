@@ -178,9 +178,21 @@
   ov.addEventListener('click', dismissOverlay);
   document.getElementById('q-skip')?.addEventListener('click', e=>{ e.stopPropagation(); dismissOverlay(); });
 
+  /* Expose to the ta-da/prologue sequence so it can show the welcome
+     question directly, deterministically, instead of waiting on a
+     scroll-triggered IntersectionObserver that has no reason to fire
+     this early (nothing has scrolled yet). This was the actual root
+     cause of the curtain-raiser-after-landing sequencing bug: there
+     was never an immediate trigger to poll for in the first place. */
+  window._curtainRaiser = { showOverlay, CARDS, DELAY };
+
   // ── Section curtain raisers (first visit only) ──────────────────────────
   if(!sessionStorage.getItem(Q_KEY) && !matchMedia('(prefers-reduced-motion:reduce)').matches){
     const triggered = new Set();
+    /* If the ARIA card (index 3) was already shown as the deterministic
+       welcome question right after prologue, don't fire it again when
+       the user later scrolls to the ARIA section. */
+    if(sessionStorage.getItem('vantage_welcome_shown')) triggered.add(3);
     const io = new IntersectionObserver(entries=>{
       entries.forEach(e=>{
         if(!e.isIntersecting) return;
@@ -223,15 +235,39 @@
       if(!sessionStorage.getItem('vantage_tada')) return;
       sessionStorage.removeItem('vantage_tada');
 
-      /* ═══ SR18 SEQUENCE: Prologue → Typewriter → Curtain Raiser → Landing ═══
-         Each stage dims in, does its thing, dims out.
-         Init-overlay stays BLACK until curtain raiser is confirmed active.
-         If curtain raiser was already seen this session, skip to doTada. */
+      /* ═══ SR18.9 SEQUENCE — rebuilt after finding the actual root cause ═══
+         Prologue → Typewriter → Curtain Raiser → doTada (logo burst) → Landing
 
-      const curtainAlreadySeen = sessionStorage.getItem('vantage_q_v6');
+         The previous version POLLED for a scroll-triggered
+         IntersectionObserver overlay (the ARIA section's question card)
+         that had no reason to activate yet — nothing had scrolled. It
+         also polled for the wrong CSS class/display values entirely
+         ('active'/'flex' when the real code uses 'q-visible'/'grid'),
+         so the check silently always failed and fell through to a
+         6-second safety timeout, revealing the landing page BEFORE the
+         curtain raiser had any chance to show — exactly the reported
+         "landing page, then curtain raiser" bug.
 
-      if(initOverlay && initTextEl && !curtainAlreadySeen){
-        /* ── STAGE 2: "Initiating Vantage..." typewriter ── */
+         Fixed by calling the curtain raiser directly and
+         deterministically here, with its own dismiss callback (user
+         clicks Reveal, or its timer runs out) driving what happens
+         next — no polling, no waiting on an event that isn't coming. */
+
+      const curtainAlreadySeen  = sessionStorage.getItem('vantage_q_v6');
+      const welcomeAlreadyShown = sessionStorage.getItem('vantage_welcome_shown');
+
+      function showCurtainThenTada(){
+        const cr = window._curtainRaiser;
+        if(cr && !curtainAlreadySeen && !welcomeAlreadyShown){
+          sessionStorage.setItem('vantage_welcome_shown','1');
+          cr.showOverlay(cr.CARDS[3], cr.DELAY, doTada);
+        } else {
+          doTada();
+        }
+      }
+
+      if(initOverlay && initTextEl){
+        /* "Initiating Vantage..." typewriter — unchanged */
         initOverlay.classList.add('init-active');
         initOverlay.style.opacity = '1';
         initTextEl.textContent = '';
@@ -241,79 +277,29 @@
           if(idx <= msg.length){ initTextEl.textContent = msg.slice(0, idx); idx++; }
           else {
             clearInterval(typer);
-            /* Hold 1.8s so user reads it */
             setTimeout(()=>{
-              /* Fade the typewriter TEXT only — overlay stays black */
               initTextEl.style.transition = 'opacity .8s ease';
               initTextEl.style.opacity = '0';
-
-              /* ── STAGE 3: Wait for curtain raiser to activate ── */
-              /* vantage-cinematic.js fires #q-overlay on its own schedule
-                 after prologue-complete. We poll until it's active, THEN
-                 fade the init-overlay to reveal it. Zero flash. */
-              let polls = 0;
-              const maxPolls = 120; /* 120 × 50ms = 6s safety net */
-              const poller = setInterval(()=>{
-                polls++;
-                const qov = document.getElementById('q-overlay');
-                const isActive = qov && (qov.classList.contains('active') || qov.style.display === 'flex');
-
-                if(isActive || polls >= maxPolls){
-                  clearInterval(poller);
-
-                  if(isActive){
-                    /* Curtain raiser is ready underneath — dim out init-overlay */
-                    initOverlay.style.transition = 'opacity 1s ease';
-                    initOverlay.style.opacity = '0';
-                    setTimeout(()=>{
-                      initOverlay.classList.remove('init-active');
-                      initOverlay.style.opacity = '';
-                      initOverlay.style.transition = '';
-                      initTextEl.style.opacity = '';
-                      initTextEl.style.transition = '';
-                    }, 1050);
-                  } else {
-                    /* Safety: curtain raiser never appeared — fall through to doTada */
-                    initOverlay.style.transition = 'opacity 1s ease';
-                    initOverlay.style.opacity = '0';
-                    setTimeout(()=>{
-                      initOverlay.classList.remove('init-active');
-                      initOverlay.style.opacity = '';
-                      initOverlay.style.transition = '';
-                      initTextEl.style.opacity = '';
-                      initTextEl.style.transition = '';
-                      doTada();
-                    }, 1050);
-                  }
-                }
-              }, 50);
-            }, 1800);
-          }
-        }, 95);
-
-      } else if(initOverlay && initTextEl && curtainAlreadySeen){
-        /* Curtain already seen — do the typewriter → doTada flow */
-        initOverlay.classList.add('init-active');
-        initTextEl.textContent = '';
-        const msg2 = 'Initiating Vantage...';
-        let idx2 = 0;
-        const typer2 = setInterval(()=>{
-          if(idx2 <= msg2.length){ initTextEl.textContent = msg2.slice(0, idx2); idx2++; }
-          else {
-            clearInterval(typer2);
-            setTimeout(()=>{
-              initOverlay.style.transition = 'opacity 1s ease';
-              initOverlay.style.opacity = '0';
               setTimeout(()=>{
-                initOverlay.classList.remove('init-active');
-                initOverlay.style.opacity = '';
-                initOverlay.style.transition = '';
-                doTada();
-              }, 1050);
+                /* q-overlay (if it's about to show) paints its own
+                   opaque #050410 background, so triggering it now and
+                   removing init-overlay a beat later has zero gap and
+                   zero landing-page flash between the two. */
+                showCurtainThenTada();
+                setTimeout(()=>{
+                  initOverlay.classList.remove('init-active');
+                  initOverlay.style.opacity = '';
+                  initOverlay.style.transition = '';
+                  initTextEl.style.opacity = '';
+                  initTextEl.style.transition = '';
+                }, 150);
+              }, 800);
             }, 1800);
           }
         }, 95);
-      } else { doTada(); }
+      } else {
+        showCurtainThenTada();
+      }
 
       function doTada(){
         const logo = document.getElementById('tada-logoimg');
@@ -327,33 +313,10 @@
           if(logo) logo.style.opacity = '0';
           runParticles(document.getElementById('tada-canvas'), ()=>{
             tadaOverlay.classList.add('tada-out');
-            /* Wait for curtain raiser to be active before hiding ta-da —
-               eliminates the bare-landing-page flash between the two */
-            (function waitForCurtain(){
-              const qov = document.getElementById('q-overlay');
-              /* If curtain raiser already seen or doesn't exist, hide normally */
-              if(!qov || sessionStorage.getItem('vantage_q_v6')){
-                setTimeout(()=>{ tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 650);
-                return;
-              }
-              /* Already active — hide ta-da immediately */
-              if(qov.classList.contains('active') || qov.style.display==='flex'){
-                setTimeout(()=>{ tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 80);
-                return;
-              }
-              /* Watch for curtain raiser to activate, then hide ta-da */
-              const obs = new MutationObserver(()=>{
-                if(qov.classList.contains('active') || qov.style.display==='flex'){
-                  obs.disconnect();
-                  clearTimeout(safety);
-                  /* Small pause so curtain raiser renders before ta-da disappears */
-                  setTimeout(()=>{ tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 100);
-                }
-              });
-              obs.observe(qov,{attributes:true,attributeFilter:['class','style']});
-              /* Safety: hide ta-da after 3.5s regardless (user already saw the curtain) */
-              const safety=setTimeout(()=>{ obs.disconnect(); tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 3500);
-            })();
+            /* Curtain raiser has ALREADY been shown and dismissed by
+               this point (it's what called doTada() in the first
+               place) — no more waiting needed, just hide normally. */
+            setTimeout(()=>{ tadaOverlay.style.display='none'; tadaOverlay.classList.remove('tada-out'); }, 650);
           });
         }, 1100);
       }
