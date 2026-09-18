@@ -1199,10 +1199,11 @@
     const cv=document.getElementById('wormholeCanvas');
     if(!cv){cb();return;}
     cv.style.display='block';
-    cv.width=window.innerWidth;
-    cv.height=window.innerHeight;
+    cv.width=window.innerWidth||1440;
+    cv.height=window.innerHeight||900;
     const ctx=cv.getContext('2d');
     if(!ctx){cv.style.display='none';cb();return;}
+    console.log('Wormhole started:',cv.width,'x',cv.height);
 
     const W=cv.width, H=cv.height, cx=W/2, cy=H/2;
     const FL=W*0.45; /* focal length — controls perspective strength */
@@ -1236,7 +1237,7 @@
     function frame(now){
       const elapsed=now-t0;
       const p=Math.min(1,elapsed/duration);
-      if(p>=1){clearTimeout(safety);cv.style.display='none';cb();return;}
+      if(p>=1){clearTimeout(safety);console.log('Wormhole complete');cv.style.display='none';cb();return;}
 
       /* Trail fade — longer trails as speed increases */
       ctx.fillStyle='rgba(5,4,16,'+(0.12+p*0.08)+')';
@@ -1249,12 +1250,12 @@
       rings.forEach(ring=>{
         ring.z-=speed*0.7;
         if(ring.z<1){ring.z=maxZ;ring.r=280+Math.random()*120;}
-        const scale=FL/ring.z;
+        const scale=FL/Math.max(1,ring.z);
         const rr=ring.r*scale;
         if(rr>2&&rr<W*2){
           const alpha=Math.min(0.18,(1-ring.z/maxZ)*0.22)*(0.4+p*0.6);
           ctx.beginPath();
-          ctx.arc(cx,cy,rr,0,Math.PI*2);
+          ctx.arc(cx,cy,Math.max(0.1,rr),0,Math.PI*2);
           ctx.strokeStyle='hsla('+ring.h+',70%,55%,'+alpha+')';
           ctx.lineWidth=1+scale*0.8;
           ctx.stroke();
@@ -1267,7 +1268,7 @@
         const prevZ=s.z;
         s.z-=speed*(0.8+s.sz*0.3);
 
-        /* Reset when passing camera */
+        /* Reset when passing camera — MUST happen before projection */
         if(s.z<1){
           s.x=(Math.random()-.5)*W*1.6;
           s.y=(Math.random()-.5)*H*1.6;
@@ -1275,8 +1276,8 @@
           return;
         }
 
-        /* Project current position */
-        const scale=FL/s.z;
+        /* Project current position (z guaranteed > 0) */
+        const scale=FL/Math.max(1,s.z);
         const sx=cx+s.x*scale;
         const sy=cy+s.y*scale;
 
@@ -1303,7 +1304,7 @@
         /* Bright dot at head */
         if(proximity>0.6){
           ctx.beginPath();
-          ctx.arc(sx,sy,s.sz*scale*0.4,0,Math.PI*2);
+          ctx.arc(sx,sy,Math.max(0.1,s.sz*scale*0.4),0,Math.PI*2);
           ctx.fillStyle='hsla('+s.h+',90%,82%,'+(alpha*0.7)+')';
           ctx.fill();
         }
@@ -1686,12 +1687,24 @@
       lock.querySelector('.cor-lock-icon').textContent='\uD83D\uDD13';
       door.classList.add('open');
 
-      /* WORMHOLE for 4 seconds → then reveal room */
+      /* WORMHOLE for 3.5 seconds → then reveal room */
       setTimeout(()=>{
-        wormhole(4000,()=>{
+        try {
+          wormhole(3500,()=>{
+            const room=document.getElementById('corRoom'+doorNum);
+            if(room)room.classList.add('entered');
+          });
+        } catch(err){
+          console.error('Wormhole error:',err);
+          /* Fallback: just reveal the room */
           const room=document.getElementById('corRoom'+doorNum);
           if(room)room.classList.add('entered');
-        });
+        }
+        /* Ultimate safety: if room isn't entered after 5s, force it */
+        setTimeout(()=>{
+          const room=document.getElementById('corRoom'+doorNum);
+          if(room&&!room.classList.contains('entered')) room.classList.add('entered');
+        },5000);
       },600);
     });
   });
