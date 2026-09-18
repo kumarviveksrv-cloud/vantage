@@ -1740,15 +1740,17 @@
 }
 .cor-choice-text {
   font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  color: rgba(255,255,255,.82);
+  font-size: 14.5px;
+  color: rgba(255,255,255,.88);
   font-weight: 500;
+  line-height: 1.35;
 }
 .cor-choice-risk {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .18em;
-  color: rgba(196,181,253,.35);
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  color: rgba(196,181,253,.62);
+  line-height: 1.4;
 }
 
 /* Result panel */
@@ -2024,6 +2026,39 @@
   color: rgba(196,181,253,.55) !important;
   text-align: center !important;
   margin-bottom: 14px !important;
+}
+
+/* Two-step selection: 'selected' = highlighted but not locked, 'picked' = confirmed/locked */
+.cor-choice.selected {
+  border-color: rgba(139,92,246,.55);
+  background: rgba(124,58,237,.1);
+  box-shadow: 0 0 16px rgba(139,92,246,.25);
+}
+.cor-choice.selected .cor-choice-letter {
+  border-color: #8b5cf6;
+  background: rgba(139,92,246,.2);
+}
+
+/* Confirm button */
+.cor-confirm {
+  display: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .15em;
+  color: #fff;
+  background: linear-gradient(135deg,#9333ea,#7c3aed,#6366f1);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 32px;
+  cursor: pointer;
+  margin: 4px auto 24px;
+  box-shadow: 0 0 20px rgba(139,92,246,.4);
+  transition: all .3s;
+}
+.cor-confirm.show { display: block; animation: roomFadeIn .4s ease both; }
+.cor-confirm:hover {
+  box-shadow: 0 0 28px rgba(139,92,246,.6);
+  transform: translateY(-1px);
 }
 </style>
 </head>
@@ -2543,6 +2578,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-risk">placeholder</span>
             </div>
           </div>
+          <button class="cor-confirm" id="corConfirm1" data-room="1">Confirm Choice</button>
           <div class="cor-result" id="corResult1"></div>
           <div class="cor-next" data-next="2" style="display:none;">Proceed to Door 2 <span>→</span></div>
         </div>
@@ -2588,6 +2624,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-risk">placeholder</span>
             </div>
           </div>
+          <button class="cor-confirm" id="corConfirm2" data-room="2">Confirm Choice</button>
           <div class="cor-result" id="corResult2"></div>
           <div class="cor-next" data-next="3" style="display:none;">Proceed to Door 3 <span>→</span></div>
         </div>
@@ -2633,6 +2670,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-risk">placeholder</span>
             </div>
           </div>
+          <button class="cor-confirm" id="corConfirm3" data-room="3">Confirm Choice</button>
           <div class="cor-result" id="corResult3"></div>
           <div class="cor-next" data-next="4" style="display:none;">Proceed to Door 4 <span>→</span></div>
         </div>
@@ -2678,6 +2716,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-risk">placeholder</span>
             </div>
           </div>
+          <button class="cor-confirm" id="corConfirm4" data-room="4">Confirm Choice</button>
           <div class="cor-result" id="corResult4"></div>
           <div class="cor-next" data-next="5" style="display:none;">Proceed to Door 5 <span>→</span></div>
         </div>
@@ -2723,6 +2762,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-risk">placeholder</span>
             </div>
           </div>
+          <button class="cor-confirm" id="corConfirm5" data-room="5">Confirm Choice</button>
           <div class="cor-result" id="corResult5"></div>
           <div class="cor-final" style="display:none;">
             <p class="cor-final-line">Five doors. Five decisions. One system that remembers all of them.</p>
