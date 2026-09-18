@@ -1779,3 +1779,40 @@
   /* Initial load */
   loadCase(0);
 })();
+
+
+/* Corridor fullscreen toggle (SR18.4) */
+(function initCorridorFullscreen(){
+  'use strict';
+  const btn = document.getElementById('corFsBtn');
+  const hint = document.getElementById('corFsHint');
+  if(!btn) return;
+
+  function isFs(){
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+
+  function toggleFs(){
+    if(isFs()){
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else {
+      const el = document.documentElement;
+      (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+    }
+  }
+
+  btn.addEventListener('click', toggleFs);
+
+  /* Update button text + hide hint when fullscreen is active */
+  function onFsChange(){
+    if(isFs()){
+      btn.querySelector('.cor-fs-label').textContent = 'Exit fullscreen';
+      if(hint) hint.classList.add('fs-active');
+    } else {
+      btn.querySelector('.cor-fs-label').textContent = 'Go fullscreen';
+      if(hint) hint.classList.remove('fs-active');
+    }
+  }
+  document.addEventListener('fullscreenchange', onFsChange);
+  document.addEventListener('webkitfullscreenchange', onFsChange);
+})();
