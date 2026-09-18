@@ -2099,14 +2099,23 @@
   }
 
   const delay = ms => new Promise(r => setTimeout(r, ms));
+  /* hide(): for elements whose text gets REBUILT by a typing function
+     (tagline, kicker, lineDim) — safe to clear textContent since it's
+     retyped from scratch. */
   const hide  = el => { el.style.setProperty('opacity','0','important'); el.textContent=''; };
+  /* hideKeepText(): for the two accent lines — they are revealed with a
+     simple opacity fade and their original static text must survive.
+     Clearing their textContent (as hide() did) left them permanently
+     blank once faded in, since nothing ever retyped them. */
+  const hideKeepText = el => { el.style.setProperty('opacity','0','important'); };
 
   /* Hide + clear immediately at script parse time */
   hide(tagline);
   hide(kicker);
   hide(lineDim);
-  lineAccents.forEach(hide);
+  lineAccents.forEach(hideKeepText);
   console.log('[HeroSeq] Initial hide applied. tagline.textContent =', JSON.stringify(tagline.textContent));
+  console.log('[HeroSeq] Accent lines text preserved:', lineAccents.map(el=>el.textContent));
 
   async function typeMixedLine(el, plainText, emText, speed, label){
     /* Defensive re-clear immediately before typing — in case something
@@ -2234,8 +2243,9 @@
     hide(tagline);
     hide(kicker);
     hide(lineDim);
-    lineAccents.forEach(hide);
+    lineAccents.forEach(hideKeepText);
     console.log('[HeroSeq] Re-hidden right before run(). tagline.textContent =', JSON.stringify(tagline.textContent));
+    console.log('[HeroSeq] Accent lines text still intact:', lineAccents.map(el=>el.textContent));
     setTimeout(run, 600);
   });
 })();
