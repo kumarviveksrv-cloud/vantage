@@ -2093,6 +2093,11 @@
 
   const lineDim     = h1.querySelector('.line.dim');
   const lineAccents = [...h1.querySelectorAll('.line.accent')];
+  /* Optional — the "manager wants closure..." line was removed and later
+     restored; select it separately since it shares .dim with lineDim but
+     needs its own reveal beat, not the typewriter treatment. Not part of
+     the required-elements check since it's fine if absent. */
+  const heroContext = h1.querySelector('.hero-context');
   if(!lineDim || !lineAccents.length){
     console.log('[HeroSeq] Missing h1 lines, aborting');
     return;
@@ -2114,6 +2119,7 @@
   hide(kicker);
   hide(lineDim);
   lineAccents.forEach(hideKeepText);
+  if(heroContext) hideKeepText(heroContext);
   console.log('[HeroSeq] Initial hide applied. tagline.textContent =', JSON.stringify(tagline.textContent));
   console.log('[HeroSeq] Accent lines text preserved:', lineAccents.map(el=>el.textContent));
 
@@ -2174,13 +2180,28 @@
     });
   }
 
+  /* heroContext's own CSS deliberately renders it at 0.62 opacity (a
+     quieter, secondary line) — fading it to 1 via the generic fadeIn()
+     would override that and make it look fully bright, wrong for its
+     intended styling. This fades to a specific target instead. */
+  function fadeInTo(el, targetOpacity, duration){
+    return new Promise(resolve=>{
+      el.style.transition = 'opacity '+duration+'ms ease';
+      requestAnimationFrame(()=>{
+        el.style.setProperty('opacity', String(targetOpacity), 'important');
+        setTimeout(resolve, duration);
+      });
+    });
+  }
+
   async function run(){
     console.log('[HeroSeq] run() started');
 
-    /* Deliberate blank pause before anything types — makes the START of
-       the reveal unmistakable, since tagline was the step most likely
-       to be missed (shortest, earliest, easiest to blink past). */
-    await delay(500);
+    /* Blank pause before anything types — increased to a few full
+       seconds, since on refresh a separate covering timer/overlay is
+       visible for 3-5s and the tagline typewriter must only begin
+       once that's genuinely out of the way. */
+    await delay(3800);
 
     /* 1. Tagline types out (mixed em) — slowed from 32ms to 58ms/char,
        nearly doubling visible duration (~1.8s -> ~3.3s) */
@@ -2191,9 +2212,17 @@
     await fadeIn(kicker, 650);
     await delay(700);
 
-    /* 3. H1 line 1 (dim) types out */
-    await typeSimpleLine(lineDim, 'Every HR professional has had that 9 pm moment.', 34, 'H1-dim');
+    /* 3. H1 line 1 (dim) types out — slowed significantly, 34ms -> 70ms/char
+       (~1.6s -> ~3.4s total for this 48-character line) */
+    await typeSimpleLine(lineDim, 'Every HR professional has had that 9 pm moment.', 70, 'H1-dim');
     await delay(350);
+
+    /* 3b. "The manager wants closure..." context line fades in to its
+       own intended dim opacity (0.62), not full opacity */
+    if(heroContext){
+      await fadeInTo(heroContext, 0.62, 600);
+      await delay(500);
+    }
 
     /* 4. H1 lines 2+3 (accent) fade in together */
     lineAccents.forEach(el=>{ el.style.transition = 'opacity 800ms ease'; });
@@ -2244,6 +2273,7 @@
     hide(kicker);
     hide(lineDim);
     lineAccents.forEach(hideKeepText);
+    if(heroContext) hideKeepText(heroContext);
     console.log('[HeroSeq] Re-hidden right before run(). tagline.textContent =', JSON.stringify(tagline.textContent));
     console.log('[HeroSeq] Accent lines text still intact:', lineAccents.map(el=>el.textContent));
     setTimeout(run, 600);
