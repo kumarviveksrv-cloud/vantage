@@ -1186,179 +1186,502 @@
 })();
 
 
-/* ═══ INTELLIGENCE CORRIDOR — 5 Doors Interactive Experience (SR18.3) ═══ */
-(function initCorridor(){
+
+/* ═══ INTELLIGENCE CORRIDOR v2 — Wormhole + 5 Cases + Restart (SR18.4) ═══ */
+(function initCorridorV2(){
   'use strict';
-  const viewport = document.getElementById('corViewport');
-  if(!viewport) return;
+  const viewport=document.getElementById('corViewport');
+  if(!viewport)return;
+  const D=window._vDash;
 
-  const OUTCOMES = {
-    '1A': {
-      verdict:'HIGH EXPOSURE', vclass:'risk', num:'\u20b921L',
-      text:'No documented warnings precede this termination. Without a paper trail, tribunal challenge is near-certain. This path cannot be legally defended in Maharashtra under the Industrial Disputes Act.',
-      aria:'Are the two verbal warnings logged anywhere, even informally? That single detail changes everything here.'
-    },
-    '1B': {
-      verdict:'DEFENSIBLE', vclass:'ok', num:'\u20b92L',
-      text:'Domestic enquiry creates the strongest procedural record possible. It satisfies natural justice requirements and produces an outcome that survives tribunal scrutiny. PACT recommends this path.',
-      aria:'Shall I draft the enquiry notice for tonight? I have the precedent cases for Maharashtra IT-sector ready.'
-    },
-    '2A': {
-      verdict:'MATERIAL RISK', vclass:'warn', num:'34%',
-      text:'Case proceeds with a known evidence gap. If the employee challenges the process, the absence of documentation becomes the central vulnerability. Signal score: weak.',
-      aria:'Two witnesses exist. A signed statement from either one, even retrospective, moves your evidence score from 34% to 71%.'
-    },
-    '2B': {
-      verdict:'PROTECTED', vclass:'ok', num:'78%',
-      text:'Verbal warnings logged retroactively via witness statements. SIGNAL engine verifies the reconstruction against 4 compliance checkpoints. Evidence trail now defensible.',
-      aria:'I have found 3 similar cases in your jurisdiction where retrospective witness documentation held up in tribunal.'
-    },
-    '3A': {
-      verdict:'WEAK ARGUMENT', vclass:'risk', num:'?',
-      text:'Subjective estimates do not survive boardroom scrutiny. The CFO will benchmark your number against market data you cannot produce. You lose credibility on the next ask.',
-      aria:'Would it help to see what the CFO actually sees when they open their own P&L? The gap between your language and theirs is the problem.'
-    },
-    '3B': {
-      verdict:'QUANTIFIED', vclass:'ok', num:'\u20b918.4L',
-      text:'Net human value computed across 5 Humacity pillars. Replacement cost \u20b98.2L, ramp time 4.6 months, manager load 182 hours. The CFO now has a number they can benchmark.',
-      aria:'This is what your organisation\'s human capital position looks like when it speaks the CFO\'s language.'
-    },
-    '4A': {
-      verdict:'UNPREPARED', vclass:'risk', num:'0/3',
-      text:'The COO will ask about precedent, exposure, and your recommendation. You will not have structured answers for any of them. Confidence drops the moment she probes.',
-      aria:'I can tell you right now: she will open with the precedent question. Do you want to hear it before she asks it?'
-    },
-    '4B': {
-      verdict:'REHEARSED', vclass:'ok', num:'3/3',
-      text:'3 likely objections anticipated. Counter-arguments prepared. ARIA simulated the COO\'s communication style based on 14 past interactions. Confidence: high.',
-      aria:'The third objection is the one most people miss. Want me to run it one more time before tomorrow?'
-    },
-    '5A': {
-      verdict:'RESET', vclass:'risk', num:'0',
-      text:'9 months of decisions, conversations, exposure calculations, stakeholder rehearsals. All of it gone. You start from zero. The new manager inherits nothing.',
-      aria:'Every decision you navigated. Every rupee you protected. Is any of it saved anywhere?'
-    },
-    '5B': {
-      verdict:'ACCUMULATED', vclass:'ok', num:'47',
-      text:'47 decisions documented. 12 policy calls. 4 stakeholder rehearsals. \u20b918.4L career capital. Your Vantage Record belongs to you, across every org, every role, every year.',
-      aria:'Your next organisation will see 9 months of intelligence, not a blank resume. That is what a career record looks like.'
+  /* ── WORMHOLE EFFECT ── */
+  function wormhole(duration,cb){
+    const cv=document.getElementById('wormholeCanvas');
+    if(!cv){cb();return;}
+    cv.width=innerWidth;cv.height=innerHeight;
+    cv.classList.add('wh-active');
+    const ctx=cv.getContext('2d');
+    const cx=cv.width/2,cy=cv.height/2;
+    const stars=[];
+    for(let i=0;i<400;i++){
+      stars.push({
+        a:Math.random()*Math.PI*2,
+        d:Math.random()*50,
+        sp:0.8+Math.random()*2.5,
+        sz:0.4+Math.random()*1.8,
+        h:248+Math.random()*45
+      });
     }
-  };
+    const t0=performance.now();
+    ctx.fillStyle='#050410';ctx.fillRect(0,0,cv.width,cv.height);
+    function frame(now){
+      const el=now-t0,p=el/duration;
+      if(p>=1){cv.classList.remove('wh-active');cb();return;}
+      ctx.fillStyle=`rgba(5,4,16,${0.12+p*0.06})`;
+      ctx.fillRect(0,0,cv.width,cv.height);
+      const acc=1+p*12;
+      stars.forEach(s=>{
+        s.d+=s.sp*acc;
+        const maxD=Math.hypot(cv.width,cv.height)*.6;
+        if(s.d>maxD){s.d=0;s.a=Math.random()*Math.PI*2;}
+        const x=cx+Math.cos(s.a)*s.d,y=cy+Math.sin(s.a)*s.d;
+        const len=s.sp*acc*4;
+        const ex=cx+Math.cos(s.a)*Math.max(0,s.d-len);
+        const ey=cy+Math.sin(s.a)*Math.max(0,s.d-len);
+        const al=Math.min(1,s.d/80)*(0.3+p*0.7);
+        ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(x,y);
+        ctx.strokeStyle=`hsla(${s.h},80%,72%,${al})`;
+        ctx.lineWidth=s.sz*(1+p*3);ctx.stroke();
+      });
+      /* Tunnel rings */
+      for(let r=0;r<5;r++){
+        const rd=((el*0.15+r*180)%(maxD||600));
+        ctx.beginPath();ctx.arc(cx,cy,rd,0,Math.PI*2);
+        ctx.strokeStyle=`rgba(139,92,246,${0.04*(1-rd/(maxD||600))})`;
+        ctx.lineWidth=1.5;ctx.stroke();
+      }
+      /* Center vortex glow */
+      const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,100+p*250);
+      grad.addColorStop(0,`rgba(139,92,246,${0.25+p*0.3})`);
+      grad.addColorStop(0.4,`rgba(99,102,241,${0.06+p*0.1})`);
+      grad.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=grad;ctx.fillRect(0,0,cv.width,cv.height);
+      /* End flash */
+      if(p>0.85){
+        const flash=(p-0.85)/0.15;
+        ctx.fillStyle=`rgba(255,255,255,${flash*0.5})`;
+        ctx.fillRect(0,0,cv.width,cv.height);
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
 
-  const D = window._vDash;
+  /* ── 5 CASE DATASETS ── */
+  const CASES=[
+    {name:'TERMINATION',rooms:[
+      {tag:'ROOM 1 / PACT ENGINE',caseId:'CASE 2841 / Employee Relations',
+       h3:'Employee absent 7 days.<br>Manager wants termination tonight.<br>No written warnings on file.',
+       A:{t:'Terminate immediately',r:'speed / high exposure'},
+       B:{t:'Start domestic enquiry',r:'process / defensible'},
+       OA:{verdict:'HIGH EXPOSURE',vclass:'risk',num:'\u20b921L',
+         text:'No documented warnings precede this termination. Tribunal challenge near-certain under the Industrial Disputes Act.',
+         aria:'Are the two verbal warnings logged anywhere? That single detail changes everything.'},
+       OB:{verdict:'DEFENSIBLE',vclass:'ok',num:'\u20b92L',
+         text:'Domestic enquiry creates the strongest procedural record. It satisfies natural justice and survives tribunal scrutiny.',
+         aria:'Shall I draft the enquiry notice? I have Maharashtra IT-sector precedent cases ready.'}},
+      {tag:'ROOM 2 / SIGNAL ENGINE',caseId:'EVIDENCE ANALYSIS',
+       h3:'The enquiry reveals undocumented verbal warnings.<br>Two witnesses remember. Nothing is on paper.',
+       A:{t:'Accept the evidence gap',r:'proceed / known risk'},
+       B:{t:'Reconstruct the trail',r:'signal / protected'},
+       OA:{verdict:'MATERIAL RISK',vclass:'warn',num:'34%',
+         text:'Case proceeds with a known vulnerability. The absence of documentation becomes the central weakness.',
+         aria:'Two witnesses exist. A signed statement from either moves your evidence score from 34% to 71%.'},
+       OB:{verdict:'PROTECTED',vclass:'ok',num:'78%',
+         text:'Verbal warnings logged retroactively via witness statements. SIGNAL verifies against 4 compliance checkpoints.',
+         aria:'I found 3 similar cases where retrospective witness documentation held up in tribunal.'}},
+      {tag:'ROOM 3 / HUMACITY ENGINE',caseId:'BOARDROOM CHALLENGE',
+       h3:'CFO asks: "What does keeping this person actually cost us?"<br>The boardroom is waiting.',
+       A:{t:'Estimate from experience',r:'subjective / weak'},
+       B:{t:'Pull the Human P&L',r:'quantified / defensible'},
+       OA:{verdict:'WEAK ARGUMENT',vclass:'risk',num:'?',
+         text:'Subjective estimates do not survive boardroom scrutiny. The CFO benchmarks your number against data you cannot produce.',
+         aria:'Would it help to see what the CFO actually sees when they open their P&L? The gap between your languages is the problem.'},
+       OB:{verdict:'QUANTIFIED',vclass:'ok',num:'\u20b918.4L',
+         text:'Net human value computed across 5 Humacity pillars. Replacement cost \u20b98.2L, ramp time 4.6 months, manager load 182 hours.',
+         aria:'This is what your human capital position looks like when it speaks the CFO\u2019s language.'}},
+      {tag:'ROOM 4 / ARIA',caseId:'STAKEHOLDER PREPARATION',
+       h3:'COO call tomorrow morning.<br>She will ask about precedent, exposure, and your recommendation.',
+       A:{t:'Prepare mentally, wing it',r:'unstructured / risky'},
+       B:{t:'Run ARIA rehearsal',r:'simulated / prepared'},
+       OA:{verdict:'UNPREPARED',vclass:'risk',num:'0/3',
+         text:'The COO asks about precedent, exposure, and recommendation. You have structured answers for none of them.',
+         aria:'I can tell you right now: she will open with the precedent question. Do you want to hear it first?'},
+       OB:{verdict:'REHEARSED',vclass:'ok',num:'3/3',
+         text:'3 objections anticipated. Counter-arguments prepared. ARIA simulated the COO\u2019s communication style. Confidence: high.',
+         aria:'The third objection is the one most people miss. Want me to run it once more?'}},
+      {tag:'ROOM 5 / VANTAGE RECORD',caseId:'9 MONTHS LATER',
+       h3:'Same scenario. New employee. New manager.<br>Everything you learned the first time...',
+       A:{t:'Start from scratch',r:'reset / lost'},
+       B:{t:'Open your Vantage Record',r:'accumulated / yours'},
+       OA:{verdict:'RESET',vclass:'risk',num:'0',
+         text:'9 months of decisions, conversations, exposure calculations. All gone. The new manager inherits nothing.',
+         aria:'Every decision you navigated. Every rupee you protected. Is any of it saved anywhere?'},
+       OB:{verdict:'ACCUMULATED',vclass:'ok',num:'47',
+         text:'47 decisions documented. 12 policy calls. \u20b918.4L career capital. Your Vantage Record belongs to you.',
+         aria:'Your next organisation sees 9 months of intelligence, not a blank resume.'}}
+    ]},
+    {name:'POSH / HARASSMENT',rooms:[
+      {tag:'ROOM 1 / PACT ENGINE',caseId:'CASE 4107 / POSH',
+       h3:'Anonymous complaint received.<br>Senior director named. Complainant fears retaliation.',
+       A:{t:'Informal counselling first',r:'soft / uncertain'},
+       B:{t:'Formal ICC complaint process',r:'structured / compliant'},
+       OA:{verdict:'NON-COMPLIANT',vclass:'risk',num:'100%',
+         text:'Under the POSH Act, a written complaint to the ICC requires formal proceedings. Skipping this step violates the law.',
+         aria:'The Act is clear: once a written complaint exists, informal resolution needs written consent from the complainant. Was that obtained?'},
+       OB:{verdict:'COMPLIANT',vclass:'ok',num:'\u20b90',
+         text:'ICC proceedings initiated within statutory timeline. Process documented. Complainant identity protected per Section 16.',
+         aria:'Shall I generate the ICC notice template with the correct statutory references for your state?'}},
+      {tag:'ROOM 2 / SIGNAL ENGINE',caseId:'EVIDENCE PHASE',
+       h3:'The director denies everything.<br>No witnesses. Only a WhatsApp screenshot.',
+       A:{t:'Rely on the screenshot alone',r:'single source / fragile'},
+       B:{t:'Run SIGNAL evidence scan',r:'multi-source / robust'},
+       OA:{verdict:'FRAGILE CASE',vclass:'warn',num:'28%',
+         text:'Single-source evidence is easily challenged. The director\u2019s lawyer will question authenticity and context.',
+         aria:'Has the metadata of the screenshot been preserved? Without timestamp verification, it may be inadmissible.'},
+       OB:{verdict:'CORROBORATED',vclass:'ok',num:'72%',
+         text:'SIGNAL cross-references email logs, access records, and team seating data. Pattern of proximity confirmed independently.',
+         aria:'The email trail from March shows 4 instances of after-hours contact. That pattern is independent corroboration.'}},
+      {tag:'ROOM 3 / HUMACITY ENGINE',caseId:'BOARD EXPOSURE',
+       h3:'Board asks: "What is the financial exposure if this becomes public?"',
+       A:{t:'Downplay the risk',r:'political / dangerous'},
+       B:{t:'Pull the POSH exposure model',r:'quantified / transparent'},
+       OA:{verdict:'BLIND SPOT',vclass:'risk',num:'?',
+         text:'The board needed a number. You gave them reassurance. When the story breaks, the gap between your words and reality becomes personal liability.',
+         aria:'Three listed companies faced POSH-related market cap erosion in the last 18 months. Want me to pull those numbers?'},
+       OB:{verdict:'TRANSPARENT',vclass:'ok',num:'\u20b92.4Cr',
+         text:'Total exposure quantified: legal fees, settlement range, brand damage estimate, executive liability. The board can now make an informed decision.',
+         aria:'The settlement range alone is \u20b945L-\u20b91.2Cr. Adding brand and recruitment impact triples it.'}},
+      {tag:'ROOM 4 / ARIA',caseId:'COMPLAINANT MEETING',
+       h3:'The complainant wants to meet you personally.<br>She is scared, angry, and considering going public.',
+       A:{t:'Handle it from instinct',r:'unstructured / emotional'},
+       B:{t:'Run ARIA rehearsal first',r:'prepared / empathetic'},
+       OA:{verdict:'ESCALATED',vclass:'risk',num:'0/4',
+         text:'Without preparation, the meeting triggers the complainant\u2019s fear response. She leaves feeling unheard. The external complaint follows within 48 hours.',
+         aria:'She will ask one question that most HR leaders aren\u2019t ready for. Want me to tell you what it is?'},
+       OB:{verdict:'CONTAINED',vclass:'ok',num:'4/4',
+         text:'ARIA anticipated 4 emotional triggers. Your responses acknowledged each one. The complainant feels heard. Internal process continues.',
+         aria:'The key moment is when she asks about confidentiality. Your answer there determines whether she stays internal or goes public.'}},
+      {tag:'ROOM 5 / VANTAGE RECORD',caseId:'2 YEARS LATER',
+       h3:'New POSH complaint at a different company.<br>You need your ICC procedural playbook.',
+       A:{t:'Rebuild from memory',r:'reset / incomplete'},
+       B:{t:'Open your Vantage Record',r:'documented / ready'},
+       OA:{verdict:'GAPS',vclass:'risk',num:'0',
+         text:'The statutory timelines, the evidence protocols, the ICC constitution rules. You knew them cold two years ago. Now you are guessing.',
+         aria:'The POSH Act was amended last year. Your old playbook may not even be compliant anymore.'},
+       OB:{verdict:'BATTLE-TESTED',vclass:'ok',num:'12',
+         text:'12 POSH procedural decisions documented. ICC timelines, evidence thresholds, board communication templates. Updated with the latest amendments.',
+         aria:'Your Record already reflects the 2025 amendment. The ICC constitution template has been auto-updated.'}}
+    ]},
+    {name:'RESTRUCTURING',rooms:[
+      {tag:'ROOM 1 / PACT ENGINE',caseId:'CASE 3299 / Restructuring',
+       h3:'CEO announces 15% headcount reduction.<br>You have 30 days. 47 roles affected.',
+       A:{t:'Immediate layoff notices',r:'fast / high exposure'},
+       B:{t:'Structured reduction plan',r:'phased / defensible'},
+       OA:{verdict:'LEGAL MINEFIELD',vclass:'risk',num:'\u20b91.8Cr',
+         text:'Mass termination without a structured plan triggers Section 25 compliance failures. 47 individual claims add up fast.',
+         aria:'Have you checked which of these 47 roles fall under the Industrial Disputes Act? The threshold matters enormously.'},
+       OB:{verdict:'PROTECTED',vclass:'ok',num:'\u20b922L',
+         text:'Phased plan separates voluntary exits, natural attrition, and necessary terminations. Each category has a different legal pathway.',
+         aria:'14 of the 47 roles are eligible for VRS. Starting there reduces your forced termination count to 33.'}},
+      {tag:'ROOM 2 / SIGNAL ENGINE',caseId:'COMMUNICATION PHASE',
+       h3:'Word leaks before the official announcement.<br>Slack channels are on fire. Glassdoor posts appearing.',
+       A:{t:'Generic all-hands email',r:'reactive / impersonal'},
+       B:{t:'SIGNAL-mapped communication plan',r:'targeted / empathetic'},
+       OA:{verdict:'TRUST COLLAPSE',vclass:'risk',num:'12%',
+         text:'A generic email to 400 people during a crisis reads as corporate deflection. Employee trust score drops to 12%. Key talent starts interviewing.',
+         aria:'The engineering team and the sales team need completely different messages. Are you sending the same one to both?'},
+       OB:{verdict:'TRUST PRESERVED',vclass:'ok',num:'68%',
+         text:'SIGNAL segments employees by impact level, tenure, and flight risk. Each group gets a tailored message with the specific information they need.',
+         aria:'Your top 8 flight-risk engineers need a personal 1:1 within 48 hours. I have drafted the talking points for each.'}},
+      {tag:'ROOM 3 / HUMACITY ENGINE',caseId:'CFO REVIEW',
+       h3:'CFO says: "Show me this saves money."<br>The board wants proof the restructuring is net positive.',
+       A:{t:'Show salary savings only',r:'incomplete / misleading'},
+       B:{t:'Run full restructuring cost model',r:'honest / comprehensive'},
+       OA:{verdict:'FALSE SAVINGS',vclass:'warn',num:'-\u20b940L',
+         text:'Salary savings look great on paper. But replacement costs, knowledge loss, and 6-month productivity dips make the real number negative.',
+         aria:'The hidden cost most CFOs miss: the 47 people leaving take their client relationships with them. Have you modelled that?'},
+       OB:{verdict:'TRUE PICTURE',vclass:'ok',num:'\u20b91.1Cr',
+         text:'Full model: salary savings minus replacement, minus ramp, minus knowledge transfer, minus client risk. Net positive only if phased over 6 months.',
+         aria:'The breakeven point shifts from month 3 to month 8 when you include recruitment costs. The CFO needs to see that timeline.'}},
+      {tag:'ROOM 4 / ARIA',caseId:'TOWN HALL Q&A',
+       h3:'400-person town hall tomorrow.<br>The first question will be: "Am I safe?"',
+       A:{t:'Go in with bullet points',r:'undercooked / risky'},
+       B:{t:'ARIA full rehearsal',r:'battle-tested / ready'},
+       OA:{verdict:'AMBUSHED',vclass:'risk',num:'1/7',
+         text:'You prepared for the obvious question. The 6 follow-ups caught you off guard. The recording circulates on LinkedIn within hours.',
+         aria:'Question 3 is the trap: "If the company is profitable, why are people losing jobs?" Your current answer does not hold.'},
+       OB:{verdict:'COMMANDING',vclass:'ok',num:'7/7',
+         text:'ARIA surfaced 7 likely hostile questions from sentiment analysis. Each one has a structured response. You walked in knowing more than the room.',
+         aria:'The LinkedIn risk is real. I flagged 3 employees likely to record. Your answer to Q3 needs to work as a standalone clip.'}},
+      {tag:'ROOM 5 / VANTAGE RECORD',caseId:'NEXT RESTRUCTURING',
+       h3:'18 months later. Another restructuring.<br>Different company. Same pressure.',
+       A:{t:'Start the playbook from zero',r:'reset / slow'},
+       B:{t:'Open your Vantage Record',r:'proven / instant'},
+       OA:{verdict:'REINVENTING',vclass:'risk',num:'0',
+         text:'The phasing strategy, the communication templates, the CFO model. You built them all before. Now you are rebuilding from memory.',
+         aria:'The restructuring you ran 18 months ago saved \u20b91.1Cr net. That case study is worth more than any consulting deck.'},
+       OB:{verdict:'DEPLOYED',vclass:'ok',num:'23',
+         text:'23 restructuring decisions documented. Communication templates, CFO models, town hall scripts. Deployed in 48 hours instead of 30 days.',
+         aria:'Your previous restructuring playbook just saved this company 3 weeks of planning time. That is career capital.'}}
+    ]},
+    {name:'PERFORMANCE / PIP',rooms:[
+      {tag:'ROOM 1 / PACT ENGINE',caseId:'CASE 5520 / Performance',
+       h3:'Manager says: "This person needs to go."<br>No documented feedback. No prior conversations. Just frustration.',
+       A:{t:'Start termination process',r:'fast / no foundation'},
+       B:{t:'Initiate structured PIP',r:'documented / fair'},
+       OA:{verdict:'WRONGFUL TERMINATION',vclass:'risk',num:'\u20b914L',
+         text:'Zero documentation of underperformance. Any tribunal will ask: "Where are the warnings?" You will not have an answer.',
+         aria:'Has the manager ever given this employee written feedback? Even a single email changes the legal position.'},
+       OB:{verdict:'FAIR PROCESS',vclass:'ok',num:'\u20b91.5L',
+         text:'PIP creates a documented 60-day improvement window. If the employee fails, termination is defensible. If they improve, the manager got what they wanted.',
+         aria:'I have 4 PIP templates calibrated for this role type and seniority. Want me to generate the first draft?'}},
+      {tag:'ROOM 2 / SIGNAL ENGINE',caseId:'PERFORMANCE DATA',
+       h3:'PIP requires measurable targets.<br>The manager says: "I just know they are underperforming."',
+       A:{t:'Use the manager\'s judgment',r:'subjective / contested'},
+       B:{t:'Run SIGNAL data assessment',r:'objective / defensible'},
+       OA:{verdict:'CONTESTED',vclass:'warn',num:'22%',
+         text:'Subjective feedback without data is the #1 reason PIPs fail in tribunal. The employee will argue bias, and you have no counter.',
+         aria:'Does this employee\u2019s peer group have documented metrics? If others do and this person doesn\u2019t, that gap itself is a signal.'},
+       OB:{verdict:'DATA-BACKED',vclass:'ok',num:'81%',
+         text:'SIGNAL pulls delivery metrics, peer benchmarks, and timeline data. The PIP targets are now objective and benchmarked against the team.',
+         aria:'The data shows this employee\u2019s output dropped 40% after a team change in March. That context should be in the PIP narrative.'}},
+      {tag:'ROOM 3 / HUMACITY ENGINE',caseId:'RETENTION DECISION',
+       h3:'Day 55 of PIP. Marginal improvement.<br>Manager wants termination. The employee has 12 years tenure.',
+       A:{t:'Terminate as PIP failed',r:'binary / risky'},
+       B:{t:'Calculate retention value first',r:'informed / strategic'},
+       OA:{verdict:'EXPENSIVE EXIT',vclass:'warn',num:'\u20b926L',
+         text:'12-year tenure means high separation cost, institutional knowledge loss, and team morale impact. The "failure" is marginal, not absolute.',
+         aria:'The replacement cost alone is \u20b98.4L. Add ramp time and you are looking at 14 months before the replacement reaches this person\u2019s baseline.'},
+       OB:{verdict:'STRATEGIC CHOICE',vclass:'ok',num:'\u20b926L vs \u20b94L',
+         text:'Full cost comparison: termination costs \u20b926L over 14 months. A role adjustment with coaching costs \u20b94L. The decision is now a business case, not a gut call.',
+         aria:'There is a third option: lateral move to a role that matches this person\u2019s actual strengths. Want me to map it?'}},
+      {tag:'ROOM 4 / ARIA',caseId:'THE CONVERSATION',
+       h3:'You have to deliver the PIP outcome.<br>The employee is emotional, defensive, and has a lawyer.',
+       A:{t:'Deliver it directly',r:'confrontational / exposed'},
+       B:{t:'ARIA-prepared delivery',r:'structured / protected'},
+       OA:{verdict:'ESCALATED',vclass:'risk',num:'0/3',
+         text:'The employee\u2019s lawyer sends a notice within 24 hours citing procedural unfairness. Your verbal delivery left no documented record of what was actually said.',
+         aria:'The lawyer will focus on three words you used. Do you know which three? ARIA does.'},
+       OB:{verdict:'WATERTIGHT',vclass:'ok',num:'3/3',
+         text:'ARIA scripted the delivery with legal-safe language. Every statement documented. The employee\u2019s lawyer finds no procedural gaps to exploit.',
+         aria:'I drafted a summary of the conversation for the employee to sign. It protects both parties. Want to review it?'}},
+      {tag:'ROOM 5 / VANTAGE RECORD',caseId:'THE NEXT PIP',
+       h3:'New company. New PIP situation.<br>The manager says the same words: "This person needs to go."',
+       A:{t:'Start from scratch again',r:'reset / slow'},
+       B:{t:'Open your Vantage Record',r:'experienced / fast'},
+       OA:{verdict:'DEJA VU',vclass:'risk',num:'0',
+         text:'You have done this before. The templates, the data frameworks, the delivery scripts. All of it trapped in your previous company\u2019s systems.',
+         aria:'The PIP you ran last year was textbook. That process is worth replicating. Can you?'},
+       OB:{verdict:'MASTERED',vclass:'ok',num:'8',
+         text:'8 performance management decisions documented. PIP templates, data frameworks, delivery scripts, legal-safe language. Deployed in hours.',
+         aria:'Your Vantage Record shows you have navigated 8 PIPs with zero tribunal challenges. That track record is your career capital.'}}
+    ]},
+    {name:'WAGE COMPLIANCE',rooms:[
+      {tag:'ROOM 1 / PACT ENGINE',caseId:'CASE 6012 / Wage Dispute',
+       h3:'Employee claims 14 months of unpaid overtime.<br>Labour inspector visit scheduled for next week.',
+       A:{t:'Deny the claim outright',r:'aggressive / exposed'},
+       B:{t:'Audit the records immediately',r:'proactive / prepared'},
+       OA:{verdict:'INSPECTOR RISK',vclass:'risk',num:'\u20b932L',
+         text:'Denial without an audit is the worst posture for a labour inspection. If the inspector finds what the employee claims, penalties multiply.',
+         aria:'Under the Payment of Wages Act, the burden of proof is on the employer. Can you produce 14 months of attendance and payment records right now?'},
+       OB:{verdict:'PREPARED',vclass:'ok',num:'\u20b94L',
+         text:'Audit reveals 3 months of genuinely disputed overtime. Proactive correction costs \u20b94L. Inspector finds a company that self-corrected.',
+         aria:'The 3-month gap aligns with a system migration in Q2. That context makes the discrepancy explainable, not negligent.'}},
+      {tag:'ROOM 2 / SIGNAL ENGINE',caseId:'RECORDS ANALYSIS',
+       h3:'The audit reveals gaps in 3 months of attendance data.<br>Biometric system was down during office renovation.',
+       A:{t:'Submit incomplete records',r:'transparent / exposed'},
+       B:{t:'SIGNAL reconstruction from secondary data',r:'comprehensive / defensible'},
+       OA:{verdict:'PENALTY LIKELY',vclass:'warn',num:'62%',
+         text:'Incomplete records during an inspection invite assumption of non-compliance. The inspector fills gaps with the employee\u2019s version.',
+         aria:'Do you have Slack messages, email timestamps, or project logs from those 3 months? SIGNAL can triangulate attendance from those.'},
+       OB:{verdict:'RECONSTRUCTED',vclass:'ok',num:'94%',
+         text:'SIGNAL cross-references email logs, VPN access records, and project delivery timestamps. 94% of attendance days reconstructed with verifiable data.',
+         aria:'The reconstruction shows the employee actually worked 11 overtime days, not 47 as claimed. That changes the exposure from \u20b932L to \u20b93.2L.'}},
+      {tag:'ROOM 3 / HUMACITY ENGINE',caseId:'BOARD REPORTING',
+       h3:'CEO asks: "Is this a one-person problem or a systemic risk?"',
+       A:{t:'Reassure: isolated incident',r:'hopeful / uninformed'},
+       B:{t:'Run organisation-wide compliance scan',r:'honest / comprehensive'},
+       OA:{verdict:'SYSTEMIC BLIND SPOT',vclass:'risk',num:'?',
+         text:'You told the CEO it was isolated. The labour inspector finds 23 similar cases across 3 departments. Your credibility is gone.',
+         aria:'When was the last time anyone audited overtime compliance across all departments? If the answer is never, this is not isolated.'},
+       OB:{verdict:'FULL PICTURE',vclass:'ok',num:'23',
+         text:'Humacity scan reveals 23 employees with potential overtime discrepancies. 18 are minor. 5 require immediate correction. Total exposure: \u20b912L.',
+         aria:'Proactively correcting 23 cases costs \u20b912L. Having the inspector find them costs \u20b91.4Cr in penalties and reputation. The math is clear.'}},
+      {tag:'ROOM 4 / ARIA',caseId:'INSPECTOR MEETING',
+       h3:'Labour inspector arrives Monday.<br>She has the employee\u2019s complaint and 14 months of alleged records.',
+       A:{t:'Let legal handle it',r:'delegated / disconnected'},
+       B:{t:'ARIA-prepared with HR context',r:'informed / commanding'},
+       OA:{verdict:'DISCONNECTED',vclass:'warn',num:'1/5',
+         text:'Legal speaks law. The inspector wants to see HR process. Your lawyer cannot answer: "What is your overtime approval workflow?" You are called in unprepared.',
+         aria:'The inspector will ask 5 process questions that only HR can answer. Legal cannot help you with those. Want to hear them?'},
+       OB:{verdict:'COMMANDING',vclass:'ok',num:'5/5',
+         text:'ARIA anticipated 5 inspector questions. You have the records, the workflow documentation, and the proactive correction evidence. The inspection becomes a formality.',
+         aria:'The strongest moment: when you show the self-correction report dated before the inspection notice. That demonstrates good faith.'}},
+      {tag:'ROOM 5 / VANTAGE RECORD',caseId:'COMPLIANCE FRAMEWORK',
+       h3:'New company. First labour audit.<br>"Can you set up our compliance framework?"',
+       A:{t:'Build from regulatory reading',r:'slow / theoretical'},
+       B:{t:'Deploy from your Vantage Record',r:'proven / operational'},
+       OA:{verdict:'MONTHS AWAY',vclass:'risk',num:'0',
+         text:'Reading the Acts takes a week. Building the workflows takes a month. Testing them takes a quarter. Your new employer needs it now.',
+         aria:'The compliance framework you built at your last company was operational. This one is theoretical. The difference is 6 months.'},
+       OB:{verdict:'DEPLOYED',vclass:'ok',num:'15',
+         text:'15 compliance decisions documented. Attendance workflows, overtime approval processes, inspector preparation playbooks. Operational in 2 weeks.',
+         aria:'Your Vantage Record just compressed 6 months of compliance setup into 2 weeks. That is what career intelligence looks like.'}}
+    ]}
+  ];
 
-  /* ── Door click: open animation ── */
-  document.querySelectorAll('.cor-lock').forEach(lock => {
-    lock.addEventListener('click', e => {
+  let currentCase=0;
+
+  function loadCase(ci){
+    currentCase=ci;
+    const c=CASES[ci];
+    /* Update room door tags and scenario content */
+    c.rooms.forEach((rm,i)=>{
+      const roomEl=document.getElementById('corRoom'+(i+1));
+      if(!roomEl)return;
+      const tag=roomEl.querySelector('.cor-door-tag');
+      if(tag)tag.textContent=rm.tag;
+      const caseId=roomEl.querySelector('.cor-case-id');
+      if(caseId)caseId.textContent=rm.caseId;
+      const h3=roomEl.querySelector('.cor-scenario h3');
+      if(h3)h3.innerHTML=rm.h3;
+      const choices=roomEl.querySelectorAll('.cor-choice');
+      if(choices[0]){
+        choices[0].querySelector('.cor-choice-text').textContent=rm.A.t;
+        choices[0].querySelector('.cor-choice-risk').textContent=rm.A.r;
+      }
+      if(choices[1]){
+        choices[1].querySelector('.cor-choice-text').textContent=rm.B.t;
+        choices[1].querySelector('.cor-choice-risk').textContent=rm.B.r;
+      }
+    });
+    /* Highlight active pill */
+    document.querySelectorAll('.cor-case-pill').forEach((p,i)=>{
+      p.classList.toggle('active',i===ci);
+    });
+  }
+
+  function resetCorridor(){
+    document.querySelectorAll('.cor-room').forEach((r,i)=>{
+      r.classList.remove('active','entered');
+      r.querySelector('.cor-door')&&(r.querySelector('.cor-door').style.display='');
+      r.querySelector('.cor-door')&&r.querySelector('.cor-door').classList.remove('open');
+      r.querySelector('.cor-inside')&&(r.querySelector('.cor-inside').style.display='');
+      const lock=r.querySelector('.cor-lock-icon');
+      if(lock)lock.textContent='\uD83D\uDD12';
+      r.querySelectorAll('.cor-choice').forEach(c=>{c.classList.remove('picked','dimmed');});
+      const res=r.querySelector('.cor-result');
+      if(res){res.classList.remove('cor-result-open');res.innerHTML='';}
+      const nxt=r.querySelector('.cor-next');
+      if(nxt)nxt.style.display='none';
+      const fin=r.querySelector('.cor-final');
+      if(fin)fin.style.display='none';
+    });
+    document.querySelectorAll('.cor-pip').forEach(p=>{p.classList.remove('active','done');});
+    document.querySelectorAll('.cor-line').forEach(l=>{l.classList.remove('done');});
+    document.querySelector('.cor-pip[data-r="1"]')?.classList.add('active');
+    document.getElementById('corRoom1')?.classList.add('active');
+    document.getElementById('corCaseSelect').style.display='';
+    const section=document.getElementById('simRoom');
+    if(section)section.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  /* Case pill clicks */
+  document.querySelectorAll('.cor-case-pill').forEach(pill=>{
+    pill.addEventListener('click',()=>{
+      loadCase(parseInt(pill.dataset.case));
+      resetCorridor();
+    });
+  });
+
+  /* Restart button */
+  const restartBtn=document.getElementById('corRestart');
+  if(restartBtn) restartBtn.addEventListener('click',resetCorridor);
+
+  /* Door click → WORMHOLE → reveal room */
+  document.querySelectorAll('.cor-lock').forEach(lock=>{
+    lock.addEventListener('click',e=>{
       e.stopPropagation();
-      const doorNum = lock.dataset.door;
-      const door = document.getElementById('corDoor' + doorNum);
-      if(!door) return;
+      const doorNum=lock.dataset.door;
+      const door=document.getElementById('corDoor'+doorNum);
+      if(!door)return;
 
-      /* Unlock animation */
-      lock.querySelector('.cor-lock-icon').textContent = '\uD83D\uDD13';
+      /* Hide case selector after first door click */
+      const sel=document.getElementById('corCaseSelect');
+      if(sel)sel.style.display='none';
+
+      /* Unlock icon */
+      lock.querySelector('.cor-lock-icon').textContent='\uD83D\uDD13';
       door.classList.add('open');
 
-      /* After door swings open, reveal room content */
-      setTimeout(() => {
-        const room = document.getElementById('corRoom' + doorNum);
-        if(room) room.classList.add('entered');
-      }, 900);
+      /* WORMHOLE for 4 seconds → then reveal room */
+      setTimeout(()=>{
+        wormhole(4000,()=>{
+          const room=document.getElementById('corRoom'+doorNum);
+          if(room)room.classList.add('entered');
+        });
+      },600);
     });
   });
 
-  /* ── Choice click: show result ── */
-  document.querySelectorAll('.cor-choice').forEach(choice => {
-    choice.addEventListener('click', () => {
-      const room = choice.dataset.room;
-      const pick = choice.dataset.pick;
-      const key = room + pick;
-      const outcome = OUTCOMES[key];
-      if(!outcome) return;
+  /* Choice click → show result */
+  document.querySelectorAll('.cor-choice').forEach(choice=>{
+    choice.addEventListener('click',()=>{
+      const roomNum=choice.dataset.room;
+      const pick=choice.dataset.pick;
+      const c=CASES[currentCase];
+      const rm=c.rooms[parseInt(roomNum)-1];
+      const outcome=pick==='A'?rm.OA:rm.OB;
+      if(!outcome)return;
 
-      /* Highlight picked, dim other */
-      const parent = choice.parentElement;
-      parent.querySelectorAll('.cor-choice').forEach(c => {
-        if(c === choice) c.classList.add('picked');
-        else c.classList.add('dimmed');
+      const parent=choice.parentElement;
+      parent.querySelectorAll('.cor-choice').forEach(ch=>{
+        if(ch===choice)ch.classList.add('picked');
+        else ch.classList.add('dimmed');
       });
 
-      /* Build result HTML */
-      const resultEl = document.getElementById('corResult' + room);
-      if(!resultEl) return;
+      const resultEl=document.getElementById('corResult'+roomNum);
+      if(!resultEl)return;
+      resultEl.innerHTML='<div class="cor-result-inner">'+
+        '<span class="cor-ri-verdict '+outcome.vclass+'">'+outcome.verdict+'</span>'+
+        '<span class="cor-ri-num">'+outcome.num+'</span>'+
+        '<p class="cor-ri-text">'+outcome.text+'</p>'+
+        '<p class="cor-ri-aria">'+outcome.aria+'</p></div>';
 
-      resultEl.innerHTML = '<div class="cor-result-inner">' +
-        '<span class="cor-ri-verdict ' + outcome.vclass + '">' + outcome.verdict + '</span>' +
-        '<span class="cor-ri-num">' + outcome.num + '</span>' +
-        '<p class="cor-ri-text">' + outcome.text + '</p>' +
-        '<p class="cor-ri-aria">' + outcome.aria + '</p>' +
-        '</div>';
+      requestAnimationFrame(()=>resultEl.classList.add('cor-result-open'));
+      if(D&&D.scan)setTimeout(()=>D.scan(resultEl.querySelector('.cor-result-inner'),650),200);
+      const numSpan=resultEl.querySelector('.cor-ri-num');
+      if(numSpan&&D&&D.str){const f=numSpan.textContent;numSpan.textContent='';setTimeout(()=>D.str(numSpan,f,600),350);}
 
-      /* Animate open */
-      requestAnimationFrame(() => {
-        resultEl.classList.add('cor-result-open');
-      });
-
-      /* Scan line across result */
-      if(D && D.scan) setTimeout(() => D.scan(resultEl.querySelector('.cor-result-inner'), 650), 200);
-
-      /* Scramble the big number */
-      const numSpan = resultEl.querySelector('.cor-ri-num');
-      if(numSpan && D && D.str){
-        const final = numSpan.textContent;
-        numSpan.textContent = '';
-        setTimeout(() => D.str(numSpan, final, 600), 350);
-      }
-
-      /* Show next door button (or final CTA for room 5) */
-      setTimeout(() => {
-        const nextBtn = choice.closest('.cor-room').querySelector('.cor-next');
-        const finalEl = choice.closest('.cor-room').querySelector('.cor-final');
-        if(nextBtn) { nextBtn.style.display = 'block'; nextBtn.style.animation = 'roomFadeIn .5s ease both'; }
-        if(finalEl) { finalEl.style.display = 'block'; finalEl.style.animation = 'roomFadeIn .5s ease both'; }
-
-        /* Update progress pip */
-        const pip = document.querySelector('.cor-pip[data-r="' + room + '"]');
-        if(pip) { pip.classList.remove('active'); pip.classList.add('done'); }
-      }, 1200);
+      setTimeout(()=>{
+        const nxt=choice.closest('.cor-room').querySelector('.cor-next');
+        const fin=choice.closest('.cor-room').querySelector('.cor-final');
+        if(nxt){nxt.style.display='block';nxt.style.animation='roomFadeIn .5s ease both';}
+        if(fin){fin.style.display='block';fin.style.animation='roomFadeIn .5s ease both';}
+        const pip=document.querySelector('.cor-pip[data-r="'+roomNum+'"]');
+        if(pip){pip.classList.remove('active');pip.classList.add('done');}
+      },1200);
     });
   });
 
-  /* ── Next door: transition to next room ── */
-  document.querySelectorAll('.cor-next').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const nextRoom = btn.dataset.next;
-      const currentRoom = btn.closest('.cor-room');
-
-      /* Fade out current room */
-      currentRoom.style.transition = 'opacity .5s ease, transform .5s ease';
-      currentRoom.style.opacity = '0';
-      currentRoom.style.transform = 'translateY(-20px) scale(.97)';
-
-      setTimeout(() => {
-        currentRoom.classList.remove('active');
-        currentRoom.style.opacity = '';
-        currentRoom.style.transform = '';
-        currentRoom.style.transition = '';
-
-        /* Activate next room */
-        const next = document.getElementById('corRoom' + nextRoom);
-        if(next){
-          next.classList.add('active');
-          /* Activate the progress pip */
-          const pip = document.querySelector('.cor-pip[data-r="' + nextRoom + '"]');
-          if(pip) pip.classList.add('active');
-          /* Also mark lines as done */
-          const lines = document.querySelectorAll('.cor-line');
-          const lineIdx = parseInt(nextRoom) - 2;
-          if(lines[lineIdx]) lines[lineIdx].classList.add('done');
-        }
-
-        /* Scroll section into view */
-        const section = document.getElementById('simRoom');
-        if(section) section.scrollIntoView({behavior:'smooth', block:'start'});
-      }, 550);
+  /* Next door → transition */
+  document.querySelectorAll('.cor-next').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const nextRoom=btn.dataset.next;
+      const cur=btn.closest('.cor-room');
+      cur.style.transition='opacity .5s ease,transform .5s ease';
+      cur.style.opacity='0';cur.style.transform='translateY(-20px) scale(.97)';
+      setTimeout(()=>{
+        cur.classList.remove('active','entered');
+        cur.style.opacity='';cur.style.transform='';cur.style.transition='';
+        /* Reset door for replay */
+        const door=cur.querySelector('.cor-door');
+        if(door){door.classList.remove('open');door.style.display='';}
+        const lock=cur.querySelector('.cor-lock-icon');
+        if(lock)lock.textContent='\uD83D\uDD12';
+        const next=document.getElementById('corRoom'+nextRoom);
+        if(next)next.classList.add('active');
+        const pip=document.querySelector('.cor-pip[data-r="'+nextRoom+'"]');
+        if(pip)pip.classList.add('active');
+        const lines=document.querySelectorAll('.cor-line');
+        const li=parseInt(nextRoom)-2;
+        if(lines[li])lines[li].classList.add('done');
+        document.getElementById('simRoom')?.scrollIntoView({behavior:'smooth',block:'start'});
+      },550);
     });
   });
 
+  /* Initial load */
+  loadCase(0);
 })();
