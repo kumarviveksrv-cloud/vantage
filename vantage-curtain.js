@@ -963,16 +963,20 @@
   const wrap = document.getElementById('heroEnter');
   if(!wrap) return;
 
-  /* Build DOM: [heText][heVantage][cursor] */
+  /* Build DOM: [heText][heVantageWord][heDot][cursor] — the period is
+     its own element so only IT blinks, not the whole word. */
   const heText    = document.createElement('span');
   heText.id       = 'heText';
   const heVantage = document.createElement('span');
   heVantage.id    = 'heVantage';
+  const heDot     = document.createElement('span');
+  heDot.id        = 'heDot';
   const heCursor  = document.createElement('span');
   heCursor.className = 'he-cursor';
   heCursor.textContent = '|';
   wrap.appendChild(heText);
   wrap.appendChild(heVantage);
+  wrap.appendChild(heDot);
   wrap.appendChild(heCursor);
 
   const delay = ms => new Promise(r => setTimeout(r, ms));
@@ -993,23 +997,24 @@
   }
 
   async function run(){
-    /* Cycles 1 & 2: type full text, hold, erase */
+    /* Cycles 1 & 2: type full text, hold, erase — VANTAGE in caps */
     for(let cycle = 0; cycle < 2; cycle++){
-      await typeIn(heText, 'Enter Vantage.', 58);
+      await typeIn(heText, 'Enter VANTAGE.', 58);
       await delay(480);
       await typeOut(heText, 26);
       await delay(200);
     }
 
-    /* Cycle 3: "Enter " in heText, then "Vantage." in heVantage */
+    /* Cycle 3: "Enter " in heText, "VANTAGE" in heVantage, "." in heDot */
     await typeIn(heText, 'Enter ', 58);
-    await typeIn(heVantage, 'Vantage.', 58);
+    await typeIn(heVantage, 'VANTAGE', 58);
+    await typeIn(heDot, '.', 58);
     await delay(520);
 
-    /* Cursor off — Vantage blinks forever */
+    /* Cursor off — only the period blinks forever, not the whole word */
     heCursor.style.animation = 'none';
     heCursor.style.opacity   = '0';
-    heVantage.classList.add('he-blink');
+    heDot.classList.add('he-blink');
   }
 
   /* Exposed for the master hero sequence orchestrator to call at the right time */
@@ -2214,7 +2219,11 @@
        with color:transparent and nothing else, i.e. invisible. Fix:
        give each word span its OWN copy of the same gradient, so every
        word clips its own background independently of the parent. */
-    const gradientCSS = 'background:linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%);'+
+    /* Subtler gradient — a full 3-stop rainbow (lavender->indigo->rose)
+       repeated on EVERY individual word reads as busy/disjointed once
+       words are wrapped separately. A tight two-stop lavender range
+       keeps the accent styling but reads as one cohesive colour. */
+    const gradientCSS = 'background:linear-gradient(135deg,#d8cbff 0%,#b39ef0 100%);'+
       '-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;';
     const spans = words.map((w,i)=>{
       const span = document.createElement('span');
@@ -2244,6 +2253,33 @@
      a real <em> element so they keep the existing .hero-deck em
      styling (gradient/glow), while the rest are plain spans — both
      sets fade in as one continuous word-by-word sequence. */
+  /* Word-by-word fade to a SPECIFIC target opacity (not 1) — used for
+     heroContext, whose resting/intended opacity is 0.62, not full
+     brightness. Plain text only, no gradient, matches its dim styling. */
+  async function fadeInWordsTo(el, targetOpacity, wordDelay, wordDuration){
+    const text = el.textContent.trim();
+    const words = text.split(/\s+/);
+    el.textContent = '';
+    el.style.setProperty('opacity', String(targetOpacity), 'important');
+    const spans = words.map((w,i)=>{
+      const span = document.createElement('span');
+      span.textContent = w + (i < words.length-1 ? '\u00A0' : '');
+      span.style.opacity = '0';
+      span.style.display = 'inline-block';
+      span.style.transition = 'opacity '+wordDuration+'ms ease, transform '+wordDuration+'ms ease';
+      span.style.transform = 'translateY(5px)';
+      el.appendChild(span);
+      return span;
+    });
+    void el.offsetHeight;
+    for(const span of spans){
+      span.style.opacity = '1';
+      span.style.transform = 'translateY(0)';
+      await delay(wordDelay);
+    }
+    await delay(wordDuration);
+  }
+
   async function fadeInWordsMixed(el, emText, plainText, wordDelay, wordDuration){
     el.textContent = '';
     el.style.setProperty('opacity','1','important');
@@ -2310,19 +2346,21 @@
     await typeSimpleLine(lineDim, 'Every HR professional has had that 9 pm moment.', 70, 'H1-dim');
     await delay(350);
 
-    /* 3b. "The manager wants closure..." context line fades in to its
-       own intended dim opacity (0.62), not full opacity */
+    /* 3b. "The manager wants closure..." context line fades in WORD BY
+       WORD to its own intended dim opacity (0.62), slowly. */
     if(heroContext){
-      await fadeInTo(heroContext, 0.62, 600);
+      await fadeInWordsTo(heroContext, 0.62, 150, 450);
       await delay(500);
     }
 
-    /* 4. H1 lines 2+3 (accent) fade in WORD BY WORD, one line at a time */
+    /* 4. H1 lines 2+3 (accent) fade in WORD BY WORD, one line at a time
+       — slowed substantially: 130ms->220ms between words, 420ms->650ms
+       per word's own fade+rise. */
     for(const line of lineAccents){
-      await fadeInWords(line, 130, 420);
-      await delay(250);
+      await fadeInWords(line, 220, 650);
+      await delay(450);
     }
-    await delay(600);
+    await delay(700);
 
     /* 5. "Enter Vantage." typewriter sequence (existing logic) — now
        AWAITED so hero-deck can reveal only after it finishes, instead
