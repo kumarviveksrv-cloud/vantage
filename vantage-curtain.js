@@ -178,21 +178,9 @@
   ov.addEventListener('click', dismissOverlay);
   document.getElementById('q-skip')?.addEventListener('click', e=>{ e.stopPropagation(); dismissOverlay(); });
 
-  /* Expose to the ta-da/prologue sequence so it can show the welcome
-     question directly, deterministically, instead of waiting on a
-     scroll-triggered IntersectionObserver that has no reason to fire
-     this early (nothing has scrolled yet). This was the actual root
-     cause of the curtain-raiser-after-landing sequencing bug: there
-     was never an immediate trigger to poll for in the first place. */
-  window._curtainRaiser = { showOverlay, CARDS, DELAY };
-
   // ── Section curtain raisers (first visit only) ──────────────────────────
   if(!sessionStorage.getItem(Q_KEY) && !matchMedia('(prefers-reduced-motion:reduce)').matches){
     const triggered = new Set();
-    /* If the ARIA card (index 3) was already shown as the deterministic
-       welcome question right after prologue, don't fire it again when
-       the user later scrolls to the ARIA section. */
-    if(sessionStorage.getItem('vantage_welcome_shown')) triggered.add(3);
     const io = new IntersectionObserver(entries=>{
       entries.forEach(e=>{
         if(!e.isIntersecting) return;
@@ -244,30 +232,21 @@
          also polled for the wrong CSS class/display values entirely
          ('active'/'flex' when the real code uses 'q-visible'/'grid'),
          so the check silently always failed and fell through to a
-         6-second safety timeout, revealing the landing page BEFORE the
-         curtain raiser had any chance to show — exactly the reported
-         "landing page, then curtain raiser" bug.
+         6-second safety timeout.
 
-         Fixed by calling the curtain raiser directly and
-         deterministically here, with its own dismiss callback (user
-         clicks Reveal, or its timer runs out) driving what happens
-         next — no polling, no waiting on an event that isn't coming. */
+         CORRECTED UNDERSTANDING: "Curtain Raiser" = doTada() itself —
+         the VIRORAH VANTAGE logo + stars-flying-toward-screen scene.
+         It is NOT the ARIA section's scroll-triggered question card.
+         That card belongs only to its own scroll trigger deep in the
+         page and must never be inserted into this sequence.
 
-      const curtainAlreadySeen  = sessionStorage.getItem('vantage_q_v6');
-      const welcomeAlreadyShown = sessionStorage.getItem('vantage_welcome_shown');
-
-      function showCurtainThenTada(){
-        const cr = window._curtainRaiser;
-        if(cr && !curtainAlreadySeen && !welcomeAlreadyShown){
-          sessionStorage.setItem('vantage_welcome_shown','1');
-          cr.showOverlay(cr.CARDS[3], cr.DELAY, doTada);
-        } else {
-          doTada();
-        }
-      }
+         The correct 4-scene chain is simply:
+         Prologue → "Initiating Vantage..." typewriter → doTada (stars)
+         → Landing. No polling, no waiting on anything external —
+         each scene calls directly into the next. */
 
       if(initOverlay && initTextEl){
-        /* "Initiating Vantage..." typewriter — unchanged */
+        /* "Initiating Vantage..." typewriter */
         initOverlay.classList.add('init-active');
         initOverlay.style.opacity = '1';
         initTextEl.textContent = '';
@@ -281,11 +260,12 @@
               initTextEl.style.transition = 'opacity .8s ease';
               initTextEl.style.opacity = '0';
               setTimeout(()=>{
-                /* q-overlay (if it's about to show) paints its own
-                   opaque #050410 background, so triggering it now and
-                   removing init-overlay a beat later has zero gap and
-                   zero landing-page flash between the two. */
-                showCurtainThenTada();
+                /* tada-overlay paints its own opaque #050410 background
+                   at a much higher z-index than init-overlay, so calling
+                   doTada() now and removing init-overlay a beat later
+                   has zero gap and zero landing-page flash between the
+                   two — tada-overlay is already covering everything. */
+                doTada();
                 setTimeout(()=>{
                   initOverlay.classList.remove('init-active');
                   initOverlay.style.opacity = '';
@@ -298,7 +278,7 @@
           }
         }, 95);
       } else {
-        showCurtainThenTada();
+        doTada();
       }
 
       function doTada(){
