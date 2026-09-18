@@ -453,7 +453,7 @@
   const total    = document.getElementById('dosTotal');
   let fired = false;
 
-  function countUp(el, target, suffix, duration){
+  function countUp(el, target, duration){
     const start = performance.now();
     (function step(now){
       const t = Math.min(1,(now-start)/duration);
