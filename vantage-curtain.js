@@ -749,12 +749,78 @@
     const lastAt=420+entries.length*580+260;
     setTimeout(()=>{
       if(total)D.num(total,18.4,2000,'₹','L',1);
+      /* Start the perpetual "living record" ambience once the initial
+         boot-up settles — a dashboard that stops moving forever after
+         one reveal reads as a screenshot, not a live system. */
+      setTimeout(startDossierAmbient,2200);
     },lastAt);
+  }
+
+  /* ── Perpetual ambience — runs forever once the reveal completes ──────── */
+  function startDossierAmbient(){
+    const D=window._vDash;if(!D)return;
+
+    /* Add a small pulsing LIVE dot next to the dossier's status line,
+       if a suitable header exists to anchor it to. */
+    const header=dossier.querySelector('.record-dossier-wrap')||dossier;
+    if(header && !header.querySelector('.dos-live-dot')){
+      const dot=document.createElement('span');
+      dot.className='dos-live-dot';
+      dot.style.cssText='display:inline-block;width:6px;height:6px;border-radius:50%;'+
+        'background:#34d399;box-shadow:0 0 8px rgba(52,211,153,.8);margin-left:8px;'+
+        'animation:dosLivePulse 2.2s ease-in-out infinite;vertical-align:middle;';
+      const styleTag=document.getElementById('dosLiveDotStyle')||(()=>{
+        const s=document.createElement('style');s.id='dosLiveDotStyle';
+        s.textContent='@keyframes dosLivePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}';
+        document.head.appendChild(s);return s;
+      })();
+      const anchor=dossier.querySelector('.dos-progress-label')||dossier.querySelector('h3')||dossier.firstElementChild;
+      if(anchor) anchor.appendChild(dot);
+    }
+
+    /* Loop A: every ~6.5s, sweep the scan line across the whole card
+       again — a "live re-verification" pulse. */
+    (function scanLoop(){
+      setTimeout(()=>{
+        D.scan(dossier,900,'rgba(196,181,253,.35)');
+        scanLoop();
+      }, 6000+Math.random()*1500);
+    })();
+
+    /* Loop B: every ~5s, flash a random entry's border briefly — as if
+       that record is being "re-verified" against the live system. */
+    (function entryPulseLoop(){
+      setTimeout(()=>{
+        if(entries.length){
+          const e=entries[Math.floor(Math.random()*entries.length)];
+          e.classList.remove('dos-flash'); void e.offsetWidth;
+          e.classList.add('dos-flash');
+        }
+        entryPulseLoop();
+      }, 4500+Math.random()*2500);
+    })();
+
+    /* Loop C: every ~9s, the career-capital total gets a brief
+       "recalculating" micro-blip — scrambles for a moment then
+       resettles on the exact same number, suggesting the ledger is
+       continuously being re-verified against fresh data. */
+    (function totalBlipLoop(){
+      setTimeout(()=>{
+        if(total){
+          const D2=window._vDash;
+          if(D2) D2.str(total,'₹18.4L',380);
+        }
+        totalBlipLoop();
+      }, 8000+Math.random()*3000);
+    })();
   }
 
   const section=document.querySelector('.record.cinematic-panel');
   if(!section)return;
-  new IntersectionObserver(es=>{if(es[0].isIntersecting)run();},{threshold:0.2}).observe(section);
+  /* 3s delay before starting — a curtain-raiser question overlay covers
+     the section briefly on first scroll-into-view, so starting the
+     reveal immediately would run it invisibly underneath that overlay. */
+  new IntersectionObserver(es=>{if(es[0].isIntersecting)setTimeout(run,3000);},{threshold:0.2}).observe(section);
 })();
 
 /* ── Humac Score Synthesis — SPECTACULAR (SR18.2) ──────────────────────── */
@@ -858,12 +924,78 @@
         const tag=document.getElementById('humacTagline');
         if(tag)D.str(tag,'This is what your organisation\u2019s human capital position looks like when it speaks the CFO\u2019s language.',1800);
       },2600);
+
+      /* Perpetual ambience once the reveal settles */
+      setTimeout(startHumacityAmbient,4600);
     },scoreAt);
+  }
+
+  /* ── Perpetual ambience — runs forever once the reveal completes ──────── */
+  function startHumacityAmbient(){
+    const D=window._vDash;if(!D)return;
+    const rotatingStatus=[
+      'MONITORING L1\u2013L5 SIGNAL...','CROSS-REFERENCING PEER BENCHMARKS...',
+      'VERIFYING VALUE LEDGER INTEGRITY...','RE-INDEXING TALENT PREMIUM...',
+      'SYNCING NET HUMAN WORTH...'
+    ];
+
+    /* Loop A: status line quietly cycles through monitoring states,
+       so the panel reads as continuously watching, not a finished
+       snapshot. */
+    let statusIdx=0;
+    (function statusLoop(){
+      setTimeout(()=>{
+        if(statusEl) D.str(statusEl, rotatingStatus[statusIdx%rotatingStatus.length], 380);
+        statusIdx++;
+        statusLoop();
+      }, 3800+Math.random()*1200);
+    })();
+
+    /* Loop B: every ~6s, a random force card gets a brief re-flash and
+       its bar/number does a quick re-verify blip. */
+    (function forceLoop(){
+      setTimeout(()=>{
+        if(forces.length){
+          const fc=forces[Math.floor(Math.random()*forces.length)];
+          fc.classList.remove('card-boot-flash'); void fc.offsetWidth;
+          fc.classList.add('card-boot-flash');
+          const numSpan=fc.querySelector('.hs-val');
+          if(numSpan) D.str(numSpan, numSpan.textContent.trim(), 340);
+        }
+        forceLoop();
+      }, 5500+Math.random()*2000);
+    })();
+
+    /* Loop C: the main Humac score breathes — a soft glow pulse on its
+       ring, plus an occasional single-digit "recalculation" flicker
+       that resettles on the same value (looks live, changes nothing). */
+    if(fillEl){
+      fillEl.style.transition='box-shadow 2.4s ease-in-out';
+      (function breathe(){
+        fillEl.style.boxShadow='0 0 18px rgba(196,181,253,.55)';
+        setTimeout(()=>{ fillEl.style.boxShadow='0 0 6px rgba(196,181,253,.2)'; }, 2400);
+        setTimeout(breathe, 4800);
+      })();
+    }
+    (function scoreBlipLoop(){
+      setTimeout(()=>{
+        if(numEl) D.str(numEl,'84',300);
+        scoreBlipLoop();
+      }, 9000+Math.random()*3000);
+    })();
+
+    /* Loop D: periodic full-panel scan sweep, like a re-audit pass */
+    (function scanLoop(){
+      setTimeout(()=>{
+        D.scan(panel,850,'rgba(196,181,253,.3)');
+        scanLoop();
+      }, 8500+Math.random()*2500);
+    })();
   }
 
   const section=document.querySelector('.humacity.cinematic-panel');
   if(!section)return;
-  new IntersectionObserver(es=>{if(es[0].isIntersecting)run();},{threshold:0.15}).observe(section);
+  new IntersectionObserver(es=>{if(es[0].isIntersecting)setTimeout(run,3000);},{threshold:0.15}).observe(section);
 })();
 
 /* ── MERIDIAN Engine Stack — SPECTACULAR (SR18.2) ──────────────────────── */
@@ -908,6 +1040,28 @@
     if(fired)return;fired=true;
     const D=window._vDash;if(!D)return;
 
+    /* Reusable single-packet travel — used once for the initial reveal
+       below, and repeatedly afterward for the perpetual ambience (see
+       startMeridianAmbient), so multiple packets can be in flight at
+       once rather than the stack going still after one pass. */
+    async function spawnPacket(){
+      const packet=document.createElement('div');
+      packet.className='ms-packet';
+      stackContainer.style.position='relative';
+      stackContainer.appendChild(packet);
+      const visibleLayers=[...stack.querySelectorAll('.ms-layer')];
+      const stackRect=stackContainer.getBoundingClientRect();
+      packet.style.opacity='1';
+      for(const layer of visibleLayers){
+        const r=layer.getBoundingClientRect();
+        const y=r.top-stackRect.top+r.height/2;
+        packet.style.top=y+'px';
+        await new Promise(res=>setTimeout(res,480));
+      }
+      packet.style.opacity='0';
+      setTimeout(()=>packet.remove(),300);
+    }
+
     /* Phase 1: scan the whole stack panel */
     await D.scan(stack,800,'rgba(196,181,253,.6)');
 
@@ -918,23 +1072,7 @@
     }
 
     /* Phase 3: DATA PACKET travels from top layer DOWN to output */
-    const packet=document.createElement('div');
-    packet.className='ms-packet';
-    stackContainer.style.position='relative';
-    stackContainer.appendChild(packet);
-
-    /* Get layer positions for the packet to travel through */
-    const visibleLayers=[...stack.querySelectorAll('.ms-layer')]; /* original order: L4 top */
-    const stackRect=stackContainer.getBoundingClientRect();
-
-    packet.style.opacity='1';
-    let lastY=0;
-    for(const layer of visibleLayers){
-      const r=layer.getBoundingClientRect();
-      const y=r.top-stackRect.top+r.height/2;
-      packet.style.top=y+'px';
-      await new Promise(r=>setTimeout(r,480));
-    }
+    await spawnPacket();
 
     /* Phase 4: PRECISION ADVICE bursts in */
     setTimeout(()=>{
@@ -946,14 +1084,57 @@
           outputText.classList.add('advice-burst');
         },150);
       }
-      packet.style.opacity='0';
-      setTimeout(()=>packet.remove(),300);
     },200);
+
+    /* Perpetual ambience once the initial sequence settles */
+    setTimeout(()=>startMeridianAmbient(spawnPacket),1800);
+  }
+
+  /* ── Perpetual ambience — runs forever once the reveal completes ──────── */
+  function startMeridianAmbient(spawnPacket){
+    const D=window._vDash;if(!D)return;
+
+    /* Loop A: new packets continuously flow top-to-bottom — several
+       can be mid-travel at once, giving the stack a genuinely "live
+       processing" feel instead of a single one-off animation. */
+    (function packetLoop(){
+      spawnPacket();
+      setTimeout(packetLoop, 1600+Math.random()*900);
+    })();
+
+    /* Loop B: periodic scan-line sweep across a random active layer,
+       as if that layer is being re-verified. */
+    const activeLayers=[...stack.querySelectorAll('.ms-layer')];
+    (function layerScanLoop(){
+      setTimeout(()=>{
+        const layer=activeLayers[Math.floor(Math.random()*activeLayers.length)];
+        if(layer){
+          const scanDiv=document.createElement('div');
+          scanDiv.className='msl-scanline';
+          layer.style.position='relative';
+          layer.appendChild(scanDiv);
+          scanDiv.addEventListener('animationend',()=>scanDiv.remove(),{once:true});
+        }
+        layerScanLoop();
+      }, 4200+Math.random()*2200);
+    })();
+
+    /* Loop C: PRECISION ADVICE output periodically re-glows, as if a
+       fresh recommendation just recalculated through. */
+    (function outputPulseLoop(){
+      setTimeout(()=>{
+        if(outputText){
+          outputText.classList.remove('advice-burst'); void outputText.offsetWidth;
+          outputText.classList.add('advice-burst');
+        }
+        outputPulseLoop();
+      }, 6500+Math.random()*2500);
+    })();
   }
 
   const section=document.querySelector('.meridian.cinematic-panel');
   if(!section)return;
-  new IntersectionObserver(es=>{if(es[0].isIntersecting)run();},{threshold:0.15}).observe(section);
+  new IntersectionObserver(es=>{if(es[0].isIntersecting)setTimeout(run,3000);},{threshold:0.15}).observe(section);
 })();
 
 /* Sim-room classified briefing — lines appear one by one on scroll (SR18) */
