@@ -39,6 +39,15 @@
       heroBtns[1].style.setProperty('opacity','1','important');
     }
     const grad = getSourceGradient();
+
+    /* Force hero-kicker to DM Sans — beats any split-reveal span override */
+    const kicker = document.querySelector('.hero-kicker');
+    if(kicker){
+      kicker.style.setProperty('font-family',"'DM Sans',sans-serif",'important');
+      kicker.querySelectorAll('span').forEach(s=>{
+        s.style.setProperty('font-family',"'DM Sans',sans-serif",'important');
+      });
+    }
     document.querySelectorAll('span.accent').forEach(el=>{
       el.style.setProperty('display','block','important');
       el.style.setProperty('font-style','italic','important');
