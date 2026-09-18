@@ -1319,6 +1319,18 @@
   transform: translateY(-1px) !important;
 }
 .hero-actions .btn-primary span { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+
+/* Fix descender clipping on hero h1 — g, f, p getting cut off (SR18) */
+.hero-title,
+.hero-title .line,
+.hero-title .line.dim,
+.hero-title .line.accent {
+  overflow: visible !important;
+  clip-path: none !important;
+}
+.hero-title {
+  padding-bottom: 0.18em !important;
+}
 </style>
 </head>
 <body>
