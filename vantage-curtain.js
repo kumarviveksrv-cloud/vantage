@@ -1010,9 +1010,15 @@
       copy.style.textAlign = 'center';
     }
 
-    /* Hide sub initially — message now reveals word-by-word after kicker types */
+    /* Hide message + sub initially — message reveals word-by-word after
+       kicker types. BUG FIX: message was declared but never actually
+       hidden here before — it showed its original static content
+       immediately (default opacity), THEN revealMessageWords() cleared
+       and rebuilt it later, which looked like the same text appearing
+       twice in sequence. */
     const message = pro.querySelector('.prologue-message');
     const sub = pro.querySelector('.prologue-sub');
+    if(message){ message.style.setProperty('opacity','0','important'); }
     if(sub){ sub.style.setProperty('opacity','0','important'); sub.style.transition='opacity 1.3s ease'; }
 
     /* Word-by-word reveal for the message line — preserves the <br> and
@@ -1100,31 +1106,26 @@
   rainDiv.remove();
 
   const ctx = canvas.getContext('2d');
+  const photoEl = pro.querySelector('.prologue-photo');
 
   /* prologue-bg.png natural size — used to replicate the CSS
      "background-size:cover; background-position:center center" crop
      math in JS, since the visible portion of the photo shifts with
-     the viewport's aspect ratio. Six previous attempts hardcoded
-     percentages of the CANVAS itself, which only happened to be
-     correct at one specific aspect ratio and drifted at every other
-     screen size. */
+     the viewport's aspect ratio. */
   const IMG_W = 1672, IMG_H = 941;
   const IMG_ASPECT = IMG_W / IMG_H;
 
-  /* Window region + person-silhouette exclusion, measured directly
-     against the actual photo (fractions of the ORIGINAL image, 0-1).
-     The person is a widening silhouette (narrow at the head, wide at
-     the shoulders) sitting INSIDE the rectangular window area — a
-     single rectangular clip can never exclude a person-shaped region,
-     which is why rain kept "falling on him" no matter how the window
-     rectangle itself was adjusted. This traces an actual trapezoid
-     around him and cuts it out of the window rectangle. */
-  const WINDOW = { x0: 0.125, y0: 0.0, x1: 0.95, y1: 0.70 };
+  /* Boundaries re-measured directly against the photo with a 10% grid
+     overlay for precision (previous estimates were visually close but
+     not accurate enough — window left edge is at ~0.205, not ~0.125,
+     and the person's silhouette extends further at the shoulders/chair
+     than first measured). */
+  const WINDOW = { x0: 0.205, y0: 0.0, x1: 0.98, y1: 0.72 };
   const PERSON_LEVELS = [
-    { y: 0.26, xl: 0.49, xr: 0.51 },
-    { y: 0.40, xl: 0.44, xr: 0.63 },
-    { y: 0.55, xl: 0.41, xr: 0.67 },
-    { y: 0.72, xl: 0.20, xr: 0.78 }
+    { y: 0.30, xl: 0.485, xr: 0.515 },
+    { y: 0.40, xl: 0.455, xr: 0.545 },
+    { y: 0.55, xl: 0.40,  xr: 0.62  },
+    { y: 0.70, xl: 0.30,  xr: 0.73  }
   ];
 
   let cover = { renderW:0, renderH:0, offsetX:0, offsetY:0 };
@@ -1140,8 +1141,6 @@
       return { renderW, renderH, offsetX: (cw - renderW) / 2, offsetY: 0 };
     }
   }
-  /* Map an image-fraction point (0-1, 0-1) to canvas pixel coordinates
-     through the current cover transform. */
   function mapPt(fx, fy){
     return {
       x: cover.offsetX + fx * cover.renderW,
@@ -1152,17 +1151,30 @@
   function resize(){
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
-    cover = computeCover(canvas.width, canvas.height);
 
-    /* Left strip: window-left to person's left edge, full window height */
+    /* Use the ACTUAL rendered box of .prologue-photo for the cover-math
+       container, rather than assuming it exactly equals the viewport —
+       removes any dependency on unseen layout/padding in prologue.css
+       that could otherwise misalign the canvas against the photo. */
+    let containerW = canvas.width, containerH = canvas.height, containerLeft = 0, containerTop = 0;
+    if(photoEl){
+      const r = photoEl.getBoundingClientRect();
+      if(r.width > 0 && r.height > 0){
+        containerW = r.width; containerH = r.height;
+        containerLeft = r.left; containerTop = r.top;
+      }
+    }
+    const c = computeCover(containerW, containerH);
+    /* Offset the cover result by the photo element's own position
+       relative to the canvas (which is always full-viewport) */
+    cover = { renderW: c.renderW, renderH: c.renderH, offsetX: c.offsetX + containerLeft, offsetY: c.offsetY + containerTop };
+
     const leftMinX = Math.min(...PERSON_LEVELS.map(p=>p.xl));
     const winTL = mapPt(WINDOW.x0, WINDOW.y0);
     const leftBR = mapPt(leftMinX, WINDOW.y1);
-    /* Right strip: person's right edge to window-right, full window height */
     const rightMaxX = Math.max(...PERSON_LEVELS.map(p=>p.xr));
     const rightTL = mapPt(rightMaxX, WINDOW.y0);
     const winBR = mapPt(WINDOW.x1, WINDOW.y1);
-    /* Top strip: directly above the person's head, window-top to head-top */
     const topTL = mapPt(leftMinX, WINDOW.y0);
     const topBR = mapPt(rightMaxX, PERSON_LEVELS[0].y);
 
@@ -1170,7 +1182,7 @@
       { x: winTL.x,  y: winTL.y,  w: leftBR.x - winTL.x,  h: leftBR.y - winTL.y },
       { x: rightTL.x, y: rightTL.y, w: winBR.x - rightTL.x, h: winBR.y - rightTL.y },
       { x: topTL.x,  y: topTL.y,  w: topBR.x - topTL.x,   h: topBR.y - topTL.y }
-    ].filter(r => r.w > 4 && r.h > 4); /* drop degenerate slivers */
+    ].filter(r => r.w > 4 && r.h > 4);
   }
   resize();
   window.addEventListener('resize', resize, {passive:true});
