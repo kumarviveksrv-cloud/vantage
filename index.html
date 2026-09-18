@@ -331,17 +331,32 @@
   background: linear-gradient(90deg,#c084fc 0%,#8b5cf6 50%,#6366f1 100%) !important;
 }
 
-/* ARIA ambient particle canvas — z-index:-1 keeps it behind face canvas */
+/* ARIA ambient particle canvas — z:0, face canvas z:2, content z:3 */
 #ariaAmbient {
   position: absolute;
   inset: 0;
   width: 100% !important;
   height: 100% !important;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
   opacity: 1;
 }
-.aria-room { position: relative; } /* overflow:hidden removed — was clipping face */
+.aria-room {
+  position: relative;
+  isolation: isolate; /* creates stacking context so z-indexes work within */
+}
+.aria-figure {
+  position: relative;
+  z-index: 2 !important;
+}
+#ariaVolumetricCanvas {
+  position: relative;
+  z-index: 2 !important;
+}
+.aria-figure ~ *, .aria-reaction, .aria-grid, .aria-light {
+  position: relative;
+  z-index: 3;
+}
 
 /* ═══ VANTAGE RECORD — Intelligence Dossier (SR18) ═══ */
 .record-dossier-wrap {
@@ -1964,6 +1979,35 @@
 }
 /* Once fullscreen is active, hide the hint entirely */
 .cor-fullscreen-hint.fs-active { display: none; }
+
+/* Corridor cinematic heading */
+.cor-heading {
+  text-align: center;
+  margin-bottom: 28px;
+  padding: 0 20px;
+}
+.cor-h2 {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: clamp(28px, 3.5vw, 48px) !important;
+  font-weight: 400 !important;
+  line-height: 1.3 !important;
+  margin-bottom: 14px !important;
+}
+.cor-h2-pre {
+  color: rgba(255,255,255,.78) !important;
+  -webkit-text-fill-color: rgba(255,255,255,.78) !important;
+  background: none !important;
+  display: block !important;
+  margin-bottom: 4px !important;
+}
+.cor-h2-sub {
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: clamp(13px, 1.3vw, 16px) !important;
+  color: rgba(255,255,255,.45) !important;
+  max-width: 520px !important;
+  margin: 0 auto !important;
+  line-height: 1.6 !important;
+}
 </style>
 </head>
 <body>
@@ -2391,6 +2435,15 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 
 <section class="sim-room cinematic-panel reveal-section" id="simRoom">
   <div class="corridor" id="corridor">
+
+    <!-- Corridor cinematic heading -->
+    <div class="cor-heading">
+      <h2 class="cor-h2">
+        <span class="cor-h2-pre">Five doors. Five decisions.</span><br>
+        <span class="line accent">Step inside. See what Vantage sees.</span>
+      </h2>
+      <p class="cor-h2-sub">Each door is a real HR scenario. Behind each one, Vantage shows you the intelligence no one else can.</p>
+    </div>
 
     <!-- Case selector -->
     <div class="cor-case-select" id="corCaseSelect">
