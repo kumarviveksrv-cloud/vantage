@@ -13,7 +13,10 @@ addEventListener('scroll',sceneProgress,{passive:true});addEventListener('resize
 
 /* Make headings breathe into view */
 if(window.gsap&&!reduce&&window.ScrollTrigger){gsap.registerPlugin(ScrollTrigger);$$('h1,h2').forEach((el)=>{if(el.classList.contains('hero-title'))return;if(el.querySelector('.line.accent')){gsap.from(el,{opacity:0,y:24,duration:.9,scrollTrigger:{trigger:el,start:'top 85%',once:true}});return;}let raw=el.innerHTML.replace(/<br\s*\/?>/gi,' ').replace(/<em>/gi,'\u0001').replace(/<\/em>/gi,'\u0002').replace(/<[^>]+>/g,'');const words=raw.trim().split(/\s+/).filter(Boolean);el.innerHTML=words.map((w,i)=>{const html=w.replace(/\u0001/g,'<em>').replace(/\u0002/g,'</em>');return `<span class="kinetic-word"><span style="animation-delay:${i*35}ms">${html}</span></span>`}).join(' ');gsap.to(el.querySelectorAll('.kinetic-word span'),{y:0,opacity:1,stagger:.035,duration:.8,ease:'power4.out',scrollTrigger:{trigger:el,start:'top 86%',once:true}})});
-$$('.cinematic-panel,.cinematic-portal').forEach((s,i)=>gsap.fromTo(s,{opacity:.78},{opacity:1,duration:.8,scrollTrigger:{trigger:s,start:'top 90%',end:'top 50%',scrub:true}}));
+$$('.cinematic-panel,.cinematic-portal').forEach((s,i)=>{
+  if(s.classList.contains('is-live'))return; // hero always full opacity
+  gsap.fromTo(s,{opacity:.78},{opacity:1,duration:.8,scrollTrigger:{trigger:s,start:'top 90%',end:'top 50%',scrub:true}});
+});
 }
 
 /* Floating film frames: visual fragments without pretending to be product screenshots */
@@ -81,10 +84,30 @@ $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.ge
  if(stage&&!reduce){stage.addEventListener('pointermove',e=>{const r=stage.getBoundingClientRect(),x=e.clientX/r.width-.5,y=e.clientY/r.height-.5;stage.style.setProperty('--field-x',x);stage.style.setProperty('--field-y',y);$('.decision-core',stage).style.transform=`translate(calc(-50% + ${x*8}px),calc(-50% + ${y*8}px))`},{passive:true});stage.addEventListener('pointerleave',()=>{$('.decision-core',stage).style.transform='translate(-50%,-50%)'})}
  // Case choices propagate through the entire intelligence environment.
  const outcomes={
-  A:{state:'risk',risk:'HIGH',signal:'EXPOSURE RISING',process:'WEAK',impact:'HIGH',def:'LOW',exposure:'₹18L–₹24L'},
-  B:{state:'partial',risk:'MATERIAL',signal:'PROCESS OPEN',process:'PARTIAL',impact:'MODERATE',def:'MEDIUM',exposure:'₹4L–₹8L'},
-  C:{state:'defensible',risk:'LOW',signal:'FIELD RESOLVED',process:'STRONG',impact:'LOW',def:'HIGH',exposure:'₹1L–₹3L'},
-  D:{state:'risk',risk:'HIGH',signal:'PROCEDURAL RISK',process:'WEAK',impact:'HIGH',def:'LOW',exposure:'₹15L–₹20L'}
+  A:{state:'risk',risk:'HIGH',signal:'EXPOSURE RISING',process:'WEAK',impact:'HIGH',def:'LOW',exposure:'₹18L–₹24L',
+    expNum:'₹21L',
+    pact:'No documented warnings precede this termination. Without a paper trail, tribunal challenge is near-certain. This path cannot be legally defended in Maharashtra under the Industrial Disputes Act.',
+    aria:'Before this goes further — are the two verbal warnings logged anywhere, even informally? That single detail changes everything here.',
+    verdict:'HIGH EXPOSURE · Do not proceed tonight.'
+  },
+  B:{state:'partial',risk:'MATERIAL',signal:'PROCESS OPEN',process:'PARTIAL',impact:'MODERATE',def:'MEDIUM',exposure:'₹4L–₹8L',
+    expNum:'₹6L',
+    pact:'The written warning creates a paper trail forward, but the prior verbal warnings are undocumented. Partial protection only. The case remains open and must be followed up within 30 days or exposure increases.',
+    aria:'Has the employee formally acknowledged receipt of verbal warnings in any form — WhatsApp, email, even informally? That changes the defensibility score significantly.',
+    verdict:'PARTIAL PROTECTION · Case still open.'
+  },
+  C:{state:'defensible',risk:'LOW',signal:'FIELD RESOLVED',process:'STRONG',impact:'LOW',def:'HIGH',exposure:'₹1L–₹3L',
+    expNum:'₹2L',
+    pact:'Domestic enquiry creates the strongest procedural record possible. It satisfies natural justice requirements, gives the employee a formal hearing, and produces an outcome that survives tribunal scrutiny. PACT recommends this path for this context.',
+    aria:'Shall I draft the enquiry notice for tonight? I have the precedent cases for Maharashtra IT-sector pulled and ready.',
+    verdict:'RECOMMENDED · Fully defensible. PACT approved.'
+  },
+  D:{state:'risk',risk:'HIGH',signal:'PROCEDURAL RISK',process:'WEAK',impact:'HIGH',def:'LOW',exposure:'₹15L–₹20L',
+    expNum:'₹17L',
+    pact:'Voluntary abandonment requires documented evidence of the employee\'s intent to abandon employment. Verbal absence alone does not qualify. Without that evidence, any tribunal will treat this as wrongful termination.',
+    aria:'Is there any written or recorded communication from the employee during the 7-day absence period? Without it, this argument will not hold under cross-examination.',
+    verdict:'HIGH RISK · Conditions for abandonment not met.'
+  }
  };
  $$('#choices button').forEach(btn=>btn.addEventListener('click',()=>{
    const key=btn.dataset.choice,o=outcomes[key];
@@ -94,8 +117,17 @@ $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.ge
    setRail('risk',o.risk);setRail('signal',o.signal);setSystem(o.state);focus();
    document.documentElement.style.setProperty('--system-risk',o.state==='risk'?'.8':o.state==='partial'?'.35':'.05');
    document.documentElement.style.setProperty('--system-energy',o.state==='risk'?'.9':o.state==='defensible'?'.65':'.5');
+   /* SR18: populate intelligence panel */
+   const riEl=document.getElementById('resultIntelligence');
+   const pactEl=document.getElementById('resultPact');
+   const ariaEl=document.getElementById('resultAria');
+   const expNum=document.getElementById('resultExpNum');
+   if(pactEl) pactEl.textContent=o.pact||'';
+   if(ariaEl) ariaEl.textContent=o.aria||'';
+   if(expNum) expNum.textContent=o.expNum||o.exposure||'—';
+   if(riEl) riEl.classList.add('ri-active');
  }));
- $('#caseReset')?.addEventListener('click',()=>{if(stage){stage.dataset.state='';$('.decision-state b',stage).textContent='AWAITING CHOICE'}if(machine)machine.dataset.outcome='';if(field.process)field.process.textContent='WAITING';if(field.exposure)field.exposure.textContent='—';if(field.impact)field.impact.textContent='—';if(field.def)field.def.textContent='—';setRail('risk','UNRESOLVED');setRail('signal','LISTENING');setSystem('');});
+ $('#caseReset')?.addEventListener('click',()=>{if(stage){stage.dataset.state='';$('.decision-state b',stage).textContent='AWAITING CHOICE'}if(machine)machine.dataset.outcome='';if(field.process)field.process.textContent='WAITING';if(field.exposure)field.exposure.textContent='—';if(field.impact)field.impact.textContent='—';if(field.def)field.def.textContent='—';setRail('risk','UNRESOLVED');setRail('signal','LISTENING');setSystem('');const riReset=document.getElementById('resultIntelligence');if(riReset)riReset.classList.remove('ri-active');});
  // Meridian becomes a context lock sequence.
  const meridian=$('.meridian'),status=$('#meridianStatus');
  if(meridian){const labels=$$('.orbit-label',meridian);const observer=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){meridian.dataset.calibrated='true';setRail('context','RESOLVED');setRail('signal','PRECISION');setTimeout(()=>setRail('signal','READY'),900);observer.disconnect()}},{threshold:.35});observer.observe(meridian)}
