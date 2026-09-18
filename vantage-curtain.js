@@ -497,194 +497,342 @@
   window.addEventListener('resize',()=>{resize();makePts();},{passive:true});
 })();
 
-/* Vantage Record — Intelligence Dossier scroll animation (SR18) */
+/* ═══ SHARED DASHBOARD ANIMATION UTILITIES (SR18.2) ═══ */
+(function(){
+  'use strict';
+  window._vDash={
+    /* Scramble-then-settle numeric counter */
+    num(el,target,dur,pre='',suf='',dec=0){
+      if(!el)return;
+      const chars='0123456789',s=performance.now();
+      (function f(now){
+        const p=Math.min(1,(now-s)/dur),ease=1-Math.pow(1-p,3);
+        if(p<0.60){
+          const raw=dec>0?target.toFixed(dec):String(target);
+          let sc='';for(let i=0;i<raw.length;i++)sc+=chars[Math.floor(Math.random()*10)];
+          el.textContent=pre+sc+suf;
+        }else{
+          const v=ease*target;
+          el.textContent=pre+(dec>0?v.toFixed(dec):Math.round(v))+suf;
+        }
+        if(p<1)requestAnimationFrame(f);
+        else el.textContent=pre+(dec>0?target.toFixed(dec):target)+suf;
+      })(s);
+    },
+    /* Scramble text string letter-by-letter */
+    str(el,final,dur){
+      if(!el)return;
+      const chars='0123456789ABCDEF░▒',s=performance.now(),n=final.length;
+      (function f(now){
+        const p=Math.min(1,(now-s)/dur),settled=Math.floor(p*n);
+        let res='';
+        for(let i=0;i<n;i++){
+          if(i<settled||final[i]===' ')res+=final[i];
+          else res+=chars[Math.floor(Math.random()*chars.length)];
+        }
+        el.textContent=res;
+        if(p<1)requestAnimationFrame(f);else el.textContent=final;
+      })(s);
+    },
+    /* Horizontal scan line sweeping across a container (returns Promise) */
+    scan(container,dur=850,col='rgba(196,181,253,.8)'){
+      return new Promise(resolve=>{
+        const line=document.createElement('div');
+        line.style.cssText=`position:absolute;left:0;right:0;height:1px;top:0;z-index:20;pointer-events:none;
+          background:linear-gradient(90deg,transparent 0%,${col} 30%,rgba(255,255,255,.95) 50%,${col} 70%,transparent 100%);
+          box-shadow:0 0 10px ${col},0 0 22px ${col};`;
+        const prev=container.style.position;
+        if(!prev||prev==='static')container.style.position='relative';
+        container.appendChild(line);
+        const h=container.offsetHeight||220;
+        let st=null;
+        (function anim(ts){
+          if(!st)st=ts;
+          const p=Math.min(1,(ts-st)/dur);
+          line.style.top=(p*h)+'px';
+          if(p<1)requestAnimationFrame(anim);
+          else{line.remove();if(!prev)container.style.position='';resolve();}
+        })(performance.now());
+      });
+    },
+    /* Progress bar fill with moving glow head */
+    bar(fillEl,pct,dur){
+      if(!fillEl)return;
+      const glow=document.createElement('span');
+      glow.style.cssText=`position:absolute;right:-3px;top:-4px;width:8px;height:calc(100%+8px);
+        background:rgba(255,255,255,.9);border-radius:50%;filter:blur(5px);pointer-events:none;`;
+      fillEl.style.position='relative';fillEl.appendChild(glow);
+      const s=performance.now();
+      (function f(now){
+        const t=Math.min(1,(now-s)/dur),ease=1-Math.pow(1-t,2.5);
+        fillEl.style.width=(ease*pct)+'%';
+        if(t<1)requestAnimationFrame(f);else glow.remove();
+      })(s);
+    }
+  };
+})();
+
+/* ── Intelligence Dossier — SPECTACULAR (SR18.2) ────────────────────────── */
 (function initDossier(){
   'use strict';
-  const dossier = document.getElementById('recordDossier');
-  if(!dossier) return;
+  const dossier=document.getElementById('recordDossier');
+  if(!dossier)return;
+  const entries=[...dossier.querySelectorAll('.dos-entry')];
+  const progress=document.getElementById('dosProgress');
+  const percent=document.getElementById('dosPercent');
+  const total=document.getElementById('dosTotal');
+  let fired=false;
 
-  const entries  = [...dossier.querySelectorAll('.dos-entry')];
-  const progress = document.getElementById('dosProgress');
-  const percent  = document.getElementById('dosPercent');
-  const total    = document.getElementById('dosTotal');
-  let fired = false;
+  async function run(){
+    if(fired)return;fired=true;
+    const D=window._vDash;if(!D)return;
 
-  function countUp(el, target, duration){
-    const start = performance.now();
-    (function step(now){
-      const t = Math.min(1,(now-start)/duration);
-      const ease = t<.5 ? 2*t*t : -1+(4-2*t)*t;
-      el.textContent = '₹' + (ease*target).toFixed(1) + 'L';
-      if(t<1) requestAnimationFrame(step);
-    })(start);
-  }
+    /* Phase 1: scan line sweeps across the whole dossier card */
+    await D.scan(dossier,720,'rgba(196,181,253,.75)');
 
-  function countPercent(el, target, duration){
-    const start = performance.now();
-    (function step(now){
-      const t = Math.min(1,(now-start)/duration);
-      const ease = t<.5 ? 2*t*t : -1+(4-2*t)*t;
-      el.textContent = Math.round(ease*target) + '%';
-      if(t<1) requestAnimationFrame(step);
-    })(start);
-  }
-
-  function run(){
-    if(fired) return; fired = true;
-
-    // Progress bar + percent counter
+    /* Phase 2: progress bar fills immediately after scan */
     setTimeout(()=>{
-      if(progress){ progress.style.width = '73%'; }
-      if(percent)  countPercent(percent, 73, 2200);
-    }, 200);
+      D.bar(progress,73,2000);
+      D.num(percent,73,2200,'','%');
+    },80);
 
-    // Entries stagger in
-    entries.forEach((entry, i)=>{
-      setTimeout(()=>{ entry.classList.add('dos-visible'); }, 400 + i * 520);
+    /* Phase 3: entries flash in sequentially with scramble typewriter */
+    entries.forEach((entry,i)=>{
+      setTimeout(()=>{
+        /* Border flash */
+        entry.classList.add('dos-flash','dos-visible');
+
+        /* Scramble the timestamp */
+        const ts=entry.querySelector('.dos-ts');
+        if(ts){const orig=ts.textContent.trim();ts.textContent='';D.str(ts,orig,520);}
+
+        /* Scramble the title */
+        const title=entry.querySelector('.dos-title');
+        if(title){const orig=title.textContent.trim();title.textContent='';D.str(title,orig,800);}
+
+        /* Badge pops in after title settles */
+        const badges=entry.querySelectorAll('.dos-badge');
+        badges.forEach((b,bi)=>{
+          setTimeout(()=>{
+            b.style.opacity='0';b.style.transform='scale(.4) translateY(4px)';
+            b.style.transition='none';
+            setTimeout(()=>{
+              b.style.transition='';b.classList.add('badge-pop');b.style.opacity='1';
+            },60+bi*80);
+          },750);
+        });
+      },420+i*580);
     });
 
-    // Total counter fires after last entry
-    const lastDelay = 400 + entries.length * 520 + 200;
+    /* Phase 4: career capital scramble counter fires after last entry */
+    const lastAt=420+entries.length*580+260;
     setTimeout(()=>{
-      if(total) countUp(total, 18.4, 2000);
-    }, lastDelay);
+      if(total)D.num(total,18.4,2000,'₹','L',1);
+    },lastAt);
   }
 
-  const section = document.querySelector('.record.cinematic-panel');
-  if(!section) return;
-  new IntersectionObserver(es=>{
-    if(es[0].isIntersecting) run();
-  },{threshold:0.25}).observe(section);
+  const section=document.querySelector('.record.cinematic-panel');
+  if(!section)return;
+  new IntersectionObserver(es=>{if(es[0].isIntersecting)run();},{threshold:0.2}).observe(section);
 })();
 
-/* Humac Score Synthesis — scroll-triggered build (SR18) */
+/* ── Humac Score Synthesis — SPECTACULAR (SR18.2) ──────────────────────── */
 (function initHumacSynthesis(){
   'use strict';
-  const panel = document.getElementById('humacSynthesis');
-  if(!panel) return;
-  const forces   = [...panel.querySelectorAll('.hs-force')];
-  const scorePnl = document.getElementById('humacScorePanel');
-  const numEl    = document.getElementById('humacNum');
-  const fillEl   = document.getElementById('humacFill');
-  const statusEl = document.getElementById('humacStatus');
-  const verdict  = document.getElementById('humacVerdict');
-  let fired = false;
+  const panel=document.getElementById('humacSynthesis');
+  if(!panel)return;
+  const forces=[...panel.querySelectorAll('.hs-force')];
+  const scorePnl=document.getElementById('humacScorePanel');
+  const numEl=document.getElementById('humacNum');
+  const fillEl=document.getElementById('humacFill');
+  const statusEl=document.getElementById('humacStatus');
+  let fired=false;
 
-  function countUp(el, target, dur){
-    const t0 = performance.now();
-    (function step(now){
-      const t = Math.min(1,(now-t0)/dur);
-      const e = t<.5 ? 2*t*t : -1+(4-2*t)*t;
-      el.textContent = Math.round(e*target);
-      if(t<1) requestAnimationFrame(step);
-    })(t0);
-  }
-
-  const STATUS = [
-    'CALIBRATING L1: VALUE LEDGER...',
-    'CALIBRATING L2: TALENT PREMIUM...',
-    'CALIBRATING L3: ORG VITALS...',
-    'CALIBRATING L4: HUMAN P&L...',
-    'CALIBRATING L5: NET HUMAN WORTH...',
+  const STATUS=[
+    'CALIBRATING L1: VALUE LEDGER...','CALIBRATING L2: TALENT PREMIUM...',
+    'CALIBRATING L3: ORG VITALS...','CALIBRATING L4: HUMAN P&L...',
+    'CALIBRATING L5: NET HUMAN WORTH...'
   ];
 
-  function run(){
-    if(fired) return; fired = true;
-    const GAP = 500;
+  async function run(){
+    if(fired)return;fired=true;
+    const D=window._vDash;if(!D)return;
 
-    forces.forEach((f, i) => {
-      setTimeout(() => {
-        f.classList.add('hf-visible');
-        const bar = f.querySelector('.hsf-fill');
-        if(bar) bar.style.width = bar.dataset.w + '%';
-        if(statusEl) statusEl.textContent = STATUS[i];
-      }, 300 + i * GAP);
+    /* Phase 1: scan sweeps the full synthesis panel */
+    await D.scan(panel,800,'rgba(196,181,253,.7)');
+
+    /* Phase 2: force cards boot up one by one */
+    const GAP=480;
+    forces.forEach((fc,i)=>{
+      setTimeout(()=>{
+        /* Flash + class */
+        fc.classList.add('card-boot-flash','hf-visible');
+
+        /* Status text scrambles */
+        if(statusEl)D.str(statusEl,STATUS[i],400);
+
+        /* Bar fills with glow */
+        const bar=fc.querySelector('.hsf-fill');
+        if(bar){
+          const target=parseFloat(bar.dataset.w)||60;
+          bar.style.width='0%';
+          setTimeout(()=>D.bar(bar,target,1200),80);
+        }
+
+        /* The big number scrambles */
+        const numSpan=fc.querySelector('.hs-val');
+        if(numSpan){
+          const orig=numSpan.textContent.trim();
+          numSpan.textContent='';
+          setTimeout(()=>D.str(numSpan,orig,700),200);
+        }
+
+        /* "+18 pts" badge pops */
+        const pts=fc.querySelector('.hs-pts');
+        if(pts){
+          pts.style.opacity='0';pts.style.transform='scale(.3)';
+          setTimeout(()=>{pts.classList.add('badge-pop');pts.style.opacity='1';},700);
+        }
+      },200+i*GAP);
     });
 
-    // Score panel fires after last force
-    const scoreAt = 300 + forces.length * GAP + 300;
-    setTimeout(() => {
-      if(scorePnl) scorePnl.classList.add('hsp-visible');
+    /* Phase 3: score synthesis panel slides up + counters */
+    const scoreAt=200+forces.length*GAP+320;
+    setTimeout(()=>{
+      if(scorePnl)scorePnl.classList.add('hsp-visible');
 
-      // 1. Raw Humac Score
-      if(fillEl) fillEl.style.width = '84%';
-      if(numEl)  countUp(numEl, 84, 2000);
+      /* Master scan across score panel */
       setTimeout(()=>{
-        const v = document.getElementById('humacVerdict');
-        if(v) v.textContent = 'Value Generating';
-      }, 2100);
+        if(scorePnl)D.scan(scorePnl,600,'rgba(196,181,253,.65)');
+      },120);
 
-      // 2. HCI-Adjusted (84 × 0.94 = ~79)
+      /* Humac score scramble-counter */
+      if(fillEl)setTimeout(()=>D.bar(fillEl,84,2000),200);
+      if(numEl) setTimeout(()=>D.num(numEl,84,2200,'',''),200);
+      setTimeout(()=>{const v=document.getElementById('humacVerdict');if(v)v.textContent='Value Generating';},2400);
+
+      /* HCI-Adjusted */
       setTimeout(()=>{
-        const hci = document.getElementById('humacHCI');
-        const hcix = document.getElementById('humacHCIx');
-        if(hci)  countUp(hci, 79, 1600);
-        if(hcix) {
-          let t0 = performance.now();
-          (function tick(now){
-            const t = Math.min(1,(now-t0)/1600);
-            const e = t<.5?2*t*t:-1+(4-2*t)*t;
-            if(hcix) hcix.textContent = (0.5+e*.44).toFixed(2)+'x';
-            if(t<1) requestAnimationFrame(tick);
-            else if(hcix) hcix.textContent = '0.94x';
-          })(t0);
+        const hci=document.getElementById('humacHCI');
+        const hcix=document.getElementById('humacHCIx');
+        if(hci)D.num(hci,79,1600,'','');
+        if(hcix){
+          const s=performance.now();
+          (function f(now){const t=Math.min(1,(now-s)/1600);const e=1-Math.pow(1-t,3);
+            hcix.textContent=(0.50+e*0.44).toFixed(2)+'x';if(t<1)requestAnimationFrame(f);else hcix.textContent='0.94x';
+          })(s);
         }
-      }, 400);
+      },350);
 
-      // 3. Trajectory Index
+      /* Trajectory */
       setTimeout(()=>{
-        const tNum = document.getElementById('humacTrajNum');
-        const tSt  = document.getElementById('humacTrajStatus');
-        if(tNum){ let t0=performance.now();(function tick(now){const t=Math.min(1,(now-t0)/1400);const e=t<.5?2*t*t:-1+(4-2*t)*t;tNum.textContent='+'+Math.round(e*6);if(t<1)requestAnimationFrame(tick);})(t0);}
-        setTimeout(()=>{if(tSt) tSt.textContent='Improving';}, 1500);
-      }, 800);
+        const tNum=document.getElementById('humacTrajNum');
+        const tSt=document.getElementById('humacTrajStatus');
+        if(tNum)D.num(tNum,6,1400,'+','');
+        setTimeout(()=>{if(tSt)tSt.textContent='Improving';},1500);
+      },700);
 
-      // 4. Tagline
+      /* Tagline */
       setTimeout(()=>{
-        const tag = document.getElementById('humacTagline');
-        if(tag) tag.textContent = 'This is what your organisation’s human capital position looks like when it speaks the CFO’s language.';
-      }, 2500);
-    }, scoreAt);
+        const tag=document.getElementById('humacTagline');
+        if(tag)D.str(tag,'This is what your organisation\u2019s human capital position looks like when it speaks the CFO\u2019s language.',1800);
+      },2600);
+    },scoreAt);
   }
 
-  const section = document.querySelector('.humacity.cinematic-panel');
-  if(!section) return;
-  new IntersectionObserver(es => {
-    if(es[0].isIntersecting) run();
-  }, {threshold: 0.2}).observe(section);
+  const section=document.querySelector('.humacity.cinematic-panel');
+  if(!section)return;
+  new IntersectionObserver(es=>{if(es[0].isIntersecting)run();},{threshold:0.15}).observe(section);
 })();
 
-/* MERIDIAN Engine Stack — bottom-up scroll reveal (SR18) */
+/* ── MERIDIAN Engine Stack — SPECTACULAR (SR18.2) ──────────────────────── */
 (function initMeridianStack(){
   'use strict';
-  const stack = document.getElementById('meridianStack');
-  if(!stack) return;
+  const stack=document.getElementById('meridianStack');
+  if(!stack)return;
+  const layers=[...stack.querySelectorAll('.ms-layer')].reverse(); /* L1 first */
+  const output=document.getElementById('msOutput');
+  const outputText=output?output.querySelector('.mso-label'):null;
+  const stackContainer=stack.querySelector('.msl-layers')||stack;
+  let fired=false;
 
-  /* Layers in DOM order: L4, L3, L2, L1 — reverse so L1 activates first */
-  const layers  = [...stack.querySelectorAll('.ms-layer')].reverse();
-  const output  = document.getElementById('msOutput');
-  let fired = false;
+  function activateLayer(layer,i){
+    const D=window._vDash;
+    return new Promise(resolve=>{
+      /* Scan line sweeps across this layer row */
+      const scanDiv=document.createElement('div');
+      scanDiv.className='msl-scanline';
+      layer.style.position='relative';
+      layer.appendChild(scanDiv);
 
-  function run(){
-    if(fired) return; fired = true;
-
-    layers.forEach((layer, i) => {
-      setTimeout(() => {
+      setTimeout(()=>{
         layer.classList.add('msl-active');
-      }, 200 + i * 380);
+        /* Scramble the layer label */
+        const label=layer.querySelector('.msl-label');
+        if(label&&D){const orig=label.textContent.trim();D.str(label,orig,500);}
+        /* Scramble the description */
+        const desc=layer.querySelector('.msl-desc');
+        if(desc&&D){
+          const orig=desc.textContent.trim();
+          desc.style.opacity='0';
+          setTimeout(()=>{desc.style.opacity='1';D.str(desc,orig,700);},200);
+        }
+        scanDiv.addEventListener('animationend',()=>{scanDiv.remove();},{ once:true });
+        setTimeout(resolve,620);
+      },60);
     });
-
-    /* Output lights up after all layers */
-    setTimeout(() => {
-      if(output) output.classList.add('mso-active');
-    }, 200 + layers.length * 380 + 300);
   }
 
-  const section = document.querySelector('.meridian.cinematic-panel');
-  if(!section) return;
-  new IntersectionObserver(es => {
-    if(es[0].isIntersecting) run();
-  }, {threshold: 0.2}).observe(section);
+  async function run(){
+    if(fired)return;fired=true;
+    const D=window._vDash;if(!D)return;
+
+    /* Phase 1: scan the whole stack panel */
+    await D.scan(stack,800,'rgba(196,181,253,.6)');
+
+    /* Phase 2: activate layers one by one, bottom-up */
+    for(let i=0;i<layers.length;i++){
+      await activateLayer(layers[i],i);
+      await new Promise(r=>setTimeout(r,80));
+    }
+
+    /* Phase 3: DATA PACKET travels from top layer DOWN to output */
+    const packet=document.createElement('div');
+    packet.className='ms-packet';
+    stackContainer.style.position='relative';
+    stackContainer.appendChild(packet);
+
+    /* Get layer positions for the packet to travel through */
+    const visibleLayers=[...stack.querySelectorAll('.ms-layer')]; /* original order: L4 top */
+    const stackRect=stackContainer.getBoundingClientRect();
+
+    packet.style.opacity='1';
+    let lastY=0;
+    for(const layer of visibleLayers){
+      const r=layer.getBoundingClientRect();
+      const y=r.top-stackRect.top+r.height/2;
+      packet.style.top=y+'px';
+      await new Promise(r=>setTimeout(r,480));
+    }
+
+    /* Phase 4: PRECISION ADVICE bursts in */
+    setTimeout(()=>{
+      if(output)output.classList.add('mso-active');
+      if(outputText){
+        outputText.style.opacity='0';
+        setTimeout(()=>{
+          outputText.style.opacity='1';
+          outputText.classList.add('advice-burst');
+        },150);
+      }
+      packet.style.opacity='0';
+      setTimeout(()=>packet.remove(),300);
+    },200);
+  }
+
+  const section=document.querySelector('.meridian.cinematic-panel');
+  if(!section)return;
+  new IntersectionObserver(es=>{if(es[0].isIntersecting)run();},{threshold:0.15}).observe(section);
 })();
 
 /* Sim-room classified briefing — lines appear one by one on scroll (SR18) */
