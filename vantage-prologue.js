@@ -61,7 +61,7 @@
   addEventListener('wheel',preventScroll,{passive:false});
   addEventListener('touchmove',preventScroll,{passive:false});
 
-  function endPrologue(){if(!active)return;active=false;clearTimers();lockScroll(false);pro.classList.remove('active','phase-pressure');pro.classList.add('ending');const fade=$('.prologue-fade');if(fade)fade.classList.add('on');sessionStorage.setItem('vantage_prologue_seen','1');sessionStorage.setItem('vantage_tada','1');setTimeout(()=>{pro.style.display='none';document.body.classList.add('prologue-complete');},1100)}
+  function endPrologue(){if(!active)return;active=false;clearTimers();lockScroll(false);pro.classList.remove('active','phase-pressure');pro.classList.add('ending');const fade=$('.prologue-fade');if(fade){fade.style.setProperty('transition','opacity 2.4s ease','important');fade.classList.add('on');}sessionStorage.setItem('vantage_prologue_seen','1');sessionStorage.setItem('vantage_tada','1');setTimeout(()=>{pro.style.display='none';document.body.classList.add('prologue-complete');},2500)}
   skip?.addEventListener('click',endPrologue);
 
   /* ---------- Three.js scene ---------- */
@@ -383,7 +383,7 @@
   let lastMs=null;
   let lastScreenTick=0;
   function animate(ms){if(!active)return;const t=ms*.001;const elapsed=ms-start;
-    if(elapsed>11000)endPrologue();
+    if(elapsed>13000)endPrologue();
     const dt=lastMs===null?.016:Math.min(.05,(ms-lastMs)*.001);
     lastMs=ms;
     camera.position.x+=(mx*.35-camera.position.x)*.015;camera.position.y+=(1.1-my*.18-camera.position.y)*.015;camera.lookAt(.2,.5,0);
@@ -417,7 +417,7 @@
     pro.classList.add('active','phase-pressure');skip?.classList.add('show');
     requestAnimationFrame(animate);
     // Spectacle countdown for the last 3 seconds before endPrologue()
-    // fires (still triggered by the existing elapsed>11000 check inside
+    // fires (still triggered by the existing elapsed>13000 check inside
     // animate() above) — makes the wait itself feel intentional and
     // dramatic instead of just an unexplained pause right before the
     // page appears. SR18: shifted +2s (was 6/7/8s, now 8/9/10s).
@@ -429,9 +429,9 @@
       void countNum.offsetWidth;
       countNum.classList.add('tick');
     }
-    later(()=>{pro.classList.add('countdown');tick(3);},8000);
-    later(()=>{tick(2);},9000);
-    later(()=>{tick(1);},10000);
+    later(()=>{pro.classList.add('countdown');tick(3);},10000);
+    later(()=>{tick(2);},11000);
+    later(()=>{tick(1);},12000);
   }
   // A previous version of this tried to watch #boot for a .done class
   // before revealing, on the theory that a boot countdown screen sitting
