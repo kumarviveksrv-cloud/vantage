@@ -111,3 +111,48 @@ $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.ge
  // Make portal rings respond to system energy.
  if(!reduce){addEventListener('pointermove',e=>{document.documentElement.style.setProperty('--system-precision',String(Math.min(1,Math.abs(e.clientX/innerWidth-.5)*.8+.35)))},{passive:true})}
 })();
+
+
+/* MERIDIAN readout — constant 7-parameter cycling animation (SR18) */
+(function initMeridianReadout(){
+  'use strict';
+  const status=document.getElementById('meridianStatus');
+  const readout=document.querySelector('.context-readout .readout-line');
+  if(!status||!readout) return;
+  const params=[
+    {key:'STATE',val:'MAHARASHTRA'},
+    {key:'INDUSTRY',val:'IT / SAAS'},
+    {key:'ORG TYPE',val:'CORPORATE'},
+    {key:'ORG SIZE',val:'251–1000'},
+    {key:'SENIORITY',val:'HR MANAGER'},
+    {key:'UNION',val:'NON-UNION'},
+    {key:'FUNCTION',val:'ER SPECIALIST'},
+  ];
+  const bars=[...readout.querySelectorAll('i')];
+  let step=0,interval=null;
+  function tick(){
+    const p=params[step];
+    // Update status text
+    status.textContent=p.key+' ∕ '+p.val;
+    // Light up current bar, dim rest
+    bars.forEach((b,i)=>{
+      if(i===step){
+        b.style.cssText='opacity:1;background:rgba(196,181,253,.88);box-shadow:0 0 10px rgba(196,181,253,.55);transition:all .35s ease;flex:2;';
+      } else {
+        b.style.cssText='opacity:0.16;transition:all .35s ease;flex:1;';
+      }
+    });
+    step=(step+1)%params.length;
+  }
+  const section=document.querySelector('.meridian');
+  if(!section) return;
+  new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting){
+      if(!interval){ tick(); interval=setInterval(tick,1400); }
+    } else {
+      clearInterval(interval); interval=null;
+      bars.forEach(b=>{ b.style.cssText='opacity:0.16;transition:all .35s ease;flex:1;'; });
+      status.textContent='CALIBRATING...';
+    }
+  },{threshold:0.2}).observe(section);
+})();
