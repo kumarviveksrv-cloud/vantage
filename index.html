@@ -899,16 +899,37 @@
   color: rgba(255,255,255,.62) !important;
 }
 
-/* "Enter VANTAGE." — stage direction, bridge between question and answer */
+/* "Enter Vantage." — typewriter + blink system */
 .hero-enter {
   font-family: 'Cormorant Garamond', serif !important;
   font-style: italic !important;
   font-size: clamp(20px,2.2vw,28px) !important;
-  font-weight: 400 !important;
-  color: rgba(196,181,253,.88) !important;
+  font-weight: 700 !important;
+  color: rgba(196,181,253,.92) !important;
   letter-spacing: .04em !important;
   margin: 16px 0 8px !important;
   opacity: 1 !important;
+  text-shadow: 0 0 18px rgba(196,181,253,.65),0 0 40px rgba(124,58,237,.4),0 0 70px rgba(124,58,237,.2) !important;
+}
+.he-cursor {
+  display: inline-block;
+  font-weight: 300;
+  font-style: normal;
+  color: rgba(196,181,253,.75);
+  margin-left: 1px;
+  animation: heCursorBlink .65s step-end infinite;
+}
+@keyframes heCursorBlink {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+#heVantage.he-blink {
+  animation: vantageGlowBlink .9s ease-in-out infinite;
+  display: inline;
+}
+@keyframes vantageGlowBlink {
+  0%,100% { opacity: 1; text-shadow: 0 0 24px rgba(196,181,253,.9),0 0 50px rgba(124,58,237,.7); }
+  50% { opacity: 0; text-shadow: none; }
 }
 
 /* Curtain raiser question h2 — lining numerals so "9" sits on baseline */
@@ -1119,7 +1140,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <span class="line accent">A case that won't hold.</span>
       <span class="line accent">Who does HR go to for help?</span>
     </h1>
-    <p class="hero-enter">Enter Vantage.</p>
+    <p class="hero-enter" id="heroEnter"></p>
     <p class="hero-deck"><em>HR for HR</em> — the private intelligence ally built for the profession that carries everyone else, and has nowhere to take their own.</p>
     <div class="hero-actions">
       <a href="demo.html" class="btn btn-primary magnetic">Try the Demo — it's live <span>→</span></a>
