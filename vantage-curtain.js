@@ -2194,6 +2194,38 @@
     });
   }
 
+  /* Word-by-word fade: reads the line's EXISTING text (never cleared —
+     hideKeepText only touches opacity), splits into words, wraps each
+     in its own span starting invisible, then reveals them one at a
+     time with a stagger. The line itself is set to opacity:1 first so
+     the wrapper is visible; individual words carry their own opacity. */
+  async function fadeInWords(el, wordDelay, wordDuration){
+    const text = el.textContent.trim();
+    const words = text.split(/\s+/);
+    el.textContent = '';
+    el.style.setProperty('opacity','1','important');
+    const spans = words.map((w,i)=>{
+      const span = document.createElement('span');
+      span.textContent = w + (i < words.length-1 ? '\u00A0' : '');
+      span.style.opacity = '0';
+      span.style.display = 'inline-block';
+      span.style.transition = 'opacity '+wordDuration+'ms ease, transform '+wordDuration+'ms ease';
+      span.style.transform = 'translateY(6px)';
+      el.appendChild(span);
+      return span;
+    });
+    /* Force layout so the initial opacity:0 is actually painted before
+       we start revealing — otherwise the browser can coalesce the
+       "hidden" and "first word visible" states into one frame. */
+    void el.offsetHeight;
+    for(const span of spans){
+      span.style.opacity = '1';
+      span.style.transform = 'translateY(0)';
+      await delay(wordDelay);
+    }
+    await delay(wordDuration);
+  }
+
   async function run(){
     console.log('[HeroSeq] run() started');
 
@@ -2224,12 +2256,12 @@
       await delay(500);
     }
 
-    /* 4. H1 lines 2+3 (accent) fade in together */
-    lineAccents.forEach(el=>{ el.style.transition = 'opacity 800ms ease'; });
-    requestAnimationFrame(()=>{
-      lineAccents.forEach(el=> el.style.setProperty('opacity','1','important'));
-    });
-    await delay(1000);
+    /* 4. H1 lines 2+3 (accent) fade in WORD BY WORD, one line at a time */
+    for(const line of lineAccents){
+      await fadeInWords(line, 130, 420);
+      await delay(250);
+    }
+    await delay(600);
 
     /* 5. "Enter Vantage." typewriter sequence (existing logic) */
     console.log('[HeroSeq] run() complete, handing off to heroEnter');
