@@ -979,12 +979,12 @@
 
   const ctx = canvas.getContext('2d');
   /* Build 180 drops with varied opacity, length, speed */
-  const drops = Array.from({length:180}, ()=>({
+  const drops = Array.from({length:280}, ()=>({
     x:     Math.random() * window.innerWidth,
     y:     Math.random() * window.innerHeight,
     len:   14 + Math.random() * 22,
     speed: 11 + Math.random() * 9,
-    op:    0.04 + Math.random() * 0.10,
+    op:    0.14 + Math.random() * 0.22,
     w:     0.4  + Math.random() * 0.5
   }));
 
