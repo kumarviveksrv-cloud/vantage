@@ -31,7 +31,7 @@
   font-size: clamp(18px,1.8vw,26px) !important;
   font-family: 'Cormorant Garamond', serif !important;
   font-style: italic !important;
-  font-weight: 400 !important;
+  font-weight: 700 !important;
   color: rgba(255,255,255,.92) !important;
   letter-spacing: .02em !important;
   opacity: 1 !important;
@@ -2030,15 +2030,6 @@
   line-height: 1.6 !important;
 }
 
-.cor-h2-eyebrow {
-  font-family: 'JetBrains Mono', monospace !important;
-  font-size: 11px !important;
-  letter-spacing: .3em !important;
-  color: rgba(196,181,253,.55) !important;
-  text-align: center !important;
-  margin-bottom: 14px !important;
-}
-
 /* Two-step selection: 'selected' = highlighted but not locked, 'picked' = confirmed/locked */
 .cor-choice.selected {
   border-color: rgba(139,92,246,.55);
@@ -2518,9 +2509,12 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 <section class="sim-room cinematic-panel reveal-section" id="simRoom">
   <div class="corridor" id="corridor">
 
-    <!-- Corridor cinematic heading -->
+    <!-- Corridor cinematic heading — the standard .section-index label
+         further down ("05 / THE STAKES") already serves as this
+         section's label, left-aligned and sized to match every other
+         section. A second, smaller, centered "THE STAKES" here was
+         redundant and inconsistent with that pattern. -->
     <div class="cor-heading">
-      <p class="cor-h2-eyebrow">THE STAKES</p>
       <h2 class="cor-h2">
         <span class="cor-h2-pre">Come and challenge yourself on real HR scenarios.</span><br>
         <span class="line accent">Five doors. Five decisions. No do-overs.</span>
