@@ -586,3 +586,36 @@
     if(es[0].isIntersecting) run();
   }, {threshold: 0.2}).observe(section);
 })();
+
+/* MERIDIAN Engine Stack — bottom-up scroll reveal (SR18) */
+(function initMeridianStack(){
+  'use strict';
+  const stack = document.getElementById('meridianStack');
+  if(!stack) return;
+
+  /* Layers in DOM order: L4, L3, L2, L1 — reverse so L1 activates first */
+  const layers  = [...stack.querySelectorAll('.ms-layer')].reverse();
+  const output  = document.getElementById('msOutput');
+  let fired = false;
+
+  function run(){
+    if(fired) return; fired = true;
+
+    layers.forEach((layer, i) => {
+      setTimeout(() => {
+        layer.classList.add('msl-active');
+      }, 200 + i * 380);
+    });
+
+    /* Output lights up after all layers */
+    setTimeout(() => {
+      if(output) output.classList.add('mso-active');
+    }, 200 + layers.length * 380 + 300);
+  }
+
+  const section = document.querySelector('.meridian.cinematic-panel');
+  if(!section) return;
+  new IntersectionObserver(es => {
+    if(es[0].isIntersecting) run();
+  }, {threshold: 0.2}).observe(section);
+})();
