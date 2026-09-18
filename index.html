@@ -1356,6 +1356,17 @@
   padding-bottom: 0.18em !important;
 }
 
+/* Ensure "Every HR..." (dim) and "A case..."/"Who does HR..." (accent)
+   render in the exact same typeface — accent lines were picking up
+   italic styling from elsewhere, reading as a different font entirely
+   next to the upright dim line. */
+.hero-title .line.dim,
+.hero-title .line.accent {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-weight: 700 !important;
+  font-style: normal !important;
+}
+
 /* Rain region now handled by ctx.clip() in curtain.js */
 
 
