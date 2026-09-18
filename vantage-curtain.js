@@ -249,23 +249,22 @@
     qBtn.classList.remove('reflect-pulse');
   }
 
-  /* Only nudge for returning visitors who already saw the curtains */
-  if(sessionStorage.getItem(Q_KEY)){
-    const nudgeIO = new IntersectionObserver(entries=>{
-      entries.forEach(e=>{
-        const i = CARDS.findIndex(c=>e.target.matches(c.trigger));
-        if(i === -1) return;
-        if(e.isIntersecting && currentNudge !== i && qBtn.style.display !== 'none'){
-          currentNudge = i;
-          showNudge(CARDS[i].nudge);
-        } else if(!e.isIntersecting && currentNudge === i){
-          currentNudge = -1;
-          hideNudge();
-        }
-      });
-    },{threshold:0.2});
-    CARDS.forEach(c=>{const el=document.querySelector(c.trigger);if(el)nudgeIO.observe(el);});
-  }
+  /* Nudge on ALL visits: pulse Reflect whenever user is inside a question section
+     Guard: skip if a curtain overlay is already active (!active) */
+  const nudgeIO = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      const i = CARDS.findIndex(c=>e.target.matches(c.trigger));
+      if(i === -1) return;
+      if(e.isIntersecting && currentNudge !== i && qBtn.style.display !== 'none' && !active){
+        currentNudge = i;
+        showNudge(CARDS[i].nudge);
+      } else if(!e.isIntersecting && currentNudge === i){
+        currentNudge = -1;
+        hideNudge();
+      }
+    });
+  },{threshold:0.2});
+  CARDS.forEach(c=>{const el=document.querySelector(c.trigger);if(el)nudgeIO.observe(el);});
 
   /* SR18: pulse animation CSS injected */
   const pulseStyle = document.createElement('style');
