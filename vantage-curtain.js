@@ -1788,6 +1788,15 @@
   const hint = document.getElementById('corFsHint');
   if(!btn) return;
 
+  /* Detect OS and show correct keyboard shortcut */
+  const desktopHint = document.querySelector('.cor-fs-desktop');
+  if(desktopHint){
+    const isMac = /Mac|iPhone|iPad/.test(navigator.platform||'') || /Mac/.test(navigator.userAgent||'');
+    if(isMac){
+      desktopHint.innerHTML = 'Press <kbd>\u2303</kbd><kbd>\u2318</kbd><kbd>F</kbd> for the full immersive experience';
+    }
+  }
+
   function isFs(){
     return !!(document.fullscreenElement || document.webkitFullscreenElement);
   }
