@@ -173,6 +173,131 @@
   text-align: center;
   margin-top: 16px;
 }
+
+/* ═══ SR18 BATCH 2 — Type scale enforcement + 6-item visual fixes ═══ */
+
+/* TIER 1: System/HUD labels — already correct, no override needed */
+
+/* TIER 2: Section eyebrows — enforce consistently */
+.eyebrow {
+  font-size: clamp(13px,1.3vw,18px) !important;
+  color: rgba(196,181,253,.85) !important;
+  letter-spacing: .08em !important;
+  text-transform: none !important;
+  opacity: 1 !important;
+  font-weight: 500 !important;
+}
+
+/* TIER 4: Body copy — enforce across all sections */
+.lede, .body-copy, .hero-deck, .plan-desc, p:not(.eyebrow):not(.aria-eyebrow):not(.aria-ally):not(.aria-tagline):not(.aria-actions-label):not(.aria-cta-note):not(.pricing-note):not(.sim-pre):not(.sim-sub) {
+  font-size: clamp(15px,1.55vw,20px);
+  line-height: 1.8;
+}
+
+/* Item 1: Prologue kicker + sub — italic, readable, title case */
+.prologue-kicker {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-size: clamp(20px,2.4vw,32px) !important;
+  text-transform: capitalize !important;
+  letter-spacing: .04em !important;
+  color: rgba(196,181,253,.92) !important;
+  opacity: 1 !important;
+  font-weight: 400 !important;
+  margin-bottom: 24px !important;
+}
+.prologue-sub {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-size: clamp(15px,1.8vw,24px) !important;
+  text-transform: capitalize !important;
+  letter-spacing: .03em !important;
+  color: rgba(196,181,253,.78) !important;
+  opacity: 1 !important;
+  font-weight: 400 !important;
+  margin-top: 24px !important;
+}
+
+/* Item 2: Prologue note — bigger, readable */
+.prologue-note {
+  font-size: clamp(14px,1.45vw,19px) !important;
+  color: rgba(255,255,255,.85) !important;
+  opacity: 1 !important;
+  line-height: 1.7 !important;
+  font-family: 'DM Sans', sans-serif !important;
+  letter-spacing: .01em !important;
+}
+.prologue-note strong {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: clamp(15px,1.65vw,21px) !important;
+  color: rgba(196,181,253,.96) !important;
+  display: block !important;
+  margin-bottom: 8px !important;
+  letter-spacing: .06em !important;
+}
+
+/* Item 3: Hero CTAs — vibrant purple; hero-foot readable */
+.hero .btn-primary, .hero a.btn-primary {
+  background: linear-gradient(135deg,#7c3aed 0%,#6366f1 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 36px rgba(99,102,241,.45), 0 2px 12px rgba(0,0,0,.3) !important;
+}
+.hero .btn-ghost, .hero a.btn-ghost {
+  border-color: rgba(196,181,253,.55) !important;
+  color: rgba(196,181,253,.92) !important;
+  opacity: 1 !important;
+}
+#prologue-back {
+  color: rgba(196,181,253,.8) !important;
+  font-size: clamp(13px,1.25vw,16px) !important;
+  opacity: 1 !important;
+  display: inline-block !important;
+}
+.hero-foot { opacity: 1 !important; }
+.hero-foot span {
+  color: rgba(196,181,253,.75) !important;
+  font-size: clamp(12px,1.15vw,15px) !important;
+  opacity: 1 !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-weight: 400 !important;
+}
+
+/* Item 4: Humacity — breathing room + body copy size */
+.humacity-concept {
+  margin-top: clamp(24px,2.8vw,40px) !important;
+  margin-bottom: clamp(24px,2.8vw,36px) !important;
+}
+.humacity-copy .body-copy {
+  font-size: clamp(15px,1.55vw,20px) !important;
+  line-height: 1.82 !important;
+  color: rgba(255,255,255,.78) !important;
+  opacity: 1 !important;
+}
+
+/* Item 5: Record — lede + record-sub bigger */
+.record-head .lede {
+  font-size: clamp(15px,1.55vw,20px) !important;
+  line-height: 1.82 !important;
+  color: rgba(255,255,255,.78) !important;
+  opacity: 1 !important;
+}
+.record-sub {
+  font-size: clamp(14px,1.45vw,19px) !important;
+  line-height: 1.68 !important;
+  color: rgba(255,255,255,.72) !important;
+  opacity: 1 !important;
+  margin-top: 20px !important;
+}
+
+/* Item 6: ARIA dims — force all labels to ALL CAPS for consistency */
+.aria-dim strong {
+  text-transform: uppercase !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 10px !important;
+  letter-spacing: .18em !important;
+}
 </style>
 </head>
 <body>
@@ -208,7 +333,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   <div class="prologue-top"><span>VANTAGE / 21:00</span><span class="prologue-time"><i></i><strong>PRIVATE HR DECISION / LIVE</strong></span></div>
   <div class="prologue-signal"><span>INCOMING <b>HIGH PRIORITY</b></span><span>Employee relations <b>CASE 2841</b></span><span>MANAGER <b>NEEDS CLOSURE</b></span><span>DOCUMENTATION <b>INCOMPLETE</b></span></div>
   <div class="prologue-note"><strong>09:18 PM</strong>The office is mostly empty.<br>The decision isn't.</div>
-  <div class="prologue-copy"><div class="prologue-kicker">THE BUILDING HAS GONE QUIET</div><div class="prologue-message">Somewhere in it, a decision is still being made.<br><em>Alone.</em></div><div class="prologue-sub">NO ESCALATION PATH. NO SECOND OPINION. JUST THE CLOCK.</div></div>
+  <div class="prologue-copy"><div class="prologue-kicker">The Building Has Gone Quiet</div><div class="prologue-message">Somewhere in it, a decision is still being made.<br><em>Alone.</em></div><div class="prologue-sub">No Escalation Path. No Second Opinion. Just The Clock.</div></div>
   <button class="prologue-skip" id="prologueSkip">SKIP PROLOGUE ↗</button>
   <div class="prologue-countdown" id="prologueCountdown"><span>ENTERING VANTAGE</span><strong id="prologueCountNum">3</strong></div>
   <div class="prologue-fade"></div>
@@ -406,7 +531,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <p class="aria-tagline">I see the full picture.<br>So you can make the right decision.</p>
       <div class="aria-dims">
         <div class="aria-dim"><div class="dim-dot"></div><div><strong>PEOPLE</strong><span>Human context, always</span></div></div>
-        <div class="aria-dim"><div class="dim-dot"></div><div><strong>Policy</strong><span>What applies, clearly</span></div></div>
+        <div class="aria-dim"><div class="dim-dot"></div><div><strong>POLICY</strong><span>What applies, clearly</span></div></div>
         <div class="aria-dim"><div class="dim-dot"></div><div><strong>BUSINESS</strong><span>Impact, quantified</span></div></div>
         <div class="aria-dim"><div class="dim-dot"></div><div><strong>FINANCE</strong><span>Consequences, projected</span></div></div>
         <div class="aria-dim"><div class="dim-dot"></div><div><strong>CONTEXT</strong><span>Jurisdiction, industry, scale</span></div></div>
