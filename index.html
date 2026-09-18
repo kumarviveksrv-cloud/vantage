@@ -19,9 +19,10 @@
 
 /* Item 5: ARIA identity text — make readable and prominent */
 .aria-eyebrow {
+  font-family: 'DM Sans', sans-serif !important;
   font-size: clamp(12px,1.15vw,16px) !important;
-  letter-spacing: .09em !important;
-  color: rgba(196,181,253,.88) !important;
+  letter-spacing: .05em !important;
+  color: rgba(196,181,253,.85) !important;
   opacity: 1 !important;
   text-transform: none !important;
   font-weight: 400 !important;
@@ -298,6 +299,28 @@
   font-size: 10px !important;
   letter-spacing: .18em !important;
 }
+
+/* ═══ SR18 BATCH 3 ═══ */
+
+/* Item 1: humacity-concept — bigger, proper breathing room */
+.humacity-concept {
+  font-size: clamp(22px,2.4vw,32px) !important;
+  margin-top: clamp(24px,2.8vw,40px) !important;
+  margin-bottom: clamp(20px,2.2vw,28px) !important;
+}
+
+/* Item 2: humacity terms line — gradient block after body-copy */
+.humacity-terms {
+  font-size: clamp(18px,1.85vw,24px) !important;
+  margin-top: clamp(20px,2.2vw,28px) !important;
+  display: block !important;
+}
+
+/* Item 5: More vivid gradient — 90deg left-to-right shows full spectrum */
+/* CSS fallback (applyGradients inline styles are the primary path) */
+.accent {
+  background: linear-gradient(90deg,#c4b5fd 0%,#818cf8 30%,#a78bfa 65%,#e879f9 100%) !important;
+}
 </style>
 </head>
 <body>
@@ -411,7 +434,8 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <span class="line accent">You fund it.</span></h2>
       <p class="humacity-concept"><span class="line accent">The Human P&amp;L changes everything.</span></p>
       <p class="body-copy">HR has always generated financial value. The P&amp;L never showed it — because no one built the framework to translate it. Until now.<br><br>
-      Humacity gives every people decision a number the CFO can read and an argument the boardroom cannot dismiss. The Human P&amp;L. The Human Balance Sheet. The Humac Score.</p>
+      Humacity gives every people decision a number the CFO can read and an argument the boardroom cannot dismiss.</p>
+      <span class="line accent humacity-terms">The Human P&amp;L. The Human Balance Sheet. The Humac Score.</span>
       <div class="h-metrics">
         <div><small>Replacement cost</small><b>₹ 8.2L</b></div>
         <div><small>Ramp time</small><b>4.6 mo</b></div>
@@ -527,7 +551,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
         <span class="aria-im">I'm</span>
         <h2 class="aria-name-large">ARIA</h2>
       </div>
-      <p class="aria-ally">Your HR intelligence ally</p>
+      <p class="aria-ally"><span class="line accent">Your HR intelligence ally</span></p>
       <p class="aria-tagline">I see the full picture.<br>So you can make the right decision.</p>
       <div class="aria-dims">
         <div class="aria-dim"><div class="dim-dot"></div><div><strong>PEOPLE</strong><span>Human context, always</span></div></div>
