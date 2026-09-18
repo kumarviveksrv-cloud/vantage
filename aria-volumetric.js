@@ -27,6 +27,17 @@
    numbers further — growing the container scales everything up
    proportionally with zero clipping risk, since the framing ratio
    inside the canvas doesn't change.
+
+   SR18 tuning:
+   - Particle spread widened (nx 3.15→3.5, ny 4.0→4.4) to fill canvas
+   - Radial edge damping reduced (0.72→0.50) — more particles near edges
+   - Face scale 0.94→1.06 — occupies full box
+   - Halo tightened inward to stay within canvas bounds
+   - t increment 0.012→0.007 — slower ambient animation
+   - mouse lerp 0.055→0.026 — cinematic, not snappy
+   - Coherence lerp 0.07→0.038 — face forms and disperses slowly
+   - justEntered boost: 0.14 lerp for first 1.2s after mouseenter
+   - Idle threshold 1400→3200ms — face holds longer before dispersing
 */
 (function(){
   'use strict';
@@ -73,12 +84,6 @@
     const ctx=sample.getContext('2d',{willReadFrequently:true});
     ctx.drawImage(img,0,0,w,h);
     const d=ctx.getImageData(0,0,w,h).data;
-    // Brightness alone gives a soft, evenly-filled cloud with no
-    // legible structure — it can't tell smooth cheek skin from the
-    // edge of an eyelid. What actually reads as a facial FEATURE is
-    // local contrast: the boundary where dark meets light. Precompute
-    // brightness for every pixel once so each pixel can be compared
-    // against its neighbors below.
     const bright=new Float32Array(w*h);
     for(let y=0;y<h;y++)for(let x=0;x<w;x++){
       const i=(y*w+x)*4;
@@ -92,14 +97,17 @@
         const brL=x>0?bright[idx-1]:br,brR=x<w-1?bright[idx+1]:br;
         const brU=y>0?bright[idx-w]:br,brD=y<h-1?bright[idx+w]:br;
         const contrast=Math.abs(br-brL)+Math.abs(br-brR)+Math.abs(br-brU)+Math.abs(br-brD);
-        const nx=(x/(w-1)-.5)*3.15,ny=(.5-y/(h-1))*4.0;
+        /* SR18: wider spread fills more of the canvas */
+        const nx=(x/(w-1)-.5)*3.5,ny=(.5-y/(h-1))*4.4;
         const radial=Math.sqrt((nx/1.65)**2+(ny/2.0)**2);
-        const central=Math.max(0,1-radial*.72);
+        /* SR18: reduced damping (0.72→0.50) allows more edge particles */
+        const central=Math.max(0,1-radial*.50);
         const dL=Math.hypot(nx-EYE_L[0],ny-EYE_L[1]),dR=Math.hypot(nx-EYE_R[0],ny-EYE_R[1]);
         const wL=Math.exp(-(dL*dL)/(2*EYE_SIGMA*EYE_SIGMA)),wR=Math.exp(-(dR*dR)/(2*EYE_SIGMA*EYE_SIGMA));
         const eyeWeight=Math.max(wL,wR);
         const a=central*.18+br*.32+Math.min(1,contrast*3.8)*(.2+.38*central)+eyeWeight*.22;
-        if(a<.14||Math.random()>Math.min(1,.42+a*.9))continue;
+        /* SR18: lower threshold (0.14→0.09) adds density near edges */
+        if(a<.09||Math.random()>Math.min(1,.42+a*.9))continue;
         const depth=(br-.45)*.9+(1-radial)*.7+(Math.random()-.5)*.32;
         pos.push(nx,ny,depth);
         seed.push(Math.random()*Math.PI*2,.5+Math.random()*1.5,depth);
@@ -149,12 +157,16 @@
     });
     facePoints=new THREE.Points(geo,mat);
     facePoints.position.y=.05;
-    facePoints.scale.set(.94,.94,.94);
+    /* SR18: scale 0.94→1.06 — face fills the full canvas */
+    facePoints.scale.set(1.06,1.06,1.06);
     group.add(facePoints);
 
+    /* SR18: halo pulled inward so it stays within the canvas bounds */
     const count=9000,hp=new Float32Array(count*3),hc=new Float32Array(count*3);
     for(let i=0;i<count;i++){
-      const u=Math.random(),a=Math.random()*Math.PI*2,rr=1.7+Math.pow(u,.5)*2.2;
+      const u=Math.random(),a=Math.random()*Math.PI*2;
+      /* SR18: tighter halo rr (1.7+2.2 → 0.6+1.6) stays within canvas */
+      const rr=0.6+Math.pow(u,.5)*1.6;
       hp[i*3]=Math.cos(a)*rr;hp[i*3+1]=(Math.random()-.5)*4.4;hp[i*3+2]=(Math.random()-.5)*1.8;
       hc[i*3]=.55+Math.random()*.25;hc[i*3+1]=.35+Math.random()*.2;hc[i*3+2]=.85+Math.random()*.15;
     }
@@ -170,10 +182,23 @@
     canvas.classList.add('is-ready');
   }
 
-  let lastMoveAt=0; // starts at 0 so face is scattered until cursor enters
+  let lastMoveAt=0;
   let cursorInside=false;
-  figure.addEventListener('pointerenter',()=>{cursorInside=true;lastMoveAt=performance.now();});
-  figure.addEventListener('pointerleave',()=>{cursorInside=false;});
+  /* SR18: justEntered flag — drives faster coherence lerp for first 1.2s */
+  let justEntered=false;
+  let justEnteredTimer=null;
+
+  figure.addEventListener('pointerenter',()=>{
+    cursorInside=true;
+    lastMoveAt=performance.now();
+    justEntered=true;
+    if(justEnteredTimer) clearTimeout(justEnteredTimer);
+    justEnteredTimer=setTimeout(()=>{ justEntered=false; },1200);
+  });
+  figure.addEventListener('pointerleave',()=>{
+    cursorInside=false;
+    justEntered=false;
+  });
   addEventListener('pointermove',e=>{
     const r=figure.getBoundingClientRect();
     target.x=((e.clientX-r.left)/r.width-.5)*2;
@@ -211,16 +236,12 @@
 
   function applyOutcome(outcome){
     if(outcome==='C'){
-      // Defensible: calm, fully coherent, green — clearest face
       targetStateMix=.22;currentStateColor=STATE_COLOR.defensible;targetAgitation=0;stateCoherenceCap=1;
     }else if(outcome==='A'||outcome==='D'){
-      // High risk: red, agitated — face stays readable but feels unstable
       targetStateMix=.4;currentStateColor=STATE_COLOR.risk;targetAgitation=.45;stateCoherenceCap=.88;
     }else if(outcome==='B'){
-      // Partial: amber, slight scatter — face mostly clear
       targetStateMix=.3;currentStateColor=STATE_COLOR.partial;targetAgitation=.2;stateCoherenceCap=.91;
     }else{
-      // No selection: pure lavender, perfectly coherent
       targetStateMix=0;targetAgitation=0;stateCoherenceCap=1;
     }
   }
@@ -240,24 +261,19 @@
     reactionText.textContent='Move your cursor over her — she notices.';
     reaction.classList.add('live');
   }
-  function hideHint(){
-    // hint stays — cursor is inside, face forming
-  }
-  // Toggles every time, rather than dismissing once — the hint hides
-  // while hovering (no need to keep telling you what you're already
-  // doing) and reappears the moment the cursor leaves, so it keeps
-  // reminding anyone who moves away that the box is interactive.
-  // Both guard against hasRealResult() so a real decision outcome is
-  // never overwritten by the hint text either way.
+  function hideHint(){}
 
   function animate(){
     requestAnimationFrame(animate);
     if(!onScreen)return;
-    t+=.012;
-    mouse.lerp(target,.055);
+    /* SR18: t increment 0.012→0.007 — slower ambient motion */
+    t+=.007;
+    /* SR18: mouse lerp 0.055→0.026 — cinematic parallax, not snappy */
+    mouse.lerp(target,.026);
 
     const idleMs=performance.now()-lastMoveAt;
-    const idleTarget=idleMs>1400?.10:1;
+    /* SR18: idle threshold 1400→3200ms — face holds before dispersing */
+    const idleTarget=idleMs>3200?.10:1;
     const coherenceTarget=Math.min(idleTarget,stateCoherenceCap);
     currentAgitation+=(targetAgitation-currentAgitation)*.02;
     currentStateMix+=(targetStateMix-currentStateMix)*.03;
@@ -270,7 +286,10 @@
     if(facePoints){
       const u=facePoints.material.uniforms;
       u.uTime.value=t;
-      u.uCoherence.value+=(coherenceTarget-u.uCoherence.value)*.07;
+      /* SR18: coherence lerp 0.07→0.038 normally, 0.14 on justEntered —
+         face forms slowly/cinematically but snaps in on first hover */
+      const lerpRate=justEntered?0.14:0.038;
+      u.uCoherence.value+=(coherenceTarget-u.uCoherence.value)*lerpRate;
       u.uStateMix.value=currentStateMix;
       u.uStateColor.value.copy(currentStateColor);
     }
