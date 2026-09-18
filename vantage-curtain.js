@@ -1194,123 +1194,147 @@
   if(!viewport)return;
   const D=window._vDash;
 
-  /* ── WORMHOLE EFFECT ── */
+  /* ── WORMHOLE EFFECT — Interstellar forward-flight tunnel ── */
   function wormhole(duration,cb){
     const cv=document.getElementById('wormholeCanvas');
     if(!cv){cb();return;}
-
-    /* Ensure canvas is sized and visible BEFORE first draw */
     cv.style.display='block';
     cv.width=window.innerWidth;
     cv.height=window.innerHeight;
     const ctx=cv.getContext('2d');
     if(!ctx){cv.style.display='none';cb();return;}
 
-    const W=cv.width,H=cv.height;
-    const cx=W/2,cy=H/2;
-    const maxR=Math.hypot(W,H)*0.55;
+    const W=cv.width, H=cv.height, cx=W/2, cy=H/2;
+    const FL=W*0.45; /* focal length — controls perspective strength */
+    const maxZ=1200;  /* far plane */
 
-    /* Pre-fill black */
     ctx.fillStyle='#050410';
     ctx.fillRect(0,0,W,H);
 
-    /* Build 500 stars spread across the full radius */
+    /* 600 stars in 3D space — fly TOWARD the camera */
     const stars=[];
-    for(let i=0;i<500;i++){
+    for(let i=0;i<600;i++){
       stars.push({
-        a: Math.random()*Math.PI*2,
-        d: Math.random()*maxR,         /* start distributed, not centered */
-        sp: 1.2+Math.random()*3.5,
-        sz: 0.6+Math.random()*2.0,
-        h: 245+Math.random()*50,
-        l: 60+Math.random()*20
+        x:(Math.random()-.5)*W*1.6,
+        y:(Math.random()-.5)*H*1.6,
+        z:Math.random()*maxZ,
+        sz:0.5+Math.random()*1.8,
+        h:240+Math.random()*55,
+        l:58+Math.random()*25
       });
     }
 
-    const t0=performance.now();
+    /* Tunnel wall rings at fixed Z depths */
+    const rings=[];
+    for(let i=0;i<20;i++){
+      rings.push({ z: (i/20)*maxZ, r: 280+Math.random()*120, h: 255+Math.random()*30 });
+    }
 
-    /* Safety: kill wormhole after duration+500ms no matter what */
-    const safety=setTimeout(()=>{
-      cv.style.display='none';
-      cb();
-    }, duration+500);
+    const t0=performance.now();
+    const safety=setTimeout(()=>{cv.style.display='none';cb();},duration+600);
 
     function frame(now){
       const elapsed=now-t0;
-      const p=Math.min(1, elapsed/duration);
+      const p=Math.min(1,elapsed/duration);
+      if(p>=1){clearTimeout(safety);cv.style.display='none';cb();return;}
 
-      if(p>=1){
-        clearTimeout(safety);
-        cv.style.display='none';
-        cb();
-        return;
-      }
-
-      /* Trail fade (not full clear — creates streak effect) */
-      ctx.fillStyle='rgba(5,4,16,0.18)';
+      /* Trail fade — longer trails as speed increases */
+      ctx.fillStyle='rgba(5,4,16,'+(0.12+p*0.08)+')';
       ctx.fillRect(0,0,W,H);
 
-      /* Acceleration ramps up over time */
-      const acc=1+p*p*18;
+      /* Speed ramps quadratically */
+      const speed=(2+p*p*45);
 
-      /* Draw stars as radial streaks */
-      stars.forEach(s=>{
-        s.d+=s.sp*acc;
-        if(s.d>maxR){
-          s.d=10+Math.random()*40;  /* respawn near center */
-          s.a=Math.random()*Math.PI*2;
-        }
-
-        const x=cx+Math.cos(s.a)*s.d;
-        const y=cy+Math.sin(s.a)*s.d;
-        const streakLen=Math.min(s.d*0.3, s.sp*acc*5);
-        const ex=cx+Math.cos(s.a)*Math.max(0,s.d-streakLen);
-        const ey=cy+Math.sin(s.a)*Math.max(0,s.d-streakLen);
-
-        /* Alpha increases with distance from center and progress */
-        const distAlpha=Math.min(1, s.d/120);
-        const alpha=distAlpha*(0.35+p*0.65);
-
-        ctx.beginPath();
-        ctx.moveTo(ex,ey);
-        ctx.lineTo(x,y);
-        ctx.strokeStyle='hsla('+s.h+',85%,'+s.l+'%,'+alpha+')';
-        ctx.lineWidth=s.sz*(1+p*2.5);
-        ctx.stroke();
-      });
-
-      /* Expanding tunnel rings */
-      for(let r=0;r<6;r++){
-        const ringR=((elapsed*0.18+r*150)%maxR);
-        const ringAlpha=0.06*(1-ringR/maxR)*(0.5+p);
-        if(ringAlpha>0.005){
+      /* ── TUNNEL RINGS — rush toward camera ── */
+      rings.forEach(ring=>{
+        ring.z-=speed*0.7;
+        if(ring.z<1){ring.z=maxZ;ring.r=280+Math.random()*120;}
+        const scale=FL/ring.z;
+        const rr=ring.r*scale;
+        if(rr>2&&rr<W*2){
+          const alpha=Math.min(0.18,(1-ring.z/maxZ)*0.22)*(0.4+p*0.6);
           ctx.beginPath();
-          ctx.arc(cx,cy,ringR,0,Math.PI*2);
-          ctx.strokeStyle='rgba(139,92,246,'+ringAlpha+')';
-          ctx.lineWidth=1.5+p;
+          ctx.arc(cx,cy,rr,0,Math.PI*2);
+          ctx.strokeStyle='hsla('+ring.h+',70%,55%,'+alpha+')';
+          ctx.lineWidth=1+scale*0.8;
           ctx.stroke();
         }
-      }
+      });
 
-      /* Central vortex glow — grows with progress */
-      const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,80+p*300);
-      grad.addColorStop(0,'rgba(139,92,246,'+(0.2+p*0.35)+')');
-      grad.addColorStop(0.3,'rgba(99,102,241,'+(0.08+p*0.12)+')');
-      grad.addColorStop(0.7,'rgba(79,70,229,'+(0.02+p*0.04)+')');
+      /* ── STARS — 3D to 2D projection ── */
+      stars.forEach(s=>{
+        /* Store previous projected position for streak */
+        const prevZ=s.z;
+        s.z-=speed*(0.8+s.sz*0.3);
+
+        /* Reset when passing camera */
+        if(s.z<1){
+          s.x=(Math.random()-.5)*W*1.6;
+          s.y=(Math.random()-.5)*H*1.6;
+          s.z=maxZ-Math.random()*200;
+          return;
+        }
+
+        /* Project current position */
+        const scale=FL/s.z;
+        const sx=cx+s.x*scale;
+        const sy=cy+s.y*scale;
+
+        /* Project previous position (where it was one step ago) */
+        const prevScale=FL/prevZ;
+        const px=cx+s.x*prevScale;
+        const py=cy+s.y*prevScale;
+
+        /* Only draw if on screen */
+        if(sx<-50||sx>W+50||sy<-50||sy>H+50)return;
+
+        /* Brightness increases as star approaches camera */
+        const proximity=1-s.z/maxZ;
+        const alpha=proximity*proximity*(0.4+p*0.6);
+
+        /* Streak from previous to current position */
+        ctx.beginPath();
+        ctx.moveTo(px,py);
+        ctx.lineTo(sx,sy);
+        ctx.strokeStyle='hsla('+s.h+',85%,'+s.l+'%,'+Math.min(1,alpha)+')';
+        ctx.lineWidth=s.sz*scale*0.8;
+        ctx.stroke();
+
+        /* Bright dot at head */
+        if(proximity>0.6){
+          ctx.beginPath();
+          ctx.arc(sx,sy,s.sz*scale*0.4,0,Math.PI*2);
+          ctx.fillStyle='hsla('+s.h+',90%,82%,'+(alpha*0.7)+')';
+          ctx.fill();
+        }
+      });
+
+      /* ── CENTRAL DEPTH GLOW — the light at the end of the tunnel ── */
+      const glowR=60+p*40;
+      const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,glowR);
+      grad.addColorStop(0,'rgba(196,181,253,'+(0.15+p*0.2)+')');
+      grad.addColorStop(0.4,'rgba(139,92,246,'+(0.06+p*0.08)+')');
       grad.addColorStop(1,'rgba(0,0,0,0)');
       ctx.fillStyle=grad;
       ctx.fillRect(0,0,W,H);
 
-      /* White flash at the end (last 15%) */
-      if(p>0.85){
-        const flash=(p-0.85)/0.15;
-        ctx.fillStyle='rgba(255,255,255,'+(flash*flash*0.7)+')';
+      /* ── PERIPHERAL BLUR — tunnel walls rushing past ── */
+      const edgeGrad=ctx.createRadialGradient(cx,cy,W*0.15,cx,cy,W*0.65);
+      edgeGrad.addColorStop(0,'rgba(0,0,0,0)');
+      edgeGrad.addColorStop(0.6,'rgba(79,70,229,'+(0.02+p*0.04)+')');
+      edgeGrad.addColorStop(1,'rgba(30,27,75,'+(0.08+p*0.15)+')');
+      ctx.fillStyle=edgeGrad;
+      ctx.fillRect(0,0,W,H);
+
+      /* ── END FLASH — white burst at arrival ── */
+      if(p>0.82){
+        const flash=(p-0.82)/0.18;
+        ctx.fillStyle='rgba(255,255,255,'+(flash*flash*flash*0.85)+')';
         ctx.fillRect(0,0,W,H);
       }
 
       requestAnimationFrame(frame);
     }
-
     requestAnimationFrame(frame);
   }
 
