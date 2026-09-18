@@ -1687,7 +1687,9 @@
       r.querySelector('.cor-inside')&&(r.querySelector('.cor-inside').style.display='');
       const lock=r.querySelector('.cor-lock-icon');
       if(lock)lock.textContent='\uD83D\uDD12';
-      r.querySelectorAll('.cor-choice').forEach(c=>{c.classList.remove('picked','dimmed');});
+      r.querySelectorAll('.cor-choice').forEach(c=>{c.classList.remove('picked','dimmed','selected');});
+      const confirmBtn=r.querySelector('.cor-confirm');
+      if(confirmBtn){confirmBtn.classList.remove('show');delete confirmBtn.dataset.pick;}
       const res=r.querySelector('.cor-result');
       if(res){res.classList.remove('cor-result-open');res.innerHTML='';}
       const nxt=r.querySelector('.cor-next');
@@ -1754,22 +1756,55 @@
     });
   });
 
-  /* Choice click → show result */
+  /* Choice click → SELECT only (not locked). Confirm button locks it. */
   document.querySelectorAll('.cor-choice').forEach(choice=>{
     choice.addEventListener('click',()=>{
+      /* If already locked (picked), ignore further clicks in this room */
+      if(choice.classList.contains('picked'))return;
       const roomNum=choice.dataset.room;
-      const pick=choice.dataset.pick;
+      const parent=choice.parentElement;
+
+      /* Toggle selection — clicking a different card just switches selection */
+      parent.querySelectorAll('.cor-choice').forEach(ch=>{
+        ch.classList.remove('selected');
+      });
+      choice.classList.add('selected');
+
+      /* Show the confirm button for this room */
+      const confirmBtn=document.getElementById('corConfirm'+roomNum);
+      if(confirmBtn){
+        confirmBtn.classList.add('show');
+        confirmBtn.dataset.pick=choice.dataset.pick;
+      }
+    });
+  });
+
+  /* Confirm button → LOCK the selected choice and reveal the result */
+  document.querySelectorAll('.cor-confirm').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const roomNum=btn.dataset.room;
+      const pick=btn.dataset.pick;
+      if(!pick)return;
+
+      const selectedChoice=document.querySelector('.cor-choice.selected[data-room="'+roomNum+'"]');
+      if(!selectedChoice)return;
+
       const cs=CASES[currentCase];
       const rm=cs.rooms[parseInt(roomNum)-1];
       const outcomeMap={A:rm.OA,B:rm.OB,C:rm.OC,D:rm.OD};
       const outcome=outcomeMap[pick];
       if(!outcome)return;
 
-      const parent=choice.parentElement;
+      /* Lock: picked + dimmed states, remove selected */
+      const parent=selectedChoice.parentElement;
       parent.querySelectorAll('.cor-choice').forEach(ch=>{
-        if(ch===choice)ch.classList.add('picked');
+        ch.classList.remove('selected');
+        if(ch===selectedChoice)ch.classList.add('picked');
         else ch.classList.add('dimmed');
       });
+
+      /* Hide the confirm button now that choice is locked */
+      btn.classList.remove('show');
 
       const resultEl=document.getElementById('corResult'+roomNum);
       if(!resultEl)return;
@@ -1785,8 +1820,8 @@
       if(numSpan&&D&&D.str){const f=numSpan.textContent;numSpan.textContent='';setTimeout(()=>D.str(numSpan,f,600),350);}
 
       setTimeout(()=>{
-        const nxt=choice.closest('.cor-room').querySelector('.cor-next');
-        const fin=choice.closest('.cor-room').querySelector('.cor-final');
+        const nxt=selectedChoice.closest('.cor-room').querySelector('.cor-next');
+        const fin=selectedChoice.closest('.cor-room').querySelector('.cor-final');
         if(nxt){nxt.style.display='block';nxt.style.animation='roomFadeIn .5s ease both';}
         if(fin){fin.style.display='block';fin.style.animation='roomFadeIn .5s ease both';}
         const pip=document.querySelector('.cor-pip[data-r="'+roomNum+'"]');
