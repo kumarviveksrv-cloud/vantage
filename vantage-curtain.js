@@ -1344,56 +1344,96 @@
     {name:'TERMINATION',rooms:[
       {tag:'ROOM 1 / PACT ENGINE',caseId:'CASE 2841 / Employee Relations',
        h3:'Employee absent 7 days.<br>Manager wants termination tonight.<br>No written warnings on file.',
-       A:{t:'Terminate immediately',r:'speed / high exposure'},
-       B:{t:'Start domestic enquiry',r:'process / defensible'},
+       A:{t:'Terminate immediately citing absence',r:'looks decisive'},
+       B:{t:'Issue show-cause notice, 48-hr window',r:'first procedural step'},
+       C:{t:'Mark as voluntary abandonment',r:'common assumption'},
+       D:{t:'Initiate domestic enquiry directly',r:'sounds thorough'},
        OA:{verdict:'HIGH EXPOSURE',vclass:'risk',num:'\u20b921L',
-         text:'No documented warnings precede this termination. Tribunal challenge near-certain under the Industrial Disputes Act.',
-         aria:'Are the two verbal warnings logged anywhere? That single detail changes everything.'},
-       OB:{verdict:'DEFENSIBLE',vclass:'ok',num:'\u20b92L',
-         text:'Domestic enquiry creates the strongest procedural record. It satisfies natural justice and survives tribunal scrutiny.',
-         aria:'Shall I draft the enquiry notice? I have Maharashtra IT-sector precedent cases ready.'}},
+         text:'Termination without a charge sheet or opportunity to respond violates natural justice under the Industrial Disputes Act. In Maharashtra, this is one of the most commonly overturned dismissal grounds \u2014 tribunals routinely order reinstatement with back wages.',
+         aria:'Has this employee been given any written opportunity to explain the absence? Without that, this termination has almost no chance of holding.'},
+       OB:{verdict:'DEFENSIBLE FIRST STEP',vclass:'ok',num:'\u20b91.5L',
+         text:'A show-cause notice preserves the employee\u2019s right to respond before any punitive step. If the response is unsatisfactory, PACT recommends escalating to a charge sheet and domestic enquiry next \u2014 this is the correct opening move, not a delay.',
+         aria:'I\u2019ve drafted a show-cause notice with a 48-hour window. Want me to route it to the employee\u2019s last known address and email tonight?'},
+       OC:{verdict:'CONTESTABLE',vclass:'warn',num:'\u20b99L',
+         text:'Voluntary abandonment requires clear evidence of the employee\u2019s intent to abandon employment, not just absence itself. Courts have repeatedly rejected this doctrine when the employer made no contact attempts during the absence period.',
+         aria:'Did anyone from the company actually try to reach this employee during the 7 days? If not, \u201cabandonment\u201d will be difficult to establish.'},
+       OD:{verdict:'PROCEDURALLY PREMATURE',vclass:'warn',num:'\u20b94L',
+         text:'A domestic enquiry is the right eventual step, but skipping the show-cause stage denies the employee a first chance to explain before formal charges are framed. Tribunals have flagged this sequencing gap even when the enquiry itself is fair.',
+         aria:'The enquiry process is sound, but the sequencing is off. Want me to restructure this so the show-cause comes first?'}},
       {tag:'ROOM 2 / SIGNAL ENGINE',caseId:'EVIDENCE ANALYSIS',
        h3:'The enquiry reveals undocumented verbal warnings.<br>Two witnesses remember. Nothing is on paper.',
-       A:{t:'Accept the evidence gap',r:'proceed / known risk'},
-       B:{t:'Reconstruct the trail',r:'signal / protected'},
-       OA:{verdict:'MATERIAL RISK',vclass:'warn',num:'34%',
-         text:'Case proceeds with a known vulnerability. The absence of documentation becomes the central weakness.',
-         aria:'Two witnesses exist. A signed statement from either moves your evidence score from 34% to 71%.'},
-       OB:{verdict:'PROTECTED',vclass:'ok',num:'78%',
-         text:'Verbal warnings logged retroactively via witness statements. SIGNAL verifies against 4 compliance checkpoints.',
-         aria:'I found 3 similar cases where retrospective witness documentation held up in tribunal.'}},
+       A:{t:'Proceed treating this as a first offense',r:'clean and simple'},
+       B:{t:'Have managers backdate a warning email',r:'quick paper trail'},
+       C:{t:'Collect signed witness statements, dated today',r:'proper reconstruction'},
+       D:{t:'Rely on manager\u2019s verbal assurance alone',r:'trusted colleague'},
+       OA:{verdict:'UNDERSTATED CASE',vclass:'warn',num:'31%',
+         text:'Treating this as a first offense discards two witnesses\u2019 recollection of prior corrective conversations. The case is technically defensible but weaker than it needs to be \u2014 SIGNAL flags this as a missed opportunity, not a violation.',
+         aria:'The pattern of repeated conduct matters for tribunal context. Why leave that evidence on the table?'},
+       OB:{verdict:'DOCUMENT INTEGRITY RISK',vclass:'risk',num:'\u20b940L+',
+         text:'Backdating any document is falsification of evidence. If discovered \u2014 and email metadata makes this discoverable \u2014 it doesn\u2019t just weaken this case, it can void the entire proceeding and expose the company to a fraud allegation.',
+         aria:'I need to flag this clearly: backdating a document isn\u2019t a documentation fix. It\u2019s a new and much larger problem.'},
+       OC:{verdict:'PROPERLY RECONSTRUCTED',vclass:'ok',num:'78%',
+         text:'Witnesses can describe past events in a statement dated today \u2014 this is standard evidence reconstruction, not falsification, provided the statement is honest about when it was written. SIGNAL verifies this against 4 compliance checkpoints.',
+         aria:'I\u2019ve drafted witness statement templates that clearly date themselves as contemporaneous accounts of past events. Want me to send them?'},
+       OD:{verdict:'UNCORROBORATED',vclass:'warn',num:'19%',
+         text:'A manager\u2019s word, without any written or witnessed record, is hearsay in a tribunal setting. It may satisfy an internal decision but won\u2019t hold up if the employee challenges the process externally.',
+         aria:'If this goes external, whose word carries more weight \u2014 your manager\u2019s memory, or the employee\u2019s silence? Right now, it\u2019s a coin flip.'}},
       {tag:'ROOM 3 / HUMACITY ENGINE',caseId:'BOARDROOM CHALLENGE',
        h3:'CFO asks: "What does keeping this person actually cost us?"<br>The boardroom is waiting.',
-       A:{t:'Estimate from experience',r:'subjective / weak'},
-       B:{t:'Pull the Human P&L',r:'quantified / defensible'},
-       OA:{verdict:'WEAK ARGUMENT',vclass:'risk',num:'?',
-         text:'Subjective estimates do not survive boardroom scrutiny. The CFO benchmarks your number against data you cannot produce.',
-         aria:'Would it help to see what the CFO actually sees when they open their P&L? The gap between your languages is the problem.'},
-       OB:{verdict:'QUANTIFIED',vclass:'ok',num:'\u20b918.4L',
-         text:'Net human value computed across 5 Humacity pillars. Replacement cost \u20b98.2L, ramp time 4.6 months, manager load 182 hours.',
-         aria:'This is what your human capital position looks like when it speaks the CFO\u2019s language.'}},
+       A:{t:'Quote an estimate based on salary alone',r:'quick answer'},
+       B:{t:'Ask for a few days to gather the number',r:'thorough approach'},
+       C:{t:'Present the full Human P&L model',r:'quantified, complete'},
+       D:{t:'Cite generic industry benchmarks',r:'external validation'},
+       OA:{verdict:'INCOMPLETE PICTURE',vclass:'warn',num:'\u20b96L',
+         text:'Salary is the smallest piece of the real cost. Leaving out replacement recruitment, ramp time, and manager hours understates the case by roughly two-thirds \u2014 and the CFO will notice the gap immediately.',
+         aria:'Salary is the number everyone quotes. It\u2019s also the number that convinces no one in this room.'},
+       OB:{verdict:'CREDIBILITY COST',vclass:'warn',num:'\u2014',
+         text:'Asking for time when the board wants a number now reads as unpreparedness, not diligence. The moment passes, and the next ask from HR carries less weight in this room.',
+         aria:'The CFO isn\u2019t asking for perfect precision. They\u2019re asking if you know your numbers. Do you?'},
+       OC:{verdict:'BOARDROOM-READY',vclass:'ok',num:'\u20b918.4L',
+         text:'Net cost computed across all Humacity pillars: replacement cost \u20b98.2L, ramp time 4.6 months, manager load 182 hours. This is the number that survives cross-examination by a CFO.',
+         aria:'This is what your organisation\u2019s human capital position looks like when it speaks the CFO\u2019s language.'},
+       OD:{verdict:'NOT YOUR NUMBERS',vclass:'warn',num:'\u20b912L (avg)',
+         text:'Industry benchmarks are a useful sanity check, but they aren\u2019t this company\u2019s numbers. A sharp CFO will ask why you didn\u2019t calculate your own \u2014 and you won\u2019t have an answer ready.',
+         aria:'Benchmarks answer \u201cwhat do other companies see.\u201d The CFO asked what THIS decision costs THIS company.'}},
       {tag:'ROOM 4 / ARIA',caseId:'STAKEHOLDER PREPARATION',
        h3:'COO call tomorrow morning.<br>She will ask about precedent, exposure, and your recommendation.',
-       A:{t:'Prepare mentally, wing it',r:'unstructured / risky'},
-       B:{t:'Run ARIA rehearsal',r:'simulated / prepared'},
-       OA:{verdict:'UNPREPARED',vclass:'risk',num:'0/3',
-         text:'The COO asks about precedent, exposure, and recommendation. You have structured answers for none of them.',
-         aria:'I can tell you right now: she will open with the precedent question. Do you want to hear it first?'},
-       OB:{verdict:'REHEARSED',vclass:'ok',num:'3/3',
-         text:'3 objections anticipated. Counter-arguments prepared. ARIA simulated the COO\u2019s communication style. Confidence: high.',
-         aria:'The third objection is the one most people miss. Want me to run it once more?'}},
+       A:{t:'Prepare a one-page summary, go in confident',r:'covers the basics'},
+       B:{t:'Let legal handle all the questions',r:'plays it safe'},
+       C:{t:'Rehearse likely questions with ARIA',r:'anticipates objections'},
+       D:{t:'Reschedule to buy more prep time',r:'more time to prepare'},
+       OA:{verdict:'SURFACE-LEVEL READY',vclass:'warn',num:'1/3',
+         text:'A one-pager covers the headline, not the follow-ups. The moment the COO asks \u201cwhat precedent are we setting,\u201d a confident tone won\u2019t substitute for a structured answer.',
+         aria:'Confidence gets you through the first question. What happens at the second?'},
+       OB:{verdict:'ABDICATED OWNERSHIP',vclass:'risk',num:'0/3',
+         text:'This is your decision to own, not legal\u2019s to defend. A COO who sees HR defer entirely to legal in the room starts routing future people-decisions elsewhere \u2014 a much larger, longer-term cost than this single case.',
+         aria:'If you\u2019re not answering for this decision, who does the COO believe actually made it?'},
+       OC:{verdict:'BOARDROOM-READY',vclass:'ok',num:'3/3',
+         text:'3 objections anticipated. Counter-arguments prepared. ARIA modelled the COO\u2019s communication style from 14 past interactions \u2014 walking in knowing the questions before they\u2019re asked.',
+         aria:'The third objection is the one most people miss. Want me to run it once more before tomorrow?'},
+       OD:{verdict:'SIGNALS UNREADINESS',vclass:'warn',num:'-1 day',
+         text:'Delaying a scheduled decision-maker call reads as a lack of control over the situation, not diligence. The COO now wonders if HR is managing this case, or being managed by it.',
+         aria:'The clock on this case has been running since 9pm the first night. Does the COO know it\u2019s still running?'}},
       {tag:'ROOM 5 / VANTAGE RECORD',caseId:'9 MONTHS LATER',
        h3:'Same scenario. New employee. New manager.<br>Everything you learned the first time...',
-       A:{t:'Start from scratch',r:'reset / lost'},
-       B:{t:'Open your Vantage Record',r:'accumulated / yours'},
-       OA:{verdict:'RESET',vclass:'risk',num:'0',
-         text:'9 months of decisions, conversations, exposure calculations. All gone. The new manager inherits nothing.',
-         aria:'Every decision you navigated. Every rupee you protected. Is any of it saved anywhere?'},
-       OB:{verdict:'ACCUMULATED',vclass:'ok',num:'47',
-         text:'47 decisions documented. 12 policy calls. \u20b918.4L career capital. Your Vantage Record belongs to you.',
-         aria:'Your next organisation sees 9 months of intelligence, not a blank resume.'}}
+       A:{t:'Rely on memory, repeat the manual process',r:'you\u2019ve done this before'},
+       B:{t:'Ask the previous manager informally',r:'quick shortcut'},
+       C:{t:'Open your Vantage Record, adapt the case',r:'documented and ready'},
+       D:{t:'Escalate to legal for a fresh review',r:'extra caution'},
+       OA:{verdict:'RISK OF DRIFT',vclass:'warn',num:'~60%',
+         text:'Memory compresses and distorts detail over time. The specific sequencing \u2014 show-cause before enquiry, witness statements dated correctly \u2014 is exactly the kind of nuance that erodes first, not last.',
+         aria:'You got the sequence right last time. Are you certain you\u2019ll get every step right again, from memory, under pressure?'},
+       OB:{verdict:'SECOND-HAND AND UNRELIABLE',vclass:'warn',num:'~40%',
+         text:'The previous manager remembers the outcome, not the reasoning behind each step. Relying on their account risks reproducing a decision without reproducing the judgment that made it defensible.',
+         aria:'Would you want your successor learning your judgment secondhand, or from the actual record?'},
+       OC:{verdict:'INSTITUTIONAL MEMORY',vclass:'ok',num:'47',
+         text:'47 decisions documented. 12 policy calls. \u20b918.4L career capital. The exact sequencing, templates, and reasoning from the first case are available immediately \u2014 not reconstructed from memory.',
+         aria:'Your next organisation will see 9 months of documented intelligence, not a blank resume. That is what a career record looks like.'},
+       OD:{verdict:'UNNECESSARY OVERHEAD',vclass:'warn',num:'+3 weeks',
+         text:'Escalating a routine, already-precedented matter to legal every time slows the organisation down and signals HR doesn\u2019t trust its own established process. Legal\u2019s time is better spent on genuinely novel questions.',
+         aria:'This exact playbook has already been legally validated once. Why pay that cost twice?'}}
     ]},
-    {name:'POSH / HARASSMENT',rooms:[
+{name:'POSH / HARASSMENT',rooms:[
       {tag:'ROOM 1 / PACT ENGINE',caseId:'CASE 4107 / POSH',
        h3:'Anonymous complaint received.<br>Senior director named. Complainant fears retaliation.',
        A:{t:'Informal counselling first',r:'soft / uncertain'},
@@ -1619,14 +1659,19 @@
       const h3=roomEl.querySelector('.cor-scenario h3');
       if(h3)h3.innerHTML=rm.h3;
       const choices=roomEl.querySelectorAll('.cor-choice');
-      if(choices[0]){
-        choices[0].querySelector('.cor-choice-text').textContent=rm.A.t;
-        choices[0].querySelector('.cor-choice-risk').textContent=rm.A.r;
-      }
-      if(choices[1]){
-        choices[1].querySelector('.cor-choice-text').textContent=rm.B.t;
-        choices[1].querySelector('.cor-choice-risk').textContent=rm.B.r;
-      }
+      const letters=['A','B','C','D'];
+      choices.forEach((ch,i)=>{
+        const letter=letters[i];
+        const data=rm[letter];
+        if(data){
+          ch.querySelector('.cor-choice-text').textContent=data.t;
+          ch.querySelector('.cor-choice-risk').textContent=data.r;
+          ch.style.display='';
+        } else {
+          /* Case doesn't have this option yet — hide the slot */
+          ch.style.display='none';
+        }
+      });
     });
     /* Highlight active pill */
     document.querySelectorAll('.cor-case-pill').forEach((p,i)=>{
@@ -1714,9 +1759,10 @@
     choice.addEventListener('click',()=>{
       const roomNum=choice.dataset.room;
       const pick=choice.dataset.pick;
-      const c=CASES[currentCase];
-      const rm=c.rooms[parseInt(roomNum)-1];
-      const outcome=pick==='A'?rm.OA:rm.OB;
+      const cs=CASES[currentCase];
+      const rm=cs.rooms[parseInt(roomNum)-1];
+      const outcomeMap={A:rm.OA,B:rm.OB,C:rm.OC,D:rm.OD};
+      const outcome=outcomeMap[pick];
       if(!outcome)return;
 
       const parent=choice.parentElement;
