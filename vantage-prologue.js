@@ -148,6 +148,13 @@
       max-width: 100% !important;
       max-height: 100% !important;
     }
+    /* vantage-curtain.js sets copy.style.overflowY='auto' which forces
+       overflow-x:auto too (CSS spec). prologue-sub at letter-spacing:.6em
+       is ~1000px wide inside the container — horizontal scrollbar appears.
+       CSS !important beats JS inline without !important, so this wins. */
+    #prologue .prologue-copy {
+      overflow: hidden !important;
+    }
     #prologue .prologue-countdown strong.tick {
       animation: none !important;
     }
