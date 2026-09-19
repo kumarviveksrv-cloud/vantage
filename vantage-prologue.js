@@ -64,7 +64,42 @@
   function endPrologue(){if(!active)return;active=false;clearTimers();lockScroll(false);pro.classList.remove('active','phase-pressure');pro.classList.add('ending');const fade=$('.prologue-fade');if(fade){fade.style.setProperty('transition','opacity 2.4s ease','important');fade.classList.add('on');}sessionStorage.setItem('vantage_prologue_seen','1');sessionStorage.setItem('vantage_tada','1');setTimeout(()=>{pro.style.display='none';document.body.classList.add('prologue-complete');},2500)}
   skip?.addEventListener('click',endPrologue);
 
-  /* ---------- Three.js scene ---------- */
+  /* ── MOBILE PATH — no Three.js at all ─────────────────────────────────────
+     Running a full 3D office scene (600+ objects, rain physics, animated
+     laptop texture, dynamic lighting) every frame on mobile while CSS
+     animations also run creates unavoidable GPU pressure → visible flicker.
+     The canvas is opacity:0 anyway (photo bg replaced it in SR18), so
+     Three.js provides zero visual output on mobile. Skip it entirely.
+
+     Dual-safety endPrologue timing:
+     · Primary: later(endPrologue, 13100) — clears on skip via clearTimers()
+     · Backup:  raw setTimeout at 14000ms — NOT via later(), immune to
+                clearTimers(). If(!active) guard prevents double-execution.
+     Either way, the prologue ends. */
+  if(window.innerWidth <= 900){
+    /* Backup fires 1s after primary would have — clearTimers() can't touch it */
+    const mobileEnd = setTimeout(()=>{ if(active) endPrologue(); }, 14000);
+
+    later(function mobileStart(){
+      active=true; start=performance.now(); lockScroll(true);
+      pro.classList.add('active','phase-pressure'); skip?.classList.add('show');
+
+      const countNum=$('#prologueCountNum');
+      function tick(n){
+        if(!countNum)return;
+        countNum.textContent=n;
+        countNum.classList.remove('tick');
+        requestAnimationFrame(()=>requestAnimationFrame(()=>countNum.classList.add('tick')));
+      }
+      later(()=>{pro.classList.add('countdown');tick(3);},10000);
+      later(()=>{tick(2);},11000);
+      later(()=>{tick(1);},12000);
+      later(()=>{clearTimeout(mobileEnd);endPrologue();},13100);
+    },100);
+    return; /* ← skips all Three.js below */
+  }
+
+  /* ---------- Three.js scene (desktop only) ---------- */
   if(!canvas||!window.THREE)return;
   const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
