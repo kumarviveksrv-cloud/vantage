@@ -6,8 +6,19 @@ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* ---------- boot sequence ---------- */
 const boot=$('#boot'), log=$('#bootLog'), nav=$('#nav');
 const logs=['INITIALISING PRIVATE INTELLIGENCE LAYER','LOADING INDIA / HR CONTEXT','CONNECTING DECISION FIELD','MERIDIAN CONTEXT ENGINE READY','ARIA SIMULATION ENVIRONMENT READY','HUMACITY FINANCIAL LAYER READY','VANTAGE RECORD: PRIVATE / ACTIVE'];
-let li=0; const logTimer=setInterval(()=>{if(li<logs.length){log.insertAdjacentHTML('beforeend','<div>› '+logs[li++]+'</div>');}else clearInterval(logTimer)},260);
-setTimeout(()=>{boot.classList.add('done');nav.classList.add('ready');},5000);
+
+if(sessionStorage.getItem('vantage_boot_seen')){
+  /* Already seen this session — skip instantly, no friction */
+  if(boot){boot.classList.add('done');}
+  if(nav){nav.classList.add('ready');}
+}else{
+  /* First visit this session — run full cinematic boot */
+  let li=0; const logTimer=setInterval(()=>{if(li<logs.length){log.insertAdjacentHTML('beforeend','<div>\u203a '+logs[li++]+'</div>');}else clearInterval(logTimer)},260);
+  setTimeout(()=>{
+    boot.classList.add('done');nav.classList.add('ready');
+    sessionStorage.setItem('vantage_boot_seen','1');
+  },5000);
+}
 
 /* ---------- live clock ---------- */
 function clock(){const d=new Date();const t=[d.getHours(),d.getMinutes(),d.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');const el=$('#liveClock');if(el)el.textContent=t;const bt=$('#bootTime');if(bt)bt.textContent=t.slice(0,5)}
