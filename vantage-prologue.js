@@ -21,6 +21,23 @@
 */
 (function(){
   'use strict';
+  /* ── SCROLLBAR KILL — runs before any rendering ─────────────────────────────
+     prologue-sub starts at letter-spacing:.6em (~1000px wide inside a 520px
+     container) before phase-pressure fires. overflow:hidden in CSS keeps losing
+     the specificity battle. Inline JS style beats every CSS rule, including
+     !important in external stylesheets.
+     Also reset initial letter-spacing to the final values so the wide text
+     never exists at all — no overflow to worry about. */
+  (function killScrollbar(){
+    const pro = document.getElementById('prologue');
+    const copy = pro?.querySelector('.prologue-copy');
+    const sub  = pro?.querySelector('.prologue-sub');
+    const kick = pro?.querySelector('.prologue-kicker');
+    if(pro)  pro.style.setProperty('overflow','hidden','important');
+    if(copy) copy.style.setProperty('overflow','hidden','important');
+    if(sub)  sub.style.setProperty('letter-spacing','.14em','important');
+    if(kick) kick.style.setProperty('letter-spacing','.22em','important');
+  })();
   const $=(s,p=document)=>p.querySelector(s);
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const pro=$('#prologue');
