@@ -69,102 +69,16 @@
   }
 
   function revealText() {
-    /* Signal and note: let CSS phase-pressure transitions handle them */
+    /* Signal and note: remove inline hide so CSS phase-pressure transitions take over.
+       Kicker/message/sub: curtain.js (vantage-curtain.js ~line 1235) owns those —
+       it reads kicker text, clears it, types it at 68ms/char, then reveals
+       message word-by-word and sub. We must not touch them here. */
     [signal, note].forEach(el => {
       if (!el) return;
       el.style.removeProperty('opacity');
       el.style.removeProperty('visibility');
     });
-    /* Copy container visible — children animated individually below */
-    if (copy) {
-      copy.style.removeProperty('opacity');
-      copy.style.removeProperty('visibility');
-    }
-    /* Kill CSS transitions on elements we animate manually.
-       phase-pressure adds them right after this call — without this,
-       the container opacity AND each word-span both animate (double fade). */
-    [kicker, message, sub].forEach(el => {
-      if (el) el.style.transition = 'none';
-    });
-    typewriteKicker();
-  }
-
-  /* ── 1. KICKER: typewriter ────────────────────────────────────────────── */
-  function typewriteKicker() {
-    if (!kicker || !active) { revealMessage(); return; }
-    const TEXT = 'The Building Has Gone Quiet';
-    kicker.textContent = '';
-    kicker.style.setProperty('opacity', '1', 'important');
-    kicker.style.setProperty('visibility', 'visible', 'important');
-    kicker.style.filter = 'none';
-    kicker.style.letterSpacing = '.22em';
-    let ci = 0;
-    function type() {
-      if (!active) return;
-      if (ci < TEXT.length) {
-        kicker.textContent += TEXT[ci++];
-        later(type, 45);
-      } else {
-        later(revealMessage, 220);
-      }
-    }
-    later(type, 50);
-  }
-
-  /* ── 2. MESSAGE: word-by-word fade ───────────────────────────────────── */
-  function revealMessage() {
-    if (!message || !active) { revealSub(); return; }
-    message.style.setProperty('opacity', '1', 'important');
-    message.style.setProperty('visibility', 'visible', 'important');
-    message.style.filter = 'none';
-    message.style.transform = 'none';
-
-    const words = 'Somewhere in it, a decision is still being made.'.split(' ');
-    message.innerHTML = '';
-
-    const line = document.createElement('span');
-    line.style.display = 'block';
-    words.forEach(w => {
-      const s = document.createElement('span');
-      s.textContent = w + '\u00a0';
-      s.style.cssText = 'opacity:0;display:inline-block;transition:opacity .4s ease';
-      line.appendChild(s);
-    });
-
-    const emEl = document.createElement('em');
-    emEl.textContent = 'Alone.';
-    emEl.style.cssText = 'opacity:0;display:block;color:#c4b5fd;font-style:italic;font-weight:500;transition:opacity .5s ease';
-
-    message.appendChild(line);
-    message.appendChild(emEl);
-
-    const parts = [...line.querySelectorAll('span'), emEl];
-    parts.forEach((s, i) => later(() => { if (active) s.style.opacity = '1'; }, i * 120));
-    later(revealSub, parts.length * 120 + 200);
-  }
-
-  /* ── 3. SUB: word-by-word fade ───────────────────────────────────────── */
-  function revealSub() {
-    if (!sub || !active) return;
-    sub.style.setProperty('opacity', '1', 'important');
-    sub.style.setProperty('visibility', 'visible', 'important');
-    sub.style.filter = 'none';
-    sub.style.letterSpacing = '.14em';
-
-    const words = 'No Escalation Path. No Second Opinion. Just The Clock.'.split(' ');
-    sub.innerHTML = '';
-    words.forEach(w => {
-      const s = document.createElement('span');
-      s.textContent = w + '\u00a0';
-      s.style.cssText = 'opacity:0;display:inline-block;transition:opacity .35s ease';
-      sub.appendChild(s);
-    });
-    Array.from(sub.querySelectorAll('span')).forEach((s, i) =>
-      later(() => { if (active) s.style.opacity = '1'; }, i * 100)
-    );
-  }
-
-  function hideCopyForCountdown() {
+  }  function hideCopyForCountdown() {
     setImportant(copy, 'opacity', '0');
     setImportant(copy, 'visibility', 'hidden');
     setImportant(signal, 'opacity', '0');
@@ -265,6 +179,19 @@
     if (revealStarted) return;
     revealStarted = true;
     pro.classList.add('active');
+    /* Make kicker and copy visible immediately — curtain.js (line ~1235) fires
+       on 'active' and starts typing the kicker after a 700ms pause. Without
+       this, curtain.js types into a hidden element for 1100ms then it pops
+       visible mid-word. With this, the cursor blinks from t=0 and typing is
+       visible from the first character. Kicker CSS transitions killed so
+       phase-pressure doesn't also animate it. */
+    if (copy) { copy.style.removeProperty('opacity'); copy.style.removeProperty('visibility'); }
+    if (kicker) { kicker.style.transition='none'; kicker.style.setProperty('opacity','1','important'); kicker.style.setProperty('visibility','visible','important'); }
+    /* Remove visibility:hidden from message/sub now so when curtain.js later
+       sets opacity:1 on them they actually appear (visibility:hidden would
+       block them even with opacity:1). Opacity stays at 0 via curtain.js. */
+    if (message) message.style.removeProperty('visibility');
+    if (sub)     sub.style.removeProperty('visibility');
     later(() => {
       revealText();
       pro.classList.add('phase-pressure');
