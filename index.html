@@ -270,14 +270,22 @@
    wrap within its own box rather than ever extending past it. */
 .prologue-kicker,
 .prologue-message,
-.prologue-sub,
-.prologue-note {
+.prologue-sub {
   white-space: normal !important;
   overflow-wrap: break-word !important;
   word-break: normal !important;
   text-align: center !important;
   max-width: 100% !important;
   width: 100% !important;
+  box-sizing: border-box !important;
+}
+/* .prologue-note is position:absolute right:32px — it must NOT get
+   text-align:center or width:100%, which together shift it to the
+   screen centre. Wrap-safety only. */
+.prologue-note {
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
   box-sizing: border-box !important;
 }
 .prologue-note strong {
@@ -1161,11 +1169,15 @@
 
 /* Prologue kicker typewriter handled by JS in curtain.js */
 
-/* Prologue copy pushed to bottom — clear of the man and the scene */
+/* Prologue copy pushed to bottom — clear of the man and the scene.
+   transform: translateX(-50%) must stay — it pairs with left:50% from
+   vantage-prologue.css to center the block. transform:none was killing
+   this centering entirely, making the block start at 50% left with no
+   offset and clipping everything to the right on mobile. */
 .prologue-copy {
   top: auto !important;
   bottom: 108px !important;
-  transform: none !important;
+  transform: translateX(-50%) !important;
   padding-top: 0 !important;
   margin-top: 0 !important;
 }
