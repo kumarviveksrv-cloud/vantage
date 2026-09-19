@@ -106,6 +106,8 @@
       localStorage.setItem('vantage_clerk_signed_in', '1');
       localStorage.setItem('sr_user_email', email);
       localStorage.setItem('sr_user_name',  name);
+      /* Permanent prologue bypass — survives sign-out, never cleared */
+      localStorage.setItem('vantage_paid_user', '1');
       if (email) {
         var m = localStorage.getItem('sr_meridian_' + email);
         if (m) sessionStorage.setItem('sr_meridian', m);
@@ -159,7 +161,19 @@
       window.Clerk.load().then(function() {
 
         if (window.Clerk.user) {
-          // Already signed in — restore data and go to dashboard
+          /* Guard: if ?signed_out=1 is in the URL the user explicitly
+             signed out. Don't auto-sign them back in via Google OAuth
+             — force them to explicitly choose to sign in again. */
+          var _params = new URLSearchParams(window.location.search);
+          if (_params.get('signed_out') === '1') {
+            window.Clerk.signOut().then(function() {
+              window.location.replace(CLERK_SIGNIN + '?redirect_url=' + encodeURIComponent('https://vantage.virorah.com/access.html'));
+            }).catch(function() {
+              window.location.replace(CLERK_SIGNIN + '?redirect_url=' + encodeURIComponent('https://vantage.virorah.com/access.html'));
+            });
+            return;
+          }
+          // Normal flow: already signed in — restore data and go to dashboard
           setStatus('Welcome back!', 'Restoring your workspace\u2026');
           syncUser(window.Clerk.user);
           var redirectTo = getRedirectUrl();
