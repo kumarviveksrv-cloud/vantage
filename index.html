@@ -361,10 +361,8 @@
 }
 .record-sub .accent {
   font-weight: 700 !important;
-  /* SR19: visible size increase — clamp(20px,2.4vw,28px) gives 28px on 1440px
-     desktop vs 21px for surrounding text. Previous 1px increments were
-     below human visual threshold — 7px jump is unmistakable. */
   font-size: clamp(20px, 2.4vw, 28px) !important;
+  line-height: 1.2 !important;
 }
 
 /* Item 6: ARIA dims — force all labels to ALL CAPS for consistency */
@@ -1197,9 +1195,16 @@
 }
 @media (max-width: 700px) {
   .prologue-copy {
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
+    /* Margin-auto centering instead of transform: translateX(-50%) —
+       identical visual result but creates NO GPU compositing layer.
+       The transform was introduced as a mobile fix but is what caused
+       the countdown glitch: extra GPU layer on an already GPU-heavy
+       mobile prologue pushed the compositor over its limit. */
+    left: 0 !important;
+    right: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    transform: none !important;
     width: calc(100% - 32px) !important;
     text-align: center !important;
     bottom: 108px !important;
@@ -2655,6 +2660,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 </section>
 
 <section class="sim-room cinematic-panel reveal-section" id="simRoom">
+  <div class="section-index">05 / THE STAKES</div>
   <div class="corridor" id="corridor">
 
     <!-- Corridor cinematic heading — the standard .section-index label
@@ -2695,10 +2701,6 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <div class="cor-pip" data-r="5">5</div>
     </div>
 
-    <!-- Section eyebrow -->
-    <div class="cor-eyebrow">
-      <span class="section-index">05 / THE STAKES</span>
-    </div>
     <div class="cor-fullscreen-hint" id="corFsHint">
       <span class="cor-fs-desktop">Press <kbd>F11</kbd> for the full immersive experience</span>
       <button class="cor-fs-btn" id="corFsBtn" aria-label="Toggle fullscreen">
