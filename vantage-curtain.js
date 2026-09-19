@@ -8,7 +8,7 @@
     const ref = document.querySelector('.case-intro h2 em') ||
                 document.querySelector('h2 em') ||
                 document.querySelector('.sim-case h2 em');
-    if(!ref) return FALLBACK; 
+    if(!ref) return FALLBACK;
     const cs  = window.getComputedStyle(ref);
     const bg  = cs.getPropertyValue('background-image');
     /* If em has a gradient, use it verbatim */
@@ -2848,7 +2848,9 @@
     el.style.setProperty('color', 'rgba(255,255,255,.78)', 'important');
     const accentSpan = el.querySelector('.accent');
     if(accentSpan){
-      accentSpan.style.setProperty('font-size', 'inherit', 'important');
+      /* SR19: was 'inherit' — inherit made accent same size as parent,
+         negating the CSS bump. Now sets explicit larger size matching CSS. */
+      accentSpan.style.setProperty('font-size', 'clamp(20px, 2.4vw, 28px)', 'important');
     }
   }
   if(document.readyState === 'loading'){
