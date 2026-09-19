@@ -76,14 +76,22 @@
   window.clerkSignOut = function () {
     localStorage.removeItem('vantage_clerk_signed_in');
     sessionStorage.clear();
+    /* Redirect to LANDING PAGE, not access.html.
+       Sending the user back to access.html after sign-out causes a Google
+       OAuth loop: access.html loads Clerk → Clerk detects the still-active
+       Google browser session → auto-signs back in before the user can blink.
+       The landing page has no Clerk SDK loaded, so the loop has nowhere to
+       run. This also matches the desired UX: returning users land on the
+       hero page with Sign In available in the nav. */
+    var landingUrl = 'https://vantage.virorah.com/?signed_out=1';
     if (window.Clerk && window.Clerk.signOut) {
       window.Clerk.signOut().then(function () {
-        window.location.replace(ACCESS_URL);
+        window.location.replace(landingUrl);
       }).catch(function () {
-        window.location.replace(ACCESS_URL);
+        window.location.replace(landingUrl);
       });
     } else {
-      window.location.replace(ACCESS_URL);
+      window.location.replace(landingUrl);
     }
   };
 
