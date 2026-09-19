@@ -66,33 +66,6 @@
 
   /* ---------- Three.js scene ---------- */
   if(!canvas||!window.THREE)return;
-
-  /* SR19 MOBILE FIX — skip all Three.js on mobile.
-     #prologueCanvas has opacity:0 on all devices (photo background replaced
-     the 3D scene in SR18). On mobile the Three.js initialization causes two
-     visible GPU spikes before the countdown even starts:
-       1. new THREE.WebGLRenderer() — shader compilation + GPU buffer alloc
-       2. The continuous render loop consuming GPU budget needed for CSS animations
-     Replacing with a lightweight timer-only sequence eliminates both spikes
-     while keeping the full prologue experience (photo, copy, countdown, end). */
-  if(window.innerWidth <= 900){
-    later(function startRevealMobile(){
-      active=true; start=performance.now(); lockScroll(true);
-      pro.classList.add('active','phase-pressure'); skip?.classList.add('show');
-      const countNum=$('#prologueCountNum');
-      function tick(n){
-        if(!countNum)return;
-        countNum.textContent=n;
-        countNum.classList.remove('tick');
-        requestAnimationFrame(()=>requestAnimationFrame(()=>countNum.classList.add('tick')));
-      }
-      later(()=>{pro.classList.add('countdown');tick(3);},10000);
-      later(()=>{tick(2);},11000);
-      later(()=>{tick(1);},12000);
-      later(endPrologue,13100);
-    },100);
-    return;
-  }
   const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
   renderer.setSize(innerWidth,innerHeight);
@@ -409,6 +382,10 @@
   let start=performance.now();
   let lastMs=null;
   let lastScreenTick=0;
+  /* Skip renderer.render on mobile — canvas is opacity:0 (photo bg used instead),
+     so rendering is wasted GPU work. The animate loop still runs so endPrologue
+     fires reliably at elapsed>13000ms. This was the freeze fix from SR19. */
+  const isMobilePrologue = window.innerWidth <= 900;
   function animate(ms){if(!active)return;const t=ms*.001;const elapsed=ms-start;
     if(elapsed>13000)endPrologue();
     /* SR19: pause Three.js renders during the countdown phase — the GPU
@@ -432,7 +409,7 @@
       // the window rather than reading as happening outside it.
       if(drop.position.y<.7){drop.position.y=3.7+Math.random()*.15;drop.position.x=1.3+Math.random()*3.2;}
     });
-    renderer.render(scene,camera);requestAnimationFrame(animate)}
+    if(!isMobilePrologue)renderer.render(scene,camera);requestAnimationFrame(animate)}
   // Previously this fired on a blind 900ms timer with no idea whether the
   // boot countdown screen (#boot, which sits ABOVE the prologue) was still
   // covering it. If boot ran long, the prologue's entire 2.4s blur-to-clear
