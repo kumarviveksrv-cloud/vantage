@@ -14,9 +14,19 @@
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!pro || reduce) return;
 
+  /* ── PAYING USER BYPASS ──────────────────────────────────────────────────
+     Two signals — either is enough to skip the prologue permanently:
+     1. vantage_clerk_signed_in — Clerk session active (set by clerk-auth.js
+        syncUser, cleared on sign-out via clerkSignOut)
+     2. vantage_paid_user — permanent flag, set once on first sign-in by
+        syncUser(), never cleared. Returning paying users skip the prologue
+        even after signing out — they know the product. */
+  const isPayingUser = localStorage.getItem('vantage_clerk_signed_in') === '1' ||
+                       localStorage.getItem('vantage_paid_user') === '1';
+
   const alreadySeen = sessionStorage.getItem('vantage_prologue_seen') === '1';
   const cameFromDemo = /\/demo\.html/i.test(document.referrer || '');
-  if (alreadySeen || cameFromDemo) {
+  if (alreadySeen || cameFromDemo || isPayingUser) {
     pro.style.display = 'none';
     document.body.classList.add('prologue-complete');
     return;
