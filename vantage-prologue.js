@@ -263,8 +263,16 @@
 
   function startReveal(){
     active=true;start=performance.now();lockScroll(true);
-    pro.classList.add('active','phase-pressure');skip?.classList.add('show');
+    /* Start the Three.js animate loop immediately — canvas needs to render
+       at least ONE frame before phase-pressure triggers text transitions.
+       Without this delay: text starts fading in over a black/transparent
+       canvas (opacity:0 → still transitioning), which is the "flash" glitch.
+       Double rAF guarantees the animate loop has run and painted frame 1. */
     requestAnimationFrame(animate);
+    pro.classList.add('active');skip?.classList.add('show');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      pro.classList.add('phase-pressure');
+    }));
     const countNum=$('#prologueCountNum');
     function tick(n){
       if(!countNum)return;
