@@ -69,11 +69,94 @@
   }
 
   function revealText() {
-    [copy, kicker, message, sub, signal, note].forEach((element) => {
-      if (!element) return;
-      element.style.removeProperty('opacity');
-      element.style.removeProperty('visibility');
+    /* Signal and note: let CSS phase-pressure transitions handle them */
+    [signal, note].forEach(el => {
+      if (!el) return;
+      el.style.removeProperty('opacity');
+      el.style.removeProperty('visibility');
     });
+    /* Copy container: visible but children are animated individually below */
+    if (copy) {
+      copy.style.removeProperty('opacity');
+      copy.style.removeProperty('visibility');
+    }
+    /* Kick off the sequential text animation */
+    typewriteKicker();
+  }
+
+  /* ── 1. KICKER: typewriter ────────────────────────────────────────────── */
+  function typewriteKicker() {
+    if (!kicker || !active) { revealMessage(); return; }
+    const TEXT = 'The Building Has Gone Quiet';
+    kicker.textContent = '';
+    kicker.style.setProperty('opacity', '1', 'important');
+    kicker.style.removeProperty('visibility');
+    kicker.style.filter = 'none';
+    kicker.style.letterSpacing = '.22em';
+    let ci = 0;
+    function type() {
+      if (!active) return;
+      if (ci < TEXT.length) {
+        kicker.textContent += TEXT[ci++];
+        later(type, 45);
+      } else {
+        later(revealMessage, 220);
+      }
+    }
+    later(type, 50);
+  }
+
+  /* ── 2. MESSAGE: word-by-word fade ───────────────────────────────────── */
+  function revealMessage() {
+    if (!message || !active) { revealSub(); return; }
+    message.style.setProperty('opacity', '1', 'important');
+    message.style.removeProperty('visibility');
+    message.style.filter = 'none';
+    message.style.transform = 'none';
+
+    const words = 'Somewhere in it, a decision is still being made.'.split(' ');
+    message.innerHTML = '';
+
+    const line = document.createElement('span');
+    line.style.display = 'block';
+    words.forEach(w => {
+      const s = document.createElement('span');
+      s.textContent = w + '\u00a0';
+      s.style.cssText = 'opacity:0;display:inline-block;transition:opacity .4s ease';
+      line.appendChild(s);
+    });
+
+    const emEl = document.createElement('em');
+    emEl.textContent = 'Alone.';
+    emEl.style.cssText = 'opacity:0;display:block;color:#c4b5fd;font-style:italic;font-weight:500;transition:opacity .5s ease';
+
+    message.appendChild(line);
+    message.appendChild(emEl);
+
+    const parts = [...line.querySelectorAll('span'), emEl];
+    parts.forEach((s, i) => later(() => { if (active) s.style.opacity = '1'; }, i * 120));
+    later(revealSub, parts.length * 120 + 200);
+  }
+
+  /* ── 3. SUB: word-by-word fade ───────────────────────────────────────── */
+  function revealSub() {
+    if (!sub || !active) return;
+    sub.style.setProperty('opacity', '1', 'important');
+    sub.style.removeProperty('visibility');
+    sub.style.filter = 'none';
+    sub.style.letterSpacing = '.14em';
+
+    const words = 'No Escalation Path. No Second Opinion. Just The Clock.'.split(' ');
+    sub.innerHTML = '';
+    words.forEach(w => {
+      const s = document.createElement('span');
+      s.textContent = w + '\u00a0';
+      s.style.cssText = 'opacity:0;display:inline-block;transition:opacity .35s ease';
+      sub.appendChild(s);
+    });
+    Array.from(sub.querySelectorAll('span')).forEach((s, i) =>
+      later(() => { if (active) s.style.opacity = '1'; }, i * 100)
+    );
   }
 
   function hideCopyForCountdown() {
