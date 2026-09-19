@@ -741,12 +741,12 @@
 }
 .hsp-display { display:flex;align-items:baseline;gap:2px;margin-bottom:5px; }
 .hsp-num {
-  font-family:'Space Grotesk',sans-serif;font-size:clamp(34px,3.8vw,48px);font-weight:700;
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,3vw,40px);font-weight:700;
   background:linear-gradient(90deg,#c084fc,#8b5cf6,#6366f1);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;-webkit-text-fill-color:transparent;line-height:1;
 }
-.hsp-denom { font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(196,181,253,.3); }
+.hsp-denom { font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(196,181,253,.4);align-self:flex-end;padding-bottom:2px; }
 .hsp-status { font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.14em;color:rgba(168,85,247,.65);display:block; }
 .hsp-right { flex:1;min-width:0; }
 .hsp-track { height:5px;background:rgba(196,181,253,.08);border-radius:5px;overflow:hidden;margin-bottom:6px; }
@@ -903,7 +903,7 @@
   margin-bottom: 2px;
   white-space: nowrap;
 }
-.hsp-mval { display: flex; align-items: baseline; gap: 2px; }
+.hsp-mval { display: flex; align-items: flex-end; gap: 4px; }
 .hsp-num--adj {
   font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(28px,3vw,40px);
@@ -960,6 +960,28 @@
   border-top: 1px solid rgba(196,181,253,.07);
   margin: 0;
   min-height: 18px;
+}
+/* Fix 3: mobile score panel — stack trio + tagline vertically.
+   On desktop, hs-score-panel is a flex ROW (trio left, tagline right).
+   On mobile the trio fills all horizontal space and the tagline is
+   squeezed to zero width — completely invisible. Column layout fixes it. */
+@media (max-width: 900px) {
+  .hs-score-panel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+  .hsp-tagline {
+    border-top: 1px solid rgba(196,181,253,.07);
+    border-left: none;
+    padding: 12px 16px 14px;
+    font-size: 11px;
+  }
+}
+@media (max-width: 560px) {
+  .hsp-metric { padding: 12px 10px; }
+  .hsp-mlabel { font-size: 6.5px; letter-spacing: .1em; }
+  .hsp-trio { gap: 0; }
 }
 
 /* Fix: h1 oldstyle numerals → lining (9 sits on baseline, not descending) */
@@ -2354,7 +2376,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <p class="humacity-concept"><span class="line accent">Now you can prove it.</span></p>
       <p class="body-copy">HR has always generated financial value. The P&amp;L never showed it — because no one built the framework to translate it. Until now.<br><br>
       Humacity gives every people decision a number the CFO can read and an argument the boardroom cannot dismiss.</p>
-      <span class="line accent humacity-terms">The Human P&amp;L. The Human Balance Sheet. The Humac Score.</span>
+      <span class="line accent humacity-terms">The Human P<span style="font-family:'DM Sans',sans-serif;font-style:normal">&amp;</span>L. The Human Balance Sheet. The Humac Score.</span>
       <div class="h-metrics">
         <div><small>Replacement cost</small><b>₹ 8.2L</b></div>
         <div><small>Ramp time</small><b>4.6 mo</b></div>
