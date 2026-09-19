@@ -66,6 +66,33 @@
 
   /* ---------- Three.js scene ---------- */
   if(!canvas||!window.THREE)return;
+
+  /* SR19 MOBILE FIX — skip all Three.js on mobile.
+     #prologueCanvas has opacity:0 on all devices (photo background replaced
+     the 3D scene in SR18). On mobile the Three.js initialization causes two
+     visible GPU spikes before the countdown even starts:
+       1. new THREE.WebGLRenderer() — shader compilation + GPU buffer alloc
+       2. The continuous render loop consuming GPU budget needed for CSS animations
+     Replacing with a lightweight timer-only sequence eliminates both spikes
+     while keeping the full prologue experience (photo, copy, countdown, end). */
+  if(window.innerWidth <= 900){
+    later(function startRevealMobile(){
+      active=true; start=performance.now(); lockScroll(true);
+      pro.classList.add('active','phase-pressure'); skip?.classList.add('show');
+      const countNum=$('#prologueCountNum');
+      function tick(n){
+        if(!countNum)return;
+        countNum.textContent=n;
+        countNum.classList.remove('tick');
+        requestAnimationFrame(()=>requestAnimationFrame(()=>countNum.classList.add('tick')));
+      }
+      later(()=>{pro.classList.add('countdown');tick(3);},10000);
+      later(()=>{tick(2);},11000);
+      later(()=>{tick(1);},12000);
+      later(endPrologue,13100);
+    },100);
+    return;
+  }
   const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
   renderer.setSize(innerWidth,innerHeight);
