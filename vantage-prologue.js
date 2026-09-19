@@ -32,6 +32,11 @@
     document.body.classList.add('prologue-complete');
     return;
   }
+  /* Kill horizontal scrollbar immediately — page content has overflow-x
+     that Chrome renders on top of the fixed prologue overlay. CSS fix in
+     index.html covers normal loads; this covers sw.js cached-HTML visits. */
+  document.documentElement.style.overflowX='hidden';
+  document.body.style.overflowX='hidden';
   const canvas=$('#prologueCanvas');
   const skip=$('#prologueSkip');
   let active=false, timers=[];
