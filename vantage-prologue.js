@@ -75,12 +75,17 @@
       el.style.removeProperty('opacity');
       el.style.removeProperty('visibility');
     });
-    /* Copy container: visible but children are animated individually below */
+    /* Copy container visible — children animated individually below */
     if (copy) {
       copy.style.removeProperty('opacity');
       copy.style.removeProperty('visibility');
     }
-    /* Kick off the sequential text animation */
+    /* Kill CSS transitions on elements we animate manually.
+       phase-pressure adds them right after this call — without this,
+       the container opacity AND each word-span both animate (double fade). */
+    [kicker, message, sub].forEach(el => {
+      if (el) el.style.transition = 'none';
+    });
     typewriteKicker();
   }
 
@@ -90,7 +95,7 @@
     const TEXT = 'The Building Has Gone Quiet';
     kicker.textContent = '';
     kicker.style.setProperty('opacity', '1', 'important');
-    kicker.style.removeProperty('visibility');
+    kicker.style.setProperty('visibility', 'visible', 'important');
     kicker.style.filter = 'none';
     kicker.style.letterSpacing = '.22em';
     let ci = 0;
@@ -110,7 +115,7 @@
   function revealMessage() {
     if (!message || !active) { revealSub(); return; }
     message.style.setProperty('opacity', '1', 'important');
-    message.style.removeProperty('visibility');
+    message.style.setProperty('visibility', 'visible', 'important');
     message.style.filter = 'none';
     message.style.transform = 'none';
 
@@ -142,7 +147,7 @@
   function revealSub() {
     if (!sub || !active) return;
     sub.style.setProperty('opacity', '1', 'important');
-    sub.style.removeProperty('visibility');
+    sub.style.setProperty('visibility', 'visible', 'important');
     sub.style.filter = 'none';
     sub.style.letterSpacing = '.14em';
 
