@@ -382,16 +382,11 @@
   let start=performance.now();
   let lastMs=null;
   let lastScreenTick=0;
-  /* Skip renderer.render on mobile — canvas is opacity:0 (photo bg used instead),
-     so rendering is wasted GPU work. The animate loop still runs so endPrologue
-     fires reliably at elapsed>13000ms. This was the freeze fix from SR19. */
-  const isMobilePrologue = window.innerWidth <= 900;
   function animate(ms){if(!active)return;const t=ms*.001;const elapsed=ms-start;
     if(elapsed>13000)endPrologue();
-    /* Skip all Three.js work on mobile (canvas is opacity:0, no visual output,
-       but scene updates + screenTexObj canvas draws were still causing GPU spikes).
-       Also skip during countdown — same reason, plus CSS animation conflict. */
-    if(isMobilePrologue||pro.classList.contains('countdown')){requestAnimationFrame(animate);return;}
+    /* Skip Three.js rendering during countdown — GPU was competing between
+       WebGL renders and the prologueCountTick CSS animation (SR19 fix). */
+    if(pro.classList.contains('countdown')){requestAnimationFrame(animate);return;}
     const dt=lastMs===null?.016:Math.min(.05,(ms-lastMs)*.001);
     lastMs=ms;
     camera.position.x+=(mx*.35-camera.position.x)*.015;camera.position.y+=(1.1-my*.18-camera.position.y)*.015;camera.lookAt(.2,.5,0);
@@ -409,7 +404,7 @@
       // the window rather than reading as happening outside it.
       if(drop.position.y<.7){drop.position.y=3.7+Math.random()*.15;drop.position.x=1.3+Math.random()*3.2;}
     });
-    if(!isMobilePrologue)renderer.render(scene,camera);requestAnimationFrame(animate)}
+    renderer.render(scene,camera);requestAnimationFrame(animate)}
   // Previously this fired on a blind 900ms timer with no idea whether the
   // boot countdown screen (#boot, which sits ABOVE the prologue) was still
   // covering it. If boot ran long, the prologue's entire 2.4s blur-to-clear
