@@ -2447,13 +2447,28 @@
       heroCopy.style.setProperty('overflow', 'visible', 'important');
     }
   }
-  /* heroEnter starts genuinely empty (its content is built entirely by
-     JS) — briefly insert its final text to measure, then clear it
-     back to empty for the typewriter to fill in. */
+  /* heroEnter's real content is FOUR child spans (heText, heVantage,
+     heDot, heCursor) built by initHeroEnter, elsewhere in this file.
+     The previous version of this fix measured height by doing
+     heroEnterEl.textContent = 'Enter VANTAGE.' — but .textContent =
+     DESTROYS all existing children. That wiped out those four spans
+     permanently; when the typewriter later tried to type into them,
+     it was writing to detached, invisible nodes no longer in the
+     document at all, which is exactly why "Enter VANTAGE." vanished
+     completely instead of typing. Fixed by measuring against a
+     temporary CLONE instead, never touching the real element or its
+     children. */
   if(heroEnterEl){
-    heroEnterEl.textContent = 'Enter VANTAGE.';
-    const h = heroEnterEl.getBoundingClientRect().height;
-    heroEnterEl.textContent = '';
+    const ghost = heroEnterEl.cloneNode(false);
+    ghost.textContent = 'Enter VANTAGE.';
+    ghost.style.cssText = heroEnterEl.style.cssText;
+    ghost.style.position = 'absolute';
+    ghost.style.visibility = 'hidden';
+    ghost.style.pointerEvents = 'none';
+    ghost.style.height = 'auto';
+    heroEnterEl.parentNode.insertBefore(ghost, heroEnterEl.nextSibling);
+    const h = ghost.getBoundingClientRect().height;
+    ghost.remove();
     if(h > 0){
       heroEnterEl.style.setProperty('height', h + 'px', 'important');
       heroEnterEl.style.setProperty('overflow', 'visible', 'important');
@@ -2466,10 +2481,26 @@
   function relockIfTaller(el, cachedText){
     if(!el) return;
     const priorHeight = parseFloat(el.style.height) || 0;
-    const priorText = el.textContent;
-    if(cachedText !== undefined) el.textContent = cachedText;
-    const h = el.getBoundingClientRect().height;
-    if(cachedText !== undefined) el.textContent = priorText;
+    let h;
+    if(cachedText !== undefined){
+      /* Never write cachedText into the real element — it may have
+         live children (like heroEnterEl's four typing spans) that
+         would be destroyed by a direct .textContent assignment, the
+         exact bug that made "Enter VANTAGE." vanish entirely. Measure
+         against a throwaway clone instead. */
+      const ghost = el.cloneNode(false);
+      ghost.textContent = cachedText;
+      ghost.style.cssText = el.style.cssText;
+      ghost.style.position = 'absolute';
+      ghost.style.visibility = 'hidden';
+      ghost.style.pointerEvents = 'none';
+      ghost.style.height = 'auto';
+      el.parentNode.insertBefore(ghost, el.nextSibling);
+      h = ghost.getBoundingClientRect().height;
+      ghost.remove();
+    } else {
+      h = el.getBoundingClientRect().height;
+    }
     if(h > priorHeight){
       el.style.setProperty('height', h + 'px', 'important');
     }
@@ -2804,18 +2835,18 @@
 
 (function enforceRecordSubSize(){
   'use strict';
-  /* Three CSS-only attempts at this haven't held — something in an
-     external stylesheet not visible here is apparently still winning.
-     Bypassing the question entirely: inline !important always beats
-     ANY stylesheet rule regardless of selector specificity or load
-     order, so this is enforced directly on the element and its child
-     span, guaranteed. */
+  /* Bypassing CSS specificity questions entirely: inline !important
+     always beats ANY stylesheet rule regardless of selector
+     specificity or load order. Target: EXACT parity with .lede's
+     size (clamp(15px,1.55vw,20px)) — an earlier pass overcorrected
+     this to be LARGER than the paragraph beside it, which was never
+     the ask; the goal has always been matching, not exceeding. */
   function apply(){
     const el = document.querySelector('.record-sub');
     if(!el) return;
-    el.style.setProperty('font-size', 'clamp(17px, 1.8vw, 23px)', 'important');
-    el.style.setProperty('line-height', '1.6', 'important');
-    el.style.setProperty('color', 'rgba(255,255,255,.85)', 'important');
+    el.style.setProperty('font-size', 'clamp(15px, 1.55vw, 20px)', 'important');
+    el.style.setProperty('line-height', '1.8', 'important');
+    el.style.setProperty('color', 'rgba(255,255,255,.78)', 'important');
     const accentSpan = el.querySelector('.accent');
     if(accentSpan){
       accentSpan.style.setProperty('font-size', 'inherit', 'important');
