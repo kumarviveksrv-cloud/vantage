@@ -8,7 +8,7 @@
     const ref = document.querySelector('.case-intro h2 em') ||
                 document.querySelector('h2 em') ||
                 document.querySelector('.sim-case h2 em');
-    if(!ref) return FALLBACK;
+    if(!ref) return FALLBACK; 
     const cs  = window.getComputedStyle(ref);
     const bg  = cs.getPropertyValue('background-image');
     /* If em has a gradient, use it verbatim */
