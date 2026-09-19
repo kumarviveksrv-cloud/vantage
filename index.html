@@ -1237,7 +1237,20 @@
   will-change: auto !important;
 }
 
-/* Three.js canvas is the prologue visual — z-indexes ensure text sits above it */
+/* ── PROLOGUE PHOTO BACKGROUND ──────────────────────────────────────────────── */
+.prologue-photo {
+  position: absolute; inset: 0;
+  background: url('prologue-bg.png') center center / cover no-repeat;
+  z-index: 0; opacity: 0; transition: opacity 2s ease;
+}
+#prologue.active .prologue-photo { opacity: 1; }
+@media (max-width: 700px) and (orientation: portrait) {
+  .prologue-photo { background-image: url('prologue-bg-mobile.png'); }
+}
+/* Hide Three.js canvas — photo is the visual */
+#prologueCanvas { opacity: 0 !important; pointer-events: none; }
+
+
 /* Ensure text overlays sit above photo/rain (z:0-1). NO position override —
    prologue-css already sets absolute/fixed on these elements. */
 .prologue-top, .prologue-note,
@@ -2173,6 +2186,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 </div>
 
 <div id="prologue" aria-label="Vantage 21:00 prologue">
+  <div class="prologue-photo" aria-hidden="true"></div>
   <canvas id="prologueCanvas" aria-hidden="true"></canvas>
   <div class="prologue-grid"></div><div class="prologue-vignette"></div>
   <div class="prologue-top"><span>VANTAGE / 21:00</span><span class="prologue-time"><i></i><strong>PRIVATE HR DECISION / LIVE</strong></span></div>
