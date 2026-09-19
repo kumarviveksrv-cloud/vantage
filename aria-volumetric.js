@@ -271,6 +271,30 @@
       ? 'Touch and drag over her — she notices.'
       : 'Move your cursor over her — she notices.';
     reaction.classList.add('live');
+
+    /* On mobile the nudge wasn't appearing at all — its positioning
+       comes entirely from an external stylesheet not visible here,
+       and whatever it does for this element on narrow viewports
+       apparently doesn't render it. Force a guaranteed-visible
+       position directly: centered near the bottom of the room, well
+       within the visible box, with an explicit high z-index so
+       nothing else in the room can cover it. Desktop is untouched —
+       this only applies below the tablet breakpoint. */
+    if(isTouch && window.innerWidth <= 900){
+      reaction.style.setProperty('position','absolute','important');
+      reaction.style.setProperty('left','50%','important');
+      reaction.style.setProperty('bottom','16px','important');
+      reaction.style.setProperty('top','auto','important');
+      reaction.style.setProperty('right','auto','important');
+      reaction.style.setProperty('transform','translateX(-50%)','important');
+      reaction.style.setProperty('width','88%','important');
+      reaction.style.setProperty('max-width','320px','important');
+      reaction.style.setProperty('text-align','center','important');
+      reaction.style.setProperty('z-index','20','important');
+      reaction.style.setProperty('display','block','important');
+      reaction.style.setProperty('opacity','1','important');
+      reaction.style.setProperty('pointer-events','none','important');
+    }
   }
   function hideHint(){}
 
