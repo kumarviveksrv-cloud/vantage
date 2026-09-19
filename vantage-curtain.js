@@ -503,6 +503,10 @@
      guaranteed available by then), giving up to ~13 seconds of idle
      time before doTada() ever needs this shader for real. */
   (function scheduleParticlePrewarm(){
+    /* SR19: skip prewarm on mobile — it creates a full WebGLRenderer during
+       the prologue, which is the second GPU spike causing glitches on mobile.
+       The ta-da shader compiles live on first use instead (~2ms, imperceptible). */
+    if(window.innerWidth <= 900) return;
     const pro = document.getElementById('prologue');
     if(!pro){ setTimeout(prewarmParticleShader, 1000); return; }
     if(pro.classList.contains('active')){ prewarmParticleShader(); return; }
@@ -2850,7 +2854,7 @@
     if(accentSpan){
       /* SR19: was 'inherit' — inherit made accent same size as parent,
          negating the CSS bump. Now sets explicit larger size matching CSS. */
-      accentSpan.style.setProperty('font-size', 'clamp(20px, 2.4vw, 28px)', 'important');
+      accentSpan.style.setProperty('font-size', 'clamp(20px, 2.4vw, 28px)', 'important'); 
       accentSpan.style.setProperty('line-height', '1.2', 'important');
     }
   }
