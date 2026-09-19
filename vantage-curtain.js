@@ -1251,32 +1251,54 @@
        bottom edge of small phone screens. */
     const copy = pro.querySelector('.prologue-copy');
     if(copy){
-      const isNarrow = window.innerWidth <= 480;
-      const isShort  = window.innerHeight <= 700;
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const isNarrow = vw <= 480;
+      const isTiny   = vw <= 375;   /* iPhone SE and similar */
+      const isShort  = vh <= 700;
       copy.style.position = 'absolute';
       copy.style.top = 'auto';
-      copy.style.bottom = (isNarrow || isShort) ? '48px' : '90px';
+      copy.style.bottom = (isNarrow || isShort) ? '36px' : '90px';
       copy.style.left = '50%';
       copy.style.transform = 'translateX(-50%)';
-      copy.style.width = isNarrow ? '92%' : '82%';
+      copy.style.width = isNarrow ? '94%' : '82%';
       copy.style.maxWidth = '760px';
       copy.style.textAlign = 'center';
+      /* Absolute safety net: even with every size/spacing reduction
+         below, guarantee this block can NEVER be invisibly clipped by
+         a parent's overflow — it caps its own height to whatever
+         space is actually available (leaving room for the top signal
+         panel) and becomes internally scrollable if content still
+         doesn't fit, rather than silently cutting text off with no
+         way to read it. */
+      copy.style.maxHeight = 'calc(100vh - 150px)';
+      copy.style.overflowY = 'auto';
+      copy.style.setProperty('-webkit-overflow-scrolling', 'touch');
+      if(isTiny){
+        copy.style.bottom = '24px';
+        copy.style.maxHeight = 'calc(100vh - 120px)';
+      }
     }
 
     /* JS safety net for mobile font sizing — inline !important always
        wins over any external stylesheet regardless of its selector
        specificity, so this guarantees the CSS media query above isn't
-       silently overridden by vantage-prologue.css. */
-    if(window.innerWidth <= 480){
+       silently overridden by vantage-prologue.css. Sizes reduced
+       further this round — the previous pass still weren't small
+       enough to reliably fit on narrow/short phone screens. */
+    {
+      const vw = window.innerWidth;
       const kickerEl = pro.querySelector('.prologue-kicker');
       const msgEl    = pro.querySelector('.prologue-message');
       const subEl    = pro.querySelector('.prologue-sub');
-      if(kickerEl) kickerEl.style.setProperty('font-size','17px','important');
-      if(msgEl){
-        msgEl.style.setProperty('font-size','19px','important');
-        msgEl.style.setProperty('line-height','1.35','important');
+      if(vw <= 375){
+        if(kickerEl){ kickerEl.style.setProperty('font-size','14px','important'); kickerEl.style.setProperty('margin-bottom','8px','important'); }
+        if(msgEl){ msgEl.style.setProperty('font-size','15px','important'); msgEl.style.setProperty('line-height','1.28','important'); }
+        if(subEl){ subEl.style.setProperty('font-size','11px','important'); subEl.style.setProperty('margin-top','8px','important'); }
+      } else if(vw <= 480){
+        if(kickerEl){ kickerEl.style.setProperty('font-size','16px','important'); kickerEl.style.setProperty('margin-bottom','10px','important'); }
+        if(msgEl){ msgEl.style.setProperty('font-size','17px','important'); msgEl.style.setProperty('line-height','1.3','important'); }
+        if(subEl){ subEl.style.setProperty('font-size','12px','important'); subEl.style.setProperty('margin-top','10px','important'); }
       }
-      if(subEl) subEl.style.setProperty('font-size','13px','important');
     }
 
     /* Hide message + sub initially — message reveals word-by-word after
@@ -2371,6 +2393,54 @@
   if(!tagline || !kicker || !h1){
     console.log('[HeroSeq] Missing element(s), aborting:', {tagline:!!tagline, kicker:!!kicker, h1:!!h1});
     return;
+  }
+
+  /* Lock the height of the WHOLE hero-copy container to its natural,
+     full-content size RIGHT NOW — before anything below is hidden or
+     cleared for the typewriter/fade sequence. The static HTML still
+     has every line's final text in place at this exact moment, so
+     measuring here captures the true final height. Reserving it as a
+     min-height on the container means that as individual lines get
+     cleared to empty and typed back in, the CONTAINER never resizes,
+     so nothing below the hero section shifts position — this was the
+     cause of the "whole screen moving down while text types" issue,
+     on both mobile and desktop, since every line collapsing to near-
+     zero height and growing back was changing the hero's total height
+     dynamically throughout the sequence. */
+  const heroCopy = document.querySelector('.hero-copy');
+  function reserveHeroCopyHeight(){
+    if(!heroCopy) return;
+    const naturalHeight = heroCopy.getBoundingClientRect().height;
+    if(naturalHeight > 0){
+      /* Only grow the reservation, never shrink it — avoids a second,
+         smaller measurement (e.g. from a font metrics quirk) undoing
+         a correct larger one already in place. */
+      const current = parseFloat(heroCopy.style.minHeight) || 0;
+      if(naturalHeight > current){
+        heroCopy.style.setProperty('min-height', naturalHeight + 'px', 'important');
+      }
+    }
+  }
+  reserveHeroCopyHeight();
+  /* Web fonts (Cormorant Garamond, DM Sans) may not have finished
+     loading at the exact moment this script first runs — if the
+     initial measurement happened against a fallback font with
+     different metrics, re-measure once the real fonts are confirmed
+     ready and correct the reservation if it needs to be taller. */
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(reserveHeroCopyHeight);
+  }
+  /* heroEnter starts genuinely empty in the static HTML (its content
+     is built entirely by JS), so it contributes no height at all to
+     the measurement above — reserve its own space separately by
+     briefly inserting its final text, measuring, then clearing it
+     back to empty for the typewriter to fill in later. */
+  const heroEnterEl = document.getElementById('heroEnter');
+  if(heroEnterEl){
+    heroEnterEl.textContent = 'Enter VANTAGE.';
+    const h = heroEnterEl.getBoundingClientRect().height;
+    heroEnterEl.textContent = '';
+    if(h > 0) heroEnterEl.style.setProperty('min-height', h + 'px', 'important');
   }
 
   const lineDim     = h1.querySelector('.line.dim');
