@@ -388,10 +388,10 @@
   const isMobilePrologue = window.innerWidth <= 900;
   function animate(ms){if(!active)return;const t=ms*.001;const elapsed=ms-start;
     if(elapsed>13000)endPrologue();
-    /* SR19: pause Three.js renders during the countdown phase — the GPU
-       was competing between WebGL renders and the prologueCountTick CSS
-       animation, causing a dropped frame / glitch on each number change. */
-    if(pro.classList.contains('countdown')){requestAnimationFrame(animate);return;}
+    /* Skip all Three.js work on mobile (canvas is opacity:0, no visual output,
+       but scene updates + screenTexObj canvas draws were still causing GPU spikes).
+       Also skip during countdown — same reason, plus CSS animation conflict. */
+    if(isMobilePrologue||pro.classList.contains('countdown')){requestAnimationFrame(animate);return;}
     const dt=lastMs===null?.016:Math.min(.05,(ms-lastMs)*.001);
     lastMs=ms;
     camera.position.x+=(mx*.35-camera.position.x)*.015;camera.position.y+=(1.1-my*.18-camera.position.y)*.015;camera.lookAt(.2,.5,0);
