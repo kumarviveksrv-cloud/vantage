@@ -438,7 +438,7 @@
     }
     later(()=>{pro.classList.add('countdown');tick(3);},10000);
     later(()=>{tick(2);},11000);
-    later(()=>{tick(1);},12000);
+    later(()=>{tick(1);},12000); 
   }
   // A previous version of this tried to watch #boot for a .done class
   // before revealing, on the theory that a boot countdown screen sitting
