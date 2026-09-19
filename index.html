@@ -20,6 +20,12 @@
    no intentional horizontal scroll anywhere. */
 html, body { overflow-x: hidden; }
 
+/* Kill prologue scrollbar — prologue-sub at letter-spacing:.6em is ~1000px
+   wide inside a 520px container. Re-assert overflow:hidden with !important
+   on both the prologue root and the copy container. */
+#prologue { overflow: hidden !important; }
+.prologue-copy { overflow: hidden !important; }
+
 /* SR18 — visual enhancement batch */
 
 /* Item 5: ARIA identity text — make readable and prominent */
