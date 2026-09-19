@@ -137,21 +137,46 @@
       min-height: 100svh !important;
       max-height: 100svh !important;
       overflow: hidden !important;
-      contain: paint !important;
       overscroll-behavior: none !important;
+      /* contain:paint removed — it creates a separate paint boundary which,
+         combined with the photo + grid compositing layers, multiplies GPU
+         cost on mobile. overflow:hidden already prevents any scroll. */
     }
     #prologue .prologue-photo,
-    #prologue #prologueCanvas,
     #prologue .prologue-grid,
     #prologue .prologue-vignette,
     #prologue .prologue-fade {
       max-width: 100% !important;
       max-height: 100% !important;
     }
-    /* vantage-curtain.js sets copy.style.overflowY='auto' which forces
-       overflow-x:auto too (CSS spec). prologue-sub at letter-spacing:.6em
-       is ~1000px wide inside the container — horizontal scrollbar appears.
-       CSS !important beats JS inline without !important, so this wins. */
+    /* Pre-promote photo to GPU layer BEFORE the opacity transition starts.
+       Without this, the layer is promoted mid-transition → visible flash on
+       mobile. will-change tells the GPU to allocate the layer upfront. */
+    #prologue .prologue-photo {
+      will-change: opacity !important;
+      backface-visibility: hidden !important;
+      -webkit-backface-visibility: hidden !important;
+    }
+    /* Canvas hidden via display:none — not opacity:0.
+       vantage-prologue.css sets filter:blur(24px) on #prologueCanvas which
+       promotes it to a GPU compositing layer EVEN at opacity:0. The photo
+       background replaces Three.js so the canvas has zero visual role here.
+       display:none removes it from the render tree entirely → one less GPU layer. */
+    #prologue #prologueCanvas {
+      display: none !important;
+    }
+    /* prologue-grid uses mask-image which ALWAYS creates a GPU compositing
+       layer regardless of content. On mobile the grid is barely visible
+       (opacity:.45, line color rgba 2-3%) but costs a full GPU layer.
+       Hide it on mobile → one less competing layer. Desktop keeps it. */
+    @media (max-width: 900px) {
+      #prologue .prologue-grid {
+        display: none !important;
+      }
+    }
+    /* curtain.js sets copy.style.overflowY='auto' which forces
+       overflow-x:auto too. prologue-sub at letter-spacing:.6em is ~1000px
+       wide → horizontal scrollbar. CSS !important beats JS inline. */
     #prologue .prologue-copy {
       overflow: hidden !important;
     }
