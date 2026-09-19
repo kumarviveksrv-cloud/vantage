@@ -2851,6 +2851,7 @@
       /* SR19: was 'inherit' — inherit made accent same size as parent,
          negating the CSS bump. Now sets explicit larger size matching CSS. */
       accentSpan.style.setProperty('font-size', 'clamp(20px, 2.4vw, 28px)', 'important');
+      accentSpan.style.setProperty('line-height', '1.2', 'important');
     }
   }
   if(document.readyState === 'loading'){
