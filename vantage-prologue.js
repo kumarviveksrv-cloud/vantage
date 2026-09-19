@@ -426,8 +426,12 @@
       if(!countNum)return;
       countNum.textContent=n;
       countNum.classList.remove('tick');
-      void countNum.offsetWidth;
-      countNum.classList.add('tick');
+      /* void offsetWidth forced a synchronous reflow on every count change,
+         causing a visible flash when Three.js was mid-render (SR19 fix).
+         Double rAF is the standard reflow-free way to restart a CSS animation:
+         frame 1 lets the browser register the class removal, frame 2 re-adds.
+         ~16-33ms delay is imperceptible at 1s countdown intervals. */
+      requestAnimationFrame(()=>requestAnimationFrame(()=>countNum.classList.add('tick')));
     }
     later(()=>{pro.classList.add('countdown');tick(3);},10000);
     later(()=>{tick(2);},11000);
