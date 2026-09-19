@@ -269,7 +269,11 @@
        canvas (opacity:0 → still transitioning), which is the "flash" glitch.
        Double rAF guarantees the animate loop has run and painted frame 1. */
     requestAnimationFrame(animate);
-    pro.classList.add('active');skip?.classList.add('show');
+    pro.classList.add('active');
+    /* Delay skip button — its box-shadow (0 8px 30px purple) reads as a
+       white/grey line against the black bg before the photo fades in (2s).
+       At 2s the photo is fully visible so the glow looks natural. */
+    later(()=>{skip?.classList.add('show');},2000);
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       pro.classList.add('phase-pressure');
     }));
