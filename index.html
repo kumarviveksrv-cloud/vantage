@@ -1356,6 +1356,13 @@
   0%,100% { opacity: .7; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.03); }
 }
+/* On mobile the screenglow transform creates a GPU compositing layer
+   that runs continuously alongside Three.js — the source of the persistent
+   prologue flicker. The glow is barely visible on the mobile portrait photo
+   anyway. Remove both animation and element entirely on mobile. */
+@media (max-width: 900px) {
+  .prologue-screenglow { display: none !important; }
+}
 
 /* Ensure text overlays sit above photo/rain (z:0-1). NO position override —
    prologue-css already sets absolute/fixed on these elements. */
