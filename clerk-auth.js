@@ -138,6 +138,9 @@
     localStorage.setItem('vantage_clerk_signed_in', '1');
     localStorage.setItem('sr_user_email',            email);
     localStorage.setItem('sr_user_name',             name);
+    /* Permanent prologue bypass — set once, never cleared by sign-out.
+       Returning paying users skip the prologue forever on this device. */
+    localStorage.setItem('vantage_paid_user', '1');
 
     // Restore MERIDIAN
     if (email) {
