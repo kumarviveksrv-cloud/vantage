@@ -1244,17 +1244,39 @@
     if(!pro.classList.contains('active') || fired) return;
     fired = true; obs.disconnect();
 
-    /* Force prologue-copy to bottom via inline style — overrides prologue.css */
+    /* Force prologue-copy to bottom via inline style — overrides prologue.css.
+       Responsive: narrower viewports get a wider text column and a
+       smaller bottom offset, since the large Cormorant Garamond serif
+       text plus a fixed 90px offset was pushing content off the
+       bottom edge of small phone screens. */
     const copy = pro.querySelector('.prologue-copy');
     if(copy){
+      const isNarrow = window.innerWidth <= 480;
+      const isShort  = window.innerHeight <= 700;
       copy.style.position = 'absolute';
       copy.style.top = 'auto';
-      copy.style.bottom = '90px';
+      copy.style.bottom = (isNarrow || isShort) ? '48px' : '90px';
       copy.style.left = '50%';
       copy.style.transform = 'translateX(-50%)';
-      copy.style.width = '82%';
+      copy.style.width = isNarrow ? '92%' : '82%';
       copy.style.maxWidth = '760px';
       copy.style.textAlign = 'center';
+    }
+
+    /* JS safety net for mobile font sizing — inline !important always
+       wins over any external stylesheet regardless of its selector
+       specificity, so this guarantees the CSS media query above isn't
+       silently overridden by vantage-prologue.css. */
+    if(window.innerWidth <= 480){
+      const kickerEl = pro.querySelector('.prologue-kicker');
+      const msgEl    = pro.querySelector('.prologue-message');
+      const subEl    = pro.querySelector('.prologue-sub');
+      if(kickerEl) kickerEl.style.setProperty('font-size','17px','important');
+      if(msgEl){
+        msgEl.style.setProperty('font-size','19px','important');
+        msgEl.style.setProperty('line-height','1.35','important');
+      }
+      if(subEl) subEl.style.setProperty('font-size','13px','important');
     }
 
     /* Hide message + sub initially — message reveals word-by-word after
@@ -1385,6 +1407,53 @@
       bubbles: true, cancelable: true
     });
     document.dispatchEvent(relay);
+  }, {passive: true});
+
+  /* ── Touch equivalent ── mouseenter/mousemove never fire for touch
+     interactions on mobile, which is why the face never formed there
+     at all. aria-volumetric.js listens for pointerenter/pointerleave
+     specifically on .aria-figure (a smaller element nested inside
+     .aria-room) — those two events do NOT bubble, so they must be
+     dispatched on .aria-figure directly, not the outer room wrapper.
+     pointermove is listened for globally on window and DOES bubble,
+     so dispatching that from anywhere within the room reaches it fine.
+     touch-action:none stops the page from treating the drag as a
+     scroll gesture while the finger is inside the room. */
+  const ariaFigure = ariaRoom.querySelector('.aria-figure');
+  ariaRoom.style.touchAction = 'none';
+
+  function seedFaceAt(clientX, clientY, isFirstTouch){
+    if(isFirstTouch && ariaFigure){
+      const enterEv = new PointerEvent('pointerenter', {
+        clientX, clientY, bubbles: false, cancelable: true, pointerType: 'touch'
+      });
+      ariaFigure.dispatchEvent(enterEv);
+    }
+    const moveEv = new PointerEvent('pointermove', {
+      clientX, clientY, bubbles: true, cancelable: true, pointerType: 'touch'
+    });
+    ariaRoom.dispatchEvent(moveEv);
+  }
+
+  ariaRoom.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    if(t) seedFaceAt(t.clientX, t.clientY, true);
+  }, {passive: true});
+
+  let lastTouch = 0;
+  ariaRoom.addEventListener('touchmove', e => {
+    const now = performance.now();
+    if(now - lastTouch < 33) return;
+    lastTouch = now;
+    const t = e.touches[0];
+    if(t) seedFaceAt(t.clientX, t.clientY, false);
+  }, {passive: true});
+
+  ariaRoom.addEventListener('touchend', () => {
+    if(ariaFigure){
+      const leaveEv = new PointerEvent('pointerleave', {bubbles:false, cancelable:true, pointerType:'touch'});
+      ariaFigure.dispatchEvent(leaveEv);
+    }
   }, {passive: true});
 })();
 
@@ -2257,14 +2326,25 @@
 
   btn.addEventListener('click', toggleFs);
 
+  /* Persistent floating exit control — shows anywhere on the page
+     while in fullscreen, since scrolling away from the corridor (or
+     the browser's own fullscreen exit gesture being unreliable on
+     mobile) otherwise leaves no way back to normal view. */
+  const floatingBtn = document.getElementById('corFsFloating');
+  if(floatingBtn){
+    floatingBtn.addEventListener('click', toggleFs);
+  }
+
   /* Update button text + hide hint when fullscreen is active */
   function onFsChange(){
     if(isFs()){
       btn.querySelector('.cor-fs-label').textContent = 'Exit fullscreen';
       if(hint) hint.classList.add('fs-active');
+      if(floatingBtn) floatingBtn.classList.add('show');
     } else {
       btn.querySelector('.cor-fs-label').textContent = 'Go fullscreen';
       if(hint) hint.classList.remove('fs-active');
+      if(floatingBtn) floatingBtn.classList.remove('show');
     }
   }
   document.addEventListener('fullscreenchange', onFsChange);
