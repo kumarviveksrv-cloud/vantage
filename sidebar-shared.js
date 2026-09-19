@@ -1275,3 +1275,43 @@
   // ── END HUMAC SCORE LINK ───────────────────────────────────────────────────
 
 })();
+
+/* ── VANTAGE INTRO MODALS ──────────────────────────────────────────────────
+   Auto-detects the current page and shows the right first-visit intro modal.
+   Modal JS loads dynamically — no extra <script> tag needed on any page. */
+(function(){
+  var PAGE_MODALS = {
+    'aria.html':                   'aria',
+    'debrief.html':                'debrief',
+    'ledger.html':                 'ledger',
+    'humac-onboarding.html':       'humac',
+    'er-case-navigator.html':      'case-navigator',
+    'policy-compass.html':         'policy-compass',
+    'hr-data-storyteller.html':    'hr-storyteller',
+    'offer-intelligence.html':     'offer-intelligence',
+    'stakeholder-influence.html':  'stakeholder-influence',
+    'conversation-simulator.html': 'conversation-simulator',
+    'case-library.html':           'case-library'
+  };
+
+  var path = window.location.pathname.split('/').pop();
+  var key  = PAGE_MODALS[path];
+  if(!key) return;
+
+  function launchModal(){
+    if(typeof window.VantageIntro !== 'undefined'){
+      setTimeout(function(){ window.VantageIntro.show(key); }, 800);
+      return;
+    }
+    var s = document.createElement('script');
+    s.src = '/vantage-intro-modal.js';
+    s.onload = function(){ setTimeout(function(){ window.VantageIntro.show(key); }, 800); };
+    document.head.appendChild(s);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', launchModal);
+  } else {
+    launchModal();
+  }
+})();
