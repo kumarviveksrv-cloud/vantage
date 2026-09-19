@@ -274,14 +274,20 @@
   white-space: normal !important;
   overflow-wrap: break-word !important;
   word-break: normal !important;
-  text-align: center !important;
+  text-align: inherit !important;  /* inherits right on desktop, center on mobile */
   max-width: 100% !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
-/* .prologue-note is position:absolute right:32px — it must NOT get
-   text-align:center or width:100%, which together shift it to the
-   screen centre. Wrap-safety only. */
+@media (max-width: 700px) {
+  .prologue-kicker,
+  .prologue-message,
+  .prologue-sub {
+    text-align: center !important;
+  }
+}
+/* .prologue-note is position:absolute right:32px — must NOT get
+   text-align:center or width:100% (shifts it to center of screen). */
 .prologue-note {
   white-space: normal !important;
   overflow-wrap: break-word !important;
@@ -347,7 +353,7 @@
   opacity: 1 !important;
 }
 .record-sub {
-  font-size: clamp(15px,1.55vw,20px) !important;
+  font-size: clamp(16px,1.65vw,21px) !important; /* SR19: +1pt from clamp(15,1.55vw,20) */
   line-height: 1.8 !important;
   color: rgba(255,255,255,.78) !important;
   opacity: 1 !important;
@@ -1169,17 +1175,35 @@
 
 /* Prologue kicker typewriter handled by JS in curtain.js */
 
-/* Prologue copy pushed to bottom — clear of the man and the scene.
-   transform: translateX(-50%) must stay — it pairs with left:50% from
-   vantage-prologue.css to center the block. transform:none was killing
-   this centering entirely, making the block start at 50% left with no
-   offset and clipping everything to the right on mobile. */
+/* Prologue copy — SR19: desktop moved to right side (dark city skyline area)
+   so text is readable against the background, not competing with the glowing
+   laptop screen at center. Mobile stays centered (left:50%+translateX fix). */
 .prologue-copy {
   top: auto !important;
   bottom: 108px !important;
-  transform: translateX(-50%) !important;
+  left: auto !important;
+  right: 48px !important;
+  transform: none !important;
+  width: min(520px, 40vw) !important;
+  text-align: right !important;
   padding-top: 0 !important;
   margin-top: 0 !important;
+}
+@media (max-width: 700px) {
+  .prologue-copy {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 32px) !important;
+    text-align: center !important;
+    bottom: 108px !important;
+  }
+}
+/* During countdown, .prologue-copy is opacity:0 — remove transform to
+   eliminate GPU composite layer that was amplifying the tick glitch on mobile */
+#prologue.countdown .prologue-copy {
+  transform: none !important;
+  will-change: auto !important;
 }
 
 /* ═══ PROLOGUE PHOTO BACKGROUND (SR18) ═══ */
