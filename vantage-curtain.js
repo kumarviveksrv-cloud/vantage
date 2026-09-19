@@ -2395,65 +2395,91 @@
     return;
   }
 
-  /* Lock the height of the WHOLE hero-copy container to its natural,
-     full-content size RIGHT NOW — before anything below is hidden or
-     cleared for the typewriter/fade sequence. The static HTML still
-     has every line's final text in place at this exact moment, so
-     measuring here captures the true final height. Reserving it as a
-     min-height on the container means that as individual lines get
-     cleared to empty and typed back in, the CONTAINER never resizes,
-     so nothing below the hero section shifts position — this was the
-     cause of the "whole screen moving down while text types" issue,
-     on both mobile and desktop, since every line collapsing to near-
-     zero height and growing back was changing the hero's total height
-     dynamically throughout the sequence. */
-  const heroCopy = document.querySelector('.hero-copy');
-  function reserveHeroCopyHeight(){
-    if(!heroCopy) return;
-    const naturalHeight = heroCopy.getBoundingClientRect().height;
-    if(naturalHeight > 0){
-      /* Only grow the reservation, never shrink it — avoids a second,
-         smaller measurement (e.g. from a font metrics quirk) undoing
-         a correct larger one already in place. */
-      const current = parseFloat(heroCopy.style.minHeight) || 0;
-      if(naturalHeight > current){
-        heroCopy.style.setProperty('min-height', naturalHeight + 'px', 'important');
-      }
+  const lineDim     = h1.querySelector('.line.dim');
+  const lineAccents = [...h1.querySelectorAll('.line.accent')];
+  const heroContext = h1.querySelector('.hero-context');
+  const heroDeck    = document.querySelector('.hero-deck');
+  const heroEnterEl = document.getElementById('heroEnter');
+  if(!lineDim || !lineAccents.length){
+    console.log('[HeroSeq] Missing h1 lines, aborting');
+    return;
+  }
+
+  /* ═══ LAYOUT-SHIFT FIX (attempt 2) ═══════════════════════════════════════
+     Locking only the OUTER .hero-copy container's height did not hold —
+     the shift was still visible. Reserving height on the CONTAINER
+     alone isn't enough if the browser is still free to redistribute
+     space AMONG the children as each one collapses and regrows — a
+     parent's min-height doesn't stop its children from individually
+     shrinking to near-zero and growing back, which is what actually
+     produces the visible "text sliding down" motion.
+
+     Fix this time: lock an EXACT height (not min-height) on EVERY
+     individual animated line — tagline, kicker, h1's dim line, both
+     accent lines, heroContext, heroDeck, and heroEnter — all measured
+     from their real final content BEFORE any of them are hidden.
+     Each element is then physically the same size for the entire
+     sequence, whether its text is empty, half-typed, or complete, so
+     nothing above or below any of them can move as it fills in. */
+  const reservedEls = [tagline, kicker, lineDim, ...lineAccents];
+  if(heroContext) reservedEls.push(heroContext);
+  if(heroDeck)    reservedEls.push(heroDeck);
+
+  function lockExactHeight(el){
+    if(!el) return;
+    const h = el.getBoundingClientRect().height;
+    if(h > 0){
+      el.style.setProperty('height', h + 'px', 'important');
+      el.style.setProperty('overflow', 'visible', 'important');
     }
   }
-  reserveHeroCopyHeight();
-  /* Web fonts (Cormorant Garamond, DM Sans) may not have finished
-     loading at the exact moment this script first runs — if the
-     initial measurement happened against a fallback font with
-     different metrics, re-measure once the real fonts are confirmed
-     ready and correct the reservation if it needs to be taller. */
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(reserveHeroCopyHeight);
+  reservedEls.forEach(lockExactHeight);
+  /* Belt-and-suspenders: ALSO lock the outer .hero-copy container to
+     an exact height (not min-height this time), measured now while
+     every child still has its full static text — combining this with
+     the per-element locks above closes off any remaining path for
+     the block's overall footprint to change during the sequence. */
+  const heroCopy = document.querySelector('.hero-copy');
+  if(heroCopy){
+    const containerHeight = heroCopy.getBoundingClientRect().height;
+    if(containerHeight > 0){
+      heroCopy.style.setProperty('height', containerHeight + 'px', 'important');
+      heroCopy.style.setProperty('overflow', 'visible', 'important');
+    }
   }
-  /* heroEnter starts genuinely empty in the static HTML (its content
-     is built entirely by JS), so it contributes no height at all to
-     the measurement above — reserve its own space separately by
-     briefly inserting its final text, measuring, then clearing it
-     back to empty for the typewriter to fill in later. */
-  const heroEnterEl = document.getElementById('heroEnter');
+  /* heroEnter starts genuinely empty (its content is built entirely by
+     JS) — briefly insert its final text to measure, then clear it
+     back to empty for the typewriter to fill in. */
   if(heroEnterEl){
     heroEnterEl.textContent = 'Enter VANTAGE.';
     const h = heroEnterEl.getBoundingClientRect().height;
     heroEnterEl.textContent = '';
-    if(h > 0) heroEnterEl.style.setProperty('min-height', h + 'px', 'important');
+    if(h > 0){
+      heroEnterEl.style.setProperty('height', h + 'px', 'important');
+      heroEnterEl.style.setProperty('overflow', 'visible', 'important');
+    }
   }
-
-  const lineDim     = h1.querySelector('.line.dim');
-  const lineAccents = [...h1.querySelectorAll('.line.accent')];
-  /* Optional — the "manager wants closure..." line was removed and later
-     restored; select it separately since it shares .dim with lineDim but
-     needs its own reveal beat, not the typewriter treatment. Not part of
-     the required-elements check since it's fine if absent. */
-  const heroContext = h1.querySelector('.hero-context');
-  const heroDeck = document.querySelector('.hero-deck');
-  if(!lineDim || !lineAccents.length){
-    console.log('[HeroSeq] Missing h1 lines, aborting');
-    return;
+  /* Re-measure once web fonts are confirmed loaded, in case the first
+     pass happened against fallback-font metrics that were smaller
+     than the real font's — only grows a reservation, never shrinks
+     one already correctly set. */
+  function relockIfTaller(el, cachedText){
+    if(!el) return;
+    const priorHeight = parseFloat(el.style.height) || 0;
+    const priorText = el.textContent;
+    if(cachedText !== undefined) el.textContent = cachedText;
+    const h = el.getBoundingClientRect().height;
+    if(cachedText !== undefined) el.textContent = priorText;
+    if(h > priorHeight){
+      el.style.setProperty('height', h + 'px', 'important');
+    }
+  }
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(()=>{
+      reservedEls.forEach(el=>relockIfTaller(el));
+      if(heroEnterEl) relockIfTaller(heroEnterEl, 'Enter VANTAGE.');
+      if(heroCopy) relockIfTaller(heroCopy);
+    });
   }
 
   const delay = ms => new Promise(r => setTimeout(r, ms));
@@ -2774,4 +2800,30 @@
     console.log('[HeroSeq] Accent lines text still intact:', lineAccents.map(el=>el.textContent));
     setTimeout(run, 600);
   });
+})();
+
+(function enforceRecordSubSize(){
+  'use strict';
+  /* Three CSS-only attempts at this haven't held — something in an
+     external stylesheet not visible here is apparently still winning.
+     Bypassing the question entirely: inline !important always beats
+     ANY stylesheet rule regardless of selector specificity or load
+     order, so this is enforced directly on the element and its child
+     span, guaranteed. */
+  function apply(){
+    const el = document.querySelector('.record-sub');
+    if(!el) return;
+    el.style.setProperty('font-size', 'clamp(17px, 1.8vw, 23px)', 'important');
+    el.style.setProperty('line-height', '1.6', 'important');
+    el.style.setProperty('color', 'rgba(255,255,255,.85)', 'important');
+    const accentSpan = el.querySelector('.accent');
+    if(accentSpan){
+      accentSpan.style.setProperty('font-size', 'inherit', 'important');
+    }
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', apply);
+  } else {
+    apply();
+  }
 })();
