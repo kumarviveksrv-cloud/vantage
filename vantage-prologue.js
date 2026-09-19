@@ -109,6 +109,8 @@
       fade.style.setProperty('transition', 'opacity 2.4s ease', 'important');
       fade.classList.add('on');
     }
+    /* Fade skip button at the same moment the screen goes to black */
+    if (skip) skip.style.setProperty('opacity', '0', 'important');
 
     sessionStorage.setItem('vantage_prologue_seen', '1');
     sessionStorage.setItem('vantage_tada', '1');
