@@ -1164,6 +1164,18 @@
 }
 #prologue.active .prologue-photo { opacity: 1; }
 
+/* Portrait mobile gets a purpose-shot vertical composition instead of
+   the landscape photo forced through cover-crop, which was cutting
+   off the left/right sides of the scene entirely and leaving no clean
+   space for the text overlay. This version is composed for 9:16 with
+   the desk/window scene in the upper two-thirds and a deliberately
+   empty dark floor area at the bottom for text to sit on. */
+@media (max-width: 700px) and (orientation: portrait) {
+  .prologue-photo {
+    background-image: url('prologue-bg-mobile.png');
+  }
+}
+
 /* Hide Three.js canvas — image replaces it */
 #prologueCanvas { opacity: 0 !important; pointer-events: none; }
 
