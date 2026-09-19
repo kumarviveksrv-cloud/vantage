@@ -264,7 +264,12 @@
   function showHint(){
     if(!reaction)return;
     reactionBadge.textContent='ARIA';
-    reactionText.textContent='Move your cursor over her — she notices.';
+    /* "Move your cursor" means nothing on a touch device — detect and
+       show the right affordance for whichever input this actually is. */
+    const isTouch = matchMedia('(hover: none), (pointer: coarse)').matches;
+    reactionText.textContent = isTouch
+      ? 'Touch and drag over her — she notices.'
+      : 'Move your cursor over her — she notices.';
     reaction.classList.add('live');
   }
   function hideHint(){}
