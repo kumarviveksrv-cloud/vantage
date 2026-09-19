@@ -1217,19 +1217,17 @@
 }
 @media (max-width: 700px) {
   .prologue-copy {
-    /* Margin-auto centering instead of transform: translateX(-50%) —
-       identical visual result but creates NO GPU compositing layer.
-       The transform was introduced as a mobile fix but is what caused
-       the countdown glitch: extra GPU layer on an already GPU-heavy
-       mobile prologue pushed the compositor over its limit. */
-    left: 0 !important;
-    right: 0 !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    /* Transform-free centering: left:3% + width:94% = 3% margin each side.
+       No transform, no GPU compositing layer. Same visual result as the
+       original transform:none working state. */
+    left: 3% !important;
+    right: auto !important;
     transform: none !important;
-    width: calc(100% - 32px) !important;
+    width: 94% !important;
     text-align: center !important;
     bottom: 108px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 }
 /* During countdown, .prologue-copy is opacity:0 — remove transform to
