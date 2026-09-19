@@ -2197,6 +2197,24 @@
     return;
   }
 
+  /* ── INSTANT REVEAL — animation already played this session ─────────────
+     All hero text elements are naturally visible (we never call hide()).
+     Only heroEnterEl needs special handling — initHeroEnter() creates
+     its child spans empty, so we populate them to their final state. */
+  if(sessionStorage.getItem('vantage_hero_animated')){
+    if(heroEnterEl){
+      var heT=heroEnterEl.querySelector('#heText');
+      var heV=heroEnterEl.querySelector('#heVantage');
+      var heD=heroEnterEl.querySelector('#heDot');
+      var heC=heroEnterEl.querySelector('.he-cursor');
+      if(heT)heT.textContent='Enter ';
+      if(heV)heV.textContent='VANTAGE';
+      if(heD){heD.textContent='.';heD.classList.add('he-blink');}
+      if(heC){heC.style.opacity='0';heC.style.animation='none';}
+    }
+    return;
+  }
+
   /* ═══ LAYOUT-SHIFT FIX (attempt 2) ═══════════════════════════════════════
      Locking only the OUTER .hero-copy container's height did not hold —
      the shift was still visible. Reserving height on the CONTAINER
@@ -2578,6 +2596,7 @@
     }
 
     console.log('[HeroSeq] run() complete');
+    sessionStorage.setItem('vantage_hero_animated','1');
   }
 
   function waitForLandingReveal(){
