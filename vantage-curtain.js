@@ -704,124 +704,69 @@
   const total=document.getElementById('dosTotal');
   let fired=false;
 
-  async function run(){
+  /* Terminal Intelligence CSS — injected once */
+  if(!document.getElementById('dos-anim-css')){
+    const s=document.createElement('style');s.id='dos-anim-css';
+    s.textContent=`
+      .dos-entry{opacity:0;transform:translateY(8px);transition:opacity .45s ease,transform .45s ease}
+      .dos-entry.dos-visible{opacity:1;transform:none}
+      .dos-live-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#34d399;margin-left:6px;animation:dosLivePulse 2.2s ease-in-out infinite;vertical-align:middle}
+      @keyframes dosLivePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
+      .dos-scanline{pointer-events:none;position:absolute;left:0;right:0;height:1px;background:rgba(196,181,253,.08);top:-1px;animation:dosScan 10s 3s ease-in-out infinite}
+      @keyframes dosScan{0%,100%{top:-1px;opacity:0}5%{opacity:.6}50%{top:100%;opacity:.12}55%{opacity:0}}
+    `;
+    document.head.appendChild(s);
+  }
+
+  function run(){
     if(fired)return;fired=true;
     const D=window._vDash;if(!D)return;
 
-    /* Phase 1: scan line sweeps across the whole dossier card */
-    await D.scan(dossier,720,'rgba(196,181,253,.75)');
+    /* Progress bar — once */
+    setTimeout(()=>{D.bar(progress,73,1800);D.num(percent,73,2000,'','%');},120);
 
-    /* Phase 2: progress bar fills immediately after scan */
-    setTimeout(()=>{
-      D.bar(progress,73,2000);
-      D.num(percent,73,2200,'','%');
-    },80);
-
-    /* Phase 3: entries flash in sequentially with scramble typewriter */
+    /* Entries cascade in — CSS transition, one-time scramble */
     entries.forEach((entry,i)=>{
       setTimeout(()=>{
-        /* Border flash */
-        entry.classList.add('dos-flash','dos-visible');
-
-        /* Scramble the timestamp */
+        entry.classList.add('dos-visible');
         const ts=entry.querySelector('.dos-ts');
-        if(ts){const orig=ts.textContent.trim();ts.textContent='';D.str(ts,orig,520);}
-
-        /* Scramble the title */
+        if(ts){const orig=ts.textContent.trim();ts.textContent='';D.str(ts,orig,380);}
         const title=entry.querySelector('.dos-title');
-        if(title){const orig=title.textContent.trim();title.textContent='';D.str(title,orig,800);}
-
-        /* Badge pops in after title settles */
+        if(title){const orig=title.textContent.trim();title.textContent='';D.str(title,orig,600);}
         const badges=entry.querySelectorAll('.dos-badge');
         badges.forEach((b,bi)=>{
           setTimeout(()=>{
-            b.style.opacity='0';b.style.transform='scale(.4) translateY(4px)';
-            b.style.transition='none';
-            setTimeout(()=>{
-              b.style.transition='';b.classList.add('badge-pop');b.style.opacity='1';
-            },60+bi*80);
-          },750);
+            b.style.opacity='0';b.style.transform='scale(.4) translateY(4px)';b.style.transition='none';
+            setTimeout(()=>{b.style.transition='';b.classList.add('badge-pop');b.style.opacity='1';},60+bi*60);
+          },600);
         });
-      },420+i*580);
+      },300+i*480);
     });
 
-    /* Phase 4: career capital scramble counter fires after last entry */
-    const lastAt=420+entries.length*580+260;
-    setTimeout(()=>{
-      if(total)D.num(total,18.4,2000,'₹','L',1);
-      /* Start the perpetual "living record" ambience once the initial
-         boot-up settles — a dashboard that stops moving forever after
-         one reveal reads as a screenshot, not a live system. */
-      setTimeout(startDossierAmbient,2200);
-    },lastAt);
-  }
+    /* Career capital — once */
+    setTimeout(()=>{if(total)D.num(total,18.4,1800,'\u20b9','L',1);},300+entries.length*480+200);
 
-  /* ── Perpetual ambience — runs forever once the reveal completes ──────── */
-  function startDossierAmbient(){
-    const D=window._vDash;if(!D)return;
-
-    /* Add a small pulsing LIVE dot next to the dossier's status line,
-       if a suitable header exists to anchor it to. */
+    /* Live dot */
     const header=dossier.querySelector('.record-dossier-wrap')||dossier;
-    if(header && !header.querySelector('.dos-live-dot')){
-      const dot=document.createElement('span');
-      dot.className='dos-live-dot';
-      dot.style.cssText='display:inline-block;width:6px;height:6px;border-radius:50%;'+
-        'background:#34d399;box-shadow:0 0 8px rgba(52,211,153,.8);margin-left:8px;'+
-        'animation:dosLivePulse 2.2s ease-in-out infinite;vertical-align:middle;';
-      const styleTag=document.getElementById('dosLiveDotStyle')||(()=>{
-        const s=document.createElement('style');s.id='dosLiveDotStyle';
-        s.textContent='@keyframes dosLivePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}';
-        document.head.appendChild(s);return s;
-      })();
+    if(header&&!header.querySelector('.dos-live-dot')){
+      const dot=document.createElement('span');dot.className='dos-live-dot';
+      if(!document.getElementById('dosLiveDotStyle')){
+        const ss=document.createElement('style');ss.id='dosLiveDotStyle';document.head.appendChild(ss);
+      }
       const anchor=dossier.querySelector('.dos-progress-label')||dossier.querySelector('h3')||dossier.firstElementChild;
-      if(anchor) anchor.appendChild(dot);
+      if(anchor)anchor.appendChild(dot);
     }
 
-    /* Loop A: every ~6.5s, sweep the scan line across the whole card
-       again — a "live re-verification" pulse. */
-    (function scanLoop(){
-      setTimeout(()=>{
-        D.scan(dossier,900,'rgba(196,181,253,.35)');
-        scanLoop();
-      }, 6000+Math.random()*1500);
-    })();
-
-    /* Loop B: every ~5s, flash a random entry's border briefly — as if
-       that record is being "re-verified" against the live system. */
-    (function entryPulseLoop(){
-      setTimeout(()=>{
-        if(entries.length){
-          const e=entries[Math.floor(Math.random()*entries.length)];
-          e.classList.remove('dos-flash'); void e.offsetWidth;
-          e.classList.add('dos-flash');
-        }
-        entryPulseLoop();
-      }, 4500+Math.random()*2500);
-    })();
-
-    /* Loop C: every ~9s, the career-capital total gets a brief
-       "recalculating" micro-blip — scrambles for a moment then
-       resettles on the exact same number, suggesting the ledger is
-       continuously being re-verified against fresh data. */
-    (function totalBlipLoop(){
-      setTimeout(()=>{
-        if(total){
-          const D2=window._vDash;
-          if(D2) D2.str(total,'₹18.4L',380);
-        }
-        totalBlipLoop();
-      }, 8000+Math.random()*3000);
-    })();
+    /* CSS-only scanline — no JS loop */
+    dossier.style.position='relative';dossier.style.overflow='hidden';
+    const scan=document.createElement('div');scan.className='dos-scanline';dossier.appendChild(scan);
   }
 
   const section=document.querySelector('.record.cinematic-panel');
   if(!section)return;
-  /* 3s delay before starting — a curtain-raiser question overlay covers
-     the section briefly on first scroll-into-view, so starting the
-     reveal immediately would run it invisibly underneath that overlay. */
   new IntersectionObserver(es=>{if(es[0].isIntersecting)setTimeout(run,3000);},{threshold:0.2}).observe(section);
 })();
+
 
 /* ── Humac Score Synthesis — SPECTACULAR (SR18.2) ──────────────────────── */
 (function initHumacSynthesis(){
@@ -835,162 +780,60 @@
   const statusEl=document.getElementById('humacStatus');
   let fired=false;
 
-  const STATUS=[
-    'CALIBRATING L1: VALUE LEDGER...','CALIBRATING L2: TALENT PREMIUM...',
-    'CALIBRATING L3: ORG VITALS...','CALIBRATING L4: HUMAN P&L...',
-    'CALIBRATING L5: NET HUMAN WORTH...'
-  ];
+  /* Terminal Intelligence CSS — injected once */
+  if(!document.getElementById('humac-anim-css')){
+    const s=document.createElement('style');s.id='humac-anim-css';
+    s.textContent=`
+      .hs-force{opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease}
+      .hs-force.hf-visible{opacity:1;transform:none}
+      #humacScorePanel{opacity:0;transform:translateY(8px);transition:opacity .55s .1s ease,transform .55s .1s ease}
+      #humacScorePanel.hsp-visible{opacity:1;transform:none}
+      #humacNum{animation:humacBreathe 3.8s 2.5s ease-in-out infinite}
+      @keyframes humacBreathe{0%,100%{opacity:1}50%{opacity:.76}}
+      .humac-scanline{pointer-events:none;position:absolute;left:0;right:0;height:1px;background:rgba(196,181,253,.08);top:-1px;animation:humacScan 9s 2s ease-in-out infinite}
+      @keyframes humacScan{0%,100%{top:-1px;opacity:0}5%{opacity:.65}50%{top:100%;opacity:.12}55%{opacity:0}}
+    `;
+    document.head.appendChild(s);
+  }
 
-  async function run(){
+  const STATUS=['CALIBRATING L1: VALUE LEDGER...','CALIBRATING L2: TALENT PREMIUM...','CALIBRATING L3: ORG VITALS...','CALIBRATING L4: HUMAN P&L...','CALIBRATING L5: NET HUMAN WORTH...'];
+
+  function run(){
     if(fired)return;fired=true;
     const D=window._vDash;if(!D)return;
 
-    /* Phase 1: scan sweeps the full synthesis panel */
-    await D.scan(panel,800,'rgba(196,181,253,.7)');
-
-    /* Phase 2: force cards boot up one by one */
-    const GAP=480;
+    const GAP=460;
     forces.forEach((fc,i)=>{
       setTimeout(()=>{
-        /* Flash + class */
-        fc.classList.add('card-boot-flash','hf-visible');
-
-        /* Status text scrambles */
-        if(statusEl)D.str(statusEl,STATUS[i],400);
-
-        /* Bar fills with glow */
+        fc.classList.add('hf-visible');
+        if(statusEl)D.str(statusEl,STATUS[i]||STATUS[STATUS.length-1],320);
         const bar=fc.querySelector('.hsf-fill');
-        if(bar){
-          const target=parseFloat(bar.dataset.w)||60;
-          bar.style.width='0%';
-          setTimeout(()=>D.bar(bar,target,1200),80);
-        }
-
-        /* The big number scrambles */
+        if(bar){const target=parseFloat(bar.dataset.w)||60;bar.style.width='0%';setTimeout(()=>D.bar(bar,target,900),80);}
         const numSpan=fc.querySelector('.hs-val');
-        if(numSpan){
-          const orig=numSpan.textContent.trim();
-          numSpan.textContent='';
-          setTimeout(()=>D.str(numSpan,orig,700),200);
-        }
-
-        /* "+18 pts" badge pops */
+        if(numSpan){const orig=numSpan.textContent.trim();numSpan.textContent='';setTimeout(()=>D.str(numSpan,orig,600),200);}
         const pts=fc.querySelector('.hs-pts');
-        if(pts){
-          pts.style.opacity='0';pts.style.transform='scale(.3)';
-          setTimeout(()=>{pts.classList.add('badge-pop');pts.style.opacity='1';},700);
-        }
-      },200+i*GAP);
+        if(pts){pts.style.opacity='0';pts.style.transform='scale(.3)';setTimeout(()=>{pts.classList.add('badge-pop');pts.style.opacity='1';},700);}
+      },180+i*GAP);
     });
 
-    /* Phase 3: score synthesis panel slides up + counters */
-    const scoreAt=200+forces.length*GAP+320;
+    const scoreAt=180+forces.length*GAP+280;
     setTimeout(()=>{
       if(scorePnl)scorePnl.classList.add('hsp-visible');
-
-      /* Master scan across score panel */
+      if(fillEl)setTimeout(()=>D.bar(fillEl,84,1800),200);
+      if(numEl)setTimeout(()=>D.num(numEl,84,2000,'',''),200);
+      setTimeout(()=>{const v=document.getElementById('humacVerdict');if(v)v.textContent='Value Generating';},2200);
       setTimeout(()=>{
-        if(scorePnl)D.scan(scorePnl,600,'rgba(196,181,253,.65)');
-      },120);
-
-      /* Humac score scramble-counter */
-      if(fillEl)setTimeout(()=>D.bar(fillEl,84,2000),200);
-      if(numEl) setTimeout(()=>D.num(numEl,84,2200,'',''),200);
-      setTimeout(()=>{const v=document.getElementById('humacVerdict');if(v)v.textContent='Value Generating';},2400);
-
-      /* HCI-Adjusted */
-      setTimeout(()=>{
-        const hci=document.getElementById('humacHCI');
-        const hcix=document.getElementById('humacHCIx');
-        if(hci)D.num(hci,79,1600,'','');
-        if(hcix){
-          const s=performance.now();
-          (function f(now){const t=Math.min(1,(now-s)/1600);const e=1-Math.pow(1-t,3);
-            hcix.textContent=(0.50+e*0.44).toFixed(2)+'x';if(t<1)requestAnimationFrame(f);else hcix.textContent='0.94x';
-          })(s);
-        }
+        const hci=document.getElementById('humacHCI');const hcix=document.getElementById('humacHCIx');
+        if(hci)D.num(hci,79,1400,'','');
+        if(hcix){const s=performance.now();(function f(now){const t=Math.min(1,(now-s)/1400);hcix.textContent=(0.50+t*.44).toFixed(2)+'x';if(t<1)requestAnimationFrame(f);else hcix.textContent='0.94x';})(s);}
       },350);
-
-      /* Trajectory */
-      setTimeout(()=>{
-        const tNum=document.getElementById('humacTrajNum');
-        const tSt=document.getElementById('humacTrajStatus');
-        if(tNum)D.num(tNum,6,1400,'+','');
-        setTimeout(()=>{if(tSt)tSt.textContent='Improving';},1500);
-      },700);
-
-      /* Tagline */
-      setTimeout(()=>{
-        const tag=document.getElementById('humacTagline');
-        if(tag)D.str(tag,'This is what your organisation\u2019s human capital position looks like when it speaks the CFO\u2019s language.',1800);
-      },2600);
-
-      /* Perpetual ambience once the reveal settles */
-      setTimeout(startHumacityAmbient,4600);
+      setTimeout(()=>{const tNum=document.getElementById('humacTrajNum');const tSt=document.getElementById('humacTrajStatus');if(tNum)D.num(tNum,6,1200,'+','');setTimeout(()=>{if(tSt)tSt.textContent='Improving';},1300);},600);
+      setTimeout(()=>{const tag=document.getElementById('humacTagline');if(tag)D.str(tag,'This is what your organisation\u2019s human capital position looks like when it speaks the CFO\u2019s language.',1600);},2400);
     },scoreAt);
-  }
 
-  /* ── Perpetual ambience — runs forever once the reveal completes ──────── */
-  function startHumacityAmbient(){
-    const D=window._vDash;if(!D)return;
-    const rotatingStatus=[
-      'MONITORING L1\u2013L5 SIGNAL...','CROSS-REFERENCING PEER BENCHMARKS...',
-      'VERIFYING VALUE LEDGER INTEGRITY...','RE-INDEXING TALENT PREMIUM...',
-      'SYNCING NET HUMAN WORTH...'
-    ];
-
-    /* Loop A: status line quietly cycles through monitoring states,
-       so the panel reads as continuously watching, not a finished
-       snapshot. */
-    let statusIdx=0;
-    (function statusLoop(){
-      setTimeout(()=>{
-        if(statusEl) D.str(statusEl, rotatingStatus[statusIdx%rotatingStatus.length], 380);
-        statusIdx++;
-        statusLoop();
-      }, 3800+Math.random()*1200);
-    })();
-
-    /* Loop B: every ~6s, a random force card gets a brief re-flash and
-       its bar/number does a quick re-verify blip. */
-    (function forceLoop(){
-      setTimeout(()=>{
-        if(forces.length){
-          const fc=forces[Math.floor(Math.random()*forces.length)];
-          fc.classList.remove('card-boot-flash'); void fc.offsetWidth;
-          fc.classList.add('card-boot-flash');
-          const numSpan=fc.querySelector('.hs-val');
-          if(numSpan) D.str(numSpan, numSpan.textContent.trim(), 340);
-        }
-        forceLoop();
-      }, 5500+Math.random()*2000);
-    })();
-
-    /* Loop C: the main Humac score breathes — a soft glow pulse on its
-       ring, plus an occasional single-digit "recalculation" flicker
-       that resettles on the same value (looks live, changes nothing). */
-    if(fillEl){
-      fillEl.style.transition='box-shadow 2.4s ease-in-out';
-      (function breathe(){
-        fillEl.style.boxShadow='0 0 18px rgba(196,181,253,.55)';
-        setTimeout(()=>{ fillEl.style.boxShadow='0 0 6px rgba(196,181,253,.2)'; }, 2400);
-        setTimeout(breathe, 4800);
-      })();
-    }
-    (function scoreBlipLoop(){
-      setTimeout(()=>{
-        if(numEl) D.str(numEl,'84',300);
-        scoreBlipLoop();
-      }, 9000+Math.random()*3000);
-    })();
-
-    /* Loop D: periodic full-panel scan sweep, like a re-audit pass */
-    (function scanLoop(){
-      setTimeout(()=>{
-        D.scan(panel,850,'rgba(196,181,253,.3)');
-        scanLoop();
-      }, 8500+Math.random()*2500);
-    })();
+    /* CSS-only scanline — no JS loop */
+    panel.style.position='relative';panel.style.overflow='hidden';
+    const scan=document.createElement('div');scan.className='humac-scanline';panel.appendChild(scan);
   }
 
   const section=document.querySelector('.humacity.cinematic-panel');
@@ -998,144 +841,84 @@
   new IntersectionObserver(es=>{if(es[0].isIntersecting)setTimeout(run,3000);},{threshold:0.15}).observe(section);
 })();
 
+
 /* ── MERIDIAN Engine Stack — SPECTACULAR (SR18.2) ──────────────────────── */
 (function initMeridianStack(){
   'use strict';
   const stack=document.getElementById('meridianStack');
   if(!stack)return;
-  const layers=[...stack.querySelectorAll('.ms-layer')].reverse(); /* L1 first */
+  const layers=[...stack.querySelectorAll('.ms-layer')].reverse();
   const output=document.getElementById('msOutput');
   const outputText=output?output.querySelector('.mso-label'):null;
-  const stackContainer=stack.querySelector('.msl-layers')||stack;
   let fired=false;
 
-  function activateLayer(layer,i){
-    const D=window._vDash;
-    return new Promise(resolve=>{
-      /* Scan line sweeps across this layer row */
-      const scanDiv=document.createElement('div');
-      scanDiv.className='msl-scanline';
-      layer.style.position='relative';
-      layer.appendChild(scanDiv);
+  /* Neural Flow CSS — injected once */
+  if(!document.getElementById('meridian-anim-css')){
+    const s=document.createElement('style');s.id='meridian-anim-css';
+    s.textContent=`
+      .ms-layer{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .6s ease}
+      .ms-layer.msl-active{opacity:1;transform:none}
+      #msOutput{opacity:0;transition:opacity .6s ease}
+      #msOutput.mso-active{opacity:1}
+      #msOutput.mso-active .mso-label{animation:mOutputBreathe 4s 1.2s ease-in-out infinite}
+      @keyframes mOutputBreathe{0%,100%{opacity:1}50%{opacity:.78}}
+      .meridian-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+      .meridian-p{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(196,181,253,.18);animation:mFloat linear infinite}
+      @keyframes mFloat{0%{transform:translateY(0) translateX(0);opacity:.18}33%{transform:translateY(-20px) translateX(7px);opacity:.32}66%{transform:translateY(-8px) translateX(-5px);opacity:.15}100%{transform:translateY(0) translateX(0);opacity:.18}}
+      .meridian-packet{position:absolute;left:50%;width:7px;height:7px;margin-left:-3px;border-radius:50%;background:rgba(196,181,253,.75);pointer-events:none;opacity:0;animation:mPacket 5s 1.8s ease-in-out infinite;z-index:2}
+      @keyframes mPacket{0%{top:4%;opacity:0}6%{opacity:.95}82%{top:90%;opacity:.4}88%{opacity:0}100%{top:4%;opacity:0}}
+      #meridianStack{position:relative;overflow:hidden}
+    `;
+    document.head.appendChild(s);
+  }
 
+  function run(){
+    if(fired)return;fired=true;
+
+    /* Particle field — CSS only */
+    const pc=document.createElement('div');pc.className='meridian-particles';
+    [[10,20,12],[28,62,9],[52,15,14],[68,70,10],[85,38,11],[38,82,13]].forEach(([l,t,d])=>{
+      const p=document.createElement('div');p.className='meridian-p';
+      p.style.left=l+'%';p.style.top=t+'%';
+      p.style.animationDuration=d+'s';
+      p.style.animationDelay=(-Math.random()*d).toFixed(1)+'s';
+      pc.appendChild(p);
+    });
+    stack.appendChild(pc);
+
+    /* CSS packet — continuous, no JS loop */
+    const pkt=document.createElement('div');pkt.className='meridian-packet';stack.appendChild(pkt);
+
+    /* Layers cascade with one-time text scramble */
+    const D=window._vDash;
+    layers.forEach((layer,i)=>{
       setTimeout(()=>{
         layer.classList.add('msl-active');
-        /* Scramble the layer label */
         const label=layer.querySelector('.msl-label');
-        if(label&&D){const orig=label.textContent.trim();D.str(label,orig,500);}
-        /* Scramble the description */
+        if(label&&D){const orig=label.textContent.trim();D.str(label,orig,450);}
         const desc=layer.querySelector('.msl-desc');
-        if(desc&&D){
-          const orig=desc.textContent.trim();
+        if(desc){
           desc.style.opacity='0';
-          setTimeout(()=>{desc.style.opacity='1';D.str(desc,orig,700);},200);
+          setTimeout(()=>{
+            desc.style.opacity='1';
+            if(D){const orig=desc.textContent.trim();D.str(desc,orig,600);}
+          },200);
         }
-        scanDiv.addEventListener('animationend',()=>{scanDiv.remove();},{ once:true });
-        setTimeout(resolve,620);
-      },60);
+      },200+i*520);
     });
-  }
 
-  async function run(){
-    if(fired)return;fired=true;
-    const D=window._vDash;if(!D)return;
-
-    /* Reusable single-packet travel — used once for the initial reveal
-       below, and repeatedly afterward for the perpetual ambience (see
-       startMeridianAmbient), so multiple packets can be in flight at
-       once rather than the stack going still after one pass. */
-    async function spawnPacket(){
-      const packet=document.createElement('div');
-      packet.className='ms-packet';
-      stackContainer.style.position='relative';
-      stackContainer.appendChild(packet);
-      const visibleLayers=[...stack.querySelectorAll('.ms-layer')];
-      const stackRect=stackContainer.getBoundingClientRect();
-      packet.style.opacity='1';
-      for(const layer of visibleLayers){
-        const r=layer.getBoundingClientRect();
-        const y=r.top-stackRect.top+r.height/2;
-        packet.style.top=y+'px';
-        await new Promise(res=>setTimeout(res,480));
-      }
-      packet.style.opacity='0';
-      setTimeout(()=>packet.remove(),300);
-    }
-
-    /* Phase 1: scan the whole stack panel */
-    await D.scan(stack,800,'rgba(196,181,253,.6)');
-
-    /* Phase 2: activate layers one by one, bottom-up */
-    for(let i=0;i<layers.length;i++){
-      await activateLayer(layers[i],i);
-      await new Promise(r=>setTimeout(r,80));
-    }
-
-    /* Phase 3: DATA PACKET travels from top layer DOWN to output */
-    await spawnPacket();
-
-    /* Phase 4: PRECISION ADVICE bursts in */
+    /* Output reveal */
     setTimeout(()=>{
       if(output)output.classList.add('mso-active');
-      if(outputText){
-        outputText.style.opacity='0';
-        setTimeout(()=>{
-          outputText.style.opacity='1';
-          outputText.classList.add('advice-burst');
-        },150);
-      }
-    },200);
-
-    /* Perpetual ambience once the initial sequence settles */
-    setTimeout(()=>startMeridianAmbient(spawnPacket),1800);
-  }
-
-  /* ── Perpetual ambience — runs forever once the reveal completes ──────── */
-  function startMeridianAmbient(spawnPacket){
-    const D=window._vDash;if(!D)return;
-
-    /* Loop A: new packets continuously flow top-to-bottom — several
-       can be mid-travel at once, giving the stack a genuinely "live
-       processing" feel instead of a single one-off animation. */
-    (function packetLoop(){
-      spawnPacket();
-      setTimeout(packetLoop, 1600+Math.random()*900);
-    })();
-
-    /* Loop B: periodic scan-line sweep across a random active layer,
-       as if that layer is being re-verified. */
-    const activeLayers=[...stack.querySelectorAll('.ms-layer')];
-    (function layerScanLoop(){
-      setTimeout(()=>{
-        const layer=activeLayers[Math.floor(Math.random()*activeLayers.length)];
-        if(layer){
-          const scanDiv=document.createElement('div');
-          scanDiv.className='msl-scanline';
-          layer.style.position='relative';
-          layer.appendChild(scanDiv);
-          scanDiv.addEventListener('animationend',()=>scanDiv.remove(),{once:true});
-        }
-        layerScanLoop();
-      }, 4200+Math.random()*2200);
-    })();
-
-    /* Loop C: PRECISION ADVICE output periodically re-glows, as if a
-       fresh recommendation just recalculated through. */
-    (function outputPulseLoop(){
-      setTimeout(()=>{
-        if(outputText){
-          outputText.classList.remove('advice-burst'); void outputText.offsetWidth;
-          outputText.classList.add('advice-burst');
-        }
-        outputPulseLoop();
-      }, 6500+Math.random()*2500);
-    })();
+      if(outputText)outputText.classList.add('advice-burst');
+    },200+layers.length*520+320);
   }
 
   const section=document.querySelector('.meridian.cinematic-panel');
   if(!section)return;
   new IntersectionObserver(es=>{if(es[0].isIntersecting)setTimeout(run,3000);},{threshold:0.15}).observe(section);
 })();
+
 
 /* Sim-room classified briefing — lines appear one by one on scroll (SR18) */
 (function initSimRoom(){
