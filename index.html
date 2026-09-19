@@ -359,7 +359,13 @@
   opacity: 1 !important;
   margin-top: 20px !important;
 }
-.record-sub .accent { font-weight: 700 !important; }
+.record-sub .accent {
+  font-weight: 700 !important;
+  /* SR19: visible size increase — clamp(20px,2.4vw,28px) gives 28px on 1440px
+     desktop vs 21px for surrounding text. Previous 1px increments were
+     below human visual threshold — 7px jump is unmistakable. */
+  font-size: clamp(20px, 2.4vw, 28px) !important;
+}
 
 /* Item 6: ARIA dims — force all labels to ALL CAPS for consistency */
 .aria-dim strong {
@@ -1334,6 +1340,23 @@
 .prologue-skip   { z-index: 10 !important; }
 .prologue-fade   { z-index: 8 !important; }
 .prologue-grid, .prologue-vignette { z-index: 2 !important; }
+
+/* SR19 COUNTDOWN GLITCH FIX: the original prologueCountTick animation started
+   at opacity:0 — every number change caused a visible flash (element goes
+   opacity:1 → instant opacity:0 as new animation starts → fades back in).
+   Override here overrides vantage-prologue.css definition (later stylesheet wins).
+   Pure scale, no opacity change = no flash. */
+@keyframes prologueCountTick {
+  0%   { transform: scale(1.3); }
+  55%  { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+/* Fixed character cell prevents layout reflow when 3→2→1 text changes width */
+#prologueCountNum {
+  display: block;
+  min-width: 1ch;
+  font-variant-numeric: tabular-nums;
+}
 
 /* Reflect modal scrollbar — purple gradient, matches platform palette */
 .reflect-body::-webkit-scrollbar {
@@ -2326,7 +2349,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <p class="humacity-concept"><span class="line accent">Now you can prove it.</span></p>
       <p class="body-copy">HR has always generated financial value. The P&amp;L never showed it — because no one built the framework to translate it. Until now.<br><br>
       Humacity gives every people decision a number the CFO can read and an argument the boardroom cannot dismiss.</p>
-      <span class="line accent humacity-terms">The Human P&L. The Human Balance Sheet. The Humac Score.</span>
+      <span class="line accent humacity-terms">The Human P&amp;L. The Human Balance Sheet. The Humac Score.</span>
       <div class="h-metrics">
         <div><small>Replacement cost</small><b>₹ 8.2L</b></div>
         <div><small>Ramp time</small><b>4.6 mo</b></div>
@@ -2997,7 +3020,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
 <script src="vantage-cinematic.js"></script>
-<script src="vantage-cinematic-v4.js"></script> 
+<script src="vantage-cinematic-v4.js"></script>
 <script src="vantage-star-globe.js"></script>
 <script src="vantage-prologue.js"></script>
 <script src="aria-volumetric.js"></script>
