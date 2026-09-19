@@ -274,9 +274,11 @@
        white/grey line against the black bg before the photo fades in (2s).
        At 2s the photo is fully visible so the glow looks natural. */
     later(()=>{skip?.classList.add('show');},2000);
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      pro.classList.add('phase-pressure');
-    }));
+    /* Photo transition is 2s. Adding phase-pressure at ~33ms (double rAF)
+       means text appeared over a pitch-black background — that's the grey
+       line + sub text flash. Delay phase-pressure to 1800ms so text only
+       starts transitioning in when the photo is at ~90% opacity. */
+    later(()=>{ pro.classList.add('phase-pressure'); }, 1800);
     const countNum=$('#prologueCountNum');
     function tick(n){
       if(!countNum)return;
