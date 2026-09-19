@@ -195,7 +195,9 @@
   }
 
   // ── Demo button intercept ───────────────────────────────────────────────
-  // Shows a question before going to demo.html
+  // Shows a reflection question before going to demo.html — once per session.
+  // First click: overlay fires (primes prospect to think about their problem).
+  // Subsequent clicks in same session: go straight to demo, no friction.
   const DEMO_CARD = {
     pre: 'Before you step in',
     q: 'What\u2019s the HR challenge you\u2019re dealing with tonight?',
@@ -206,7 +208,14 @@
     btn.addEventListener('click', e=>{
       e.preventDefault();
       const dest = btn.href;
-      showOverlay(DEMO_CARD, 4000, ()=>{ window.location.href = dest; });
+      if(sessionStorage.getItem('vantage_demo_curtain_seen')){
+        window.location.href = dest;
+        return;
+      }
+      showOverlay(DEMO_CARD, 4000, ()=>{
+        sessionStorage.setItem('vantage_demo_curtain_seen', '1');
+        window.location.href = dest;
+      });
     });
   });
 
