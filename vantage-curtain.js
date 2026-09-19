@@ -2838,20 +2838,18 @@
   /* Bypassing CSS specificity questions entirely: inline !important
      always beats ANY stylesheet rule regardless of selector
      specificity or load order. Target: EXACT parity with .lede's
-     size (clamp(15px,1.55vw,20px)) — bumped +1pt to clamp(16px,1.65vw,21px)
-     per SR19 explicit request. Still within lede range, not exceeding it. */
+     size (clamp(15px,1.55vw,20px)) — an earlier pass overcorrected
+     this to be LARGER than the paragraph beside it, which was never
+     the ask; the goal has always been matching, not exceeding. */
   function apply(){
     const el = document.querySelector('.record-sub');
     if(!el) return;
-    el.style.setProperty('font-size', 'clamp(16px, 1.65vw, 21px)', 'important');
+    el.style.setProperty('font-size', 'clamp(15px, 1.55vw, 20px)', 'important');
     el.style.setProperty('line-height', '1.8', 'important');
     el.style.setProperty('color', 'rgba(255,255,255,.78)', 'important');
     const accentSpan = el.querySelector('.accent');
     if(accentSpan){
-      /* SR19: was 'inherit' — inherit made accent same size as parent,
-         negating the CSS bump. Now sets explicit larger size matching CSS. */
-      accentSpan.style.setProperty('font-size', 'clamp(20px, 2.4vw, 28px)', 'important'); 
-      accentSpan.style.setProperty('line-height', '1.2', 'important');
+      accentSpan.style.setProperty('font-size', 'inherit', 'important');
     }
   }
   if(document.readyState === 'loading'){
