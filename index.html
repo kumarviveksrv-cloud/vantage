@@ -2289,7 +2289,6 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
     <a href="#system">System</a><a href="#aria">ARIA</a><a href="#humacity">Humacity</a><a href="#pricing">Pricing</a>
   </nav>
   <div class="nav-actions"><a class="nav-sign" href="access.html">Sign in</a><a class="nav-cta" href="demo.html" style="white-space:nowrap">Try the Demo <b>↗</b></a></div>
-  <button id="pwa-install-btn" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:10px 20px;background:rgba(99,102,241,.88);border:1px solid rgba(99,102,241,.5);border-radius:24px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;cursor:pointer;transition:all .2s;z-index:9100;white-space:nowrap;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(99,102,241,.4)" title="Install Vantage as an app">&#x2B07;&nbsp; Install Vantage App</button>
 </header>
 
 <div id="tada-overlay" aria-hidden="true">
@@ -2309,16 +2308,16 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <span>INDIA / HR</span><span>CASE RECORDING ACTIVE</span>
       <span id="liveClock">21:07:00</span>
     </div>
-    <p class="hero-tagline">Your intelligence ally at work. <em>Not the org's — yours.</em></p>
-    <p class="hero-kicker split-reveal">It's 9 pm. The decision can't wait.</p>
+    <p class="hero-tagline" style="opacity:0">Your intelligence ally at work. <em>Not the org's — yours.</em></p>
+    <p class="hero-kicker split-reveal" style="opacity:0">It's 9 pm. The decision can't wait.</p>
     <h1 class="hero-title">
-      <span class="line dim">Every HR professional has had that 9 pm moment.</span>
-      <span class="line dim hero-context">The manager wants closure. The policy is unclear. The clock is running.</span>
-      <span class="line accent">A case that won't hold.</span>
-      <span class="line accent">Who does HR go to for help?</span>
+      <span class="line dim" style="opacity:0">Every HR professional has had that 9 pm moment.</span>
+      <span class="line dim hero-context" style="opacity:0">The manager wants closure. The policy is unclear. The clock is running.</span>
+      <span class="line accent" style="opacity:0">A case that won't hold.</span>
+      <span class="line accent" style="opacity:0">Who does HR go to for help?</span>
     </h1>
-    <p class="hero-enter" id="heroEnter"></p>
-    <p class="hero-deck"><em>HR for HR</em> — the private intelligence ally built for the profession that carries everyone else, and has nowhere to take their own.</p>
+    <p class="hero-enter" id="heroEnter" style="opacity:0"></p>
+    <p class="hero-deck" style="opacity:0"><em>HR for HR</em> — the private intelligence ally built for the profession that carries everyone else, and has nowhere to take their own.</p>
     <div class="hero-actions">
       <a href="demo.html" class="btn btn-primary magnetic">Try the Demo — it's live <span>→</span></a>
       <a href="access.html" class="btn btn-ghost magnetic">Sign In <span>↗</span></a>
@@ -3033,8 +3032,44 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   <span>&#x26F6;</span> Exit fullscreen
 </button>
 
+<!-- ── PWA INSTALL TOAST ──────────────────────────────────────────────── -->
+<style>
+#pwa-toast{
+  position:fixed;bottom:-100px;left:50%;transform:translateX(-50%);
+  width:min(420px,calc(100vw - 32px));
+  background:rgba(12,11,29,.96);border:1px solid rgba(99,102,241,.35);
+  border-radius:16px;padding:14px 18px;
+  display:flex;align-items:center;gap:14px;
+  z-index:9100;backdrop-filter:blur(16px);
+  box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 0 1px rgba(99,102,241,.08) inset;
+  transition:bottom .4s cubic-bezier(.34,1.56,.64,1);
+}
+#pwa-toast.pwa-show{bottom:24px}
+.pwa-icon{font-size:26px;flex-shrink:0;line-height:1}
+.pwa-text{flex:1;min-width:0}
+.pwa-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#a5b4fc;display:block;margin-bottom:2px;text-transform:uppercase}
+.pwa-sub{font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(244,243,255,.58);line-height:1.4}
+.pwa-actions{display:flex;gap:8px;flex-shrink:0}
+#pwa-install-btn{padding:8px 14px;background:linear-gradient(135deg,#6366f1,#7c3aed);border:none;border-radius:8px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;cursor:pointer;white-space:nowrap;transition:opacity .2s}
+#pwa-install-btn:hover{opacity:.88}
+#pwa-toast-close{background:none;border:none;color:rgba(196,181,253,.35);font-size:18px;cursor:pointer;padding:2px 6px;line-height:1;transition:color .15s}
+#pwa-toast-close:hover{color:rgba(196,181,253,.65)}
+</style>
+
+<div id="pwa-toast" aria-live="polite">
+  <div class="pwa-icon">&#x2B07;&#xFE0F;</div>
+  <div class="pwa-text">
+    <span class="pwa-title">Install Vantage</span>
+    <span class="pwa-sub">Add to your home screen for quick access</span>
+  </div>
+  <div class="pwa-actions">
+    <button id="pwa-install-btn">Install</button>
+  </div>
+  <button id="pwa-toast-close" aria-label="Dismiss">&times;</button>
+</div>
+
 <script>
-/* ── Fix 4: SERVICE WORKER + PWA INSTALL PROMPT ──────────────────────── */
+/* ── SERVICE WORKER + PWA INSTALL TOAST ──────────────────────────────── */
 if('serviceWorker' in navigator){
   window.addEventListener('load',function(){
     navigator.serviceWorker.register('/sw.js').then(function(reg){
@@ -3044,32 +3079,35 @@ if('serviceWorker' in navigator){
     });
   });
 }
-/* Capture beforeinstallprompt — show custom Install button in nav */
-var _pwaPrompt=null;
+var _pwaPrompt=null,_toastTimer=null;
+function showPwaToast(){
+  var t=document.getElementById('pwa-toast');
+  if(t){setTimeout(function(){t.classList.add('pwa-show');},800);
+  _toastTimer=setTimeout(function(){hidePwaToast();},12000);}
+}
+function hidePwaToast(){
+  var t=document.getElementById('pwa-toast');
+  if(t)t.classList.remove('pwa-show');
+  if(_toastTimer){clearTimeout(_toastTimer);_toastTimer=null;}
+}
 window.addEventListener('beforeinstallprompt',function(e){
-  e.preventDefault();
-  _pwaPrompt=e;
-  var btn=document.getElementById('pwa-install-btn');
-  if(btn)btn.style.display='inline-flex';
+  e.preventDefault();_pwaPrompt=e;showPwaToast();
 });
 document.addEventListener('DOMContentLoaded',function(){
-  var btn=document.getElementById('pwa-install-btn');
-  if(btn){
-    btn.addEventListener('click',function(){
-      if(!_pwaPrompt)return;
-      _pwaPrompt.prompt();
-      _pwaPrompt.userChoice.then(function(choice){
-        if(choice.outcome==='accepted'){btn.style.display='none';}
-        _pwaPrompt=null;
-      });
+  var ib=document.getElementById('pwa-install-btn');
+  var cb=document.getElementById('pwa-toast-close');
+  if(ib){ib.addEventListener('click',function(){
+    if(!_pwaPrompt)return;hidePwaToast();
+    _pwaPrompt.prompt();
+    _pwaPrompt.userChoice.then(function(c){
+      if(c.outcome==='accepted')console.log('[PWA] Accepted');
+      _pwaPrompt=null;
     });
-  }
+  });}
+  if(cb){cb.addEventListener('click',hidePwaToast);}
 });
 window.addEventListener('appinstalled',function(){
-  var btn=document.getElementById('pwa-install-btn');
-  if(btn)btn.style.display='none';
-  _pwaPrompt=null;
-  console.log('[PWA] Installed successfully');
+  hidePwaToast();_pwaPrompt=null;console.log('[PWA] Installed');
 });
 </script>
 </body>
