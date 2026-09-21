@@ -7,16 +7,27 @@ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const boot=$('#boot'), log=$('#bootLog'), nav=$('#nav');
 const logs=['INITIALISING PRIVATE INTELLIGENCE LAYER','LOADING INDIA / HR CONTEXT','CONNECTING DECISION FIELD','MERIDIAN CONTEXT ENGINE READY','ARIA SIMULATION ENVIRONMENT READY','HUMACITY FINANCIAL LAYER READY','VANTAGE RECORD: PRIVATE / ACTIVE'];
 
-if(sessionStorage.getItem('vantage_boot_seen')){
-  /* Already seen this session — skip instantly, no friction */
+/* Fix 5b: Boot uses a 2-hour localStorage TTL in addition to sessionStorage.
+   Mobile browsers suspend (not kill) tabs — sessionStorage can persist across
+   "closes". The TTL means returning within 2 hours skips the boot on ANY
+   mobile reopen. After 2 hours, boot plays again as a fresh cinematic. */
+function bootSeenRecently(){
+  try{var ts=localStorage.getItem('vantage_boot_ts');return !!(ts&&(Date.now()-parseInt(ts,10))<2*3600000);}catch(e){return false;}
+}
+function markBootSeen(){
+  try{sessionStorage.setItem('vantage_boot_seen','1');localStorage.setItem('vantage_boot_ts',Date.now().toString());}catch(e){}
+}
+
+if(sessionStorage.getItem('vantage_boot_seen')||bootSeenRecently()){
+  /* Skip — seen this session or within last 2 hours */
   if(boot){boot.classList.add('done');}
   if(nav){nav.classList.add('ready');}
 }else{
-  /* First visit this session — run full cinematic boot */
+  /* First visit or 2+ hours since last boot — run full cinematic */
   let li=0; const logTimer=setInterval(()=>{if(li<logs.length){log.insertAdjacentHTML('beforeend','<div>\u203a '+logs[li++]+'</div>');}else clearInterval(logTimer)},260);
   setTimeout(()=>{
     boot.classList.add('done');nav.classList.add('ready');
-    sessionStorage.setItem('vantage_boot_seen','1');
+    markBootSeen();
   },5000);
 }
 
