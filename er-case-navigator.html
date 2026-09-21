@@ -6,7 +6,7 @@
   <link rel="shortcut icon" href="favicon.png"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ER Case Navigator — Virorah Vantage</title>
+  <title>Employee Case Advisor — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="vantage-theme.css"/>
   <!-- SR18: vantage-theme.css above is the canonical palette + typography
@@ -226,7 +226,7 @@
     </div>
     <a href="dashboard.html" class="nav-item"><span class="icon">⊞</span> Dashboard</a>
     <div class="nav-section">Core Tools</div>
-    <a href="er-case-navigator.html" class="nav-item active"><span class="icon">⚡</span> ER Case Navigator</a>
+    <a href="er-case-navigator.html" class="nav-item active"><span class="icon">⚡</span> Employee Case Advisor</a>
     <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">📊</span> HR Data Storyteller</a>
     <a href="stakeholder-influence.html" class="nav-item"><span class="icon">🎯</span> Stakeholder Influence</a>
     <div class="nav-section">Intelligence</div>
@@ -256,8 +256,8 @@
     <!-- INTAKE VIEW -->
     <div id="intake-view">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; ER Case Navigator</div>
-        <div class="page-title">&#x26A1; ER Case Navigator</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Employee Case Advisor</div>
+        <div class="page-title">&#x26A1; Employee Case Advisor</div>
         <div class="page-sub">Tell me what's happening — I'll run the PACT diagnostic and build your Unified Decision Protocol.</div>
       </div>
 
@@ -303,7 +303,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
 
     <!-- LOADING VIEW -->
     <div id="loading-view" style="display:none">
-      <div class="page-header"><div class="page-title">&#x26A1; ER Case Navigator</div></div>
+      <div class="page-header"><div class="page-title">&#x26A1; Employee Case Advisor</div></div>
       <div class="loading-state">
         <div class="loading-orb">
           <svg width="64" height="64" viewBox="0 0 64 64">
@@ -324,7 +324,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     <!-- OUTPUT VIEW -->
     <div id="output-view" style="display:none">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="er-case-navigator.html">ER Case Navigator</a> &middot; PACT + Protocol</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="er-case-navigator.html">Employee Case Advisor</a> &middot; PACT + Protocol</div>
         <div class="page-title">PACT Assessment + Decision Protocol</div>
         <div class="page-sub" id="output-case-type">Case assessment complete</div>
       </div>
@@ -556,7 +556,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           currentResult = data.data;
           renderOutput();
         } else {
-          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You’ve reached your daily limit for ER Case Navigator. Resets tomorrow.') : 'Assessment failed. ' + (data.error || 'Please try again.'));
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You’ve reached your daily limit for Employee Case Advisor. Resets tomorrow.') : 'Assessment failed. ' + (data.error || 'Please try again.'));
         }
       } catch(err) {
         clearInterval(loadInterval);
