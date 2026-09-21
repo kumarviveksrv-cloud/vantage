@@ -2243,23 +2243,35 @@
   }
 
   /* ── INSTANT REVEAL — animation already played this session ─────────────
-     Hero CSS sets opacity:0 on all text elements by default — the JS
-     animation is always responsible for showing them. We must explicitly
-     reveal every element here, not assume natural visibility. */
+     Hero CSS sets opacity:0 + visibility:hidden on all text elements.
+     Must explicitly reveal BOTH properties here. */
   if(sessionStorage.getItem('vantage_hero_animated')){
     /* Reveal all hero text elements instantly */
     [tagline, kicker, lineDim].forEach(function(el){
-      if(el) el.style.setProperty('opacity','1','important');
+      if(el){
+        el.style.setProperty('opacity','1','important');
+        el.style.setProperty('visibility','visible','important');
+      }
     });
     lineAccents.forEach(function(el){
-      if(el) el.style.setProperty('opacity','1','important');
+      if(el){
+        el.style.setProperty('opacity','1','important');
+        el.style.setProperty('visibility','visible','important');
+      }
     });
-    if(heroContext) heroContext.style.setProperty('opacity','0.62','important');
-    if(heroDeck) heroDeck.style.setProperty('opacity','1','important');
+    if(heroContext){
+      heroContext.style.setProperty('opacity','0.62','important');
+      heroContext.style.setProperty('visibility','visible','important');
+    }
+    if(heroDeck){
+      heroDeck.style.setProperty('opacity','1','important');
+      heroDeck.style.setProperty('visibility','visible','important');
+    }
 
     /* heroEnterEl child spans start empty — populate to final state */
     if(heroEnterEl){
       heroEnterEl.style.setProperty('opacity','1','important');
+      heroEnterEl.style.setProperty('visibility','visible','important');
       var heT=heroEnterEl.querySelector('#heText');
       var heV=heroEnterEl.querySelector('#heVantage');
       var heD=heroEnterEl.querySelector('#heDot');
@@ -2393,7 +2405,7 @@
 
   /* Hide + clear immediately at script parse time */
   hide(tagline);
-  hide(kicker);
+  hideKeepText(kicker);
   hide(lineDim);
   lineAccents.forEach(hideKeepText);
   if(heroContext) hideKeepText(heroContext);
@@ -2409,6 +2421,7 @@
     }
     el.textContent = '';
     el.style.setProperty('opacity','1','important');
+    el.style.setProperty('visibility','visible','important');
     console.log('['+label+'] Cleared and starting type. Current textContent =', JSON.stringify(el.textContent));
 
     const plainSpan = document.createElement('span');
@@ -2441,6 +2454,7 @@
   async function typeSimpleLine(el, text, speed, label){
     el.textContent = '';
     el.style.setProperty('opacity','1','important');
+    el.style.setProperty('visibility','visible','important');
     for(let i=0;i<=text.length;i++){
       el.textContent = text.slice(0,i);
       await delay(speed);
@@ -2453,6 +2467,7 @@
       el.style.transition = 'opacity '+duration+'ms ease';
       requestAnimationFrame(()=>{
         el.style.setProperty('opacity','1','important');
+        el.style.setProperty('visibility','visible','important');
         setTimeout(resolve, duration);
       });
     });
@@ -2482,6 +2497,7 @@
     const words = text.split(/\s+/);
     el.textContent = '';
     el.style.setProperty('opacity','1','important');
+    el.style.setProperty('visibility','visible','important');
     /* .line.accent's purple gradient relies on background-clip:text
        painted on the element whose direct text it clips to. Once we
        wrap each word in its own inline-block span, the PARENT has no
@@ -2711,7 +2727,7 @@
      during the wait for landing reveal (could be 0-15+ seconds). */
   waitForLandingReveal().then(() => {
     hide(tagline);
-    hide(kicker);
+    hideKeepText(kicker);
     hide(lineDim);
     lineAccents.forEach(hideKeepText);
     if(heroContext) hideKeepText(heroContext);
