@@ -3140,7 +3140,22 @@ function triggerPwaInstall(){
 window.triggerPwaInstall=triggerPwaInstall;
 
 window.addEventListener('beforeinstallprompt',function(e){
-  e.preventDefault();_pwaPrompt=e;showAllInstallUI();
+  e.preventDefault();
+  _pwaPrompt=e;
+  /* Only show install nudge AFTER prologue/intro is done.
+     If prologue is already complete (paying user bypass), show immediately.
+     Otherwise wait for prologue-complete to be added to body. */
+  if(document.body.classList.contains('prologue-complete')){
+    showAllInstallUI();
+  } else {
+    var prologueWatcher=new MutationObserver(function(){
+      if(document.body.classList.contains('prologue-complete')){
+        prologueWatcher.disconnect();
+        showAllInstallUI();
+      }
+    });
+    prologueWatcher.observe(document.body,{attributes:true,attributeFilter:['class']});
+  }
 });
 document.addEventListener('DOMContentLoaded',function(){
   var toast_ib=document.getElementById('pwa-install-btn');
