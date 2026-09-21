@@ -2684,13 +2684,16 @@
       function finish(){ if(done) return; done = true; resolve(); }
 
       /* KEY FIX: paying user / returning user prologue bypass adds
-         prologue-complete to body immediately. Watch for it so we
-         don't wait the full 20s safety timeout on fresh sessions. */
-      if(document.body.classList.contains('prologue-complete')){
+         prologue-complete to body immediately — and the q-overlay
+         never shows. Watch for prologue-complete BUT only finish()
+         if q-overlay was never active (i.e. prologue was bypassed,
+         not just completed). If the full prologue ran, q-overlay
+         will show then hide and the existing obs handles it. */
+      if(document.body.classList.contains('prologue-complete') && !sawActive){
         finish(); return;
       }
       const bodyWatcher = new MutationObserver(function(){
-        if(document.body.classList.contains('prologue-complete')){
+        if(document.body.classList.contains('prologue-complete') && !sawActive){
           bodyWatcher.disconnect(); finish();
         }
       });
