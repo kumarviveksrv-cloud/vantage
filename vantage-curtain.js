@@ -833,7 +833,7 @@
       const hcix=document.getElementById('humacHCIx');if(hcix)hcix.textContent='0.94x';
       const tNum=document.getElementById('humacTrajNum');if(tNum)tNum.textContent='+6';
       const tSt=document.getElementById('humacTrajStatus');if(tSt)tSt.textContent='Improving';
-      const tag=document.getElementById('humacTagline');if(tag)tag.textContent='This is what your organisation\u2019s human capital position looks like when it speaks the CFO\u2019s language.';
+      const tag=document.getElementById('humacTagline');if(tag)tag.textContent='84 is value-generating territory \u2014 your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.';
       panel.style.position='relative';panel.style.overflow='hidden';
       if(!panel.querySelector('.humac-scanline')){const sc=document.createElement('div');sc.className='humac-scanline';panel.appendChild(sc);}
       return;
@@ -865,7 +865,7 @@
         if(hcix){const s=performance.now();(function f(now){const t=Math.min(1,(now-s)/1400);hcix.textContent=(0.50+t*.44).toFixed(2)+'x';if(t<1)requestAnimationFrame(f);else hcix.textContent='0.94x';})(s);}
       },350);
       setTimeout(()=>{const tNum=document.getElementById('humacTrajNum');const tSt=document.getElementById('humacTrajStatus');if(tNum)D.num(tNum,6,1200,'+','');setTimeout(()=>{if(tSt)tSt.textContent='Improving';},1300);},600);
-      setTimeout(()=>{const tag=document.getElementById('humacTagline');if(tag)D.str(tag,'This is what your organisation\u2019s human capital position looks like when it speaks the CFO\u2019s language.',1600);},2400);
+      setTimeout(()=>{const tag=document.getElementById('humacTagline');if(tag)D.str(tag,'84 is value-generating territory \u2014 your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.',1600);},2400);
     },scoreAt);
 
     /* CSS-only scanline — no JS loop */
@@ -1523,7 +1523,7 @@
          aria:'The CFO isn\u2019t asking for perfect precision. They\u2019re asking if you know your numbers. Do you?'},
        OC:{verdict:'BOARDROOM-READY',vclass:'ok',num:'\u20b918.4L',
          text:'Net cost computed across all Humacity pillars: replacement cost \u20b98.2L, ramp time 4.6 months, manager load 182 hours. This is the number that survives cross-examination by a CFO.',
-         aria:'This is what your organisation\u2019s human capital position looks like when it speaks the CFO\u2019s language.'},
+         aria:'84 is value-generating territory \u2014 your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.'},
        OD:{verdict:'NOT YOUR NUMBERS',vclass:'warn',num:'\u20b912L (avg)',
          text:'Industry benchmarks are a useful sanity check, but they aren\u2019t this company\u2019s numbers. A sharp CFO will ask why you didn\u2019t calculate your own \u2014 and you won\u2019t have an answer ready.',
          aria:'Benchmarks answer \u201cwhat do other companies see.\u201d The CFO asked what THIS decision costs THIS company.'}},
