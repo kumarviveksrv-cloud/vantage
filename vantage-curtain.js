@@ -2667,8 +2667,25 @@
       let done = false;
       function finish(){ if(done) return; done = true; resolve(); }
 
+      /* KEY FIX: paying user / returning user prologue bypass adds
+         prologue-complete to body immediately. Watch for it so we
+         don't wait the full 20s safety timeout on fresh sessions. */
+      if(document.body.classList.contains('prologue-complete')){
+        finish(); return;
+      }
+      const bodyWatcher = new MutationObserver(function(){
+        if(document.body.classList.contains('prologue-complete')){
+          bodyWatcher.disconnect(); finish();
+        }
+      });
+      bodyWatcher.observe(document.body,{attributes:true,attributeFilter:['class']});
+
+      /* Known returning user (localStorage persists across sessions):
+         don't wait more than 800ms if q-overlay never activates. */
+      const isKnownUser=!!(localStorage.getItem('vantage_seen_ever')||localStorage.getItem('vantage_paid_user'));
+
       if(!qov){
-        setTimeout(finish, firstVisit ? 12000 : 300);
+        setTimeout(finish, (firstVisit && !isKnownUser) ? 12000 : 300);
         return;
       }
 
@@ -2683,7 +2700,7 @@
       });
       obs.observe(qov, {attributes:true, attributeFilter:['class','style']});
 
-      if(!firstVisit){
+      if(!firstVisit || isKnownUser){
         setTimeout(()=>{ if(!sawActive){ obs.disconnect(); finish(); } }, 800);
       }
       setTimeout(()=>{ obs.disconnect(); finish(); }, 20000);
