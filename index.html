@@ -2210,6 +2210,21 @@
   opacity: 0 !important;
   visibility: hidden !important;
 }
+/* Fix 1: prologue-note flashes briefly on refresh — hide until phase-pressure */
+#prologue:not(.phase-pressure) .prologue-note {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+#prologue.phase-pressure .prologue-note {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+/* Fix 1: hero accent lines flash as purple blocks before JS runs —
+   default to hidden, JS reveals them. The instant-reveal path and
+   the full animation path both explicitly set opacity:1. */
+.hero-title .line {
+  opacity: 0;
+}
 /* The current visual is the decoded photo layer. Avoid an unnecessary
    mobile WebGL context and compositor competition. */
 @media (max-width: 700px) {
@@ -2271,7 +2286,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   <nav>
     <a href="#system">System</a><a href="#aria">ARIA</a><a href="#humacity">Humacity</a><a href="#pricing">Pricing</a>
   </nav>
-  <div class="nav-actions"><a class="nav-sign" href="access.html">Sign in</a><a class="nav-cta" href="demo.html">Try the Demo <b>↗</b></a></div>
+  <div class="nav-actions"><a class="nav-sign" href="access.html">Sign in</a><a class="nav-cta" href="demo.html">Try the Demo <b>↗</b></a><button id="pwa-install-btn" style="display:none;padding:7px 14px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.35);border-radius:7px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;cursor:pointer;transition:all .2s" title="Install Vantage as an app">&#x2B07; Install App</button></div>
 </header>
 
 <div id="tada-overlay" aria-hidden="true">
@@ -2305,7 +2320,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <a href="demo.html" class="btn btn-primary magnetic">Try the Demo — it's live <span>→</span></a>
       <a href="access.html" class="btn btn-ghost magnetic">Sign In <span>↗</span></a>
     </div>
-    <a href="#" id="prologue-back" onclick="sessionStorage.removeItem('vantage_prologue_seen');location.reload();return false;">← Watch the opening sequence</a>
+    <a href="#" id="prologue-back" onclick="sessionStorage.removeItem('vantage_prologue_seen');sessionStorage.removeItem('vantage_boot_seen');sessionStorage.removeItem('vantage_hero_animated');sessionStorage.removeItem('vantage_demo_curtain_seen');sessionStorage.removeItem('vantage_dash_animated');location.reload();return false;">← Watch the opening sequence</a>
     <div class="hero-foot">
       <span>Private by default</span>
       <span>Built for Indian HR</span>
@@ -3014,5 +3029,45 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 <button id="corFsFloating" aria-label="Exit fullscreen" style="display:none;">
   <span>&#x26F6;</span> Exit fullscreen
 </button>
+
+<script>
+/* ── Fix 4: SERVICE WORKER + PWA INSTALL PROMPT ──────────────────────── */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('/sw.js').then(function(reg){
+      console.log('[SW] Registered:',reg.scope);
+    }).catch(function(err){
+      console.warn('[SW] Registration failed:',err);
+    });
+  });
+}
+/* Capture beforeinstallprompt — show custom Install button in nav */
+var _pwaPrompt=null;
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();
+  _pwaPrompt=e;
+  var btn=document.getElementById('pwa-install-btn');
+  if(btn)btn.style.display='inline-flex';
+});
+document.addEventListener('DOMContentLoaded',function(){
+  var btn=document.getElementById('pwa-install-btn');
+  if(btn){
+    btn.addEventListener('click',function(){
+      if(!_pwaPrompt)return;
+      _pwaPrompt.prompt();
+      _pwaPrompt.userChoice.then(function(choice){
+        if(choice.outcome==='accepted'){btn.style.display='none';}
+        _pwaPrompt=null;
+      });
+    });
+  }
+});
+window.addEventListener('appinstalled',function(){
+  var btn=document.getElementById('pwa-install-btn');
+  if(btn)btn.style.display='none';
+  _pwaPrompt=null;
+  console.log('[PWA] Installed successfully');
+});
+</script>
 </body>
 </html>
