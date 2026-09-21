@@ -195,7 +195,7 @@
     ledgerLink.className = isNiClass2 ? 'ni' : 'nav-item';
     if (currentPage2 === 'ledger.html') ledgerLink.className += ' active';
     ledgerLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.65);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
-    ledgerLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">\u{1F4DC}</span> The Ledger';
+    ledgerLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">\u{1F4DC}</span> Standpoint';
     clNavLink.parentNode.insertBefore(ledgerLink, clNavLink.nextSibling);
   }
 
@@ -210,7 +210,7 @@
     oiLink.className = isNiClass ? 'ni' : 'nav-item';
     if (currentPage === 'offer-intelligence.html') oiLink.className += ' active';
     oiLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.65);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
-    oiLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">\u2696\uFE0F</span> Offer Intelligence';
+    oiLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">\u2696\uFE0F</span> Retention Advisor';
     siNavLink.parentNode.insertBefore(oiLink, siNavLink.nextSibling);
   }
 
@@ -670,13 +670,13 @@
       { icon: '\u229E', label: 'Home',    href: 'dashboard.html',         page: 'dashboard' },
       { icon: '\u26A1', label: 'Cases',   href: 'er-case-navigator.html', page: 'er-case-navigator' },
       { icon: '\u2726', label: 'ARIA',    href: 'aria.html',              page: 'aria' },
-      { icon: '\u25CE', label: 'Library', href: 'case-library.html',      page: 'case-library' },
+      { icon: '\u25CE', label: 'Record',  href: 'case-library.html',      page: 'case-library' },
       { icon: '\u22EF', label: 'More',    href: null,                     page: 'more' },
     ];
 
     // FIX: this list previously had 7 flat items and had fallen out of sync
     // with everything else this same file injects into the desktop sidebar
-    // over time — Offer Intelligence, The Ledger, MERIDIAN Profile, Pricing,
+    // over time — Retention Advisor, The Ledger, MERIDIAN Profile, Pricing,
     // Terms of Service, Privacy Policy, Humacity, Platform Tour, About
     // Vantage, and Humac Score were all unreachable on mobile. Restructured
     // as sections mirroring the desktop sidebar's own grouping, both to
@@ -684,7 +684,7 @@
     // usability problem. A couple of icons were changed from what desktop
     // uses for the same link, specifically where reusing the desktop icon
     // would have collided with another item already in this same drawer
-    // (Humac Score vs HR Data Storyteller both use 📊 on desktop; About
+    // (Humac Score vs People ROI Brief both use 📊 on desktop; About
     // Vantage's ✦ collides with the ARIA bottom-tab icon above) — noted
     // here so a future edit doesn't "fix" these back into a collision.
     var drawerSections = [
@@ -696,26 +696,30 @@
         ]
       },
       {
-        title: 'Core Tools',
+        title: 'Your Foundation',
         items: [
-          { icon: '\uD83D\uDCCA', label: 'HR Data Storyteller', sub: 'SIGNAL framework', href: 'hr-data-storyteller.html', page: 'hr-data-storyteller' },
-          { icon: '\uD83C\uDFAF', label: 'Stakeholder Influence', sub: 'INFLUENCE stack', href: 'stakeholder-influence.html', page: 'stakeholder-influence' },
-          { icon: '\u2696\uFE0F', label: 'Offer Intelligence', sub: '', href: 'offer-intelligence.html', page: 'offer-intelligence' },
+          { icon: '\u2B21', label: 'MERIDIAN Profile', sub: '7-parameter context', href: 'onboarding.html', page: 'onboarding' },
+          { icon: '\uD83D\uDCC8', label: 'Humac Score', sub: 'Your people finance number', href: 'humac-onboarding.html', page: 'humac-onboarding' },
         ]
       },
       {
-        title: 'The Proving Ground',
+        title: 'Your Active Tools',
         items: [
-          { icon: '\uD83E\uDDED', label: 'Policy Compass', sub: 'BNS \u00b7 BNSS \u00b7 BSA', href: 'policy-compass.html', page: 'policy-compass' },
-          { icon: '\uD83C\uDFAD', label: 'Conversation Simulator', sub: 'Practice before the real thing', href: 'conversation-simulator.html', page: 'conversation-simulator' },
+          { icon: '\u26A1', label: 'Employee Case Advisor', sub: 'Navigate any employee situation', href: 'er-case-navigator.html', page: 'er-case-navigator' },
+          { icon: '\uD83D\uDCCA', label: 'People ROI Brief', sub: 'HR metrics to boardroom argument', href: 'hr-data-storyteller.html', page: 'hr-data-storyteller' },
+          { icon: '\uD83C\uDFAF', label: 'Leadership Communicator', sub: 'Frame the right conversation', href: 'stakeholder-influence.html', page: 'stakeholder-influence' },
+          { icon: '\uD83C\uDFAD', label: 'Difficult Conversations', sub: 'Rehearse before you walk in', href: 'conversation-simulator.html', page: 'conversation-simulator' },
+          { icon: '\uD83E\uDDED', label: 'Policy Advisor', sub: 'Applicable law, every time', href: 'policy-compass.html', page: 'policy-compass' },
+          { icon: '\u2696\uFE0F', label: 'Retention Advisor', sub: 'Stay or go — model the cost', href: 'offer-intelligence.html', page: 'offer-intelligence' },
+          { icon: '\u2726', label: 'ARIA', sub: 'Your private HR intelligence ally', href: 'aria.html', page: 'aria' },
         ]
       },
       {
-        title: 'My Record',
+        title: 'Your Record',
         items: [
-          { icon: '\uD83D\uDCDC', label: 'The Ledger', sub: '', href: 'ledger.html', page: 'ledger' },
-          { icon: '\uD83D\uDCCB', label: 'The Debrief', sub: 'Monthly intelligence brief', href: 'debrief.html', page: 'debrief' },
-          { icon: '\uD83D\uDCC8', label: 'Humac Score', sub: '', href: 'humac-onboarding.html', page: 'humac-onboarding' },
+          { icon: '\u25CE', label: 'Vantage Record', sub: 'Your complete case archive', href: 'case-library.html', page: 'case-library' },
+          { icon: '\uD83D\uDCDC', label: 'Standpoint', sub: 'File your position before the outcome', href: 'ledger.html', page: 'ledger' },
+          { icon: '\uD83D\uDCCB', label: 'The Debrief', sub: 'Auto-generated monthly', href: 'debrief.html', page: 'debrief' },
         ]
       },
       {
@@ -1181,7 +1185,7 @@
       var coreHeader = null;
       sections.forEach(function(s) {
         var t = s.textContent.trim().toUpperCase();
-        if (t === 'CORE TOOLS') coreHeader = s;
+        if (t === 'YOUR ACTIVE TOOLS') coreHeader = s;
       });
       if (!coreHeader) return;
 
@@ -1208,7 +1212,7 @@
   // ── "INTELLIGENCE" SECTION → "THE PROVING GROUND" ────────────────────────
   // Renamed because "Intelligence" as a section label collided with "Offer
   // Intelligence" living in a different section (Core Tools) — a user
-  // seeing a tool literally named "Offer Intelligence" would reasonably
+  // seeing a tool literally named "Retention Advisor" would reasonably
   // expect it inside a section literally labelled "Intelligence," which
   // wasn't true. The new name describes what ARIA and Conversation
   // Simulator actually are — live rehearsal and coaching sessions, not
@@ -1219,8 +1223,8 @@
       var sections = document.querySelectorAll('.nav-section, .ns, .sb-section');
       sections.forEach(function(s) {
         var t = s.textContent.trim().toUpperCase();
-        if (t === 'INTELLIGENCE') {
-          s.textContent = 'The Proving Ground';
+        if (t === 'INTELLIGENCE' || t === 'THE PROVING GROUND') {
+          s.textContent = 'Your Active Tools';
         }
       });
     }
@@ -1242,7 +1246,7 @@
       var myRecordHeader = null;
       sections.forEach(function(s) {
         var t = s.textContent.trim().toUpperCase();
-        if (t === 'MY RECORD') myRecordHeader = s;
+        if (t === 'YOUR RECORD' || t === "YOUR RECORD") myRecordHeader = s;
       });
       if (!myRecordHeader) return;
 
