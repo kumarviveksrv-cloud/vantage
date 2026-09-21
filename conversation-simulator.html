@@ -6,7 +6,7 @@
   <link rel="shortcut icon" href="favicon.png"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Conversation Simulator — Virorah Vantage</title>
+  <title>Difficult Conversations — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="vantage-theme.css"/>
   <!-- SR18: vantage-theme.css above is the canonical palette + typography
@@ -212,7 +212,7 @@
     <div class="nav-section">Intelligence</div>
     <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
     <a href="policy-compass.html" class="nav-item"><span class="icon">🧭</span> Policy Compass</a>
-    <a href="conversation-simulator.html" class="nav-item active"><span class="icon">🎭</span> Conversation Simulator</a>
+    <a href="conversation-simulator.html" class="nav-item active"><span class="icon">🎭</span> Difficult Conversations</a>
     <div class="nav-section">My Record</div>
     <a href="case-library.html" class="nav-item"><span class="icon">◎</span> Case Library</a>
     <a href="debrief.html" class="nav-item"><span class="icon">📋</span> The Debrief</a>
@@ -236,8 +236,8 @@
     <!-- SETUP VIEW -->
     <div id="setup-view" style="display:flex;flex-direction:column;height:100%">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Conversation Simulator</div>
-        <div class="page-title">&#x1F3AD; Conversation Simulator</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Difficult Conversations</div>
+        <div class="page-title">&#x1F3AD; Difficult Conversations</div>
         <div class="page-sub">Let's make sure you've already had it once before it counts.</div>
       </div>
       <div class="setup-scroll">
@@ -348,7 +348,7 @@
     <!-- DEBRIEF VIEW -->
     <div id="debrief-view" style="display:none;flex-direction:column;height:100%">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="conversation-simulator.html">Conversation Simulator</a> &middot; Coaching Debrief</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="conversation-simulator.html">Difficult Conversations</a> &middot; Coaching Debrief</div>
         <div class="page-title">Coaching Debrief</div>
         <div class="page-sub">Here's what happened in your practice session.</div>
       </div>
@@ -698,7 +698,7 @@
           updateExchangeCounter();
           if (voiceMode) speak(dialogue);
         } else {
-          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You’ve reached your daily limit for Conversation Simulator. Resets tomorrow.') : 'Error starting simulation. ' + (data.error || 'Please try again.'), 'setup-view');
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You’ve reached your daily limit for Difficult Conversations. Resets tomorrow.') : 'Error starting simulation. ' + (data.error || 'Please try again.'), 'setup-view');
         }
       } catch(err) {
         showError('Connection error. Please check your network and try again.', 'setup-view');
@@ -763,7 +763,7 @@
             document.getElementById('messages-container').appendChild(info);
           }
         } else {
-          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You’ve reached your daily limit for Conversation Simulator. Resets tomorrow.') : 'Something went wrong. ' + (data.error || 'Please try again.'), null);
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You’ve reached your daily limit for Difficult Conversations. Resets tomorrow.') : 'Something went wrong. ' + (data.error || 'Please try again.'), null);
           if (voiceMode) setVoiceStatus('Error. Tap to try again.', '');
         }
       } catch(err) {
