@@ -6,7 +6,7 @@
   <link rel="shortcut icon" href="favicon.png"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HR Data Storyteller — Virorah Vantage</title>
+  <title>People ROI Brief — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="vantage-theme.css"/>
   <!-- SR18: vantage-theme.css above is the canonical palette + typography
@@ -204,7 +204,7 @@
     <a href="dashboard.html" class="nav-item"><span class="icon">⊞</span> Dashboard</a>
     <div class="nav-section">Core Tools</div>
     <a href="er-case-navigator.html" class="nav-item"><span class="icon">⚡</span> ER Case Navigator</a>
-    <a href="hr-data-storyteller.html" class="nav-item active"><span class="icon">📊</span> HR Data Storyteller</a>
+    <a href="hr-data-storyteller.html" class="nav-item active"><span class="icon">📊</span> People ROI Brief</a>
     <a href="stakeholder-influence.html" class="nav-item"><span class="icon">🎯</span> Stakeholder Influence</a>
     <div class="nav-section">Intelligence</div>
     <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
@@ -233,8 +233,8 @@
     <!-- INTAKE VIEW -->
     <div id="intake-view">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; HR Data Storyteller</div>
-        <div class="page-title">&#x1F4CA; HR Data Storyteller</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; People ROI Brief</div>
+        <div class="page-title">&#x1F4CA; People ROI Brief</div>
         <div class="page-sub">Your numbers already tell a story. Let's make sure the right people hear it.</div>
       </div>
       <div class="intro-card">
@@ -285,7 +285,7 @@
 
     <!-- LOADING VIEW -->
     <div id="loading-view" style="display:none">
-      <div class="page-header"><div class="page-title">&#x1F4CA; HR Data Storyteller</div></div>
+      <div class="page-header"><div class="page-title">&#x1F4CA; People ROI Brief</div></div>
       <div class="loading-state">
         <div class="loading-orb">
           <svg width="64" height="64" viewBox="0 0 64 64">
@@ -300,7 +300,7 @@
     <!-- OUTPUT VIEW -->
     <div id="output-view" style="display:none">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="hr-data-storyteller.html">HR Data Storyteller</a> &middot; SIGNAL Output</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="hr-data-storyteller.html">People ROI Brief</a> &middot; SIGNAL Output</div>
         <div class="page-title">Your SIGNAL Narrative</div>
         <div class="page-sub" id="output-audience-label">Ready to present</div>
       </div>
@@ -507,7 +507,7 @@
           currentResult = data.data;
           renderOutput();
         } else {
-          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You\u2019ve reached your daily limit for HR Data Storyteller. Resets tomorrow.') : 'Analysis failed. ' + (data.error || 'Please try again.'));
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You\u2019ve reached your daily limit for People ROI Brief. Resets tomorrow.') : 'Analysis failed. ' + (data.error || 'Please try again.'));
         }
       } catch(err) {
         clearInterval(loadInterval);
@@ -633,7 +633,7 @@
     function goToARIA() {
       sessionStorage.setItem('sr_aria_context', JSON.stringify({
         mode: 'conversation_coach',
-        scenario: 'HR Data Storyteller — presenting to ' + selectedAudience,
+        scenario: 'People ROI Brief — presenting to ' + selectedAudience,
         headline: document.getElementById('headline-text').innerText
       }));
       window.location.href = BASE + 'aria.html';
