@@ -12,10 +12,20 @@ const logs=['INITIALISING PRIVATE INTELLIGENCE LAYER','LOADING INDIA / HR CONTEX
    "closes". The TTL means returning within 2 hours skips the boot on ANY
    mobile reopen. After 2 hours, boot plays again as a fresh cinematic. */
 function bootSeenRecently(){
+  /* Only check localStorage TTL for paying users — non-paying users
+     should see the boot on every new tab/session. */
+  if(!localStorage.getItem('vantage_paid_user')) return false;
   try{var ts=localStorage.getItem('vantage_boot_ts');return !!(ts&&(Date.now()-parseInt(ts,10))<2*3600000);}catch(e){return false;}
 }
 function markBootSeen(){
-  try{sessionStorage.setItem('vantage_boot_seen','1');localStorage.setItem('vantage_boot_ts',Date.now().toString());}catch(e){}
+  try{
+    sessionStorage.setItem('vantage_boot_seen','1');
+    /* Only persist the 2-hour skip in localStorage for paying users.
+       Non-paying users get sessionStorage only — boot replays every close/reopen. */
+    if(localStorage.getItem('vantage_paid_user')){
+      localStorage.setItem('vantage_boot_ts',Date.now().toString());
+    }
+  }catch(e){}
 }
 
 if(sessionStorage.getItem('vantage_boot_seen')||bootSeenRecently()){
