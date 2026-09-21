@@ -2195,23 +2195,6 @@
   margin-top: 0.2em;
 }
 
-/* ── DASHBOARD EDGE GLOW — slow purple-indigo pulse on all 3 panels ── */
-@keyframes dashEdgeGlow {
-  0%, 100% {
-    filter: drop-shadow(0 0 6px rgba(99,102,241,.2))
-            drop-shadow(0 0 18px rgba(99,102,241,.1));
-  }
-  50% {
-    filter: drop-shadow(0 0 14px rgba(99,102,241,.42))
-            drop-shadow(0 0 36px rgba(124,58,237,.22))
-            drop-shadow(0 0 56px rgba(99,102,241,.1));
-  }
-}
-.humac-synthesis,
-.record-dossier,
-#meridianStack {
-  animation: dashEdgeGlow 4s ease-in-out infinite;
-}
 </style>
 <style id="prologue-startup-guard">
 /* Startup guard: later inline typography overrides must not expose the
