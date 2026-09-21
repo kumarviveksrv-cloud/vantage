@@ -2683,25 +2683,21 @@
       let done = false;
       function finish(){ if(done) return; done = true; resolve(); }
 
-      /* KEY FIX: paying user / returning user prologue bypass adds
-         prologue-complete to body immediately — and the q-overlay
-         never shows. Watch for prologue-complete BUT only finish()
-         if q-overlay was never active (i.e. prologue was bypassed,
-         not just completed). If the full prologue ran, q-overlay
-         will show then hide and the existing obs handles it. */
-      if(document.body.classList.contains('prologue-complete') && !sawActive){
-        finish(); return;
-      }
-      const bodyWatcher = new MutationObserver(function(){
-        if(document.body.classList.contains('prologue-complete') && !sawActive){
-          bodyWatcher.disconnect(); finish();
-        }
-      });
-      bodyWatcher.observe(document.body,{attributes:true,attributeFilter:['class']});
-
-      /* Known returning user (localStorage persists across sessions):
-         don't wait more than 800ms if q-overlay never activates. */
+      /* BYPASS DETECTION — scripts run in order: vantage-prologue.js
+         before vantage-curtain.js. The paying user bypass fires
+         synchronously at prologue.js parse time, so prologue-complete
+         is ALREADY on body when this function is first called.
+         For full-prologue users, prologue-complete is added later
+         (after 12+ seconds) — not present when we start watching.
+         Check once at call time; no MutationObserver needed. */
       const isKnownUser=!!(localStorage.getItem('vantage_seen_ever')||localStorage.getItem('vantage_paid_user'));
+
+      if(document.body.classList.contains('prologue-complete')){
+        /* Prologue was bypassed — q-overlay will never show.
+           Small delay to let the page settle visually. */
+        setTimeout(finish, 300);
+        return;
+      }
 
       if(!qov){
         setTimeout(finish, (firstVisit && !isKnownUser) ? 12000 : 300);
