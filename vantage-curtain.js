@@ -731,7 +731,16 @@
     if(fired)return;fired=true;
     const D=window._vDash;if(!D)return;
 
-    /* Progress bar — once */
+    /* Fix 2: Skip animation if dashboards already played this session */
+    if(sessionStorage.getItem('vantage_dash_animated')){
+      entries.forEach(e=>e.classList.add('dos-visible'));
+      if(progress)progress.style.width='73%';
+      if(percent)percent.textContent='73%';
+      if(total)total.textContent='\u20b918.4L';
+      dossier.style.position='relative';dossier.style.overflow='hidden';
+      if(!dossier.querySelector('.dos-scanline')){const sc=document.createElement('div');sc.className='dos-scanline';dossier.appendChild(sc);}
+      return;
+    }
     setTimeout(()=>{D.bar(progress,73,1800);D.num(percent,73,2000,'','%');},120);
 
     /* Entries cascade in — CSS transition, one-time scramble */
@@ -769,6 +778,7 @@
     /* CSS-only scanline — no JS loop */
     dossier.style.position='relative';dossier.style.overflow='hidden';
     const scan=document.createElement('div');scan.className='dos-scanline';dossier.appendChild(scan);
+    sessionStorage.setItem('vantage_dash_animated','1');
   }
 
   const section=document.querySelector('.record.cinematic-panel');
@@ -810,6 +820,24 @@
   function run(){
     if(fired)return;fired=true;
     const D=window._vDash;if(!D)return;
+
+    /* Fix 2: Skip animation if already played this session */
+    if(sessionStorage.getItem('vantage_dash_animated')){
+      forces.forEach(fc=>fc.classList.add('hf-visible'));
+      forces.forEach(fc=>{const b=fc.querySelector('.hsf-fill');if(b)b.style.width=(parseFloat(b.dataset.w)||60)+'%';});
+      if(scorePnl)scorePnl.classList.add('hsp-visible');
+      if(fillEl)fillEl.style.width='84%';
+      if(numEl)numEl.textContent='84';
+      const v=document.getElementById('humacVerdict');if(v)v.textContent='Value Generating';
+      const hci=document.getElementById('humacHCI');if(hci)hci.textContent='79';
+      const hcix=document.getElementById('humacHCIx');if(hcix)hcix.textContent='0.94x';
+      const tNum=document.getElementById('humacTrajNum');if(tNum)tNum.textContent='+6';
+      const tSt=document.getElementById('humacTrajStatus');if(tSt)tSt.textContent='Improving';
+      const tag=document.getElementById('humacTagline');if(tag)tag.textContent='This is what your organisation\u2019s human capital position looks like when it speaks the CFO\u2019s language.';
+      panel.style.position='relative';panel.style.overflow='hidden';
+      if(!panel.querySelector('.humac-scanline')){const sc=document.createElement('div');sc.className='humac-scanline';panel.appendChild(sc);}
+      return;
+    }
 
     const GAP=460;
     forces.forEach((fc,i)=>{
@@ -883,6 +911,23 @@
 
   function run(){
     if(fired)return;fired=true;
+
+    /* Fix 2: Skip animation if already played this session */
+    if(sessionStorage.getItem('vantage_dash_animated')){
+      layers.forEach(l=>l.classList.add('msl-active'));
+      if(output){output.classList.add('mso-active');if(outputText)outputText.classList.add('advice-burst');}
+      if(!stack.querySelector('.meridian-particles')){
+        const pc=document.createElement('div');pc.className='meridian-particles';
+        [[10,20,12],[28,62,9],[52,15,14],[68,70,10],[85,38,11],[38,82,13]].forEach(([l,t,d])=>{
+          const p=document.createElement('div');p.className='meridian-p';
+          p.style.left=l+'%';p.style.top=t+'%';p.style.animationDuration=d+'s';
+          p.style.animationDelay=(-Math.random()*d).toFixed(1)+'s';pc.appendChild(p);
+        });
+        stack.appendChild(pc);
+        const pkt=document.createElement('div');pkt.className='meridian-packet';stack.appendChild(pkt);
+      }
+      return;
+    }
 
     /* Particle field — CSS only */
     const pc=document.createElement('div');pc.className='meridian-particles';
@@ -2552,11 +2597,13 @@
   async function run(){
     console.log('[HeroSeq] run() started');
 
-    /* Blank pause before anything types — increased to a few full
-       seconds, since on refresh a separate covering timer/overlay is
-       visible for 3-5s and the tagline typewriter must only begin
-       once that's genuinely out of the way. */
-    await delay(3800);
+    /* Fix 5: 3800ms pause was designed for the very first ever visit —
+       the dramatic pause after the prologue + ta-da sequence. Returning
+       visitors (localStorage flag) get 800ms instead. Cuts the blank
+       hero from 6-10 seconds to under 2 seconds on mobile and refresh. */
+    var firstEverVisit=!localStorage.getItem('vantage_seen_ever');
+    localStorage.setItem('vantage_seen_ever','1');
+    await delay(firstEverVisit ? 3800 : 800);
 
     /* 1. Tagline types out (mixed em) — slowed from 32ms to 58ms/char,
        nearly doubling visible duration (~1.8s -> ~3.3s) */
