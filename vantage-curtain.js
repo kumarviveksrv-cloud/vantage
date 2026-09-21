@@ -2621,13 +2621,14 @@
        - First ever visit without prologue path: 3800ms — dramatic pause.
        - Returning visitor without prologue path: 800ms — brief breathing room. */
     var firstEverVisit=!localStorage.getItem('vantage_seen_ever');
-    /* Only persist 'seen ever' for paying users — non-paying users
-       should get the full cinematic pause on every new tab/session. */
-    if(localStorage.getItem('vantage_paid_user')){
-      localStorage.setItem('vantage_seen_ever','1');
-    }
+    /* Always write vantage_seen_ever — needed by waitForLandingReveal()
+       isKnownUser check so the 800ms fallback fires for returning visitors.
+       Hero delay is controlled separately: paying users get 800ms on return,
+       non-paying users always get the full 3800ms dramatic pause. */
+    localStorage.setItem('vantage_seen_ever','1');
     var hadPrologue=document.body.classList.contains('prologue-complete');
-    await delay(hadPrologue ? 400 : (firstEverVisit ? 3800 : 800));
+    var isPayingUser=!!localStorage.getItem('vantage_paid_user');
+    await delay(hadPrologue ? 400 : (isPayingUser && !firstEverVisit ? 800 : 3800));
 
     /* 1. Tagline types out (mixed em) — slowed from 32ms to 58ms/char,
        nearly doubling visible duration (~1.8s -> ~3.3s) */
