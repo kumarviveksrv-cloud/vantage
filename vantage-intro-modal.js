@@ -19,18 +19,18 @@ var MODALS = {
   'debrief': {
     icon: '◉',
     name: 'The Debrief',
-    tagline: 'Every decision you made, finally on record.',
-    what: 'Your professional intelligence log. Every case closed, every difficult conversation navigated, every policy call made — documented, searchable, and owned by you.',
-    does: 'Builds your Vantage Record over time. Every entry compounds: the next case is easier, your career capital grows, and your judgment becomes something you can prove.',
-    start: 'Log your most recent decision. What was the situation, what did you decide, and what happened next. That\'s the first entry.'
+    tagline: 'Your month, synthesised and sent to you.',
+    what: 'The Debrief is auto-generated on the last working day of every month. You don\'t write it — Vantage does. It reads your entire month\'s activity and produces a professional narrative: cases navigated, tools used, financial exposure managed, growth signal, and one provocation.',
+    does: 'Twelve Debriefs become a year. A year becomes a career record that answers the question every HR leader eventually faces: what have I actually delivered? You receive it. You don\'t build it.',
+    start: 'Use the platform through the month — every tool session, every case, every conversation feeds into it. The Debrief arrives automatically at month end.'
   },
   'ledger': {
-    icon: '₹',
-    name: 'The Ledger',
-    tagline: 'The financial language HR never had.',
-    what: 'A running ledger of the people decisions you\'ve made, translated into rupee-value terms — costs avoided, exposure managed, and value created for the business.',
-    does: 'Gives you the numbers to walk into any boardroom conversation with evidence instead of instinct. HR has always done financial work. Now you can show it.',
-    start: 'Add your first case — select the type, describe what happened, and let Vantage calculate the financial position it represents.'
+    icon: '📜',
+    name: 'Standpoint',
+    tagline: 'Your professional position, on record before the outcome.',
+    what: 'Standpoint is where you file your professional stance before a decision\'s outcome is known. Every time you take a position that could later be questioned — a recommendation overruled, a risk you flagged, an alternative you proposed — you file it here, timestamped.',
+    does: 'When leadership overrules you and it goes wrong six weeks later, Standpoint shows exactly what you said and when you said it. Not a complaint. Not a diary. Documented professional judgment.',
+    start: 'The next time you take a stand that leadership might override — file it here before the outcome is known. One entry is worth more than a year of silence.'
   },
   'humac': {
     icon: '⬡',
@@ -42,61 +42,62 @@ var MODALS = {
   },
   'case-navigator': {
     icon: '⊞',
-    name: 'The Stakes',
-    tagline: 'Five real cases. Every decision has a consequence.',
-    what: 'An interactive decision simulator built around five real HR case types — Termination, POSH, Restructuring, Performance/PIP, and Wage Compliance. Each with four paths. Each with a real cost.',
-    does: 'Shows you exactly what each decision costs, legally and financially, before you make it in the real world. Built for practice. Built for proof.',
-    start: 'Choose a case type, open the first room, and pick a path. PACT calculates the exposure. Your decision, your consequences.'
+    name: 'Employee Case Advisor',
+    tagline: 'Navigate any employee situation — with the full picture.',
+    what: 'Employee Case Advisor takes your real situation — a termination, a POSH complaint, a disciplinary issue, a PIP, an absenteeism case — and tells you exactly what to do, what process to follow, and what the financial exposure looks like if you get it wrong.',
+    does: 'Calibrated to your state, your industry, and your org type. Every recommendation is grounded in the law that actually applies to you — not generic HR advice.',
+    start: 'Describe the situation as it is right now. The more specific you are — what happened, who\'s involved, what\'s been done — the more precise the advice.'
   },
   'policy-compass': {
     icon: '⊕',
-    name: 'Policy Compass',
-    tagline: 'The policy that fits your exact situation — not a template.',
-    what: 'A policy generation and analysis engine calibrated to your state, industry, and organisation type. Built on India\'s actual legal framework, not generic HR boilerplate.',
-    does: 'Drafts defensible policies grounded in the regulations that actually apply to you — jurisdiction-specific, role-aware, and legally grounded.',
-    start: 'Select your state, describe the policy gap you need to fill, and let Policy Compass build the framework from the ground up.'
+    name: 'Policy Advisor',
+    tagline: 'The right policy for your exact situation — not a template.',
+    what: 'Policy Advisor generates policy frameworks calibrated to your state, industry, and organisation type. Built on India\'s actual legal framework — BNS, BNSS, BSA — not generic HR boilerplate.',
+    does: 'Drafts defensible policies grounded in the regulations that actually apply to you. Jurisdiction-specific, role-aware, and ready to withstand challenge.',
+    start: 'Describe the policy gap you\'re trying to fill — what\'s unclear, what\'s missing, what situation triggered this. Policy Advisor builds from there.'
   },
   'hr-storyteller': {
     icon: '◎',
-    name: 'HR Data Storyteller',
-    tagline: 'Turn your numbers into a CFO-ready narrative.',
-    what: 'A signal analysis tool that takes your HR metrics and builds a financial argument your leadership cannot dismiss. Attrition, engagement, headcount, cost-per-hire — all translated into board language.',
-    does: 'Converts raw HR data into narrative with rupee-value anchors and business linkage. The same numbers your CFO sees, told in the story that actually moves decisions.',
-    start: 'Enter your key HR metrics, choose your audience — CEO, CFO, Board — and describe the outcome you\'re driving toward. SIGNAL does the rest.'
+    name: 'People ROI Brief',
+    tagline: 'Your HR numbers, translated into a boardroom argument.',
+    what: 'People ROI Brief takes your raw HR metrics — attrition rates, engagement scores, cost-per-hire, headcount data — and builds the financial argument your leadership cannot dismiss.',
+    does: 'Converts HR data into board-level narrative with rupee-value anchors. The same numbers your CFO sees, told in the language that actually moves decisions.',
+    start: 'Enter your key HR metrics, choose your audience — CEO, CFO, Board — and describe the outcome you\'re driving toward.'
   },
   'offer-intelligence': {
     icon: '◇',
-    name: 'Offer Intelligence',
-    tagline: 'Know exactly what an offer is worth — and what it costs to say no.',
-    what: 'An offer analysis engine that models the full financial cost of a hiring or counter-offer decision — market positioning, replacement cost, ramp time, flight risk, and timeline.',
-    does: 'Gives you the number you need to defend or challenge any offer in the room. The answer before the question gets asked.',
-    start: 'Enter the candidate\'s current CTC, the offer on the table, and the role details. Offer Intelligence models the full position in both directions.'
+    name: 'Retention Advisor',
+    tagline: 'Model the real cost of keeping or losing this person.',
+    what: 'Retention Advisor models the full financial picture of a retention decision — what it costs to keep someone, what it costs to lose them, replacement cost, ramp time, flight risk, and the counter-offer position.',
+    does: 'Gives you the number you need before any retention conversation. Not a gut feel — a calculated position you can defend in the room.',
+    start: 'Enter the person\'s current CTC, their role, and the situation. Retention Advisor models both paths — retain and lose — so you walk in prepared.'
   },
   'stakeholder-influence': {
     icon: '◬',
-    name: 'Stakeholder Influence',
-    tagline: 'Know how to say it before you say it.',
-    what: 'A communication intelligence tool that models how different stakeholders — CEOs, CFOs, line managers, boards — receive the same information differently, and what framing actually moves them.',
-    does: 'Same facts. Right framing. Helps you position every people decision in the language that lands with the specific person you\'re talking to.',
-    start: 'Choose your stakeholder, describe the decision you need to communicate, and specify the outcome you\'re driving. INFLUENCE maps the path.'
+    name: 'Leadership Communicator',
+    tagline: 'Know how to say it to this specific person, before you say it.',
+    what: 'Leadership Communicator models how a specific leader — your CEO, CFO, a line manager, the board — receives information, what language moves them, and how to frame your recommendation to land.',
+    does: 'Same facts. Right framing. Every people decision you need to communicate, positioned in the language that reaches the specific person you\'re walking in to meet.',
+    start: 'Name the person, describe the decision you need to communicate, and specify the outcome you\'re driving. Leadership Communicator maps the path.'
   },
   'conversation-simulator': {
     icon: '◈',
-    name: 'Conversation Simulator',
-    tagline: 'Rehearse the conversation before it matters.',
-    what: 'A real-time simulation environment for the conversations HR professionals dread most — performance discussions, terminations, disciplinary hearings, leadership alignment calls.',
-    does: 'A safe space to test your approach, anticipate pushback, and walk into the real conversation already knowing what\'s coming. ARIA plays the other person and holds nothing back.',
+    name: 'Difficult Conversations',
+    tagline: 'Rehearse before the conversation that matters.',
+    what: 'Difficult Conversations is a real-time simulation environment for the conversations HR professionals dread most — performance discussions, terminations, disciplinary hearings, leadership alignment calls. ARIA plays the other person.',
+    does: 'A safe space to test your approach, anticipate pushback, and walk into the real conversation already knowing what\'s coming. ARIA holds nothing back.',
     start: 'Choose the conversation type, set the context — role, stakes, what you\'re trying to achieve — and start. Treat it like the real thing.'
   },
   'case-library': {
     icon: '▦',
-    name: 'Case Library',
-    tagline: 'Every precedent you\'ve ever needed, in one place.',
-    what: 'A curated library of HR case precedents — documented decision patterns, outcome analysis, and legal grounding across all major case types and jurisdictions in India.',
-    does: 'Gives you the reference point to defend any decision before it gets challenged, and anticipate any objection before it gets raised.',
-    start: 'Search by case type, outcome, or keyword — or browse the featured cases to see what others have navigated and how it resolved.'
+    name: 'Vantage Record',
+    tagline: 'Every case you\'ve navigated, permanently yours.',
+    what: 'Vantage Record is your complete professional case archive, auto-populated every time you use the platform. Every employee case, every brief, every session — saved, searchable by date, and portable across organisations.',
+    does: 'The record the org never built for you. After two years on Vantage, you have a searchable archive of every difficult situation you handled and how you handled it — proof that your experience is real.',
+    start: 'Start using the tools. Every session is saved here automatically. Search by date to see what you were navigating on any given day.'
   }
 };
+
 
 var PREFIX = 'vip_seen_';
 
