@@ -3142,20 +3142,16 @@ window.triggerPwaInstall=triggerPwaInstall;
 window.addEventListener('beforeinstallprompt',function(e){
   e.preventDefault();
   _pwaPrompt=e;
-  /* Only show install nudge AFTER prologue/intro is done.
-     If prologue is already complete (paying user bypass), show immediately.
-     Otherwise wait for prologue-complete to be added to body. */
-  if(document.body.classList.contains('prologue-complete')){
-    showAllInstallUI();
-  } else {
-    var prologueWatcher=new MutationObserver(function(){
-      if(document.body.classList.contains('prologue-complete')){
-        prologueWatcher.disconnect();
-        showAllInstallUI();
-      }
-    });
-    prologueWatcher.observe(document.body,{attributes:true,attributeFilter:['class']});
-  }
+  /* Store the prompt — do NOT show any UI yet.
+     The install nudge shows only when 'vantage-hero-ready' fires,
+     meaning the full hero animation is complete and the user is
+     genuinely on the landing page. This prevents the toast from
+     appearing during the prologue, ta-da, or Scene 2 typewriter. */
+});
+
+/* Show install UI only after hero animation completes */
+window.addEventListener('vantage-hero-ready',function(){
+  if(_pwaPrompt) setTimeout(showAllInstallUI, 1200);
 });
 document.addEventListener('DOMContentLoaded',function(){
   var toast_ib=document.getElementById('pwa-install-btn');
