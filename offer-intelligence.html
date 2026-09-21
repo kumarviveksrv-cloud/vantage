@@ -6,7 +6,7 @@
   <link rel="shortcut icon" href="favicon.png"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Offer Intelligence — Virorah Vantage</title>
+  <title>Retention Advisor — Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="vantage-theme.css"/>
   <style>
@@ -179,7 +179,7 @@
     <a href="er-case-navigator.html" class="nav-item"><span class="icon">⚡</span> ER Case Navigator</a>
     <a href="hr-data-storyteller.html" class="nav-item"><span class="icon">📊</span> HR Data Storyteller</a>
     <a href="stakeholder-influence.html" class="nav-item"><span class="icon">🎯</span> Stakeholder Influence</a>
-    <a href="offer-intelligence.html" class="nav-item active"><span class="icon">⚖️</span> Offer Intelligence</a>
+    <a href="offer-intelligence.html" class="nav-item active"><span class="icon">⚖️</span> Retention Advisor</a>
     <div class="nav-section">Intelligence</div>
     <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
     <a href="policy-compass.html" class="nav-item"><span class="icon">🧭</span> Policy Compass</a>
@@ -202,8 +202,8 @@
     <!-- INTAKE VIEW -->
     <div id="intake-view">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Offer Intelligence</div>
-        <div class="page-title">⚖️ Offer Intelligence</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Retention Advisor</div>
+        <div class="page-title">⚖️ Retention Advisor</div>
         <div class="page-sub">Model the decision before you make it. Whether they have an offer in hand or you're sensing movement, the financial case and the right conversation are both here.</div>
       </div>
 
@@ -279,7 +279,7 @@
             <input type="hidden" id="co-crit" />
           </div>
 
-          <button class="analyze-btn" onclick="analyzeOffer('counter_offer')">Run Offer Intelligence →</button>
+          <button class="analyze-btn" onclick="analyzeOffer('counter_offer')">Run Retention Advisor →</button>
           <div class="privacy-note">🔒 Anonymised before processing. No personal data stored in analysis.</div>
         </div>
       </div>
@@ -494,7 +494,7 @@
           showView('output-view');
         } else {
           showError(data.error === 'USAGE_LIMIT'
-            ? (data.message || 'You\u2019ve reached your daily limit for Offer Intelligence. Resets tomorrow.')
+            ? (data.message || 'You\u2019ve reached your daily limit for Retention Advisor. Resets tomorrow.')
             : 'Analysis failed. ' + (data.error || 'Please try again.'));
         }
       } catch(err) {
@@ -514,7 +514,7 @@
         var humac = d.humac || {};
 
         // Header
-        html += '<div class="output-eyebrow">⚖️ Offer Intelligence &middot; Counter-offer Decision</div>';
+        html += '<div class="output-eyebrow">⚖️ Retention Advisor &middot; Counter-offer Decision</div>';
 
         // Profile strip
         html += '<div class="profile-strip">';
@@ -584,7 +584,7 @@
         var comm2 = d.communication || {};
         var humac2 = d.humac || {};
 
-        html += '<div class="output-eyebrow">🔭 Offer Intelligence &middot; Flight Risk Assessment</div>';
+        html += '<div class="output-eyebrow">🔭 Retention Advisor &middot; Flight Risk Assessment</div>';
 
         // Risk header
         html += '<div class="profile-strip">';
@@ -679,7 +679,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             tool: 'save_case',
-            caseType: flow === 'counter_offer' ? 'Offer Intelligence — Counter-offer' : 'Offer Intelligence — Flight Risk',
+            caseType: flow === 'counter_offer' ? 'Retention Advisor — Counter-offer' : 'Retention Advisor — Flight Risk',
             narrative: narrative,
             result: currentResult,
             status: 'Open'
