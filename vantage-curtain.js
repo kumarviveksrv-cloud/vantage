@@ -783,7 +783,7 @@
 
   const section=document.querySelector('.record.cinematic-panel');
   if(!section)return;
-  new IntersectionObserver(es=>{if(es[0].isIntersecting)setTimeout(run,3000);},{threshold:0.2}).observe(section);
+  new IntersectionObserver(es=>{if(es[0].isIntersecting){var d=sessionStorage.getItem('vantage_dash_animated')?0:3000;setTimeout(run,d);}},{threshold:0.2}).observe(section);
 })();
 
 
@@ -875,7 +875,7 @@
 
   const section=document.querySelector('.humacity.cinematic-panel');
   if(!section)return;
-  new IntersectionObserver(es=>{if(es[0].isIntersecting)setTimeout(run,3000);},{threshold:0.15}).observe(section);
+  new IntersectionObserver(es=>{if(es[0].isIntersecting){var d=sessionStorage.getItem('vantage_dash_animated')?0:3000;setTimeout(run,d);}},{threshold:0.15}).observe(section);
 })();
 
 
@@ -970,7 +970,7 @@
 
   const section=document.querySelector('.meridian.cinematic-panel');
   if(!section)return;
-  new IntersectionObserver(es=>{if(es[0].isIntersecting)setTimeout(run,3000);},{threshold:0.15}).observe(section);
+  new IntersectionObserver(es=>{if(es[0].isIntersecting){var d=sessionStorage.getItem('vantage_dash_animated')?0:3000;setTimeout(run,d);}},{threshold:0.15}).observe(section);
 })();
 
 
@@ -2597,13 +2597,15 @@
   async function run(){
     console.log('[HeroSeq] run() started');
 
-    /* Fix 5: 3800ms pause was designed for the very first ever visit —
-       the dramatic pause after the prologue + ta-da sequence. Returning
-       visitors (localStorage flag) get 800ms instead. Cuts the blank
-       hero from 6-10 seconds to under 2 seconds on mobile and refresh. */
+    /* Fix 3 + 5: Context-aware delay before hero typewriter starts.
+       - After prologue completes (natural or skip): 400ms — user is already
+         in the experience, hero should appear promptly.
+       - First ever visit without prologue path: 3800ms — dramatic pause.
+       - Returning visitor without prologue path: 800ms — brief breathing room. */
     var firstEverVisit=!localStorage.getItem('vantage_seen_ever');
     localStorage.setItem('vantage_seen_ever','1');
-    await delay(firstEverVisit ? 3800 : 800);
+    var hadPrologue=document.body.classList.contains('prologue-complete');
+    await delay(hadPrologue ? 400 : (firstEverVisit ? 3800 : 800));
 
     /* 1. Tagline types out (mixed em) — slowed from 32ms to 58ms/char,
        nearly doubling visible duration (~1.8s -> ~3.3s) */
@@ -2699,7 +2701,11 @@
     if(heroDeck) hideKeepText(heroDeck);
     console.log('[HeroSeq] Re-hidden right before run(). tagline.textContent =', JSON.stringify(tagline.textContent));
     console.log('[HeroSeq] Accent lines text still intact:', lineAccents.map(el=>el.textContent));
-    setTimeout(run, 600);
+    /* Fix 3: When prologue has already completed (skip or natural end),
+       use minimal delay so hero appears immediately after the landing page
+       is revealed — not after an extra 600ms pause. */
+    var postPrologueDelay = document.body.classList.contains('prologue-complete') ? 80 : 600;
+    setTimeout(run, postPrologueDelay);
   });
 })();
 
