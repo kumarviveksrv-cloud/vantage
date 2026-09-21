@@ -2190,6 +2190,10 @@
 .hero-title {
   font-size: clamp(32px, 4.8vw, 66px) !important;
 }
+/* Breathing room between the two accent lines */
+.hero-title .line.accent + .line.accent {
+  margin-top: 0.2em;
+}
 </style>
 <style id="prologue-startup-guard">
 /* Startup guard: later inline typography overrides must not expose the
