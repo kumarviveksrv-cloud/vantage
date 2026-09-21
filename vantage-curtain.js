@@ -2281,6 +2281,8 @@
       if(heD){heD.textContent='.';heD.classList.add('he-blink');}
       if(heC){heC.style.opacity='0';heC.style.animation='none';}
     }
+    /* Signal that hero is ready — used to gate PWA install prompt */
+    window.dispatchEvent(new CustomEvent('vantage-hero-ready'));
     return;
   }
 
@@ -2613,14 +2615,15 @@
   async function run(){
     console.log('[HeroSeq] run() started');
 
-    /* Delay before typewriter starts. The ta-da animation runs for
-       3-4 seconds after waitForLandingReveal() resolves — animation
-       must not begin until after the landing page is genuinely visible.
-       First ever visit: 3800ms covers the full ta-da duration.
-       Returning visitor: 800ms — ta-da is shorter/already past. */
+    /* Fix 3 + 5: Context-aware delay before hero typewriter starts.
+       - After prologue completes (natural or skip): 400ms — user is already
+         in the experience, hero should appear promptly.
+       - First ever visit without prologue path: 3800ms — dramatic pause.
+       - Returning visitor without prologue path: 800ms — brief breathing room. */
     var firstEverVisit=!localStorage.getItem('vantage_seen_ever');
     localStorage.setItem('vantage_seen_ever','1');
-    await delay(firstEverVisit ? 3800 : 800);
+    var hadPrologue=document.body.classList.contains('prologue-complete');
+    await delay(hadPrologue ? 400 : (firstEverVisit ? 3800 : 800));
 
     /* 1. Tagline types out (mixed em) — slowed from 32ms to 58ms/char,
        nearly doubling visible duration (~1.8s -> ~3.3s) */
@@ -2673,6 +2676,8 @@
 
     console.log('[HeroSeq] run() complete');
     sessionStorage.setItem('vantage_hero_animated','1');
+    /* Signal that hero animation is fully done — gates PWA install prompt */
+    window.dispatchEvent(new CustomEvent('vantage-hero-ready'));
   }
 
   function waitForLandingReveal(){
@@ -2732,7 +2737,11 @@
     if(heroDeck) hideKeepText(heroDeck);
     console.log('[HeroSeq] Re-hidden right before run(). tagline.textContent =', JSON.stringify(tagline.textContent));
     console.log('[HeroSeq] Accent lines text still intact:', lineAccents.map(el=>el.textContent));
-    setTimeout(run, 600);
+    /* Fix 3: When prologue has already completed (skip or natural end),
+       use minimal delay so hero appears immediately after the landing page
+       is revealed — not after an extra 600ms pause. */
+    var postPrologueDelay = document.body.classList.contains('prologue-complete') ? 80 : 600;
+    setTimeout(run, postPrologueDelay);
   });
 })();
 
