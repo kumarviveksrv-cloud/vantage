@@ -2621,7 +2621,11 @@
        - First ever visit without prologue path: 3800ms — dramatic pause.
        - Returning visitor without prologue path: 800ms — brief breathing room. */
     var firstEverVisit=!localStorage.getItem('vantage_seen_ever');
-    localStorage.setItem('vantage_seen_ever','1');
+    /* Only persist 'seen ever' for paying users — non-paying users
+       should get the full cinematic pause on every new tab/session. */
+    if(localStorage.getItem('vantage_paid_user')){
+      localStorage.setItem('vantage_seen_ever','1');
+    }
     var hadPrologue=document.body.classList.contains('prologue-complete');
     await delay(hadPrologue ? 400 : (firstEverVisit ? 3800 : 800));
 
