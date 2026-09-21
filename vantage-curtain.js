@@ -2198,11 +2198,23 @@
   }
 
   /* ── INSTANT REVEAL — animation already played this session ─────────────
-     All hero text elements are naturally visible (we never call hide()).
-     Only heroEnterEl needs special handling — initHeroEnter() creates
-     its child spans empty, so we populate them to their final state. */
+     Hero CSS sets opacity:0 on all text elements by default — the JS
+     animation is always responsible for showing them. We must explicitly
+     reveal every element here, not assume natural visibility. */
   if(sessionStorage.getItem('vantage_hero_animated')){
+    /* Reveal all hero text elements instantly */
+    [tagline, kicker, lineDim].forEach(function(el){
+      if(el) el.style.setProperty('opacity','1','important');
+    });
+    lineAccents.forEach(function(el){
+      if(el) el.style.setProperty('opacity','1','important');
+    });
+    if(heroContext) heroContext.style.setProperty('opacity','0.62','important');
+    if(heroDeck) heroDeck.style.setProperty('opacity','1','important');
+
+    /* heroEnterEl child spans start empty — populate to final state */
     if(heroEnterEl){
+      heroEnterEl.style.setProperty('opacity','1','important');
       var heT=heroEnterEl.querySelector('#heText');
       var heV=heroEnterEl.querySelector('#heVantage');
       var heD=heroEnterEl.querySelector('#heDot');
