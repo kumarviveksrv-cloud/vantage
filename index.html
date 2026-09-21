@@ -2220,12 +2220,14 @@
   visibility: visible !important;
 }
 /* Fix 1: hero accent lines flash as purple blocks before JS runs —
-   default to hidden, JS reveals them. The instant-reveal path and
-   the full animation path both explicitly set opacity:1.
-   !important ensures this beats any rule in vantage-cinematic.css
-   regardless of specificity. */
+   visibility:hidden prevents GPU compositing entirely (no layer created)
+   so there is no intermediate state where background shows as a rectangle
+   before background-clip:text applies. opacity:0 alone still composites
+   the element and can flash. Both properties set for maximum suppression.
+   !important ensures this beats any rule in vantage-cinematic.css. */
 .hero-title .line {
   opacity: 0 !important;
+  visibility: hidden !important;
 }
 /* The current visual is the decoded photo layer. Avoid an unnecessary
    mobile WebGL context and compositor competition. */
@@ -2288,7 +2290,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   <nav>
     <a href="#system">System</a><a href="#aria">ARIA</a><a href="#humacity">Humacity</a><a href="#pricing">Pricing</a>
   </nav>
-  <div class="nav-actions"><a class="nav-sign" href="access.html">Sign in</a><a class="nav-cta" href="demo.html" style="white-space:nowrap">Try the Demo <b>↗</b></a></div>
+  <div class="nav-actions"><a class="nav-sign" href="access.html">Sign in</a><a class="nav-cta" href="demo.html" style="white-space:nowrap">Try the Demo <b>↗</b></a><button id="pwa-nav-btn" onclick="triggerPwaInstall()" style="display:none;padding:6px 12px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:7px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;cursor:pointer;transition:all .2s;white-space:nowrap" title="Install Vantage as an app">&#x2B07; Install</button></div>
 </header>
 
 <div id="tada-overlay" aria-hidden="true">
@@ -3010,7 +3012,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 </section>
 
 
-<section class="final cinematic-panel"><div class="final-field"><div class="final-radial"></div></div><div class="final-copy"><p class="eyebrow">VANTAGE / Private intelligence system</p><h2>Do the work.<br>Keep the record.<br><span class="line accent">Build the career.</span></h2><p>Walk into the next room with more than an answer.</p><a href="access.html" class="btn btn-primary magnetic">Enter Vantage <span>↗</span></a></div><div class="final-foot"><span>VIRORAH VANTAGE</span><span>INDIA / HR</span><span>© 2026 Virorah Private Limited. All rights reserved.</span></div></section>
+<section class="final cinematic-panel"><div class="final-field"><div class="final-radial"></div></div><div class="final-copy"><p class="eyebrow">VANTAGE / Private intelligence system</p><h2>Do the work.<br>Keep the record.<br><span class="line accent">Build the career.</span></h2><p>Walk into the next room with more than an answer.</p><div style="display:flex;flex-direction:column;align-items:center;gap:12px"><a href="access.html" class="btn btn-primary magnetic">Enter Vantage <span>↗</span></a><button id="pwa-cta-btn" onclick="triggerPwaInstall()" style="display:none;padding:11px 24px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:10px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap">&#x2B07;&nbsp; Install Vantage App</button><p id="pwa-device-msg" style="display:none;font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(196,181,253,.45);max-width:340px;text-align:center;line-height:1.6;margin:0"></p></div></div><div class="final-foot"><span>VIRORAH VANTAGE</span><span>INDIA / HR</span><span>© 2026 Virorah Private Limited. All rights reserved.</span></div></section>
 </main></main>
 
 <footer><span>© 2026 Virorah Private Limited. All rights reserved.</span><div><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="https://virorah.com">Virorah Universe</a></div></footer>
@@ -3080,6 +3082,36 @@ if('serviceWorker' in navigator){
   });
 }
 var _pwaPrompt=null,_toastTimer=null;
+
+/* Device-aware messaging */
+var _isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+var _deviceMsg=_isMobile
+  ? 'Install on your phone for quick access anytime — check cases, talk to ARIA, and track decisions on the go.'
+  : 'Install as a desktop app for the full immersive experience — dashboards, profiles, and your complete Vantage Record in one view.';
+
+function showAllInstallUI(){
+  /* Show nav button */
+  var nb=document.getElementById('pwa-nav-btn');
+  if(nb)nb.style.display='inline-flex';
+  /* Show CTA button + device message */
+  var cb=document.getElementById('pwa-cta-btn');
+  if(cb)cb.style.display='inline-block';
+  var dm=document.getElementById('pwa-device-msg');
+  if(dm){dm.textContent=_deviceMsg;dm.style.display='block';}
+  /* Show toast */
+  showPwaToast();
+  /* GA4: track install prompt shown */
+  if(window.gtag)gtag('event','pwa_prompt_shown',{event_category:'pwa',event_label:_isMobile?'mobile':'desktop'});
+}
+function hideAllInstallUI(){
+  ['pwa-nav-btn','pwa-cta-btn'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  var dm=document.getElementById('pwa-device-msg');
+  if(dm)dm.style.display='none';
+  hidePwaToast();
+}
+
 function showPwaToast(){
   var t=document.getElementById('pwa-toast');
   if(t){setTimeout(function(){t.classList.add('pwa-show');},800);
@@ -3090,24 +3122,36 @@ function hidePwaToast(){
   if(t)t.classList.remove('pwa-show');
   if(_toastTimer){clearTimeout(_toastTimer);_toastTimer=null;}
 }
+
+function triggerPwaInstall(){
+  if(!_pwaPrompt)return;
+  hidePwaToast();
+  _pwaPrompt.prompt();
+  _pwaPrompt.userChoice.then(function(c){
+    if(c.outcome==='accepted'){
+      hideAllInstallUI();
+      if(window.gtag)gtag('event','pwa_install_accepted',{event_category:'pwa',event_label:_isMobile?'mobile':'desktop'});
+    }else{
+      if(window.gtag)gtag('event','pwa_install_dismissed',{event_category:'pwa',event_label:_isMobile?'mobile':'desktop'});
+    }
+    _pwaPrompt=null;
+  });
+}
+window.triggerPwaInstall=triggerPwaInstall;
+
 window.addEventListener('beforeinstallprompt',function(e){
-  e.preventDefault();_pwaPrompt=e;showPwaToast();
+  e.preventDefault();_pwaPrompt=e;showAllInstallUI();
 });
 document.addEventListener('DOMContentLoaded',function(){
-  var ib=document.getElementById('pwa-install-btn');
-  var cb=document.getElementById('pwa-toast-close');
-  if(ib){ib.addEventListener('click',function(){
-    if(!_pwaPrompt)return;hidePwaToast();
-    _pwaPrompt.prompt();
-    _pwaPrompt.userChoice.then(function(c){
-      if(c.outcome==='accepted')console.log('[PWA] Accepted');
-      _pwaPrompt=null;
-    });
-  });}
-  if(cb){cb.addEventListener('click',hidePwaToast);}
+  var toast_ib=document.getElementById('pwa-install-btn');
+  var toast_cb=document.getElementById('pwa-toast-close');
+  if(toast_ib){toast_ib.addEventListener('click',triggerPwaInstall);}
+  if(toast_cb){toast_cb.addEventListener('click',hidePwaToast);}
 });
 window.addEventListener('appinstalled',function(){
-  hidePwaToast();_pwaPrompt=null;console.log('[PWA] Installed');
+  hideAllInstallUI();_pwaPrompt=null;
+  if(window.gtag)gtag('event','pwa_installed',{event_category:'pwa',event_label:_isMobile?'mobile':'desktop'});
+  console.log('[PWA] Installed');
 });
 </script>
 </body>
