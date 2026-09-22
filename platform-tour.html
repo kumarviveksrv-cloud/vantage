@@ -143,18 +143,18 @@
     </div>
     <a href="dashboard.html" class="nav-item"><span class="nav-icon">⊞</span>Dashboard</a>
     <div class="nav-section">Core Tools</div>
-    <a href="er-case-navigator.html" class="nav-item"><span class="nav-icon">⚡</span>Employee Case Advisor</a>
-    <a href="hr-data-storyteller.html" class="nav-item"><span class="nav-icon">📊</span>People ROI Brief</a>
-    <a href="stakeholder-influence.html" class="nav-item"><span class="nav-icon">🎯</span>Leadership Communicator</a>
-    <a href="offer-intelligence.html" class="nav-item"><span class="nav-icon">⚖️</span>Retention Advisor</a>
+    <a href="employee-case-advisor.html" class="nav-item"><span class="nav-icon">⚡</span>Employee Case Advisor</a>
+    <a href="people-roi-brief.html" class="nav-item"><span class="nav-icon">📊</span>People ROI Brief</a>
+    <a href="leadership-communicator.html" class="nav-item"><span class="nav-icon">🎯</span>Leadership Communicator</a>
+    <a href="retention-advisor.html" class="nav-item"><span class="nav-icon">⚖️</span>Retention Advisor</a>
     <div class="nav-section">Intelligence</div>
     <a href="aria.html" class="nav-item"><span class="nav-icon">✦</span>ARIA</a>
-    <a href="policy-compass.html" class="nav-item"><span class="nav-icon">🧭</span>Policy Advisor</a>
-    <a href="conversation-simulator.html" class="nav-item"><span class="nav-icon">🎭</span>Difficult Conversations</a>
+    <a href="policy-advisor.html" class="nav-item"><span class="nav-icon">🧭</span>Policy Advisor</a>
+    <a href="difficult-conversations.html" class="nav-item"><span class="nav-icon">🎭</span>Difficult Conversations</a>
     <div class="nav-section">My Record</div>
     <a href="humac-onboarding.html" class="nav-item"><span class="nav-icon">📈</span>Humac Score</a>
-    <a href="case-library.html" class="nav-item"><span class="nav-icon">◎</span>Vantage Record</a>
-    <a href="ledger.html" class="nav-item"><span class="nav-icon">📜</span>Standpoint</a>
+    <a href="vantage-record.html" class="nav-item"><span class="nav-icon">◎</span>Vantage Record</a>
+    <a href="standpoint.html" class="nav-item"><span class="nav-icon">📜</span>Standpoint</a>
     <a href="debrief.html" class="nav-item"><span class="nav-icon">📋</span>The Debrief</a>
     <div class="nav-section">Account</div>
     <a href="data-dashboard.html" class="nav-item"><span class="nav-icon">🔒</span>Data &amp; Privacy</a>
@@ -314,30 +314,30 @@
     // ── SITUATION → TOOL LOOKUP ───────────────────────────────
     var LOOKUP = [
       { group: 'A situation just landed on my desk', items: [
-        ['A termination, misconduct, or disciplinary case', 'Employee Case Advisor', 'er-case-navigator.html'],
-        ['A POSH complaint or harassment allegation', 'Employee Case Advisor', 'er-case-navigator.html'],
-        ['A grievance, PIP, or ER escalation', 'Employee Case Advisor', 'er-case-navigator.html'],
-        ['A process question — notice period, warning letter, domestic enquiry', 'Policy Advisor', 'policy-compass.html']
+        ['A termination, misconduct, or disciplinary case', 'Employee Case Advisor', 'employee-case-advisor.html'],
+        ['A POSH complaint or harassment allegation', 'Employee Case Advisor', 'employee-case-advisor.html'],
+        ['A grievance, PIP, or ER escalation', 'Employee Case Advisor', 'employee-case-advisor.html'],
+        ['A process question — notice period, warning letter, domestic enquiry', 'Policy Advisor', 'policy-advisor.html']
       ]},
       { group: 'I need to influence someone', items: [
-        ['Convincing a CFO or CEO with financial numbers', 'Leadership Communicator', 'stakeholder-influence.html'],
-        ['Building a business case for a people programme', 'Leadership Communicator', 'stakeholder-influence.html'],
-        ['Getting budget approved for an HR initiative', 'Leadership Communicator', 'stakeholder-influence.html']
+        ['Convincing a CFO or CEO with financial numbers', 'Leadership Communicator', 'leadership-communicator.html'],
+        ['Building a business case for a people programme', 'Leadership Communicator', 'leadership-communicator.html'],
+        ['Getting budget approved for an HR initiative', 'Leadership Communicator', 'leadership-communicator.html']
       ]},
       { group: 'I have data that needs to become an argument', items: [
-        ['Attrition numbers, engagement scores, or time-to-hire data', 'People ROI Brief', 'hr-data-storyteller.html'],
-        ['A board meeting or leadership review tomorrow', 'People ROI Brief', 'hr-data-storyteller.html'],
-        ['Making HR metrics mean something financially', 'People ROI Brief', 'hr-data-storyteller.html']
+        ['Attrition numbers, engagement scores, or time-to-hire data', 'People ROI Brief', 'people-roi-brief.html'],
+        ['A board meeting or leadership review tomorrow', 'People ROI Brief', 'people-roi-brief.html'],
+        ['Making HR metrics mean something financially', 'People ROI Brief', 'people-roi-brief.html']
       ]},
       { group: 'I have a hard conversation coming up', items: [
-        ['A PIP conversation, termination meeting, or salary pushback', 'Difficult Conversations', 'conversation-simulator.html'],
-        ['A resistant stakeholder or difficult employee', 'Difficult Conversations', 'conversation-simulator.html'],
-        ['Preparing before the real thing', 'Difficult Conversations', 'conversation-simulator.html']
+        ['A PIP conversation, termination meeting, or salary pushback', 'Difficult Conversations', 'difficult-conversations.html'],
+        ['A resistant stakeholder or difficult employee', 'Difficult Conversations', 'difficult-conversations.html'],
+        ['Preparing before the real thing', 'Difficult Conversations', 'difficult-conversations.html']
       ]},
       { group: 'I need a policy or compliance answer', items: [
-        ['Can I do this? Is this legally defensible?', 'Policy Advisor', 'policy-compass.html'],
-        ['POSH, standing orders, notice period, gratuity, bonus', 'Policy Advisor', 'policy-compass.html'],
-        ['BNS / BNSS / BSA citation for a specific situation', 'Policy Advisor', 'policy-compass.html']
+        ['Can I do this? Is this legally defensible?', 'Policy Advisor', 'policy-advisor.html'],
+        ['POSH, standing orders, notice period, gratuity, bonus', 'Policy Advisor', 'policy-advisor.html'],
+        ['BNS / BNSS / BSA citation for a specific situation', 'Policy Advisor', 'policy-advisor.html']
       ]},
       { group: 'I want to think through something', items: [
         ['Something just happened — I need to process it before acting', 'ARIA · Case Partner', 'aria.html'],
@@ -345,14 +345,14 @@
         ['Monthly reflection on patterns and what they mean', 'ARIA · Reflection', 'aria.html']
       ]},
       { group: 'An employee has an offer, or something\u2019s shifting', items: [
-        ['They\u2019ve resigned or disclosed a competing offer \u2014 should I match it?', 'Retention Advisor', 'offer-intelligence.html'],
-        ['No offer yet, but something\u2019s changed \u2014 assess the flight risk', 'Retention Advisor', 'offer-intelligence.html'],
-        ['What is the actual cost of losing this person vs. retaining them?', 'Retention Advisor', 'offer-intelligence.html']
+        ['They\u2019ve resigned or disclosed a competing offer \u2014 should I match it?', 'Retention Advisor', 'retention-advisor.html'],
+        ['No offer yet, but something\u2019s changed \u2014 assess the flight risk', 'Retention Advisor', 'retention-advisor.html'],
+        ['What is the actual cost of losing this person vs. retaining them?', 'Retention Advisor', 'retention-advisor.html']
       ]},
       { group: 'I need to document a position before it gets overruled', items: [
-        ['Leadership is about to override a recommendation I have made', 'Standpoint', 'ledger.html'],
-        ['I want a timestamped record of what I recommended and why', 'Standpoint', 'ledger.html'],
-        ['I need to check back on a position I filed weeks ago', 'Standpoint', 'ledger.html']
+        ['Leadership is about to override a recommendation I have made', 'Standpoint', 'standpoint.html'],
+        ['I want a timestamped record of what I recommended and why', 'Standpoint', 'standpoint.html'],
+        ['I need to check back on a position I filed weeks ago', 'Standpoint', 'standpoint.html']
       ]},
       { group: 'I want to measure my organisation', items: [
         ['Generate the Humac Score — financial baseline of people investment', 'Humac Score', 'humac-onboarding.html'],
@@ -376,14 +376,14 @@
 
     // ── TOOL ROADMAP ──────────────────────────────────────────
     var TOOLS = [
-      { num:'01', icon:'⚡', tag:'HERO · Entry point', name:'Employee Case Advisor', desc:'Describe any employee situation with legal stakes — termination, POSH, disciplinary, PIP. Get the exact process, financial exposure, and documentation needed.', path:'er-case-navigator.html', flagship:true,  color:'#f43f5e', rgb:'244,63,94' },
-      { num:'02', icon:'\u2696\ufe0f', tag:'Core', name:'Retention Advisor', desc:'Model the full cost of keeping or losing a specific person — flight risk, replacement cost, counter-offer position, and the break-even ceiling.', path:'offer-intelligence.html', flagship:false, color:'#eab308', rgb:'234,179,8' },
-      { num:'03', icon:'🎯', tag:'Core', name:'Leadership Communicator', desc:'Name a specific person and what you need them to decide. Get a communication strategy framed in the language that reaches that person specifically.', path:'stakeholder-influence.html', flagship:false, color:'#f59e0b', rgb:'245,158,11' },
-      { num:'04', icon:'📊', tag:'Core', name:'People ROI Brief', desc:'Enter your HR metrics — attrition, engagement, cost-per-hire. Get a CFO-ready financial argument your leadership cannot dismiss.', path:'hr-data-storyteller.html', flagship:false, color:'#0ea5e9', rgb:'14,165,233' },
-      { num:'05', icon:'🎭', tag:'Intelligence', name:'Difficult Conversations', desc:'ARIA plays the other person. Rehearse before the termination meeting, performance discussion, or leadership alignment call that matters.', path:'conversation-simulator.html', flagship:false, color:'#a855f7', rgb:'168,85,247' },
-      { num:'06', icon:'🧭', tag:'Intelligence', name:'Policy Advisor', desc:'Describe the policy gap or situation. Get the applicable legal framework — BNS, BNSS, BSA, POSH — calibrated to your state and org type.', path:'policy-compass.html', flagship:false, color:'#10b981', rgb:'16,185,129' },
+      { num:'01', icon:'⚡', tag:'HERO · Entry point', name:'Employee Case Advisor', desc:'Describe any employee situation with legal stakes — termination, POSH, disciplinary, PIP. Get the exact process, financial exposure, and documentation needed.', path:'employee-case-advisor.html', flagship:true,  color:'#f43f5e', rgb:'244,63,94' },
+      { num:'02', icon:'\u2696\ufe0f', tag:'Core', name:'Retention Advisor', desc:'Model the full cost of keeping or losing a specific person — flight risk, replacement cost, counter-offer position, and the break-even ceiling.', path:'retention-advisor.html', flagship:false, color:'#eab308', rgb:'234,179,8' },
+      { num:'03', icon:'🎯', tag:'Core', name:'Leadership Communicator', desc:'Name a specific person and what you need them to decide. Get a communication strategy framed in the language that reaches that person specifically.', path:'leadership-communicator.html', flagship:false, color:'#f59e0b', rgb:'245,158,11' },
+      { num:'04', icon:'📊', tag:'Core', name:'People ROI Brief', desc:'Enter your HR metrics — attrition, engagement, cost-per-hire. Get a CFO-ready financial argument your leadership cannot dismiss.', path:'people-roi-brief.html', flagship:false, color:'#0ea5e9', rgb:'14,165,233' },
+      { num:'05', icon:'🎭', tag:'Intelligence', name:'Difficult Conversations', desc:'ARIA plays the other person. Rehearse before the termination meeting, performance discussion, or leadership alignment call that matters.', path:'difficult-conversations.html', flagship:false, color:'#a855f7', rgb:'168,85,247' },
+      { num:'06', icon:'🧭', tag:'Intelligence', name:'Policy Advisor', desc:'Describe the policy gap or situation. Get the applicable legal framework — BNS, BNSS, BSA, POSH — calibrated to your state and org type.', path:'policy-advisor.html', flagship:false, color:'#10b981', rgb:'16,185,129' },
       { num:'07', icon:'✦', tag:'Intelligence Layer', name:'ARIA', desc:'Adaptive Reflective Intelligence for Advancement. Case Partner, Conversation Coach, Reflection. One question at a time.', path:'aria.html', flagship:true,  color:'#6366f1', rgb:'99,102,241' },
-      { num:'08', icon:'📜', tag:'Your Record · Career Protection', name:'Standpoint', desc:'File your professional position before the outcome is known. Timestamped, permanent. When leadership overrules you and it goes wrong, this shows what you said and when.', path:'ledger.html', flagship:true,  color:'#4ade80', rgb:'74,222,128' }
+      { num:'08', icon:'📜', tag:'Your Record · Career Protection', name:'Standpoint', desc:'File your professional position before the outcome is known. Timestamped, permanent. When leadership overrules you and it goes wrong, this shows what you said and when.', path:'standpoint.html', flagship:true,  color:'#4ade80', rgb:'74,222,128' }
     ];
 
     var toolWrap = document.getElementById('tool-cards');
