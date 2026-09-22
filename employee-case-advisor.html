@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+  <link rel="apple-touch-icon" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="shortcut icon" href="favicon.png"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Case Advisor — Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <!-- SR18: vantage-theme.css above is the canonical palette + typography
+       source, layered on top of this page's own :root below. The local
+       :root is KEPT INTACT (not stripped) as a fallback — if the theme
+       file fails to load for any reason (wrong path, upload order), this
+       page still renders correctly on its own values, which already
+       match the canonical palette exactly. Cormorant Garamond loads via
+       the theme file's @import; only .page-title, .risk-title, and the
+       "Something's landed on your desk." intake statement below were
+       swapped to it — genuine headline moments, same split PMS itself
+       uses (dense UI chrome stays sans-serif). -->
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
+    body{display:flex}
+    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.25);--grey:rgba(244,243,255,0.68);--dim:rgba(244,243,255,0.25)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+    /* SIDEBAR */
+    .sidebar{width:220px;flex-shrink:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto}
+    .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px}
+    .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
+    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.5);margin-top:2px}
+    .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.6);padding:4px 10px;margin:16px 0 6px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.65);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
+    .nav-item:hover{background:rgba(99,102,241,0.08);color:#f4f3ff;border-color:rgba(99,102,241,0.15)}
+    .nav-item.active{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.30);color:#c4b5fd;font-weight:500}
+    .nav-item .icon{font-size:16px;flex-shrink:0}
+    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.20)}
+    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .meridian-chip .val{font-size:11px;color:var(--grey)}
+
+    /* MAIN */
+    .main{flex:1;overflow-y:auto;height:100vh;padding:28px 32px;background-image:linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px);background-size:48px 48px}
+    .page-header{margin-bottom:28px;animation:fadeIn .3s ease}
+    .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
+    .breadcrumb a{color:var(--dim);text-decoration:none}
+    .breadcrumb a:hover{color:var(--muted)}
+    .page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;margin-bottom:4px;color:#f4f3ff}
+    .page-sub{font-size:13px;color:var(--grey)}
+
+    /* INTAKE */
+    .intake-card{background:rgba(5,4,16,0.25);border:1px solid rgba(99,102,241,0.12);border-radius:16px;padding:28px;margin-bottom:24px;animation:fadeIn .3s ease}
+    .form-section{margin-bottom:24px}
+    .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:block}
+    .case-types{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .case-type-btn{background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;color:var(--grey);font-size:12px;font-family:'Plus Jakarta Sans',sans-serif}
+    .case-type-btn:hover{border-color:rgba(99,102,241,0.35);color:#f4f3ff;background:rgba(99,102,241,0.08)}
+    .case-type-btn.selected{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.45);color:#c4b5fd;font-weight:500}
+    .case-type-icon{font-size:18px;display:block;margin-bottom:4px}
+    textarea{width:100%;padding:16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:12px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:1.6;resize:vertical;min-height:140px;outline:none;transition:border .2s}
+    textarea:focus{border-color:rgba(99,102,241,0.35);box-shadow:0 0 0 3px rgba(99,102,241,0.05)}
+    textarea::placeholder{color:rgba(165,180,252,0.25);font-size:13px}
+    input[type=text]{width:100%;padding:14px 16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:12px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;outline:none;transition:border .2s}
+    input[type=text]:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
+    input[type=text]::placeholder{color:rgba(165,180,252,0.25)}
+    .privacy-note{font-size:11px;color:var(--dim);margin-top:8px;display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace}
+    .submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.35)}
+    .submit-btn:hover{opacity:.88}
+    .submit-btn:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
+
+    /* LOADING */
+    .loading-state{text-align:center;padding:60px 20px;animation:fadeIn .3s ease}
+    .loading-orb{width:64px;height:64px;margin:0 auto 24px}
+    .loading-orb svg{animation:spin 2s linear infinite}
+    .loading-text{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.08em}
+    .loading-steps{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+    .loading-step{font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+    .loading-step.active{color:rgba(244,243,255,0.6)}
+
+    /* OUTPUT — RISK BANNER */
+    .output-section{animation:fadeIn .4s ease}
+    .risk-banner{border-radius:12px;padding:18px 22px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}
+    .risk-critical{background:rgba(255,77,109,0.08);border:1px solid rgba(255,77,109,0.25)}
+    .risk-high{background:rgba(255,181,71,0.08);border:1px solid rgba(255,181,71,0.25)}
+    .risk-medium{background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.25)}
+    .risk-low{background:rgba(244,243,255,0.04);border:1px solid rgba(244,243,255,0.1)}
+    .risk-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;color:var(--dim)}
+    .risk-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#f4f3ff}
+    .risk-narrative{font-size:13px;color:var(--grey);margin-top:6px;line-height:1.5;max-width:600px}
+    .risk-badge-lg{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:8px 18px;border-radius:8px;flex-shrink:0}
+    .badge-critical{color:#FF4D6D;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3)}
+    .badge-high{color:#FFB547;background:rgba(255,181,71,0.15);border:1px solid rgba(255,181,71,0.3)}
+    .badge-medium{color:var(--muted);background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3)}
+    .badge-low{color:var(--grey);background:rgba(244,243,255,0.06);border:1px solid rgba(244,243,255,0.1)}
+
+    /* OUTPUT — PACT GRID */
+    .pact-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+    .pact-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+    .pact-dimension{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+    .pact-score{font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 8px;border-radius:4px}
+    .score-critical{color:#FF4D6D;background:rgba(255,77,109,0.12);border:1px solid rgba(255,77,109,0.25)}
+    .score-high{color:#FFB547;background:rgba(255,181,71,0.12);border:1px solid rgba(255,181,71,0.25)}
+    .score-medium{color:var(--muted);background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25)}
+    .score-low{color:var(--grey);background:rgba(244,243,255,0.06);border:1px solid rgba(244,243,255,0.1)}
+    .pact-status{font-size:13px;color:rgba(244,243,255,0.7);font-weight:500;margin-bottom:12px}
+    .pact-points{display:flex;flex-direction:column;gap:8px}
+    .pact-point{display:flex;gap:8px;font-size:12px;color:var(--grey);line-height:1.5}
+    .pact-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0}
+
+    /* OUTPUT — PROTOCOL SECTIONS */
+    .protocol-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:16px}
+    .protocol-section.legal-section{border-color:rgba(99,102,241,0.22);background:rgba(99,102,241,0.03)}
+    .proto-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .proto-icon{font-size:13px}
+    .proto-text{font-size:13px;color:rgba(244,243,255,0.65);line-height:1.8}
+    .two-col-proto{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+
+    /* OUTPUT — FINANCIAL CARD */
+    .fin-card{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.28);border-radius:14px;padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
+    .fin-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.5),transparent)}
+    .fin-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+    .fin-range{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:#f4f3ff;letter-spacing:-0.5px;line-height:1}
+    .fin-badges{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+    .fin-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase}
+    .conf-high{color:rgba(34,197,94,0.9);background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25)}
+    .conf-medium{color:#FFB547;background:rgba(255,181,71,0.1);border:1px solid rgba(255,181,71,0.25)}
+    .conf-low{color:var(--muted);background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2)}
+    .pillar-badge{color:#c4b5fd;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.28)}
+    .fin-breakdown{margin-bottom:16px}
+    .fin-breakdown-item{display:flex;gap:8px;font-size:12px;color:var(--grey);line-height:1.6;margin-bottom:5px}
+    .fin-breakdown-dot{color:var(--muted);flex-shrink:0;margin-top:1px}
+    .fin-divider{border:none;border-top:1px solid rgba(99,102,241,0.1);margin:14px 0}
+    .fin-pillar-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px}
+    .fin-pillar-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .fin-pillar-text{font-size:12px;color:var(--grey);line-height:1.5}
+    .fin-trajectory{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.14);border-radius:8px;padding:10px 14px}
+    .fin-traj-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+    .fin-traj-text{font-size:12px;color:var(--grey);line-height:1.5}
+
+    /* OUTPUT — RECOMMENDATION */
+    .recommendation-card{background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.32);border-radius:14px;padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
+    .recommendation-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.7),transparent)}
+    .rec-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+    .rec-text{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:600;color:#f4f3ff;line-height:1.7}
+
+    /* OUTPUT — COMMUNICATION */
+    .communication-card{background:var(--card);border:1px solid rgba(244,243,255,0.07);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:20px 24px;margin-bottom:16px}
+    .comm-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+    .comm-text{font-size:13px;color:rgba(244,243,255,0.7);line-height:1.85;font-style:italic}
+
+    /* OUTPUT — ARIA OFFER */
+    .aria-offer-card{background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(99,102,241,0.04));border:1px solid rgba(124,58,237,0.22);border-radius:12px;padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .aria-offer-inner{flex:1}
+    .aria-offer-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#c4b5fd;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+    .aria-offer-text{font-size:13px;color:var(--grey);line-height:1.5}
+    .aria-offer-btn{padding:10px 20px;background:linear-gradient(135deg,var(--violet),var(--accent));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;text-decoration:none;white-space:nowrap;box-shadow:0 4px 14px rgba(99,102,241,0.3)}
+
+    /* ACTION ROW */
+    .action-row{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap}
+    .btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
+    .btn-primary:hover{opacity:.88}
+    .btn-secondary{padding:14px 28px;background:transparent;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;font-size:14px;border:1px solid rgba(99,102,241,0.35);border-radius:10px;cursor:pointer;transition:all .2s}
+    .btn-secondary:hover{background:rgba(99,102,241,0.08)}
+    .btn-ghost{padding:14px 28px;background:transparent;color:var(--grey);font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;font-size:14px;border:1px solid rgba(244,243,255,0.08);border-radius:10px;cursor:pointer;transition:all .2s}
+    .btn-ghost:hover{border-color:rgba(244,243,255,0.15);color:#f4f3ff}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid rgba(99,102,241,0.3);border-radius:10px;padding:14px 20px;font-size:13px;color:#f4f3ff;display:flex;align-items:center;gap:10px;animation:fadeIn .3s ease;z-index:1000}
+    .toast-icon{color:var(--muted);font-size:16px}
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
+
+    @media(max-width:768px){
+      .sidebar{display:none}
+      .main{padding:20px 16px;overflow-y:auto}
+      .case-types{grid-template-columns:repeat(2,1fr)}
+      .pact-grid{grid-template-columns:1fr}
+      .two-col-proto{grid-template-columns:1fr}
+      .action-row{flex-direction:column}
+      .aria-offer-card{flex-direction:column;align-items:flex-start}
+    }
+  
+    /* ── VOICE INPUT WRAPPER ── */
+    .voice-wrap{position:relative}
+    .voice-btn{
+      position:absolute;bottom:10px;right:10px;
+      width:32px;height:32px;border-radius:50%;
+      background:rgba(99,102,241,0.12);
+      border:1px solid rgba(99,102,241,0.25);
+      color:#a5b4fc;cursor:pointer;font-size:14px;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .2s;z-index:2;
+      line-height:1;
+    }
+    .voice-btn:hover{background:rgba(99,102,241,0.22);border-color:rgba(99,102,241,0.45)}
+    .voice-btn.listening{
+      background:rgba(124,58,237,0.25);
+      border-color:rgba(124,58,237,0.6);
+      color:#c4b5fd;
+      animation:voicePulse 1s ease-in-out infinite;
+    }
+    @keyframes voicePulse{
+      0%{box-shadow:0 0 0 0 rgba(124,58,237,0.5)}
+      70%{box-shadow:0 0 0 10px rgba(124,58,237,0)}
+      100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">
+      <div class="logo-dot"></div>
+      <div>
+        <div class="logo-name">Virorah</div>
+        <div class="logo-sub">Vantage</div>
+      </div>
+    </div>
+    <a href="dashboard.html" class="nav-item"><span class="icon">⊞</span> Dashboard</a>
+    <div class="nav-section">Core Tools</div>
+    <a href="employee-case-advisor.html" class="nav-item active"><span class="icon">⚡</span> Employee Case Advisor</a>
+    <a href="people-roi-brief.html" class="nav-item"><span class="icon">📊</span> HR Data Storyteller</a>
+    <a href="leadership-communicator.html" class="nav-item"><span class="icon">🎯</span> Stakeholder Influence</a>
+    <div class="nav-section">Intelligence</div>
+    <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
+    <a href="policy-advisor.html" class="nav-item"><span class="icon">🧭</span> Policy Compass</a>
+    <a href="difficult-conversations.html" class="nav-item"><span class="icon">🎭</span> Conversation Simulator</a>
+    <div class="nav-section">My Record</div>
+    <a href="vantage-record.html" class="nav-item"><span class="icon">◎</span> Case Library</a>
+    <a href="debrief.html" class="nav-item"><span class="icon">📋</span> The Debrief</a>
+    <div class="nav-section">Philosophy</div>
+    <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">🌀</span> Humacity</a>
+    <div class="nav-section">Legal</div>
+    <a href="terms.html" class="nav-item"><span class="icon">📄</span> Terms of Service</a>
+    <a href="privacy.html" class="nav-item"><span class="icon">🔒</span> Privacy Policy</a>
+    <div class="nav-section">Account</div>
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">🔒</span> Data &amp; Privacy</a>
+    <a href="#" class="nav-item" onclick="clerkSignOut(); return false;"><span class="icon">↩</span> Sign out</a>
+    <div class="meridian-chip">
+      <div class="label">MERIDIAN Active</div>
+      <div class="val" id="meridian-chip-val">Loading...</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- INTAKE VIEW -->
+    <div id="intake-view">
+      <div class="page-header">
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Employee Case Advisor</div>
+        <div class="page-title">&#x26A1; Employee Case Advisor</div>
+        <div class="page-sub">Tell me what's happening — I'll run the PACT diagnostic and build your Unified Decision Protocol.</div>
+      </div>
+
+      <div style="background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:14px;padding:22px 26px;margin-bottom:24px;animation:fadeIn .3s ease">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f4f3ff;margin-bottom:12px">Something's landed on your desk.</div>
+        <div style="font-size:14px;color:rgba(244,243,255,0.72);line-height:1.75">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);padding:3px 8px;border-radius:3px;margin-right:8px">PACT + PROTOCOL</span>
+          Two layers, always. The <strong style="color:rgba(244,243,255,0.8)">PACT diagnostic</strong> scans across Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation. The <strong style="color:rgba(244,243,255,0.8)">Unified Decision Protocol</strong> translates that scan into assessment, legal position, financial exposure, one clear recommendation, and the exact language to use in the room.
+        </div>
+      </div>
+
+      <div class="intake-card">
+        <div class="form-section">
+          <label class="form-label">Case Type</label>
+          <div class="case-types">
+            <div class="case-type-btn" onclick="selectCase(this,'Disciplinary')"><span class="case-type-icon">&#x2696;&#xFE0F;</span>Disciplinary</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Grievance')"><span class="case-type-icon">&#x1F4E2;</span>Grievance</div>
+            <div class="case-type-btn" onclick="selectCase(this,'PIP')"><span class="case-type-icon">&#x1F4C8;</span>PIP</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Termination')"><span class="case-type-icon">&#x1F6AA;</span>Termination</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Redundancy')"><span class="case-type-icon">&#x1F504;</span>Redundancy</div>
+            <div class="case-type-btn" onclick="selectCase(this,'POSH Complaint')"><span class="case-type-icon">&#x1F6E1;&#xFE0F;</span>POSH / Harassment</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Absence Management')"><span class="case-type-icon">&#x1F4C5;</span>Absence</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Retrenchment')"><span class="case-type-icon">&#x1F4CA;</span>Retrenchment</div>
+          </div>
+        </div>
+        <div class="form-section">
+          <label class="form-label">What's happening? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic to speak</span></label>
+          <div class="voice-wrap">
+          <textarea id="narrative" placeholder='e.g. "A senior engineer has been absent without information for 4 days. There were two verbal warnings for attendance in the last 3 months, both documented. His manager wants to terminate but we haven&apos;t done a domestic enquiry yet. I need to know where I stand before I call him in tomorrow."
+
+Don&apos;t worry about structure or length. Write it the way it happened.' rows="6" style="padding-right:48px"></textarea>
+          <button class="voice-btn" id="narrative-mic" onclick="toggleVoiceInput('narrative', this)" title="Tap to speak">&#127908;</button>
+          </div>
+          <div class="privacy-note">&#x1F512; Anonymised before processing. Your data stays yours.</div>
+        </div>
+        <div class="form-section">
+          <label class="form-label">Who's involved? (Roles only, no names needed)</label>
+          <input type="text" id="stakeholders" placeholder="e.g. Senior engineer (6 years tenure), his line manager, HR Director — legal hasn't been looped in yet" />
+        </div>
+        <button class="submit-btn" id="submit-btn" onclick="runPACT()" disabled>Run PACT Assessment + Decision Protocol &rarr;</button>
+      </div>
+    </div>
+
+    <!-- LOADING VIEW -->
+    <div id="loading-view" style="display:none">
+      <div class="page-header"><div class="page-title">&#x26A1; Employee Case Advisor</div></div>
+      <div class="loading-state">
+        <div class="loading-orb">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/>
+            <circle cx="32" cy="32" r="28" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="44 132" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="loading-text" id="loading-text">READING YOUR SITUATION...</div>
+        <div class="loading-steps">
+          <div class="loading-step active" id="ls1">Running PACT diagnostic across 4 dimensions...</div>
+          <div class="loading-step" id="ls2">Applying MERIDIAN context and policy guardrails...</div>
+          <div class="loading-step" id="ls3">Mapping legal position and financial exposure...</div>
+          <div class="loading-step" id="ls4">Building Unified Decision Protocol...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTPUT VIEW -->
+    <div id="output-view" style="display:none">
+      <div class="page-header">
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="employee-case-advisor.html">Employee Case Advisor</a> &middot; PACT + Protocol</div>
+        <div class="page-title">PACT Assessment + Decision Protocol</div>
+        <div class="page-sub" id="output-case-type">Case assessment complete</div>
+      </div>
+
+      <div class="output-section">
+
+        <!-- Risk banner -->
+        <div class="risk-banner" id="risk-banner">
+          <div>
+            <div class="risk-label" id="risk-label">PACT Diagnostic</div>
+            <div class="risk-title" id="risk-title">Assessing...</div>
+            <div class="risk-narrative" id="risk-narrative"></div>
+          </div>
+          <div class="risk-badge-lg" id="risk-badge">&mdash;</div>
+        </div>
+
+        <!-- PACT grid -->
+        <div class="pact-grid">
+          <div class="pact-card">
+            <div class="pact-dimension">P &mdash; Process Integrity <span class="pact-score" id="score-process">&mdash;</span></div>
+            <div class="pact-status" id="status-process"></div>
+            <div class="pact-points" id="points-process"></div>
+          </div>
+          <div class="pact-card">
+            <div class="pact-dimension">A &mdash; Accountability Clarity <span class="pact-score" id="score-accountability">&mdash;</span></div>
+            <div class="pact-status" id="status-accountability"></div>
+            <div class="pact-points" id="points-accountability"></div>
+          </div>
+          <div class="pact-card">
+            <div class="pact-dimension">C &mdash; Consequence Mapping <span class="pact-score" id="score-consequence">&mdash;</span></div>
+            <div class="pact-status" id="status-consequence"></div>
+            <div class="pact-points" id="points-consequence"></div>
+          </div>
+          <div class="pact-card">
+            <div class="pact-dimension">T &mdash; Trust Preservation <span class="pact-score" id="score-trust">&mdash;</span></div>
+            <div class="pact-status" id="status-trust"></div>
+            <div class="pact-points" id="points-trust"></div>
+          </div>
+        </div>
+
+        <!-- Protocol: Assessment -->
+        <div class="protocol-section">
+          <div class="proto-label"><span class="proto-icon">🧠</span> Assessment</div>
+          <div class="proto-text" id="proto-assessment"></div>
+        </div>
+
+        <!-- Protocol: Legal + Context (two-column) -->
+        <div class="two-col-proto">
+          <div class="protocol-section legal-section">
+            <div class="proto-label"><span class="proto-icon">⚖️</span> Legal Position</div>
+            <div class="proto-text" id="proto-legal"></div>
+          </div>
+          <div class="protocol-section">
+            <div class="proto-label"><span class="proto-icon">🧭</span> MERIDIAN Context</div>
+            <div class="proto-text" id="proto-context"></div>
+          </div>
+        </div>
+
+        <!-- Protocol: Financial -->
+        <div class="fin-card">
+          <div class="proto-label" style="margin-bottom:10px"><span class="proto-icon">💰</span> Financial Exposure</div>
+          <div class="fin-top">
+            <div>
+              <div class="fin-range" id="fin-range">—</div>
+              <div class="fin-badges">
+                <span class="fin-badge" id="fin-confidence-badge"></span>
+                <span class="fin-badge pillar-badge" id="fin-pillar-badge"></span>
+              </div>
+              <div id="fin-green-cat" style="margin-top:10px"></div>
+            </div>
+          </div>
+          <div class="fin-breakdown" id="fin-breakdown"></div>
+          <hr class="fin-divider">
+          <div class="fin-pillar-row">
+            <div>
+              <div class="fin-pillar-label">Humac pillar affected</div>
+              <div class="fin-pillar-text" id="fin-pillar-rationale"></div>
+            </div>
+          </div>
+          <div class="fin-trajectory" style="margin-top:12px">
+            <div class="fin-traj-label">Trajectory Signal</div>
+            <div class="fin-traj-text" id="fin-trajectory"></div>
+          </div>
+        </div>
+
+        <!-- Protocol: Recommendation -->
+        <div class="recommendation-card">
+          <div class="rec-label">🎯 Recommended Path — one direction</div>
+          <div class="rec-text" id="proto-recommendation"></div>
+        </div>
+
+        <!-- Protocol: Communication -->
+        <div class="communication-card">
+          <div class="comm-label">💬 Communication — what to say, to whom</div>
+          <div class="comm-text" id="proto-communication"></div>
+        </div>
+
+        <!-- ARIA offer -->
+        <div class="aria-offer-card">
+          <div class="aria-offer-inner">
+            <div class="aria-offer-label">✦ ARIA — Practice this conversation now</div>
+            <div class="aria-offer-text" id="proto-aria"></div>
+          </div>
+          <button class="aria-offer-btn" onclick="goToARIA()">Talk to ARIA &rarr;</button>
+        </div>
+
+        <!-- Action row -->
+        <div class="action-row">
+          <button class="btn-primary" onclick="saveCase()">Save to Case Library</button>
+          <button class="btn-secondary" onclick="practiceConversation()">Simulate the Conversation &rarr;</button>
+          <button class="btn-ghost" onclick="fileToLedger()">File to Ledger &rarr;</button>
+          <button class="btn-ghost" onclick="startNew()">New Case</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+
+    function renderGreenCat(gc) {
+      if (!gc || !gc.primary) return '';
+      var icons = {'Revenue Growth':'&#x2191;','Cost Efficiency':'&#x2193;','Risk Mitigation':'&#x26A0;'};
+      var labels = {'Revenue Growth':'Revenue Growth','Cost Efficiency':'Cost Efficiency','Risk Mitigation':'Risk Exposure'};
+      var colors = {'Revenue Growth':'#4ade80','Cost Efficiency':'#a5b4fc','Risk Mitigation':'#FBB724'};
+      var p = gc.primary; var s = gc.secondary;
+      var html = '<span style="font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.05em;color:' + (colors[p]||'#a5b4fc') + '">' + (icons[p]||'') + ' ' + (labels[p]||p) + '</span>';
+      if (s && s !== 'null' && s !== p) html += '<span style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(244,243,255,0.35);margin-left:8px">&middot; ' + (labels[s]||s) + '</span>';
+      return html;
+    }
+    function showError(msg) {
+      document.getElementById('vantage-error-msg').textContent = msg;
+      document.getElementById('vantage-error').style.display = 'block';
+      showView('intake-view');
+      setTimeout(function(){ var el=document.getElementById('vantage-error'); if(el)el.style.display='none'; }, 10000);
+    }
+    var BASE = 'https://vantage.virorah.com/';
+    var selectedCaseType = '';
+    var currentResult = null;
+    var currentNarrative = '';
+    var currentARIAScenario = '';
+
+    if (sessionStorage.getItem('sr_access') !== 'true') {
+      window.location.href = BASE + 'access.html';
+    }
+
+    // Pre-fill from practice context
+    var caseFromPractice = sessionStorage.getItem('sr_case_from_practice');
+    if (caseFromPractice) {
+      try {
+        var pd = JSON.parse(caseFromPractice);
+        if (pd.scenario) document.getElementById('narrative').value = pd.scenario;
+        if (pd.role) document.getElementById('stakeholders').value = pd.role;
+        sessionStorage.removeItem('sr_case_from_practice');
+        checkSubmit();
+      } catch(e) {}
+    }
+
+    var meridianRaw = sessionStorage.getItem('sr_meridian');
+    var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
+    document.getElementById('meridian-chip-val').innerText =
+      (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
+
+    function getUserId() {
+      var uid = localStorage.getItem('sr_user_id');
+      if (!uid) { uid = 'usr_' + Math.random().toString(36).substr(2,9) + '_' + Date.now(); localStorage.setItem('sr_user_id', uid); }
+      return uid;
+    }
+
+    function selectCase(el, type) {
+      document.querySelectorAll('.case-type-btn').forEach(function(b){ b.classList.remove('selected'); });
+      el.classList.add('selected');
+      selectedCaseType = type;
+      checkSubmit();
+    }
+
+    document.getElementById('narrative').addEventListener('input', checkSubmit);
+
+    function checkSubmit() {
+      document.getElementById('submit-btn').disabled =
+        !(selectedCaseType && document.getElementById('narrative').value.trim().length > 20);
+    }
+
+    function showView(view) {
+      ['intake-view','loading-view','output-view'].forEach(function(v){
+        document.getElementById(v).style.display = 'none';
+      });
+      document.getElementById(view).style.display = 'block';
+    }
+
+    function animateLoading() {
+      var steps = ['ls1','ls2','ls3','ls4'];
+      var texts = ['RUNNING PACT DIAGNOSTIC...','APPLYING MERIDIAN CONTEXT...','MAPPING FINANCIAL EXPOSURE...','BUILDING DECISION PROTOCOL...'];
+      var i = 0;
+      return setInterval(function(){
+        steps.forEach(function(s){ document.getElementById(s).classList.remove('active'); });
+        if (i < steps.length) {
+          document.getElementById(steps[i]).classList.add('active');
+          document.getElementById('loading-text').innerText = texts[i];
+        }
+        i++;
+      }, 1800);
+    }
+
+    async function runPACT() {
+      var narrativeVal = document.getElementById('narrative').value.trim();
+      var stakeholders = document.getElementById('stakeholders').value.trim();
+      if (!selectedCaseType || !narrativeVal) return;
+      currentNarrative = narrativeVal;
+      showView('loading-view');
+      var loadInterval = animateLoading();
+      try {
+        var res = await fetch(WORKER, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({
+            tool: 'pact',
+            narrative: narrativeVal,
+            caseType: selectedCaseType,
+            stakeholders: stakeholders,
+            meridian: meridian
+          })
+        });
+        var data = await res.json();
+        clearInterval(loadInterval);
+        if (data.success) {
+          currentResult = data.data;
+          renderOutput();
+        } else {
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You’ve reached your daily limit for Employee Case Advisor. Resets tomorrow.') : 'Assessment failed. ' + (data.error || 'Please try again.'));
+        }
+      } catch(err) {
+        clearInterval(loadInterval);
+        showError('Connection error. Please check your network and try again.');
+      }
+    }
+
+    function getRiskClass(level) {
+      return {Critical:'critical',High:'high',Medium:'medium',Low:'low'}[level] || 'medium';
+    }
+    function getScoreClass(score) {
+      return {Critical:'score-critical',High:'score-high',Medium:'score-medium',Low:'score-low'}[score] || 'score-medium';
+    }
+    function getConfClass(conf) {
+      return {High:'conf-high',Medium:'conf-medium',Low:'conf-low'}[conf] || 'conf-medium';
+    }
+
+    function renderPACTCard(dimension, data) {
+      if (!data) return;
+      document.getElementById('score-' + dimension).className = 'pact-score ' + getScoreClass(data.score);
+      document.getElementById('score-' + dimension).innerText = (data.score || '') + ' RISK';
+      document.getElementById('status-' + dimension).innerText = data.status || '';
+      document.getElementById('points-' + dimension).innerHTML = (data.points || []).map(function(p) {
+        return '<div class="pact-point"><div class="pact-dot"></div><div>' + p + '</div></div>';
+      }).join('');
+    }
+
+    function renderOutput() {
+      var r = currentResult;
+      if (!r) return;
+
+      var ps = r.pact_scores || {};
+      var pr = r.protocol || {};
+      var fin = pr.financial || {};
+
+      // Risk banner
+      var riskClass = getRiskClass(ps.overallRisk);
+      document.getElementById('risk-banner').className = 'risk-banner risk-' + riskClass;
+      document.getElementById('risk-label').innerText = selectedCaseType + ' · PACT Diagnostic';
+      document.getElementById('risk-title').innerText = (ps.overallRisk || '') + ' Risk';
+      document.getElementById('risk-narrative').innerText = ps.overallNarrative || '';
+      var badge = document.getElementById('risk-badge');
+      badge.className = 'risk-badge-lg badge-' + riskClass;
+      badge.innerText = (ps.overallRisk || '').toUpperCase();
+      document.getElementById('output-case-type').innerText = selectedCaseType + ' · Assessment + Protocol complete';
+
+      // PACT cards
+      renderPACTCard('process', ps.process);
+      renderPACTCard('accountability', ps.accountability);
+      renderPACTCard('consequence', ps.consequence);
+      renderPACTCard('trust', ps.trust);
+
+      // Protocol: Assessment
+      document.getElementById('proto-assessment').innerText = pr.assessment || '';
+
+      // Protocol: Legal + Context
+      document.getElementById('proto-legal').innerText = pr.legal || '';
+      document.getElementById('proto-context').innerText = pr.context || '';
+
+      // Protocol: Financial
+      document.getElementById('fin-green-cat').innerHTML = renderGreenCat(result.greenCategory);
+      document.getElementById('fin-range').innerText = fin.range || 'Not calculated';
+      var confBadge = document.getElementById('fin-confidence-badge');
+      confBadge.innerText = (fin.confidence || '') + ' confidence';
+      confBadge.className = 'fin-badge ' + getConfClass(fin.confidence);
+      var pillarBadge = document.getElementById('fin-pillar-badge');
+      pillarBadge.innerText = fin.pillar ? 'Humac ' + fin.pillar : '';
+      pillarBadge.style.display = fin.pillar ? '' : 'none';
+      document.getElementById('fin-breakdown').innerHTML = (fin.breakdown || []).map(function(item) {
+        return '<div class="fin-breakdown-item"><span class="fin-breakdown-dot">·</span><span>' + item + '</span></div>';
+      }).join('');
+      document.getElementById('fin-pillar-rationale').innerText = fin.pillarRationale || '';
+      document.getElementById('fin-trajectory').innerText = fin.trajectorySignal || '';
+
+      // Protocol: Recommendation
+      document.getElementById('proto-recommendation').innerText = pr.recommendation || '';
+
+      // Protocol: Communication
+      document.getElementById('proto-communication').innerText = pr.communication || '';
+
+      // ARIA
+      currentARIAScenario = pr.aria || '';
+      document.getElementById('proto-aria').innerText = currentARIAScenario;
+
+      showView('output-view');
+    }
+
+    function saveCase() {
+      var userId = getUserId();
+      var toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = '<span class="toast-icon">&#x23F3;</span> Saving to your case library...';
+      document.body.appendChild(toast);
+      fetch(WORKER, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          tool: 'save_case',
+          userId: userId,
+          caseType: selectedCaseType,
+          narrative: currentNarrative.substring(0, 900),
+          result: currentResult,
+          status: 'Open'
+        })
+      })
+      .then(function(res){ return res.json(); })
+      .then(function(data) {
+        toast.remove();
+        var t = document.createElement('div');
+        t.className = 'toast';
+        if (data.success) {
+          t.innerHTML = '<span class="toast-icon">&#x2713;</span> Case saved permanently to your library.';
+          if (data.data && data.data.airtableId) localStorage.setItem('sr_last_case_id', data.data.airtableId);
+        } else {
+          t.innerHTML = '<span class="toast-icon">&#x26A0;&#xFE0F;</span> Save failed: ' + (data.error || 'Unknown error');
+        }
+        document.body.appendChild(t);
+        setTimeout(function(){ t.remove(); }, 3000);
+      })
+      .catch(function(err) {
+        toast.remove();
+        var t = document.createElement('div');
+        t.className = 'toast';
+        t.innerHTML = '<span class="toast-icon">&#x26A0;&#xFE0F;</span> Connection error. Case not saved.';
+        document.body.appendChild(t);
+        setTimeout(function(){ t.remove(); }, 3000);
+      });
+    }
+
+    function goToARIA() {
+      sessionStorage.setItem('sr_aria_context', JSON.stringify({
+        mode: 'conversation_coach',
+        scenario: currentARIAScenario,
+        caseType: selectedCaseType
+      }));
+      window.location.href = BASE + 'aria.html';
+    }
+
+    function practiceConversation() {
+      sessionStorage.setItem('sr_practice_context', JSON.stringify({
+        caseType: selectedCaseType,
+        narrative: currentNarrative.substring(0, 300)
+      }));
+      window.location.href = BASE + 'difficult-conversations.html';
+    }
+
+    function fileToLedger() {
+      if (!currentResult) return;
+      var p = currentResult.protocol || {};
+      var gc = currentResult.greenCategory || {};
+      var prefill = {
+        sourceTool: 'pact',
+        situationSummary: (p.assessment || '').substring(0, 300),
+        hrRecommendation: p.recommendation || '',
+        predictedOutcome: p.financial && p.financial.trajectorySignal ? p.financial.trajectorySignal : '',
+        financialRangePredicted: p.financial ? p.financial.range : '',
+        greenCategory: gc.primary || ''
+      };
+      try { sessionStorage.setItem('ledger_prefill', JSON.stringify(prefill)); } catch(e) {}
+      window.location.href = 'standpoint.html';
+    }
+
+    function startNew() {
+      selectedCaseType = '';
+      currentResult = null;
+      currentARIAScenario = '';
+      document.getElementById('narrative').value = '';
+      document.getElementById('stakeholders').value = '';
+      document.querySelectorAll('.case-type-btn').forEach(function(b){ b.classList.remove('selected'); });
+      document.getElementById('submit-btn').disabled = true;
+      showView('intake-view');
+    }
+  </script>
+
+  <script>
+    // ── WHISPER VOICE INPUT ──────────────────────────────────────────────────
+    // AudioContext + ScriptProcessor captures raw PCM → encodes WAV →
+    // POSTs to Cloudflare Worker → OpenAI Whisper → transcript in textarea.
+    // Tap once to start. Tap again to stop. No browser speech engine.
+    (function() {
+      var _active = false;
+      var _audioCtx = null;
+      var _micStream = null;
+      var _processor = null;
+      var _source = null;
+      var _buffers = [];
+      var _sampleRate = 44100;
+
+      function getToken() { return sessionStorage.getItem('sr_session_token') || ''; }
+      function getWorker() { return 'https://situation-room-api.kumarvivek-srv.workers.dev'; }
+
+      function startRec(btn, targetId) {
+        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false })
+          .then(function(stream) {
+            _micStream = stream;
+            _buffers = [];
+            try {
+              _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+              if (_audioCtx.state === 'suspended') _audioCtx.resume();
+              _sampleRate = _audioCtx.sampleRate;
+              _source = _audioCtx.createMediaStreamSource(stream);
+              _processor = _audioCtx.createScriptProcessor(4096, 1, 1);
+              _processor.onaudioprocess = function(e) {
+                if (!_active) return;
+                _buffers.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+              };
+              _source.connect(_processor);
+              _processor.connect(_audioCtx.destination);
+              _active = true;
+              setBtnState(btn, 'recording');
+              var el = document.getElementById(targetId);
+              if (el) { el._ph = el.placeholder; el.placeholder = 'Listening… tap ⏹ to stop and transcribe'; }
+            } catch(err) { releaseMic(); setBtnState(btn, 'idle'); }
+          })
+          .catch(function(err) {
+            var msg = err.name === 'NotAllowedError' ? 'Mic blocked — click the camera icon in the address bar' : 'Mic unavailable — try again';
+            setBtnState(btn, 'idle');
+            btn.title = msg;
+            btn.style.borderColor = 'rgba(248,113,113,0.6)';
+            setTimeout(function(){ btn.style.borderColor = ''; }, 3000);
+          });
+      }
+
+      function stopRec(btn, targetId) {
+        _active = false;
+        try { if (_processor) { _processor.disconnect(); _processor = null; } } catch(e) {}
+        try { if (_source) { _source.disconnect(); _source = null; } } catch(e) {}
+        var chunks = _buffers.slice(); _buffers = [];
+        releaseMic();
+        var el = document.getElementById(targetId);
+        if (el && el._ph) { el.placeholder = el._ph; }
+        if (!chunks.length) { setBtnState(btn, 'idle'); return; }
+        setBtnState(btn, 'processing');
+        transcribe(encodeWAV(chunks, _sampleRate), btn, targetId);
+      }
+
+      function releaseMic() {
+        if (_micStream) { try { _micStream.getTracks().forEach(function(t){ t.stop(); }); } catch(e){} _micStream = null; }
+      }
+
+      function encodeWAV(buffers, sr) {
+        var total = 0; buffers.forEach(function(b){ total += b.length; });
+        var merged = new Float32Array(total); var off = 0;
+        buffers.forEach(function(b){ merged.set(b, off); off += b.length; });
+        var pcm = new Int16Array(merged.length);
+        for (var i = 0; i < merged.length; i++) {
+          var s = Math.max(-1, Math.min(1, merged[i]));
+          pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        }
+        var buf = new ArrayBuffer(44 + pcm.buffer.byteLength);
+        var v = new DataView(buf);
+        function ws(o, s){ for(var i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i)); }
+        ws(0,'RIFF'); v.setUint32(4,36+pcm.buffer.byteLength,true); ws(8,'WAVE');
+        ws(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+        v.setUint32(24,sr,true); v.setUint32(28,sr*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
+        ws(36,'data'); v.setUint32(40,pcm.buffer.byteLength,true);
+        new Int16Array(buf,44).set(pcm);
+        return new Blob([buf],{type:'audio/wav'});
+      }
+
+      function transcribe(blob, btn, targetId) {
+        var fd = new FormData();
+        fd.append('audio', blob, 'recording.wav');
+        fd.append('token', getToken());
+        fetch(getWorker() + '/transcribe', { method: 'POST', body: fd })
+          .then(function(r){ if(!r.ok) return r.json().then(function(d){ throw new Error(d.error||'Transcription failed'); }); return r.json(); })
+          .then(function(data) {
+            if (data.text && data.text.trim()) {
+              var el = document.getElementById(targetId);
+              if (el) {
+                var existing = el.value.trim();
+                el.value = existing ? existing + ' ' + data.text.trim() : data.text.trim();
+                el.dispatchEvent(new Event('input'));
+              }
+            }
+            setBtnState(btn, 'idle');
+          })
+          .catch(function(err) {
+            console.error('Whisper error:', err);
+            setBtnState(btn, 'idle');
+            btn.title = (err && err.message) || 'Transcription failed — try again';
+            btn.style.borderColor = 'rgba(248,113,113,0.6)';
+            setTimeout(function(){ btn.style.borderColor=''; btn.title='Tap to speak'; }, 3000);
+          });
+      }
+
+      function setBtnState(btn, state) {
+        if (!btn) return;
+        if (state === 'recording') {
+          btn.innerHTML = '&#9209;'; btn.classList.add('listening'); btn.title = 'Tap to stop';
+        } else if (state === 'processing') {
+          btn.innerHTML = '&#8987;'; btn.classList.remove('listening'); btn.title = 'Transcribing…';
+        } else {
+          btn.innerHTML = '&#127908;'; btn.classList.remove('listening'); btn.title = 'Tap to speak';
+        }
+      }
+
+      window.toggleVoiceInput = function(targetId, btn) {
+        if (!navigator.mediaDevices || (!window.AudioContext && !window.webkitAudioContext)) {
+          alert('Voice input requires Chrome or a modern browser.');
+          return;
+        }
+        if (_active) { stopRec(btn, targetId); } else { startRec(btn, targetId); }
+      };
+    })();
+  </script>
+  <script src="clerk-auth.js"></script>
+  <script src="sidebar-shared.js"></script>
+
+  <!-- Vantage inline error banner — replaces alert() calls -->
+  <div id="vantage-error" style="display:none;position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:999;background:#11102a;border:1px solid rgba(224,92,58,0.35);border-left:3px solid #E05C3A;border-radius:10px;padding:16px 20px;max-width:480px;width:calc(100% - 48px);box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:fadeIn .25s ease">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x26A0;&#xFE0F;</span>
+      <div style="flex:1">
+        <div id="vantage-error-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:rgba(244,243,255,.85);line-height:1.55"></div>
+        <button onclick="document.getElementById('vantage-error').style.display='none';showView('intake-view')" style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:#a5b4fc;background:transparent;border:1px solid rgba(99,102,241,.3);border-radius:6px;padding:5px 12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(99,102,241,.6)'" onmouseout="this.style.borderColor='rgba(99,102,241,.3)'">&#x2190; Try again</button>
+      </div>
+      <button onclick="document.getElementById('vantage-error').style.display='none'" style="background:none;border:none;color:rgba(244,243,255,.3);cursor:pointer;font-size:16px;padding:0;line-height:1;flex-shrink:0">&#x2715;</button>
+    </div>
+  </div>
+</body>
+</html>

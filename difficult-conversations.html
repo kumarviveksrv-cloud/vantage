@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+  <link rel="apple-touch-icon" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="shortcut icon" href="favicon.png"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Difficult Conversations — Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <!-- SR18: vantage-theme.css above is the canonical palette + typography
+       source. Local :root below is KEPT INTACT as a fallback — same
+       pattern as every other SR18 page. Cormorant Garamond applied to
+       .page-title (covers setup, chat, and debrief view headers) and
+       the "The real conversation is coming." intro headline (inline
+       font-family swap only). .debrief-section-title cards stay
+       Bricolage — they're dense 15px card headers, not headline
+       moments, same pattern as PMS's own small card header treatment. -->
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
+    body{display:flex}
+    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.25);--grey:rgba(244,243,255,0.68);--dim:rgba(244,243,255,0.25)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(99,102,241,0.4)}70%{box-shadow:0 0 0 20px rgba(99,102,241,0)}100%{box-shadow:0 0 0 0 rgba(99,102,241,0)}}
+    @keyframes micPulseRed{0%{box-shadow:0 0 0 0 rgba(255,77,109,0.4)}70%{box-shadow:0 0 0 20px rgba(255,77,109,0)}100%{box-shadow:0 0 0 0 rgba(255,77,109,0)}}
+    @keyframes waveBar{0%,100%{height:4px}50%{height:20px}}
+
+    /* SIDEBAR */
+    .sidebar{width:220px;flex-shrink:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto}
+    .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px}
+    .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
+    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
+    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.5);margin-top:2px}
+    .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.6);padding:4px 10px;margin:16px 0 6px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.65);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
+    .nav-item:hover{background:rgba(99,102,241,0.08);color:#f4f3ff;border-color:rgba(99,102,241,0.15)}
+    .nav-item.active{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.30);color:#c4b5fd;font-weight:500}
+    .nav-item .icon{font-size:16px;flex-shrink:0}
+    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.20)}
+    .meridian-chip .label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+    .meridian-chip .val{font-size:11px;color:var(--grey)}
+
+    /* MAIN */
+    .main{flex:1;overflow:hidden;height:100vh;display:flex;flex-direction:column}
+    .page-header{padding:24px 32px 0;flex-shrink:0;animation:fadeIn .3s ease}
+    .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.06em;margin-bottom:8px}
+    .breadcrumb a{color:var(--dim);text-decoration:none}
+    .breadcrumb a:hover{color:var(--muted)}
+    .page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;margin-bottom:4px;color:#f4f3ff}
+    .page-sub{font-size:13px;color:var(--grey);margin-bottom:20px}
+    .setup-scroll{flex:1;overflow-y:auto;padding:0 32px 32px}
+
+    /* SETUP FORM */
+    .intake-card{background:rgba(5,4,16,0.25);border:1px solid rgba(99,102,241,0.12);border-radius:16px;padding:28px;margin-bottom:16px;animation:fadeIn .3s ease}
+    .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:block}
+    .form-section{margin-bottom:22px}
+    .roles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .role-btn{background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;color:var(--grey);font-size:12px;font-family:'Plus Jakarta Sans',sans-serif}
+    .role-btn:hover{border-color:rgba(99,102,241,0.3);color:#f4f3ff;background:rgba(99,102,241,0.08)}
+    .role-btn.selected{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.45);color:#c4b5fd;font-weight:500}
+    .role-icon{font-size:18px;display:block;margin-bottom:4px}
+    textarea{width:100%;padding:14px 16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:10px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:1.6;resize:vertical;outline:none;transition:border .2s}
+    textarea:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
+    textarea::placeholder{color:rgba(165,180,252,0.25)}
+    .difficulty-wrap{display:flex;gap:10px}
+    .diff-btn{flex:1;padding:12px;background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;text-align:center;font-size:13px;color:var(--grey);font-family:'Plus Jakarta Sans',sans-serif}
+    .diff-standard.selected{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.4);color:#c4b5fd}
+    .diff-challenging.selected{background:rgba(255,77,109,0.08);border-color:rgba(255,77,109,0.3);color:#FF4D6D}
+    .submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.35)}
+    .submit-btn:hover{opacity:.88}
+    .submit-btn:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
+
+    /* CHAT HEADER */
+    .chat-header{padding:16px 32px;border-bottom:1px solid rgba(99,102,241,0.1);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+    .chat-header-left .role-tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+    .chat-header-left .role-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
+    .chat-header-right{display:flex;gap:10px;align-items:center}
+    .hdr-btn{padding:8px 16px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s}
+    .hdr-btn-outline{background:transparent;color:var(--grey);border:1px solid rgba(244,243,255,0.1)}
+    .hdr-btn-outline:hover{border-color:rgba(244,243,255,0.2);color:#f4f3ff}
+    .voice-toggle{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;cursor:pointer;transition:all .2s;border:1px solid rgba(244,243,255,0.1);background:transparent;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--grey)}
+    .voice-toggle.active{background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.3);color:var(--muted)}
+    .voice-toggle-dot{width:8px;height:8px;border-radius:50%;background:rgba(244,243,255,0.2);transition:all .2s}
+    .voice-toggle.active .voice-toggle-dot{background:var(--accent);box-shadow:0 0 6px rgba(99,102,241,0.6)}
+
+    /* STAKES BRIEFING PANEL */
+    .stakes-panel{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(124,58,237,0.03));border-bottom:1px solid rgba(99,102,241,0.18);padding:14px 32px;flex-shrink:0;animation:fadeIn .4s ease}
+    .stakes-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+    .stakes-grid{display:flex;gap:20px;flex-wrap:wrap}
+    .stake-item{display:flex;flex-direction:column;gap:3px}
+    .stake-k{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.45);letter-spacing:.06em;text-transform:uppercase}
+    .stake-v{font-size:12px;color:rgba(244,243,255,0.75);line-height:1.4;max-width:340px}
+    .stake-v.financial{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:#c4b5fd}
+
+    /* MESSAGES */
+    .messages{flex:1;overflow-y:auto;padding:20px 32px;display:flex;flex-direction:column;gap:16px}
+    .msg{display:flex;gap:12px;animation:msgIn .25s ease}
+    .msg-them{justify-content:flex-start}
+    .msg-you{justify-content:flex-end}
+    .msg-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+    .avatar-them{background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.25)}
+    .avatar-you{background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.25)}
+    .msg-bubble{max-width:68%;padding:13px 16px;border-radius:14px;font-size:13px;line-height:1.6}
+    .bubble-them{background:var(--card);border:1px solid var(--border);color:rgba(244,243,255,0.8);border-radius:4px 14px 14px 14px}
+    .bubble-you{background:rgba(99,102,241,0.14);border:1px solid rgba(99,102,241,0.25);color:#f4f3ff;border-radius:14px 4px 14px 14px}
+    .msg-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+    .typing{display:flex;gap:4px;align-items:center;padding:4px 0}
+    .typing span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse .8s ease-in-out infinite}
+    .typing span:nth-child(2){animation-delay:.15s}
+    .typing span:nth-child(3){animation-delay:.3s}
+
+    /* TEXT INPUT */
+    .chat-input-wrap{padding:16px 32px;border-top:1px solid rgba(99,102,241,0.1);display:flex;gap:12px;flex-shrink:0}
+    .chat-input{flex:1;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;outline:none;resize:none;line-height:1.5;max-height:120px;transition:border .2s}
+    .chat-input:focus{border-color:rgba(99,102,241,0.45)}
+    .chat-input::placeholder{color:rgba(165,180,252,0.25)}
+    .send-btn{padding:12px 20px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;transition:opacity .2s;flex-shrink:0;box-shadow:0 4px 16px rgba(99,102,241,0.3)}
+    .send-btn:hover{opacity:.88}
+    .send-btn:disabled{opacity:.3;cursor:not-allowed}
+
+    /* VOICE INPUT */
+    .voice-input-wrap{padding:20px 32px;border-top:1px solid rgba(99,102,241,0.1);display:flex;flex-direction:column;align-items:center;gap:16px;flex-shrink:0}
+    .voice-status{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.08em;text-align:center;min-height:16px;transition:all .2s}
+    .voice-status.listening{color:#FF4D6D}
+    .voice-status.thinking{color:#FFB547}
+    .voice-status.speaking{color:var(--muted)}
+    .mic-btn{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--violet));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:28px;transition:all .25s;flex-shrink:0;box-shadow:0 4px 20px rgba(99,102,241,0.4)}
+    .mic-btn:hover{opacity:.88;transform:scale(1.05)}
+    .mic-btn.listening{background:#FF4D6D;box-shadow:0 4px 20px rgba(255,77,109,0.4);animation:micPulseRed 1s ease-in-out infinite}
+    .mic-btn.speaking{background:rgba(99,102,241,0.3);animation:micPulse 1.5s ease-in-out infinite;cursor:default;box-shadow:none}
+    .mic-btn.thinking{background:rgba(255,181,71,0.3);cursor:default;box-shadow:none}
+    .voice-transcript{font-size:13px;color:var(--grey);text-align:center;max-width:500px;min-height:20px;font-style:italic;transition:all .2s}
+    .wave-bars{display:flex;align-items:center;gap:3px;height:24px}
+    .wave-bar{width:3px;background:#FF4D6D;border-radius:2px;animation:waveBar .6s ease-in-out infinite}
+    .wave-bar:nth-child(2){animation-delay:.1s}
+    .wave-bar:nth-child(3){animation-delay:.2s}
+    .wave-bar:nth-child(4){animation-delay:.3s}
+    .wave-bar:nth-child(5){animation-delay:.4s}
+    .voice-hint{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;text-align:center}
+
+    /* LOADING */
+    .loading-center{flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center}
+    .loading-orb-wrap{width:64px;height:64px;margin-bottom:24px}
+    .loading-orb-wrap svg{animation:spin 2s linear infinite}
+
+    /* DEBRIEF */
+    .debrief-scroll{flex:1;overflow-y:auto;padding:0 32px 32px}
+    .debrief-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;animation:fadeIn .4s ease}
+    .debrief-section-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:600;margin-bottom:14px;color:#f4f3ff}
+    .debrief-item{display:flex;gap:10px;margin-bottom:12px}
+    .debrief-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0}
+    .debrief-item-text{font-size:13px;color:var(--grey);line-height:1.6}
+    .highlight-card{background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:20px;margin-bottom:16px}
+    .highlight-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+    .highlight-text{font-size:13px;color:rgba(244,243,255,0.7);line-height:1.6}
+    .prep-brief{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:16px}
+    .prep-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+    .prep-text{font-size:13px;color:var(--grey);line-height:1.8;white-space:pre-wrap}
+
+    /* FINANCIAL CONTEXT CARD */
+    .fin-context-card{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.25);border-radius:12px;padding:20px 24px;margin-bottom:16px;position:relative;overflow:hidden}
+    .fin-context-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.5),transparent)}
+    .fin-context-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+    .fin-context-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    .fin-ctx-item{background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.1);border-radius:8px;padding:12px 14px}
+    .fin-ctx-k{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.5);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+    .fin-ctx-v{font-size:13px;color:rgba(244,243,255,0.75);line-height:1.45}
+    .fin-ctx-v.range{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;color:#c4b5fd}
+    .fin-context-impact{font-size:13px;color:rgba(244,243,255,0.6);line-height:1.7;margin-bottom:10px}
+    .fin-trajectory-note{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.12);border-radius:7px;padding:9px 12px;font-size:12px;color:var(--grey);line-height:1.5}
+    .fin-trajectory-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+
+    .action-row{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+    .btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
+    .btn-primary:hover{opacity:.88}
+    .btn-ghost{padding:14px 28px;background:transparent;color:var(--grey);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;border:1px solid rgba(244,243,255,0.08);border-radius:10px;cursor:pointer;transition:all .2s}
+    .btn-ghost:hover{border-color:rgba(244,243,255,0.15);color:#f4f3ff}
+    .btn-indigo-outline{padding:14px 28px;background:transparent;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;border:1px solid rgba(99,102,241,0.35);border-radius:10px;cursor:pointer;transition:all .2s}
+    .btn-indigo-outline:hover{background:rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.5)}
+
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
+    @media(max-width:768px){.sidebar{display:none}.roles-grid{grid-template-columns:repeat(2,1fr)}.main{overflow:hidden}.stakes-grid{flex-direction:column;gap:10px}.fin-context-grid{grid-template-columns:1fr}}
+  
+    /* ── VOICE INPUT WRAPPER ── */
+    .voice-wrap{position:relative}
+    .voice-btn{position:absolute;bottom:10px;right:10px;width:32px;height:32px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);color:#a5b4fc;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:2;line-height:1}
+    .voice-btn:hover{background:rgba(99,102,241,0.22);border-color:rgba(99,102,241,0.45)}
+    .voice-btn.listening{background:rgba(124,58,237,0.25);border-color:rgba(124,58,237,0.6);color:#c4b5fd;animation:voicePulse 1s ease-in-out infinite}
+    @keyframes voicePulse{0%{box-shadow:0 0 0 0 rgba(124,58,237,0.5)}70%{box-shadow:0 0 0 10px rgba(124,58,237,0)}100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}}
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">
+      <div class="logo-dot"></div>
+      <div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div>
+    </div>
+    <a href="dashboard.html" class="nav-item"><span class="icon">⊞</span> Dashboard</a>
+    <div class="nav-section">Core Tools</div>
+    <a href="employee-case-advisor.html" class="nav-item"><span class="icon">⚡</span> ER Case Navigator</a>
+    <a href="people-roi-brief.html" class="nav-item"><span class="icon">📊</span> HR Data Storyteller</a>
+    <a href="leadership-communicator.html" class="nav-item"><span class="icon">🎯</span> Stakeholder Influence</a>
+    <div class="nav-section">Intelligence</div>
+    <a href="aria.html" class="nav-item"><span class="icon">✦</span> ARIA</a>
+    <a href="policy-advisor.html" class="nav-item"><span class="icon">🧭</span> Policy Compass</a>
+    <a href="difficult-conversations.html" class="nav-item active"><span class="icon">🎭</span> Difficult Conversations</a>
+    <div class="nav-section">My Record</div>
+    <a href="vantage-record.html" class="nav-item"><span class="icon">◎</span> Case Library</a>
+    <a href="debrief.html" class="nav-item"><span class="icon">📋</span> The Debrief</a>
+    <div class="nav-section">Philosophy</div>
+    <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">🌀</span> Humacity</a>
+    <div class="nav-section">Legal</div>
+    <a href="terms.html" class="nav-item"><span class="icon">📄</span> Terms of Service</a>
+    <a href="privacy.html" class="nav-item"><span class="icon">🔒</span> Privacy Policy</a>
+    <div class="nav-section">Account</div>
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">🔒</span> Data &amp; Privacy</a>
+    <a href="#" class="nav-item" onclick="clerkSignOut(); return false;"><span class="icon">↩</span> Sign out</a>
+    <div class="meridian-chip">
+      <div class="label">MERIDIAN Active</div>
+      <div class="val" id="meridian-chip-val">Loading...</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main" id="main-panel">
+
+    <!-- SETUP VIEW -->
+    <div id="setup-view" style="display:flex;flex-direction:column;height:100%">
+      <div class="page-header">
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Difficult Conversations</div>
+        <div class="page-title">&#x1F3AD; Difficult Conversations</div>
+        <div class="page-sub">Let's make sure you've already had it once before it counts.</div>
+      </div>
+      <div class="setup-scroll">
+        <div style="background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:14px;padding:22px 26px;margin-bottom:16px;animation:fadeIn .3s ease">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f4f3ff;margin-bottom:12px">The real conversation is coming.</div>
+          <div style="font-size:14px;color:rgba(244,243,255,0.72);line-height:1.75">Pick the person you need to face. Describe what's at stake. Then have the conversation — text or voice — in a space where there are <strong style="color:rgba(244,243,255,0.8)">no consequences for getting it wrong</strong>. Before you start, you'll see the financial stakes — what this conversation is actually protecting or fighting for. The coaching debrief after tells you exactly what to do differently when it counts.</div>
+        </div>
+        <div class="intake-card">
+          <div class="form-section">
+            <label class="form-label">Who are you speaking with?</label>
+            <div class="roles-grid">
+              <div class="role-btn" onclick="selectRole(this,'Direct report')"><span class="role-icon">&#x1F464;</span>Direct report</div>
+              <div class="role-btn" onclick="selectRole(this,'Your manager')"><span class="role-icon">&#x1F446;</span>Your manager</div>
+              <div class="role-btn" onclick="selectRole(this,'Skip-level leader')"><span class="role-icon">&#x1F3E2;</span>Skip-level leader</div>
+              <div class="role-btn" onclick="selectRole(this,'Peer / colleague')"><span class="role-icon">&#x1F91D;</span>Peer / colleague</div>
+              <div class="role-btn" onclick="selectRole(this,'CHRO / HR Head')"><span class="role-icon">&#x1F451;</span>CHRO / HR Head</div>
+              <div class="role-btn" onclick="selectRole(this,'CFO / Finance head')"><span class="role-icon">&#x1F4B0;</span>CFO / Finance head</div>
+              <div class="role-btn" onclick="selectRole(this,'CEO / Founder')"><span class="role-icon">&#x26A1;</span>CEO / Founder</div>
+              <div class="role-btn" onclick="selectRole(this,'Employee on PIP')"><span class="role-icon">&#x1F4CB;</span>Employee on PIP</div>
+              <div class="role-btn" onclick="selectRole(this,'Legal counsel')"><span class="role-icon">&#x2696;&#xFE0F;</span>Legal counsel</div>
+            </div>
+          </div>
+          <div class="form-section">
+            <label class="form-label">What's the conversation about? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic</span></label>
+            <div class="voice-wrap">
+            <textarea id="scenario" style="padding-right:48px" placeholder='e.g. "My direct report has been underperforming for 3 months. Two informal chats, nothing changed. His manager wants a PIP — I need to have that conversation tomorrow and he&apos;s going to be defensive about it." Just write it the way it&apos;s sitting in your head.' rows="4"></textarea>
+            <button class="voice-btn" id="scenario-mic" onclick="toggleVoiceInput('scenario', this)" title="Tap to speak">&#127908;</button>
+            </div>
+          </div>
+          <div class="form-section">
+            <label class="form-label">What does success look like for you?</label>
+            <textarea id="objective" placeholder='e.g. "He understands why the PIP is happening, agrees to the 60-day plan, and doesn&apos;t go to HR to complain afterwards." One or two sentences is enough.' rows="3"></textarea>
+          </div>
+          <div class="form-section">
+            <label class="form-label">Difficulty level</label>
+            <div class="difficulty-wrap">
+              <div class="diff-btn diff-standard selected" onclick="selectDiff(this,'standard')">
+                <div style="font-size:18px;margin-bottom:4px">&#x1F610;</div>
+                <div style="font-weight:600">Realistic</div>
+                <div style="font-size:12px;color:rgba(244,243,255,0.65);margin-top:3px">Pushes back but stays professional</div>
+              </div>
+              <div class="diff-btn diff-challenging" onclick="selectDiff(this,'challenging')">
+                <div style="font-size:18px;margin-bottom:4px">&#x1F624;</div>
+                <div style="font-weight:600">Challenging</div>
+                <div style="font-size:12px;color:rgba(244,243,255,0.65);margin-top:3px">Defensive, emotional, resistant</div>
+              </div>
+            </div>
+          </div>
+          <button class="submit-btn" id="start-btn" onclick="startSimulation()" disabled>Begin Practice &#x2192;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT VIEW -->
+    <div id="chat-view" style="display:none;flex-direction:column;height:100%">
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <div class="role-tag">You are speaking with</div>
+          <div class="role-name" id="chat-role-name">&#8212;</div>
+        </div>
+        <div class="chat-header-right">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim)" id="exchange-indicator">0 / 8 exchanges</span>
+          <div class="voice-toggle" id="voice-toggle" onclick="toggleVoiceMode()">
+            <div class="voice-toggle-dot"></div>
+            <span id="voice-toggle-label">&#x1F3A4; Switch to Voice</span>
+          </div>
+          <button class="hdr-btn hdr-btn-outline" onclick="endPractice()">End Practice &amp; Get Debrief</button>
+        </div>
+      </div>
+
+      <div id="stakes-panel" class="stakes-panel" style="display:none">
+        <div class="stakes-label">&#x1F4B0; Stakes Briefing — what this conversation is actually about</div>
+        <div class="stakes-grid" id="stakes-grid"></div>
+      </div>
+
+      <div class="messages" id="messages-container"></div>
+
+      <div class="chat-input-wrap" id="text-input-wrap">
+        <textarea class="chat-input" id="chat-input" placeholder="Type your response... (or switch to voice mode above)" rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()">Send &#x2192;</button>
+      </div>
+      <div class="voice-input-wrap" id="voice-input-wrap" style="display:none">
+        <div class="voice-status" id="voice-status">Tap the mic to speak</div>
+        <div id="wave-bars" style="display:none" class="wave-bars">
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+          <div class="wave-bar"></div><div class="wave-bar"></div>
+        </div>
+        <button class="mic-btn" id="mic-btn" onclick="handleMicClick()">&#x1F3A4;</button>
+        <div class="voice-transcript" id="voice-transcript"></div>
+        <div class="voice-hint">Tap to speak &middot; Tap again to stop early &middot; Responses play automatically</div>
+      </div>
+    </div>
+
+    <!-- LOADING VIEW -->
+    <div id="loading-view" style="display:none;flex-direction:column;height:100%">
+      <div class="loading-center">
+        <div class="loading-orb-wrap">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/>
+            <circle cx="32" cy="32" r="28" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="44 132" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div id="loading-text" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#a5b4fc;letter-spacing:.08em">PREPARING YOUR PRACTICE...</div>
+      </div>
+    </div>
+
+    <!-- DEBRIEF VIEW -->
+    <div id="debrief-view" style="display:none;flex-direction:column;height:100%">
+      <div class="page-header">
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="difficult-conversations.html">Difficult Conversations</a> &middot; Coaching Debrief</div>
+        <div class="page-title">Coaching Debrief</div>
+        <div class="page-sub">Here's what happened in your practice session.</div>
+      </div>
+      <div class="debrief-scroll">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+          <div class="debrief-card">
+            <div class="debrief-section-title">&#x2705; What worked</div>
+            <div id="what-worked"></div>
+          </div>
+          <div class="debrief-card">
+            <div class="debrief-section-title">&#x1F3AF; What to improve</div>
+            <div id="what-improve"></div>
+          </div>
+        </div>
+
+        <div class="highlight-card">
+          <div class="highlight-label">The moment that would have changed everything</div>
+          <div class="highlight-text" id="inflection-point">&#8212;</div>
+        </div>
+
+        <div class="highlight-card" style="background:linear-gradient(135deg,rgba(255,181,71,0.07),rgba(255,181,71,0.02));border-color:rgba(255,181,71,0.2)">
+          <div class="highlight-label" style="color:#FFB547">One technique to try in the real conversation</div>
+          <div class="highlight-text" id="technique">&#8212;</div>
+        </div>
+
+        <!-- Financial Context Card -->
+        <div class="fin-context-card" id="fin-context-card" style="display:none">
+          <div class="fin-context-label">&#x1F4B0; Financial Context — what was at stake in this conversation</div>
+          <div class="fin-context-grid">
+            <div class="fin-ctx-item">
+              <div class="fin-ctx-k">At stake</div>
+              <div class="fin-ctx-v range" id="fc-at-stake">&#8212;</div>
+            </div>
+            <div class="fin-ctx-item">
+              <div class="fin-ctx-k">Humac pillar</div>
+              <div class="fin-ctx-v" id="fc-pillar">&#8212;</div>
+              <div style="font-size:11px;color:var(--dim);margin-top:4px" id="fc-pillar-rationale"></div>
+            </div>
+          </div>
+          <div id="fc-green-cat" style="margin-top:10px;margin-bottom:4px"></div>
+          <div class="fin-context-impact" id="fc-conversation-impact"></div>
+          <div class="fin-trajectory-note" id="fc-trajectory-row" style="display:none">
+            <div class="fin-trajectory-label">Trajectory Signal</div>
+            <div id="fc-trajectory"></div>
+          </div>
+        </div>
+
+        <div class="prep-brief">
+          <div class="prep-label">Preparation Brief &#8212; Read this before the real conversation</div>
+          <div class="prep-text" id="prep-brief-text">&#8212;</div>
+        </div>
+
+        <div class="action-row">
+          <button class="btn-primary" onclick="practiceAgain()">Practice Again</button>
+          <button class="btn-indigo-outline" onclick="openInCaseNavigator()">Open in Case Navigator &#x2192;</button>
+          <button class="btn-ghost" onclick="newScenario()">New Scenario</button>
+          <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+
+    function renderGreenCat(gc) {
+      if (!gc || !gc.primary) return '';
+      var icons = {'Revenue Growth':'&#x2191;','Cost Efficiency':'&#x2193;','Risk Mitigation':'&#x26A0;'};
+      var labels = {'Revenue Growth':'Revenue Growth','Cost Efficiency':'Cost Efficiency','Risk Mitigation':'Risk Exposure'};
+      var colors = {'Revenue Growth':'#4ade80','Cost Efficiency':'#a5b4fc','Risk Mitigation':'#FBB724'};
+      var p = gc.primary; var s = gc.secondary;
+      var html = '<span style="font-family:JetBrains Mono,monospace;font-size:11px;font-weight:700;letter-spacing:.05em;color:' + (colors[p]||'#a5b4fc') + '">' + (icons[p]||'') + ' ' + (labels[p]||p) + '</span>';
+      if (s && s !== 'null' && s !== p) html += '<span style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(244,243,255,0.35);margin-left:8px">&middot; ' + (labels[s]||s) + '</span>';
+      return html;
+    }
+    function showError(msg, fallbackView) {
+      document.getElementById('vantage-error-msg').textContent = msg;
+      document.getElementById('vantage-error').style.display = 'block';
+      if (fallbackView) showView(fallbackView);
+      setTimeout(function(){ var el=document.getElementById('vantage-error'); if(el)el.style.display='none'; }, 10000);
+    }
+    var BASE = 'https://vantage.virorah.com/';
+    var selectedRole = '';
+    var selectedDiff = 'standard';
+    var conversationHistory = [];
+    var exchangeCount = 0;
+    var MAX_EXCHANGES = 8;
+    var currentScenario = '';
+    var currentObjective = '';
+    var voiceMode = false;
+    var isListening = false;
+    var isSpeaking = false;
+    var recognition = null;
+    var voices = [];
+
+    if (sessionStorage.getItem('sr_access') !== 'true') {
+      window.location.href = BASE + 'access.html';
+    }
+
+    var meridianRaw = sessionStorage.getItem('sr_meridian');
+    var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
+    document.getElementById('meridian-chip-val').innerText =
+      (meridian.state || 'Not set') + ' \xb7 ' + (meridian.industry || 'Not set');
+
+    var practiceCtx = sessionStorage.getItem('sr_practice_context');
+    if (practiceCtx) {
+      try {
+        var ctx = JSON.parse(practiceCtx);
+        if (ctx.narrative) document.getElementById('scenario').value = 'Context from ER case: ' + ctx.narrative;
+        sessionStorage.removeItem('sr_practice_context');
+      } catch(e) {}
+    }
+
+    document.getElementById('scenario').addEventListener('input', checkStart);
+    document.getElementById('objective').addEventListener('input', checkStart);
+    window.speechSynthesis.onvoiceschanged = function() { voices = window.speechSynthesis.getVoices(); };
+    setTimeout(function(){ voices = window.speechSynthesis.getVoices(); }, 500);
+
+    function selectRole(el, role) {
+      document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('selected'); });
+      el.classList.add('selected');
+      selectedRole = role;
+      checkStart();
+    }
+
+    function selectDiff(el, diff) {
+      document.querySelectorAll('.diff-btn').forEach(function(b){ b.classList.remove('selected'); });
+      el.classList.add('selected');
+      selectedDiff = diff;
+    }
+
+    function checkStart() {
+      var s = document.getElementById('scenario').value.trim();
+      var o = document.getElementById('objective').value.trim();
+      document.getElementById('start-btn').disabled = !(selectedRole && s.length > 20 && o.length > 10);
+    }
+
+    function showView(view) {
+      ['setup-view','chat-view','loading-view','debrief-view'].forEach(function(v){
+        document.getElementById(v).style.display = 'none';
+      });
+      document.getElementById(view).style.display = 'flex';
+      document.getElementById(view).style.flexDirection = 'column';
+    }
+
+    function toggleVoiceMode() {
+      voiceMode = !voiceMode;
+      var toggle = document.getElementById('voice-toggle');
+      var label = document.getElementById('voice-toggle-label');
+      if (voiceMode) {
+        toggle.classList.add('active');
+        label.innerText = '\u2328\uFE0F Switch to Text';
+        document.getElementById('text-input-wrap').style.display = 'none';
+        document.getElementById('voice-input-wrap').style.display = 'flex';
+        setVoiceStatus('Tap the mic to speak', '');
+      } else {
+        toggle.classList.remove('active');
+        label.innerText = '\uD83C\uDFA4 Switch to Voice';
+        document.getElementById('text-input-wrap').style.display = 'flex';
+        document.getElementById('voice-input-wrap').style.display = 'none';
+        stopListening();
+      }
+    }
+
+    function setVoiceStatus(text, state) {
+      var el = document.getElementById('voice-status');
+      el.innerText = text;
+      el.className = 'voice-status' + (state ? ' ' + state : '');
+      document.getElementById('wave-bars').style.display = state === 'listening' ? 'flex' : 'none';
+      var micBtn = document.getElementById('mic-btn');
+      micBtn.className = 'mic-btn' + (state ? ' ' + state : '');
+      if (state === 'listening') micBtn.innerText = '\u23F9';
+      else if (state === 'thinking') micBtn.innerText = '\uD83D\uDCAD';
+      else if (state === 'speaking') micBtn.innerText = '\uD83D\uDD0A';
+      else micBtn.innerText = '\uD83C\uDFA4';
+    }
+
+    function initRecognition() {
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) { alert('Voice recognition requires Chrome.'); return null; }
+      var r = new SR();
+      r.continuous = false; r.interimResults = true; r.lang = 'en-US'; r.maxAlternatives = 3;
+      r.onstart = function() { isListening = true; setVoiceStatus('Listening... speak now', 'listening'); document.getElementById('voice-transcript').innerText = ''; };
+      r.onresult = function(event) {
+        var interim = '', final = '';
+        for (var i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) final += event.results[i][0].transcript;
+          else interim += event.results[i][0].transcript;
+        }
+        document.getElementById('voice-transcript').innerText = final || interim;
+        if (final) { isListening = false; sendVoiceMessage(final.trim()); }
+      };
+      r.onerror = function(e) {
+        isListening = false;
+        if (e.error !== 'no-speech') setVoiceStatus('Mic error: ' + e.error + '. Tap to retry.', '');
+        else setVoiceStatus('No speech detected. Tap to try again.', '');
+      };
+      r.onend = function() { isListening = false; if (!isSpeaking) setVoiceStatus('Tap the mic to speak', ''); };
+      return r;
+    }
+
+    function handleMicClick() {
+      if (isSpeaking) { window.speechSynthesis.cancel(); isSpeaking = false; setVoiceStatus('Tap the mic to speak',''); return; }
+      if (isListening) { stopListening(); return; }
+      startListening();
+    }
+
+    function startListening() {
+      recognition = initRecognition();
+      if (!recognition) return;
+      try { recognition.start(); } catch(e) { console.error(e); }
+    }
+
+    function stopListening() {
+      if (recognition) { try { recognition.stop(); } catch(e) {} }
+      isListening = false;
+      setVoiceStatus('Tap the mic to speak', '');
+    }
+
+    function speak(text, onEnd) {
+      window.speechSynthesis.cancel();
+      isSpeaking = true;
+      setVoiceStatus('Speaking...', 'speaking');
+      var clean = text.replace(/\*\*/g,'').replace(/#{1,6}\s/g,'').replace(/`/g,'').replace(/_/g,'');
+      var utterance = new SpeechSynthesisUtterance(clean);
+      utterance.lang = 'en-US'; utterance.rate = 0.92; utterance.pitch = 1;
+      if (voices.length > 0) {
+        var preferred = voices.find(function(v){ return v.lang === 'en-US'; }) || voices.find(function(v){ return v.lang.startsWith('en'); });
+        if (preferred) utterance.voice = preferred;
+      }
+      utterance.onend = function() { isSpeaking = false; setVoiceStatus('Tap the mic to respond', ''); if (onEnd) onEnd(); };
+      utterance.onerror = function() { isSpeaking = false; setVoiceStatus('Tap the mic to speak', ''); };
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function addMessage(role, text, isTypingIndicator) {
+      var container = document.getElementById('messages-container');
+      var div = document.createElement('div');
+      div.className = 'msg ' + (role === 'you' ? 'msg-you' : 'msg-them');
+      var avatar = role === 'you'
+        ? '<div class="msg-avatar avatar-you">\uD83E\uDDD1</div>'
+        : '<div class="msg-avatar avatar-them">\uD83C\uDFAD</div>';
+      var label = role === 'you' ? 'You' : selectedRole;
+      if (isTypingIndicator) {
+        div.id = 'typing-indicator';
+        div.innerHTML = avatar + '<div><div class="msg-label">' + label + '</div><div class="msg-bubble bubble-them"><div class="typing"><span></span><span></span><span></span></div></div></div>';
+      } else {
+        div.innerHTML = (role !== 'you' ? avatar : '') +
+          '<div><div class="msg-label">' + label + '</div><div class="msg-bubble ' + (role === 'you' ? 'bubble-you' : 'bubble-them') + '">' + text + '</div></div>' +
+          (role === 'you' ? avatar : '');
+      }
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+      return div;
+    }
+
+    function removeTyping() {
+      var t = document.getElementById('typing-indicator');
+      if (t) t.remove();
+    }
+
+    function updateExchangeCounter() {
+      document.getElementById('exchange-indicator').innerText = exchangeCount + ' / ' + MAX_EXCHANGES + ' exchanges';
+    }
+
+    function parseFirstResponse(text) {
+      if (!text) return { briefing: null, dialogue: text };
+
+      var m1 = text.match(/^-{3,}\s*\n([\s\S]*?)\n-{3,}\s*\n([\s\S]*)$/);
+      if (m1 && m1[1].toUpperCase().indexOf('STAKES') > -1) {
+        return { briefing: m1[1].trim(), dialogue: m1[2].trim() };
+      }
+
+      var m2 = text.match(/([\s\S]*?The simulation begins now\.?)\s*\n?-*\s*\n([\s\S]*)/i);
+      if (m2) {
+        return { briefing: m2[1].trim(), dialogue: m2[2].trim() };
+      }
+
+      var m3 = text.match(/STAKES BRIEFING\s*\n([\s\S]*?)\n-{3,}\s*\n([\s\S]*)/i);
+      if (m3) {
+        return { briefing: 'STAKES BRIEFING\n\n' + m3[1].trim(), dialogue: m3[2].trim() };
+      }
+
+      return { briefing: null, dialogue: text };
+    }
+
+    function showStakesBriefing(briefingText) {
+      var panel = document.getElementById('stakes-panel');
+      var grid = document.getElementById('stakes-grid');
+
+      var exposureMatch   = briefingText.match(/Financial exposure:\s*([^\n]+)/i);
+      var pillarMatch     = briefingText.match(/Humac pillar:\s*([^\n]+)/i);
+      var atStakeMatch    = briefingText.match(/What is at stake:\s*([^\n]+)/i);
+      var practisingMatch = briefingText.match(/You are practising with:\s*([^\n]+)/i);
+
+      var items = [];
+      if (exposureMatch)   items.push({ k: 'Financial exposure',      v: exposureMatch[1].trim(),   cls: 'financial' });
+      if (pillarMatch)     items.push({ k: 'Humac pillar',            v: pillarMatch[1].trim(),     cls: '' });
+      if (atStakeMatch)    items.push({ k: 'What is at stake',        v: atStakeMatch[1].trim(),    cls: '' });
+      if (practisingMatch) items.push({ k: 'You are practising with', v: practisingMatch[1].trim(), cls: '' });
+
+      if (items.length === 0) {
+        grid.innerHTML = '<div class="stake-item"><div class="stake-v">' + briefingText.replace(/STAKES BRIEFING\n?/i,'').trim() + '</div></div>';
+      } else {
+        grid.innerHTML = items.map(function(item) {
+          return '<div class="stake-item"><div class="stake-k">' + item.k + '</div><div class="stake-v ' + item.cls + '">' + item.v + '</div></div>';
+        }).join('');
+      }
+      panel.style.display = 'block';
+    }
+
+    async function startSimulation() {
+      currentScenario = document.getElementById('scenario').value.trim();
+      currentObjective = document.getElementById('objective').value.trim();
+      document.getElementById('chat-role-name').innerText = selectedRole;
+      conversationHistory = [];
+      exchangeCount = 0;
+      document.getElementById('messages-container').innerHTML = '';
+      document.getElementById('stakes-panel').style.display = 'none';
+      showView('loading-view');
+      document.getElementById('loading-text').innerText = 'SETTING THE SCENE...';
+
+      try {
+        var res = await fetch(WORKER, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            tool: 'practice',
+            scenario: currentScenario,
+            objective: currentObjective,
+            stakeholderRole: selectedRole,
+            difficulty: selectedDiff,
+            history: conversationHistory,
+            meridian: meridian
+          })
+        });
+        var data = await res.json();
+        if (data.success) {
+          var response = data.data.response;
+          var parsed = parseFirstResponse(response);
+          if (parsed.briefing) showStakesBriefing(parsed.briefing);
+          var dialogue = parsed.dialogue || response;
+          conversationHistory.push({ role: 'assistant', content: dialogue });
+          showView('chat-view');
+          if (dialogue) addMessage('them', dialogue);
+          updateExchangeCounter();
+          if (voiceMode) speak(dialogue);
+        } else {
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You’ve reached your daily limit for Difficult Conversations. Resets tomorrow.') : 'Error starting simulation. ' + (data.error || 'Please try again.'), 'setup-view');
+        }
+      } catch(err) {
+        showError('Connection error. Please check your network and try again.', 'setup-view');
+      }
+    }
+
+    async function sendMessage() {
+      var input = document.getElementById('chat-input');
+      var text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      await processUserMessage(text);
+    }
+
+    async function sendVoiceMessage(text) {
+      if (!text || text.length < 2) { setVoiceStatus('Tap the mic to speak', ''); return; }
+      document.getElementById('voice-transcript').innerText = '';
+      setVoiceStatus('Thinking...', 'thinking');
+      await processUserMessage(text);
+    }
+
+    async function processUserMessage(text) {
+      if (exchangeCount >= MAX_EXCHANGES) { endPractice(); return; }
+      var sendBtn = document.getElementById('send-btn');
+      if (sendBtn) sendBtn.disabled = true;
+
+      addMessage('you', text);
+      conversationHistory.push({ role: 'user', content: text });
+      exchangeCount++;
+      updateExchangeCounter();
+      addMessage('them', '', true);
+
+      try {
+        var res = await fetch(WORKER, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            tool: 'practice',
+            scenario: currentScenario,
+            objective: currentObjective,
+            stakeholderRole: selectedRole,
+            difficulty: selectedDiff,
+            history: conversationHistory,
+            meridian: meridian
+          })
+        });
+        var data = await res.json();
+        removeTyping();
+        if (data.success) {
+          var response = data.data.response;
+          conversationHistory.push({ role: 'assistant', content: response });
+          addMessage('them', response);
+          if (voiceMode) {
+            speak(response, function() {
+              if (exchangeCount < MAX_EXCHANGES) setTimeout(startListening, 300);
+            });
+          }
+          if (exchangeCount >= MAX_EXCHANGES) {
+            var info = document.createElement('div');
+            info.style.cssText = 'text-align:center;font-family:JetBrains Mono,monospace;font-size:12px;color:rgba(244,243,255,0.60);padding:8px 0';
+            info.innerText = 'Max exchanges reached. Click "End Practice" for your debrief.';
+            document.getElementById('messages-container').appendChild(info);
+          }
+        } else {
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You’ve reached your daily limit for Difficult Conversations. Resets tomorrow.') : 'Something went wrong. ' + (data.error || 'Please try again.'), null);
+          if (voiceMode) setVoiceStatus('Error. Tap to try again.', '');
+        }
+      } catch(err) {
+        removeTyping();
+        showError('Connection error. Please check your network.', null);
+        if (voiceMode) setVoiceStatus('Connection error. Tap to retry.', '');
+      }
+      if (sendBtn) sendBtn.disabled = false;
+    }
+
+    async function endPractice() {
+      window.speechSynthesis.cancel();
+      stopListening();
+      showView('loading-view');
+      document.getElementById('loading-text').innerText = 'GENERATING YOUR DEBRIEF...';
+      try {
+        var res = await fetch(WORKER, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            tool: 'practice',
+            scenario: currentScenario,
+            objective: currentObjective,
+            stakeholderRole: selectedRole,
+            difficulty: selectedDiff,
+            history: conversationHistory,
+            meridian: meridian,
+            requestDebrief: true
+          })
+        });
+        var data = await res.json();
+        if (data.success) renderDebrief(data.data);
+        else { showError('Debrief generation failed. ' + (data.error || 'Please try again.'), 'chat-view'); }
+      } catch(err) {
+        showError('Connection error. Please check your network and try again.', 'chat-view');
+      }
+    }
+
+    function renderDebrief(r) {
+      document.getElementById('what-worked').innerHTML = (r.whatWorked || []).map(function(w) {
+        return '<div class="debrief-item"><div class="debrief-dot"></div><div class="debrief-item-text">' + w + '</div></div>';
+      }).join('');
+      document.getElementById('what-improve').innerHTML = (r.whatToImprove || []).map(function(w) {
+        return '<div class="debrief-item"><div class="debrief-dot" style="background:#FFB547"></div><div class="debrief-item-text">' + w + '</div></div>';
+      }).join('');
+      document.getElementById('inflection-point').innerText = r.inflectionPoint || '\u2014';
+      document.getElementById('technique').innerText = r.techniqueForNextTime || '\u2014';
+      document.getElementById('prep-brief-text').innerText = r.preparationBrief || '\u2014';
+
+      if (r.financialContext) {
+        var fc = r.financialContext;
+        document.getElementById('fc-at-stake').innerText = fc.atStake || '\u2014';
+        document.getElementById('fc-pillar').innerText = fc.pillar || '\u2014';
+        document.getElementById('fc-pillar-rationale').innerText = fc.pillarRationale || '';
+        document.getElementById('fc-conversation-impact').innerText = fc.howConversationAffectsIt || '';
+        if (fc.trajectorySignal) {
+          document.getElementById('fc-trajectory').innerText = fc.trajectorySignal;
+          document.getElementById('fc-trajectory-row').style.display = 'block';
+        }
+        document.getElementById('fc-green-cat').innerHTML = renderGreenCat(fc.greenCategory || r.greenCategory);
+        document.getElementById('fin-context-card').style.display = 'block';
+      }
+
+      showView('debrief-view');
+    }
+
+    function openInCaseNavigator() {
+      sessionStorage.setItem('sr_case_from_practice', JSON.stringify({
+        scenario: currentScenario,
+        role: selectedRole
+      }));
+      window.location.href = BASE + 'employee-case-advisor.html';
+    }
+
+    function practiceAgain() {
+      conversationHistory = [];
+      exchangeCount = 0;
+      document.getElementById('messages-container').innerHTML = '';
+      document.getElementById('stakes-panel').style.display = 'none';
+      startSimulation();
+    }
+
+    function newScenario() {
+      window.speechSynthesis.cancel();
+      stopListening();
+      document.getElementById('scenario').value = '';
+      document.getElementById('objective').value = '';
+      document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('selected'); });
+      selectedRole = '';
+      conversationHistory = [];
+      document.getElementById('start-btn').disabled = true;
+      showView('setup-view');
+    }
+  </script>
+
+  <script>
+    // ── WHISPER VOICE INPUT ──────────────────────────────────────────────────
+    (function() {
+      var _active = false, _audioCtx = null, _micStream = null;
+      var _processor = null, _source = null, _buffers = [], _sampleRate = 44100;
+
+      function getToken() { return sessionStorage.getItem('sr_session_token') || ''; }
+      function getWorker() { return 'https://situation-room-api.kumarvivek-srv.workers.dev'; }
+
+      function startRec(btn, targetId) {
+        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false })
+          .then(function(stream) {
+            _micStream = stream; _buffers = [];
+            try {
+              _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+              if (_audioCtx.state === 'suspended') _audioCtx.resume();
+              _sampleRate = _audioCtx.sampleRate;
+              _source = _audioCtx.createMediaStreamSource(stream);
+              _processor = _audioCtx.createScriptProcessor(4096, 1, 1);
+              _processor.onaudioprocess = function(e) { if (_active) _buffers.push(new Float32Array(e.inputBuffer.getChannelData(0))); };
+              _source.connect(_processor); _processor.connect(_audioCtx.destination);
+              _active = true; setBtnState(btn, 'recording');
+              var el = document.getElementById(targetId);
+              if (el) { el._ph = el.placeholder; el.placeholder = 'Listening\u2026 tap \u23F9 to stop and transcribe'; }
+            } catch(err) { releaseMic(); setBtnState(btn, 'idle'); }
+          })
+          .catch(function(err) {
+            setBtnState(btn, 'idle');
+            btn.title = err.name === 'NotAllowedError' ? 'Mic blocked \u2014 click the camera icon in the address bar' : 'Mic unavailable \u2014 try again';
+            btn.style.borderColor = 'rgba(248,113,113,0.6)';
+            setTimeout(function(){ btn.style.borderColor = ''; }, 3000);
+          });
+      }
+
+      function stopRec(btn, targetId) {
+        _active = false;
+        try { if (_processor) { _processor.disconnect(); _processor = null; } } catch(e) {}
+        try { if (_source) { _source.disconnect(); _source = null; } } catch(e) {}
+        var chunks = _buffers.slice(); _buffers = [];
+        releaseMic();
+        var el = document.getElementById(targetId);
+        if (el && el._ph) el.placeholder = el._ph;
+        if (!chunks.length) { setBtnState(btn, 'idle'); return; }
+        setBtnState(btn, 'processing');
+        transcribe(encodeWAV(chunks, _sampleRate), btn, targetId);
+      }
+
+      function releaseMic() {
+        if (_micStream) { try { _micStream.getTracks().forEach(function(t){ t.stop(); }); } catch(e){} _micStream = null; }
+      }
+
+      function encodeWAV(buffers, sr) {
+        var total = 0; buffers.forEach(function(b){ total += b.length; });
+        var merged = new Float32Array(total); var off = 0;
+        buffers.forEach(function(b){ merged.set(b, off); off += b.length; });
+        var pcm = new Int16Array(merged.length);
+        for (var i = 0; i < merged.length; i++) { var s = Math.max(-1, Math.min(1, merged[i])); pcm[i] = s < 0 ? s * 0x8000 : s * 0x7FFF; }
+        var buf = new ArrayBuffer(44 + pcm.buffer.byteLength); var v = new DataView(buf);
+        function ws(o, s){ for(var i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i)); }
+        ws(0,'RIFF'); v.setUint32(4,36+pcm.buffer.byteLength,true); ws(8,'WAVE');
+        ws(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+        v.setUint32(24,sr,true); v.setUint32(28,sr*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
+        ws(36,'data'); v.setUint32(40,pcm.buffer.byteLength,true); new Int16Array(buf,44).set(pcm);
+        return new Blob([buf],{type:'audio/wav'});
+      }
+
+      function transcribe(blob, btn, targetId) {
+        var fd = new FormData(); fd.append('audio', blob, 'recording.wav'); fd.append('token', getToken());
+        fetch(getWorker() + '/transcribe', { method: 'POST', body: fd })
+          .then(function(r){ if(!r.ok) return r.json().then(function(d){ throw new Error(d.error||'Transcription failed'); }); return r.json(); })
+          .then(function(data) {
+            if (data.text && data.text.trim()) {
+              var el = document.getElementById(targetId);
+              if (el) { var ex = el.value.trim(); el.value = ex ? ex + ' ' + data.text.trim() : data.text.trim(); el.dispatchEvent(new Event('input')); }
+            }
+            setBtnState(btn, 'idle');
+          })
+          .catch(function(err) {
+            console.error('Whisper error:', err); setBtnState(btn, 'idle');
+            btn.title = (err && err.message) || 'Transcription failed \u2014 try again';
+            btn.style.borderColor = 'rgba(248,113,113,0.6)';
+            setTimeout(function(){ btn.style.borderColor=''; btn.title='Tap to speak'; }, 3000);
+          });
+      }
+
+      function setBtnState(btn, state) {
+        if (!btn) return;
+        if (state === 'recording') { btn.innerHTML = '&#9209;'; btn.classList.add('listening'); btn.title = 'Tap to stop'; }
+        else if (state === 'processing') { btn.innerHTML = '&#8987;'; btn.classList.remove('listening'); btn.title = 'Transcribing\u2026'; }
+        else { btn.innerHTML = '&#127908;'; btn.classList.remove('listening'); btn.title = 'Tap to speak'; }
+      }
+
+      window.toggleVoiceInput = function(targetId, btn) {
+        if (!navigator.mediaDevices || (!window.AudioContext && !window.webkitAudioContext)) { alert('Voice input requires Chrome or a modern browser.'); return; }
+        if (_active) { stopRec(btn, targetId); } else { startRec(btn, targetId); }
+      };
+    })();
+  </script>
+  <script src="clerk-auth.js"></script>
+  <script src="sidebar-shared.js"></script>
+
+  <!-- Vantage inline error banner -->
+  <div id="vantage-error" style="display:none;position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:999;background:#11102a;border:1px solid rgba(224,92,58,0.35);border-left:3px solid #E05C3A;border-radius:10px;padding:16px 20px;max-width:480px;width:calc(100% - 48px);box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:fadeIn .25s ease">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x26A0;&#xFE0F;</span>
+      <div style="flex:1">
+        <div id="vantage-error-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:rgba(244,243,255,.85);line-height:1.55"></div>
+      </div>
+      <button onclick="document.getElementById('vantage-error').style.display='none'" style="background:none;border:none;color:rgba(244,243,255,.3);cursor:pointer;font-size:16px;padding:0;line-height:1;flex-shrink:0">&#x2715;</button>
+    </div>
+  </div>
+</body>
+</html>
