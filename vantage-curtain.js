@@ -833,7 +833,7 @@
       const hcix=document.getElementById('humacHCIx');if(hcix)hcix.textContent='0.94x';
       const tNum=document.getElementById('humacTrajNum');if(tNum)tNum.textContent='+6';
       const tSt=document.getElementById('humacTrajStatus');if(tSt)tSt.textContent='Improving';
-      const tag=document.getElementById('humacTagline');if(tag)tag.textContent='84 is value-generating territory \u2014 your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.';
+      const tag=document.getElementById('humacTagline');if(tag){tag.style.visibility='hidden';tag.textContent='84 is value-generating territory \u2014 your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.';const _h=tag.offsetHeight;tag.style.minHeight=_h+'px';tag.style.visibility='';}
       panel.style.position='relative';panel.style.overflow='hidden';
       if(!panel.querySelector('.humac-scanline')){const sc=document.createElement('div');sc.className='humac-scanline';panel.appendChild(sc);}
       return;
@@ -865,7 +865,19 @@
         if(hcix){const s=performance.now();(function f(now){const t=Math.min(1,(now-s)/1400);hcix.textContent=(0.50+t*.44).toFixed(2)+'x';if(t<1)requestAnimationFrame(f);else hcix.textContent='0.94x';})(s);}
       },350);
       setTimeout(()=>{const tNum=document.getElementById('humacTrajNum');const tSt=document.getElementById('humacTrajStatus');if(tNum)D.num(tNum,6,1200,'+','');setTimeout(()=>{if(tSt)tSt.textContent='Improving';},1300);},600);
-      setTimeout(()=>{const tag=document.getElementById('humacTagline');if(tag)D.str(tag,'84 is value-generating territory \u2014 your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.',1600);},2400);
+      setTimeout(()=>{
+        const tag=document.getElementById('humacTagline');
+        if(tag){
+          /* Pre-lock height before typewriter to prevent reflow during animation */
+          tag.style.visibility='hidden';
+          tag.textContent='84 is value-generating territory \u2014 your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.';
+          const h=tag.offsetHeight;
+          tag.textContent='';
+          tag.style.minHeight=h+'px';
+          tag.style.visibility='';
+          D.str(tag,'84 is value-generating territory \u2014 your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.',1600);
+        }
+      },2400);
     },scoreAt);
 
     /* CSS-only scanline — no JS loop */
