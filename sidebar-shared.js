@@ -1185,7 +1185,7 @@
       var coreHeader = null;
       sections.forEach(function(s) {
         var t = s.textContent.trim().toUpperCase();
-        if (t === 'YOUR ACTIVE TOOLS') coreHeader = s;
+        if (t === 'YOUR ACTIVE TOOLS' || t === 'Your Active Tools') coreHeader = s;
       });
       if (!coreHeader) return;
 
@@ -1246,7 +1246,7 @@
       var myRecordHeader = null;
       sections.forEach(function(s) {
         var t = s.textContent.trim().toUpperCase();
-        if (t === 'YOUR RECORD' || t === "YOUR RECORD") myRecordHeader = s;
+        if (t === 'YOUR RECORD' || t === "YOUR RECORD" || t === 'Your Record') myRecordHeader = s;
       });
       if (!myRecordHeader) return;
 
