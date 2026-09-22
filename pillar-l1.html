@@ -271,6 +271,7 @@ var benchColor=benchPos==='above'?'#4ade80':benchPos==='at'?'#6366f1':'#E05C3A';
 
 function band(s){if(s<=25)return{name:'Minimum',color:'#E05C3A'};if(s<=50)return{name:'Emerging',color:'#a5b4fc'};if(s<=72)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};}
 var sb=band(l1);
+var realRatioPct=realLedger&&realLedger.compBase>0?(realLedger.totalRet/realLedger.compBase)*100:0;
 var q1Ratio=realLedger?(realRatioPct/100).toFixed(2)+'x':(q1Pct/100).toFixed(2)+'x';
 var q1Display=realLedger?'\u20b9'+realRatioPct.toFixed(0):(q1Pct>0?'\u20b9'+q1Pct.toFixed(0):'N/A');
 
@@ -298,7 +299,6 @@ var totalRet=components.reduce(function(s,c){return s+c.ret;},0);
 var totalNet=totalRet-totalCost;
 
 // When computed, the real ratio replaces the self-reported q1Pct entirely
-var realRatioPct=realLedger&&realLedger.compBase>0?(realLedger.totalRet/realLedger.compBase)*100:0;
 
 function swHTML(id,c){
   return '<button class="sw-trigger" onclick="toggleSW(\''+id+'\')" id="'+id+'-btn">'+
