@@ -2230,6 +2230,25 @@
   opacity: 1 !important;
   visibility: visible !important;
 }
+/* Fix 2: prologue layout — keep copy left-of-centre, note owns right zone */
+.prologue-copy {
+  left: 24px !important;
+  right: 280px !important;
+  width: auto !important;
+  transform: none !important;
+}
+/* Fix 2: note — push down 10px from signal to create breathing room */
+.prologue-note {
+  top: 120px !important;
+}
+@media (max-width: 900px) {
+  .prologue-copy { right: 210px !important; }
+  .prologue-note { top: 90px !important; }
+}
+@media (max-width: 560px) {
+  .prologue-copy { left: 16px !important; right: 16px !important; }
+}
+
 /* Fix 1: hero accent lines flash as purple blocks before JS runs —
    visibility:hidden prevents GPU compositing entirely (no layer created)
    so there is no intermediate state where background shows as a rectangle
