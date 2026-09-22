@@ -10,7 +10,7 @@
        applied to two editorial hero headlines only:
          .hero-title — "Intelligence that compounds. Priced for what it's worth."
          .cs-title   — "The value compounds. Every month."
-       .pc-name (Core / Consultant tier names), .faq-title ("Common
+       .pc-name (Core tier name), .faq-title ("Common
        questions"), and .cc-title (compound card headers) all stay
        Bricolage — they are dense product/UI chrome, not editorial
        headlines. -->
@@ -49,7 +49,7 @@
     .billing-notice{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.18);border-radius:20px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,.8);letter-spacing:.06em;margin-top:20px}
 
     /* PRICING GRID */
-    .pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:64px}
+    .pricing-grid{display:grid;grid-template-columns:1fr;gap:20px;margin-bottom:64px;max-width:520px;margin-left:auto;margin-right:auto}
     @media(max-width:680px){.pricing-grid{grid-template-columns:1fr}}
 
     /* PRICING CARD */
@@ -181,7 +181,7 @@
           </div>
           <div class="pc-price-mo">per month</div>
           <div class="pc-daily">&#x20B9;23 per day &middot; less than a coffee</div>
-          <a href="access.html" class="pc-cta secondary">Get started &rarr;</a>
+          <a href="access.html" class="pc-cta primary">Get started &rarr;</a>
           <div class="pc-divider"></div>
           <div class="pc-features-label">What's included</div>
           <ul class="pc-features">
@@ -198,29 +198,6 @@
           </ul>
         </div>
 
-        <!-- CONSULTANT -->
-        <div class="pc featured">
-          <div class="pc-badge">For HR Consultants</div>
-          <div class="pc-tier" style="margin-top:8px">For HR practitioners</div>
-          <div class="pc-name">Consultant</div>
-          <div class="pc-desc">Everything in Core, built for HR professionals who serve multiple clients and need separate intelligence per engagement.</div>
-          <div class="pc-price-wrap">
-            <div class="pc-price"><sup>&#x20B9;</sup>1,499</div>
-          </div>
-          <div class="pc-price-mo">per month</div>
-          <div class="pc-daily">&#x20B9;50 per day &middot; per client intelligence</div>
-          <a href="access.html" class="pc-cta primary">Get started &rarr;</a>
-          <div class="pc-divider"></div>
-          <div class="pc-features-label">Everything in Core, plus</div>
-          <ul class="pc-features">
-            <li class="pc-feature"><span class="pf-check violet">&#x2736;</span><span class="pf-label">Multiple MERIDIAN Profiles <span class="pf-tag">KEY</span> — one per client, each fully calibrated</span></li>
-            <li class="pc-feature"><span class="pf-check violet">&#x2736;</span><span class="pf-label">Client-tagged Case Library — cases organised by engagement, not mixed</span></li>
-            <li class="pc-feature"><span class="pf-check violet">&#x2736;</span><span class="pf-label">Switch MERIDIAN context per session — full tool suite recalibrates per client</span></li>
-            <li class="pc-feature"><span class="pf-check violet">&#x2736;</span><span class="pf-label">All 6 tools &times; all clients — ER, Influence, SIGNAL, Simulator, Policy, ARIA</span></li>
-            <li class="pc-feature"><span class="pf-check violet">&#x2736;</span><span class="pf-label">Humac Score per client engagement</span></li>
-            <li class="pc-feature"><span class="pf-check violet">&#x2736;</span><span class="pf-label">Monthly Debrief — across all active engagements</span></li>
-          </ul>
-        </div>
 
       </div>
 
@@ -274,20 +251,6 @@
               <span class="faq-arrow">&#x25BE;</span>
             </div>
             <div class="faq-a">Your MERIDIAN profile, case library, and Humac score data are retained for 30 days after cancellation. You can export your data from the Data &amp; Privacy section before cancelling. After 30 days, data is permanently deleted from Vantage servers.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)">
-              <span>Can I switch from Core to Consultant?</span>
-              <span class="faq-arrow">&#x25BE;</span>
-            </div>
-            <div class="faq-a">Yes. Switching tiers takes effect from the next billing cycle. Your existing data — MERIDIAN profile, case history, Humac score — carries over completely. Nothing is lost on upgrade.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)">
-              <span>How many MERIDIAN profiles does Consultant support?</span>
-              <span class="faq-arrow">&#x25BE;</span>
-            </div>
-            <div class="faq-a">The Consultant tier is designed for HR practitioners managing multiple client engagements. Each client gets their own fully calibrated MERIDIAN profile. You switch context per session and all six tools recalibrate accordingly.</div>
           </div>
           <div class="faq-item">
             <div class="faq-q" onclick="toggleFaq(this)">
