@@ -15,7 +15,7 @@
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
     body{display:flex}
-    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.25);--grey:rgba(244,243,255,0.68);--dim:rgba(244,243,255,0.25)}
+    :root{--accent:#6366f1;--border-accent:rgba(99,102,241,0.25);--dim:rgba(244,243,255,0.25)}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
     @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -96,9 +96,8 @@
     <a href="dashboard.html" class="nav-item">
       <span class="icon">⊞</span> Dashboard
     </a>
-    <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">&#x1F300;</span> Humacity</a>
 
-    <div class="nav-section">Your Foundation</div>
+        <div class="nav-section">Your Foundation</div>
     <a href="onboarding.html" class="nav-item"><span class="icon">&#x2B21;</span> MERIDIAN Profile</a>
     <a href="humac-onboarding.html" class="nav-item" id="nav-humac"><span class="icon">&#x1F4C8;</span> Humac Score</a>
     <div class="nav-section">Your Active Tools</div>
@@ -110,17 +109,115 @@
     <a href="retention-advisor.html" class="nav-item"><span class="icon">&#x2696;&#xFE0F;</span> Retention Advisor</a>
     <a href="aria.html" class="nav-item"><span class="icon">&#x2736;</span> ARIA</a>
     <div class="nav-section">Your Record</div>
-    <a href="vantage-record.html" class="nav-item"><span class="icon">&#x25CE;</span> Vantage Record</a>
+    <a href="vantage-record.html" class="nav-item active"><span class="icon">&#x25CE;</span> Vantage Record</a>
     <a href="standpoint.html" class="nav-item"><span class="icon">&#x1F4DC;</span> Standpoint</a>
     <a href="debrief.html" class="nav-item"><span class="icon">&#x1F4CB;</span> The Debrief</a>
 
-        <div class="nav-section">Account</div>
-    <a href="pricing.html" class="nav-item"><span class="icon">&#x1F4B0;</span> Pricing</a>
-    <a href="data-dashboard.html" class="nav-item"><span class="icon">&#x1F512;</span> Data &amp; Privacy</a>
+    <div class="nav-section">Philosophy</div>
+    <a href="https://humacity.com" class="nav-item" target="_blank">
+      <span class="icon">🌀</span> Humacity
+    </a>
+
     <div class="nav-section">Legal</div>
-    <a href="terms.html" class="nav-item"><span class="icon">&#x1F4C4;</span> Terms of Service</a>
-    <a href="privacy.html" class="nav-item"><span class="icon">&#x1F512;</span> Privacy Policy</a>
-    <a href="#" class="nav-item" onclick="clerkSignOut();return false;" style="margin-top:8px;border-top:1px solid rgba(99,102,241,.1);padding-top:14px;"><span class="icon">&#x21A9;</span> Sign out</a></div>';
+    <a href="terms.html" class="nav-item">
+      <span class="icon">📄</span> Terms of Service
+    </a>
+    <a href="privacy.html" class="nav-item">
+      <span class="icon">🔒</span> Privacy Policy
+    </a>
+
+    <div class="nav-section">Account</div>
+    <a href="data-dashboard.html" class="nav-item">
+      <span class="icon">🔒</span> Data &amp; Privacy
+    </a>
+    <a href="#" class="nav-item" onclick="clerkSignOut(); return false;">
+      <span class="icon">↩</span> Sign out
+    </a>
+
+<div class="meridian-chip">
+      <div class="label">MERIDIAN Active</div>
+      <div class="val" id="meridian-chip-val">Loading...</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Vantage Record</div>
+        <div class="page-title">&#x25CE; Vantage Record</div>
+        <div class="page-sub">Every case you’ve navigated through the Situation Room, permanently saved.</div>
+      </div>
+      <a href="employee-case-advisor.html" class="new-case-btn">+ New Case</a>
+    </div>
+
+    <div id="loading-view" class="loading-state">
+      <div class="loading-orb">
+        <svg width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/>
+          <circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="loading-text">LOADING YOUR CASE LIBRARY...</div>
+    </div>
+
+    <div id="main-content" style="display:none">
+      <div class="stats-row">
+        <div class="stat-mini"><div class="stat-mini-val" id="stat-total">0</div><div class="stat-mini-label">Total cases</div></div>
+        <div class="stat-mini"><div class="stat-mini-val" id="stat-open" style="color:#22c55e">0</div><div class="stat-mini-label">Open</div></div>
+        <div class="stat-mini"><div class="stat-mini-val" id="stat-critical" style="color:#FF4D6D">0</div><div class="stat-mini-label">Critical risk</div></div>
+        <div class="stat-mini"><div class="stat-mini-val" id="stat-closed">0</div><div class="stat-mini-label">Closed</div></div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-btn active" onclick="filterCases('all',this)">All cases</div>
+        <div class="filter-btn" onclick="filterCases('Open',this)">Open</div>
+        <div class="filter-btn" onclick="filterCases('Closed',this)">Closed</div>
+        <div class="filter-btn" onclick="filterCases('Critical',this)">Critical risk</div>
+        <div class="filter-btn" onclick="filterCases('High',this)">High risk</div>
+        <div class="filter-btn" onclick="filterCases('Termination',this)">Termination</div>
+        <div class="filter-btn" onclick="filterCases('Disciplinary',this)">Disciplinary</div>
+      </div>
+      <div class="cases-grid" id="cases-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+    var BASE = 'https://kumarviveksrv-cloud.github.io/vantage/';
+    var allCases = [];
+    var currentFilter = 'all';
+
+    if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; }
+
+    var meridianRaw = sessionStorage.getItem('sr_meridian');
+    var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
+    document.getElementById('meridian-chip-val').innerText = (meridian.state||'Not set') + ' \xb7 ' + (meridian.industry||'Not set');
+
+    function getUserId() {
+      var uid = localStorage.getItem('sr_user_id');
+      if (!uid) { uid = 'usr_' + Math.random().toString(36).substr(2,9) + '_' + Date.now(); localStorage.setItem('sr_user_id', uid); }
+      return uid;
+    }
+
+    function getRiskBadge(risk) {
+      if (!risk) return '';
+      var cls = 'badge-' + (risk||'medium').toLowerCase();
+      return '<div class="risk-badge '+cls+'">'+(risk||'').toUpperCase()+'</div>';
+    }
+
+    function getStatusBadge(status) {
+      var cls = (status||'Open').toLowerCase() === 'open' ? 'status-open' : 'status-closed';
+      return '<div class="status-badge '+cls+'">'+(status||'Open')+'</div>';
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      try { return new Date(dateStr).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); } catch(e){ return dateStr; }
+    }
+
+    function renderCases(cases) {
+      var grid = document.getElementById('cases-grid');
+      if (!cases || cases.length === 0) {
+        grid.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x25CE;</div><div class="empty-title">No cases here yet.</div><div class="empty-sub">Navigate a case through the ER Case Navigator and save it — it will appear here permanently.</div><a href="employee-case-advisor.html" class="new-case-btn" style="display:inline-flex;margin:0 auto">Navigate your first case &rarr;</a></div>';
         return;
       }
       grid.innerHTML = cases.map(function(c){
