@@ -214,7 +214,7 @@ input[type=number]{-moz-appearance:textfield}
 .pillar-title-v2{font-family:var(--font);font-size:.96rem;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:-.01em}
 .pillar-sub-v2{font-family:var(--mono);font-size:.66rem;color:var(--text-dim);display:flex;align-items:center;gap:8px}
 .pillar-band-dot-v2{width:6px;height:6px;border-radius:50%;background:var(--pillar-accent,var(--cobalt));flex-shrink:0}
-.pillar-cta-v2{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.04em;color:#050410;background:var(--pillar-accent,var(--cobalt));padding:9px 16px;border-radius:8px;white-space:nowrap;transition:transform .18s ease,padding-right .18s ease}
+.pillar-cta-v2{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 20px rgba(99,102,241,0.4);white-space:nowrap;transition:transform .18s ease,padding-right .18s ease}
 .pillar-card-v2:hover .pillar-cta-v2{transform:translateX(2px);padding-right:20px}
 .reveal-actions{display:flex;gap:12px;flex-wrap:wrap}
 .action-primary{background:var(--cobalt);border:none;color:#fff;padding:12px 28px;border-radius:9px;font-family:var(--mono);font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s;letter-spacing:.04em;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
@@ -275,8 +275,8 @@ input[type=number]{-moz-appearance:textfield}
       <div style="font-family:var(--mono);font-size:.72rem;color:var(--text-dim);line-height:1.6">Download the template, fill in one row with your own data, and upload it back &mdash; every Computed field across all four pillars populates in one step.</div>
     </div>
     <div style="display:flex;gap:10px;flex-shrink:0;align-items:center">
-      <a href="Vantage_Humac_Data_Template.xlsx" download style="font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.04em;color:var(--cobalt);background:transparent;border:1px solid rgba(99,102,241,.35);padding:12px 20px;border-radius:9px;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;transition:all .15s">Download Template</a>
-      <label style="font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.04em;color:#fff;background:var(--cobalt);padding:12px 20px;border-radius:9px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;transition:all .15s">Upload Filled Template<input type="file" id="upload-input" accept=".xlsx,.xls" style="display:none" onchange="handleTemplateUpload(this.files[0])"/></label>
+      <a href="Vantage_Humac_Data_Template.xlsx" download style="padding:10px 20px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;border:none;border-radius:8px;flex-shrink:0;box-shadow:0 4px 20px rgba(99,102,241,0.4);text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;transition:all .15s">Download Template</a>
+      <label style="padding:10px 20px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 20px rgba(99,102,241,0.4);white-space:nowrap;display:inline-flex;align-items:center;transition:all .15s">Upload Filled Template<input type="file" id="upload-input" accept=".xlsx,.xls" style="display:none" onchange="handleTemplateUpload(this.files[0])"/></label>
     </div>
   </div>
   <div id="upload-status" style="display:none;font-family:var(--mono);font-size:.76rem;padding:10px 16px;border-radius:8px;margin-bottom:20px"></div>
@@ -962,7 +962,7 @@ function renderScoreReveal(){
         '<div class="pillar-title-v2">'+p.name+'</div>'+
         '<div class="pillar-sub-v2"><span class="pillar-band-dot-v2"></span>'+pb.name+' \xb7 '+p.weight+' weight'+(p.scopeTag?' \xb7 '+p.scopeTag:'')+'</div>'+
       '</div>'+
-      '<div class="pillar-cta-v2" style="background:var(--cobalt);color:#fff">View Full Story \u2192</div>'+
+      '<div class="pillar-cta-v2">View Full Story \u2192</div>'+
     '</a>';
   }).join('');
 
