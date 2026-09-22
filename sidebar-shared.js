@@ -185,30 +185,30 @@
   }
 
   // ── LEDGER NAV INJECTION ──────────────────────────────────
-  var clNavLink = document.querySelector('a[href="case-library.html"]');
-  var alreadyHasLedger = document.querySelector('a[href="ledger.html"]');
+  var clNavLink = document.querySelector('a[href="vantage-record.html"]');
+  var alreadyHasLedger = document.querySelector('a[href="standpoint.html"]');
   if (clNavLink && !alreadyHasLedger) {
     var currentPage2 = window.location.pathname.split('/').pop();
     var ledgerLink = document.createElement('a');
-    ledgerLink.href = 'ledger.html';
+    ledgerLink.href = 'standpoint.html';
     var isNiClass2 = clNavLink.classList.contains('ni');
     ledgerLink.className = isNiClass2 ? 'ni' : 'nav-item';
-    if (currentPage2 === 'ledger.html') ledgerLink.className += ' active';
+    if (currentPage2 === 'standpoint.html') ledgerLink.className += ' active';
     ledgerLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.65);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
     ledgerLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">\u{1F4DC}</span> Standpoint';
     clNavLink.parentNode.insertBefore(ledgerLink, clNavLink.nextSibling);
   }
 
   // ── OFFER INTELLIGENCE NAV INJECTION ─────────────────────
-  var siNavLink = document.querySelector('a[href="stakeholder-influence.html"]');
-  var alreadyHasOI = document.querySelector('a[href="offer-intelligence.html"]');
+  var siNavLink = document.querySelector('a[href="leadership-communicator.html"]');
+  var alreadyHasOI = document.querySelector('a[href="retention-advisor.html"]');
   if (siNavLink && !alreadyHasOI) {
     var currentPage = window.location.pathname.split('/').pop();
     var oiLink = document.createElement('a');
-    oiLink.href = 'offer-intelligence.html';
+    oiLink.href = 'retention-advisor.html';
     var isNiClass = siNavLink.classList.contains('ni');
     oiLink.className = isNiClass ? 'ni' : 'nav-item';
-    if (currentPage === 'offer-intelligence.html') oiLink.className += ' active';
+    if (currentPage === 'retention-advisor.html') oiLink.className += ' active';
     oiLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.65);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
     oiLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">\u2696\uFE0F</span> Retention Advisor';
     siNavLink.parentNode.insertBefore(oiLink, siNavLink.nextSibling);
@@ -668,9 +668,9 @@
 
     var navItems = [
       { icon: '\u229E', label: 'Home',    href: 'dashboard.html',         page: 'dashboard' },
-      { icon: '\u26A1', label: 'Cases',   href: 'er-case-navigator.html', page: 'er-case-navigator' },
+      { icon: '\u26A1', label: 'Cases',   href: 'employee-case-advisor.html', page: 'er-case-navigator' },
       { icon: '\u2726', label: 'ARIA',    href: 'aria.html',              page: 'aria' },
-      { icon: '\u25CE', label: 'Record',  href: 'case-library.html',      page: 'case-library' },
+      { icon: '\u25CE', label: 'Record',  href: 'vantage-record.html',      page: 'case-library' },
       { icon: '\u22EF', label: 'More',    href: null,                     page: 'more' },
     ];
 
@@ -705,20 +705,20 @@
       {
         title: 'Your Active Tools',
         items: [
-          { icon: '\u26A1', label: 'Employee Case Advisor', sub: 'Navigate any employee situation', href: 'er-case-navigator.html', page: 'er-case-navigator' },
-          { icon: '\uD83D\uDCCA', label: 'People ROI Brief', sub: 'HR metrics to boardroom argument', href: 'hr-data-storyteller.html', page: 'hr-data-storyteller' },
-          { icon: '\uD83C\uDFAF', label: 'Leadership Communicator', sub: 'Frame the right conversation', href: 'stakeholder-influence.html', page: 'stakeholder-influence' },
-          { icon: '\uD83C\uDFAD', label: 'Difficult Conversations', sub: 'Rehearse before you walk in', href: 'conversation-simulator.html', page: 'conversation-simulator' },
-          { icon: '\uD83E\uDDED', label: 'Policy Advisor', sub: 'Applicable law, every time', href: 'policy-compass.html', page: 'policy-compass' },
-          { icon: '\u2696\uFE0F', label: 'Retention Advisor', sub: 'Stay or go — model the cost', href: 'offer-intelligence.html', page: 'offer-intelligence' },
+          { icon: '\u26A1', label: 'Employee Case Advisor', sub: 'Navigate any employee situation', href: 'employee-case-advisor.html', page: 'er-case-navigator' },
+          { icon: '\uD83D\uDCCA', label: 'People ROI Brief', sub: 'HR metrics to boardroom argument', href: 'people-roi-brief.html', page: 'hr-data-storyteller' },
+          { icon: '\uD83C\uDFAF', label: 'Leadership Communicator', sub: 'Frame the right conversation', href: 'leadership-communicator.html', page: 'stakeholder-influence' },
+          { icon: '\uD83C\uDFAD', label: 'Difficult Conversations', sub: 'Rehearse before you walk in', href: 'difficult-conversations.html', page: 'conversation-simulator' },
+          { icon: '\uD83E\uDDED', label: 'Policy Advisor', sub: 'Applicable law, every time', href: 'policy-advisor.html', page: 'policy-compass' },
+          { icon: '\u2696\uFE0F', label: 'Retention Advisor', sub: 'Stay or go — model the cost', href: 'retention-advisor.html', page: 'offer-intelligence' },
           { icon: '\u2726', label: 'ARIA', sub: 'Your private HR intelligence ally', href: 'aria.html', page: 'aria' },
         ]
       },
       {
         title: 'Your Record',
         items: [
-          { icon: '\u25CE', label: 'Vantage Record', sub: 'Your complete case archive', href: 'case-library.html', page: 'case-library' },
-          { icon: '\uD83D\uDCDC', label: 'Standpoint', sub: 'File your position before the outcome', href: 'ledger.html', page: 'ledger' },
+          { icon: '\u25CE', label: 'Vantage Record', sub: 'Your complete case archive', href: 'vantage-record.html', page: 'case-library' },
+          { icon: '\uD83D\uDCDC', label: 'Standpoint', sub: 'File your position before the outcome', href: 'standpoint.html', page: 'ledger' },
           { icon: '\uD83D\uDCCB', label: 'The Debrief', sub: 'Auto-generated monthly', href: 'debrief.html', page: 'debrief' },
         ]
       },
@@ -1287,15 +1287,15 @@
   var PAGE_MODALS = {
     'aria.html':                   'aria',
     'debrief.html':                'debrief',
-    'ledger.html':                 'ledger',
+    'standpoint.html':                 'ledger',
     'humac-onboarding.html':       'humac',
-    'er-case-navigator.html':      'case-navigator',
-    'policy-compass.html':         'policy-compass',
-    'hr-data-storyteller.html':    'hr-storyteller',
-    'offer-intelligence.html':     'offer-intelligence',
-    'stakeholder-influence.html':  'stakeholder-influence',
-    'conversation-simulator.html': 'conversation-simulator',
-    'case-library.html':           'case-library'
+    'employee-case-advisor.html':      'case-navigator',
+    'policy-advisor.html':         'policy-compass',
+    'people-roi-brief.html':    'hr-storyteller',
+    'retention-advisor.html':     'offer-intelligence',
+    'leadership-communicator.html':  'stakeholder-influence',
+    'difficult-conversations.html': 'conversation-simulator',
+    'vantage-record.html':           'case-library'
   };
 
   var path = window.location.pathname.split('/').pop();
