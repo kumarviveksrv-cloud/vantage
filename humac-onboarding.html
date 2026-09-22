@@ -815,7 +815,28 @@ function nextBlock(){
   if(currentBlock<BLOCKS.length-1){currentBlock++;renderBlock(currentBlock);window.scrollTo(0,0);}else{showScoreReveal();}
 }
 function prevBlock(){if(currentBlock>0){currentBlock--;renderBlock(currentBlock);window.scrollTo(0,0);}}
-function restartOnboarding(){currentBlock=0;document.getElementById('score-reveal').style.display='none';document.getElementById('block-container').style.display='block';renderBlock(0);window.scrollTo(0,0);}
+function restartOnboarding(){
+  // Starting an update — activate check-in mode so trajectory runs at the end
+  if(previousScore&&previousScore.humac){
+    isCheckin=true;
+    // Show the check-in banner and update the page title
+    var titleEl=document.getElementById('page-title-main');
+    var subEl=document.getElementById('page-sub-main');
+    if(titleEl)titleEl.innerText='Quarterly check-in';
+    if(subEl)subEl.innerText='Updating from your previous baseline. Answer the same questions with your most current data — your Trajectory Index establishes after this check-in.';
+    var banner=document.getElementById('checkin-banner');
+    var prevDateEl=document.getElementById('checkin-prev-date');
+    var numEl=document.getElementById('checkin-num');
+    if(banner)banner.style.display='flex';
+    if(prevDateEl&&previousScore.timestamp)prevDateEl.innerText=new Date(previousScore.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+    if(numEl)numEl.innerText=String((previousScore.checkInNumber||0)+1);
+  }
+  currentBlock=0;
+  document.getElementById('score-reveal').style.display='none';
+  document.getElementById('block-container').style.display='block';
+  renderBlock(0);
+  window.scrollTo(0,0);
+}
 
 // ── SCORE REVEAL ───────────────────────────────────────────────────────────────
 var L1_BENCH={min:0.264,max:1.133};
@@ -1028,8 +1049,50 @@ function toggleGapBody(blockId){var body=document.getElementById('gap-body-'+blo
 function toggleBuilding(blockId){var key='vantage_gaps_building';var building={};try{building=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}var isNow=building[blockId]!=='1';if(isNow)building[blockId]='1';else delete building[blockId];localStorage.setItem(key,JSON.stringify(building));var card=document.getElementById('gap-card-'+blockId);var pill=document.getElementById('gap-pill-'+blockId);var btn=document.getElementById('gap-btn-'+blockId);if(card)card.classList.toggle('building',isNow);if(pill){pill.textContent=isNow?'\u2713 Building':'Gap';pill.classList.toggle('building',isNow);}if(btn){btn.textContent=isNow?'\u2713 I\u2019m building this':'Mark as building';btn.classList.toggle('active',isNow);}}
 
 // ── INIT ───────────────────────────────────────────────────────────────────────
-renderStepper();
-renderBlock(0);
+(function(){
+  var saved=null;
+  try{saved=JSON.parse(sessionStorage.getItem('vantage_humac')||'null');}catch(e){}
+
+  if(saved&&saved.humac){
+    // ── RETURNING VISIT: show existing score directly, skip questionnaire ──
+    // Restore answers and confidence from saved score
+    answers=saved.rawAnswers||{};
+    if(saved.l1Mode==='computed')confidence.A='computed';
+    if(saved.l2Mode==='computed')confidence.B='computed';
+    if(saved.l4Mode==='computed')confidence.D='computed';
+    if(saved.l5Mode==='computed')confidence.E='computed';
+
+    // Suppress trajectory + check-in banner for the view (not an active check-in)
+    var _savedIsCheckin=isCheckin,_savedPrev=previousScore;
+    isCheckin=false;previousScore=null;
+
+    // Hide check-in banner — only relevant during the questionnaire
+    var cb=document.getElementById('checkin-banner');
+    if(cb)cb.style.display='none';
+
+    // Show score reveal directly
+    document.getElementById('block-container').style.display='none';
+    renderStepper();
+    renderScoreReveal();
+
+    // Restore for when user clicks "Update my score"
+    isCheckin=_savedIsCheckin;previousScore=_savedPrev;
+
+    // Update eyebrow to show this is the saved score
+    var _sd=saved.timestamp?new Date(saved.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
+    var ey=document.getElementById('rv-eyebrow');
+    if(ey)ey.innerText='Your Humac Score'+(hd&&hd.band?' · '+hd.band:'')+((_sd)?' · Set '+_sd:'');
+
+    // Change "Refine answers" to "Update my score"
+    var refineBtn=document.querySelector('button.action-secondary');
+    if(refineBtn){refineBtn.textContent='Update my score →';refineBtn.style.marginLeft='auto';}
+
+  }else{
+    // ── FIRST VISIT: show questionnaire ──
+    renderStepper();
+    renderBlock(0);
+  }
+})();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="clerk-auth.js"></script>
