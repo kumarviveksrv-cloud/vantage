@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="vantage-theme.css"/>
   <!-- SR18: vantage-theme.css above is the canonical palette + typography
        source. Local :root below is KEPT INTACT as a fallback — same
-       pattern as er-case-navigator.html, case-library.html, and
+       pattern as employee-case-advisor.html, vantage-record.html, and
        dashboard.html. Cormorant Garamond applied to .page-title,
        .empty-title, and .dh-title (the debrief-hero headline) — the
        three genuine headline moments on this page. Section dividers,
@@ -137,13 +137,13 @@
     </a>
 
     <div class="nav-section">Core Tools</div>
-    <a href="er-case-navigator.html" class="nav-item">
+    <a href="employee-case-advisor.html" class="nav-item">
       <span class="icon">⚡</span> ER Case Navigator
     </a>
-    <a href="hr-data-storyteller.html" class="nav-item">
+    <a href="people-roi-brief.html" class="nav-item">
       <span class="icon">📊</span> HR Data Storyteller
     </a>
-    <a href="stakeholder-influence.html" class="nav-item">
+    <a href="leadership-communicator.html" class="nav-item">
       <span class="icon">🎯</span> Stakeholder Influence
     </a>
 
@@ -151,15 +151,15 @@
     <a href="aria.html" class="nav-item">
       <span class="icon">✦</span> ARIA
     </a>
-    <a href="policy-compass.html" class="nav-item">
+    <a href="policy-advisor.html" class="nav-item">
       <span class="icon">🧭</span> Policy Compass
     </a>
-    <a href="conversation-simulator.html" class="nav-item">
+    <a href="difficult-conversations.html" class="nav-item">
       <span class="icon">🎭</span> Conversation Simulator
     </a>
 
     <div class="nav-section">My Record</div>
-    <a href="case-library.html" class="nav-item">
+    <a href="vantage-record.html" class="nav-item">
       <span class="icon">◎</span> Case Library
     </a>
     <a href="debrief.html" class="nav-item active">
@@ -226,7 +226,7 @@
             <div style="display:flex;gap:10px;font-size:13px;color:var(--grey)"><span style="color:var(--muted)">&#x2736;</span> What to focus on next month</div>
           </div>
         </div>
-        <a href="er-case-navigator.html" class="btn-primary" style="display:inline-flex;text-decoration:none">Navigate your first case &rarr;</a>
+        <a href="employee-case-advisor.html" class="btn-primary" style="display:inline-flex;text-decoration:none">Navigate your first case &rarr;</a>
         <div style="margin-top:16px">
           <button onclick="generateDebrief()" style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:transparent;border:1px solid rgba(99,102,241,0.35);color:#a5b4fc;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.08em;cursor:pointer;transition:all .15s" onmouseover="this.style.background='rgba(99,102,241,.08)'" onmouseout="this.style.background='transparent'">
             Generate this month’s debrief →
@@ -350,8 +350,8 @@
         </div>
 
         <div class="action-row">
-          <button class="btn-primary" onclick="window.location.href='er-case-navigator.html'">Start a New Case &rarr;</button>
-          <button class="btn-ghost" onclick="window.location.href='case-library.html'">View Full Case Library</button>
+          <button class="btn-primary" onclick="window.location.href='employee-case-advisor.html'">Start a New Case &rarr;</button>
+          <button class="btn-ghost" onclick="window.location.href='vantage-record.html'">View Full Case Library</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
         </div>
       </div>
@@ -595,7 +595,7 @@
 
       if (d.cases && d.cases.length > 0) {
         document.getElementById('debrief-cases-list').innerHTML = d.cases.map(function(c){
-          return '<div class="debrief-case-card" onclick="window.location.href=\'case-library.html\'">' +
+          return '<div class="debrief-case-card" onclick="window.location.href=\'vantage-record.html\'">' +
             '<div><div class="dcc-type">'+(c.caseType||'ER Case')+'</div><div class="dcc-narrative">'+(c.narrative||'')+'</div></div>' +
             '<div class="dcc-badges">'+getRiskBadge(c.risk)+'</div>' +
           '</div>';
