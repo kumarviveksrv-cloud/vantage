@@ -2621,14 +2621,13 @@
        - First ever visit without prologue path: 3800ms — dramatic pause.
        - Returning visitor without prologue path: 800ms — brief breathing room. */
     var firstEverVisit=!localStorage.getItem('vantage_seen_ever');
-    /* Always write vantage_seen_ever — needed by waitForLandingReveal()
-       isKnownUser check so the 800ms fallback fires for returning visitors.
-       Hero delay is controlled separately: paying users get 800ms on return,
-       non-paying users always get the full 3800ms dramatic pause. */
     localStorage.setItem('vantage_seen_ever','1');
-    var hadPrologue=document.body.classList.contains('prologue-complete');
     var isPayingUser=!!localStorage.getItem('vantage_paid_user');
-    await delay(hadPrologue ? 400 : (isPayingUser && !firstEverVisit ? 800 : 3800));
+    /* Hero delay — controls when typewriter starts relative to landing page reveal.
+       Paying user (no ta-da, bypass path): 400ms is plenty.
+       Non-paying first visit (full prologue + ta-da running): 3800ms covers ta-da.
+       Non-paying returning: 800ms — shorter ta-da or already past it. */
+    await delay(isPayingUser ? 400 : (firstEverVisit ? 3800 : 800));
 
     /* 1. Tagline types out (mixed em) — slowed from 32ms to 58ms/char,
        nearly doubling visible duration (~1.8s -> ~3.3s) */
@@ -2742,10 +2741,12 @@
     if(heroDeck) hideKeepText(heroDeck);
     console.log('[HeroSeq] Re-hidden right before run(). tagline.textContent =', JSON.stringify(tagline.textContent));
     console.log('[HeroSeq] Accent lines text still intact:', lineAccents.map(el=>el.textContent));
-    /* Fix 3: When prologue has already completed (skip or natural end),
-       use minimal delay so hero appears immediately after the landing page
-       is revealed — not after an extra 600ms pause. */
-    var postPrologueDelay = document.body.classList.contains('prologue-complete') ? 80 : 600;
+    /* postPrologueDelay: paying users skip the prologue entirely (no ta-da),
+       so 80ms is fine. Non-paying users go through the full prologue + ta-da
+       sequence — ta-da takes 3-5 seconds, so 600ms breathing room is needed
+       before run() starts its own delay. */
+    var _isPayingForDelay = !!localStorage.getItem('vantage_paid_user');
+    var postPrologueDelay = _isPayingForDelay ? 80 : 600;
     setTimeout(run, postPrologueDelay);
   });
 })();
