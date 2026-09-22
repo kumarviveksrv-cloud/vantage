@@ -105,7 +105,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 <div class="sidebar">
   <div class="logo" onclick="window.location.href='dashboard.html'"><div class="logo-dot"></div><div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div></div>
   <a href="dashboard.html" class="nav-item"><span class="icon">&#x229E;</span> Dashboard</a>
-      <div class="nav-section">Your Foundation</div>
+    <a href="about.html" class="nav-item"><span class="icon">&#x2139;&#xFE0F;</span> About Vantage</a>
+    <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">&#x1F300;</span> Humacity</a>
+
+    <div class="nav-section">Your Foundation</div>
     <a href="onboarding.html" class="nav-item"><span class="icon">&#x2B21;</span> MERIDIAN Profile</a>
     <a href="humac-onboarding.html" class="nav-item" id="nav-humac"><span class="icon">&#x1F4C8;</span> Humac Score</a>
     <div class="nav-section">Your Active Tools</div>
@@ -121,137 +124,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
     <a href="standpoint.html" class="nav-item"><span class="icon">&#x1F4DC;</span> Standpoint</a>
     <a href="debrief.html" class="nav-item"><span class="icon">&#x1F4CB;</span> The Debrief</a>
     
-  <div class="nav-section">Philosophy</div>
-  <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">&#x1F300;</span> Humacity</a>
-  <div class="nav-section">Legal</div>
-  <a href="terms.html" class="nav-item"><span class="icon">&#x1F4C4;</span> Terms of Service</a>
-  <a href="privacy.html" class="nav-item"><span class="icon">&#x1F512;</span> Privacy Policy</a>
-  <div class="nav-section">Account</div>
-  <a href="data-dashboard.html" class="nav-item"><span class="icon">&#x1F512;</span> Data &amp; Privacy</a>
-  <a href="#" class="nav-item" onclick="clerkSignOut();return false;"><span class="icon">&#x21A9;</span> Sign out</a>
-  <div class="meridian-chip" id="meridian-chip"><div class="m-header"><div class="label">MERIDIAN Profile</div><div class="m-badge" id="meridian-badge">Incomplete</div></div><div class="val" id="meridian-summary">Not configured yet</div></div>
-</div>
-<div class="wrap" id="main-wrap"></div>
-<script>
-(function(){var raw=sessionStorage.getItem('sr_meridian');if(raw){try{var m=JSON.parse(raw);document.getElementById('meridian-summary').innerText=(m.state||'')+' \xb7 '+(m.industry||'');var b=document.getElementById('meridian-badge');b.innerText='Active';b.className='m-badge complete';}catch(e){}}})();
-var hd=null,md=null;
-try{hd=JSON.parse(sessionStorage.getItem('vantage_humac')||'null');}catch(e){}
-try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
-if(!hd){window.location.href='humac-onboarding.html';}
-var l1=hd.l1||0,l2=hd.l2||0,l3=hd.l3||0,l4=hd.l4||0,l5=hd.l5||0;
-var ra=hd.rawAnswers||{};
-var l2Mode=hd.l2Mode||'estimate';
-var q2=ra.q2,q3=ra.q3,q4=ra.q4,q5=ra.q5,q6=ra.q6;
-
-function clampL2(n,lo,hi){return Math.max(lo,Math.min(hi,n));}
-// Real per-verdict breakdown — identical formula to Revenue Fluent's original L2 verdict scoring
-function computeRealL2(a){
-  var headcount=a.cq1_headcount||0,stars=a.cq1_stars||0,hipo=a.cq5_hipo||0;
-  var promoted=a.cq2_promoted12mo||0,promotedEx=a.cq2_promotedexcelling||0;
-  var managers=a.cq2_managers||0,mgrOutperform=a.cq2_managersoutperform||0;
-  var hired=a.cq2_hired12mo||0,hiredMeeting=a.cq2_hiredmeeting||0;
-  var tenureTop=a.cq2_tenuretop||0,tenureAtRisk=a.cq2_tenureatrisk||0;
-  var promoScore=promoted>0?(promotedEx/promoted)*100:50;
-  var mgrScore=managers>0?(mgrOutperform/managers)*100:50;
-  var hireScore=hired>0?(hiredMeeting/hired)*100:50;
-  var selRetScore=50;
-  if(tenureAtRisk>0){var ratio=tenureTop/tenureAtRisk;selRetScore=clampL2((ratio/2)*100,0,100);}
-  else if(tenureTop>0){selRetScore=100;}
-  var hipoScore=headcount>0?clampL2(((hipo+stars)/headcount)*100*4,0,100):50;
-  return {promoScore:Math.round(promoScore),mgrScore:Math.round(mgrScore),hireScore:Math.round(hireScore),selRetScore:Math.round(selRetScore),hipoScore:Math.round(hipoScore)};
-}
-var realL2=(l2Mode==='computed')?computeRealL2(ra):null;
-var hci=hd.hci||1,conf=hd.confidence||'medium';
-var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
-var yesCount=realL2
-  ?[realL2.promoScore,realL2.mgrScore,realL2.hireScore,realL2.selRetScore,realL2.hipoScore].filter(function(s){return s>=60;}).length
-  :[q2,q3,q4,q5,q6].filter(function(v){return v==='yes';}).length;
-var answeredCount=realL2?5:[q2,q3,q4,q5,q6].filter(function(v){return v==='yes'||v==='no';}).length;
-var industry='',state='';
-if(md){industry=md.industry||'';state=md.state||'';}
-var sb=(function(s){if(s<=15)return{name:'Critical',color:'#E05C3A'};if(s<=33)return{name:'Emerging',color:'#a5b4fc'};if(s<=75)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};})(l2);
-
-var VERDICTS=[
-  {signal:'Promotion Accuracy',q:q2,score:realL2?realL2.promoScore:null,
-   passText:'Promotions are landing. Promoted employees are growing into roles, not just surviving them. This is the signal that confirms talent identification is accurate \u2014 you are elevating the right people at the right time.',
-   failText:'Promotions are not landing. <b>A wrong promotion simultaneously puts the wrong person in more power and makes the vacated role harder to fill.</b> Most costly and hardest-to-reverse talent mistake in any org.',
-   action:'Post-promotion tracking: at 3 and 6 months, ask the manager \u2014 above, at, or below grade expectations? Track the running %. That is your Promotion Accuracy number.'},
-  {signal:'Manager Quality',q:q3,score:realL2?realL2.mgrScore:null,
-   passText:'Managers are raising the bar. The management layer is an active amplifier of team performance, not a drag. When managers outperform their team average, everyone gets better faster.',
-   failText:'Managers are performing below their direct report average. <b>The manager explains more performance variance than any other single factor.</b> This is a structural problem, not individual underperformance.',
-   action:'Add one question to your next pulse survey: "My manager actively raises the bar in our team." Aggregate by manager. Below 60% agreement = structured development conversation this quarter.'},
-  {signal:'Hiring Quality',q:q4,score:realL2?realL2.hireScore:null,
-   passText:'New hires are working out. Your recruiting function is selecting above-average talent consistently. The people you are choosing are meeting or exceeding what you expected when you hired them.',
-   failText:'New hires are underperforming. <b>You are paying market salaries for below-market output in the talent you most recently chose.</b> This signal determines next year\u2019s performance more than any other.',
-   action:'Six months after each joining date, the manager rates: above, at, or below grade baseline. Build a running spreadsheet. The % above baseline is your Hiring Quality number.'},
-  {signal:'Selective Retention',q:q5,score:realL2?realL2.selRetScore:null,
-   passText:'Exits are broadly non-regretted. When people leave, they are largely people you were replacing anyway. Attrition is removing underperformers \u2014 meaning your retention efforts are working where they matter most.',
-   failText:'Retention is inverted. The people leaving are the ones you wanted to keep. <b>This is the most financially damaging retention profile</b> \u2014 you are losing value and retaining cost simultaneously.',
-   action:'In every exit interview, note the person\u2019s last performance rating. Stars vs below-expectation exits over 12 months. If Stars are leaving faster, you have a selective retention failure.'},
-  {signal:'HiPo Identification',q:q6,score:realL2?realL2.hipoScore:null,
-   passText:'A named HiPo pipeline exists. The org is actively investing in its next generation of leaders. A structured HiPo list is the difference between leadership development and hoping talent surfaces itself.',
-   failText:'No formal HiPo identification. The pipeline is empty. <b>This failure is silent</b> \u2014 it does not appear until 5\u20137 years later, when the leaders who should have been developed simply are not there.',
-   action:'Create a shared document with 10\u201315 names, reviewed twice a year. Each person gets one concrete investment: a mentoring assignment, stretch project, or leadership exposure. That is your formal HiPo process.'}
-];
-
-function verdictCard(v){
-  if(v.score!==null&&v.score!==undefined){
-    var passedReal=v.score>=60;
-    var clsReal=passedReal?'passed':'failed';
-    var bdgClsReal=passedReal?'strong':'gap';
-    return '<div class="verdict-card '+clsReal+'"><div class="verdict-top"><div class="verdict-signal">'+v.signal+'</div><div class="verdict-badge '+bdgClsReal+'">'+v.score+'%</div></div><div class="verdict-text">'+(passedReal?v.passText:v.failText)+'</div><div class="verdict-action-lbl">How to measure this</div><div class="verdict-action-txt">'+v.action+'</div></div>';
-  }
-  if(v.q==='na'){
-    return '<div class="verdict-card na"><div class="verdict-top"><div class="verdict-signal">'+v.signal+'</div><div class="verdict-badge na">N/A this period</div></div><div class="verdict-text">You marked this as not applicable \u2014 the underlying event didn\u2019t occur this period, so there was nothing to assess. This was a deliberate answer, not a skipped question, and it correctly did not count against your L2 score.</div><div class="verdict-action-lbl">How to measure this next time</div><div class="verdict-action-txt">'+v.action+'</div></div>';
-  }
-  var ans=v.q==='yes'||v.q==='no';var passed=v.q==='yes';
-  var cls=!ans?'unanswered':passed?'passed':'failed';
-  var bdgCls=!ans?'pending':passed?'strong':'gap';
-  var bdgTxt=!ans?'Not answered':passed?'Strong':'Gap';
-  var txt=!ans?'This signal was not captured in your Humac assessment.':passed?v.passText:v.failText;
-  return '<div class="verdict-card '+cls+'"><div class="verdict-top"><div class="verdict-signal">'+v.signal+'</div><div class="verdict-badge '+bdgCls+'">'+bdgTxt+'</div></div><div class="verdict-text">'+txt+'</div><div class="verdict-action-lbl">How to measure this</div><div class="verdict-action-txt">'+v.action+'</div></div>';
-}
-
-var gapSigs=realL2
-  ?VERDICTS.filter(function(v){return v.score<60;})
-  :VERDICTS.filter(function(v){return v.q==='no';});
-var strongSigs=realL2
-  ?VERDICTS.filter(function(v){return v.score>=60;})
-  :VERDICTS.filter(function(v){return v.q==='yes';});
-
-function intelText(){
-  var ctx=industry?' in the '+industry+' sector':'';
-  if(l2<=15)return'An L2 score of <b>'+l2+'</b>'+ctx+' signals every measured talent quality dimension needs attention. Start with HiPo Identification \u2014 costs nothing, closes fastest \u2014 and exit tracking for selective retention. The verdict rows above have the specific measurement process for each signal.';
-  if(l2<=33)return'An L2 score of <b>'+l2+'</b>'+ctx+' with <b>'+yesCount+' of '+answeredCount+' signals</b> passing confirms real talent premium exists but is not yet systematized. Each failing signal above has a specific, time-bound measurement process. Pick the highest-impact one and start this week.';
-  if(l2<=75)return'An L2 score of <b>'+l2+'</b>'+ctx+' with <b>'+yesCount+' of '+answeredCount+' signals</b> passing puts your Talent Premium in positive territory. '+(gapSigs.length>0?'The failing signal \u2014 '+gapSigs[0].signal+' \u2014 is fixable with the measurement process above. One signal closed upgrades the score to the next band.':'All signals are reading strong. Systematize and present this as an organizational capability.');
-  return'An L2 score of <b>'+l2+'</b>'+ctx+' with '+(answeredCount===5?'all five signals':yesCount+' of '+answeredCount+' measured signals')+' passing is a full-strength Talent Premium read. Systematize it. Present it. Use it in senior hiring conversations as a proof point of organizational quality.';
-}
-
-var acts=[
-  {title:'Build Promotion Accuracy tracking now',body:'Your last 12 months of promotions. One manager rating per person at 6 months: above, at, or below grade. That ratio is your score. Run it before your next performance cycle.'},
-  {title:'Run a selective retention audit',body:'Every exit from the last 12 months, assigned a performance label. % Stars who left. If above 20%, you have a selective retention failure that compounds every quarter you do not address it.'},
-  {title:'Add one manager effectiveness question to your next survey',body:'"My manager actively raises the bar in our team." Below 60% agreement per manager = development conversation this quarter, before the next performance cycle.'},
-  {title:'Name your HiPo list in 30 days',body:'Ten names. Reviewed twice a year. 45-minute session with one business leader. That is your formal HiPo process. The names matter less than the discipline of maintaining the list.'}
-];
-if(l2>75){
-  acts=[
-    {title:'Publish your Talent Premium to leadership',body:yesCount+' of '+answeredCount+' signals passing is a rare reading. Present it: "Our talent quality is generating premium across '+(answeredCount===5?'all five dimensions':'every dimension we can currently measure')+'." That is a board-level statement about your people investment.'},
-    {title:'Set up a quarterly talent quality review',body:'L2 scores deteriorate when measurement stops. Build a quarterly review checking at least 2 signals with hard data. Selective Retention and HiPo Identification are most at risk of silent deterioration.'},
-    {title:'Use Talent Premium as a recruitment differentiator',body:'Orgs where promotions work, managers raise the bar, and hires succeed attract better talent. Make your L2 findings part of your employer brand narrative in senior conversations.'},
-    {title:'Benchmark against your next Humac check-in',body:'A strong L2 is a baseline, not a destination. Return in 90 days. Declining verdict signals appear here before they appear in attrition data. 6\u201312 months of lead time.'}
-  ];
-}
-
-var w=document.getElementById('main-wrap');
-var pdots=[{label:'L1',score:l1,href:'pillar-l1.html'},{label:'L2',score:l2,href:'pillar-l2.html',active:true},{label:'L3',score:l3,href:'pillar-l3.html'},{label:'L4',score:l4,href:'pillar-l4.html'},{label:'L5',score:l5,href:'pillar-l5.html'}];
-var nav='<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+p.score+'</span></a>';}).join('')+'</div><a href="pillar-l3.html" class="pillar-forward">L3 Org Vitals \u2192</a></div>';
-var header='<div class="eyebrow">Vantage \xb7 Humac Score \xb7 L2 \xb7 15% weight</div><h1 class="page-title">The Talent Premium</h1><p class="page-sub">'+(md&&industry?industry+' \xb7 ':'')+(md&&state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate:'Your L2 pillar intelligence')+'</p>';
-var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L2 Score</div><div class="ratio-num">'+l2+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+yesCount+' of '+answeredCount+' talent quality signals passing</div><div class="context">What is the financial value of having <b>better-than-average people</b> at the same cost? Five verdict areas. Each one a measurable talent quality signal.<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' confidence \xb7 L2 carries 15% of Humac Score</div></div></div></div>';
-var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l2+'/100</div><div class="sl">L2 Score</div></div><div class="stat"><div class="sv '+(yesCount>=4?'sv-green':yesCount>=2?'sv-cobalt':'sv-red')+'">'+yesCount+'/'+answeredCount+'</div><div class="sl">Signals passing</div></div><div class="stat"><div class="sv '+(strongSigs.length>0?'sv-gold':'sv-dim')+'">'+(strongSigs.length>0?strongSigs[0].signal.split(' ')[0]:'\u2014')+'</div><div class="sl">Strongest signal</div></div><div class="stat"><div class="sv '+(gapSigs.length>0?'sv-red':'sv-green')+'">'+(gapSigs.length>0?gapSigs[0].signal.split(' ')[0]:'\u2713 All')+'</div><div class="sl">Priority gap</div></div></div>';
-var verdicts='<div class="verdicts-section"><div class="sec-head"><h2><span class="step">1</span>Five Verdict Areas \xb7 Talent Quality Signals</h2></div>'+VERDICTS.map(verdictCard).join('')+'</div>';
-var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L2 Talent Premium</div><div class="stmt-txt">'+intelText()+'</div></div>';
-var actions='<div class="section-eyebrow">What to do next</div><div class="section-title">Moving your Talent Premium forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('');
-var bottomNav='<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><a href="pillar-l3.html" class="btn-next">L3 Org Vitals \u2192</a></div>';
+      <div class="nav-section">Account</div>
+    <a href="pricing.html" class="nav-item"><span class="icon">&#x1F4B0;</span> Pricing</a>
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">&#x1F512;</span> Data &amp; Privacy</a>
+    <div class="nav-section">Legal</div>
+    <a href="terms.html" class="nav-item"><span class="icon">&#x1F4C4;</span> Terms of Service</a>
+    <a href="privacy.html" class="nav-item"><span class="icon">&#x1F512;</span> Privacy Policy</a>
+    <a href="#" class="nav-item" onclick="clerkSignOut();return false;" style="margin-top:8px;border-top:1px solid rgba(99,102,241,.1);padding-top:14px;"><span class="icon">&#x21A9;</span> Sign out</a></div>';
 w.innerHTML=nav+header+hero+stats+verdicts+stmt+actions+bottomNav;
 </script>
 <script src="clerk-auth.js"></script>

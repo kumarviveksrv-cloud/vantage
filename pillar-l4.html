@@ -113,7 +113,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 <div class="sidebar">
   <div class="logo" onclick="window.location.href='dashboard.html'"><div class="logo-dot"></div><div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div></div>
   <a href="dashboard.html" class="nav-item"><span class="icon">&#x229E;</span> Dashboard</a>
-      <div class="nav-section">Your Foundation</div>
+    <a href="about.html" class="nav-item"><span class="icon">&#x2139;&#xFE0F;</span> About Vantage</a>
+    <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">&#x1F300;</span> Humacity</a>
+
+    <div class="nav-section">Your Foundation</div>
     <a href="onboarding.html" class="nav-item"><span class="icon">&#x2B21;</span> MERIDIAN Profile</a>
     <a href="humac-onboarding.html" class="nav-item" id="nav-humac"><span class="icon">&#x1F4C8;</span> Humac Score</a>
     <div class="nav-section">Your Active Tools</div>
@@ -129,155 +132,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
     <a href="standpoint.html" class="nav-item"><span class="icon">&#x1F4DC;</span> Standpoint</a>
     <a href="debrief.html" class="nav-item"><span class="icon">&#x1F4CB;</span> The Debrief</a>
     
-  <div class="nav-section">Philosophy</div>
-  <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">&#x1F300;</span> Humacity</a>
-  <div class="nav-section">Legal</div>
-  <a href="terms.html" class="nav-item"><span class="icon">&#x1F4C4;</span> Terms of Service</a>
-  <a href="privacy.html" class="nav-item"><span class="icon">&#x1F512;</span> Privacy Policy</a>
-  <div class="nav-section">Account</div>
-  <a href="data-dashboard.html" class="nav-item"><span class="icon">&#x1F512;</span> Data &amp; Privacy</a>
-  <a href="#" class="nav-item" onclick="clerkSignOut();return false;"><span class="icon">&#x21A9;</span> Sign out</a>
-  <div class="meridian-chip" id="meridian-chip"><div class="m-header"><div class="label">MERIDIAN Profile</div><div class="m-badge" id="meridian-badge">Incomplete</div></div><div class="val" id="meridian-summary">Not configured yet</div></div>
-</div>
-<div class="wrap" id="main-wrap"></div>
-<script>
-(function(){var raw=sessionStorage.getItem('sr_meridian');if(raw){try{var m=JSON.parse(raw);document.getElementById('meridian-summary').innerText=(m.state||'')+' \xb7 '+(m.industry||'');var b=document.getElementById('meridian-badge');b.innerText='Active';b.className='m-badge complete';}catch(e){}}})();
-var hd=null,md=null;
-try{hd=JSON.parse(sessionStorage.getItem('vantage_humac')||'null');}catch(e){}
-try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
-if(!hd){window.location.href='humac-onboarding.html';}
-var l1=hd.l1||0,l2=hd.l2||0,l3=hd.l3||0,l4=hd.l4||0,l5=hd.l5||0;
-var ra=hd.rawAnswers||{};
-var l4Mode=hd.l4Mode||'estimate';
-var q15Pct=(ra.q15!=null)?Number(ra.q15):0;
-
-function fmtINR(n){
-  var abs=Math.abs(n),sign=n<0?'-':'';
-  if(abs>=10000000)return sign+'\u20b9'+(abs/10000000).toFixed(2)+'Cr';
-  if(abs>=100000)return sign+'\u20b9'+(abs/100000).toFixed(1)+'L';
-  if(abs>=1000)return sign+'\u20b9'+Math.round(abs/1000)+'K';
-  return sign+'\u20b9'+Math.round(abs);
-}
-
-// Real Human P&L — identical formula to Revenue Fluent's original computePL()
-function computeRealL4(a){
-  var headcount=a.cq1_headcount||0, compBase=a.cq1_compbase||0;
-  var avgSalary=headcount>0?compBase/headcount:0;
-  var stars=a.cq1_stars||0, emerging=a.cq1_emerging||0, tenured5=a.cq1_tenured5||0, revHires24=a.cq4_revhires24||0;
-  var talentAcqValue=revHires24>0?(revHires24*avgSalary)*1.4:0;
-  var retSavings=stars>0?(stars*avgSalary*1.5)*0.3:0;
-  var perfUplift=emerging>0?(emerging*avgSalary)*0.08:0;
-  var culturePrem=tenured5>0?(tenured5*avgSalary)*0.06:0;
-  var totalRev=talentAcqValue+retSavings+perfUplift+culturePrem;
-  var acqCost=revHires24>0?(revHires24*avgSalary)*0.15:0;
-  var devInvest=emerging>0?(emerging*avgSalary)*0.04:0;
-  var hrFuncCost=compBase*0.04;
-  var totalCOGS=acqCost+devInvest+hrFuncCost;
-  var compliance=compBase*0.015;
-  var cultureSpend=compBase*0.02;
-  var totalOpEx=compliance+cultureSpend;
-  var hrInvestment=totalCOGS+totalOpEx;
-  var netProfit=totalRev-hrInvestment;
-  var ratio=hrInvestment>0?totalRev/hrInvestment:0;
-  return {talentAcqValue:talentAcqValue,retSavings:retSavings,perfUplift:perfUplift,culturePrem:culturePrem,totalRev:totalRev,
-          acqCost:acqCost,devInvest:devInvest,hrFuncCost:hrFuncCost,totalCOGS:totalCOGS,
-          compliance:compliance,cultureSpend:cultureSpend,totalOpEx:totalOpEx,
-          hrInvestment:hrInvestment,netProfit:netProfit,ratio:ratio};
-}
-var realL4=(l4Mode==='computed')?computeRealL4(ra):null;
-var hci=hd.hci||1,conf=hd.confidence||'medium';
-var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
-var industry='',state='';
-if(md){industry=md.industry||'';state=md.state||'';}
-var sb=(function(s){if(s<=25)return{name:'Minimum',color:'#E05C3A'};if(s<=50)return{name:'Emerging',color:'#a5b4fc'};if(s<=72)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};})(l4);
-var q15Ratio=realL4?realL4.ratio.toFixed(2)+'x':(q15Pct/100).toFixed(2)+'x';
-var isPos=realL4?realL4.ratio>=1:q15Pct>=100;
-var benchStr=industry&&industry.toLowerCase().includes('tech')?'2.0\u20132.5x':industry&&industry.toLowerCase().includes('service')?'1.8\u20132.2x':'1.5\u20132.0x';
-
-// P&L index values derived from q15Pct
-var hrInv=100;
-var hrRet=q15Pct>0?q15Pct:0;
-var retSavings=Math.round(hrRet*0.45);
-var qualHire=Math.round(hrRet*0.30);
-var devRet=Math.round(hrRet*0.15);
-var engPrem=Math.round(hrRet*0.07);
-var riskMgmt=Math.round(hrRet*0.03);
-var totalRev=retSavings+qualHire+devRet+engPrem+riskMgmt;
-var hrOpCost=Math.round(hrInv*0.65);
-var hrOvhd=Math.round(hrInv*0.35);
-var totalCost=hrInv;
-var netOp=totalRev-totalCost;
-
-function plHTML(){
-  if(realL4){
-    return '<div class="pl-wrap">'+
-      '<div class="pl-header"><div class="pl-header-title">Human P&amp;L Statement</div><div class="pl-header-sub">Real figures \xb7 '+q15Ratio+' HR return ratio \xb7 '+scoreDate+' baseline</div></div>'+
-      '<div class="pl-section-head"><span>Human Revenue</span><span>\u20b9</span></div>'+
-      plRowReal('Talent Acquisition Value','Revenue-role hires (24mo) \xd7 salary \xd7 1.40',realL4.talentAcqValue,true)+
-      plRowReal('Retention Savings','Stars \xd7 salary \xd7 1.5 \xd7 30%',realL4.retSavings,true)+
-      plRowReal('Performance Uplift','Emerging Talent \xd7 salary \xd7 8%',realL4.perfUplift,true)+
-      plRowReal('Culture Premium','Tenured 5+ yrs \xd7 salary \xd7 6%',realL4.culturePrem,true)+
-      '<div class="pl-subtotal"><div class="pl-subtotal-label">GROSS HUMAN REVENUE</div><div class="pl-subtotal-val pos">+'+fmtINR(realL4.totalRev)+'</div></div>'+
-      '<div class="pl-section-head"><span>Human COGS</span><span>\u20b9</span></div>'+
-      plRowReal('Acquisition Cost','Revenue-role hires \xd7 salary \xd7 15%',realL4.acqCost,false)+
-      plRowReal('Development Investment','Emerging Talent \xd7 salary \xd7 4%',realL4.devInvest,false)+
-      plRowReal('HR Function Cost','4% of total comp base',realL4.hrFuncCost,false)+
-      '<div class="pl-subtotal"><div class="pl-subtotal-label">TOTAL HUMAN COGS</div><div class="pl-subtotal-val neg">-'+fmtINR(realL4.totalCOGS)+'</div></div>'+
-      '<div class="pl-section-head"><span>Human OpEx</span><span>\u20b9</span></div>'+
-      plRowReal('Compliance & Admin','1.5% of total comp base',realL4.compliance,false)+
-      plRowReal('Culture & Engagement Spend','2% of total comp base',realL4.cultureSpend,false)+
-      '<div class="pl-subtotal"><div class="pl-subtotal-label">TOTAL HUMAN OPEX</div><div class="pl-subtotal-val neg">-'+fmtINR(realL4.totalOpEx)+'</div></div>'+
-      '<div class="pl-net-row"><div class="pl-net-label">HR Net Profit</div><div class="pl-net-val '+(realL4.netProfit>=0?'pos':'neg')+'">'+(realL4.netProfit>=0?'+':'')+fmtINR(realL4.netProfit)+'</div></div>'+
-      '<div class="pl-ratio-row"><div class="pl-ratio-desc">\u201cFor every \u20b91 this organisation invests in running HR, it returns '+q15Ratio+'.\u201d</div><div class="pl-ratio-val">'+q15Ratio+'</div></div>'+
-    '</div>';
-  }
-  return '<div class="pl-wrap">'+
-    '<div class="pl-header"><div class="pl-header-title">Human P&amp;L Statement</div><div class="pl-header-sub">Index-based \xb7 from your '+q15Ratio+' HR function return ratio \xb7 '+scoreDate+' baseline</div></div>'+
-    '<div class="pl-section-head"><span>Human Revenue</span><span>Index</span></div>'+
-    plRow('Retention Savings','Stars retained \xd7 1.8\xd7 salary \u2014 replacement cost avoided',retSavings,true)+
-    plRow('Talent Acquisition Value','Revenue-role hires \xd7 salary premium contribution',qualHire,true)+
-    plRow('Development Return','L&D investment \xd7 2.8 Development Return Index',devRet,true)+
-    plRow('Engagement Premium','Tenured employees \xd7 salary \xd7 8% productivity premium',engPrem,true)+
-    plRow('Risk Management Value','Performance risk contained \xb7 compliance exposure managed',riskMgmt,true)+
-    '<div class="pl-subtotal"><div class="pl-subtotal-label">GROSS HUMAN REVENUE</div><div class="pl-subtotal-val pos">+'+(q15Pct>0?totalRev:'\u2014')+'</div></div>'+
-    '<div class="pl-section-head"><span>HR Investment (Operating Cost)</span><span>Index</span></div>'+
-    plRow('HR Function Operating Cost','HR team salaries + tools + compliance + administration',hrOpCost,false)+
-    plRow('Recruitment & Development Overhead','Sourcing fees + L&D programme spend',hrOvhd,false)+
-    '<div class="pl-subtotal"><div class="pl-subtotal-label">TOTAL HR INVESTMENT</div><div class="pl-subtotal-val neg">-'+hrInv+'</div></div>'+
-    '<div class="pl-net-row"><div class="pl-net-label">HR Operating Profit</div><div class="pl-net-val '+(netOp>=0?'pos':'neg')+'">'+(q15Pct>0?(netOp>=0?'+':'')+netOp:'\u2014')+'</div></div>'+
-    '<div class="pl-ratio-row"><div class="pl-ratio-desc">\u201cFor every \u20b9100 your HR function invests in running HR, it returns '+q15Ratio+' in measurable value.\u201d</div><div class="pl-ratio-val">'+q15Ratio+'</div></div>'+
-  '</div>';
-}
-function plRowReal(label,desc,val,isRev){
-  return '<div class="pl-row"><div><div class="pl-row-label">'+label+'</div><div class="pl-row-desc">'+desc+'</div></div><div class="pl-row-val '+(isRev?'pos':'neg')+'">'+(isRev?'+':'-')+fmtINR(val)+'</div></div>';
-}
-function plRow(label,desc,val,isRev){
-  return '<div class="pl-row"><div><div class="pl-row-label">'+label+'</div><div class="pl-row-desc">'+desc+'</div></div><div class="pl-row-val '+(isRev?'pos':'neg')+'">'+(q15Pct>0?(isRev?'+':'-')+val:'\u2014')+'</div></div>';
-}
-
-function intelText(){
-  var ctx=industry?' in the '+industry+' sector':'';
-  if(q15Pct<100)return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+q15Ratio+' HR return ratio means the P&L is currently negative \u2014 HR is consuming more in operational investment than it is demonstrably returning. This does not mean HR is not generating value. It means the measurement infrastructure to surface that value does not yet exist. The four actions below build it.';
-  if(q15Pct<200)return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+q15Ratio+' HR return ratio. The P&L is positive. Industry baseline is 1.5x. The gap to strong (2.5x+) is measurement precision on the revenue side. Retention savings alone, computed correctly, often close this gap entirely.';
-  if(q15Pct<300)return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+q15Ratio+' HR return ratio puts your HR function in the upper tier. The P&L above is board-ready \u2014 not as an HR report, but as a return on investment statement. Present it as such.';
-  return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+q15Ratio+' HR return ratio is exceptional. Walk into your next leadership meeting and say: "Our HR function returned '+q15Ratio+' on every rupee invested in running HR this year." Then let the room absorb it.';
-}
-
-var w=document.getElementById('main-wrap');
-var pdots=[{label:'L1',score:l1,href:'pillar-l1.html'},{label:'L2',score:l2,href:'pillar-l2.html'},{label:'L3',score:l3,href:'pillar-l3.html'},{label:'L4',score:l4,href:'pillar-l4.html',active:true},{label:'L5',score:l5,href:'pillar-l5.html'}];
-var nav='<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+p.score+'</span></a>';}).join('')+'</div><a href="pillar-l5.html" class="pillar-forward">L5 Balance Sheet \u2192</a></div>';
-var header='<div class="eyebrow">Vantage \xb7 Humac Score \xb7 L4 \xb7 20% weight</div><h1 class="page-title">The Human P&L</h1><p class="page-sub">'+(md&&industry?industry+' \xb7 ':'')+(md&&state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate:'Your L4 pillar intelligence')+'</p>';
-var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L4 Score</div><div class="ratio-num">'+l4+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+(q15Pct>0?q15Ratio+' returned for every \u20b9100 invested in running HR':'HR ROI not yet computed')+'</div><div class="context">'+(industry?industry+' benchmark: <b>'+benchStr+'</b>.<br>':'')+'For every rupee your HR function spends operating HR, how much comes back in measurable value? Industry baseline: 1.5x. Strong: 2.5x+.<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' confidence \xb7 L4 carries 20% of Humac Score</div></div></div></div>';
-var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l4+'/100</div><div class="sl">L4 Score</div></div><div class="stat"><div class="sv '+(isPos?'sv-green':'sv-red')+'">'+q15Ratio+'</div><div class="sl">HR Return Ratio</div></div><div class="stat"><div class="sv sv-cobalt">'+benchStr+'</div><div class="sl">'+(industry||'Sector')+' benchmark</div></div><div class="stat"><div class="sv sv-dim">'+hci.toFixed(2)+'x</div><div class="sl">HCI coefficient</div></div></div>';
-var acts=[
-  {title:'Calculate your actual HR investment base',body:'HR team salaries + recruitment fees + L&D budget + HR tools and systems + compliance costs. Most organisations can pull this from finance in under an hour. This is your P&L denominator.'},
-  {title:'Calculate HR-attributable value for the last 12 months',body:'Attrition cost avoided (exits \xd7 1.8\xd7 avg salary) + quality-of-hire uplift (above-baseline hires \xd7 salary premium) + L&D return (spend \xd7 2.8) + risk outcomes (compliance penalties avoided). Sum these. This is your numerator.'},
-  {title:'Divide and present the ratio',body:'HR Value Generated \xf7 HR Investment = your Human P&L ratio. Industry baseline: 1.5x. Strong: 2.5x+. Walk into your next leadership meeting with this. "Our HR function returned '+q15Ratio+' on every rupee invested in running HR this year."'},
-  {title:'Build a biannual HR P&L report',body:'Standing 6-month deliverable alongside the business P&L. Two data points at the same time each year signals that HR treats its financial contribution as a managed metric, not a one-off exercise.'}
-];
-var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L4 Human P&L</div><div class="stmt-txt">'+intelText()+'</div></div>';
-var actions='<div class="section-eyebrow">What to do next</div><div class="section-title">Building your Human P&L</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('');
-var bottomNav='<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><a href="pillar-l5.html" class="btn-next">L5 Balance Sheet \u2192</a></div>';
+      <div class="nav-section">Account</div>
+    <a href="pricing.html" class="nav-item"><span class="icon">&#x1F4B0;</span> Pricing</a>
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">&#x1F512;</span> Data &amp; Privacy</a>
+    <div class="nav-section">Legal</div>
+    <a href="terms.html" class="nav-item"><span class="icon">&#x1F4C4;</span> Terms of Service</a>
+    <a href="privacy.html" class="nav-item"><span class="icon">&#x1F512;</span> Privacy Policy</a>
+    <a href="#" class="nav-item" onclick="clerkSignOut();return false;" style="margin-top:8px;border-top:1px solid rgba(99,102,241,.1);padding-top:14px;"><span class="icon">&#x21A9;</span> Sign out</a></div>';
 w.innerHTML=nav+header+hero+stats+plHTML()+stmt+actions+bottomNav;
 </script>
 <script src="clerk-auth.js"></script>

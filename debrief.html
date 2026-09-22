@@ -135,8 +135,10 @@
     <a href="dashboard.html" class="nav-item">
       <span class="icon">⊞</span> Dashboard
     </a>
+    <a href="about.html" class="nav-item"><span class="icon">&#x2139;&#xFE0F;</span> About Vantage</a>
+    <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">&#x1F300;</span> Humacity</a>
 
-        <div class="nav-section">Your Foundation</div>
+    <div class="nav-section">Your Foundation</div>
     <a href="onboarding.html" class="nav-item"><span class="icon">&#x2B21;</span> MERIDIAN Profile</a>
     <a href="humac-onboarding.html" class="nav-item" id="nav-humac"><span class="icon">&#x1F4C8;</span> Humac Score</a>
     <div class="nav-section">Your Active Tools</div>
@@ -152,67 +154,13 @@
     <a href="standpoint.html" class="nav-item"><span class="icon">&#x1F4DC;</span> Standpoint</a>
     <a href="debrief.html" class="nav-item"><span class="icon">&#x1F4CB;</span> The Debrief</a>
 
-    <div class="nav-section">Philosophy</div>
-    <a href="https://humacity.com" class="nav-item" target="_blank">
-      <span class="icon">🌀</span> Humacity
-    </a>
-
+        <div class="nav-section">Account</div>
+    <a href="pricing.html" class="nav-item"><span class="icon">&#x1F4B0;</span> Pricing</a>
+    <a href="data-dashboard.html" class="nav-item"><span class="icon">&#x1F512;</span> Data &amp; Privacy</a>
     <div class="nav-section">Legal</div>
-    <a href="terms.html" class="nav-item">
-      <span class="icon">📄</span> Terms of Service
-    </a>
-    <a href="privacy.html" class="nav-item">
-      <span class="icon">🔒</span> Privacy Policy
-    </a>
-
-    <div class="nav-section">Account</div>
-    <a href="data-dashboard.html" class="nav-item">
-      <span class="icon">🔒</span> Data &amp; Privacy
-    </a>
-    <a href="#" class="nav-item" onclick="clerkSignOut(); return false;">
-      <span class="icon">↩</span> Sign out
-    </a>
-
-<div class="meridian-chip">
-      <div class="label">MERIDIAN Active</div>
-      <div class="val" id="meridian-chip-val">Loading...</div>
-    </div>
-  </div>
-
-  <div class="main">
-    <div class="page-header">
-      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; The Debrief</div>
-      <div class="page-title">&#x1F4CB; The Debrief</div>
-      <div class="page-sub">Your monthly intelligence report. Generated on the last working day of each month.</div>
-    </div>
-
-    <div id="loading-view" class="loading-state">
-      <div class="loading-orb">
-        <svg width="64" height="64" viewBox="0 0 64 64">
-          <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/>
-          <circle cx="32" cy="32" r="28" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="44 132" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="loading-text">LOADING YOUR DEBRIEF...</div>
-    </div>
-
-    <div id="empty-view" style="display:none">
-      <div class="empty-state">
-        <div class="empty-icon">&#x1F4CB;</div>
-        <div class="month-label">&#x2736; August 2026</div>
-        <div class="empty-title">Your Debrief is building itself.</div>
-        <div class="empty-sub">Every case you navigate, every conversation you practice, every tool you use this month gets pulled into your Debrief. It arrives on the last working day of August — a complete intelligence report on your month.</div>
-        <div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.18);border-radius:12px;padding:20px 24px;max-width:480px;margin:0 auto 28px;text-align:left">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">Your Debrief will include</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="display:flex;gap:10px;font-size:13px;color:var(--grey)"><span style="color:var(--muted)">&#x2736;</span> A narrative of your month's HR intelligence activity</div>
-            <div style="display:flex;gap:10px;font-size:13px;color:var(--grey)"><span style="color:var(--muted)">&#x2736;</span> Every case you navigated — risk profile and outcome</div>
-            <div style="display:flex;gap:10px;font-size:13px;color:var(--grey)"><span style="color:var(--muted)">&#x2736;</span> Patterns in your case types and risk levels</div>
-            <div style="display:flex;gap:10px;font-size:13px;color:var(--grey)"><span style="color:var(--muted)">&#x2736;</span> Humacity asset class summary — your Human P&amp;L for the month</div>
-            <div style="display:flex;gap:10px;font-size:13px;color:var(--grey)"><span style="color:var(--muted)">&#x2736;</span> What to focus on next month</div>
-          </div>
-        </div>
-        <a href="employee-case-advisor.html" class="btn-primary" style="display:inline-flex;text-decoration:none">Navigate your first case &rarr;</a>
+    <a href="terms.html" class="nav-item"><span class="icon">&#x1F4C4;</span> Terms of Service</a>
+    <a href="privacy.html" class="nav-item"><span class="icon">&#x1F512;</span> Privacy Policy</a>
+    <a href="#" class="nav-item" onclick="clerkSignOut();return false;" style="margin-top:8px;border-top:1px solid rgba(99,102,241,.1);padding-top:14px;"><span class="icon">&#x21A9;</span> Sign out</a>
         <div style="margin-top:16px">
           <button onclick="generateDebrief()" style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:transparent;border:1px solid rgba(99,102,241,0.35);color:#a5b4fc;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.08em;cursor:pointer;transition:all .15s" onmouseover="this.style.background='rgba(99,102,241,.08)'" onmouseout="this.style.background='transparent'">
             Generate this month’s debrief →
