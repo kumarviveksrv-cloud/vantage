@@ -262,6 +262,7 @@ input[type=number]{-moz-appearance:textfield}
     <a href="terms.html" class="nav-item"><span class="icon">&#x1F4C4;</span> Terms of Service</a>
     <a href="privacy.html" class="nav-item"><span class="icon">&#x1F512;</span> Privacy Policy</a>
     <a href="#" class="nav-item" onclick="clerkSignOut();return false;" style="margin-top:8px;border-top:1px solid rgba(99,102,241,.1);padding-top:14px;"><span class="icon">&#x21A9;</span> Sign out</a>
+</div>
 <script>
 function toggleGapBody(blockId){var body=document.getElementById('gap-body-'+blockId);var chev=document.getElementById('gap-chev-'+blockId);if(!body)return;body.classList.toggle('open');if(chev)chev.classList.toggle('open');}
 function toggleBuilding(blockId){var key='vantage_gaps_building';var building={};try{building=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}var isNow=building[blockId]!=='1';if(isNow)building[blockId]='1';else delete building[blockId];localStorage.setItem(key,JSON.stringify(building));var card=document.getElementById('gap-card-'+blockId);var pill=document.getElementById('gap-pill-'+blockId);var btn=document.getElementById('gap-btn-'+blockId);if(card)card.classList.toggle('building',isNow);if(pill){pill.textContent=isNow?'\u2713 Building':'Gap';pill.classList.toggle('building',isNow);}if(btn){btn.textContent=isNow?'\u2713 I\u2019m building this':'Mark as building';btn.classList.toggle('active',isNow);}}
