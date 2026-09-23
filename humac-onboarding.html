@@ -190,10 +190,12 @@ input[type=number]{-moz-appearance:textfield}
 .calc-spinner{width:48px;height:48px;margin:0 auto 24px;border-radius:50%;border:3px solid rgba(99,102,241,.15);border-top-color:var(--cobalt);animation:calcSpin .8s linear infinite}
 @keyframes calcSpin{to{transform:rotate(360deg)}}
 .calc-stage-text{font-family:var(--mono);font-size:.92rem;color:var(--text-mid);letter-spacing:.02em;transition:opacity .25s ease;min-height:24px}
-.pillar-card-v2{display:grid;grid-template-columns:60px 1fr auto;align-items:center;gap:18px;padding:18px 20px;margin-bottom:12px;border-radius:16px;background:linear-gradient(135deg,rgba(13,11,30,.7),rgba(5,4,16,.5));border:1px solid rgba(99,102,241,.16);text-decoration:none;cursor:pointer;position:relative;overflow:hidden;opacity:0;transform:translateY(16px) scale(.98);animation:pillarPop .55s cubic-bezier(.19,1,.22,1) forwards;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.pillar-card-v2{display:grid;grid-template-columns:60px 1fr auto;align-items:center;gap:18px;padding:18px 20px;margin-bottom:12px;border-radius:16px;background:linear-gradient(135deg,rgba(13,11,30,.7),rgba(5,4,16,.5));border:1px solid rgba(99,102,241,.16);text-decoration:none;cursor:pointer;position:relative;overflow:hidden;opacity:0;transform:translateY(16px) scale(.98);animation:pillarPop .55s cubic-bezier(.19,1,.22,1) var(--pop-delay,0s) forwards;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
 .pillar-card-v2:hover{transform:translateY(-4px) scale(1.005);border-color:var(--pillar-accent,rgba(99,102,241,.4));box-shadow:0 10px 32px var(--pillar-accent-glow,rgba(99,102,241,.2))}
 .pillar-card-v2::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pillar-accent,var(--cobalt))}
 @keyframes pillarPop{to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes pillarGlow{0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,0);border-color:rgba(99,102,241,.16)}50%{box-shadow:0 0 22px 6px rgba(99,102,241,.22),0 0 0 1px rgba(99,102,241,.28);border-color:rgba(99,102,241,.4)}}
+.pillar-card-v2.is-destruction{animation:pillarPop .55s cubic-bezier(.19,1,.22,1) var(--pop-delay,0s) forwards,pillarGlow 2.6s ease-in-out calc(var(--pop-delay,0s) + 0.65s) infinite}
 .pillar-badge-v2{width:60px;height:60px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--pillar-accent-dim,rgba(99,102,241,.12));border:1px solid var(--pillar-accent,rgba(99,102,241,.3));flex-shrink:0}
 .pillar-badge-num-v2{font-family:var(--stat);font-size:1.4rem;font-weight:700;color:var(--pillar-accent,var(--cobalt));line-height:1}
 .pillar-badge-label-v2{font-family:var(--mono);font-size:.5rem;letter-spacing:.08em;color:var(--text-dim);margin-top:2px}
@@ -564,7 +566,7 @@ function calcL4(pct){var r=(pct||0)/100;if(r<=0)return 0;if(r>=3.0)return 100;if
 function calcL5(qA,qBYears,qC){var base=(qA==='yes')?2.0:1.2;var yrs=Math.min(parseFloat(qBYears)||0,10);var mult=1+(yrs/10)*0.30;var adj=base*mult;var div={low:1.0,medium:1.2,high:1.5}[(qC||'').toLowerCase()]||1.0;var ratio=adj/div;var idx=(ratio-1.0)*20;if(idx<0)return 0;if(idx>=50)return 100;if(idx<=20)return 10+(idx/20)*40;return 50+((idx-20)/30)*50;}
 function calcHCI(n){return Math.round((0.70+n*0.15)*100)/100;}
 function countYes(ids){return ids.filter(function(id){return answers[id]==='yes';}).length;}
-function getBand(s){if(s<=30)return{name:'Value Destruction',color:'#E05C3A',desc:'People cost more than they return. Immediate intervention required.'};if(s<=50)return{name:'Value Neutral',color:'#a5b4fc',desc:'Breaking even on people investment. High deterioration risk without action.'};if(s<=70)return{name:'Value Generating',color:'#6366f1',desc:'Positive returns. Significant value still left on the table.'};if(s<=85)return{name:'Value Compounding',color:'#7c3aed',desc:'Systematic value creation. Strong leading indicators.'};return{name:'Value Exceptional',color:'#c4b5fd',desc:'Top-tier. People treated as a compounding asset class.'};}
+function getBand(s){if(s<=30)return{name:'Value Destruction',color:'#6366f1',desc:'People cost more than they return. Immediate intervention required.'};if(s<=50)return{name:'Value Neutral',color:'#a5b4fc',desc:'Breaking even on people investment. High deterioration risk without action.'};if(s<=70)return{name:'Value Generating',color:'#6366f1',desc:'Positive returns. Significant value still left on the table.'};if(s<=85)return{name:'Value Compounding',color:'#7c3aed',desc:'Systematic value creation. Strong leading indicators.'};return{name:'Value Exceptional',color:'#c4b5fd',desc:'Top-tier. People treated as a compounding asset class.'};}
 function getConfidenceLevel(){var e=Object.values(confidence).filter(function(v){return v==='estimated';}).length;if(e===0)return 'high';if(e<=2)return 'medium';return 'low';}
 
 function computeTrajectory(l1,l2,l3,l4,l5,humac,hciAdj){
@@ -943,7 +945,7 @@ function renderScoreReveal(){
     var pb=getBand(p.score);
     var accentDim=pb.color+'20';
     var accentGlow=pb.color+'33';
-    return '<a href="'+href+'" class="pillar-card-v2" style="animation-delay:'+(i*0.1)+'s;--pillar-accent:'+pb.color+';--pillar-accent-dim:'+accentDim+';--pillar-accent-glow:'+accentGlow+'">'+
+    return '<a href="'+href+'" class="pillar-card-v2'+(pb.name==="Value Destruction"?" is-destruction":"")'+'" style="--pop-delay:'+(i*0.1)+'s;--pillar-accent:'+pb.color+';--pillar-accent-dim:'+accentDim+';--pillar-accent-glow:'+accentGlow+'">'+
       '<div class="pillar-badge-v2"><div class="pillar-badge-num-v2">'+p.score+'</div><div class="pillar-badge-label-v2">'+p.label+'</div></div>'+
       '<div class="pillar-body-v2">'+
         '<div class="pillar-title-v2">'+p.name+'</div>'+
