@@ -30,7 +30,14 @@ function markBootSeen(){
 
 /* SR20: session check removed — non-paying users replay boot on every load.
    bootSeenRecently() already returns false for non-paying users (no paid flag). */
-if(bootSeenRecently()){
+/* SR20: also skip boot when navigating back from an internal page
+   (about.html sets vantage_skip_intro_from before navigating).
+   cinematic.js runs before prologue.js so the flag is still readable here. */
+if(sessionStorage.getItem('vantage_skip_intro_from')){
+  /* Skip boot — internal page navigation, land directly on the page */
+  if(boot){boot.classList.add('done');}
+  if(nav){nav.classList.add('ready');}
+}else if(bootSeenRecently()){
   /* Skip — seen this session or within last 2 hours */
   if(boot){boot.classList.add('done');}
   if(nav){nav.classList.add('ready');}
