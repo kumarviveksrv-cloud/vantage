@@ -24,9 +24,21 @@
   const isPayingUser = localStorage.getItem('vantage_clerk_signed_in') === '1' ||
                        localStorage.getItem('vantage_paid_user') === '1';
 
-  const alreadySeen = sessionStorage.getItem('vantage_prologue_seen') === '1';
+  /* SR20: non-paying visitors see the full intro on every page load.
+     Clear all session-level flags so prologue, boot, hero, and ta-da
+     all replay. LocalStorage is left untouched — paying-user flags
+     and the vantage_seen_ever timing hint are durable and must survive. */
+  if (!isPayingUser) {
+    try {
+      sessionStorage.removeItem('vantage_prologue_seen');
+      sessionStorage.removeItem('vantage_boot_seen');
+      sessionStorage.removeItem('vantage_hero_animated');
+      sessionStorage.removeItem('vantage_tada');
+    } catch(e) {}
+  }
+
   const cameFromDemo = /\/demo\.html/i.test(document.referrer || '');
-  if (alreadySeen || cameFromDemo || isPayingUser) {
+  if (cameFromDemo || isPayingUser) {
     pro.style.display = 'none';
     document.body.classList.add('prologue-complete');
     return;
@@ -106,7 +118,7 @@
     // No forced reflow and no opacity/scale animation on mobile.
   }
 
-  function endPrologue() {
+  function endPrologue(fastFade) {
     if (!active || ending) return;
     ending = true;
     active = false;
@@ -116,7 +128,7 @@
     pro.classList.add('ending');
 
     if (fade) {
-      fade.style.setProperty('transition', 'opacity 2.4s ease', 'important');
+      fade.style.setProperty('transition', fastFade ? 'opacity 0.5s ease' : 'opacity 2.4s ease', 'important');
       fade.classList.add('on');
     }
     /* Fade skip button at the same moment the screen goes to black */
@@ -128,7 +140,7 @@
     window.setTimeout(() => {
       pro.style.display = 'none';
       document.body.classList.add('prologue-complete');
-    }, 2500);
+    }, fastFade ? 600 : 2500);
   }
 
   // Inject only stability rules. This avoids requiring an additional CSS file
@@ -270,5 +282,12 @@
 
   window.addEventListener('wheel', preventScroll, { passive: false });
   window.addEventListener('touchmove', preventScroll, { passive: false });
-  skip?.addEventListener('click', endPrologue);
+  /* SR20: Skip Intro skips the full sequence — prologue + ta-da.
+     Sets vantage_skip_tada so curtain.js bypasses the ta-da overlay. */
+  function skipFullIntro() {
+    sessionStorage.setItem('vantage_skip_tada', '1');
+    sessionStorage.setItem('vantage_post_skip', '1');
+    endPrologue(true);
+  }
+  skip?.addEventListener('click', skipFullIntro);
 })();
