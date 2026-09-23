@@ -1007,6 +1007,234 @@
   padding:3px 8px;border-radius:3px;
 }
 
+/* ═══ VANTAGE DEFINITION INTERSTITIAL (SR20) ═══ */
+.vantage-def {
+  padding: 80px 6vw 90px;
+  border-top: 1px solid rgba(196,181,253,.08);
+  border-bottom: 1px solid rgba(196,181,253,.08);
+  background: linear-gradient(180deg,rgba(99,102,241,.03),rgba(5,4,16,0) 60%);
+  position: relative;
+  overflow: hidden;
+}
+.vantage-def::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(196,181,253,.25),transparent);
+}
+.vd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7vw;
+  align-items: center;
+  margin-bottom: 72px;
+}
+.vd-copy .eyebrow { margin-bottom: 18px; }
+.vd-copy h2 {
+  font: 700 clamp(28px,3.6vw,48px)/1.1 'Cormorant Garamond',serif;
+  letter-spacing: -.01em;
+  margin: 0 0 28px;
+  color: #f4f3ff;
+}
+.vd-copy h2 em {
+  font-style: italic;
+  color: #c4b5fd;
+}
+.vd-body p {
+  font-size: 14px;
+  color: rgba(244,243,255,.62);
+  line-height: 1.85;
+  margin: 0 0 16px;
+}
+.vd-body p:last-child { margin-bottom: 0; }
+.vd-body p strong {
+  color: rgba(244,243,255,.88);
+  font-weight: 600;
+}
+.vd-about-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  font: 700 12px 'Bricolage Grotesque',sans-serif;
+  letter-spacing: .08em;
+  text-decoration: none;
+  padding: 11px 22px;
+  border-radius: 8px;
+  background: linear-gradient(135deg,#6366f1,#7c3aed);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(99,102,241,.4);
+  transition: opacity .2s, transform .2s;
+}
+.vd-about-cta:hover { opacity: .85; transform: translateY(-1px); }
+
+/* Scope diagram */
+.vd-visual {
+  position: relative;
+}
+.vd-scope {
+  width: 100%;
+  border: 1px solid rgba(196,181,253,.1);
+  border-radius: 16px;
+  background: rgba(13,11,30,.72);
+  padding: 28px 24px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.vd-scope::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(99,102,241,.4),transparent);
+}
+.vd-scope-label {
+  font: 8.5px 'JetBrains Mono',monospace;
+  letter-spacing: .2em;
+  color: rgba(196,181,253,.45);
+  margin-bottom: 20px;
+}
+.vd-scope-svg { width: 100%; display: block; }
+.vd-scope-caps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 18px;
+}
+.vd-scope-cap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(99,102,241,.18);
+  border-radius: 7px;
+  background: rgba(99,102,241,.06);
+}
+.vd-scope-cap-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #6366f1;
+  box-shadow: 0 0 8px rgba(99,102,241,.5);
+  flex-shrink: 0;
+}
+.vd-scope-cap span {
+  font: 10px 'JetBrains Mono',monospace;
+  letter-spacing: .08em;
+  color: rgba(196,181,253,.72);
+}
+.vd-scope-outside {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.vd-scope-out-label {
+  font: 8px 'JetBrains Mono',monospace;
+  letter-spacing: .14em;
+  color: rgba(255,255,255,.22);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.vd-scope-out-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.vd-scope-out-tag {
+  font: 8px 'JetBrains Mono',monospace;
+  letter-spacing: .1em;
+  color: rgba(255,255,255,.2);
+  border: 1px solid rgba(255,255,255,.07);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+/* Four pillars */
+.vd-pillars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 52px;
+}
+.vd-pillar {
+  padding: 24px;
+  border: 1px solid rgba(196,181,253,.1);
+  border-radius: 14px;
+  background: rgba(13,11,30,.6);
+  position: relative;
+  overflow: hidden;
+  transition: border-color .3s, background .3s;
+}
+.vd-pillar:hover {
+  border-color: rgba(99,102,241,.3);
+  background: rgba(13,11,30,.85);
+}
+.vd-pillar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  border-radius: 14px 14px 0 0;
+}
+.vd-pillar:nth-child(1)::before { background: linear-gradient(90deg,#6366f1,#818cf8); }
+.vd-pillar:nth-child(2)::before { background: linear-gradient(90deg,#7c3aed,#a78bfa); }
+.vd-pillar:nth-child(3)::before { background: linear-gradient(90deg,#0ea5e9,#38bdf8); }
+.vd-pillar:nth-child(4)::before { background: linear-gradient(90deg,#10b981,#34d399); }
+.vd-pillar-num {
+  font: 8px 'JetBrains Mono',monospace;
+  letter-spacing: .18em;
+  color: rgba(196,181,253,.4);
+  margin-bottom: 10px;
+}
+.vd-pillar-h {
+  font: 600 15px 'Bricolage Grotesque',sans-serif;
+  color: rgba(244,243,255,.88);
+  margin: 0 0 12px;
+  line-height: 1.35;
+}
+.vd-pillar-p {
+  font: 13px 'DM Sans',sans-serif;
+  color: rgba(244,243,255,.5);
+  line-height: 1.75;
+  margin: 0;
+}
+
+/* Closing line */
+.vd-close {
+  text-align: center;
+  font: 500 clamp(18px,2.2vw,26px)/1.4 'Cormorant Garamond',serif;
+  color: rgba(244,243,255,.7);
+  max-width: 780px;
+  margin: 0 auto;
+  font-style: italic;
+  letter-spacing: -.01em;
+}
+.vd-close em { color: #c4b5fd; font-style: italic; }
+
+@media(max-width:900px){
+  .vd-grid { grid-template-columns: 1fr; gap: 40px; }
+  .vd-pillars { grid-template-columns: 1fr; }
+}
+
+/* Hero about-cta button glow variant */
+.hero-about-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font: 600 11px 'JetBrains Mono',monospace;
+  letter-spacing: .12em;
+  color: rgba(196,181,253,.65);
+  text-decoration: none;
+  border: 1px solid rgba(196,181,253,.18);
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: color .2s, border-color .2s;
+}
+.hero-about-link:hover { color: #c4b5fd; border-color: rgba(196,181,253,.4); }
+
 /* Hero kicker — DM Sans instead of JetBrains Mono; "9" reads editorial not AI */
 .hero-kicker {
   font-family: 'DM Sans', sans-serif !important;
@@ -2458,6 +2686,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <a href="access.html" class="btn btn-ghost magnetic">Sign In <span>↗</span></a>
     </div>
     <a href="#" id="prologue-back" onclick="sessionStorage.removeItem('vantage_prologue_seen');sessionStorage.removeItem('vantage_boot_seen');sessionStorage.removeItem('vantage_hero_animated');sessionStorage.removeItem('vantage_demo_curtain_seen');sessionStorage.removeItem('vantage_dash_animated');localStorage.removeItem('vantage_paid_user');localStorage.removeItem('vantage_clerk_signed_in');location.reload();return false;">← Watch the opening sequence</a>
+    <a href="about.html" class="hero-about-link">About Vantage &mdash; what it is and what it does &#8594;</a>
     <div class="hero-foot">
       <span>Private by default</span>
       <span>Built for Indian HR</span>
@@ -2477,6 +2706,110 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   </div>
   <div class="q-bar"><div class="q-bar-fill"></div></div>
 </div>
+<section class="vantage-def reveal-section" id="what">
+  <div class="vd-grid">
+    <div class="vd-copy">
+      <p class="eyebrow">What Vantage is</p>
+      <h2>Where HR decisions stop being opinions and start becoming <em>evidence.</em></h2>
+      <div class="vd-body">
+        <p>When a manager wants to fire someone and has no documentation on file. When an employee raises a complaint and the legal exposure is unclear. When a resignation might cost the company &#x20B9;34L in replacement costs nobody has calculated. When a business case needs to land with a CFO who responds to numbers, not HR narratives.</p>
+        <p>These are the moments where HR professionals earn everything they&rsquo;re paid. And where most have nowhere to turn but their own judgment and a WhatsApp group.</p>
+        <p><strong>Vantage is what you turn to instead.</strong></p>
+      </div>
+      <a href="about.html" class="vd-about-cta">Read the full story &rarr;</a>
+    </div>
+
+    <div class="vd-visual">
+      <div class="vd-scope">
+        <div class="vd-scope-label">VANTAGE COVERAGE SCOPE &mdash; THE EMPLOYMENT RELATIONSHIP</div>
+        <svg class="vd-scope-svg" viewBox="0 0 440 120" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="vdZone" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#6366f1" stop-opacity="0.15"/>
+              <stop offset="50%" stop-color="#7c3aed" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#6366f1" stop-opacity="0.15"/>
+            </linearGradient>
+            <linearGradient id="vdLine" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="rgba(196,181,253,0.1)"/>
+              <stop offset="20%" stop-color="rgba(99,102,241,0.6)"/>
+              <stop offset="80%" stop-color="rgba(124,58,237,0.6)"/>
+              <stop offset="100%" stop-color="rgba(196,181,253,0.1)"/>
+            </linearGradient>
+          </defs>
+          <!-- Timeline base -->
+          <line x1="20" y1="60" x2="420" y2="60" stroke="rgba(196,181,253,0.12)" stroke-width="1.5"/>
+          <!-- Pre-Vantage zone -->
+          <text x="30" y="40" font-family="JetBrains Mono,monospace" font-size="7" fill="rgba(255,255,255,0.2)" letter-spacing="1">TALENT ACQUISITION</text>
+          <circle cx="20" cy="60" r="4" fill="#050410" stroke="rgba(196,181,253,0.2)" stroke-width="1.5"/>
+          <text x="12" y="80" font-family="JetBrains Mono,monospace" font-size="6.5" fill="rgba(255,255,255,0.2)">DAY 0</text>
+          <!-- Vantage Zone highlight -->
+          <rect x="80" y="30" width="280" height="60" rx="8" fill="url(#vdZone)"/>
+          <rect x="80" y="30" width="280" height="60" rx="8" fill="none" stroke="rgba(99,102,241,0.35)" stroke-width="1"/>
+          <line x1="80" y1="60" x2="360" y2="60" stroke="url(#vdLine)" stroke-width="2"/>
+          <!-- Zone label -->
+          <text x="220" y="22" font-family="JetBrains Mono,monospace" font-size="7.5" fill="rgba(196,181,253,0.75)" text-anchor="middle" letter-spacing="2">VANTAGE</text>
+          <!-- Milestone dots -->
+          <circle cx="110" cy="60" r="3.5" fill="#6366f1" opacity="0.8"/>
+          <text x="110" y="100" font-family="JetBrains Mono,monospace" font-size="6" fill="rgba(196,181,253,0.45)" text-anchor="middle">JOIN</text>
+          <circle cx="180" cy="60" r="3.5" fill="#7c3aed" opacity="0.8"/>
+          <text x="180" y="100" font-family="JetBrains Mono,monospace" font-size="6" fill="rgba(196,181,253,0.45)" text-anchor="middle">ER CASE</text>
+          <circle cx="255" cy="60" r="3.5" fill="#7c3aed" opacity="0.8"/>
+          <text x="255" y="100" font-family="JetBrains Mono,monospace" font-size="6" fill="rgba(196,181,253,0.45)" text-anchor="middle">DECISION</text>
+          <circle cx="330" cy="60" r="3.5" fill="#6366f1" opacity="0.8"/>
+          <text x="330" y="100" font-family="JetBrains Mono,monospace" font-size="6" fill="rgba(196,181,253,0.45)" text-anchor="middle">RECORD</text>
+          <!-- Post-Vantage -->
+          <circle cx="420" cy="60" r="4" fill="#050410" stroke="rgba(196,181,253,0.2)" stroke-width="1.5"/>
+          <text x="400" y="80" font-family="JetBrains Mono,monospace" font-size="6.5" fill="rgba(255,255,255,0.2)">EXIT</text>
+          <text x="385" y="40" font-family="JetBrains Mono,monospace" font-size="7" fill="rgba(255,255,255,0.2)" text-anchor="end">L&amp;D</text>
+        </svg>
+        <div class="vd-scope-caps">
+          <div class="vd-scope-cap"><div class="vd-scope-cap-dot"></div><span>ER CASE MANAGEMENT</span></div>
+          <div class="vd-scope-cap"><div class="vd-scope-cap-dot"></div><span>PEOPLE ECONOMICS</span></div>
+          <div class="vd-scope-cap"><div class="vd-scope-cap-dot"></div><span>STAKEHOLDER INFLUENCE</span></div>
+          <div class="vd-scope-cap"><div class="vd-scope-cap-dot"></div><span>POLICY COMPLIANCE</span></div>
+          <div class="vd-scope-cap"><div class="vd-scope-cap-dot"></div><span>ORG VITALS</span></div>
+          <div class="vd-scope-cap"><div class="vd-scope-cap-dot"></div><span>CAREER RECORD</span></div>
+        </div>
+        <div class="vd-scope-outside">
+          <span class="vd-scope-out-label">NOT COVERED</span>
+          <div class="vd-scope-out-tags">
+            <span class="vd-scope-out-tag">TALENT ACQUISITION</span>
+            <span class="vd-scope-out-tag">L&amp;D</span>
+            <span class="vd-scope-out-tag">PAYROLL</span>
+            <span class="vd-scope-out-tag">HRIS</span>
+            <span class="vd-scope-out-tag">COMP BENCHMARKING</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vd-pillars">
+    <div class="vd-pillar">
+      <div class="vd-pillar-num">01 / LAW</div>
+      <h3 class="vd-pillar-h">The law &mdash; current, cited, and calibrated to you.</h3>
+      <p class="vd-pillar-p">India&rsquo;s 29 central employment laws became 4 Labour Codes on 21 November 2025. The Industrial Disputes Act is gone. The Industrial Relations Code replaced it. The gap between the old laws and the new Codes is where most legal exposure now sits. Vantage runs on what is actually in force today &mdash; the specific Code, the specific section, and the exact threshold that applies to your state, your org size, and the case on your desk right now.</p>
+    </div>
+    <div class="vd-pillar">
+      <div class="vd-pillar-num">02 / FINANCIAL</div>
+      <h3 class="vd-pillar-h">The financial exposure &mdash; in rupees, with a confidence level.</h3>
+      <p class="vd-pillar-p">Every case carries a number. Wrongful termination risk. Replacement cost. Flight risk liability. Vantage converts your HR situation into an INR figure broken down by line item &mdash; so you walk into any room with evidence, not estimates.</p>
+    </div>
+    <div class="vd-pillar">
+      <div class="vd-pillar-num">03 / INFLUENCE</div>
+      <h3 class="vd-pillar-h">The stakeholder strategy &mdash; not just what&rsquo;s right, but how to get it through.</h3>
+      <p class="vd-pillar-p">Knowing the right answer is half the job. Getting a busy manager, a skeptical department head, or a resistant business partner to act on it is the other half. Vantage builds the argument, the language, and the communication approach &mdash; calibrated to the person you need to move. And when the conversation feels high-stakes, ARIA will play the other person so you can practice it before it&rsquo;s real.</p>
+    </div>
+    <div class="vd-pillar">
+      <div class="vd-pillar-num">04 / RECORD</div>
+      <h3 class="vd-pillar-h">The career record &mdash; every decision documented and financially quantified.</h3>
+      <p class="vd-pillar-p">Every case you handle on Vantage is documented &mdash; the situation, the legal position, the financial exposure, and what you recommended. Before outcomes are known, not after. So when a decision goes well, you have evidence. When it goes badly, you have proof that your judgment was sound. Over months and years, this becomes a professional record that most HR careers never produce &mdash; because most HR decisions leave no trace at all.</p>
+    </div>
+  </div>
+
+  <p class="vd-close">Most HR professionals spend a decade making consequential decisions that leave no trace. Vantage is the platform that changes that &mdash; <em>one documented, financially quantified decision at a time.</em></p>
+</section>
+
 <section class="humacity cinematic-panel reveal-section" id="humacity">
   <div class="section-index">01 / HUMACITY</div>
   <div class="humacity-grid">
