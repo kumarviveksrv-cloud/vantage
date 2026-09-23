@@ -244,6 +244,7 @@
   opacity: 1 !important;
   font-weight: 400 !important;
   margin-bottom: 24px !important;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.9), 0 0 50px rgba(0,0,0,0.7) !important;
 }
 .prologue-sub {
   font-family: 'Cormorant Garamond', serif !important;
@@ -255,6 +256,12 @@
   opacity: 1 !important;
   font-weight: 400 !important;
   margin-top: 24px !important;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.9), 0 0 50px rgba(0,0,0,0.7) !important;
+}
+
+/* SR20: prologue-message text-shadow for readability against busy background */
+.prologue-message {
+  text-shadow: 0 2px 24px rgba(0,0,0,0.92), 0 0 60px rgba(0,0,0,0.75) !important;
 }
 
 /* Item 2: Prologue note — scene-stamp + whispered narration */
@@ -1031,13 +1038,13 @@
 .hero-context {
   font-family: 'Cormorant Garamond', serif !important;
   font-style: italic !important;
-  font-size: clamp(14px,1.5vw,19px) !important;
+  font-size: clamp(19px,2.1vw,27px) !important;
   font-weight: 400 !important;
-  opacity: 0.75 !important;
-  margin: 22px 0 18px !important;
+  opacity: 1 !important;
+  margin: 20px 0 18px !important;
   background: none !important;
-  -webkit-text-fill-color: rgba(196,181,253,0.75) !important;
-  color: rgba(196,181,253,0.75) !important;
+  -webkit-text-fill-color: rgba(196,181,253,0.90) !important;
+  color: rgba(196,181,253,0.90) !important;
 }
 
 /* "Enter Vantage." — typewriter + blink system */
@@ -1242,11 +1249,11 @@
 .prologue-copy {
   top: auto !important;
   bottom: 108px !important;
-  left: auto !important;
-  right: 48px !important;
+  left: 48px !important;
+  right: auto !important;
   transform: none !important;
-  width: min(520px, 40vw) !important;
-  text-align: right !important;
+  width: min(540px, 44vw) !important;
+  text-align: left !important;
   padding-top: 0 !important;
   margin-top: 0 !important;
 }
