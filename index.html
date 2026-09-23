@@ -910,6 +910,103 @@
   color:rgba(255,255,255,.38);font-style:italic;
 }
 
+/* SR20: MERIDIAN dashboard enrichment — active context + layer signals */
+.ms-calibrate {
+  border-left:1px solid rgba(124,58,237,.3);
+  border-right:1px solid rgba(124,58,237,.3);
+  background:linear-gradient(135deg,rgba(99,102,241,.07),rgba(124,58,237,.04));
+  padding:14px 20px;border-bottom:1px solid rgba(124,58,237,.12);
+}
+.ms-cal-header {
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+.ms-cal-dot {
+  width:6px;height:6px;border-radius:50%;
+  background:#4ade80;box-shadow:0 0 8px rgba(74,222,128,.6);
+  animation:msDotPulse 2s ease-in-out infinite;flex-shrink:0;
+}
+@keyframes msDotPulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ms-cal-label {
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  letter-spacing:.2em;color:#4ade80;
+}
+.ms-cal-context {
+  display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;
+}
+.ms-cal-tag {
+  font-family:'JetBrains Mono',monospace;font-size:7.5px;
+  letter-spacing:.08em;color:rgba(196,181,253,.8);
+  background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);
+  padding:3px 8px;border-radius:4px;
+}
+.ms-cal-bar {
+  height:2px;background:rgba(99,102,241,.1);border-radius:2px;overflow:hidden;
+  position:relative;
+}
+.ms-cal-fill {
+  height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#4ade80);
+  border-radius:2px;transition:width 1.8s cubic-bezier(.25,.46,.45,.94);
+}
+.ms-cal-active .ms-cal-fill { width:88%; }
+.ms-cal-status {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.12em;color:rgba(196,181,253,.45);
+  margin-top:6px;
+}
+.msl-signals {
+  margin-top:10px;border-top:1px solid rgba(124,58,237,.1);
+  padding-top:10px;display:flex;flex-direction:column;gap:8px;
+}
+.msl-signal {
+  display:flex;align-items:flex-start;gap:8px;
+}
+.msl-signal-icon {
+  font-size:7px;color:rgba(168,85,247,.6);margin-top:2px;flex-shrink:0;
+}
+.msl-signal-body { flex:1;min-width:0; }
+.msl-signal-tag {
+  font-family:'JetBrains Mono',monospace;font-size:7.5px;
+  letter-spacing:.12em;color:rgba(196,181,253,.5);margin-bottom:2px;
+}
+.msl-signal-val {
+  font-family:'DM Sans',sans-serif;font-size:11.5px;
+  color:rgba(255,255,255,.78);line-height:1.45;
+}
+.msl-signal-val em {
+  font-style:normal;color:rgba(196,181,253,.65);font-size:10.5px;
+}
+.msl-badge {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.1em;padding:2px 7px;border-radius:3px;
+  flex-shrink:0;margin-top:2px;
+}
+.msl-badge--critical { background:rgba(255,77,109,.12);color:#FF4D6D;border:1px solid rgba(255,77,109,.25); }
+.msl-badge--high    { background:rgba(255,181,71,.1);color:#FFB547;border:1px solid rgba(255,181,71,.2); }
+.msl-badge--ok      { background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.18); }
+.msl-badge--info    { background:rgba(99,102,241,.1);color:#a5b4fc;border:1px solid rgba(99,102,241,.2); }
+.ms-output-snippet {
+  margin-top:14px;padding:12px 14px;
+  background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.18);
+  border-radius:8px;border-left:3px solid #6366f1;
+}
+.ms-output-snippet-label {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.16em;color:rgba(196,181,253,.4);margin-bottom:7px;
+}
+.ms-output-snippet-text {
+  font-family:'DM Sans',sans-serif;font-size:11.5px;
+  color:rgba(255,255,255,.72);line-height:1.6;font-style:italic;
+}
+.ms-output-meta {
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;
+}
+.ms-output-meta-tag {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.1em;color:rgba(165,180,252,.5);
+  background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.14);
+  padding:3px 8px;border-radius:3px;
+}
+
 /* Hero kicker — DM Sans instead of JetBrains Mono; "9" reads editorial not AI */
 .hero-kicker {
   font-family: 'DM Sans', sans-serif !important;
@@ -2589,6 +2686,23 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
     </div>
   </div>
 
+  <div class="ms-calibrate" id="msCalibrate">
+    <div class="ms-cal-header">
+      <div class="ms-cal-dot"></div>
+      <div class="ms-cal-label">MERIDIAN ACTIVE &mdash; CONTEXT LOADED</div>
+    </div>
+    <div class="ms-cal-context">
+      <span class="ms-cal-tag">Maharashtra</span>
+      <span class="ms-cal-tag">IT / SaaS</span>
+      <span class="ms-cal-tag">251&ndash;1,000 employees</span>
+      <span class="ms-cal-tag">HR Manager</span>
+      <span class="ms-cal-tag">Non-unionised</span>
+      <span class="ms-cal-tag">Employee Relations</span>
+    </div>
+    <div class="ms-cal-bar"><div class="ms-cal-fill"></div></div>
+    <div class="ms-cal-status">88% PRECISION CONFIDENCE &mdash; ALL 7 PARAMETERS SET</div>
+  </div>
+
   <div class="ms-divider">
     <span class="ms-divider-label">WHAT MERIDIAN ACTUALLY RUNS ON</span>
   </div>
@@ -2599,6 +2713,31 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <div class="msl-name">SIGNAL FRAMEWORK</div>
       <div class="msl-desc">Situational reading &middot; Case pattern recognition &middot; Escalation mapping</div>
       <div class="msl-bar"><div class="msl-fill"></div></div>
+      <div class="msl-signals">
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">CASE CLASSIFICATION</div>
+            <div class="msl-signal-val">Termination risk &mdash; documentation gap <em>No written warning on record</em></div>
+          </div>
+          <div class="msl-badge msl-badge--critical">CRITICAL</div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">ESCALATION SIGNAL</div>
+            <div class="msl-signal-val">Tribunal filing probability 45&ndash;55% <em>Adjusted for non-unionised status</em></div>
+          </div>
+          <div class="msl-badge msl-badge--high">HIGH</div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">PATTERN DETECTED</div>
+            <div class="msl-signal-val">3 of 5 recent IT/SaaS case types share same process failure <em>Premature closure without domestic enquiry</em></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2608,6 +2747,32 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <div class="msl-name">PACT + INFLUENCE STACK</div>
       <div class="msl-desc">ER case frameworks &middot; Stakeholder dynamics &middot; Consequence modelling</div>
       <div class="msl-bar"><div class="msl-fill"></div></div>
+      <div class="msl-signals">
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">PROCESS DIAGNOSIS</div>
+            <div class="msl-signal-val">No show-cause notice on record <em>High procedural vulnerability before any action</em></div>
+          </div>
+          <div class="msl-badge msl-badge--critical">GAP</div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">FINANCIAL EXPOSURE</div>
+            <div class="msl-signal-val">&#x20B9;8L&ndash;&#x20B9;14L <em>5-year tenure &middot; Maharashtra &middot; BFSI/IT sector</em></div>
+          </div>
+          <div class="msl-badge msl-badge--high">MEDIUM CONF</div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">RECOMMENDED PATH</div>
+            <div class="msl-signal-val">Domestic enquiry route <em>Legally defensible &middot; Issue show-cause notice first</em></div>
+          </div>
+          <div class="msl-badge msl-badge--ok">DEFENSIBLE</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2617,6 +2782,31 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <div class="msl-name">INDIA LEGAL LAYER</div>
       <div class="msl-desc">Jurisdiction &middot; Labour law &middot; Regulatory precedent &middot; State compliance</div>
       <div class="msl-bar"><div class="msl-fill"></div></div>
+      <div class="msl-signals">
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">ACTIVE LAW</div>
+            <div class="msl-signal-val">IR Code 2020 &mdash; effective 21 Nov 2025 <em>Replaced the Industrial Disputes Act 1947</em></div>
+          </div>
+          <div class="msl-badge msl-badge--info">CURRENT</div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">YOUR THRESHOLD</div>
+            <div class="msl-signal-val">Below 300-worker retrenchment cap <em>251&ndash;1,000 employees &middot; prior permission not required</em></div>
+          </div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">KEY CITATION</div>
+            <div class="msl-signal-val">IR Code 2020 &middot; Maharashtra S&amp;E Act <em>BNS replaces IPC (effective Jul 2024) &middot; not IPC</em></div>
+          </div>
+          <div class="msl-badge msl-badge--info">VERIFIED</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2626,6 +2816,31 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <div class="msl-name">HUMACITY CORE</div>
       <div class="msl-desc">People Financial Intelligence &middot; The Human P&amp;L &middot; Humac Score engine</div>
       <div class="msl-bar"><div class="msl-fill"></div></div>
+      <div class="msl-signals">
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">SECTOR ATTRITION BENCHMARK</div>
+            <div class="msl-signal-val">IT / SaaS: 12&ndash;15% typical <em>Sourced &middot; Aon 32nd Annual Survey 2025&ndash;26</em></div>
+          </div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">REPLACEMENT COST MODEL</div>
+            <div class="msl-signal-val">&#x20B9;34L exposure on current flight risk <em>1.8x salary + 9-month ramp + knowledge transfer</em></div>
+          </div>
+          <div class="msl-badge msl-badge--high">L1 SIGNAL</div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">HUMAC TRAJECTORY</div>
+            <div class="msl-signal-val">Value Ledger under pressure &mdash; L1 below benchmark <em>HR return: &#x20B9;0.82 per &#x20B9;100 invested</em></div>
+          </div>
+          <div class="msl-badge msl-badge--high">WATCH</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2634,6 +2849,16 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
     <div class="ms-output-label">OUTPUT</div>
     <div class="ms-output-value">PRECISION ADVICE</div>
     <div class="ms-output-sub">Calibrated to the reality you are actually operating in</div>
+    <div class="ms-output-snippet">
+      <div class="ms-output-snippet-label">SAMPLE OUTPUT &mdash; MAHARASHTRA &middot; IT/SAAS &middot; HR MANAGER</div>
+      <div class="ms-output-snippet-text">&ldquo;Issue a written show-cause notice today. Five years of tenure with zero documentation on file means your tribunal exposure starts at &#x20B9;8L and rises with every day you act without this step on record. Do not proceed to termination without it.&rdquo;</div>
+    </div>
+    <div class="ms-output-meta">
+      <span class="ms-output-meta-tag">LEGAL CONF: HIGH</span>
+      <span class="ms-output-meta-tag">PROCESS RISK: HIGH</span>
+      <span class="ms-output-meta-tag">HUMAC: L1</span>
+      <span class="ms-output-meta-tag">GREEN: RISK MITIGATION</span>
+    </div>
   </div>
 
 </div>
