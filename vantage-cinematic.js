@@ -28,7 +28,9 @@ function markBootSeen(){
   }catch(e){}
 }
 
-if(sessionStorage.getItem('vantage_boot_seen')||bootSeenRecently()){
+/* SR20: session check removed — non-paying users replay boot on every load.
+   bootSeenRecently() already returns false for non-paying users (no paid flag). */
+if(bootSeenRecently()){
   /* Skip — seen this session or within last 2 hours */
   if(boot){boot.classList.add('done');}
   if(nav){nav.classList.add('ready');}
