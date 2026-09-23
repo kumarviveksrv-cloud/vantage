@@ -3405,7 +3405,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var toast_ib=document.getElementById('pwa-install-btn');
   var toast_cb=document.getElementById('pwa-toast-close');
   if(toast_ib){toast_ib.addEventListener('click',triggerPwaInstall);}
-  if(toast_cb){toast_cb.addEventListener('click',hidePwaToast);}
+  if(toast_cb){toast_cb.addEventListener('click',hidePwaToast);} 
 });
 window.addEventListener('appinstalled',function(){
   hideAllInstallUI();_pwaPrompt=null;
