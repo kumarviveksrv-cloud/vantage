@@ -14,7 +14,7 @@
     /* If em has a gradient, use it verbatim */
     if(bg && bg !== 'none' && bg.includes('gradient')) return bg;
     /* Otherwise, build a gradient from the em's solid color */
-    const col = cs.getPropertyValue('-webkit-text-fill-color') ||
+    const col = cs.getPropertyValue('-webkit-text-fill-color') || 
                 cs.getPropertyValue('color') || '';
     if(col && col !== 'transparent' && col !== 'rgba(0, 0, 0, 0)'){
       return 'linear-gradient(135deg,' + col + ' 0%,#6366f1 100%)';
