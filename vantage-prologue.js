@@ -9,6 +9,22 @@
 (function () {
   'use strict';
 
+  /* SR20: Skip prologue when navigating back from an internal page (e.g. about.html).
+     about.html sets vantage_skip_intro_from before navigating — we read it here
+     FIRST, before any other checks or flag-clearing, so the full sequence is
+     bypassed cleanly and the user lands directly on the landing page. */
+  const _skipFrom = sessionStorage.getItem('vantage_skip_intro_from');
+  if (_skipFrom) {
+    sessionStorage.removeItem('vantage_skip_intro_from');
+    try {
+      sessionStorage.setItem('vantage_prologue_seen', '1');
+      sessionStorage.setItem('vantage_boot_seen', '1');
+      sessionStorage.setItem('vantage_hero_animated', '1');
+    } catch(e) {}
+    document.body.classList.add('prologue-complete');
+    return;
+  }
+
   const $ = (selector, parent = document) => parent.querySelector(selector);
   const pro = $('#prologue');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
