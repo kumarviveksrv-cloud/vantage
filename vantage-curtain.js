@@ -2805,7 +2805,7 @@
     el.style.setProperty('font-size', 'clamp(16px, 1.65vw, 21px)', 'important');
     el.style.setProperty('line-height', '1.8', 'important');
     el.style.setProperty('color', 'rgba(255,255,255,.78)', 'important');
-    const accentSpan = el.querySelector('.accent');
+    const accentSpan = el.querySelector('.accent'); 
     if(accentSpan){
       /* SR19: was 'inherit' — inherit made accent same size as parent,
          negating the CSS bump. Now sets explicit larger size matching CSS. */
