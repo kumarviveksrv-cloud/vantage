@@ -232,6 +232,15 @@
       if(!sessionStorage.getItem('vantage_tada')) return;
       sessionStorage.removeItem('vantage_tada');
 
+      /* SR20: if user pressed Skip Intro, bypass ta-da and go straight to landing */
+      if(sessionStorage.getItem('vantage_skip_tada')){
+        sessionStorage.removeItem('vantage_skip_tada');
+        if(tadaOverlay){ tadaOverlay.style.display='none'; }
+        if(initOverlay){ initOverlay.classList.remove('init-active'); initOverlay.style.opacity=''; }
+        document.dispatchEvent(new CustomEvent('vantage-intro-done'));
+        return;
+      }
+
       /* ═══ SR18.9 SEQUENCE — rebuilt after finding the actual root cause ═══
          Prologue → Typewriter → Curtain Raiser → doTada (logo burst) → Landing
 
@@ -333,6 +342,8 @@
                   tadaOverlay.style.display='none';
                   tadaOverlay.classList.remove('tada-out');
                   tadaOverlay.style.removeProperty('animation');
+                  /* SR20: signal waitForLandingReveal that landing is revealed */
+                  document.dispatchEvent(new CustomEvent('vantage-intro-done'));
                 }, 1450);
               }, 650);
             }, 1400);
@@ -2635,11 +2646,12 @@
     var firstEverVisit=!localStorage.getItem('vantage_seen_ever');
     localStorage.setItem('vantage_seen_ever','1');
     var isPayingUser=!!localStorage.getItem('vantage_paid_user');
-    /* Hero delay — controls when typewriter starts relative to landing page reveal.
-       Paying user (no ta-da, bypass path): 400ms is plenty.
-       Non-paying first visit (full prologue + ta-da running): 3800ms covers ta-da.
-       Non-paying returning: 800ms — shorter ta-da or already past it. */
-    await delay(isPayingUser ? 400 : (firstEverVisit ? 3800 : 800));
+    /* SR20: isPostSkip = user pressed Skip Intro — landing already revealed,
+       use fast hero delay. Otherwise waitForLandingReveal resolved after ta-da,
+       so 600ms breathing room is all that's needed before hero starts. */
+    var isPostSkip=!!sessionStorage.getItem('vantage_post_skip');
+    if(isPostSkip) sessionStorage.removeItem('vantage_post_skip');
+    await delay(isPayingUser ? 400 : (isPostSkip ? 400 : 600));
 
     /* 1. Tagline types out (mixed em) — slowed from 32ms to 58ms/char,
        nearly doubling visible duration (~1.8s -> ~3.3s) */
@@ -2712,6 +2724,14 @@
          Check once at call time; no MutationObserver needed. */
       const isKnownUser=!!(localStorage.getItem('vantage_seen_ever')||localStorage.getItem('vantage_paid_user'));
 
+      /* SR20: resolve as soon as ta-da ends or skip fires — for non-paying
+         users who now see the full sequence on every load. Paying users are
+         already handled by the prologue-complete bypass above (300ms). */
+      document.addEventListener('vantage-intro-done',function onIntroDone(){
+        obs.disconnect();
+        finish();
+      },{once:true});
+
       if(document.body.classList.contains('prologue-complete')){
         /* Prologue was bypassed — q-overlay will never show.
            Small delay to let the page settle visually. */
@@ -2735,10 +2755,10 @@
       });
       obs.observe(qov, {attributes:true, attributeFilter:['class','style']});
 
-      if(!firstVisit || isKnownUser){
-        setTimeout(()=>{ if(!sawActive){ obs.disconnect(); finish(); } }, 800);
-      }
-      setTimeout(()=>{ obs.disconnect(); finish(); }, 20000);
+      /* SR20: 800ms isKnownUser short-circuit removed — vantage-intro-done
+         event now resolves waitForLandingReveal for all non-paying users.
+         Extended absolute timeout covers the longest possible sequence. */
+      setTimeout(()=>{ obs.disconnect(); finish(); }, 35000);
     });
   }
 
