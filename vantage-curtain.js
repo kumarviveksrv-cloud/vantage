@@ -2283,7 +2283,7 @@
       }
     });
     if(heroContext){
-      heroContext.style.setProperty('opacity','0.62','important');
+      heroContext.style.setProperty('opacity','0.75','important');
       heroContext.style.setProperty('visibility','visible','important');
     }
     if(heroDeck){
@@ -2572,6 +2572,7 @@
     const text = el.textContent.trim();
     const words = text.split(/\s+/);
     el.textContent = '';
+    el.style.setProperty('visibility','visible','important');
     el.style.setProperty('opacity', String(targetOpacity), 'important');
     const spans = words.map((w,i)=>{
       const span = document.createElement('span');
@@ -2670,7 +2671,7 @@
     /* 3b. "The manager wants closure..." context line fades in WORD BY
        WORD to its own intended dim opacity (0.62), slowly. */
     if(heroContext){
-      await fadeInWordsTo(heroContext, 0.62, 150, 450);
+      await fadeInWordsTo(heroContext, 0.75, 150, 450);
       await delay(500);
     }
 
