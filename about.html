@@ -1,472 +1,481 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="apple-touch-icon" href="favicon.png"/>
-  <link rel="icon" type="image/png" href="favicon.png"/>
-  <link rel="shortcut icon" href="favicon.png"/>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About Vantage — Virorah Vantage</title>
-  <link rel="stylesheet" href="vantage-theme.css"/>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif}
-    body{display:flex}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-    /* SIDEBAR — identical to platform-tour.html */
-    .sidebar{width:220px;flex-shrink:0;background:rgba(13,11,30,.98);border-right:1px solid rgba(99,102,241,.08);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto;position:fixed;top:0;left:0;z-index:20}
-    .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
-    .logo-dot{width:8px;height:8px;border-radius:50%;background:#6366f1;box-shadow:0 0 10px #6366f1;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
-    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700}
-    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:2px}
-    .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:4px 10px;margin:16px 0 6px}
-    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,.45);font-size:13px;margin-bottom:2px}
-    .nav-item:hover{background:rgba(255,255,255,.04);color:#fff}
-    .nav-item.active{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.25);color:#a5b4fc;font-weight:500}
-    .nav-icon{font-size:16px;flex-shrink:0}
-    .meridian-chip{margin-top:auto;padding:12px 14px;border-radius:10px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.15)}
-    .meridian-chip .ml{font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
-    .meridian-chip .mv{font-size:11px;color:rgba(255,255,255,.45)}
-
-    /* MAIN */
-    .main{margin-left:220px;flex:1;min-height:100vh;overflow-y:auto}
-    .content{max-width:820px;margin:0 auto;padding:64px 40px 90px}
-
-    /* HERO */
-    .hero{margin-bottom:60px;animation:fadeIn .4s ease}
-    .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(99,102,241,.65);margin-bottom:16px}
-    .hero-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(1.9rem,4vw,3rem);font-weight:800;color:#f4f3ff;line-height:1.15;margin-bottom:18px}
-    .hero-title span{background:linear-gradient(135deg,#a5b4fc,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero-sub{font-size:1rem;color:rgba(244,243,255,.48);line-height:1.8;max-width:600px}
-
-    /* DIVIDER */
-    .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.2),transparent);margin:56px 0}
-
-    /* SECTION LABEL */
-    .section-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(99,102,241,.55);margin-bottom:10px;display:flex;align-items:center;gap:10px}
-    .section-label::before{content:'';width:24px;height:1.5px;background:#6366f1;flex-shrink:0}
-    .section-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(1.3rem,2.5vw,1.7rem);font-weight:700;color:#f4f3ff;margin-bottom:8px;line-height:1.25}
-    .section-sub{font-size:.9rem;color:rgba(244,243,255,.4);margin-bottom:32px;line-height:1.7;max-width:620px}
-
-    /* DAY STORY */
-    .story-section{margin-bottom:60px}
-    .story-beat{display:flex;gap:22px;padding:26px 0;border-bottom:1px solid rgba(99,102,241,.08)}
-    .story-beat:last-child{border-bottom:none}
-    .story-time{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#a5b4fc;flex-shrink:0;width:64px;padding-top:2px}
-    .story-body{flex:1}
-    .story-text{font-size:.94rem;color:rgba(244,243,255,.65);line-height:1.75;margin-bottom:12px}
-    .story-text b{color:#f4f3ff;font-weight:600}
-    .story-tool-link{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#a5b4fc;text-decoration:none;padding:5px 12px;border-radius:6px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);transition:all .2s;margin-right:8px}
-    .story-tool-link:hover{background:rgba(99,102,241,.16);border-color:rgba(99,102,241,.4)}
-    .live-chip{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#4ade80;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.25);padding:5px 12px;border-radius:6px}
-    .live-chip.pending{color:#FBB724;background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.25)}
-    .live-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:pulse 1.6s ease-in-out infinite}
-
-    /* FLAGSHIP DEEP-DIVES */
-    .flagship-block{background:rgba(13,11,30,.85);border:1px solid rgba(99,102,241,.18);border-radius:18px;padding:32px 32px;margin-bottom:20px;position:relative;overflow:hidden}
-    .flagship-block::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-    .fb-01::before{background:linear-gradient(90deg,#f43f5e,transparent)}
-    .fb-02::before{background:linear-gradient(90deg,#eab308,transparent)}
-    .fb-03::before{background:linear-gradient(90deg,#4ade80,transparent)}
-    .fb-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
-    .fb-01 .fb-eyebrow{color:#f43f5e}
-    .fb-02 .fb-eyebrow{color:#eab308}
-    .fb-03 .fb-eyebrow{color:#4ade80}
-    .fb-title{font-family:'Bricolage Grotesque',sans-serif;font-size:1.35rem;font-weight:700;color:#f4f3ff;margin-bottom:14px}
-    .fb-body{font-size:.92rem;color:rgba(244,243,255,.6);line-height:1.75;margin-bottom:18px}
-    .fb-live{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.18);border-radius:10px;padding:14px 18px;margin-bottom:18px;font-size:.85rem;color:rgba(244,243,255,.7);line-height:1.6}
-    .fb-live b{color:#a5b4fc}
-    .fb-cta{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#fff;text-decoration:none;padding:11px 22px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#7c3aed);transition:opacity .2s}
-    .fb-cta:hover{opacity:.88}
-
-    /* SUPPORTING GRID */
-    .supporting-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-bottom:16px}
-    .sc-card{background:rgba(13,11,30,.8);border:1px solid rgba(99,102,241,.12);border-radius:14px;padding:20px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;transition:all .2s}
-    .sc-card:hover{border-color:rgba(99,102,241,.35);transform:translateY(-2px)}
-    .sc-icon{font-size:20px}
-    .sc-name{font-family:'Bricolage Grotesque',sans-serif;font-size:.9rem;font-weight:700;color:#f4f3ff}
-    .sc-desc{font-size:.76rem;color:rgba(244,243,255,.38);line-height:1.5}
-
-    /* HUMAC FRAMEWORK */
-    .humac-live-card{background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(124,58,237,.05));border:1px solid rgba(99,102,241,.25);border-radius:16px;padding:28px 30px;margin-bottom:24px}
-    .hlc-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#a5b4fc;margin-bottom:10px}
-    .hlc-score-row{display:flex;align-items:baseline;gap:16px;margin-bottom:8px;flex-wrap:wrap}
-    .hlc-score{font-family:'Space Grotesk',sans-serif;font-size:2.4rem;font-weight:700;color:#f4f3ff}
-    .hlc-band{font-family:'JetBrains Mono',monospace;font-size:12px;color:#4ade80;padding:4px 12px;background:rgba(74,222,128,.1);border-radius:6px;border:1px solid rgba(74,222,128,.25)}
-    .hlc-sub{font-size:.85rem;color:rgba(244,243,255,.55);line-height:1.6}
-    .hlc-cta{display:inline-block;margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#a5b4fc;text-decoration:none}
-    .pillars{display:flex;flex-direction:column;gap:9px}
-    .pillar{display:flex;align-items:flex-start;gap:14px;padding:13px 16px;background:rgba(13,11,30,.8);border:1px solid rgba(99,102,241,.1);border-radius:10px}
-    .pillar-code{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#a5b4fc;flex-shrink:0;width:28px;padding-top:1px}
-    .pillar-name{font-family:'Bricolage Grotesque',sans-serif;font-size:.85rem;font-weight:700;color:#f4f3ff;margin-bottom:3px}
-    .pillar-desc{font-size:.76rem;color:rgba(244,243,255,.38);line-height:1.5}
-
-    /* EXPANDED PILLAR TREATMENT */
-    .manifesto-block{background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(124,58,237,.05));border:1px solid rgba(99,102,241,.25);border-radius:16px;padding:26px 30px;margin-bottom:28px}
-    .manifesto-text{font-size:.95rem;color:rgba(244,243,255,.72);line-height:1.85}
-    .manifesto-text b{color:#f4f3ff}
-    .pillar-xl{background:rgba(13,11,30,.85);border:1px solid rgba(99,102,241,.14);border-radius:14px;padding:24px 26px;margin-bottom:14px;position:relative}
-    .pillar-xl.invented{border-color:rgba(74,222,128,.3);background:linear-gradient(160deg,rgba(74,222,128,.05),rgba(13,11,30,.85))}
-    .pxl-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
-    .pxl-code{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#a5b4fc;background:rgba(99,102,241,.1);padding:3px 10px;border-radius:6px;border:1px solid rgba(99,102,241,.2)}
-    .pxl-name{font-family:'Bricolage Grotesque',sans-serif;font-size:1.05rem;font-weight:700;color:#f4f3ff}
-    .pxl-badge{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#4ade80;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);padding:3px 9px;border-radius:5px}
-    .pxl-desc{font-size:.87rem;color:rgba(244,243,255,.55);line-height:1.7;margin-bottom:8px}
-    .pxl-note{font-size:.82rem;color:rgba(74,222,128,.85);line-height:1.6;font-style:italic;border-top:1px solid rgba(74,222,128,.15);padding-top:10px;margin-top:4px}
-    .pillar-live-scores{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-    .pls-chip{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(244,243,255,.5);background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.15);padding:4px 10px;border-radius:6px}
-    .pls-chip b{color:#a5b4fc}
-
-    /* CLOSING */
-    .closing-block{text-align:center;padding:40px 20px;background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(124,58,237,.03));border:1px solid rgba(99,102,241,.15);border-radius:18px;margin-top:20px}
-    .closing-text{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:#f4f3ff;line-height:1.5;font-style:italic;max-width:540px;margin:0 auto}
-
-    /* FOOTER */
-    .about-footer{margin-top:64px;padding-top:28px;border-top:1px solid rgba(99,102,241,.08);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-    .af-brand{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.2);letter-spacing:.08em}
-    .af-link{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(99,102,241,.5);text-decoration:none;letter-spacing:.06em;transition:color .2s}
-    .af-link:hover{color:#a5b4fc}
-
-    @media(max-width:768px){
-      .sidebar{display:none}
-      .main{margin-left:0}
-      .content{padding:36px 20px 60px}
-      .story-beat{flex-direction:column;gap:8px}
-      .story-time{width:auto}
-    }
-    ::-webkit-scrollbar{width:3px}
-    ::-webkit-scrollbar-thumb{background:rgba(99,102,241,.15);border-radius:2px}
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>About Vantage — Virorah</title>
+<link rel="icon" type="image/png" href="favicon.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050410;--card:#0d0b1e;--card2:#11102a;
+  --cobalt:#6366f1;--violet:#7c3aed;
+  --muted:#a5b4fc;--lavender:#c4b5fd;
+  --white:#f4f3ff;--grey:rgba(244,243,255,0.62);
+  --border:rgba(99,102,241,0.12);--red:#FF4D6D;
+  --font:'Plus Jakarta Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --display:'Cormorant Garamond',serif;
+}
+html,body{background:var(--bg);color:var(--white);font-family:var(--font);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;height:68px;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;background:rgba(5,4,16,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-brand img{height:52px}
+.nav-back{font:600 11px var(--mono);letter-spacing:.12em;color:var(--muted);display:flex;align-items:center;gap:8px;transition:color .2s}
+.nav-back:hover{color:var(--white)}
+.nav-cta{font:700 12px 'Bricolage Grotesque',sans-serif;background:linear-gradient(135deg,var(--cobalt),var(--violet));padding:10px 18px;border-radius:7px;color:#fff;box-shadow:0 4px 20px rgba(99,102,241,.3)}
+/* HERO */
+.ab-hero{min-height:100svh;display:grid;place-items:center;padding:120px 6vw 80px;text-align:center;position:relative;overflow:hidden}
+.ab-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(99,102,241,.12),transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(124,58,237,.07),transparent 40%);z-index:0}
+.ab-hero-content{position:relative;z-index:2;max-width:860px}
+.ab-eyebrow{font:600 10px var(--mono);letter-spacing:.2em;color:var(--muted);margin-bottom:24px;display:block}
+.ab-hero h1{font:700 clamp(38px,5.5vw,72px)/1.08 var(--display);letter-spacing:-.02em;margin-bottom:24px}
+.ab-hero h1 em{font-style:italic;color:var(--lavender)}
+.ab-hero-def{max-width:640px;margin:0 auto 40px;font-size:15px;color:var(--grey);line-height:1.85}
+.ab-hero-def strong{color:rgba(244,243,255,.88);font-weight:600}
+.ab-hero-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.ab-btn-primary{display:inline-flex;align-items:center;gap:10px;padding:13px 24px;background:linear-gradient(135deg,var(--cobalt),var(--violet));border-radius:8px;font:700 13px 'Bricolage Grotesque',sans-serif;color:#fff;box-shadow:0 4px 24px rgba(99,102,241,.4);transition:opacity .2s,transform .2s}
+.ab-btn-primary:hover{opacity:.85;transform:translateY(-1px)}
+.ab-btn-ghost{display:inline-flex;align-items:center;gap:10px;padding:13px 24px;border:1px solid rgba(196,181,253,.18);border-radius:8px;font:600 13px 'Bricolage Grotesque',sans-serif;color:var(--muted);transition:border-color .2s,color .2s}
+.ab-btn-ghost:hover{border-color:rgba(196,181,253,.4);color:var(--white)}
+.ab-stars{position:absolute;inset:0;z-index:1;pointer-events:none}
+/* SECTIONS */
+.ab-section{padding:96px 6vw;border-top:1px solid var(--border)}
+.ab-section-label{font:600 10px var(--mono);letter-spacing:.2em;color:rgba(196,181,253,.45);margin-bottom:14px;display:block}
+.ab-section h2{font:700 clamp(30px,3.8vw,52px)/1.1 var(--display);letter-spacing:-.01em;margin-bottom:20px}
+.ab-section h2 em{font-style:italic;color:var(--lavender)}
+.ab-section-lede{font-size:15px;color:var(--grey);line-height:1.85;max-width:640px;margin-bottom:52px}
+/* SCOPE SECTION */
+.ab-scope-grid{display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:start}
+.ab-scope-copy p{font-size:14px;color:var(--grey);line-height:1.85;margin-bottom:18px}
+.ab-scope-copy strong{color:rgba(244,243,255,.88)}
+.ab-scope-visual{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;position:relative;overflow:hidden}
+.ab-scope-visual::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.4),transparent)}
+.ab-scope-tag{font:8px var(--mono);letter-spacing:.18em;color:rgba(196,181,253,.4);margin-bottom:18px}
+.ab-timeline-wrap{position:relative;padding:24px 0}
+.ab-tl-bar{height:3px;background:rgba(196,181,253,.08);border-radius:2px;position:relative;margin:0 0 14px}
+.ab-tl-zone{position:absolute;top:-8px;left:18%;right:18%;height:18px;border-radius:6px;background:linear-gradient(90deg,rgba(99,102,241,.2),rgba(124,58,237,.3),rgba(99,102,241,.2));border:1px solid rgba(99,102,241,.35)}
+.ab-tl-glow{position:absolute;top:-4px;left:18%;right:18%;height:10px;border-radius:6px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.4),transparent);filter:blur(4px)}
+.ab-tl-labels{display:flex;justify-content:space-between;margin-top:8px}
+.ab-tl-label{font:7.5px var(--mono);letter-spacing:.1em;color:rgba(255,255,255,.25);text-align:center}
+.ab-tl-label.ab-tl-active{color:rgba(196,181,253,.65)}
+.ab-tl-zone-label{text-align:center;font:8.5px var(--mono);letter-spacing:.16em;color:rgba(196,181,253,.55);margin-top:18px;padding:6px 12px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.18);border-radius:4px;display:inline-block}
+.ab-tl-center{text-align:center}
+.ab-caps-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:22px}
+.ab-cap{display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid rgba(99,102,241,.18);border-radius:7px;background:rgba(99,102,241,.05)}
+.ab-cap-dot{width:6px;height:6px;border-radius:50%;background:var(--cobalt);box-shadow:0 0 8px rgba(99,102,241,.5);flex-shrink:0}
+.ab-cap span{font:9px var(--mono);letter-spacing:.08em;color:rgba(196,181,253,.7)}
+.ab-out-row{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)}
+.ab-out-label{font:7px var(--mono);letter-spacing:.14em;color:rgba(255,255,255,.22);flex-shrink:0}
+.ab-out-tags{display:flex;flex-wrap:wrap;gap:5px}
+.ab-out-tag{font:7px var(--mono);letter-spacing:.08em;color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.07);padding:2px 7px;border-radius:3px}
+/* ARIA SECTION */
+.ab-aria-grid{display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:start}
+.ab-aria-copy p{font-size:14px;color:var(--grey);line-height:1.85;margin-bottom:16px}
+.ab-aria-copy strong{color:rgba(244,243,255,.88);font-weight:600}
+.ab-aria-card{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(124,58,237,.04));border:1px solid rgba(99,102,241,.25);border-radius:18px;padding:32px;position:relative;overflow:hidden}
+.ab-aria-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.5),transparent)}
+.ab-aria-orb{width:72px;height:72px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.3),rgba(5,4,16,.9) 70%);border:1px solid rgba(99,102,241,.3);box-shadow:0 0 40px rgba(99,102,241,.2);display:grid;place-items:center;margin-bottom:20px;font-size:28px}
+.ab-aria-quote{font:italic 600 20px/1.4 var(--display);color:rgba(244,243,255,.82);margin-bottom:20px}
+.ab-aria-distinction{display:flex;flex-direction:column;gap:10px}
+.ab-aria-row{display:flex;align-items:flex-start;gap:12px;padding:12px;background:rgba(5,4,16,.4);border:1px solid var(--border);border-radius:8px}
+.ab-aria-row-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.ab-aria-row-text{flex:1}
+.ab-aria-row-label{font:600 10px var(--mono);letter-spacing:.12em;color:var(--muted);display:block;margin-bottom:3px}
+.ab-aria-row-desc{font:13px var(--font);color:var(--grey);line-height:1.6}
+/* TOOLS SECTION */
+.ab-tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ab-tool{border:1px solid var(--border);border-radius:14px;padding:24px;background:var(--card);position:relative;overflow:hidden;transition:border-color .3s,background .3s}
+.ab-tool:hover{border-color:rgba(99,102,241,.3);background:var(--card2)}
+.ab-tool::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0}
+.ab-tool:nth-child(1)::before{background:linear-gradient(90deg,#FF4D6D,#fb7185)}
+.ab-tool:nth-child(2)::before{background:linear-gradient(90deg,#0ea5e9,#38bdf8)}
+.ab-tool:nth-child(3)::before{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.ab-tool:nth-child(4)::before{background:linear-gradient(90deg,#a855f7,#c084fc)}
+.ab-tool:nth-child(5)::before{background:linear-gradient(90deg,#10b981,#34d399)}
+.ab-tool:nth-child(6)::before{background:linear-gradient(90deg,#6366f1,#818cf8)}
+.ab-tool:nth-child(7)::before{background:linear-gradient(90deg,#c4b5fd,#6366f1)}
+.ab-tool-icon{font-size:22px;margin-bottom:12px}
+.ab-tool-name{font:700 14px 'Bricolage Grotesque',sans-serif;color:var(--white);margin-bottom:6px}
+.ab-tool-when{font:600 10px var(--mono);letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
+.ab-tool-scenario{font-size:12.5px;color:var(--grey);line-height:1.65}
+.ab-tool-scenario em{color:rgba(196,181,253,.75);font-style:italic}
+/* HR DECISION CAPITAL */
+.ab-hdc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:start}
+.ab-hdc-copy p{font-size:14px;color:var(--grey);line-height:1.85;margin-bottom:16px}
+.ab-hdc-copy strong{color:rgba(244,243,255,.88)}
+.ab-hdc-card{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(124,58,237,.05));border:1px solid rgba(99,102,241,.25);border-radius:18px;padding:32px;position:relative;overflow:hidden}
+.ab-hdc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(196,181,253,.4),transparent)}
+.ab-hdc-label{font:8.5px var(--mono);letter-spacing:.2em;color:rgba(196,181,253,.45);margin-bottom:8px}
+.ab-hdc-number{font:700 clamp(42px,5vw,64px)/1 'Space Grotesk',sans-serif;letter-spacing:-.04em;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.ab-hdc-sublabel{font:12px 'Bricolage Grotesque',sans-serif;color:rgba(196,181,253,.55);font-style:italic;margin-bottom:24px}
+.ab-hdc-breakdown{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.ab-hdc-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(5,4,16,.35);border:1px solid var(--border);border-radius:8px}
+.ab-hdc-row-label{font:10px var(--mono);letter-spacing:.1em;color:rgba(196,181,253,.5)}
+.ab-hdc-row-val{font:600 13px 'Space Grotesk',sans-serif;color:var(--lavender)}
+.ab-hdc-note{font:11.5px var(--font);color:rgba(244,243,255,.4);font-style:italic;line-height:1.65;border-top:1px solid var(--border);padding-top:14px;margin-top:4px}
+/* 90 DAYS */
+.ab-journey{display:flex;flex-direction:column;gap:0;position:relative;max-width:680px}
+.ab-journey::before{content:'';position:absolute;left:16px;top:32px;bottom:32px;width:1px;background:linear-gradient(180deg,rgba(99,102,241,.5),rgba(124,58,237,.5))}
+.ab-journey-item{display:flex;gap:24px;padding:24px 0}
+.ab-journey-dot{width:32px;height:32px;border-radius:50%;border:1px solid rgba(99,102,241,.4);background:var(--card);display:flex;align-items:center;justify-content:center;flex-shrink:0;font:700 11px 'Space Grotesk',sans-serif;color:var(--muted);z-index:1}
+.ab-journey-content{flex:1;padding-top:4px}
+.ab-journey-period{font:8.5px var(--mono);letter-spacing:.18em;color:var(--muted);display:block;margin-bottom:5px}
+.ab-journey-title{font:700 16px 'Bricolage Grotesque',sans-serif;color:var(--white);margin-bottom:6px}
+.ab-journey-desc{font:13.5px var(--font);color:var(--grey);line-height:1.75}
+/* WHO IT'S FOR */
+.ab-for-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ab-for-card{padding:24px;border:1px solid var(--border);border-radius:12px;background:var(--card)}
+.ab-for-role{font:700 14px 'Bricolage Grotesque',sans-serif;color:var(--white);margin-bottom:6px}
+.ab-for-context{font:10px var(--mono);letter-spacing:.1em;color:var(--muted);margin-bottom:12px}
+.ab-for-gets{font:13px var(--font);color:var(--grey);line-height:1.7}
+/* FINAL CTA */
+.ab-final{padding:120px 6vw;text-align:center;border-top:1px solid var(--border);background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,.1),transparent 50%)}
+.ab-final h2{font:700 clamp(32px,4.5vw,58px)/1.1 var(--display);margin-bottom:20px;letter-spacing:-.01em}
+.ab-final h2 em{font-style:italic;color:var(--lavender)}
+.ab-final p{font-size:14px;color:var(--grey);line-height:1.85;max-width:560px;margin:0 auto 40px}
+/* RESPONSIVE */
+@media(max-width:900px){
+  .ab-scope-grid,.ab-aria-grid,.ab-hdc-grid{grid-template-columns:1fr}
+  .ab-tools-grid{grid-template-columns:1fr}
+  .ab-for-grid{grid-template-columns:1fr}
+}
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#6366f1,#7c3aed);border-radius:2px}
+/* FADE IN */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.ab-hero-content>*{animation:fadeUp .6s ease both}
+.ab-hero-content>*:nth-child(1){animation-delay:.1s}
+.ab-hero-content>*:nth-child(2){animation-delay:.2s}
+.ab-hero-content>*:nth-child(3){animation-delay:.3s}
+.ab-hero-content>*:nth-child(4){animation-delay:.4s}
+.ab-hero-content>*:nth-child(5){animation-delay:.5s}
+</style>
 </head>
 <body>
 
-  <div class="sidebar">
-    <div class="logo" onclick="window.location.href='dashboard.html'">
-      <div class="logo-dot"></div>
-      <div><div class="logo-name">Virorah</div><div class="logo-sub">Vantage</div></div>
-    </div>
-    <a href="dashboard.html" class="nav-item"><span class="nav-icon">⊞</span>Dashboard</a>
-    <a href="https://humacity.com" class="nav-item" target="_blank"><span class="icon">&#x1F300;</span> Humacity</a>
+<nav class="nav">
+  <a href="index.html" class="nav-brand"><img src="favicon.png" alt="Virorah Vantage"/></a>
+  <a href="index.html" class="nav-back">&#8592; Back to Vantage</a>
+  <a href="access.html" class="nav-cta">Sign In &#8599;</a>
+</nav>
 
-    <div class="nav-section">Your Foundation</div>
-    <a href="onboarding.html" class="nav-item"><span class="icon">&#x2B21;</span> MERIDIAN Profile</a>
-    <a href="humac-onboarding.html" class="nav-item" id="nav-humac"><span class="icon">&#x1F4C8;</span> Humac Score</a>
-    <div class="nav-section">Your Active Tools</div>
-    <a href="employee-case-advisor.html" class="nav-item"><span class="icon">&#x26A1;</span> Employee Case Advisor</a>
-    <a href="people-roi-brief.html" class="nav-item"><span class="icon">&#x1F4CA;</span> People ROI Brief</a>
-    <a href="leadership-communicator.html" class="nav-item"><span class="icon">&#x1F3AF;</span> Leadership Communicator</a>
-    <a href="difficult-conversations.html" class="nav-item"><span class="icon">&#x1F3AD;</span> Difficult Conversations</a>
-    <a href="policy-advisor.html" class="nav-item"><span class="icon">&#x1F9ED;</span> Policy Advisor</a>
-    <a href="retention-advisor.html" class="nav-item"><span class="icon">&#x2696;&#xFE0F;</span> Retention Advisor</a>
-    <a href="aria.html" class="nav-item"><span class="icon">&#x2736;</span> ARIA</a>
-    <div class="nav-section">Your Record</div>
-    <a href="vantage-record.html" class="nav-item"><span class="icon">&#x25CE;</span> Vantage Record</a>
-    <a href="standpoint.html" class="nav-item"><span class="icon">&#x1F4DC;</span> Standpoint</a>
-    <a href="debrief.html" class="nav-item"><span class="icon">&#x1F4CB;</span> The Debrief</a>
-        <div class="nav-section">Account</div>
-    <a href="pricing.html" class="nav-item"><span class="icon">&#x1F4B0;</span> Pricing</a>
-    <a href="data-dashboard.html" class="nav-item"><span class="icon">&#x1F512;</span> Data &amp; Privacy</a>
-    <div class="nav-section">Legal</div>
-    <a href="terms.html" class="nav-item"><span class="icon">&#x1F4C4;</span> Terms of Service</a>
-    <a href="privacy.html" class="nav-item"><span class="icon">&#x1F512;</span> Privacy Policy</a>
-    <a href="#" class="nav-item" onclick="clerkSignOut();return false;" style="margin-top:8px;border-top:1px solid rgba(99,102,241,.1);padding-top:14px;"><span class="icon">&#x21A9;</span> Sign out</a>
-    <div class="meridian-chip">
-      <div class="ml">MERIDIAN Active</div>
-      <div class="mv" id="mcv">—</div>
+<canvas class="ab-stars" id="abStars"></canvas>
+
+<!-- HERO -->
+<section class="ab-hero">
+  <div class="ab-hero-bg"></div>
+  <div class="ab-hero-content">
+    <span class="ab-eyebrow">VIRORAH VANTAGE &mdash; WHAT IT IS AND WHAT IT DOES</span>
+    <h1>The professional intelligence system for<br><em>the employment relationship.</em></h1>
+    <p class="ab-hero-def">Not all of HR. Not recruitment pipelines, training budgets, or payroll runs. The decisions that sit at the intersection of law, people, and money — the ones where getting it wrong has a <strong>financial and legal cost</strong> that someone has to answer for. That is what Vantage is built for.</p>
+    <div class="ab-hero-actions">
+      <a href="demo.html" class="ab-btn-primary">Try the Demo &rarr;</a>
+      <a href="access.html" class="ab-btn-ghost">Sign In &#8599;</a>
     </div>
   </div>
+</section>
 
-  <div class="main">
-    <div class="content">
+<!-- WHAT VANTAGE COVERS -->
+<section class="ab-section" id="scope">
+  <span class="ab-section-label">01 / SCOPE</span>
+  <h2>The employment relationship &mdash;<br><em>in its full complexity.</em></h2>
+  <p class="ab-section-lede">The moment someone joins your organisation until the moment they leave — every decision in between that carries legal exposure, financial consequence, or stakeholder risk. That is the zone Vantage operates in.</p>
 
-      <!-- HERO -->
-      <div class="hero">
-        <div class="hero-eyebrow">About Vantage</div>
-        <h1 class="hero-title" id="hero-title">This is what a day looks like <span>when Vantage is behind you.</span></h1>
-        <p class="hero-sub" id="hero-sub">Not a feature list. A walk through an ordinary working day — the moments that already exist in your calendar, and what changes when you have this platform in the room with you.</p>
-      </div>
+  <div class="ab-scope-grid">
+    <div class="ab-scope-copy">
+      <p>Most HR tools try to cover all of HR. Vantage doesn't. It covers the part that requires the most professional judgment, carries the highest financial and legal stakes, and produces — when handled well — the kind of evidence that changes how an HR professional is perceived in any room they walk into.</p>
+      <p>That part is the <strong>employment relationship</strong>. The live, ongoing relationship between an employer and the people already inside the organisation. Every disciplinary process. Every at-risk conversation. Every moment where the line between a good outcome and an expensive tribunal starts to matter.</p>
+      <p>Vantage doesn't touch talent acquisition — that's the pipeline before someone joins. It doesn't touch L&D programme design — that's the curriculum after they're settled. It doesn't do payroll, HRIS configuration, or compensation benchmarking. These are deliberate choices, not limitations. The employment relationship is complex enough to deserve a platform built entirely around it.</p>
+      <p style="font:italic 600 16px/1.5 var(--display);color:rgba(244,243,255,.82);margin-top:8px">Five capabilities. One zone of consequence. Every decision documented.</p>
+    </div>
 
-      <!-- DAY STORY -->
-      <div class="story-section">
-        <div class="section-label">A Day With Vantage</div>
-        <h2 class="section-title">Nothing here is hypothetical. This is your desk.</h2>
-        <p class="section-sub">Five moments, the kind that already show up in your week. Where we can, we're pulling your own numbers into the story — not a demo account's.</p>
-
-        <div class="story-beat">
-          <div class="story-time">9:14 AM</div>
-          <div class="story-body">
-            <div class="story-text">Someone mentions, almost in passing, that they have "an offer to think about." No letter, no number, definitely not the company name. You have to ask twice before they even confirm it is real. Once they do, you already know the replacement cost and the break-even ceiling — so the conversation is about them, not about extracting details out of them.</div>
-            <a href="retention-advisor.html" class="story-tool-link">⚖️ Offer Intelligence →</a>
-          </div>
+    <div class="ab-scope-visual">
+      <div class="ab-scope-tag">VANTAGE COVERAGE SCOPE</div>
+      <div class="ab-timeline-wrap">
+        <div class="ab-tl-bar">
+          <div class="ab-tl-zone"></div>
+          <div class="ab-tl-glow"></div>
         </div>
-
-        <div class="story-beat">
-          <div class="story-time">11:20 AM</div>
-          <div class="story-body">
-            <div class="story-text">The BU Head wants to skip the process on a termination. You run it through <b>PACT</b> in four minutes — Process, Accountability, Consequence, Trust — and you walk into his office with the legal exposure already calculated, not guessed at.</div>
-            <a href="employee-case-advisor.html" class="story-tool-link">⚡ ER Case Navigator →</a>
-          </div>
+        <div class="ab-tl-labels">
+          <div class="ab-tl-label">RECRUITMENT<br>&amp; HIRE</div>
+          <div class="ab-tl-label ab-tl-active">JOIN<br>DAY 1</div>
+          <div class="ab-tl-label ab-tl-active">ACTIVE<br>EMPLOYMENT</div>
+          <div class="ab-tl-label ab-tl-active">ER CASES &amp;<br>DECISIONS</div>
+          <div class="ab-tl-label ab-tl-active">EXIT<br>PROCESS</div>
+          <div class="ab-tl-label">POST<br>EXIT</div>
         </div>
-
-        <div class="story-beat">
-          <div class="story-time">1:00 PM</div>
-          <div class="story-body">
-            <div class="story-text" id="humac-beat-text">Someone asks how the org is actually doing, beyond the anecdotes. There is an answer for that — the <b>Humac Score</b>, built from five pillars that combine into a two-number result (Raw and HCI-adjusted), measuring how efficiently this organisation converts people investment into value. <span id="humac-beat-live"></span></div>
-            <a href="humac-onboarding.html" class="story-tool-link" id="humac-beat-cta">📈 See your Humac Score →</a>
-          </div>
-        </div>
-
-        <div class="story-beat">
-          <div class="story-time">3:30 PM</div>
-          <div class="story-body">
-            <div class="story-text">You disagree with a decision leadership is about to make, and you already know how this ends in six weeks. Rather than argue, you document it — timestamped, financially specific — and move on.</div>
-            <span id="ledger-beat-live" style="display:inline-flex;margin-bottom:8px"></span><br>
-            <a href="standpoint.html" class="story-tool-link">📜 The Ledger →</a>
-          </div>
-        </div>
-
-        <div class="story-beat">
-          <div class="story-time">6:40 PM</div>
-          <div class="story-body">
-            <div class="story-text">On the drive home, you talk through what actually happened today — not to a chatbot, to something that asks the next question before you've finished the first thought.</div>
-            <a href="aria.html" class="story-tool-link">✦ Talk to ARIA →</a>
-          </div>
+        <div class="ab-tl-center">
+          <span class="ab-tl-zone-label">&#x25CF; VANTAGE OPERATES HERE</span>
         </div>
       </div>
-
-      <div class="divider"></div>
-
-      <!-- FLAGSHIP DEEP-DIVES -->
-      <div class="section">
-        <div class="section-label">What Nothing Else Does</div>
-        <h2 class="section-title">Two tools nothing else in Indian HR tech has. One system that remembers what you said before anyone else does.</h2>
-
-        <div class="flagship-block fb-01">
-          <div class="fb-eyebrow">Core Tool · Entry Point</div>
-          <div class="fb-title">⚡ ER Case Navigator</div>
-          <div class="fb-body">Every ER situation gets two layers, always, no exceptions. The PACT diagnostic scans Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation in under a minute. Then the seven-section Decision Protocol gives you the legal position, the exact financial exposure in INR, the MERIDIAN-calibrated context, and the specific language to use — with the stakeholder you're about to talk to, not a generic script.</div>
-          <a href="employee-case-advisor.html" class="fb-cta">Open ER Case Navigator →</a>
-        </div>
-
-        <div class="flagship-block fb-02">
-          <div class="fb-eyebrow">Core Tool · Retention Decisions</div>
-          <div class="fb-title">⚖️ Offer Intelligence</div>
-          <div class="fb-body">The counter-offer decision that used to be a gut call now has a break-even ceiling attached to it. Two flows: a live resignation with a competing offer in hand, or a proactive flight-risk read before anything's been said out loud. Either way, you get the replacement cost, the retention cost at three match levels, a flagged primary recommendation, and two scripts — one for the BU Head, one for the employee.</div>
-          <a href="retention-advisor.html" class="fb-cta">Open Offer Intelligence →</a>
-        </div>
-
-        <p class="section-sub" style="margin-top:8px;margin-bottom:20px">Those two are tools — you feed them a situation, they give you an analysis. What comes next is not a tool. It lives in <b style="color:#f4f3ff">My Record</b>, alongside your Humac Score and Case Library, and it is the one Vantage feature that talks back to you months after you use it.</p>
-
-        <div class="flagship-block fb-03">
-          <div class="fb-eyebrow">My Record · The System That Remembers</div>
-          <div class="fb-title">📜 The Ledger</div>
-          <div class="fb-body">HR gets overruled and then gets blamed six months later when the overruled path fails. The Ledger flips that. File your position, the financial basis, and your prediction before the decision goes the other way. Six weeks or six months on, close the loop and see who the outcome actually vindicated. Not a confrontation. A timestamped professional record that speaks for itself.</div>
-          <div class="fb-live" id="ledger-fb-live">Loading your Ledger record…</div>
-          <a href="standpoint.html" class="fb-cta">Open The Ledger →</a>
+      <div class="ab-caps-grid">
+        <div class="ab-cap"><div class="ab-cap-dot"></div><span>ER CASE MANAGEMENT</span></div>
+        <div class="ab-cap"><div class="ab-cap-dot"></div><span>PEOPLE ECONOMICS</span></div>
+        <div class="ab-cap"><div class="ab-cap-dot"></div><span>STAKEHOLDER INFLUENCE</span></div>
+        <div class="ab-cap"><div class="ab-cap-dot"></div><span>POLICY COMPLIANCE</span></div>
+        <div class="ab-cap"><div class="ab-cap-dot"></div><span>ORG VITALS</span></div>
+        <div class="ab-cap"><div class="ab-cap-dot"></div><span>HR DECISION CAPITAL</span></div>
+      </div>
+      <div class="ab-out-row">
+        <span class="ab-out-label">OUTSIDE VANTAGE</span>
+        <div class="ab-out-tags">
+          <span class="ab-out-tag">TALENT ACQUISITION</span>
+          <span class="ab-out-tag">L&amp;D</span>
+          <span class="ab-out-tag">PAYROLL</span>
+          <span class="ab-out-tag">HRIS</span>
+          <span class="ab-out-tag">COMP BENCHMARKING</span>
         </div>
       </div>
-
-      <div class="divider"></div>
-
-      <!-- SUPPORTING TOOLS -->
-      <div class="section">
-        <div class="section-label">The Rest Of The System</div>
-        <h2 class="section-title">Five more — seven tools in total, every one calibrated to your MERIDIAN.</h2>
-        <div class="supporting-grid">
-          <a href="people-roi-brief.html" class="sc-card">
-            <div class="sc-icon">📊</div>
-            <div class="sc-name">HR Data Storyteller</div>
-            <div class="sc-desc">Turns raw metrics into a Boardroom, CFO, and CEO version of the same story — with Revenue at Risk attached.</div>
-          </a>
-          <a href="leadership-communicator.html" class="sc-card">
-            <div class="sc-icon">🎯</div>
-            <div class="sc-name">Stakeholder Influence</div>
-            <div class="sc-desc">The five-layer INFLUENCE Stack. Makes saying no the riskier decision, without a single question mark in the closing line.</div>
-          </a>
-          <a href="policy-advisor.html" class="sc-card">
-            <div class="sc-icon">🧭</div>
-            <div class="sc-name">Policy Compass</div>
-            <div class="sc-desc">BNS, BNSS, BSA, POSH, state-specific compliance — precise, never a disclaimer machine.</div>
-          </a>
-          <a href="difficult-conversations.html" class="sc-card">
-            <div class="sc-icon">🎭</div>
-            <div class="sc-name">Conversation Simulator</div>
-            <div class="sc-desc">Rehearse the hard conversation before you have it, at a difficulty that actually pushes back.</div>
-          </a>
-          <a href="aria.html" class="sc-card">
-            <div class="sc-icon">✦</div>
-            <div class="sc-name">ARIA</div>
-            <div class="sc-desc">Case Partner, Conversation Coach, Reflection. One question at a time, never a lecture.</div>
-          </a>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- HUMAC FRAMEWORK -->
-      <div class="section">
-        <div class="section-label">The Framework Nobody Else Has Built</div>
-        <h2 class="section-title">Two of these five pillars did not exist in HR before Vantage. We are introducing them here, for the first time.</h2>
-        <p class="section-sub">This is not a scorecard borrowed from somewhere else and rebadged. Five pillars combine into a two-number score — Raw and HCI-adjusted — with a Trajectory Index that shows where you're heading over time. Every tool on this platform ultimately reports into these five pillars.</p>
-
-        <div class="manifesto-block">
-          <div class="manifesto-text">HR has always had fragments of financial data — an exit cost here, a training budget there. Nobody had put a name on the shadow P&L that HR decisions actually create, or treated institutional knowledge as a balance sheet line item with a real number attached. <b>Human P&L and Human Balance Sheet are original categories.</b> They do not exist in any accounting standard, any HR framework, or any competitor's product. We built them because the cost was always real. It just never had anywhere to live.</div>
-        </div>
-
-        <div class="humac-live-card" id="humac-live-card">
-          <div class="hlc-label">Your Humac Score</div>
-          <div id="humac-live-content">Loading…</div>
-        </div>
-
-        <div class="pillar-xl">
-          <div class="pxl-top"><span class="pxl-code">L1</span><span class="pxl-name">Value Ledger</span></div>
-          <div class="pxl-desc">The total financial cost and return of attrition, hiring, and retention — the numbers that already exist somewhere in your organisation, scattered across a dozen spreadsheets nobody has ever put in one place. Replacement cost, productivity gap, knowledge transfer loss, all of it, finally added up.</div>
-        </div>
-
-        <div class="pillar-xl">
-          <div class="pxl-top"><span class="pxl-code">L2</span><span class="pxl-name">Talent Premium</span></div>
-          <div class="pxl-desc">The gap between what a Star performer costs and what they actually return, measured against baseline — and, just as precisely, what an Inconsistent Performer is quietly costing you below it. Most organisations feel this gap. Almost none of them can put a number on it.</div>
-        </div>
-
-        <div class="pillar-xl">
-          <div class="pxl-top"><span class="pxl-code">L3</span><span class="pxl-name">Org Vitals</span></div>
-          <div class="pxl-desc">Eight signals, not a survey. Four ask whether leadership is stable, the org is free of disruption, culture is not in crisis, and strategic priorities are on track — these double as the inputs to your HCI coefficient elsewhere in the score. Four more ask whether managers run real 1:1s, frontline can explain a leadership decision within a week, HR flags risk before it becomes a crisis, and projects land on time. The pulse that tells you something is wrong months before the exit interview does.</div>
-        </div>
-
-        <div class="pillar-xl invented">
-          <div class="pxl-top"><span class="pxl-code">L4</span><span class="pxl-name">Human P&amp;L</span><span class="pxl-badge">Original Concept</span></div>
-          <div class="pxl-desc">Every CFO has a Profit and Loss statement. None of them have this one — the financial account of every people decision that never appears on the official P&amp;L but gets paid for anyway: HR programme costs, compliance spend, legal exposure from a termination handled badly, the below-the-line drag that shows up in the results without ever showing up in the report.</div>
-          <div class="pxl-note">This category did not exist in HR or accounting practice before Vantage. It exists now because the cost was always there, whether anyone was counting it or not.</div>
-        </div>
-
-        <div class="pillar-xl invented">
-          <div class="pxl-top"><span class="pxl-code">L5</span><span class="pxl-name">Human Balance Sheet</span><span class="pxl-badge">Original Concept</span></div>
-          <div class="pxl-desc">Your organisation's balance sheet has line items for property, equipment, and receivables. It has nothing for the institutional knowledge that walks out the door when a fifteen-year employee retires, the succession depth that determines whether the business survives a key departure, or the talent concentration risk sitting quietly in one team. This pillar gives those things a number.</div>
-          <div class="pxl-note">The first framework to treat institutional knowledge and succession depth as literal balance sheet assets and liabilities, not soft HR language.</div>
-        </div>
-
-        <p class="section-sub" style="margin-top:10px">If this sounds like it should already exist somewhere in HR practice — it doesn't. That's the point. HR has been asked for years to "think like a business." Nobody built the ledger that would let it. This is that ledger.</p>
-      </div>
-
-      <!-- CLOSING -->
-      <div class="closing-block">
-        <div class="closing-text">"You are already in the room. Vantage gives you what you need to own it."</div>
-      </div>
-
-      <!-- FOOTER -->
-      <div class="about-footer">
-        <span class="af-brand">A VIRORAH PRODUCT · VANTAGE v1.0 · INDIA</span>
-        <div style="display:flex;gap:20px">
-          <a href="https://virorah.com" class="af-link" target="_blank">virorah.com ↗</a>
-          <a href="https://humacity.com" class="af-link" target="_blank">humacity.com ↗</a>
-        </div>
-      </div>
-
     </div>
   </div>
+</section>
 
-  <script>
-    var BASE = 'https://vantage.virorah.com/';
-    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+<!-- THE TOOLS -->
+<section class="ab-section" id="tools">
+  <span class="ab-section-label">02 / THE TOOLS</span>
+  <h2>Six tools and ARIA.<br><em>Each one built for a specific moment.</em></h2>
+  <p class="ab-section-lede">Each tool in Vantage is its own structured intelligence engine — its own frameworks, its own financial models, its own legal calibration. ARIA is different in kind. She thinks with you. The tools think for the situation.</p>
 
-    if (sessionStorage.getItem('sr_access') !== 'true') {
-      window.location.href = BASE + 'access.html';
-    }
+  <div class="ab-tools-grid">
+    <div class="ab-tool">
+      <div class="ab-tool-icon">&#x26A1;</div>
+      <div class="ab-tool-name">Employee Case Advisor</div>
+      <div class="ab-tool-when">USE WHEN: You have an ER situation with legal stakes</div>
+      <div class="ab-tool-scenario">A manager wants to terminate a 5-year employee with no written warning on file. You describe the situation. The Case Advisor runs the PACT diagnostic — process gaps, accountability clarity, consequence mapping, trust impact — and gives you the exact legal position, the financial exposure in INR, what documentation you need today, and the recommended path forward. <em>Not a template. A structured decision.</em></div>
+    </div>
+    <div class="ab-tool">
+      <div class="ab-tool-icon">&#x1F4CA;</div>
+      <div class="ab-tool-name">People ROI Brief</div>
+      <div class="ab-tool-when">USE WHEN: You have HR numbers that need to become a business argument</div>
+      <div class="ab-tool-scenario">Your attrition jumped from 14% to 22% in one quarter. You need ₹22L approved for a retention programme. The People ROI Brief converts your metrics into a CFO-grade financial narrative — revenue at risk, cost per departure, sector benchmark comparison, and three audience-specific versions: boardroom, CFO, CEO. <em>You walk in with a rupee figure, not an HR report.</em></div>
+    </div>
+    <div class="ab-tool">
+      <div class="ab-tool-icon">&#x1F3AF;</div>
+      <div class="ab-tool-name">Leadership Communicator</div>
+      <div class="ab-tool-when">USE WHEN: You need a specific person to take a specific action</div>
+      <div class="ab-tool-scenario">You need your VP Engineering to approve a counter-offer before Friday. She responds to financial risk, not people narratives. The Leadership Communicator builds the five-layer influence stack — credibility anchor, data anchor, narrative bridge, risk mirror, decision runway — calibrated to how that specific stakeholder thinks. <em>Opening line, closing line, and everything in between.</em></div>
+    </div>
+    <div class="ab-tool">
+      <div class="ab-tool-icon">&#x1F3AD;</div>
+      <div class="ab-tool-name">Difficult Conversations</div>
+      <div class="ab-tool-when">USE WHEN: The conversation tomorrow feels high-stakes</div>
+      <div class="ab-tool-scenario">You have to tell a line manager that his star performer is leaving and he contributed to it. ARIA plays the manager — resistant, defensive, not ready to hear it. You practice the conversation until the argument lands cleanly and you've heard every form of pushback before the real meeting. <em>Not a script. A rehearsal that makes the real thing easier to navigate.</em></div>
+    </div>
+    <div class="ab-tool">
+      <div class="ab-tool-icon">&#x1F9ED;</div>
+      <div class="ab-tool-name">Policy Advisor</div>
+      <div class="ab-tool-when">USE WHEN: The policy is unclear or you're not sure what applies</div>
+      <div class="ab-tool-scenario">A manager asks if he can extend a fixed-term contract employee's probation. You don't know if your Standing Orders cover it. The Policy Advisor gives you the applicable law, the specific section, what your state's rules say, and the recommended path — in plain language, without needing a lawyer on speed dial. <em>Three paragraphs. Cited. Actionable today.</em></div>
+    </div>
+    <div class="ab-tool">
+      <div class="ab-tool-icon">&#x2696;&#xFE0F;</div>
+      <div class="ab-tool-name">Retention Advisor</div>
+      <div class="ab-tool-when">USE WHEN: Someone might leave and the cost isn't clear yet</div>
+      <div class="ab-tool-scenario">Your senior data architect just got a 35% offer from a competitor. She's been here four years and owns half the platform's institutional knowledge. The Retention Advisor models the full replacement cost — recruitment, ramp time, knowledge transfer — against the cost of matching or exceeding the offer, and gives you the break-even ceiling, the recommended position, and the exact language for both conversations. <em>Walk in knowing your number before they ask for theirs.</em></div>
+    </div>
+    <div class="ab-tool" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(124,58,237,.06));border-color:rgba(99,102,241,.3)">
+      <div class="ab-tool-icon">&#x2736;</div>
+      <div class="ab-tool-name">ARIA &mdash; Your HR Intelligence Companion</div>
+      <div class="ab-tool-when">DIFFERENT IN KIND &mdash; NOT A STRUCTURED TOOL. A THINKING PARTNER.</div>
+      <div class="ab-tool-scenario">The six tools above give you structured outputs for specific situations. ARIA is the one you talk to when the situation is still messy. When you don't know which tool to reach for. When you're processing a difficult week. When you want to think out loud at 9pm and have someone who understands the Indian HR professional reality ask you the question you hadn't thought to ask yourself. She doesn't produce a formatted output. She listens, reflects, and moves your thinking forward — one question at a time. <em>The tools think for the situation. ARIA thinks with you.</em></div>
+    </div>
+  </div>
+</section>
 
-    var mr = sessionStorage.getItem('sr_meridian');
-    var meridian = mr ? JSON.parse(mr) : {};
-    document.getElementById('mcv').innerText = (meridian.state || 'Not set') + ' \u00b7 ' + (meridian.industry || 'Not set');
+<!-- ARIA CLARIFICATION -->
+<section class="ab-section" id="aria">
+  <span class="ab-section-label">03 / ARIA</span>
+  <h2>ARIA does not power<br><em>the other tools.</em></h2>
+  <p class="ab-section-lede">This is one of the most common questions we get. The answer matters because it changes how you use Vantage.</p>
 
-    // Personalize hero if MERIDIAN industry is known
-    if (meridian.industry) {
-      document.getElementById('hero-sub').innerText = 'Not a feature list. A walk through an ordinary working day in ' + meridian.industry + ' HR \u2014 the moments that already exist in your calendar, and what changes when you have this platform in the room with you.';
-    }
+  <div class="ab-aria-grid">
+    <div class="ab-aria-copy">
+      <p>Each Vantage tool — the Employee Case Advisor, the People ROI Brief, the Policy Advisor, all of them — is its own structured intelligence engine. Each has its own diagnostic framework, its own financial model, its own legal calibration specific to Indian employment law. When you use the Employee Case Advisor, you are not having a conversation with ARIA. You are running a structured protocol that produces a formatted output every time.</p>
+      <p>ARIA is different in kind, not just in name. She is your <strong>conversational professional companion</strong>. The one you talk to when the situation is too messy for a structured tool. When you don't know what you're dealing with yet. When you're at 9pm and the call tomorrow morning is in your head and you need to think, not process.</p>
+      <p>The tools give you answers. ARIA helps you figure out what you're actually asking.</p>
+      <p style="font:italic 600 18px/1.4 var(--display);color:rgba(244,243,255,.8);margin-top:4px">"Each Vantage tool is its own intelligence engine. ARIA is the one that thinks with you — not for you."</p>
+    </div>
+    <div class="ab-aria-card">
+      <div class="ab-aria-orb">&#x2736;</div>
+      <div class="ab-aria-quote">"Somewhere between the situation and the decision — ARIA sits in that space."</div>
+      <div class="ab-aria-distinction">
+        <div class="ab-aria-row">
+          <div class="ab-aria-row-icon">&#x1F4CB;</div>
+          <div class="ab-aria-row-text">
+            <span class="ab-aria-row-label">THE SIX TOOLS</span>
+            <div class="ab-aria-row-desc">Structured inputs → structured outputs. A formatted decision, legal position, financial model, or influence stack. Built for situations you can name.</div>
+          </div>
+        </div>
+        <div class="ab-aria-row" style="border-color:rgba(99,102,241,.25);background:rgba(99,102,241,.06)">
+          <div class="ab-aria-row-icon">&#x2736;</div>
+          <div class="ab-aria-row-text">
+            <span class="ab-aria-row-label" style="color:#a5b4fc">ARIA</span>
+            <div class="ab-aria-row-desc">A conversation. One question at a time. For situations that are still forming — when you don't know what you need yet, or when you need to think out loud before the real conversation.</div>
+          </div>
+        </div>
+        <div class="ab-aria-row">
+          <div class="ab-aria-row-icon">&#x1F3AD;</div>
+          <div class="ab-aria-row-text">
+            <span class="ab-aria-row-label">ARIA IN DIFFICULT CONVERSATIONS</span>
+            <div class="ab-aria-row-desc">The one exception where ARIA and a structured tool overlap: ARIA plays the other person so you can practice a high-stakes conversation before it's real. She stays in character. She pushes back. She gives you the difficult version before you face the real one.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    function formatINR(n) {
-      if (!n && n !== 0) return null;
-      n = Math.round(Number(n));
-      if (n >= 10000000) return '\u20b9' + (n/10000000).toFixed(2) + 'Cr';
-      if (n >= 100000) return '\u20b9' + (n/100000).toFixed(1) + 'L';
-      if (n >= 1000) return '\u20b9' + (n/1000).toFixed(0) + 'K';
-      return '\u20b9' + n;
-    }
+<!-- HR DECISION CAPITAL -->
+<section class="ab-section" id="capital">
+  <span class="ab-section-label">04 / HR DECISION CAPITAL</span>
+  <h2>The number your HR career<br><em>has never been able to produce.</em></h2>
+  <p class="ab-section-lede">Every HR professional knows what they've done. Almost none of them can prove it — in rupees, with evidence attached.</p>
 
-    async function callWorker(payload, token) {
-      var res = await fetch(WORKER, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': 'Bearer ' + token } : {}) },
-        body: JSON.stringify(payload)
-      });
-      return res.json();
-    }
+  <div class="ab-hdc-grid">
+    <div class="ab-hdc-copy">
+      <p>When you navigate a termination risk that carried a ₹14L tribunal exposure and handled it correctly — that's documented. When you retained someone whose departure would have cost ₹34L to replace — that's documented. When you landed the ₹22L retention programme business case in a room full of CFO scepticism — that's documented.</p>
+      <p>HR Decision Capital is the sum of all of it. Every case you navigated on Vantage, every financial exposure you handled, every business case you landed — converted into a single cumulative figure that tells the financial story of your HR practice.</p>
+      <p>It is not your salary. It is not your job title. It is the documented financial impact of your professional judgment — specific to the employment relationship, where that judgment is most exposed and most consequential.</p>
+      <p><strong>It is computed from three components:</strong></p>
+      <p>Financial exposure navigated — the INR ranges from every PACT case, at midpoint. Retention value protected — the replacement cost avoided from every flight risk you managed. Business cases landed — the programmes approved because of your People ROI Brief.</p>
+      <p>A first year on Vantage builds a number. Three years builds a career argument. Five years builds something no other HR professional in India can produce — a financially quantified, timestamped, defensible record of what your professional practice is actually worth.</p>
+      <p style="font:italic 600 17px/1.4 var(--display);color:rgba(244,243,255,.8)">At your next job interview, walk in with this number. Most HR professionals bring opinions. You bring receipts.</p>
+    </div>
+    <div class="ab-hdc-card">
+      <div class="ab-hdc-label">HR DECISION CAPITAL &mdash; ILLUSTRATIVE EXAMPLE</div>
+      <div class="ab-hdc-number">&#x20B9;18.4L</div>
+      <div class="ab-hdc-sublabel">Documented value of your employment relations practice</div>
+      <div class="ab-hdc-breakdown">
+        <div class="ab-hdc-row">
+          <span class="ab-hdc-row-label">FINANCIAL EXPOSURE NAVIGATED</span>
+          <span class="ab-hdc-row-val">&#x20B9;11.2L</span>
+        </div>
+        <div class="ab-hdc-row">
+          <span class="ab-hdc-row-label">RETENTION VALUE PROTECTED</span>
+          <span class="ab-hdc-row-val">&#x20B9;5.6L</span>
+        </div>
+        <div class="ab-hdc-row">
+          <span class="ab-hdc-row-label">BUSINESS CASES LANDED</span>
+          <span class="ab-hdc-row-val">&#x20B9;1.6L</span>
+        </div>
+      </div>
+      <p class="ab-hdc-note">Computed from financial exposure navigated, retention value protected, and business cases landed — across all documented cases on Vantage. Covers ER case management, people economics, and stakeholder influence. Does not include talent acquisition or L&D outcomes — by design.</p>
+    </div>
+  </div>
+</section>
 
-    function renderHumacLive(data) {
-      var beatLive = document.getElementById('humac-beat-live');
-      var beatCta = document.getElementById('humac-beat-cta');
-      var card = document.getElementById('humac-live-content');
+<!-- WHO IT'S FOR -->
+<section class="ab-section" id="for">
+  <span class="ab-section-label">05 / WHO IT&rsquo;S FOR</span>
+  <h2>Built for Indian HR professionals<br><em>at every level of the game.</em></h2>
+  <p class="ab-section-lede">Vantage is designed for the HR professional who makes decisions that carry consequence — not for teams that process requests.</p>
 
-      if (data && data.humac) {
-        var band = data.band || 'Stable';
-        beatLive.innerHTML = 'Yours right now: <b>' + data.humac + '</b> \u2014 ' + band + '.';
-        beatCta.innerHTML = '\ud83d\udcc8 See the full breakdown \u2192';
-        card.innerHTML =
-          '<div class="hlc-score-row"><div class="hlc-score">' + data.humac + '</div><div class="hlc-band">' + band + '</div></div>' +
-          '<div class="hlc-sub">HCI-adjusted: ' + (data.hciAdj || data.humac) + '</div>' +
-          '<div class="pillar-live-scores">' +
-            '<span class="pls-chip">L1 Value Ledger <b>' + (data.l1||0) + '</b></span>' +
-            '<span class="pls-chip">L2 Talent Premium <b>' + (data.l2||0) + '</b></span>' +
-            '<span class="pls-chip">L3 Org Vitals <b>' + (data.l3||0) + '</b></span>' +
-            '<span class="pls-chip">L4 Human P&amp;L <b>' + (data.l4||0) + '</b></span>' +
-            '<span class="pls-chip">L5 Human Balance Sheet <b>' + (data.l5||0) + '</b></span>' +
-          '</div>' +
-          '<a href="humac-onboarding.html" class="hlc-cta">Update your score \u2192</a>';
-      } else {
-        beatLive.innerHTML = 'You have not generated your Humac Score yet \u2014 it takes about four minutes.';
-        beatCta.innerHTML = '\ud83d\udcc8 Generate your Humac Score \u2192';
-        card.innerHTML =
-          '<div class="hlc-sub">You have not generated your Humac Score yet. Eighteen questions, four minutes \u2014 your answers build the five pillar scores below, which combine into a two-number result: Raw Humac and HCI-adjusted.</div>' +
-          '<a href="humac-onboarding.html" class="hlc-cta">Generate it now \u2192</a>';
-      }
-    }
+  <div class="ab-for-grid">
+    <div class="ab-for-card">
+      <div class="ab-for-role">HR Manager</div>
+      <div class="ab-for-context">100–500 PERSON ORG &middot; GENERALIST OR ER FOCUS</div>
+      <div class="ab-for-gets">You handle everything. ER cases, policy queries, manager hand-holding, and no one to escalate to. Vantage gives you the legal position, the financial exposure, and the recommended path — so you stop second-guessing and start building a record that proves your value when appraisal season arrives.</div>
+    </div>
+    <div class="ab-for-card">
+      <div class="ab-for-role">Senior HR / HRBP</div>
+      <div class="ab-for-context">500–2,000 PERSON ORG &middot; BUSINESS PARTNER ROLE</div>
+      <div class="ab-for-gets">You sit in the business. You need to influence without authority and translate HR decisions into language that lands with finance and operations. Vantage builds the business case, the stakeholder argument, and the financial narrative — so you stop being the HR person in the room and start being the person with the numbers.</div>
+    </div>
+    <div class="ab-for-card">
+      <div class="ab-for-role">HR Head / VP HR</div>
+      <div class="ab-for-context">ANY ORG SIZE &middot; STRATEGIC LEADERSHIP ROLE</div>
+      <div class="ab-for-gets">The legal and financial complexity of your decisions has grown faster than your team's capability to document and defend them. Vantage calibrates every output to your specific org context — size, state, union status, seniority — and builds the kind of documented record that matters in boardrooms, audits, and across the lifetime of your career.</div>
+    </div>
+  </div>
+</section>
 
-    function renderLedgerLive(entries) {
-      var beatLive = document.getElementById('ledger-beat-live');
-      var fbLive = document.getElementById('ledger-fb-live');
-      var total = entries.length;
-      var resolved = entries.filter(function(e){ return e.status === 'Resolved'; }).length;
-      var vindicated = entries.filter(function(e){ return e.vindication === 'HR Position Vindicated'; }).length;
+<!-- YOUR FIRST 90 DAYS -->
+<section class="ab-section" id="journey">
+  <span class="ab-section-label">06 / YOUR FIRST 90 DAYS</span>
+  <h2>What Vantage builds for you<br><em>without you trying to build it.</em></h2>
+  <p class="ab-section-lede">The record starts accumulating from Day 1. Here is what 90 days on Vantage actually looks like.</p>
 
-      if (total > 0) {
-        beatLive.innerHTML = '<span class="live-chip"><span class="live-dot"></span>You already have ' + total + ' position' + (total !== 1 ? 's' : '') + ' filed' + (resolved > 0 ? ', ' + resolved + ' resolved' : '') + '.</span>';
-        fbLive.innerHTML = 'Your record so far: <b>' + total + '</b> filed, <b>' + resolved + '</b> resolved' + (vindicated > 0 ? ', <b>' + vindicated + '</b> where you were proven right.' : '.');
-      } else {
-        beatLive.innerHTML = '<span class="live-chip pending"><span class="live-dot"></span>You have not filed a position yet.</span>';
-        fbLive.innerHTML = 'You have not filed a position yet. The next time leadership overrules a recommendation, this is where you put it in writing \u2014 before anyone finds out who was right.';
-      }
-    }
+  <div class="ab-journey">
+    <div class="ab-journey-item">
+      <div class="ab-journey-dot">1</div>
+      <div class="ab-journey-content">
+        <span class="ab-journey-period">DAY 1&ndash;3 &mdash; FOUNDATION</span>
+        <div class="ab-journey-title">MERIDIAN is set. Vantage knows who you are.</div>
+        <div class="ab-journey-desc">Seven inputs. Your state, industry, org size, seniority, union status, HR function, and policy guardrails. From this moment, every output Vantage gives you is calibrated to your specific professional context — not a generic Indian HR professional, you specifically.</div>
+      </div>
+    </div>
+    <div class="ab-journey-item">
+      <div class="ab-journey-dot">2</div>
+      <div class="ab-journey-content">
+        <span class="ab-journey-period">WEEK 1&ndash;2 &mdash; FIRST CASE</span>
+        <div class="ab-journey-title">Your first documented decision lands in the Vantage Record.</div>
+        <div class="ab-journey-desc">The first ER case you navigate gives you a legal position, a financial exposure range, and a recommended path — and saves itself to your Vantage Record automatically. That's the first entry in a professional record that didn't exist before. Every case after this one adds to it.</div>
+      </div>
+    </div>
+    <div class="ab-journey-item">
+      <div class="ab-journey-dot">3</div>
+      <div class="ab-journey-content">
+        <span class="ab-journey-period">MONTH 1 &mdash; THE DEBRIEF</span>
+        <div class="ab-journey-title">Your first Monthly Debrief arrives. The record starts to speak.</div>
+        <div class="ab-journey-desc">On the last working day of the month, Vantage generates your Monthly Debrief — a structured narrative of every case you handled, every pattern detected, and the financial exposure you navigated. It calculates your HR Decision Capital for the month. This arrives in your inbox. It reads like a professional story, not a log.</div>
+      </div>
+    </div>
+    <div class="ab-journey-item">
+      <div class="ab-journey-dot">4</div>
+      <div class="ab-journey-content">
+        <span class="ab-journey-period">MONTH 2&ndash;3 &mdash; PATTERN EMERGES</span>
+        <div class="ab-journey-title">You start seeing your own practice more clearly.</div>
+        <div class="ab-journey-desc">Three months of documented decisions reveal patterns most HR professionals never see — which case types recur, where your exposure concentrates, which stakeholder conversations you keep having. Your HR Decision Capital is now a number with context. Your Humac Score tells you how your organisation's human capital position is trending. You know things about your professional reality that most of your peers don't know about their own.</div>
+      </div>
+    </div>
+    <div class="ab-journey-item">
+      <div class="ab-journey-dot">&#x221E;</div>
+      <div class="ab-journey-content">
+        <span class="ab-journey-period">BEYOND &mdash; THE CAREER RECORD</span>
+        <div class="ab-journey-title">The record compounds. The number gets harder to ignore.</div>
+        <div class="ab-journey-desc">At 12 months, Vantage generates a comprehensive career record across every decision, every pattern, and every financial moment of the year. At three years — at the end of a company tenure — you have a documented, financially quantified professional story no other HR professional in India can produce. That is the document you walk into your next interview with. It is not a CV. It is evidence.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    (function waitForClerk() {
-      if (window.Clerk && window.Clerk.session) {
-        window.Clerk.session.getToken().then(function(token) {
-          callWorker({ tool: 'get_humac' }, token).then(function(d) {
-            renderHumacLive(d.success ? d.data : null);
-          }).catch(function() { renderHumacLive(null); });
+<!-- FINAL CTA -->
+<section class="ab-final">
+  <span class="ab-eyebrow" style="display:block;margin-bottom:20px">START YOUR RECORD</span>
+  <h2>Your first decision on Vantage<br><em>is the first line of your career record.</em></h2>
+  <p>The record doesn't exist until you start building it. Every month you're not on Vantage is a month that doesn't exist in the documented history of your professional practice.</p>
+  <div class="ab-hero-actions">
+    <a href="demo.html" class="ab-btn-primary">Try the Demo &mdash; it&rsquo;s live &rarr;</a>
+    <a href="access.html" class="ab-btn-ghost">Sign In &amp; Start &#8599;</a>
+  </div>
+</section>
 
-          callWorker({ tool: 'get_ledger' }, token).then(function(d) {
-            renderLedgerLive(d.success ? (d.data || []) : []);
-          }).catch(function() { renderLedgerLive([]); });
-        }).catch(function() {
-          renderHumacLive(null);
-          renderLedgerLive([]);
-        });
-      } else {
-        setTimeout(waitForClerk, 150);
-      }
-    })();
-  </script>
-  <script src="clerk-auth.js"></script>
-  <script src="sidebar-shared.js"></script>
+<script>
+(function(){
+  var cv=document.getElementById('abStars');
+  if(!cv)return;
+  var ctx=cv.getContext('2d'),stars=[],W,H;
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  for(var i=0;i<140;i++){stars.push({x:Math.random(),y:Math.random(),r:.3+Math.random()*.9,alpha:.06+Math.random()*.28,phase:Math.random()*Math.PI*2,speed:.003+Math.random()*.007});}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(function(s){
+      s.phase+=s.speed;
+      var t=s.alpha*(0.5+Math.sin(s.phase)*0.5);
+      ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(165,180,252,'+t+')';ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
 </body>
 </html>
