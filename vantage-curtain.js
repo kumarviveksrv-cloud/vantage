@@ -14,7 +14,7 @@
     /* If em has a gradient, use it verbatim */
     if(bg && bg !== 'none' && bg.includes('gradient')) return bg;
     /* Otherwise, build a gradient from the em's solid color */
-    const col = cs.getPropertyValue('-webkit-text-fill-color') || 
+    const col = cs.getPropertyValue('-webkit-text-fill-color') ||
                 cs.getPropertyValue('color') || '';
     if(col && col !== 'transparent' && col !== 'rgba(0, 0, 0, 0)'){
       return 'linear-gradient(135deg,' + col + ' 0%,#6366f1 100%)';
@@ -939,6 +939,8 @@
     if(sessionStorage.getItem('vantage_dash_animated')){
       layers.forEach(l=>l.classList.add('msl-active'));
       if(output){output.classList.add('mso-active');if(outputText)outputText.classList.add('advice-burst');}
+      const calFast=document.getElementById('msCalibrate');
+      if(calFast) calFast.classList.add('ms-cal-active');
       if(!stack.querySelector('.meridian-particles')){
         const pc=document.createElement('div');pc.className='meridian-particles';
         [[10,20,12],[28,62,9],[52,15,14],[68,70,10],[85,38,11],[38,82,13]].forEach(([l,t,d])=>{
@@ -965,6 +967,12 @@
 
     /* CSS packet — continuous, no JS loop */
     const pkt=document.createElement('div');pkt.className='meridian-packet';stack.appendChild(pkt);
+
+    /* Calibrate bar — activate on scroll-in */
+    const calEl=document.getElementById('msCalibrate');
+    if(calEl){
+      setTimeout(()=>calEl.classList.add('ms-cal-active'),200);
+    }
 
     /* Layers cascade with one-time text scramble */
     const D=window._vDash;
