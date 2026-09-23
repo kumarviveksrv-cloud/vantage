@@ -10,17 +10,20 @@
   'use strict';
 
   /* SR20: Skip prologue when navigating back from an internal page (e.g. about.html).
-     about.html sets vantage_skip_intro_from before navigating — we read it here
-     FIRST, before any other checks or flag-clearing, so the full sequence is
-     bypassed cleanly and the user lands directly on the landing page. */
+     about.html sets vantage_skip_intro_from before navigating — cinematic.js
+     reads it first (skips boot), then we read it here to hide the prologue
+     element and mark the sequence complete so the landing page renders immediately. */
   const _skipFrom = sessionStorage.getItem('vantage_skip_intro_from');
   if (_skipFrom) {
     sessionStorage.removeItem('vantage_skip_intro_from');
     try {
       sessionStorage.setItem('vantage_prologue_seen', '1');
-      sessionStorage.setItem('vantage_boot_seen', '1');
-      sessionStorage.setItem('vantage_hero_animated', '1');
+      sessionStorage.removeItem('vantage_tada'); // ensure ta-da doesn't fire
     } catch(e) {}
+    /* Hide the prologue element directly — 'pro' isn't assigned yet at this
+       point in the IIFE, so we reference the DOM element by ID directly. */
+    var _prologueEl = document.getElementById('prologue');
+    if (_prologueEl) _prologueEl.style.display = 'none';
     document.body.classList.add('prologue-complete');
     return;
   }
