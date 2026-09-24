@@ -96,7 +96,7 @@
       <span class="icon">⊞</span> Dashboard
     </a>
 
-        <div class="nav-section">Your Foundation</div>
+    <div class="nav-section">Your Foundation</div>
     <a href="onboarding.html" class="nav-item"><span class="icon">&#x2B21;</span> MERIDIAN Profile</a>
     <a href="humac-onboarding.html" class="nav-item" id="nav-humac"><span class="icon">&#x1F4C8;</span> Humac Score</a>
     <div class="nav-section">Your Active Tools</div>
@@ -133,7 +133,7 @@
       <span class="icon">↩</span> Sign out
     </a>
 
-<div class="meridian-chip">
+    <div class="meridian-chip">
       <div class="label">MERIDIAN Active</div>
       <div class="val" id="meridian-chip-val">Loading...</div>
     </div>
@@ -144,7 +144,7 @@
       <div>
         <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Vantage Record</div>
         <div class="page-title">&#x25CE; Vantage Record</div>
-        <div class="page-sub">Every case you’ve navigated through the Situation Room, permanently saved.</div>
+        <div class="page-sub">Every case you've navigated through Vantage, permanently saved.</div>
       </div>
       <a href="employee-case-advisor.html" class="new-case-btn">+ New Case</a>
     </div>
@@ -185,107 +185,113 @@
     var allCases = [];
     var currentFilter = 'all';
 
-    if (sessionStorage.getItem('sr_access') !== 'true') { window.location.href = BASE + 'access.html'; }
-
+    // MERIDIAN chip — loaded from sessionStorage, set by onboarding.html
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
-    document.getElementById('meridian-chip-val').innerText = (meridian.state||'Not set') + ' \xb7 ' + (meridian.industry||'Not set');
-
-    function getUserId() {
-      var uid = localStorage.getItem('sr_user_id');
-      if (!uid) { uid = 'usr_' + Math.random().toString(36).substr(2,9) + '_' + Date.now(); localStorage.setItem('sr_user_id', uid); }
-      return uid;
-    }
+    document.getElementById('meridian-chip-val').innerText = (meridian.state || 'Not set') + ' \xb7 ' + (meridian.industry || 'Not set');
 
     function getRiskBadge(risk) {
       if (!risk) return '';
-      var cls = 'badge-' + (risk||'medium').toLowerCase();
-      return '<div class="risk-badge '+cls+'">'+(risk||'').toUpperCase()+'</div>';
+      var cls = 'badge-' + (risk || 'medium').toLowerCase();
+      return '<div class="risk-badge ' + cls + '">' + (risk || '').toUpperCase() + '</div>';
     }
 
     function getStatusBadge(status) {
-      var cls = (status||'Open').toLowerCase() === 'open' ? 'status-open' : 'status-closed';
-      return '<div class="status-badge '+cls+'">'+(status||'Open')+'</div>';
+      var cls = (status || 'Open').toLowerCase() === 'open' ? 'status-open' : 'status-closed';
+      return '<div class="status-badge ' + cls + '">' + (status || 'Open') + '</div>';
     }
 
     function formatDate(dateStr) {
       if (!dateStr) return '';
-      try { return new Date(dateStr).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}); } catch(e){ return dateStr; }
+      try { return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }); } catch(e) { return dateStr; }
     }
 
     function renderCases(cases) {
       var grid = document.getElementById('cases-grid');
       if (!cases || cases.length === 0) {
-        grid.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x25CE;</div><div class="empty-title">No cases here yet.</div><div class="empty-sub">Navigate a case through the ER Case Navigator and save it — it will appear here permanently.</div><a href="employee-case-advisor.html" class="new-case-btn" style="display:inline-flex;margin:0 auto">Navigate your first case &rarr;</a></div>';
+        grid.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x25CE;</div><div class="empty-title">No cases here yet.</div><div class="empty-sub">Navigate a case through the Employee Case Advisor and save it — it will appear here permanently.</div><a href="employee-case-advisor.html" class="new-case-btn" style="display:inline-flex;margin:0 auto">Navigate your first case &rarr;</a></div>';
         return;
       }
-      grid.innerHTML = cases.map(function(c){
+      // Worker returns r.fields directly — all field names are snake_case
+      grid.innerHTML = cases.map(function(c, idx) {
         var fields = c.fields || {};
-        var risk = fields['Risk Level'] || fields['risk_level'] || '';
-        var status = fields['Status'] || fields['status'] || 'Open';
-        var caseType = fields['Case Type'] || fields['case_type'] || '';
-        var narrative = fields['Narrative'] || fields['narrative'] || '';
-        var createdAt = fields['Created At'] || fields['created_at'] || c.createdTime || '';
-        var riskClass = (risk||'medium').toLowerCase();
-        return '<div class="case-card" onclick="openCase(\''+c.id+'\')">' +
+        var risk       = fields['overall_risk'] || '';
+        var status     = fields['status'] || 'Open';
+        var caseType   = fields['case_type'] || '';
+        var narrative  = fields['narrative'] || '';
+        var createdAt  = fields['date_created'] || '';
+        var exposure   = fields['financial_exposure'] || '';
+        var pillar     = fields['humac_pillar'] || '';
+        return '<div class="case-card" onclick="openCase(' + idx + ')">' +
           '<div class="case-card-top">' +
-            '<div class="case-type-tag">'+(caseType||'ER Case')+'</div>' +
-            '<div class="case-badges">'+getRiskBadge(risk)+getStatusBadge(status)+'</div>' +
+            '<div class="case-type-tag">' + (caseType || 'ER Case') + '</div>' +
+            '<div class="case-badges">' + getRiskBadge(risk) + getStatusBadge(status) + '</div>' +
           '</div>' +
-          '<div class="case-narrative">'+(narrative||'No details recorded.')+'</div>' +
+          '<div class="case-narrative">' + (narrative || 'No details recorded.') + '</div>' +
           '<div class="case-meta">' +
-            '<div class="case-meta-item">&#x1F4C5; '+formatDate(createdAt)+'</div>' +
-            (fields['Next Steps'] ? '<div class="case-meta-item">&#x2714; Next steps recorded</div>' : '') +
+            (createdAt ? '<div class="case-meta-item">&#x1F4C5; ' + formatDate(createdAt) + '</div>' : '') +
+            (exposure  ? '<div class="case-meta-item">&#x1F4B0; ' + exposure + '</div>' : '') +
+            (pillar    ? '<div class="case-meta-item">&#x25AA; ' + pillar + '</div>' : '') +
           '</div>' +
         '</div>';
       }).join('');
     }
 
     function filterCases(filter, el) {
-      document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
       el.classList.add('active');
       currentFilter = filter;
       var filtered = allCases;
       if (filter !== 'all') {
-        filtered = allCases.filter(function(c){
-          var fields = c.fields || {};
-          var risk = (fields['Risk Level'] || fields['risk_level'] || '').toLowerCase();
-          var status = (fields['Status'] || fields['status'] || 'Open').toLowerCase();
-          var caseType = (fields['Case Type'] || fields['case_type'] || '').toLowerCase();
-          if (filter === 'Open') return status === 'open';
-          if (filter === 'Closed') return status === 'closed';
+        filtered = allCases.filter(function(c) {
+          var fields   = c.fields || {};
+          var risk     = (fields['overall_risk'] || '').toLowerCase();
+          var status   = (fields['status'] || 'Open').toLowerCase();
+          var caseType = (fields['case_type'] || '').toLowerCase();
+          if (filter === 'Open')     return status === 'open';
+          if (filter === 'Closed')   return status === 'closed';
           if (filter === 'Critical') return risk === 'critical';
-          if (filter === 'High') return risk === 'high';
+          if (filter === 'High')     return risk === 'high';
           return caseType.includes(filter.toLowerCase());
         });
       }
       renderCases(filtered);
     }
 
-    function openCase(id) {
-      sessionStorage.setItem('sr_view_case_id', id);
+    // Stores the full case fields in sessionStorage so employee-case-advisor
+    // can optionally pre-populate from a saved case when implementing view mode.
+    function openCase(idx) {
+      var fields = (allCases[idx] || {}).fields || {};
+      sessionStorage.setItem('sr_view_case', JSON.stringify(fields));
       window.location.href = BASE + 'employee-case-advisor.html';
     }
 
     async function loadCases() {
-      var userId = getUserId();
+      // Require a live Clerk session — Clerk is loaded by clerk-auth.js below
+      var token = null;
+      try { token = await window.Clerk.session.getToken(); } catch(e) {}
+      if (!token) { window.location.href = BASE + 'access.html'; return; }
+
       try {
         var res = await fetch(WORKER, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ tool:'get_cases', userId:userId })
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ tool: 'get_cases' })
         });
         var data = await res.json();
         document.getElementById('loading-view').style.display = 'none';
         document.getElementById('main-content').style.display = 'block';
         if (data.success && data.data) {
-          allCases = data.data;
-          var open = allCases.filter(function(c){ return ((c.fields||{})['Status']||'Open').toLowerCase()==='open'; }).length;
-          var critical = allCases.filter(function(c){ return ((c.fields||{})['Risk Level']||'').toLowerCase()==='critical'; }).length;
-          var closed = allCases.filter(function(c){ return ((c.fields||{})['Status']||'Open').toLowerCase()==='closed'; }).length;
-          document.getElementById('stat-total').innerText = allCases.length;
-          document.getElementById('stat-open').innerText = open;
+          // Worker returns an array of field objects (r.fields) — wrap for internal consistency
+          allCases = data.data.map(function(f) { return { fields: f }; });
+          var total    = allCases.length;
+          var open     = allCases.filter(function(c) { return ((c.fields || {})['status'] || 'Open').toLowerCase() === 'open'; }).length;
+          var critical = allCases.filter(function(c) { return ((c.fields || {})['overall_risk'] || '').toLowerCase() === 'critical'; }).length;
+          var closed   = allCases.filter(function(c) { return ((c.fields || {})['status'] || 'Open').toLowerCase() === 'closed'; }).length;
+          document.getElementById('stat-total').innerText    = total;
+          document.getElementById('stat-open').innerText     = open;
           document.getElementById('stat-critical').innerText = critical;
-          document.getElementById('stat-closed').innerText = closed;
+          document.getElementById('stat-closed').innerText   = closed;
           renderCases(allCases);
         } else {
           renderCases([]);
@@ -297,7 +303,25 @@
       }
     }
 
-    loadCases();
+    // Defer loadCases until Clerk is ready — clerk-auth.js fires 'clerk:ready'
+    // when the session is confirmed. If already fired (same-page revisit), call
+    // directly via a short poll so we never wait forever.
+    document.addEventListener('clerk:ready', function() { loadCases(); });
+    // Fallback: poll for Clerk session availability (handles cases where
+    // clerk:ready fires before this listener attaches)
+    var _clerkPoll = setInterval(function() {
+      if (window.Clerk && window.Clerk.session) {
+        clearInterval(_clerkPoll);
+        loadCases();
+      }
+    }, 200);
+    // Belt-and-suspenders timeout: if Clerk never initialises, redirect to access
+    setTimeout(function() {
+      if (allCases.length === 0 && document.getElementById('loading-view').style.display !== 'none') {
+        clearInterval(_clerkPoll);
+        window.location.href = BASE + 'access.html';
+      }
+    }, 8000);
   </script>
   <script src="clerk-auth.js"></script>
   <script src="sidebar-shared.js"></script>
