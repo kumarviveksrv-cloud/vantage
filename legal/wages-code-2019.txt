@@ -1,0 +1,106 @@
+THE CODE ON WAGES, 2019
+ACT NO. 29 OF 2019
+Central rules notified; state rules vary — confirm state applicability before advising.
+Replaces: Payment of Wages Act 1936, Minimum Wages Act 1948, Payment of Bonus Act 1965, Equal Remuneration Act 1976
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHAPTER I — PRELIMINARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 2 — Key Definitions
+
+2(y) "wages" means all remuneration whether by way of salaries, allowances or otherwise, expressed in terms of money or capable of being so expressed which would, if the terms of employment, express or implied, were fulfilled, be payable to a person employed in respect of his employment or of work done in such employment, and includes,—
+  (i) basic pay;
+  (ii) dearness allowance; and
+  (iii) retaining allowance, if any,
+
+but does not include—
+  (a) any bonus payable under any law for the time being in force, which does not form part of the remuneration payable under the terms of employment;
+  (b) the value of any house-accommodation, or of the supply of light, water, medical attendance or other amenity or of any service excluded from the computation of wages by a general or special order of the appropriate Government;
+  (c) any contribution paid by the employer to any pension or provident fund, and the interest which may have accrued thereon;
+  (d) any conveyance allowance or the value of any travelling concession;
+  (e) any sum paid to the employed person to defray special expenses entailed on him by the nature of his employment;
+  (f) house rent allowance;
+  (g) remuneration payable under any award or settlement between the parties or order of a court or Tribunal;
+  (h) any overtime allowance;
+  (i) any commission payable to the employee;
+  (j) any gratuity payable on the termination of employment;
+  (k) any retrenchment compensation or other retirement benefit payable to the employee or any ex gratia payment made to him on the termination of employment.
+
+[KEY IMPLICATION: House rent allowance, conveyance allowance, overtime, and certain other components are EXCLUDED from "wages" for purposes of minimum wage calculation and bonus computation.]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHAPTER II — MINIMUM WAGES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 6 — Fixation of minimum rate of wages
+(1) The appropriate Government shall fix the minimum rate of wages payable to the employees:
+Provided that the appropriate Government may not fix minimum rates of wages in respect of any scheduled employment in which there are throughout the year less than one thousand employees in the whole of the State.
+
+(2) The appropriate Government shall review or revise the minimum rates of wages fixed under sub-section (1) at an interval not exceeding five years.
+
+Section 8 — Composition of minimum wages
+Any minimum rate of wages fixed or revised under this Chapter may consist of—
+  (a) a basic rate of wages and an allowance at a rate to be adjusted, at such intervals and in such manner as the appropriate Government may direct, to accord as nearly as practicable with the variation in the cost of living index number applicable to the workers of the scheduled employment; or
+  (b) a basic rate of wages with or without the cost of living allowance, and the cash value of the concessions in respect of essential commodities supplied at concessional rates; or
+  (c) an all-inclusive rate allowing for the basic rate, the cost of living allowance and the cash value of the concessions, if any.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHAPTER III — PAYMENT OF WAGES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 17 — Responsibility for payment of wages
+Every employer shall be responsible for the payment of all wages required to be paid under this Code to persons employed by him and in case of persons employed,—
+  (a) in factories, by the person named as the manager of the factory;
+  (b) in industrial or other establishments, by the person responsible to the employer for the supervision and control of the industrial or other establishment;
+  (c) upon railways (other than in factories), by the person nominated by the railway administration for the specified area;
+  (d) in the case of contractor, a person designated by such contractor.
+
+Section 28 — Time of payment of wages
+(1) The wages of every employee shall be paid—
+  (a) before the expiry of the seventh day after the last day of the wage period in respect of which the wages are payable, where the employment of less than one thousand employees; and
+  (b) before the expiry of the tenth day after the last day of the wage period, in any other case.
+(2) Where the employment of any employee is terminated by or on behalf of the employer, the wages earned by him shall be paid before the expiry of the second working day from the date of such termination.
+
+[CRITICAL: Final settlement wages on termination must be paid within 2 working days of termination date — not the next salary cycle.]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHAPTER IV — PAYMENT OF BONUS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 26 — Eligibility for bonus
+Every employee who has worked in an establishment for not less than thirty working days in a year shall be eligible for bonus.
+
+Section 27 — Disqualification for bonus
+Notwithstanding anything contained in this Code, an employee shall be disqualified from receiving bonus under this Code, if he is dismissed from service for—
+  (a) fraud; or
+  (b) riotous or violent behaviour while on the premises of the establishment; or
+  (c) theft, misappropriation or sabotage of any property of the establishment; or
+  (d) conviction for sexual harassment.
+
+Section 28 — Payment of minimum bonus
+Subject to the other provisions of this Code, every employer shall be bound to pay to every employee in respect of the accounting year, a minimum bonus which shall be 8.33 per cent of the wages earned by the employee during the accounting year or one hundred rupees, whichever is higher, whether or not the employer has any allocable surplus in the accounting year.
+
+[NOTE: Minimum bonus of 8.33% applies regardless of profit/loss. Maximum bonus (if allocable surplus allows) is 20% of annual wages.]
+
+Section 29 — Eligibility wage ceiling for bonus
+An employee drawing wages exceeding a threshold amount notified by the Central Government shall not be eligible to receive bonus under this Code.
+[As notified: employees drawing wages above ₹21,000 per month are not entitled to statutory bonus. The eligible wage for bonus calculation is capped at ₹7,000 per month or the notified minimum wage for scheduled employment, whichever is higher.]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EQUAL REMUNERATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 3 — Equal remuneration
+(1) No employer shall pay to any employee wages at a rate less than the rate at which wages are paid by him to an employee of another gender for performance of the same work or work of a similar nature.
+
+(2) For the purposes of this section, the expression "work of a similar nature" means work in respect of which the skill, effort, experience, responsibility, working conditions and time of work required are the same.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PENALTIES (Key provisions)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 51 — Penalties for non-payment/underpayment of wages:
+- Failure to pay minimum wages: fine up to ₹50,000 (first offence); imprisonment up to 3 months or fine up to ₹1,00,000 or both (repeat offence)
+- Failure to pay bonus: fine up to ₹50,000
+- Failure to maintain records: fine up to ₹10,000
