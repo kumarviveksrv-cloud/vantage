@@ -1,0 +1,111 @@
+THE INDUSTRIAL RELATIONS CODE, 2020
+ACT NO. 35 OF 2020
+Effective: 21 November 2025
+Replaces: Industrial Disputes Act 1947, Trade Unions Act 1926, Industrial Employment (Standing Orders) Act 1946
+
+NOTE: This file contains the operative sections most relevant to HR case management.
+Full text: https://www.indiacode.nic.in/handle/123456789/22040
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHAPTER I — PRELIMINARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 2 — Key Definitions (selected)
+
+2(zr) "worker" means any person (except an apprentice) employed in any industry to do any manual, unskilled, skilled, technical, operational, clerical or supervisory work for hire or reward, whether the terms of employment be express or implied, and includes working journalists and sales promotion employees, but does not include any such person—
+  (i) who is subject to the Air Force Act, 1950, or the Army Act, 1950, or the Navy Act, 1957; or
+  (ii) who is employed in the police service or as an officer or other employee of a prison; or
+  (iii) who is employed mainly in a managerial or administrative capacity; or
+  (iv) who, being employed in a supervisory capacity, draws wages exceeding fifteen thousand rupees per month.
+
+[NOTE: The Code uses "worker" throughout. The term "workman" from the repealed Industrial Disputes Act 1947 is no longer operative.]
+
+2(ze) "industry" means any systematic activity carried on by co-operation between an employer and workers (whether such workers are employed by such employer directly or by or through any agency, including a contractor) for the production, supply or distribution of goods or services with a view to satisfy human wants or wishes (not being wants or wishes which are merely spiritual or religious in nature), whether or not—
+  (i) any capital has been invested for the purpose of carrying on such activity; or
+  (ii) such activity is carried on with a motive to make any gain or profit,
+  and includes—
+  (a) any activity of the Dock Labour Board established under the Dock Workers (Regulation of Employment) Act, 1948;
+  (b) any activity relating to the promotion of sales or business or both carried on by an establishment.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHAPTER IV — STANDING ORDERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 29 — Application of Chapter
+Standing Orders apply to every industrial establishment in which three hundred or more workers are employed, or were employed on any day of the preceding twelve months.
+
+Section 30 — Submission of draft Standing Orders
+(1) Within six months from the date on which this Chapter becomes applicable to an industrial establishment, the employer shall submit to the certifying officer five copies of the draft Standing Orders proposed by him for adoption in his industrial establishment.
+
+Section 38 — Model Standing Orders
+The Central Government shall, by notification, make model standing orders for the purpose of this Code and those shall be deemed to be the standing orders of an establishment under this Code till such time the standing orders of the establishment are certified under this Chapter.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHAPTER IX — LAY-OFF, RETRENCHMENT AND CLOSURE
+(Applies to industrial establishments with fewer than 300 workers)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 65 — Application of sections 67 to 69
+The provisions of sections 67, 68 and 69 shall apply to every industrial establishment in which not less than fifty workers are employed or were employed on any day of the preceding twelve months.
+
+Section 66 — Definition of continuous service (for this Chapter)
+(1) A worker shall be said to be in continuous service for a period if he is, for that period, in uninterrupted service including service which may be interrupted on account of sickness or authorised leave or an accident or a strike which is not illegal or a lock-out or a cessation of work which is not due to any fault on the part of the worker.
+(2) Where a worker is not in continuous service for a period of one year or six months, he shall be deemed to be in continuous service under an employer—
+  (a) for a period of one year, if the worker, during a period of twelve calendar months preceding the date with reference to which calculation is to be made, has actually worked under the employer for not less than one hundred and ninety days.
+
+Section 70 — Conditions precedent to retrenchment of workers
+No worker employed in any industry who has been in continuous service for not less than one year under an employer shall be retrenched by that employer until—
+  (a) the worker has been given one month's notice in writing indicating the reasons for retrenchment and the period of notice has expired, or the worker has been paid in lieu of such notice, wages for the period of the notice;
+  (b) the worker has been paid, at the time of retrenchment, compensation which shall be equivalent to fifteen days' average pay for every completed year of continuous service or any part thereof in excess of six months; and
+  (c) notice in the prescribed manner is served on the appropriate Government or such authority as may be specified by the appropriate Government by notification.
+
+Section 71 — Procedure for retrenchment
+Where any worker in an industrial establishment who is a citizen of India, is to be retrenched and he belongs to a particular category of workers in that establishment, then, in the absence of any agreement between the employer and the worker in this behalf, the employer shall ordinarily retrench the worker who was the last person to be employed in that category, unless for reasons to be recorded the employer retrenches any other worker.
+
+Section 72 — Re-employment of retrenched workers
+(1) Where any worker is retrenched and the employer proposes to take into his employ any persons, he shall, in such manner as may be prescribed, give an opportunity to the retrenched workers who are citizens of India to offer themselves for re-employment and such retrenched workers who offer themselves for re-employment shall have preference over other persons.
+
+Section 73 — Compensation to workers in case of transfer of establishment
+Where the ownership or management of an undertaking is transferred, whether by agreement or by operation of law, from the employer in relation to that undertaking to a new employer, every worker who has been in continuous service for not less than one year in that undertaking immediately before such transfer shall be entitled to notice and compensation in accordance with the provisions of section 70 as if the worker had been retrenched.
+
+Section 74 — Sixty days' notice to be given of intention to close down any undertaking
+An employer who intends to close down an undertaking shall serve, at least sixty days before the date on which the intended closure is to become effective, a notice in the prescribed manner on the appropriate Government or such authority as may be specified by the appropriate Government by notification, stating clearly the reasons for the intended closure of the undertaking.
+
+Section 75 — Compensation to workers in case of closing down of undertakings
+Where an undertaking is closed down for any reason whatsoever, every worker who has been in continuous service for not less than one year in that undertaking immediately before such closure shall, subject to the provisions of section 70, be entitled to notice and compensation in accordance with the provisions of that section as if the worker had been retrenched.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHAPTER X — SPECIAL PROVISIONS RELATING TO LAY-OFF, RETRENCHMENT AND CLOSURE
+(Applies to industrial establishments with 300 or more workers)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 77 — Application of this Chapter
+The provisions of this Chapter shall apply to an industrial establishment in which not less than three hundred workers, or such higher number as may be notified by the appropriate Government, are employed, or were employed on any day of the preceding twelve months.
+
+[KEY CHANGE FROM IDA: The old threshold of 100 workers (Section 25N of the Industrial Disputes Act 1947) has been raised to 300 workers. Establishments with fewer than 300 workers do NOT require prior government permission for retrenchment.]
+
+Section 79 — Conditions precedent to retrenchment of workers to which Chapter X applies
+(1) No worker employed in any industrial establishment to which this Chapter applies, who has been in continuous service for not less than one year under an employer, shall be retrenched by that employer until—
+  (a) the worker has been given three months' notice in writing indicating the reasons for retrenchment and the period of notice has expired, or the worker has been paid in lieu of such notice, wages for the period of the notice; and
+  (b) the prior permission of the appropriate Government or such authority as may be specified by the appropriate Government by notification has been obtained on an application made in this behalf.
+(2) An application for permission under sub-section (1) shall be made by the employer in the prescribed manner stating clearly the reasons for the intended retrenchment and a copy of such application shall also be served simultaneously on the workers concerned in the prescribed manner.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHAPTER XII — UNFAIR LABOUR PRACTICES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 84 — Prohibition of unfair labour practice
+No employer or worker or a trade union, as the case may be, shall commit any unfair labour practice specified in the First Schedule or the Second Schedule.
+
+[First Schedule contains unfair labour practices on the part of employers; Second Schedule on the part of workers/trade unions. Key employer ULPs include: interfering with union activities, discriminating against union members, refusing to bargain in good faith, engaging in victimisation.]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHAPTER XIII — OFFENCES AND PENALTIES (selected)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 86 — Penalties
+Key penalty provisions (summary):
+- Retrenchment without compliance with Chapter IX/X: imprisonment up to 3 months, or fine up to Rs.50,000, or both
+- Engaging in or instigating illegal strike/lockout: imprisonment up to 1 month, or fine up to Rs.10,000, or both
+- Unfair labour practices (Section 84): fine up to Rs.1,00,000 (first offence); up to Rs.2,00,000 (repeat)
+- Closure without notice (Section 74): fine up to Rs.50,000
