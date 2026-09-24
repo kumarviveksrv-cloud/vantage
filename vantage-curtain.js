@@ -1511,7 +1511,7 @@
        C:{t:'Mark as voluntary abandonment',r:'common assumption'},
        D:{t:'Initiate domestic enquiry directly',r:'sounds thorough'},
        OA:{verdict:'HIGH EXPOSURE',vclass:'risk',num:'\u20b921L',
-         text:'Termination without a charge sheet or opportunity to respond violates natural justice under the Industrial Disputes Act. In Maharashtra, this is one of the most commonly overturned dismissal grounds \u2014 tribunals routinely order reinstatement with back wages.',
+         text:'Termination without a charge sheet or opportunity to respond violates the procedural safeguards embedded in the Industrial Relations Code 2020. In Maharashtra, failure to provide a hearing before dismissal is one of the most commonly overturned grounds \u2014 Industrial Tribunals routinely order reinstatement with back wages.',
          aria:'Has this employee been given any written opportunity to explain the absence? Without that, this termination has almost no chance of holding.'},
        OB:{verdict:'DEFENSIBLE FIRST STEP',vclass:'ok',num:'\u20b91.5L',
          text:'A show-cause notice preserves the employee\u2019s right to respond before any punitive step. If the response is unsatisfactory, PACT recommends escalating to a charge sheet and domestic enquiry next \u2014 this is the correct opening move, not a delay.',
@@ -1695,7 +1695,7 @@
        C:{t:'Freeze all terminations pending legal review',r:'maximum caution'},
        D:{t:'Select lowest performers only, ignore seniority',r:'merit-based selection'},
        OA:{verdict:'LEGAL MINEFIELD',vclass:'risk',num:'\u20b91.8Cr',
-         text:'Mass termination without notice periods, compensation calculations, or Section 25N permissions (where applicable) triggers Industrial Disputes Act compliance failures. 47 individual claims compound fast.',
+         text:'Mass termination without notice periods, compensation calculations, or prior government permission (Section 77 of the IR Code 2020, mandatory for establishments with 300+ workers) triggers compliance failures. 47 individual claims compound fast.',
          aria:'Have you checked which of these 47 roles fall under the Act\u2019s workman definition? The threshold changes everything about what\u2019s required here.'},
        OB:{verdict:'PROTECTED',vclass:'ok',num:'\u20b922L',
          text:'Phased plan separates voluntary exits, natural attrition, and necessary terminations \u2014 with seniority-based selection applied correctly within the workman category. Each path has its own defensible legal basis.',
@@ -1704,7 +1704,7 @@
          text:'Freezing everything pending review protects against legal risk but creates a different cost: the business need behind this restructuring doesn\u2019t pause while legal reviews indefinitely. Excessive caution has a price too.',
          aria:'The CEO gave you 30 days for a reason. How many of those days does an open-ended legal freeze actually leave you?'},
        OD:{verdict:'SENIORITY VIOLATION',vclass:'risk',num:'\u20b914L',
-         text:'For roles classified as workmen under the Industrial Disputes Act, Section 25G requires "last come, first go" unless there\u2019s a documented, defensible reason to deviate. Selecting purely by performance without addressing seniority invites reinstatement claims.',
+         text:'For roles classified as workers under the Industrial Relations Code 2020, Section 71 requires "last come, first go" unless there\u2019s a documented, defensible reason to deviate. Selecting purely by performance without addressing seniority invites reinstatement claims.',
          aria:'Does your performance-based selection account for the seniority rule at all, or does it override it entirely? That distinction matters a lot here.'}},
       {tag:'ROOM 2 / EVIDENCE INTELLIGENCE',caseId:'COMMUNICATION PHASE',
        h3:'Word leaks before the official announcement.<br>Slack channels are on fire. Glassdoor posts appearing.',
@@ -2805,7 +2805,7 @@
     el.style.setProperty('font-size', 'clamp(16px, 1.65vw, 21px)', 'important');
     el.style.setProperty('line-height', '1.8', 'important');
     el.style.setProperty('color', 'rgba(255,255,255,.78)', 'important');
-    const accentSpan = el.querySelector('.accent'); 
+    const accentSpan = el.querySelector('.accent');
     if(accentSpan){
       /* SR19: was 'inherit' — inherit made accent same size as parent,
          negating the CSS bump. Now sets explicit larger size matching CSS. */
