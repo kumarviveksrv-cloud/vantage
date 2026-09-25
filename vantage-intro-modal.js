@@ -3,9 +3,29 @@
    Shows once per device (localStorage). "?" button re-triggers on demand.
    Usage: called automatically by sidebar-shared.js per-page detection.
    Manual: VantageIntro.show('aria');
+
+   v2: Added sequential "Next:" progression button across all tool pages.
+   Sequence: Employee Case Advisor → Retention Advisor → Leadership Communicator
+   → People ROI Brief → Difficult Conversations → Policy Advisor
+   → ARIA → Vantage Record → Standpoint → The Debrief
 */
 (function(){
 'use strict';
+
+// Page paths for navigation
+var PAGE_PATHS = {
+  'aria':                   'aria.html',
+  'debrief':                'debrief.html',
+  'ledger':                 'standpoint.html',
+  'humac':                  'humac-onboarding.html',
+  'case-navigator':         'employee-case-advisor.html',
+  'policy-compass':         'policy-advisor.html',
+  'hr-storyteller':         'people-roi-brief.html',
+  'offer-intelligence':     'retention-advisor.html',
+  'stakeholder-influence':  'leadership-communicator.html',
+  'conversation-simulator': 'difficult-conversations.html',
+  'case-library':           'vantage-record.html'
+};
 
 var MODALS = {
   'aria': {
@@ -14,7 +34,9 @@ var MODALS = {
     tagline: 'Your private HR intelligence, on call at 9pm.',
     what: 'ARIA is a context-aware intelligence layer built on your organisation\'s exact reality — your state, your policies, your case history. Not a chatbot. Not a generic AI trained on someone else\'s problems.',
     does: 'She reads your situation, asks the right questions back, and gives you advice calibrated to your reality — the kind that would survive a boardroom challenge.',
-    start: 'Tell ARIA what\'s happening right now. The more specific you are — role, stakes, what\'s been tried — the more precise the advice.'
+    start: 'Tell ARIA what\'s happening right now. The more specific you are — role, stakes, what\'s been tried — the more precise the advice.',
+    next: 'case-library',
+    nextLabel: 'Vantage Record'
   },
   'debrief': {
     icon: '◉',
@@ -22,7 +44,9 @@ var MODALS = {
     tagline: 'Your month, synthesised and sent to you.',
     what: 'The Debrief is auto-generated on the last working day of every month. You don\'t write it — Vantage does. It reads your entire month\'s activity and produces a professional narrative: cases navigated, tools used, financial exposure managed, growth signal, and one provocation.',
     does: 'Twelve Debriefs become a year. A year becomes a career record that answers the question every HR leader eventually faces: what have I actually delivered? You receive it. You don\'t build it.',
-    start: 'Use the platform through the month — every tool session, every case, every conversation feeds into it. The Debrief arrives automatically at month end.'
+    start: 'Use the platform through the month — every tool session, every case, every conversation feeds into it. The Debrief arrives automatically at month end.',
+    next: null,
+    nextLabel: null
   },
   'ledger': {
     icon: '📜',
@@ -30,7 +54,9 @@ var MODALS = {
     tagline: 'Your professional position, on record before the outcome.',
     what: 'Standpoint is where you file your professional stance before a decision\'s outcome is known. Every time you take a position that could later be questioned — a recommendation overruled, a risk you flagged, an alternative you proposed — you file it here, timestamped.',
     does: 'When leadership overrules you and it goes wrong six weeks later, Standpoint shows exactly what you said and when you said it. Not a complaint. Not a diary. Documented professional judgment.',
-    start: 'The next time you take a stand that leadership might override — file it here before the outcome is known. One entry is worth more than a year of silence.'
+    start: 'The next time you take a stand that leadership might override — file it here before the outcome is known. One entry is worth more than a year of silence.',
+    next: 'debrief',
+    nextLabel: 'The Debrief'
   },
   'humac': {
     icon: '⬡',
@@ -38,7 +64,9 @@ var MODALS = {
     tagline: 'One number that speaks the CFO\'s language.',
     what: 'The Humac Score synthesises five forces — Value Ledger, Talent Premium, Org Vitals, Human P&L, and Net Human Worth — into a single index that quantifies HR\'s financial contribution to the organisation.',
     does: 'Gives leadership a number they can read, track, and benchmark against. Not a feeling. Not a survey. A calculation that survives cross-examination.',
-    start: 'Complete the onboarding below to build your baseline score. It takes about 10 minutes and unlocks your full Humacity profile.'
+    start: 'Complete the onboarding below to build your baseline score. It takes about 10 minutes and unlocks your full Humacity profile.',
+    next: null,
+    nextLabel: null
   },
   'case-navigator': {
     icon: '⊞',
@@ -46,7 +74,9 @@ var MODALS = {
     tagline: 'Navigate any employee situation — with the full picture.',
     what: 'Employee Case Advisor takes your real situation — a termination, a POSH complaint, a disciplinary issue, a PIP, an absenteeism case — and tells you exactly what to do, what process to follow, and what the financial exposure looks like if you get it wrong.',
     does: 'Calibrated to your state, your industry, and your org type. Every recommendation is grounded in the law that actually applies to you — not generic HR advice.',
-    start: 'Describe the situation as it is right now. The more specific you are — what happened, who\'s involved, what\'s been done — the more precise the advice.'
+    start: 'Describe the situation as it is right now. The more specific you are — what happened, who\'s involved, what\'s been done — the more precise the advice.',
+    next: 'offer-intelligence',
+    nextLabel: 'Retention Advisor'
   },
   'policy-compass': {
     icon: '⊕',
@@ -54,7 +84,9 @@ var MODALS = {
     tagline: 'The right policy for your exact situation — not a template.',
     what: 'Policy Advisor generates policy frameworks calibrated to your state, industry, and organisation type. Built on India\'s actual legal framework — BNS, BNSS, BSA — not generic HR boilerplate.',
     does: 'Drafts defensible policies grounded in the regulations that actually apply to you. Jurisdiction-specific, role-aware, and ready to withstand challenge.',
-    start: 'Describe the policy gap you\'re trying to fill — what\'s unclear, what\'s missing, what situation triggered this. Policy Advisor builds from there.'
+    start: 'Describe the policy gap you\'re trying to fill — what\'s unclear, what\'s missing, what situation triggered this. Policy Advisor builds from there.',
+    next: 'aria',
+    nextLabel: 'ARIA'
   },
   'hr-storyteller': {
     icon: '◎',
@@ -62,7 +94,9 @@ var MODALS = {
     tagline: 'Your HR numbers, translated into a boardroom argument.',
     what: 'People ROI Brief takes your raw HR metrics — attrition rates, engagement scores, cost-per-hire, headcount data — and builds the financial argument your leadership cannot dismiss.',
     does: 'Converts HR data into board-level narrative with rupee-value anchors. The same numbers your CFO sees, told in the language that actually moves decisions.',
-    start: 'Enter your key HR metrics, choose your audience — CEO, CFO, Board — and describe the outcome you\'re driving toward.'
+    start: 'Enter your key HR metrics, choose your audience — CEO, CFO, Board — and describe the outcome you\'re driving toward.',
+    next: 'conversation-simulator',
+    nextLabel: 'Difficult Conversations'
   },
   'offer-intelligence': {
     icon: '◇',
@@ -70,7 +104,9 @@ var MODALS = {
     tagline: 'Model the real cost of keeping or losing this person.',
     what: 'Retention Advisor models the full financial picture of a retention decision — what it costs to keep someone, what it costs to lose them, replacement cost, ramp time, flight risk, and the counter-offer position.',
     does: 'Gives you the number you need before any retention conversation. Not a gut feel — a calculated position you can defend in the room.',
-    start: 'Enter the person\'s current CTC, their role, and the situation. Retention Advisor models both paths — retain and lose — so you walk in prepared.'
+    start: 'Enter the person\'s current CTC, their role, and the situation. Retention Advisor models both paths — retain and lose — so you walk in prepared.',
+    next: 'stakeholder-influence',
+    nextLabel: 'Leadership Communicator'
   },
   'stakeholder-influence': {
     icon: '◬',
@@ -78,7 +114,9 @@ var MODALS = {
     tagline: 'Know how to say it to this specific person, before you say it.',
     what: 'Leadership Communicator models how a specific leader — your CEO, CFO, a line manager, the board — receives information, what language moves them, and how to frame your recommendation to land.',
     does: 'Same facts. Right framing. Every people decision you need to communicate, positioned in the language that reaches the specific person you\'re walking in to meet.',
-    start: 'Name the person, describe the decision you need to communicate, and specify the outcome you\'re driving. Leadership Communicator maps the path.'
+    start: 'Name the person, describe the decision you need to communicate, and specify the outcome you\'re driving. Leadership Communicator maps the path.',
+    next: 'hr-storyteller',
+    nextLabel: 'People ROI Brief'
   },
   'conversation-simulator': {
     icon: '◈',
@@ -86,7 +124,9 @@ var MODALS = {
     tagline: 'Rehearse before the conversation that matters.',
     what: 'Difficult Conversations is a real-time simulation environment for the conversations HR professionals dread most — performance discussions, terminations, disciplinary hearings, leadership alignment calls. ARIA plays the other person.',
     does: 'A safe space to test your approach, anticipate pushback, and walk into the real conversation already knowing what\'s coming. ARIA holds nothing back.',
-    start: 'Choose the conversation type, set the context — role, stakes, what you\'re trying to achieve — and start. Treat it like the real thing.'
+    start: 'Choose the conversation type, set the context — role, stakes, what you\'re trying to achieve — and start. Treat it like the real thing.',
+    next: 'policy-compass',
+    nextLabel: 'Policy Advisor'
   },
   'case-library': {
     icon: '▦',
@@ -94,7 +134,9 @@ var MODALS = {
     tagline: 'Every case you\'ve navigated, permanently yours.',
     what: 'Vantage Record is your complete professional case archive, auto-populated every time you use the platform. Every employee case, every brief, every session — saved, searchable by date, and portable across organisations.',
     does: 'The record the org never built for you. After two years on Vantage, you have a searchable archive of every difficult situation you handled and how you handled it — proof that your experience is real.',
-    start: 'Start using the tools. Every session is saved here automatically. Search by date to see what you were navigating on any given day.'
+    start: 'Start using the tools. Every session is saved here automatically. Search by date to see what you were navigating on any given day.',
+    next: 'ledger',
+    nextLabel: 'Standpoint'
   }
 };
 
@@ -120,11 +162,14 @@ function injectCSS(){
 .vip-section-text{font-size:12.5px;color:rgba(244,243,255,.68);line-height:1.68;font-family:'Plus Jakarta Sans','DM Sans',sans-serif}
 .vip-start{border-color:rgba(99,102,241,.2);background:rgba(99,102,241,.08)}
 .vip-start .vip-section-text{color:rgba(244,243,255,.82)}
-.vip-cta{width:100%;padding:13px 24px;background:linear-gradient(135deg,#6366f1,#7c3aed);border:none;border-radius:10px;cursor:pointer;font-family:'Plus Jakarta Sans','DM Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;letter-spacing:.01em;transition:opacity .18s}
+.vip-btns{display:flex;gap:10px}
+.vip-cta{flex:1;padding:13px 24px;background:linear-gradient(135deg,#6366f1,#7c3aed);border:none;border-radius:10px;cursor:pointer;font-family:'Plus Jakarta Sans','DM Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;letter-spacing:.01em;transition:opacity .18s;white-space:nowrap}
 .vip-cta:hover{opacity:.88}
+.vip-cta-ghost{flex:0 0 auto;padding:13px 18px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;cursor:pointer;font-family:'Plus Jakarta Sans','DM Sans',sans-serif;font-size:13px;font-weight:600;color:rgba(196,181,253,.7);letter-spacing:.01em;transition:all .18s;white-space:nowrap}
+.vip-cta-ghost:hover{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.4);color:#c4b5fd}
 #vip-trigger{position:fixed;bottom:26px;right:26px;width:34px;height:34px;border-radius:50%;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.22);color:rgba(167,139,250,.55);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:9000;font-family:'JetBrains Mono',monospace;line-height:1}
 #vip-trigger:hover{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.48);color:#c4b5fd}
-@media(max-width:600px){#vip-modal{padding:26px 20px 22px}#vip-trigger{bottom:72px}}
+@media(max-width:600px){#vip-modal{padding:26px 20px 22px}.vip-btns{flex-direction:column-reverse}#vip-trigger{bottom:72px}}
   `;
   document.head.appendChild(s);
 }
@@ -132,6 +177,17 @@ function injectCSS(){
 function build(key){
   var d=MODALS[key];if(!d)return null;
   var el=document.createElement('div');el.id='vip-backdrop';
+
+  // Build button row: "Got it" always present; "Next: [Tool]" only when sequence continues
+  var btnRow = d.next
+    ? '<div class="vip-btns">' +
+        '<button class="vip-cta-ghost" id="vip-got-it">Got it</button>' +
+        '<button class="vip-cta" id="vip-next">Next: ' + d.nextLabel + ' \u2192</button>' +
+      '</div>'
+    : '<div class="vip-btns">' +
+        '<button class="vip-cta" id="vip-got-it">Got it, let\'s go \u2192</button>' +
+      '</div>';
+
   el.innerHTML='<div id="vip-modal">'+
     '<button id="vip-close" aria-label="Close">&#xd7;</button>'+
     '<span class="vip-icon">'+d.icon+'</span>'+
@@ -142,7 +198,7 @@ function build(key){
       '<div class="vip-section"><span class="vip-section-label">What it does for you</span><p class="vip-section-text">'+d.does+'</p></div>'+
       '<div class="vip-section vip-start"><span class="vip-section-label">Where to start</span><p class="vip-section-text">'+d.start+'</p></div>'+
     '</div>'+
-    '<button class="vip-cta" id="vip-got-it">Got it, let\'s go \u2192</button>'+
+    btnRow+
   '</div>';
   return el;
 }
@@ -152,6 +208,11 @@ function dismiss(key){
   if(el){el.style.opacity='0';el.style.transition='opacity .18s ease';setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},200);}
   try{localStorage.setItem(PREFIX+key,'1');}catch(e){}
   setTimeout(function(){injectTrigger(key);},220);
+}
+
+function navigateTo(key){
+  var path = PAGE_PATHS[key];
+  if(path) window.location.href = path;
 }
 
 function injectTrigger(key){
@@ -171,7 +232,6 @@ function show(key,force){
   }
   var ex=document.getElementById('vip-backdrop');
   if(ex&&ex.parentNode)ex.parentNode.removeChild(ex);
-  // Remove old trigger before re-showing
   var oldTrigger=document.getElementById('vip-trigger');
   if(oldTrigger&&oldTrigger.parentNode)oldTrigger.parentNode.removeChild(oldTrigger);
 
@@ -179,9 +239,29 @@ function show(key,force){
   var modal=build(key);
   document.body.appendChild(modal);
 
-  function close(){dismiss(key);}
-  document.getElementById('vip-close').addEventListener('click',close);
-  document.getElementById('vip-got-it').addEventListener('click',close);
+  var d = MODALS[key];
+
+  function close(){ dismiss(key); }
+
+  document.getElementById('vip-close').addEventListener('click', close);
+  document.getElementById('vip-got-it').addEventListener('click', close);
+
+  // Next button: mark current page seen, navigate to next tool
+  if(d.next){
+    document.getElementById('vip-next').addEventListener('click', function(){
+      try{ localStorage.setItem(PREFIX+key,'1'); }catch(e){}
+      var el=document.getElementById('vip-backdrop');
+      if(el){el.style.opacity='0';el.style.transition='opacity .18s ease';
+        setTimeout(function(){
+          if(el.parentNode)el.parentNode.removeChild(el);
+          navigateTo(d.next);
+        },180);
+      } else {
+        navigateTo(d.next);
+      }
+    });
+  }
+
   modal.addEventListener('click',function(e){if(e.target===modal)close();});
   function onKey(e){if(e.key==='Escape'){close();document.removeEventListener('keydown',onKey);}}
   document.addEventListener('keydown',onKey);
