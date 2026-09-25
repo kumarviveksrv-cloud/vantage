@@ -426,6 +426,603 @@
   <div class="dash-blur-note">Illustrative preview — your real dashboard reflects your own cases, your own Humac Score, and your own professional record.</div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════════════════
+     INTELLIGENCE CORRIDOR — paste this block into demo.html
+     INSERT between: </div> (closing .dash-section)
+     AND:            <script> (the existing var WORKER block)
+     ═══════════════════════════════════════════════════════════════════ -->
+
+<style>
+/* ── CORRIDOR SECTION WRAPPER ──────────────────────────────────────── */
+.corridor-section {
+  padding: 80px 40px;
+  border-top: 1px solid rgba(99,102,241,0.15);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.corridor-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.corridor-header .cor-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(99,102,241,0.7);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.cor-eyebrow-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #6366f1;
+  box-shadow: 0 0 8px rgba(99,102,241,0.7);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+.corridor-header h2 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(22px,3vw,34px);
+  font-weight: 800;
+  color: #f4f3ff;
+  margin-bottom: 12px;
+}
+.corridor-header p {
+  font-size: 14px;
+  color: rgba(244,243,255,0.45);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ── PROGRESS ── */
+.cor-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 36px;
+}
+.cor-pip {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(124,58,237,.25);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(196,181,253,.35);
+  transition: all .5s ease;
+}
+.cor-pip.active { border-color: #8b5cf6; color: #fff; background: rgba(124,58,237,.3); box-shadow: 0 0 16px rgba(139,92,246,.5); }
+.cor-pip.done   { border-color: #34d399; color: #34d399; background: rgba(52,211,153,.12); }
+.cor-line { width: 48px; height: 2px; background: rgba(124,58,237,.15); transition: background .5s; }
+.cor-line.done  { background: rgba(52,211,153,.3); }
+
+/* ── CASE SELECTOR ── */
+.cor-case-select { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 32px; }
+.cor-case-select p { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .12em; color: rgba(196,181,253,.5); text-transform: uppercase; }
+.cor-case-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.cor-case-pill {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .1em;
+  color: rgba(196,181,253,.55); border: 1px solid rgba(124,58,237,.2);
+  border-radius: 20px; padding: 7px 16px; cursor: pointer; transition: all .25s;
+  background: rgba(12,10,32,.5);
+}
+.cor-case-pill:hover { border-color: rgba(124,58,237,.5); color: #fff; background: rgba(124,58,237,.12); }
+.cor-case-pill.active { border-color: #8b5cf6; color: #fff; background: rgba(124,58,237,.2); box-shadow: 0 0 14px rgba(139,92,246,.3); }
+
+/* ── VIEWPORT ── */
+.cor-viewport { position: relative; max-width: 820px; margin: 0 auto; min-height: 480px; }
+
+/* ── ROOMS ── */
+.cor-room { display: none; flex-direction: column; align-items: center; animation: corFadeIn .6s ease both; }
+.cor-room.active { display: flex; }
+@keyframes corFadeIn { from { opacity: 0; transform: translateY(18px) scale(.97); } to { opacity: 1; transform: none; } }
+
+/* ── DOOR ── */
+.cor-door {
+  position: relative;
+  width: min(480px, 78vw);
+  height: min(520px, 70vh);
+  margin: 0 auto 0;
+  perspective: 900px;
+  cursor: pointer;
+}
+.cor-door-frame {
+  position: absolute; inset: 0; display: flex;
+  border: 2px solid rgba(124,58,237,.3); border-radius: 8px; overflow: hidden;
+  box-shadow: 0 0 40px rgba(124,58,237,.15), inset 0 0 60px rgba(5,4,16,.8);
+  background: linear-gradient(180deg,rgba(15,12,35,.95),rgba(8,6,22,.98));
+}
+.cor-door-panel {
+  width: 50%; height: 100%;
+  background: linear-gradient(180deg,rgba(20,16,45,.9),rgba(10,8,28,.95));
+  border: 1px solid rgba(124,58,237,.15);
+  transition: transform .9s cubic-bezier(.4,0,.2,1);
+  position: relative;
+}
+.cor-door-panel::before { content: ''; position: absolute; inset: 16px; border: 1px solid rgba(124,58,237,.1); border-radius: 4px; }
+.cor-door-panel::after { content: ''; position: absolute; top: 50%; left: 50%; width: 32px; height: 32px; transform: translate(-50%,-50%) rotate(45deg); border: 1px solid rgba(196,181,253,.12); }
+.cor-door-l { transform-origin: left center; border-right: 1px solid rgba(124,58,237,.2); }
+.cor-door-r { transform-origin: right center; border-left: 1px solid rgba(124,58,237,.2); }
+.cor-door.open .cor-door-l { transform: rotateY(-110deg); }
+.cor-door.open .cor-door-r { transform: rotateY(110deg); }
+.cor-door.open .cor-lock { opacity: 0; transform: translate(-50%,-50%) scale(.5); }
+.cor-door.open .cor-door-frame { box-shadow: 0 0 80px rgba(124,58,237,.4), inset 0 0 100px rgba(124,58,237,.1); }
+.cor-lock {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  text-align: center; z-index: 5; transition: all .5s ease; cursor: pointer;
+}
+.cor-lock-icon {
+  font-size: 52px; display: block;
+  filter: drop-shadow(0 0 12px rgba(196,181,253,.7));
+  animation: lockPulse 2.5s ease-in-out infinite;
+}
+@keyframes lockPulse {
+  0%,100% { filter: drop-shadow(0 0 12px rgba(196,181,253,.5)); transform: scale(1); }
+  50%      { filter: drop-shadow(0 0 28px rgba(196,181,253,.9)); transform: scale(1.08); }
+}
+.cor-lock-label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .2em; color: rgba(196,181,253,.55); margin-top: 12px; }
+.cor-door-tag { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .2em; color: rgba(196,181,253,.35); margin-top: 16px; }
+
+/* ── INSIDE ── */
+.cor-inside { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 720px; margin: 0 auto; animation: insideReveal .7s ease .15s both; }
+.cor-room.entered .cor-inside { display: flex; }
+.cor-room.entered .cor-door { display: none; }
+@keyframes insideReveal { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+
+/* ── SCENARIO ── */
+.cor-scenario { text-align: center; margin-bottom: 32px; padding: 24px 0; }
+.cor-case-id-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .22em; color: rgba(196,181,253,.45); margin-bottom: 14px; display: block; }
+.cor-scenario h3 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(18px,2.4vw,28px); font-weight: 700;
+  color: rgba(255,255,255,.88); line-height: 1.4;
+}
+
+/* ── CHOICES ── */
+.cor-choices { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; width: 100%; margin-bottom: 24px; }
+@media(max-width:600px){ .cor-choices { grid-template-columns: 1fr; grid-template-rows: none; } }
+.cor-choice {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 18px 16px; border: 1px solid rgba(124,58,237,.2); border-radius: 10px;
+  background: rgba(12,10,32,.6); cursor: pointer; transition: all .3s ease; gap: 7px;
+}
+.cor-choice:hover { border-color: rgba(124,58,237,.5); background: rgba(124,58,237,.08); transform: translateY(-2px); box-shadow: 0 0 24px rgba(124,58,237,.22); }
+.cor-choice.selected { border-color: rgba(139,92,246,.6); background: rgba(124,58,237,.1); box-shadow: 0 0 16px rgba(139,92,246,.25); }
+.cor-choice.picked { border-color: #8b5cf6; background: rgba(124,58,237,.15); box-shadow: 0 0 28px rgba(139,92,246,.4); }
+.cor-choice.dimmed { opacity: .25; pointer-events: none; transform: scale(.97); }
+.cor-choice-letter {
+  width: 34px; height: 34px; border-radius: 50%; border: 2px solid rgba(124,58,237,.35);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: rgba(196,181,253,.85);
+}
+.cor-choice.selected .cor-choice-letter { border-color: #8b5cf6; background: rgba(139,92,246,.2); }
+.cor-choice-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: rgba(255,255,255,.88); font-weight: 600; line-height: 1.3; }
+.cor-choice-risk { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .08em; color: rgba(196,181,253,.55); }
+
+/* ── CONFIRM ── */
+.cor-confirm {
+  display: none; font-family: 'Bricolage Grotesque', sans-serif; font-size: 13px;
+  font-weight: 700; color: #fff; background: linear-gradient(135deg,#9333ea,#7c3aed,#6366f1);
+  border: none; border-radius: 7px; padding: 12px 30px; cursor: pointer;
+  margin: 0 auto 20px; box-shadow: 0 0 20px rgba(139,92,246,.4); transition: all .25s;
+}
+.cor-confirm.show { display: block; animation: corFadeIn .35s ease both; }
+.cor-confirm:hover { box-shadow: 0 0 28px rgba(139,92,246,.6); transform: translateY(-1px); }
+
+/* ── RESULT PANEL ── */
+.cor-result { width: 100%; overflow: hidden; transition: max-height .55s ease, opacity .45s ease; max-height: 0; opacity: 0; }
+.cor-result.open { max-height: 500px; opacity: 1; margin-bottom: 16px; }
+.cor-result-inner { padding: 22px; border: 1px solid rgba(124,58,237,.18); border-radius: 10px; background: rgba(8,6,22,.75); }
+.cor-verdict {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: .2em;
+  padding: 4px 12px; border-radius: 4px; display: inline-block; margin-bottom: 12px;
+}
+.cor-verdict.risk { background: rgba(239,68,68,.14); border: 1px solid rgba(239,68,68,.3); color: #fca5a5; }
+.cor-verdict.ok   { background: rgba(52,211,153,.1);  border: 1px solid rgba(52,211,153,.22); color: #6ee7b7; }
+.cor-verdict.warn { background: rgba(251,191,36,.1);  border: 1px solid rgba(251,191,36,.22); color: #fcd34d; }
+.cor-exposure {
+  font-family: 'Space Grotesk', sans-serif; font-size: clamp(22px,2.6vw,34px); font-weight: 700;
+  background: linear-gradient(90deg,#c084fc,#8b5cf6,#6366f1);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
+  display: block; margin-bottom: 10px;
+}
+.cor-explanation { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; color: rgba(255,255,255,.68); line-height: 1.65; margin: 0; }
+.cor-aria-note {
+  font-style: italic; color: rgba(196,181,253,.72);
+  border-left: 2px solid rgba(124,58,237,.3); padding-left: 12px;
+  margin-top: 12px; font-size: 12.5px; line-height: 1.6;
+}
+
+/* ── NEXT BUTTON ── */
+.cor-next {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .14em;
+  color: rgba(196,181,253,.75); border: 1px solid rgba(124,58,237,.3);
+  border-radius: 6px; padding: 11px 26px; cursor: pointer; transition: all .28s; text-align: center; margin-top: 6px;
+}
+.cor-next:hover { background: rgba(124,58,237,.15); border-color: #8b5cf6; color: #fff; box-shadow: 0 0 16px rgba(139,92,246,.3); }
+
+/* ── FINAL ── */
+.cor-final { text-align: center; margin-top: 20px; }
+.cor-final-line {
+  font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(16px,1.8vw,22px); font-weight: 700;
+  color: #f4f3ff; margin-bottom: 22px; line-height: 1.4;
+}
+.cor-final-sub { font-size: 13px; color: rgba(244,243,255,.45); margin-bottom: 22px; }
+.cor-cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.cor-btn-primary { padding: 14px 28px; background: linear-gradient(135deg,#6366f1,#7c3aed); color: #fff; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 14px; border: none; border-radius: 10px; cursor: pointer; text-decoration: none; box-shadow: 0 4px 16px rgba(99,102,241,.4); transition: opacity .2s; display: inline-flex; align-items: center; }
+.cor-btn-primary:hover { opacity: .88; }
+.cor-btn-ghost { padding: 14px 22px; background: transparent; color: rgba(196,181,253,.75); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; border: 1px solid rgba(99,102,241,.3); border-radius: 10px; cursor: pointer; transition: all .2s; text-decoration: none; }
+.cor-btn-ghost:hover { background: rgba(99,102,241,.08); border-color: rgba(99,102,241,.5); }
+
+/* ── RESTART ── */
+.cor-restart { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .14em; color: rgba(196,181,253,.5); border: 1px solid rgba(124,58,237,.2); border-radius: 6px; padding: 9px 22px; cursor: pointer; transition: all .25s; background: transparent; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; }
+.cor-restart:hover { border-color: #8b5cf6; color: #fff; background: rgba(124,58,237,.1); }
+
+@media(max-width:768px){ .corridor-section { padding: 56px 20px; } }
+</style>
+
+<!-- ── INTELLIGENCE CORRIDOR ──────────────────────────────────────── -->
+<div class="corridor-section">
+
+  <div class="corridor-header">
+    <div class="cor-eyebrow">
+      <span class="cor-eyebrow-dot"></span>
+      Intelligence Corridor &middot; Five Real Scenarios
+    </div>
+    <h2>Before you sign up — test yourself.</h2>
+    <p>Five doors. Five real HR decisions. Each one shows you exactly what Vantage would have given you. No signup required to play.</p>
+  </div>
+
+  <!-- Case selector -->
+  <div class="cor-case-select">
+    <p>Choose the scenario type</p>
+    <div class="cor-case-pills" id="demoCasePills">
+      <div class="cor-case-pill active" data-case="0">TERMINATION</div>
+      <div class="cor-case-pill" data-case="1">POSH / HARASSMENT</div>
+      <div class="cor-case-pill" data-case="2">RESTRUCTURING</div>
+      <div class="cor-case-pill" data-case="3">PERFORMANCE / PIP</div>
+      <div class="cor-case-pill" data-case="4">WAGE COMPLIANCE</div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="cor-progress" id="demoProgress">
+    <div class="cor-pip active" id="demoPip1">1</div><div class="cor-line" id="demoLine1"></div>
+    <div class="cor-pip" id="demoPip2">2</div><div class="cor-line" id="demoLine2"></div>
+    <div class="cor-pip" id="demoPip3">3</div><div class="cor-line" id="demoLine3"></div>
+    <div class="cor-pip" id="demoPip4">4</div><div class="cor-line" id="demoLine4"></div>
+    <div class="cor-pip" id="demoPip5">5</div>
+  </div>
+
+  <!-- Viewport -->
+  <div class="cor-viewport" id="demoCorViewport">
+
+    <!-- ROOM 1 -->
+    <div class="cor-room active" id="demoRoom1">
+      <div class="cor-door" id="demoDoor1" onclick="openDoor(1)">
+        <div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div>
+        <div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div>
+        <div class="cor-door-tag">ROOM 1 / CASE ANALYSIS</div>
+      </div>
+      <div class="cor-inside">
+        <div class="cor-scenario">
+          <span class="cor-case-id-label">CASE 2841 / Employee Relations</span>
+          <h3>Employee absent 7 days.<br>Manager wants termination tonight.<br>No written warnings on file.</h3>
+        </div>
+        <div class="cor-choices" id="demoChoices1">
+          <div class="cor-choice" onclick="selectChoice(1,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Terminate immediately</span><span class="cor-choice-risk">fast — manager is happy</span></div>
+          <div class="cor-choice" onclick="selectChoice(1,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Start domestic enquiry</span><span class="cor-choice-risk">slower — more defensible</span></div>
+          <div class="cor-choice" onclick="selectChoice(1,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Issue show-cause notice first</span><span class="cor-choice-risk">correct process — buys time</span></div>
+          <div class="cor-choice" onclick="selectChoice(1,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Escalate to legal team</span><span class="cor-choice-risk">delays the decision</span></div>
+        </div>
+        <button class="cor-confirm" id="demoConfirm1" onclick="confirmChoice(1)">Confirm Choice &rarr;</button>
+        <div class="cor-result" id="demoResult1"><div class="cor-result-inner" id="demoResultInner1"></div></div>
+        <div class="cor-next" id="demoNext1" style="display:none" onclick="goToRoom(2)">Proceed to Door 2 &rarr;</div>
+      </div>
+    </div>
+
+    <!-- ROOM 2 -->
+    <div class="cor-room" id="demoRoom2">
+      <div class="cor-door" id="demoDoor2" onclick="openDoor(2)">
+        <div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div>
+        <div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div>
+        <div class="cor-door-tag">ROOM 2 / EVIDENCE</div>
+      </div>
+      <div class="cor-inside">
+        <div class="cor-scenario">
+          <span class="cor-case-id-label">EVIDENCE ANALYSIS</span>
+          <h3>Enquiry reveals undocumented verbal warnings.<br>Two witnesses remember.<br>Nothing is on paper.</h3>
+        </div>
+        <div class="cor-choices" id="demoChoices2">
+          <div class="cor-choice" onclick="selectChoice(2,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Accept the evidence gap</span><span class="cor-choice-risk">proceed anyway</span></div>
+          <div class="cor-choice" onclick="selectChoice(2,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Reconstruct the trail</span><span class="cor-choice-risk">manager notes and calendars</span></div>
+          <div class="cor-choice" onclick="selectChoice(2,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Get written witness statements</span><span class="cor-choice-risk">signed and dated</span></div>
+          <div class="cor-choice" onclick="selectChoice(2,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Drop the case entirely</span><span class="cor-choice-risk">safest short-term option</span></div>
+        </div>
+        <button class="cor-confirm" id="demoConfirm2" onclick="confirmChoice(2)">Confirm Choice &rarr;</button>
+        <div class="cor-result" id="demoResult2"><div class="cor-result-inner" id="demoResultInner2"></div></div>
+        <div class="cor-next" id="demoNext2" style="display:none" onclick="goToRoom(3)">Proceed to Door 3 &rarr;</div>
+      </div>
+    </div>
+
+    <!-- ROOM 3 -->
+    <div class="cor-room" id="demoRoom3">
+      <div class="cor-door" id="demoDoor3" onclick="openDoor(3)">
+        <div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div>
+        <div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div>
+        <div class="cor-door-tag">ROOM 3 / BOARDROOM</div>
+      </div>
+      <div class="cor-inside">
+        <div class="cor-scenario">
+          <span class="cor-case-id-label">BOARDROOM CHALLENGE</span>
+          <h3>CFO asks: "What does keeping this person cost us?"<br>The boardroom is waiting.</h3>
+        </div>
+        <div class="cor-choices" id="demoChoices3">
+          <div class="cor-choice" onclick="selectChoice(3,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Estimate from experience</span><span class="cor-choice-risk">gut feel — hard to defend</span></div>
+          <div class="cor-choice" onclick="selectChoice(3,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Pull the Human P&amp;L</span><span class="cor-choice-risk">data-backed — boardroom-ready</span></div>
+          <div class="cor-choice" onclick="selectChoice(3,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Ask for more time</span><span class="cor-choice-risk">lose the room's momentum</span></div>
+          <div class="cor-choice" onclick="selectChoice(3,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Cite industry benchmark</span><span class="cor-choice-risk">generic — not your org</span></div>
+        </div>
+        <button class="cor-confirm" id="demoConfirm3" onclick="confirmChoice(3)">Confirm Choice &rarr;</button>
+        <div class="cor-result" id="demoResult3"><div class="cor-result-inner" id="demoResultInner3"></div></div>
+        <div class="cor-next" id="demoNext3" style="display:none" onclick="goToRoom(4)">Proceed to Door 4 &rarr;</div>
+      </div>
+    </div>
+
+    <!-- ROOM 4 -->
+    <div class="cor-room" id="demoRoom4">
+      <div class="cor-door" id="demoDoor4" onclick="openDoor(4)">
+        <div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div>
+        <div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div>
+        <div class="cor-door-tag">ROOM 4 / ARIA</div>
+      </div>
+      <div class="cor-inside">
+        <div class="cor-scenario">
+          <span class="cor-case-id-label">STAKEHOLDER PREPARATION</span>
+          <h3>COO call tomorrow morning.<br>She will ask about precedent, exposure, and your recommendation.</h3>
+        </div>
+        <div class="cor-choices" id="demoChoices4">
+          <div class="cor-choice" onclick="selectChoice(4,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Prepare mentally, wing it</span><span class="cor-choice-risk">unprepared</span></div>
+          <div class="cor-choice" onclick="selectChoice(4,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Run ARIA rehearsal</span><span class="cor-choice-risk">rehearsed — walk in ready</span></div>
+          <div class="cor-choice" onclick="selectChoice(4,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Write talking points only</span><span class="cor-choice-risk">prepared on paper, not in practice</span></div>
+          <div class="cor-choice" onclick="selectChoice(4,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Ask to reschedule</span><span class="cor-choice-risk">lose the moment</span></div>
+        </div>
+        <button class="cor-confirm" id="demoConfirm4" onclick="confirmChoice(4)">Confirm Choice &rarr;</button>
+        <div class="cor-result" id="demoResult4"><div class="cor-result-inner" id="demoResultInner4"></div></div>
+        <div class="cor-next" id="demoNext4" style="display:none" onclick="goToRoom(5)">Proceed to Door 5 &rarr;</div>
+      </div>
+    </div>
+
+    <!-- ROOM 5 -->
+    <div class="cor-room" id="demoRoom5">
+      <div class="cor-door" id="demoDoor5" onclick="openDoor(5)">
+        <div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div>
+        <div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div>
+        <div class="cor-door-tag">ROOM 5 / VANTAGE RECORD</div>
+      </div>
+      <div class="cor-inside">
+        <div class="cor-scenario">
+          <span class="cor-case-id-label">9 MONTHS LATER</span>
+          <h3>Same scenario. New employee. New manager.<br>Everything you learned the first time...</h3>
+        </div>
+        <div class="cor-choices" id="demoChoices5">
+          <div class="cor-choice" onclick="selectChoice(5,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Start from scratch</span><span class="cor-choice-risk">rebuild it all from memory</span></div>
+          <div class="cor-choice" onclick="selectChoice(5,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Open your Vantage Record</span><span class="cor-choice-risk">built on what you already know</span></div>
+          <div class="cor-choice" onclick="selectChoice(5,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Ask a colleague</span><span class="cor-choice-risk">secondhand memory</span></div>
+          <div class="cor-choice" onclick="selectChoice(5,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Search your email</span><span class="cor-choice-risk">partial, unstructured, not yours</span></div>
+        </div>
+        <button class="cor-confirm" id="demoConfirm5" onclick="confirmChoice(5)">Confirm Choice &rarr;</button>
+        <div class="cor-result" id="demoResult5"><div class="cor-result-inner" id="demoResultInner5"></div></div>
+        <div class="cor-final" id="demoFinal" style="display:none">
+          <p class="cor-final-line">Five doors. Five decisions.<br>Now see what Vantage gives you on your own cases.</p>
+          <p class="cor-final-sub">Every tool below runs live. Describe your situation and Vantage returns real intelligence — calibrated to your state, your industry, your org.</p>
+          <div class="cor-cta-row">
+            <a href="access.html" class="cor-btn-primary">Get started &rarr;</a>
+            <button class="cor-btn-ghost" onclick="restartCorridor()">Play again</button>
+          </div>
+          <button class="cor-restart" onclick="restartCorridor()">RESTART THE CORRIDOR</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /cor-viewport -->
+</div><!-- /corridor-section -->
+
+<script>
+/* ── INTELLIGENCE CORRIDOR — self-contained JS ──────────────────────── */
+(function() {
+
+  /* ── RESULT DATA — hardcoded per room per pick ── */
+  var RESULTS = {
+    1: {
+      A: { verdict:'risk', exposure:'₹8L – ₹14L exposure', text:'Terminating without a show-cause notice is legally indefensible. Under the IR Code 2020, any adverse action requires documented process. A tribunal will not look at intent — only procedure. Your exposure starts here and rises.', aria:'ARIA would have flagged this before you acted: no show-cause notice on record means your P dimension is Critical. The case fails process integrity before it starts.' },
+      B: { verdict:'warn', exposure:'Partially defensible', text:'The right direction — but you have skipped step one. A domestic enquiry cannot be legally initiated without a show-cause notice preceding it. Issue the SCN first, then open the enquiry.', aria:'ARIA would have caught the sequence error. Domestic enquiry without SCN = procedural gap that a tribunal will exploit on day one.' },
+      C: { verdict:'ok',   exposure:'Risk contained', text:'The right first move. No termination or domestic enquiry can be legally defended in India without a show-cause notice on record. Issue it today, give the employee time to respond, then proceed with the enquiry. This is the sequence that holds under scrutiny.', aria:'ARIA would confirm: SCN first, response window documented, enquiry follows. This is the process the IR Code requires.' },
+      D: { verdict:'warn', exposure:'Time lost', text:'Buying time — but at a cost. The manager\'s urgency is real and valid. Legal teams take days you may not have. The show-cause notice is something HR can issue directly. Issue it now, loop in legal for the enquiry stage.', aria:'ARIA would have told you: don\'t wait for legal on step one. SCN is within HR\'s direct authority.' }
+    },
+    2: {
+      A: { verdict:'risk', exposure:'High tribunal risk', text:'Proceeding with a documented gap is the single biggest source of HR tribunal losses in India. The opposing counsel will ask for the written warning. You will not have one. The case collapses.', aria:'ARIA would have flagged this under Accountability Clarity: the evidence trail is broken. Do not proceed until it is fixed.' },
+      B: { verdict:'warn', exposure:'Partially reconstructed', text:'Manager notes and calendar records help, but they carry less weight than direct witness statements. Reconstruct what you can — but push for signed statements before the enquiry hearing.', aria:'ARIA would note: reconstruction is a valid interim step, but witness statements remain the stronger evidence form.' },
+      C: { verdict:'ok',   exposure:'Evidence secured', text:'Signed, dated witness statements become part of the formal domestic enquiry record. This is the strongest evidence path available to you when written warnings were not issued. Two co-workers confirming the pattern, on paper, with dates, is defensible.', aria:'ARIA would confirm: witness statements collected before the enquiry hearing are admissible and carry weight. Collect them now.' },
+      D: { verdict:'warn', exposure:'Precedent set', text:'Safe today. But the behaviour continues, the precedent is set, and the next action against this employee becomes much harder. Dropping the case signals that undocumented absence has no consequence.', aria:'ARIA would note: dropping the case is a decision with future cost. Document the reason for closure at minimum.' }
+    },
+    3: {
+      A: { verdict:'risk', exposure:'Credibility lost', text:'A CFO who asks for a number and receives a feeling will remember it. You lose the budget conversation and your credibility in the room. Gut estimates in a boardroom setting are not HR speaking the language of business — they are HR being dismissed from it.', aria:'ARIA would have prepared you with the People ROI Brief before this meeting. The number exists. You just didn\'t have it ready.' },
+      B: { verdict:'ok',   exposure:'₹8L–₹14L documented', text:'You walk in with documented legal exposure, replacement cost model, and ramp time — not an opinion. The CFO now has a decision to make, not a feeling to dismiss. This is what HR speaking the language of business looks like.', aria:'ARIA would have built the full People ROI Brief before this call: replacement cost at 1.8x salary, 4.6 months ramp, ₹8L–₹14L legal exposure. The CFO cannot dismiss a number with a methodology behind it.' },
+      C: { verdict:'warn', exposure:'Moment passed', text:'You had the data available. Asking for more time signals you did not prepare for the most predictable question in an ER conversation with a CFO. The moment passes, the decision gets made without your input.', aria:'ARIA would have flagged this as a preparation failure — not an evidence gap.' },
+      D: { verdict:'warn', exposure:'Wrong number', text:'Industry benchmarks do not reflect your org\'s salary bands, attrition patterns, or role criticality. The CFO knows this. Generic data gets dismissed as exactly what it is.', aria:'ARIA would say: your org\'s numbers are always stronger than any benchmark. Use them.' }
+    },
+    4: {
+      A: { verdict:'risk', exposure:'Exposed in the room', text:'The COO will ask about precedent, legal exposure, and your recommendation in that sequence. Without ARIA rehearsal, you will be reacting to her framing rather than owning your own. One unexpected question and your confidence breaks.', aria:'ARIA exists for exactly this moment. Case Partner mode would have played the COO, pushed back on your reasoning, and surfaced the two questions you hadn\'t thought of.' },
+      B: { verdict:'ok',   exposure:'Fully prepared', text:'You have already answered the hard questions before the call started. ARIA pushed back. Your reasoning held under pressure. You walk in knowing your weakest points and how to address them. The COO cannot surprise you.', aria:'Case Partner mode simulates exactly this: a senior stakeholder who asks about legal exposure, precedent, and the financial case. You have already walked through it once.' },
+      C: { verdict:'warn', exposure:'Prepared on paper', text:'Knowing what to say is not the same as having said it under pressure. The muscle memory is not there. The COO will test your reasoning in real time. Talking points give you the what — ARIA gives you the practice of actually saying it.', aria:'ARIA would note: paper prep and conversational rehearsal are not the same capability. One of them builds the real thing.' },
+      D: { verdict:'risk', exposure:'Window closed', text:'You lose the moment, the momentum, and your positioning on this case. Decisions made without HR input in the room tend to go in directions HR then has to manage.', aria:'ARIA would say: reschedule only when you need more information — not more confidence. Confidence is what rehearsal builds.' }
+    },
+    5: {
+      A: { verdict:'warn', exposure:'Starting from zero', text:'Memory fades. You will approximate last time\'s process without the documentation. The financial exposure analysis rebuilds from scratch. The show-cause notice template gets rewritten from scratch. The outcome from Case 2841 stays in your head — not on record.', aria:'ARIA would note: every case you navigate without a record is a case you will have to rebuild from memory next time.' },
+      B: { verdict:'ok',   exposure:'Case 2841 on record', text:'Case 2841 is in your Vantage Record. The show-cause template you used, the domestic enquiry sequence, the financial exposure range, the outcome — all timestamped and documented. You are not starting over. You are building on what you already know.', aria:'This is what the Vantage Record is for. Not a log — a professional asset. It compounds. Every case you document makes the next one faster, more defensible, and better argued.' },
+      C: { verdict:'warn', exposure:'Secondhand memory', text:'A colleague who was not in the room, reconstructing a case from memory, nine months later. No documentation. No evidence trail. No ownership. And when the colleague leaves, the knowledge leaves with them.', aria:'ARIA would note: institutional knowledge that lives only in people is the most fragile kind.' },
+      D: { verdict:'warn', exposure:'Partial, not yours', text:'Fragmented threads, partial context, and attached to your company email account. When you move to your next organisation, it stays. This is your work — it should not be stored somewhere that belongs to someone else.', aria:'ARIA would say: your Vantage Record follows you. Your email inbox does not.' }
+    }
+  };
+
+  var currentPicks = {};
+
+  /* Case pill selector (cosmetic — same case in all scenarios) */
+  document.getElementById('demoCasePills').addEventListener('click', function(e) {
+    var pill = e.target.closest('.cor-case-pill');
+    if (!pill) return;
+    document.querySelectorAll('#demoCasePills .cor-case-pill').forEach(function(p) { p.classList.remove('active'); });
+    pill.classList.add('active');
+  });
+
+  /* Open door animation */
+  window.openDoor = function(room) {
+    var door = document.getElementById('demoDoor' + room);
+    if (!door) return;
+    door.classList.add('open');
+    setTimeout(function() {
+      var roomEl = document.getElementById('demoRoom' + room);
+      if (roomEl) roomEl.classList.add('entered');
+    }, 700);
+  };
+
+  /* Select a choice */
+  window.selectChoice = function(room, el, pick) {
+    var grid = document.getElementById('demoChoices' + room);
+    if (!grid) return;
+    grid.querySelectorAll('.cor-choice').forEach(function(c) { c.classList.remove('selected'); });
+    el.classList.add('selected');
+    currentPicks[room] = pick;
+    var btn = document.getElementById('demoConfirm' + room);
+    if (btn) btn.classList.add('show');
+  };
+
+  /* Confirm choice and show result */
+  window.confirmChoice = function(room) {
+    var pick = currentPicks[room];
+    if (!pick) return;
+    var result = RESULTS[room] && RESULTS[room][pick];
+    if (!result) return;
+
+    /* Lock choices */
+    var grid = document.getElementById('demoChoices' + room);
+    if (grid) {
+      grid.querySelectorAll('.cor-choice').forEach(function(c) {
+        if (!c.classList.contains('selected')) c.classList.add('dimmed');
+        else c.classList.add('picked');
+      });
+    }
+
+    /* Hide confirm */
+    var btn = document.getElementById('demoConfirm' + room);
+    if (btn) btn.style.display = 'none';
+
+    /* Render result */
+    var inner = document.getElementById('demoResultInner' + room);
+    if (inner) {
+      inner.innerHTML =
+        '<div class="cor-verdict ' + result.verdict + '">' +
+          (result.verdict === 'ok' ? 'DEFENSIBLE' : result.verdict === 'risk' ? 'HIGH RISK' : 'CAUTION') +
+        '</div>' +
+        (result.exposure ? '<span class="cor-exposure">' + result.exposure + '</span>' : '') +
+        '<p class="cor-explanation">' + result.text + '</p>' +
+        '<p class="cor-aria-note">&#x2736; ARIA — ' + result.aria + '</p>';
+    }
+
+    /* Open result panel */
+    var panel = document.getElementById('demoResult' + room);
+    if (panel) {
+      setTimeout(function() { panel.classList.add('open'); }, 80);
+    }
+
+    /* Show next or final */
+    if (room < 5) {
+      var next = document.getElementById('demoNext' + room);
+      if (next) setTimeout(function() { next.style.display = 'block'; }, 600);
+    } else {
+      var final = document.getElementById('demoFinal');
+      if (final) setTimeout(function() { final.style.display = 'block'; }, 600);
+    }
+
+    /* Update progress pip */
+    var pip = document.getElementById('demoPip' + room);
+    if (pip) {
+      pip.classList.remove('active');
+      pip.classList.add('done');
+      pip.textContent = '✓';
+    }
+  };
+
+  /* Go to next room */
+  window.goToRoom = function(room) {
+    /* Hide all rooms */
+    for (var i = 1; i <= 5; i++) {
+      var r = document.getElementById('demoRoom' + i);
+      if (r) r.classList.remove('active');
+    }
+    /* Mark connecting line done */
+    var line = document.getElementById('demoLine' + (room - 1));
+    if (line) line.classList.add('done');
+    /* Activate next pip */
+    var pip = document.getElementById('demoPip' + room);
+    if (pip) pip.classList.add('active');
+    /* Show next room */
+    var next = document.getElementById('demoRoom' + room);
+    if (next) {
+      next.classList.add('active');
+      next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  /* Restart */
+  window.restartCorridor = function() {
+    currentPicks = {};
+    /* Reset all rooms */
+    for (var i = 1; i <= 5; i++) {
+      var room = document.getElementById('demoRoom' + i);
+      if (room) { room.classList.remove('active','entered'); }
+      var door = document.getElementById('demoDoor' + i);
+      if (door) door.classList.remove('open');
+      var choices = document.getElementById('demoChoices' + i);
+      if (choices) choices.querySelectorAll('.cor-choice').forEach(function(c) {
+        c.classList.remove('selected','picked','dimmed');
+      });
+      var confirm = document.getElementById('demoConfirm' + i);
+      if (confirm) { confirm.classList.remove('show'); confirm.style.display = ''; }
+      var result = document.getElementById('demoResult' + i);
+      if (result) result.classList.remove('open');
+      var next = document.getElementById('demoNext' + i);
+      if (next) next.style.display = 'none';
+      var pip = document.getElementById('demoPip' + i);
+      if (pip) { pip.classList.remove('active','done'); pip.textContent = i; }
+      var line = document.getElementById('demoLine' + i);
+      if (line) line.classList.remove('done');
+    }
+    var final = document.getElementById('demoFinal');
+    if (final) final.style.display = 'none';
+    /* Reactivate room 1 */
+    var r1 = document.getElementById('demoRoom1');
+    if (r1) r1.classList.add('active');
+    var p1 = document.getElementById('demoPip1');
+    if (p1) p1.classList.add('active');
+    /* Scroll to top of corridor */
+    var section = document.querySelector('.corridor-section');
+    if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     END OF CORRIDOR PATCH — the existing <script> block follows below
+     ═══════════════════════════════════════════════════════════════════ -->
 <script>
   var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
   var BASE = 'https://vantage.virorah.com/';
