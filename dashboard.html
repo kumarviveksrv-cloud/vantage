@@ -919,5 +919,381 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     draw();
   })();
   </script>
+  <!-- ═══════════════════════════════════════════════════════════
+     VANTAGE — WELCOME OVERLAY
+     Paste this entire block before </body> in dashboard.html
+     Fires once on first sign-in. localStorage flag: vantage_onboarded_v1
+     Three paths: ARIA (live situation) · Tour (explore) · Case Advisor (specific)
+     ═══════════════════════════════════════════════════════════ -->
+
+<style>
+#vw-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99990;
+  background: rgba(5, 4, 16, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity .5s ease;
+  pointer-events: none;
+}
+#vw-backdrop.vw-active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Subtle grid background */
+#vw-backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(99,102,241,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,102,241,.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+/* Radial glow */
+#vw-backdrop::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(ellipse at center, rgba(99,102,241,.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+#vw-modal {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  width: 100%;
+  text-align: center;
+  animation: vwIn .7s cubic-bezier(.22,1,.36,1) both;
+  animation-delay: .15s;
+}
+
+@keyframes vwIn {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.vw-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .22em;
+  color: rgba(196,181,253,.5);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.vw-eyebrow-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #8b5cf6;
+  box-shadow: 0 0 8px rgba(139,92,246,.8);
+  animation: vwDotPulse 2s ease-in-out infinite;
+}
+@keyframes vwDotPulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: .35; }
+}
+
+.vw-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(255,255,255,.92);
+  line-height: 1.2;
+  margin-bottom: 10px;
+  letter-spacing: -.01em;
+}
+
+.vw-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(13px, 1.4vw, 15px);
+  color: rgba(196,181,253,.62);
+  line-height: 1.7;
+  max-width: 480px;
+  margin: 0 auto 44px;
+}
+
+/* Three path cards */
+.vw-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.vw-card {
+  background: rgba(13,11,30,.75);
+  border: 1px solid rgba(196,181,253,.1);
+  border-radius: 14px;
+  padding: 26px 22px;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  display: block;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .3s, background .3s, transform .25s;
+}
+.vw-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1.5px;
+  opacity: 0;
+  transition: opacity .3s;
+}
+.vw-card:hover {
+  border-color: rgba(196,181,253,.28);
+  background: rgba(13,11,30,.92);
+  transform: translateY(-3px);
+}
+.vw-card:hover::before { opacity: 1; }
+
+/* Individual card accents */
+.vw-card--aria::before      { background: linear-gradient(90deg, transparent, #8b5cf6, #c4b5fd, transparent); }
+.vw-card--case::before      { background: linear-gradient(90deg, transparent, #6366f1, #818cf8, transparent); }
+.vw-card--explore::before   { background: linear-gradient(90deg, transparent, #7c3aed, #a78bfa, transparent); }
+
+.vw-card:hover.vw-card--aria    { box-shadow: 0 12px 40px rgba(139,92,246,.2); }
+.vw-card:hover.vw-card--case    { box-shadow: 0 12px 40px rgba(99,102,241,.2); }
+.vw-card:hover.vw-card--explore { box-shadow: 0 12px 40px rgba(124,58,237,.2); }
+
+.vw-card-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: .18em;
+  color: rgba(196,181,253,.35);
+  margin-bottom: 14px;
+  display: block;
+}
+
+.vw-card-icon {
+  font-size: 24px;
+  margin-bottom: 14px;
+  display: block;
+  line-height: 1;
+}
+
+.vw-card-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(255,255,255,.9);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.vw-card-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: rgba(196,181,253,.55);
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+
+.vw-card-cta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transition: gap .2s;
+}
+.vw-card--aria .vw-card-cta      { color: #c4b5fd; }
+.vw-card--case .vw-card-cta      { color: #a5b4fc; }
+.vw-card--explore .vw-card-cta   { color: #a78bfa; }
+.vw-card:hover .vw-card-cta { gap: 11px; }
+
+.vw-skip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: rgba(196,181,253,.25);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color .2s;
+  padding: 8px 16px;
+}
+.vw-skip:hover { color: rgba(196,181,253,.5); }
+
+/* Mobile */
+@media (max-width: 680px) {
+  .vw-cards {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .vw-card {
+    padding: 20px 18px;
+  }
+  .vw-card-icon { font-size: 20px; margin-bottom: 10px; }
+  .vw-headline { margin-bottom: 8px; }
+  #vw-modal { text-align: left; }
+  .vw-eyebrow { justify-content: flex-start; }
+  .vw-sub { margin-left: 0; margin-right: 0; }
+}
+</style>
+
+<!-- WELCOME OVERLAY HTML -->
+<div id="vw-backdrop" role="dialog" aria-modal="true" aria-label="Welcome to Vantage">
+  <div id="vw-modal">
+
+    <div class="vw-eyebrow">
+      <span class="vw-eyebrow-dot"></span>
+      VANTAGE &nbsp;·&nbsp; PRIVATE HR INTELLIGENCE
+    </div>
+
+    <h1 class="vw-headline">You are HR for everyone.<br>Who is HR for you?</h1>
+
+    <p class="vw-sub">
+      Vantage is your private thinking partner — for the cases, decisions,
+      and hard moments you've always handled alone. Where would you like to start?
+    </p>
+
+    <div class="vw-cards">
+
+      <!-- Path 1: Live situation → ARIA -->
+      <a href="aria.html" class="vw-card vw-card--aria" onclick="vwDismiss()">
+        <span class="vw-card-num">01 / IMMEDIATE</span>
+        <span class="vw-card-icon">&#x2736;</span>
+        <div class="vw-card-title">I have a live situation right now</div>
+        <div class="vw-card-desc">A case, a decision, a conversation you're not sure about. Talk it through with ARIA and get intelligence in minutes.</div>
+        <div class="vw-card-cta">Talk to ARIA <span>&#8594;</span></div>
+      </a>
+
+      <!-- Path 2: Specific case → Employee Case Advisor -->
+      <a href="employee-case-advisor.html" class="vw-card vw-card--case" onclick="vwDismiss()">
+        <span class="vw-card-num">02 / STRUCTURED</span>
+        <span class="vw-card-icon">&#x26A1;</span>
+        <div class="vw-card-title">I need help with a specific HR case</div>
+        <div class="vw-card-desc">A disciplinary matter, a termination, a policy call. Walk through it step by step with legal and financial intelligence attached.</div>
+        <div class="vw-card-cta">Open Case Advisor <span>&#8594;</span></div>
+      </a>
+
+      <!-- Path 3: Explore → Tour -->
+      <a href="tour.html" class="vw-card vw-card--explore" onclick="vwDismiss()">
+        <span class="vw-card-num">03 / EXPLORE</span>
+        <span class="vw-card-icon">&#x1F5FA;</span>
+        <div class="vw-card-title">Show me what Vantage can do</div>
+        <div class="vw-card-desc">A quick walkthrough of every tool. Understand the platform in five minutes so you know exactly what to reach for and when.</div>
+        <div class="vw-card-cta">Take the tour <span>&#8594;</span></div>
+      </a>
+
+    </div>
+
+    <button class="vw-skip" onclick="vwDismiss()">
+      Skip for now — go to Dashboard
+    </button>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var FLAG = 'vantage_onboarded_v1';
+
+  function alreadyOnboarded(){
+    try { return localStorage.getItem(FLAG) === '1'; } catch(e) { return true; }
+  }
+
+  function markOnboarded(){
+    try { localStorage.setItem(FLAG, '1'); } catch(e) {}
+  }
+
+  window.vwDismiss = function(){
+    markOnboarded();
+    var el = document.getElementById('vw-backdrop');
+    if(!el) return;
+    el.style.opacity = '0';
+    el.style.pointerEvents = 'none';
+    setTimeout(function(){ el.style.display = 'none'; }, 500);
+  };
+
+  function showOverlay(){
+    var el = document.getElementById('vw-backdrop');
+    if(!el) return;
+    el.style.display = 'flex';
+    // Allow paint, then fade in
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        el.classList.add('vw-active');
+      });
+    });
+    // Prevent body scroll while overlay is open
+    document.body.style.overflow = 'hidden';
+  }
+
+  function init(){
+    if(alreadyOnboarded()) return;
+
+    // Wait for Clerk to confirm a real signed-in session
+    // before showing the overlay. Polls every 150ms for up to 6s.
+    var attempts = 0;
+    var maxAttempts = 40;
+
+    function waitForSession(){
+      attempts++;
+      if(attempts > maxAttempts){
+        // Clerk didn't load — show overlay anyway
+        showOverlay();
+        return;
+      }
+      if(window.Clerk && window.Clerk.session){
+        // Confirmed signed in — show overlay
+        showOverlay();
+      } else {
+        setTimeout(waitForSession, 150);
+      }
+    }
+
+    waitForSession();
+  }
+
+  // Dismiss on backdrop click (not modal click)
+  document.addEventListener('DOMContentLoaded', function(){
+    var backdrop = document.getElementById('vw-backdrop');
+    if(backdrop){
+      backdrop.addEventListener('click', function(e){
+        if(e.target === backdrop) window.vwDismiss();
+      });
+    }
+  });
+
+  // Dismiss on Escape
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') window.vwDismiss();
+  });
+
+  // Run
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+</script>
 </body>
 </html>
