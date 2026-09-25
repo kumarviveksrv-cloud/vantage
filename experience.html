@@ -175,6 +175,20 @@
 }
 .accent {
   background: linear-gradient(90deg,#c084fc 0%,#8b5cf6 50%,#6366f1 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  display: inline !important;
+}
+/* Belt-and-suspenders: also cover .line.accent directly */
+.line.accent {
+  background: linear-gradient(90deg,#c084fc 0%,#8b5cf6 50%,#6366f1 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  display: block !important;
 }
 .aria-dim strong {
   text-transform: uppercase !important;
@@ -370,6 +384,24 @@
 .aria-figure { z-index:2 !important; }
 #ariaVolumetricCanvas { position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;z-index:2 !important; }
 .aria-reaction, .aria-grid, .aria-light { position:relative;z-index:3; }
+
+/* ── RECORD HEAD LAYOUT OVERRIDE ──────────────────────────────────── */
+/* vantage-cinematic.css applies a multi-column grid to .record-head  */
+/* that breaks on experience.html — force single block layout          */
+.record-head {
+  display: block !important;
+  grid-template-columns: unset !important;
+  columns: unset !important;
+  max-width: 860px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: left !important;
+}
+.record-head h2 {
+  font-size: clamp(28px,4vw,52px) !important;
+  margin-bottom: 20px !important;
+  line-height: 1.15 !important;
+}
 
 /* ── HUMACITY SECTION ──────────────────────────────────────────────── */
 .humacity-concept { font-size:clamp(22px,2.4vw,32px) !important;margin-top:clamp(24px,2.8vw,40px) !important;margin-bottom:clamp(20px,2.2vw,28px) !important; }
@@ -1197,6 +1229,133 @@
 <script src="vantage-autoselect.js"></script>
 
 <canvas id="wormholeCanvas" aria-hidden="true"></canvas>
+
+<script>
+/* ── EXPERIENCE.HTML FALLBACK ANIMATIONS ─────────────────────────────
+   vantage-cinematic.js IntersectionObservers may not fire correctly on
+   this page because it also tries to set up prologue/boot/hero elements
+   that don't exist here. This script re-runs the same animations using
+   its own observer as a safety net — idempotent, won't double-fire.     */
+(function() {
+  function alreadyDone(el, cls) { return el && el.classList.contains(cls); }
+
+  /* ── HUMAC FORCES ── */
+  function animateHumac() {
+    var panel = document.getElementById('humacScorePanel');
+    if (alreadyDone(panel, 'hsp-visible')) return;
+    var forces = document.querySelectorAll('.hs-force');
+    var delay = 0;
+    forces.forEach(function(f) {
+      setTimeout(function() {
+        f.classList.add('hf-visible');
+        var fill = f.querySelector('.hsf-fill');
+        if (fill) fill.style.width = (fill.getAttribute('data-w') || '70') + '%';
+      }, delay);
+      delay += 280;
+    });
+    setTimeout(function() {
+      if (panel) panel.classList.add('hsp-visible');
+      /* Humac score counter */
+      var numEl = document.getElementById('humacNum');
+      var hciEl = document.getElementById('humacHCI');
+      var fillEl = document.getElementById('humacFill');
+      var verdictEl = document.getElementById('humacVerdict');
+      var taglineEl = document.getElementById('humacTagline');
+      var hcixEl = document.getElementById('humacHCIx');
+      var trajEl = document.getElementById('humacTrajNum');
+      var trajStatus = document.getElementById('humacTrajStatus');
+      var target = 84, hciTarget = 73, count = 0, hciCount = 0;
+      var iv = setInterval(function() {
+        count = Math.min(count + 2, target);
+        hciCount = Math.min(hciCount + 2, hciTarget);
+        if (numEl) numEl.textContent = count;
+        if (hciEl) hciEl.textContent = hciCount;
+        if (count >= target) clearInterval(iv);
+      }, 30);
+      if (fillEl) fillEl.style.width = '84%';
+      if (verdictEl) verdictEl.textContent = 'Value Compounding';
+      if (taglineEl) taglineEl.textContent = 'Your organisation is generating above-average returns on people investment.';
+      if (hcixEl) hcixEl.textContent = '0.87x';
+      if (trajEl) trajEl.textContent = '+6';
+      if (trajStatus) trajStatus.textContent = 'Improving vs Q2';
+    }, delay + 200);
+  }
+
+  /* ── DOSSIER ENTRIES ── */
+  function animateDossier() {
+    var entries = document.querySelectorAll('.dos-entry');
+    if (!entries.length || alreadyDone(entries[0], 'dos-visible')) return;
+    var delay = 300;
+    entries.forEach(function(e) {
+      setTimeout(function() { e.classList.add('dos-visible'); }, delay);
+      delay += 420;
+    });
+    /* Progress bar */
+    var fill = document.getElementById('dosProgress');
+    var pct = document.getElementById('dosPercent');
+    if (fill) { setTimeout(function() { fill.style.width = '100%'; fill.style.transition = 'width 2.2s ease'; }, 200); }
+    if (pct) {
+      var c = 0;
+      var piv = setInterval(function() {
+        c = Math.min(c + 3, 100);
+        pct.textContent = c + '%';
+        if (c >= 100) clearInterval(piv);
+      }, 60);
+    }
+    /* Total value counter */
+    var total = document.getElementById('dosTotal');
+    if (total) {
+      var milestones = ['₹0L','₹4.2L','₹18.4L','₹34.6L'];
+      var mi = 0;
+      var tiv = setInterval(function() {
+        mi++;
+        if (mi < milestones.length) total.textContent = milestones[mi];
+        if (mi >= milestones.length - 1) clearInterval(tiv);
+      }, 500);
+    }
+  }
+
+  /* ── MERIDIAN STACK ── */
+  function animateMeridian() {
+    var layers = document.querySelectorAll('.ms-layer');
+    if (!layers.length || alreadyDone(layers[0], 'msl-active')) return;
+    var cal = document.getElementById('msCalibrate');
+    if (cal) cal.classList.add('ms-cal-active');
+    var delay = 300;
+    /* Animate from bottom (core) up */
+    var reversed = Array.from(layers).reverse();
+    reversed.forEach(function(l) {
+      setTimeout(function() { l.classList.add('msl-active'); }, delay);
+      delay += 450;
+    });
+    setTimeout(function() {
+      var out = document.getElementById('msOutput');
+      if (out) out.classList.add('mso-active');
+      var ms = document.getElementById('meridianStatus');
+      if (ms) ms.textContent = 'PRECISION ADVICE ACTIVE';
+    }, delay + 200);
+  }
+
+  /* ── OBSERVER ── */
+  if (!window.IntersectionObserver) return;
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting) return;
+      var id = entry.target.id || entry.target.className;
+      if (entry.target.id === 'humacSynthesis') { animateHumac(); obs.unobserve(entry.target); }
+      if (entry.target.id === 'recordDossier')  { animateDossier(); obs.unobserve(entry.target); }
+      if (entry.target.id === 'meridianStack')  { animateMeridian(); obs.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    ['humacSynthesis','recordDossier','meridianStack'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+  });
+})();
+</script>
 <button id="corFsFloating" aria-label="Exit fullscreen" style="display:none;">
   <span>&#x26F6;</span> Exit fullscreen
 </button>
