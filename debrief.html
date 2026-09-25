@@ -168,8 +168,26 @@
             Generate this month’s debrief →
           </button>
           <div style="font-size:0.65rem;color:rgba(244,243,255,0.35);margin-top:8px;font-family:'JetBrains Mono',monospace">Pulls your cases + Humac data · Takes ~15 seconds</div>
-        </div>
       </div>
+
+    </div><!-- end sidebar -->
+
+  <div class="main">
+        <div id="loading-view" class="loading-state">
+      <div class="loading-orb">
+        <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="28" stroke="rgba(99,102,241,0.2)" stroke-width="4"/>
+          <path d="M32 4 A28 28 0 0 1 60 32" stroke="#6366f1" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="loading-text">LOADING YOUR DEBRIEF</div>
+    </div>
+
+    <div id="empty-view" class="empty-state" style="display:none">
+      <div class="empty-icon">📋</div>
+      <div class="empty-title">No Debrief Yet</div>
+      <div class="empty-sub">Your monthly debrief pulls together your cases, Humac data, and HR patterns. Generate your first one below.</div>
+      <button class="btn-primary" onclick="generateDebrief()">Generate This Month's Debrief →</button>
     </div>
 
     <div id="debrief-view" style="display:none">
@@ -469,9 +487,13 @@
     }
 
     function showView(view) {
-      ['loading-view','empty-view','debrief-view'].forEach(function(v){ document.getElementById(v).style.display='none'; });
-      document.getElementById(view).style.display = view === 'debrief-view' ? 'block' : 'block';
-    }
+  ['loading-view','empty-view','debrief-view'].forEach(function(v){
+    var el = document.getElementById(v);
+    if (el) el.style.display = 'none';
+  });
+  var target = document.getElementById(view);
+  if (target) target.style.display = 'block';
+}
 
     async function loadDebrief(forceRegenerate) {
       var userId = getUserId();
