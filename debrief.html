@@ -454,7 +454,7 @@
 
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
-    document.getElementById('meridian-chip-val').innerText = (meridian.state||'Not set') + ' \xb7 ' + (meridian.industry||'Not set');
+    var _chip = document.getElementById('meridian-chip-val'); if (_chip) _chip.innerText = (meridian.state||'Not set') + ' \xb7 ' + (meridian.industry||'Not set');
 
     function getUserId() {
       var uid = localStorage.getItem('sr_user_id');
