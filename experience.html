@@ -403,6 +403,69 @@
   line-height: 1.15 !important;
 }
 
+/* ── EXPERIENCE.HTML — FORCE REVEAL ───────────────────────────────────
+   vantage-cinematic.css hides .reveal-section elements and their
+   children until cinematic.js IntersectionObservers fire. On this page
+   cinematic.js runs incomplete because index.html-specific DOM elements
+   (prologue, boot, hero) don't exist. Force everything visible here
+   and let the fallback script handle the specific enter animations.     */
+.reveal-section {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+/* Humacity headline and terms */
+.humacity-headline,
+.humacity-concept,
+.humacity-terms {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+/* ARIA section elements */
+.aria-identity,
+.aria-room,
+.aria-actions,
+.aria-dims,
+.aria-dim,
+.aria-listen {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+/* Meridian copy and grid */
+.meridian-copy,
+.meridian-grid {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+/* Record section */
+.record-head,
+.record-links,
+.record-payoff {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+/* Humacity grid */
+.humacity-grid,
+.humacity-copy {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+/* CTA / final sections */
+.cta-copy, .final-copy, .cta-actions {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+/* h-metrics */
+.h-metrics {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+/* Corridor sections */
+.cor-heading, .cor-case-select, .cor-progress, .cor-fullscreen-hint {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 /* ── HUMACITY SECTION ──────────────────────────────────────────────── */
 .humacity-concept { font-size:clamp(22px,2.4vw,32px) !important;margin-top:clamp(24px,2.8vw,40px) !important;margin-bottom:clamp(20px,2.2vw,28px) !important; }
 .humacity-copy .body-copy { font-size:clamp(15px,1.55vw,20px) !important;line-height:1.82 !important;color:rgba(255,255,255,.78) !important;opacity:1 !important; }
@@ -1231,130 +1294,170 @@
 <canvas id="wormholeCanvas" aria-hidden="true"></canvas>
 
 <script>
-/* ── EXPERIENCE.HTML FALLBACK ANIMATIONS ─────────────────────────────
-   vantage-cinematic.js IntersectionObservers may not fire correctly on
-   this page because it also tries to set up prologue/boot/hero elements
-   that don't exist here. This script re-runs the same animations using
-   its own observer as a safety net — idempotent, won't double-fire.     */
+/* ── EXPERIENCE.HTML — COMPREHENSIVE ANIMATION FALLBACK ──────────────
+   Runs after all external scripts. Checks each animated component and
+   fires the reveal if cinematic.js/v4.js did not already do so.
+   Fully idempotent — each function checks before acting.               */
 (function() {
-  function alreadyDone(el, cls) { return el && el.classList.contains(cls); }
+  var done = {};
+  function once(key, fn) { if (done[key]) return; done[key] = true; fn(); }
 
-  /* ── HUMAC FORCES ── */
+  /* ── HUMAC FORCES + SCORE PANEL ── */
   function animateHumac() {
-    var panel = document.getElementById('humacScorePanel');
-    if (alreadyDone(panel, 'hsp-visible')) return;
-    var forces = document.querySelectorAll('.hs-force');
-    var delay = 0;
-    forces.forEach(function(f) {
+    once('humac', function() {
+      var forces = document.querySelectorAll('.hs-force');
+      var delay = 0;
+      forces.forEach(function(f) {
+        setTimeout(function() {
+          f.classList.add('hf-visible');
+          var fill = f.querySelector('.hsf-fill');
+          if (fill) fill.style.width = (fill.getAttribute('data-w') || '70') + '%';
+        }, delay);
+        delay += 280;
+      });
       setTimeout(function() {
-        f.classList.add('hf-visible');
-        var fill = f.querySelector('.hsf-fill');
-        if (fill) fill.style.width = (fill.getAttribute('data-w') || '70') + '%';
-      }, delay);
-      delay += 280;
+        var panel = document.getElementById('humacScorePanel');
+        if (panel) panel.classList.add('hsp-visible');
+        var numEl   = document.getElementById('humacNum');
+        var hciEl   = document.getElementById('humacHCI');
+        var fillEl  = document.getElementById('humacFill');
+        var verdict = document.getElementById('humacVerdict');
+        var tagline = document.getElementById('humacTagline');
+        var hcix    = document.getElementById('humacHCIx');
+        var traj    = document.getElementById('humacTrajNum');
+        var trajSt  = document.getElementById('humacTrajStatus');
+        var target = 84, hciTarget = 73, c = 0, hc = 0;
+        var iv = setInterval(function() {
+          c = Math.min(c + 2, target);
+          hc = Math.min(hc + 2, hciTarget);
+          if (numEl) numEl.textContent = c;
+          if (hciEl) hciEl.textContent = hc;
+          if (c >= target) clearInterval(iv);
+        }, 30);
+        if (fillEl)  fillEl.style.width = '84%';
+        if (verdict) verdict.textContent = 'Value Compounding';
+        if (tagline) tagline.textContent = 'Your organisation generates above-average returns on people investment.';
+        if (hcix)    hcix.textContent = '0.87x';
+        if (traj)    traj.textContent = '+6';
+        if (trajSt)  trajSt.textContent = 'Improving vs Q2';
+      }, delay + 200);
     });
-    setTimeout(function() {
-      if (panel) panel.classList.add('hsp-visible');
-      /* Humac score counter */
-      var numEl = document.getElementById('humacNum');
-      var hciEl = document.getElementById('humacHCI');
-      var fillEl = document.getElementById('humacFill');
-      var verdictEl = document.getElementById('humacVerdict');
-      var taglineEl = document.getElementById('humacTagline');
-      var hcixEl = document.getElementById('humacHCIx');
-      var trajEl = document.getElementById('humacTrajNum');
-      var trajStatus = document.getElementById('humacTrajStatus');
-      var target = 84, hciTarget = 73, count = 0, hciCount = 0;
-      var iv = setInterval(function() {
-        count = Math.min(count + 2, target);
-        hciCount = Math.min(hciCount + 2, hciTarget);
-        if (numEl) numEl.textContent = count;
-        if (hciEl) hciEl.textContent = hciCount;
-        if (count >= target) clearInterval(iv);
-      }, 30);
-      if (fillEl) fillEl.style.width = '84%';
-      if (verdictEl) verdictEl.textContent = 'Value Compounding';
-      if (taglineEl) taglineEl.textContent = 'Your organisation is generating above-average returns on people investment.';
-      if (hcixEl) hcixEl.textContent = '0.87x';
-      if (trajEl) trajEl.textContent = '+6';
-      if (trajStatus) trajStatus.textContent = 'Improving vs Q2';
-    }, delay + 200);
   }
 
   /* ── DOSSIER ENTRIES ── */
   function animateDossier() {
-    var entries = document.querySelectorAll('.dos-entry');
-    if (!entries.length || alreadyDone(entries[0], 'dos-visible')) return;
-    var delay = 300;
-    entries.forEach(function(e) {
-      setTimeout(function() { e.classList.add('dos-visible'); }, delay);
-      delay += 420;
+    once('dossier', function() {
+      var entries = document.querySelectorAll('.dos-entry');
+      if (!entries.length) return;
+      var delay = 300;
+      entries.forEach(function(e) {
+        setTimeout(function() { e.classList.add('dos-visible'); }, delay);
+        delay += 420;
+      });
+      var fill = document.getElementById('dosProgress');
+      var pct  = document.getElementById('dosPercent');
+      if (fill) { setTimeout(function() { fill.style.width = '100%'; fill.style.transition = 'width 2.2s ease'; }, 200); }
+      if (pct)  {
+        var c = 0;
+        var piv = setInterval(function() {
+          c = Math.min(c + 3, 100);
+          pct.textContent = c + '%';
+          if (c >= 100) clearInterval(piv);
+        }, 60);
+      }
+      var total = document.getElementById('dosTotal');
+      if (total) {
+        var stages = ['₹4.2L','₹18.4L','₹34.6L'];
+        var mi = 0;
+        var tiv = setInterval(function() {
+          if (mi < stages.length) total.textContent = stages[mi];
+          mi++;
+          if (mi >= stages.length) clearInterval(tiv);
+        }, 500);
+      }
     });
-    /* Progress bar */
-    var fill = document.getElementById('dosProgress');
-    var pct = document.getElementById('dosPercent');
-    if (fill) { setTimeout(function() { fill.style.width = '100%'; fill.style.transition = 'width 2.2s ease'; }, 200); }
-    if (pct) {
-      var c = 0;
-      var piv = setInterval(function() {
-        c = Math.min(c + 3, 100);
-        pct.textContent = c + '%';
-        if (c >= 100) clearInterval(piv);
-      }, 60);
-    }
-    /* Total value counter */
-    var total = document.getElementById('dosTotal');
-    if (total) {
-      var milestones = ['₹0L','₹4.2L','₹18.4L','₹34.6L'];
-      var mi = 0;
-      var tiv = setInterval(function() {
-        mi++;
-        if (mi < milestones.length) total.textContent = milestones[mi];
-        if (mi >= milestones.length - 1) clearInterval(tiv);
-      }, 500);
-    }
   }
 
   /* ── MERIDIAN STACK ── */
   function animateMeridian() {
-    var layers = document.querySelectorAll('.ms-layer');
-    if (!layers.length || alreadyDone(layers[0], 'msl-active')) return;
-    var cal = document.getElementById('msCalibrate');
-    if (cal) cal.classList.add('ms-cal-active');
-    var delay = 300;
-    /* Animate from bottom (core) up */
-    var reversed = Array.from(layers).reverse();
-    reversed.forEach(function(l) {
-      setTimeout(function() { l.classList.add('msl-active'); }, delay);
-      delay += 450;
+    once('meridian', function() {
+      var cal = document.getElementById('msCalibrate');
+      if (cal) cal.classList.add('ms-cal-active');
+      var layers = document.querySelectorAll('.ms-layer');
+      var delay = 300;
+      Array.from(layers).reverse().forEach(function(l) {
+        setTimeout(function() { l.classList.add('msl-active'); }, delay);
+        delay += 450;
+      });
+      setTimeout(function() {
+        var out = document.getElementById('msOutput');
+        if (out) out.classList.add('mso-active');
+        var ms = document.getElementById('meridianStatus');
+        if (ms) ms.textContent = 'PRECISION ADVICE ACTIVE';
+      }, delay + 200);
     });
-    setTimeout(function() {
-      var out = document.getElementById('msOutput');
-      if (out) out.classList.add('mso-active');
-      var ms = document.getElementById('meridianStatus');
-      if (ms) ms.textContent = 'PRECISION ADVICE ACTIVE';
-    }, delay + 200);
   }
 
-  /* ── OBSERVER ── */
-  if (!window.IntersectionObserver) return;
+  /* ── ARIA DIMS ── */
+  function animateAria() {
+    once('aria', function() {
+      var dims = document.querySelectorAll('.aria-dim');
+      var delay = 200;
+      dims.forEach(function(d) {
+        setTimeout(function() { d.style.opacity = '1'; d.style.transform = 'none'; }, delay);
+        delay += 150;
+      });
+    });
+  }
+
+  /* ── HUMACITY TERMS (gradient spans) ── */
+  function applyGradientSpans() {
+    once('gradients', function() {
+      document.querySelectorAll('.line.accent, span.accent, .humacity-terms').forEach(function(el) {
+        el.style.background = 'linear-gradient(90deg,#c084fc 0%,#8b5cf6 50%,#6366f1 100%)';
+        el.style.webkitBackgroundClip = 'text';
+        el.style.backgroundClip = 'text';
+        el.style.webkitTextFillColor = 'transparent';
+        el.style.color = 'transparent';
+      });
+    });
+  }
+
+  /* ── OBSERVER — watch each section ── */
+  if (!window.IntersectionObserver) {
+    /* No observer support — fire everything immediately */
+    setTimeout(function() {
+      applyGradientSpans();
+      animateHumac(); animateDossier(); animateMeridian(); animateAria();
+    }, 500);
+    return;
+  }
+
+  /* Apply gradient spans immediately (no scroll needed) */
+  document.addEventListener('DOMContentLoaded', applyGradientSpans);
+  /* Also run after a short delay in case DOMContentLoaded already fired */
+  setTimeout(applyGradientSpans, 100);
+
   var obs = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       if (!entry.isIntersecting) return;
-      var id = entry.target.id || entry.target.className;
-      if (entry.target.id === 'humacSynthesis') { animateHumac(); obs.unobserve(entry.target); }
-      if (entry.target.id === 'recordDossier')  { animateDossier(); obs.unobserve(entry.target); }
-      if (entry.target.id === 'meridianStack')  { animateMeridian(); obs.unobserve(entry.target); }
+      var id = entry.target.id;
+      if (id === 'humacSynthesis') { animateHumac();    obs.unobserve(entry.target); }
+      if (id === 'recordDossier')  { animateDossier();  obs.unobserve(entry.target); }
+      if (id === 'meridianStack')  { animateMeridian(); obs.unobserve(entry.target); }
+      if (id === 'aria')           { animateAria();     obs.unobserve(entry.target); }
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.1 });
 
   document.addEventListener('DOMContentLoaded', function() {
-    ['humacSynthesis','recordDossier','meridianStack'].forEach(function(id) {
+    ['humacSynthesis','recordDossier','meridianStack','aria'].forEach(function(id) {
       var el = document.getElementById(id);
       if (el) obs.observe(el);
     });
   });
+
 })();
+</script>
 </script>
 <button id="corFsFloating" aria-label="Exit fullscreen" style="display:none;">
   <span>&#x26F6;</span> Exit fullscreen
