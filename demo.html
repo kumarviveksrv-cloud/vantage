@@ -1,797 +1,857 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#050410">
-<title>Vantage — The Stakes</title>
-<meta name="description" content="Five real HR decisions. Five doors. No do-overs. The Intelligence Corridor by Virorah Vantage.">
-<link rel="icon" href="favicon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="vantage-theme.css">
-
-<style>
-/* ── BASE ───────────────────────────────────────────────────── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{
-  background:#050410;color:#f4f3ff;
-  font-family:'DM Sans',sans-serif;
-  -webkit-font-smoothing:antialiased;
-  min-height:100%;
-  overflow-x:hidden;
-}
-
-/* ── WORMHOLE CANVAS (full-screen, z 9998) ──────────────────── */
-#wormholeCanvas{
-  display:none;position:fixed;inset:0;
-  width:100%;height:100%;
-  z-index:9998;pointer-events:none;
-}
-
-/* ── BACK TO VANTAGE ────────────────────────────────────────── */
-.demo-back{
-  position:fixed;top:20px;left:20px;z-index:9990;
-  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;
-  color:rgba(196,181,253,.65);text-decoration:none;
-  border:1px solid rgba(196,181,253,.15);padding:8px 16px;border-radius:6px;
-  background:rgba(5,4,16,.8);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  transition:color .2s,border-color .2s;
-}
-.demo-back:hover{color:rgba(196,181,253,1);border-color:rgba(196,181,253,.38);}
-
-/* ── NAV ────────────────────────────────────────────────────── */
-.demo-nav{
-  position:fixed;top:0;right:0;left:0;z-index:9980;
-  display:flex;align-items:center;justify-content:flex-end;
-  padding:14px 28px;
-  background:linear-gradient(to bottom,rgba(5,4,16,.9) 0%,transparent 100%);
-  pointer-events:none;
-}
-.demo-nav a{
-  pointer-events:all;
-  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;
-  color:#fff;text-decoration:none;
-  background:linear-gradient(135deg,#7c3aed,#6366f1);
-  padding:9px 20px;border-radius:6px;
-  box-shadow:0 4px 20px rgba(99,102,241,.4);
-  transition:box-shadow .2s,transform .2s;
-}
-.demo-nav a:hover{box-shadow:0 6px 28px rgba(99,102,241,.6);transform:translateY(-1px);}
-
-/* ── HERO ────────────────────────────────────────────────────── */
-.demo-hero{
-  min-height:100vh;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;text-align:center;
-  padding:120px 24px 80px;position:relative;overflow:hidden;
-}
-.demo-hero::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 55% at 50% 30%,rgba(99,102,241,.1) 0%,transparent 72%);
-  pointer-events:none;
-}
-.demo-hero::after{
-  content:'';position:absolute;bottom:-1px;left:0;right:0;height:120px;
-  background:linear-gradient(to bottom,transparent,#050410);
-  pointer-events:none;
-}
-.demo-eyebrow{
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.28em;
-  color:rgba(196,181,253,.38);margin-bottom:32px;
-  display:flex;align-items:center;gap:12px;
-}
-.demo-eyebrow::before,.demo-eyebrow::after{
-  content:'';flex:1;height:1px;
-  background:linear-gradient(to right,transparent,rgba(196,181,253,.15));
-  max-width:60px;
-}
-.demo-eyebrow::after{background:linear-gradient(to left,transparent,rgba(196,181,253,.15));}
-.demo-hero h1{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(52px,8vw,104px);
-  font-weight:700;line-height:.92;letter-spacing:-.025em;
-  color:#f4f3ff;margin-bottom:28px;
-}
-.demo-hero h1 em{
-  font-style:italic;display:block;
-  background:linear-gradient(90deg,#c084fc 0%,#8b5cf6 50%,#6366f1 100%);
-  -webkit-background-clip:text;background-clip:text;
-  color:transparent;-webkit-text-fill-color:transparent;
-}
-.demo-sub{
-  font-family:'DM Sans',sans-serif;font-size:clamp(15px,1.65vw,20px);
-  color:rgba(255,255,255,.48);line-height:1.75;
-  max-width:480px;margin:0 auto 48px;
-}
-.demo-hero-actions{
-  display:flex;gap:14px;flex-wrap:wrap;justify-content:center;align-items:center;
-}
-.demo-hero-actions a{
-  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
-  letter-spacing:.03em;padding:13px 30px;border-radius:8px;text-decoration:none;
-  transition:all .2s;
-}
-.btn-enter{
-  background:linear-gradient(135deg,#7c3aed,#6366f1);color:#fff;
-  box-shadow:0 4px 24px rgba(99,102,241,.42);
-}
-.btn-enter:hover{box-shadow:0 8px 36px rgba(99,102,241,.65);transform:translateY(-2px);}
-.btn-access{
-  color:rgba(196,181,253,.75);
-  border:1.5px solid rgba(196,181,253,.22);
-  background:rgba(196,181,253,.04);
-}
-.btn-access:hover{border-color:rgba(196,181,253,.48);color:rgba(196,181,253,1);}
-.scroll-cue{
-  margin-top:52px;
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;
-  color:rgba(196,181,253,.25);display:flex;flex-direction:column;align-items:center;gap:12px;
-}
-.scroll-cue::after{
-  content:'';width:1px;height:40px;
-  background:linear-gradient(to bottom,rgba(196,181,253,.25),transparent);
-}
-
-/* ── SECTION HEADER ─────────────────────────────────────────── */
-.sec-header{text-align:center;padding:80px 24px 48px;}
-.sec-index{
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.28em;
-  color:rgba(196,181,253,.32);display:block;margin-bottom:18px;
-}
-.sec-header h2{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(26px,3.2vw,44px);
-  font-weight:700;line-height:1.1;color:#f4f3ff;
-}
-.sec-header p{
-  font-family:'DM Sans',sans-serif;font-size:clamp(14px,1.4vw,17px);
-  color:rgba(255,255,255,.42);margin-top:12px;
-}
-
-/* ── SIM ROOM ───────────────────────────────────────────────── */
-#simRoom{position:relative;padding:0 0 100px;}
-
-/* ── FULLSCREEN BAR ─────────────────────────────────────────── */
-.cor-fs-bar{
-  display:flex;align-items:center;gap:14px;justify-content:center;
-  padding:0 24px 28px;flex-wrap:wrap;
-}
-#corFsBtn{
-  display:flex;align-items:center;gap:8px;
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.16em;
-  color:rgba(196,181,253,.45);
-  background:rgba(196,181,253,.04);border:1px solid rgba(196,181,253,.1);
-  padding:8px 16px;border-radius:6px;cursor:pointer;
-  transition:all .2s;
-}
-#corFsBtn:hover{color:rgba(196,181,253,.85);border-color:rgba(196,181,253,.25);}
-#corFsHint .cor-fs-desktop{
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;
-  color:rgba(196,181,253,.24);
-}
-#corFsHint kbd{
-  background:rgba(196,181,253,.07);border:1px solid rgba(196,181,253,.15);
-  padding:2px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:7px;
-}
-#corFsFloating{
-  display:none;position:fixed;bottom:24px;left:24px;z-index:9995;
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.14em;
-  color:rgba(196,181,253,.7);background:rgba(5,4,16,.9);
-  border:1px solid rgba(196,181,253,.2);padding:10px 18px;border-radius:8px;
-  cursor:pointer;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-}
-#corFsFloating.show{display:block;}
-
-/* ── CASE PILLS ─────────────────────────────────────────────── */
-#corCaseSelect{
-  display:flex;justify-content:center;margin-bottom:36px;padding:0 16px;
-}
-.cor-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
-.cor-case-pill{
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.14em;
-  color:rgba(196,181,253,.45);background:rgba(196,181,253,.03);
-  border:1px solid rgba(196,181,253,.1);padding:8px 16px;border-radius:20px;
-  cursor:pointer;transition:all .2s;white-space:nowrap;
-}
-.cor-case-pill:hover{color:rgba(196,181,253,.8);border-color:rgba(196,181,253,.24);}
-.cor-case-pill.active{
-  color:#c4b5fd;background:rgba(124,58,237,.14);
-  border-color:rgba(124,58,237,.38);
-  box-shadow:0 0 14px rgba(124,58,237,.18);
-}
-
-/* ── PROGRESS PIPS ──────────────────────────────────────────── */
-.cor-progress{
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:44px;padding:0 24px;
-}
-.cor-pip{
-  width:30px;height:30px;border-radius:50%;flex-shrink:0;
-  border:1.5px solid rgba(196,181,253,.18);
-  display:flex;align-items:center;justify-content:center;
-  position:relative;transition:all .4s;
-}
-.cor-pip::before{
-  content:attr(data-r);
-  font-family:'JetBrains Mono',monospace;font-size:8px;
-  color:rgba(196,181,253,.28);transition:color .3s;
-}
-.cor-pip.active{
-  border-color:#7c3aed;background:rgba(124,58,237,.14);
-  box-shadow:0 0 16px rgba(124,58,237,.3);
-}
-.cor-pip.active::before{color:#c4b5fd;}
-.cor-pip.done{border-color:#4ade80;background:rgba(74,222,128,.1);}
-.cor-pip.done::before{display:none;}
-.cor-pip.done::after{
-  content:'✓';font-size:10px;color:#4ade80;
-  position:absolute;
-}
-.cor-line{
-  width:clamp(20px,5vw,56px);height:1px;flex-shrink:0;
-  background:rgba(196,181,253,.1);transition:background .4s;
-}
-.cor-line.done{background:rgba(74,222,128,.28);}
-
-/* ── CORRIDOR VIEWPORT ──────────────────────────────────────── */
-#corViewport{max-width:860px;margin:0 auto;padding:0 20px;}
-
-/* ── ROOMS ──────────────────────────────────────────────────── */
-.cor-room{display:none;}
-.cor-room.active{display:block;}
-
-/* ── DOOR ───────────────────────────────────────────────────── */
-.cor-door{
-  background:rgba(196,181,253,.02);
-  border:1.5px solid rgba(196,181,253,.1);
-  border-radius:18px;
-  min-height:min(500px,72vh);
-  display:flex;align-items:center;justify-content:center;
-  position:relative;overflow:hidden;
-  cursor:pointer;
-  transition:border-color .3s,background .3s,box-shadow .3s;
-}
-.cor-door::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 55% 40% at 50% 50%,rgba(99,102,241,.05) 0%,transparent 70%);
-}
-.cor-door:hover{
-  border-color:rgba(124,58,237,.32);
-  background:rgba(196,181,253,.035);
-  box-shadow:0 0 64px rgba(99,102,241,.08);
-}
-.cor-door.open{border-color:rgba(124,58,237,.28);}
-.cor-lock{
-  display:flex;flex-direction:column;align-items:center;gap:14px;
-  z-index:1;padding:40px 32px;text-align:center;cursor:pointer;
-}
-.cor-lock-icon{font-size:34px;transition:transform .3s,filter .3s;}
-.cor-door:hover .cor-lock-icon{transform:scale(1.08);filter:drop-shadow(0 0 12px rgba(124,58,237,.5));}
-.cor-lock-label{
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;
-  color:rgba(196,181,253,.35);
-}
-.cor-door-tag{
-  font-family:'DM Sans',sans-serif;font-size:clamp(13px,1.35vw,16px);
-  color:rgba(196,181,253,.52);font-weight:500;line-height:1.4;
-}
-.cor-enter-hint{
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.2em;
-  color:rgba(196,181,253,.2);margin-top:6px;
-}
-
-/* ── INSIDE (revealed after entering) ──────────────────────── */
-.cor-room .cor-inside{display:none;}
-.cor-room.entered .cor-door{display:none;}
-.cor-room.entered .cor-inside{display:block;}
-
-.cor-inside{
-  background:rgba(8,7,24,.94);
-  border:1.5px solid rgba(124,58,237,.2);border-radius:18px;
-  padding:clamp(22px,4vw,44px);
-  box-shadow:0 0 80px rgba(99,102,241,.09),0 32px 64px rgba(0,0,0,.45);
-  position:relative;overflow:hidden;
-}
-.cor-inside::before{
-  content:'';position:absolute;top:-60px;left:-60px;right:-60px;height:180px;
-  background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.1) 0%,transparent 68%);
-  pointer-events:none;
-}
-.cor-inside-header{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:20px;padding-bottom:14px;
-  border-bottom:1px solid rgba(196,181,253,.07);
-}
-.cor-case-id{
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.18em;
-  color:rgba(196,181,253,.36);
-}
-
-/* ── SCENARIO ───────────────────────────────────────────────── */
-.cor-scenario{margin-bottom:28px;}
-.cor-scenario h3{
-  font-family:'DM Sans',sans-serif;font-size:clamp(15px,1.75vw,21px);
-  font-weight:500;line-height:1.55;color:rgba(255,255,255,.86);
-}
-
-/* ── CHOICES ────────────────────────────────────────────────── */
-.cor-choices{
-  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;
-}
-@media(max-width:560px){.cor-choices{grid-template-columns:1fr;}}
-.cor-choice{
-  background:rgba(196,181,253,.03);border:1.5px solid rgba(196,181,253,.09);
-  border-radius:12px;padding:14px 18px;cursor:pointer;
-  display:flex;align-items:flex-start;gap:12px;
-  transition:border-color .2s,background .2s,box-shadow .2s;
-}
-.cor-choice:hover{
-  border-color:rgba(124,58,237,.32);background:rgba(124,58,237,.07);
-}
-.cor-choice.selected{
-  border-color:#7c3aed;background:rgba(124,58,237,.11);
-  box-shadow:0 0 22px rgba(124,58,237,.18);
-}
-.cor-choice.picked{
-  border-color:rgba(74,222,128,.45);background:rgba(74,222,128,.05);
-  cursor:default;
-}
-.cor-choice.dimmed{opacity:.32;cursor:default;pointer-events:none;}
-.cor-choice-letter{
-  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;
-  color:rgba(196,181,253,.45);background:rgba(196,181,253,.07);
-  padding:3px 7px;border-radius:4px;flex-shrink:0;margin-top:2px;
-  min-width:24px;text-align:center;transition:all .2s;
-}
-.cor-choice.selected .cor-choice-letter{background:rgba(124,58,237,.22);color:#c4b5fd;}
-.cor-choice.picked .cor-choice-letter{background:rgba(74,222,128,.14);color:#4ade80;}
-.cor-choice-text{
-  font-family:'DM Sans',sans-serif;font-size:clamp(12px,1.3vw,14px);
-  color:rgba(255,255,255,.76);line-height:1.55;margin-bottom:5px;
-}
-.cor-choice-risk{
-  font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.12em;
-  color:rgba(196,181,253,.35);
-}
-
-/* ── CONFIRM ────────────────────────────────────────────────── */
-.cor-confirm{
-  display:none;width:100%;padding:13px;margin-bottom:18px;
-  background:linear-gradient(135deg,#7c3aed,#6366f1);color:#fff;
-  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:.04em;
-  border:none;border-radius:8px;cursor:pointer;
-  box-shadow:0 4px 20px rgba(99,102,241,.38);
-  transition:box-shadow .2s,transform .2s;
-}
-.cor-confirm.show{display:block;}
-.cor-confirm:hover{box-shadow:0 6px 28px rgba(99,102,241,.58);transform:translateY(-1px);}
-
-/* ── RESULT ─────────────────────────────────────────────────── */
-.cor-result{max-height:0;overflow:hidden;transition:max-height .65s cubic-bezier(.25,.46,.45,.94);}
-.cor-result.cor-result-open{max-height:900px;}
-.cor-result-inner{
-  padding:22px;margin-top:6px;
-  background:rgba(5,4,16,.84);border:1px solid rgba(124,58,237,.18);
-  border-radius:12px;position:relative;overflow:hidden;
-}
-.cor-ri-verdict{
-  display:inline-block;font-family:'JetBrains Mono',monospace;
-  font-size:7.5px;letter-spacing:.22em;padding:4px 12px;border-radius:4px;
-  margin-bottom:11px;
-}
-.cor-ri-verdict.ok{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.22);}
-.cor-ri-verdict.risk{background:rgba(255,77,109,.1);color:#ff4d6d;border:1px solid rgba(255,77,109,.2);}
-.cor-ri-verdict.warn{background:rgba(255,181,71,.08);color:#ffb547;border:1px solid rgba(255,181,71,.18);}
-.cor-ri-num{
-  display:block;font-family:'Space Grotesk',sans-serif;
-  font-size:clamp(22px,2.8vw,36px);font-weight:700;margin-bottom:12px;
-  background:linear-gradient(90deg,#c084fc,#8b5cf6);
-  -webkit-background-clip:text;background-clip:text;
-  color:transparent;-webkit-text-fill-color:transparent;
-}
-.cor-ri-text{
-  font-family:'DM Sans',sans-serif;font-size:clamp(12px,1.35vw,14px);
-  color:rgba(255,255,255,.7);line-height:1.72;margin-bottom:14px;
-}
-.cor-ri-aria{
-  font-family:'Cormorant Garamond',serif;font-style:italic;
-  font-size:clamp(13px,1.45vw,16px);color:rgba(196,181,253,.62);
-  line-height:1.7;border-top:1px solid rgba(196,181,253,.07);padding-top:13px;
-}
-.cor-ri-aria::before{
-  content:'ARIA:';
-  font-family:'JetBrains Mono',monospace;font-style:normal;font-size:7px;
-  letter-spacing:.16em;color:rgba(196,181,253,.32);
-  display:block;margin-bottom:5px;
-}
-
-/* ── NEXT BUTTON ────────────────────────────────────────────── */
-.cor-next{
-  display:none;margin-top:18px;width:100%;padding:13px;
-  background:rgba(196,181,253,.04);
-  border:1.5px solid rgba(196,181,253,.16);
-  color:rgba(196,181,253,.8);
-  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:.04em;
-  border-radius:8px;cursor:pointer;transition:all .2s;
-}
-.cor-next:hover{background:rgba(196,181,253,.09);border-color:rgba(196,181,253,.35);color:#f4f3ff;}
-
-/* ── FINAL (Room 5 only) ────────────────────────────────────── */
-.cor-final{
-  display:none;margin-top:20px;text-align:center;
-  padding:28px 24px;
-  background:rgba(124,58,237,.06);border:1.5px solid rgba(124,58,237,.18);border-radius:14px;
-}
-.cor-final p{
-  font-family:'DM Sans',sans-serif;font-size:clamp(13px,1.45vw,16px);
-  color:rgba(255,255,255,.58);line-height:1.72;margin-bottom:20px;
-}
-.cor-final a{
-  display:inline-block;padding:14px 32px;
-  background:linear-gradient(135deg,#7c3aed,#6366f1);
-  color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
-  letter-spacing:.04em;border-radius:8px;text-decoration:none;
-  box-shadow:0 4px 22px rgba(99,102,241,.42);transition:all .2s;
-}
-.cor-final a:hover{box-shadow:0 8px 36px rgba(99,102,241,.62);transform:translateY(-2px);}
-
-/* ── RESTART ────────────────────────────────────────────────── */
-#corRestart{
-  display:none;
-  margin:36px auto 0;
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.18em;
-  color:rgba(196,181,253,.36);background:transparent;border:none;
-  cursor:pointer;text-decoration:underline;text-underline-offset:4px;
-  padding:8px;transition:color .2s;
-}
-#corRestart:hover{color:rgba(196,181,253,.72);}
-
-/* ── FOOTER CTA ─────────────────────────────────────────────── */
-.demo-footer{
-  text-align:center;padding:80px 24px 100px;
-  border-top:1px solid rgba(196,181,253,.06);position:relative;
-}
-.demo-footer::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(99,102,241,.06) 0%,transparent 70%);
-  pointer-events:none;
-}
-.demo-footer .eyebrow{
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.24em;
-  color:rgba(196,181,253,.3);display:block;margin-bottom:22px;
-}
-.demo-footer h2{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(32px,5.5vw,72px);
-  font-weight:700;line-height:1.05;color:#f4f3ff;margin-bottom:18px;
-}
-.demo-footer h2 em{
-  font-style:italic;
-  background:linear-gradient(90deg,#c084fc,#8b5cf6,#6366f1);
-  -webkit-background-clip:text;background-clip:text;
-  color:transparent;-webkit-text-fill-color:transparent;
-}
-.demo-footer > p{
-  font-family:'DM Sans',sans-serif;font-size:clamp(14px,1.55vw,18px);
-  color:rgba(255,255,255,.45);margin-bottom:36px;max-width:440px;margin-left:auto;margin-right:auto;
-}
-.demo-footer a.cta-main{
-  display:inline-block;padding:15px 40px;
-  background:linear-gradient(135deg,#7c3aed,#6366f1);
-  color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
-  letter-spacing:.04em;border-radius:8px;text-decoration:none;
-  box-shadow:0 4px 28px rgba(99,102,241,.42);transition:all .2s;
-}
-.demo-footer a.cta-main:hover{box-shadow:0 8px 40px rgba(99,102,241,.66);transform:translateY(-2px);}
-
-/* ── SUPPRESS curtain.js UI not relevant on this page ───────── */
-#questions-fab,#questions-modal,#reflect-nudge,#q-overlay{display:none!important;}
-</style>
+  <link rel="apple-touch-icon" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="shortcut icon" href="favicon.png"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Demo &mdash; Virorah Vantage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+    :root{--accent:#6366f1;--violet:#7c3aed;--muted:#a5b4fc;--lavender:#c4b5fd;--bg:#050410;--card:#0d0b1e;--card2:#11102a;--border:rgba(99,102,241,0.12);--border-accent:rgba(99,102,241,0.25);--grey:rgba(244,243,255,0.45);--dim:rgba(244,243,255,0.25)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,4,16,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(99,102,241,0.1)}
+    .nav-right{display:flex;align-items:center;gap:12px}
+    .demo-badge{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.22);padding:5px 12px;border-radius:20px}
+    .hero{padding:120px 40px 60px;text-align:center;background-image:linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px);background-size:48px 48px;position:relative;overflow:hidden}
+    .hero::after{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:500px;background:radial-gradient(circle,rgba(99,102,241,0.07) 0%,transparent 65%);pointer-events:none}
+    .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:8px}
+    .hero-eyebrow-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;animation:pulse 1.8s ease-in-out infinite}
+    .hero-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(26px,3.5vw,44px);font-weight:800;line-height:1.15;margin-bottom:16px;color:#f4f3ff;position:relative;z-index:1}
+    .hero-sub{font-size:15px;color:var(--grey);line-height:1.75;max-width:580px;margin:0 auto 12px;position:relative;z-index:1}
+    .hero-note{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.04em;position:relative;z-index:1}
+    .tool-tabs{display:flex;justify-content:center;gap:10px;padding:32px 40px 0;flex-wrap:wrap}
+    .tool-tab{padding:12px 22px;background:rgba(99,102,241,0.06);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--grey);display:flex;align-items:center;gap:8px}
+    .tool-tab:hover{border-color:rgba(99,102,241,0.3);color:#f4f3ff;background:rgba(99,102,241,0.1)}
+    .tool-tab.active{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.45);color:#c4b5fd;font-weight:600}
+    .demo-panel{max-width:760px;margin:0 auto;padding:28px 40px 60px}
+    .demo-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:30px;animation:fadeIn .35s ease;position:relative;overflow:hidden}
+    .demo-card::before{content:'';position:absolute;inset:-1px;border-radius:18px;background:linear-gradient(135deg,rgba(99,102,241,0.1),transparent 55%);z-index:0;pointer-events:none}
+    .demo-card>*{position:relative;z-index:1}
+    .demo-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:10px}
+    .demo-card-title{font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:700;color:#f4f3ff;display:flex;align-items:center;gap:10px}
+    .demo-tag{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);padding:4px 10px;border-radius:4px}
+    .scenario-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+    .scenario-text{background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-size:13px;color:rgba(244,243,255,0.65);line-height:1.7;margin-bottom:8px;font-style:italic}
+    .scenario-note{font-size:11px;color:var(--dim);margin-bottom:22px;font-family:'JetBrains Mono',monospace;letter-spacing:.03em}
+    .run-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.4);display:flex;align-items:center;justify-content:center;gap:8px}
+    .run-btn:hover{opacity:.88}
+    .run-btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
+    .loading-wrap{text-align:center;padding:40px 0;display:none}
+    .loading-orb{width:56px;height:56px;margin:0 auto 18px}
+    .loading-orb svg{animation:spin 2s linear infinite}
+    .loading-text{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.08em}
+    .output-wrap{display:none;animation:fadeIn .4s ease}
+    .risk-banner{border-radius:12px;padding:18px 22px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+    .risk-critical{background:rgba(255,77,109,0.08);border:1px solid rgba(255,77,109,0.25)}
+    .risk-high{background:rgba(255,181,71,0.08);border:1px solid rgba(255,181,71,0.25)}
+    .risk-medium{background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.25)}
+    .risk-low{background:rgba(244,243,255,0.04);border:1px solid rgba(244,243,255,0.1)}
+    .risk-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;margin-bottom:5px}
+    .risk-sub{font-size:13px;color:var(--grey);line-height:1.5;max-width:500px}
+    .risk-badge{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;flex-shrink:0}
+    .badge-critical{color:#FF4D6D;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3)}
+    .badge-high{color:#FFB547;background:rgba(255,181,71,0.15);border:1px solid rgba(255,181,71,0.3)}
+    .badge-medium{color:var(--muted);background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3)}
+    .badge-low{color:var(--grey);background:rgba(244,243,255,0.06);border:1px solid rgba(244,243,255,0.1)}
+    .pact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+    .pact-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px}
+    .pact-dim{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between}
+    .pact-score{font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 7px;border-radius:4px}
+    .score-critical{color:#FF4D6D;background:rgba(255,77,109,0.12);border:1px solid rgba(255,77,109,0.2)}
+    .score-high{color:#FFB547;background:rgba(255,181,71,0.12);border:1px solid rgba(255,181,71,0.2)}
+    .score-medium{color:var(--muted);background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.2)}
+    .score-low{color:var(--grey);background:rgba(244,243,255,0.05);border:1px solid rgba(244,243,255,0.08)}
+    .pact-status{font-size:13px;font-weight:500;color:rgba(244,243,255,0.75);margin-bottom:8px}
+    .pact-point{display:flex;gap:7px;margin-bottom:7px;font-size:12px;color:var(--grey);line-height:1.5}
+    .pact-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);margin-top:6px;flex-shrink:0}
+    .humacity-card{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.22);border-radius:12px;padding:20px;margin-bottom:20px}
+    .hc-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+    .hc-badge{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);padding:3px 9px;border-radius:4px}
+    .hc-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;color:#f4f3ff}
+    .hc-exposure{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px}
+    .hc-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+    .hc-val{font-size:13px;color:var(--muted);line-height:1.6;font-family:'JetBrains Mono',monospace}
+    .hc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .hc-block{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+    .hc-block-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+    .hc-block-label.red{color:#FF4D6D}
+    .hc-block-label.green{color:var(--muted)}
+    .hc-block-text{font-size:12px;color:var(--grey);line-height:1.5}
+    .steps-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:20px}
+    .steps-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;margin-bottom:14px;color:#f4f3ff}
+    .step-item{display:flex;gap:10px;margin-bottom:10px}
+    .step-num{width:22px;height:22px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0;font-weight:700}
+    .step-text{font-size:13px;color:var(--grey);line-height:1.5;padding-top:2px}
+    .demo-cta{background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.22);border-radius:14px;padding:28px;text-align:center;margin-top:24px}
+    .demo-cta-title{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px;color:#f4f3ff}
+    .demo-cta-sub{font-size:13px;color:var(--grey);margin-bottom:22px;line-height:1.65}
+    .cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .btn-p{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;text-decoration:none;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
+    .btn-p:hover{opacity:.88}
+    .btn-g{padding:14px 22px;background:transparent;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;border:1px solid rgba(99,102,241,0.3);border-radius:10px;cursor:pointer;transition:all .2s;text-decoration:none}
+    .btn-g:hover{background:rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.5)}
+    .signal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+    .signal-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px}
+    .sig-dim{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+    .dim-s{color:var(--muted)}.dim-i{color:#FFB547}.dim-g{color:#FF4D6D}.dim-n{color:var(--muted)}.dim-a{color:var(--muted)}.dim-l{color:var(--lavender)}
+    .sig-content{font-size:12px;color:var(--grey);line-height:1.6}
+    .anchor-block{background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:18px 20px;margin-bottom:18px;display:flex;align-items:center;gap:20px}
+    .anchor-num{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:var(--lavender);letter-spacing:-0.5px;flex-shrink:0}
+    .anchor-ctx{font-size:13px;color:var(--grey);line-height:1.6}
+    .influence-line{background:var(--card2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:18px;font-size:14px;color:#f4f3ff;font-style:italic;line-height:1.6}
+    .stack-layer{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px}
+    .stack-layer-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+    .stack-layer-body{font-size:13px;color:var(--grey);line-height:1.6}
+    .stack-layer-figure{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--lavender);margin:6px 0}
+    .policy-output{font-size:13px;color:rgba(244,243,255,0.72);line-height:1.85;white-space:pre-wrap;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:22px}
+    .transcript-wrap{display:flex;flex-direction:column;gap:12px;margin-bottom:8px}
+    .t-bubble{max-width:80%;padding:12px 16px;border-radius:14px;font-size:13px;line-height:1.6}
+    .t-sys{align-self:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.05em;background:none;padding:4px 0;text-align:center;max-width:100%}
+    .t-them{align-self:flex-start;background:var(--card2);border:1px solid var(--border);color:rgba(244,243,255,0.8);border-bottom-left-radius:4px}
+    .t-you{align-self:flex-end;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;border-bottom-right-radius:4px}
+    .t-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;opacity:.6;display:block;margin-bottom:4px}
+    .t-debrief{background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.22);border-radius:12px;padding:18px;margin-top:18px}
+    .t-debrief-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;color:#f4f3ff;margin-bottom:10px}
+    .t-debrief-row{font-size:12px;color:var(--grey);line-height:1.7;margin-bottom:6px}
+    .t-debrief-row b{color:var(--muted);font-weight:600}
+    .dash-section{padding:80px 40px;border-top:1px solid var(--border);max-width:1100px;margin:0 auto}
+    .dash-header{text-align:center;margin-bottom:36px}
+    .dash-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+    .dash-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(22px,3vw,32px);font-weight:800;color:#f4f3ff;margin-bottom:10px}
+    .dash-sub{font-size:14px;color:var(--grey);max-width:520px;margin:0 auto}
+    .dash-mock{display:grid;grid-template-columns:200px 1fr;gap:0;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.35)}
+    .dash-sidebar{background:rgba(5,4,16,0.6);border-right:1px solid var(--border);padding:20px 0}
+    .dash-nav-item{padding:11px 20px;font-size:12px;color:var(--dim);display:flex;align-items:center;gap:10px;cursor:default}
+    .dash-nav-item.active{color:#f4f3ff;background:rgba(99,102,241,0.1);border-right:2px solid var(--accent);font-weight:600}
+    .dash-nav-item i{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.5;flex-shrink:0}
+    .dash-main{padding:26px 28px}
+    .dash-main-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    .dash-main-title{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:700;color:#f4f3ff}
+    .dash-main-tag{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em}
+    .humac-gauge{display:flex;gap:20px;align-items:center;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:16px}
+    .gauge-num{font-family:'Space Grotesk',sans-serif;font-size:38px;font-weight:700;color:var(--lavender);letter-spacing:-1px;flex-shrink:0}
+    .gauge-band{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+    .gauge-bars{flex:1;display:flex;flex-direction:column;gap:6px}
+    .gauge-bar-row{display:flex;align-items:center;gap:8px}
+    .gauge-bar-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);width:22px;flex-shrink:0}
+    .gauge-bar-track{flex:1;height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden}
+    .gauge-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--lavender));border-radius:3px}
+    .case-lib-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+    .case-lib-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px}
+    .clc-top{display:flex;justify-content:space-between;margin-bottom:8px}
+    .clc-tag{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+    .clc-risk{font-size:8px;font-family:'JetBrains Mono',monospace;padding:1px 6px;border-radius:3px}
+    .clc-title{font-size:12px;color:#f4f3ff;font-weight:600;margin-bottom:4px}
+    .clc-meta{font-size:10px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+    .record-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .record-stat{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
+    .record-stat-num{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--muted)}
+    .record-stat-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.04em;text-transform:uppercase;margin-top:3px}
+    .dash-blur-note{text-align:center;margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.04em}
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
+    @media(max-width:768px){
+      nav{padding:12px 20px}.hero{padding:100px 20px 40px}.tool-tabs{padding:24px 20px 0;gap:8px}.demo-panel{padding:20px 20px 48px}
+      .pact-grid{grid-template-columns:1fr}.signal-grid{grid-template-columns:1fr}.hc-row{grid-template-columns:1fr}
+      .dash-mock{grid-template-columns:1fr}.dash-sidebar{display:none}.case-lib-grid{grid-template-columns:1fr}.record-strip{grid-template-columns:1fr 1fr}
+      .dash-section{padding:56px 20px}
+    }
+  </style>
 </head>
 <body>
 
-<!-- WORMHOLE CANVAS — full screen, fires on door click -->
-<canvas id="wormholeCanvas"></canvas>
-
-<!-- BACK TO VANTAGE — fixed, top-left, correct prologue bypass key -->
-<a class="demo-back" href="index.html"
-   onclick="sessionStorage.setItem('vantage_skip_intro_from','1');window.location.href='index.html';return false;">
-  ← Back to Vantage
-</a>
-
-<!-- NAV -->
-<nav class="demo-nav">
-  <a href="access.html">Sign In ↗</a>
+<nav>
+  <a href="index.html" style="display:flex;align-items:center;text-decoration:none">
+    <img src="virorah-vantage-logo.png" alt="Virorah Vantage" style="height:52px;width:auto;display:block;mix-blend-mode:screen;flex-shrink:0"/>
+  </a>
+  <div class="nav-right">
+    <a href="#" onclick="sessionStorage.setItem('vantage_prologue_seen','1');sessionStorage.setItem('vantage_boot_seen','1');window.location.href='index.html';return false;" style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;color:#c4b5fd;text-decoration:none;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.5);padding:8px 16px;border-radius:8px;transition:all .25s;box-shadow:0 0 14px rgba(99,102,241,0.35),0 0 36px rgba(99,102,241,0.12)" onmouseover="this.style.background='rgba(99,102,241,0.26)';this.style.boxShadow='0 0 22px rgba(99,102,241,0.55),0 0 56px rgba(99,102,241,0.22)';this.style.borderColor='rgba(99,102,241,0.75)'" onmouseout="this.style.background='rgba(99,102,241,0.15)';this.style.boxShadow='0 0 14px rgba(99,102,241,0.35),0 0 36px rgba(99,102,241,0.12)';this.style.borderColor='rgba(99,102,241,0.5)'">&larr; Back to Vantage</a>
+    <div class="demo-badge">&#x1F1EE;&#x1F1F3; India Edition &middot; Live Demo</div>
+  </div>
 </nav>
 
-<!-- HERO -->
-<section class="demo-hero">
-  <div class="demo-eyebrow">VIRORAH VANTAGE / THE INTELLIGENCE CORRIDOR</div>
-  <h1>Five doors.<br><em>Five decisions.</em></h1>
-  <p class="demo-sub">Real HR scenarios. The same calls you face in the boardroom, the enquiry, the 9pm moment. No do-overs. No second opinions.</p>
-  <div class="demo-hero-actions">
-    <a class="btn-enter" href="#simRoom"
-       onclick="document.getElementById('simRoom').scrollIntoView({behavior:'smooth',block:'start'});return false;">
-      Enter The Stakes
-    </a>
-    <a class="btn-access" href="access.html">Get full access →</a>
-  </div>
-  <div class="scroll-cue">SCROLL TO ENTER</div>
-</section>
+<div class="hero">
+  <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Real tool outputs &middot; No mockups on the tools themselves</div>
+  <div class="hero-title">Six tools. Real outputs.<br>See exactly what Indian HR professionals use every day.</div>
+  <div class="hero-sub">to navigate the cases, conversations, and data moments that define their careers.</div>
+  <div class="hero-note">These reflect real Vantage output quality on fixed example scenarios. On the full platform, every output is generated live from your own case.</div>
+</div>
 
-<!-- ═══ THE STAKES SECTION ═══════════════════════════════════ -->
-<section id="simRoom">
+<div class="tool-tabs">
+  <div class="tool-tab active" id="tab-pact" onclick="switchTool('pact')">&#x26A1; PACT ER Case Navigator</div>
+  <div class="tool-tab" id="tab-signal" onclick="switchTool('signal')">&#x1F4CA; HR Data Storyteller</div>
+  <div class="tool-tab" id="tab-influence" onclick="switchTool('influence')">&#x1F91D; Stakeholder Influence</div>
+  <div class="tool-tab" id="tab-policy" onclick="switchTool('policy')">&#x2696;&#xFE0F; Policy Compass</div>
+  <div class="tool-tab" id="tab-offer" onclick="switchTool('offer')">&#x1F4BC; Offer Intelligence</div>
+  <div class="tool-tab" id="tab-practice" onclick="switchTool('practice')">&#x1F3AD; Conversation Simulator</div>
+  <div class="tool-tab" id="tab-aria" onclick="switchTool('aria')">&#x2728; ARIA</div>
+</div>
 
-  <!-- Section label -->
-  <div class="sec-header">
-    <span class="sec-index">05 / THE STAKES</span>
-    <h2>Come and challenge yourself on real HR scenarios.</h2>
-    <p>Five doors. Five decisions. No do-overs.</p>
-  </div>
-
-  <!-- Fullscreen controls -->
-  <div class="cor-fs-bar">
-    <button id="corFsBtn">
-      <span>⛶</span>
-      <span class="cor-fs-label">Go fullscreen</span>
-    </button>
-    <div id="corFsHint">
-      <span class="cor-fs-desktop">Press <kbd>F11</kbd> for the full immersive experience</span>
+<div class="demo-panel">
+  <div id="pact-tool">
+    <div class="demo-card">
+      <div class="demo-card-header"><div class="demo-card-title">&#x26A1; PACT ER Case Navigator <div class="demo-tag">Demo &middot; Misconduct Case</div></div></div>
+      <div class="scenario-label">Pre-loaded scenario</div>
+      <div class="scenario-text">Rohan Mehta, Senior Software Engineer, 5 years tenure. Badge records confirm he marked attendance as present on 14 days over the past 3 months when he was not in office. Evidence gathered. No prior warnings on record. Line manager wants to proceed with immediate termination.</div>
+      <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you describe your own live cases.</div>
+      <button class="run-btn" id="pact-run-btn" onclick="runPACT()">&#x26A1; Run PACT Analysis</button>
+      <div class="loading-wrap" id="pact-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">RUNNING PACT ASSESSMENT...</div></div>
+      <div class="output-wrap" id="pact-output"></div>
     </div>
   </div>
-
-  <!-- Case selector (shown at start, hidden after first door click) -->
-  <div id="corCaseSelect">
-    <div class="cor-pills">
-      <button class="cor-case-pill active" data-case="0">TERMINATION</button>
-      <button class="cor-case-pill" data-case="1">POSH / HARASSMENT</button>
-      <button class="cor-case-pill" data-case="2">RESTRUCTURING</button>
-      <button class="cor-case-pill" data-case="3">PERFORMANCE / PIP</button>
-      <button class="cor-case-pill" data-case="4">WAGE COMPLIANCE</button>
+  <div id="signal-tool" style="display:none">
+    <div class="demo-card">
+      <div class="demo-card-header"><div class="demo-card-title">&#x1F4CA; HR Data Storyteller <div class="demo-tag">Demo &middot; CFO Presentation</div></div></div>
+      <div class="scenario-label">Pre-loaded scenario</div>
+      <div class="scenario-text">Attrition rate: 22% (up from 14% last quarter). Time to hire: 58 days. Engagement score: 54%. Open positions: 18. Average CTC: &#8377;14L. Audience: CFO. Context: Engineering attrition spike &mdash; need budget approval for &#8377;22L retention programme.</div>
+      <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you enter your own metrics and context.</div>
+      <button class="run-btn" id="signal-run-btn" onclick="runSIGNAL()">&#x1F4CA; Generate SIGNAL Narrative</button>
+      <div class="loading-wrap" id="signal-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">BUILDING SIGNAL NARRATIVE...</div></div>
+      <div class="output-wrap" id="signal-output"></div>
     </div>
   </div>
-
-  <!-- Progress pips -->
-  <div class="cor-progress">
-    <div class="cor-pip active" data-r="1"></div>
-    <div class="cor-line"></div>
-    <div class="cor-pip" data-r="2"></div>
-    <div class="cor-line"></div>
-    <div class="cor-pip" data-r="3"></div>
-    <div class="cor-line"></div>
-    <div class="cor-pip" data-r="4"></div>
-    <div class="cor-line"></div>
-    <div class="cor-pip" data-r="5"></div>
+  <div id="influence-tool" style="display:none">
+    <div class="demo-card">
+      <div class="demo-card-header"><div class="demo-card-title">&#x1F91D; Stakeholder Influence Builder <div class="demo-tag">Demo &middot; Retention Counter-Offer</div></div></div>
+      <div class="scenario-label">Pre-loaded scenario</div>
+      <div class="scenario-text">Priya Nair, senior engineer, 4 years tenure, sole owner of the payments migration, has a signed competing offer 32% above her current CTC. You need the VP Engineering to approve a counter-offer by Wednesday.</div>
+      <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you describe your own stakeholder and ask.</div>
+      <button class="run-btn" id="influence-run-btn" onclick="runInfluence()">&#x1F91D; Build Influence Stack</button>
+      <div class="loading-wrap" id="influence-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">BUILDING INFLUENCE STACK...</div></div>
+      <div class="output-wrap" id="influence-output"></div>
+    </div>
   </div>
+  <div id="policy-tool" style="display:none">
+    <div class="demo-card">
+      <div class="demo-card-header"><div class="demo-card-title">&#x2696;&#xFE0F; Policy Compass <div class="demo-tag">Demo &middot; PIP Compliance</div></div></div>
+      <div class="scenario-label">Pre-loaded question</div>
+      <div class="scenario-text">&ldquo;Can we terminate someone right after a failed PIP without a separate notice period, since the PIP itself already warned them?&rdquo;</div>
+      <div class="scenario-note">Question is pre-filled for this demo. On the full platform, you ask your own policy question.</div>
+      <button class="run-btn" id="policy-run-btn" onclick="runPolicy()">&#x2696;&#xFE0F; Get Policy Guidance</button>
+      <div class="loading-wrap" id="policy-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">CHECKING LEGAL POSITION...</div></div>
+      <div class="output-wrap" id="policy-output"></div>
+    </div>
+  </div>
+  <div id="offer-tool" style="display:none">
+    <div class="demo-card">
+      <div class="demo-card-header"><div class="demo-card-title">&#x1F4BC; Offer Intelligence <div class="demo-tag">Demo &middot; Counter-Offer Modelling</div></div></div>
+      <div class="scenario-label">Pre-loaded scenario</div>
+      <div class="scenario-text">Same Priya Nair case: current CTC &#8377;22L, competing offer &#8377;29L (32% premium), A-band performer, 4 years tenure, high role criticality.</div>
+      <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you enter your own employee&rsquo;s numbers.</div>
+      <button class="run-btn" id="offer-run-btn" onclick="runOffer()">&#x1F4BC; Model the Retention Decision</button>
+      <div class="loading-wrap" id="offer-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">RUNNING FINANCIAL MODEL...</div></div>
+      <div class="output-wrap" id="offer-output"></div>
+    </div>
+  </div>
+  <div id="practice-tool" style="display:none">
+    <div class="demo-card">
+      <div class="demo-card-header"><div class="demo-card-title">&#x1F3AD; Conversation Simulator <div class="demo-tag">Example &middot; Denied Promotion</div></div></div>
+      <div class="scenario-label">Example transcript &mdash; read-only preview</div>
+      <div class="scenario-text">On the full platform this is a live, typed back-and-forth. Below is a real example of how a session plays out, so you can see the shape of it before you try it yourself.</div>
+      <div class="transcript-wrap">
+        <div class="t-bubble t-sys">STAKES BRIEFING &mdash; Financial exposure: Low &middot; Humac pillar: L3 &middot; Practising with: a results-driven senior associate who has been told &ldquo;not yet&rdquo; once before</div>
+        <div class="t-bubble t-you"><span class="t-label">You (Manager)</span>I wanted to talk through this year&rsquo;s promotion cycle with you directly.</div>
+        <div class="t-bubble t-them"><span class="t-label">Employee</span>Let me guess &mdash; not this cycle either.</div>
+        <div class="t-bubble t-you"><span class="t-label">You</span>Not this cycle. Your delivery has been strong, but the panel wants to see more cross-team influence before senior level.</div>
+        <div class="t-bubble t-them"><span class="t-label">Employee</span>I&rsquo;ve heard &ldquo;cross-team influence&rdquo; for two cycles now with no clear definition of what that actually looks like.</div>
+        <div class="t-bubble t-you"><span class="t-label">You</span>That&rsquo;s fair, and it&rsquo;s on me to make it concrete. Let&rsquo;s define two specific cross-team initiatives you&rsquo;ll lead this quarter, and I&rsquo;ll bring that evidence to the panel myself next cycle.</div>
+        <div class="t-bubble t-them"><span class="t-label">Employee</span>Okay. I want that in writing, and I want to know this isn&rsquo;t just another six months of vague feedback.</div>
+      </div>
+      <div class="t-debrief">
+        <div class="t-debrief-title">Debrief</div>
+        <div class="t-debrief-row"><b>What worked:</b> Naming the specific gap instead of a vague deferral, and owning the ambiguity rather than defending the panel&rsquo;s decision.</div>
+        <div class="t-debrief-row"><b>Inflection point:</b> Turn 4 &mdash; offering to define concrete initiatives converted the conversation from a decision announcement into a plan the employee could act on.</div>
+        <div class="t-debrief-row"><b>Technique for next time:</b> Put the two initiatives in writing within 24 hours, before the conversation&rsquo;s momentum fades.</div>
+      </div>
+      <div class="demo-cta"><div class="demo-cta-title">Practice this exact conversation yourself.</div><div class="demo-cta-sub">On the full platform, you type your own responses and the AI stays fully in character, scored on empathy, clarity, and outcome.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>
+    </div>
+  </div>
+  <div id="aria-tool" style="display:none">
+    <div class="demo-card">
+      <div class="demo-card-header"><div class="demo-card-title">&#x2728; ARIA <div class="demo-tag">Example &middot; Reflection Mode</div></div></div>
+      <div class="scenario-label">Example conversation &mdash; read-only preview</div>
+      <div class="scenario-text">ARIA is your permanent coaching companion inside Vantage. This is a real example of a Reflection mode session, shown as a preview since this is a conversational experience.</div>
+      <div class="transcript-wrap">
+        <div class="t-bubble t-them"><span class="t-label">ARIA</span>How&rsquo;s this week sitting with you?</div>
+        <div class="t-bubble t-you"><span class="t-label">You</span>Heavy. Three ER cases in five days, and I feel like I handled the last one badly.</div>
+        <div class="t-bubble t-them"><span class="t-label">ARIA</span>What does &ldquo;badly&rdquo; mean to you here &mdash; the outcome, or how you got there?</div>
+        <div class="t-bubble t-you"><span class="t-label">You</span>How I got there. I rushed the conversation because the manager was pushing for closure.</div>
+        <div class="t-bubble t-them"><span class="t-label">ARIA</span>That&rsquo;s a pattern worth naming, not just this case. When a manager&rsquo;s urgency starts setting your pace on process, what usually gets sacrificed first?</div>
+        <div class="t-bubble t-you"><span class="t-label">You</span>Documentation. I skip the written step when I feel rushed.</div>
+        <div class="t-bubble t-them"><span class="t-label">ARIA</span>That&rsquo;s the exact gap PACT would have flagged on this case if you&rsquo;d run it first. One concrete insight to carry into next week: build the five-minute documentation step into your process before the conversation happens, not after.</div>
+      </div>
+      <div class="demo-cta"><div class="demo-cta-title">ARIA remembers your patterns, not just your cases.</div><div class="demo-cta-sub">On the full platform, ARIA is with you across every tool, every case, every month &mdash; building a coaching relationship, not a chatbot session.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>
+    </div>
+  </div>
+</div>
 
-  <!-- ── CORRIDOR VIEWPORT ───────────────────────────── -->
-  <div id="corViewport">
-
-    <!-- ROOM 1 -->
-    <div class="cor-room active" id="corRoom1">
-      <div class="cor-door" id="corDoor1">
-        <div class="cor-lock" data-door="1">
-          <span class="cor-lock-icon">🔒</span>
-          <span class="cor-lock-label">ROOM 1</span>
-          <span class="cor-door-tag">ROOM 1 / ER CASE ANALYSIS</span>
-          <span class="cor-enter-hint">CLICK TO ENTER</span>
+<div class="dash-section">
+  <div class="dash-header">
+    <div class="dash-eyebrow">&#x1F512; Behind the login</div>
+    <div class="dash-title">This is what your dashboard actually looks like.</div>
+    <div class="dash-sub">A visual preview of your Vantage home &mdash; your Humac Score, your Case Library, your professional record. This is a static mockup with illustrative numbers, not a live account.</div>
+  </div>
+  <div class="dash-mock">
+    <div class="dash-sidebar">
+      <div class="dash-nav-item active"><i></i>Dashboard</div>
+      <div class="dash-nav-item"><i></i>Case Library</div>
+      <div class="dash-nav-item"><i></i>Humac Score</div>
+      <div class="dash-nav-item"><i></i>MERIDIAN</div>
+      <div class="dash-nav-item"><i></i>Vantage Record</div>
+      <div class="dash-nav-item"><i></i>Monthly Debrief</div>
+      <div class="dash-nav-item"><i></i>Settings</div>
+    </div>
+    <div class="dash-main">
+      <div class="dash-main-head"><div class="dash-main-title">Welcome back</div><div class="dash-main-tag">SYSTEM MEMORY / ACTIVE</div></div>
+      <div class="humac-gauge">
+        <div><div class="gauge-num">742</div><div class="gauge-band">Strong Band</div></div>
+        <div class="gauge-bars">
+          <div class="gauge-bar-row"><span class="gauge-bar-label">L1</span><div class="gauge-bar-track"><div class="gauge-bar-fill" style="width:78%"></div></div></div>
+          <div class="gauge-bar-row"><span class="gauge-bar-label">L2</span><div class="gauge-bar-track"><div class="gauge-bar-fill" style="width:65%"></div></div></div>
+          <div class="gauge-bar-row"><span class="gauge-bar-label">L3</span><div class="gauge-bar-track"><div class="gauge-bar-fill" style="width:82%"></div></div></div>
+          <div class="gauge-bar-row"><span class="gauge-bar-label">L4</span><div class="gauge-bar-track"><div class="gauge-bar-fill" style="width:58%"></div></div></div>
+          <div class="gauge-bar-row"><span class="gauge-bar-label">L5</span><div class="gauge-bar-track"><div class="gauge-bar-fill" style="width:71%"></div></div></div>
         </div>
       </div>
+      <div class="case-lib-grid">
+        <div class="case-lib-card"><div class="clc-top"><span class="clc-tag">PACT / ER</span><span class="clc-risk score-high">HIGH</span></div><div class="clc-title">Attendance falsification &mdash; 14-day case</div><div class="clc-meta">Filed 3 days ago &middot; Rs.4L-9L exposure</div></div>
+        <div class="case-lib-card"><div class="clc-top"><span class="clc-tag">OFFER INTEL</span><span class="clc-risk score-medium">RESOLVED</span></div><div class="clc-title">Retention counter-offer &mdash; senior engineer</div><div class="clc-meta">Filed 1 week ago &middot; Retained</div></div>
+      </div>
+      <div class="record-strip">
+        <div class="record-stat"><div class="record-stat-num">47</div><div class="record-stat-lbl">ER Cases</div></div>
+        <div class="record-stat"><div class="record-stat-num">&#8377;18.4L</div><div class="record-stat-lbl">Exposure Avoided</div></div>
+        <div class="record-stat"><div class="record-stat-num">17</div><div class="record-stat-lbl">Rehearsed</div></div>
+        <div class="record-stat"><div class="record-stat-num">9</div><div class="record-stat-lbl">Debriefs</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="dash-blur-note">Illustrative preview &mdash; your real dashboard reflects your own cases, your own Humac Score, and your own professional record.</div>
+</div>
+
+<!-- ── INTELLIGENCE CORRIDOR ──────────────────────────────────────── -->
+<style>
+.corridor-section{padding:80px 40px;border-top:1px solid rgba(99,102,241,0.15);max-width:1100px;margin:0 auto}
+.corridor-header{text-align:center;margin-bottom:48px}
+.corridor-header .cor-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(99,102,241,0.7);margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:8px}
+.cor-eyebrow-dot{width:5px;height:5px;border-radius:50%;background:#6366f1;box-shadow:0 0 8px rgba(99,102,241,0.7);animation:pulse 1.8s ease-in-out infinite}
+.corridor-header h2{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(22px,3vw,34px);font-weight:800;color:#f4f3ff;margin-bottom:12px}
+.corridor-header p{font-size:14px;color:rgba(244,243,255,0.45);max-width:520px;margin:0 auto;line-height:1.7}
+.cor-progress{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:36px}
+.cor-pip{width:32px;height:32px;border-radius:50%;border:2px solid rgba(124,58,237,.25);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(196,181,253,.35);transition:all .5s ease}
+.cor-pip.active{border-color:#8b5cf6;color:#fff;background:rgba(124,58,237,.3);box-shadow:0 0 16px rgba(139,92,246,.5)}
+.cor-pip.done{border-color:#34d399;color:#34d399;background:rgba(52,211,153,.12)}
+.cor-line{width:48px;height:2px;background:rgba(124,58,237,.15);transition:background .5s}
+.cor-line.done{background:rgba(52,211,153,.3)}
+.cor-case-select{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:32px}
+.cor-case-select p{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:rgba(196,181,253,.5);text-transform:uppercase}
+.cor-case-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.cor-case-pill{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;color:rgba(196,181,253,.55);border:1px solid rgba(124,58,237,.2);border-radius:20px;padding:7px 16px;cursor:pointer;transition:all .25s;background:rgba(12,10,32,.5)}
+.cor-case-pill:hover{border-color:rgba(124,58,237,.5);color:#fff;background:rgba(124,58,237,.12)}
+.cor-case-pill.active{border-color:#8b5cf6;color:#fff;background:rgba(124,58,237,.2);box-shadow:0 0 14px rgba(139,92,246,.3)}
+.cor-viewport{position:relative;max-width:820px;margin:0 auto;min-height:480px}
+.cor-room{display:none;flex-direction:column;align-items:center;animation:corFadeIn .6s ease both}
+.cor-room.active{display:flex}
+@keyframes corFadeIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+.cor-door{position:relative;width:min(480px,78vw);height:min(520px,70vh);margin:0 auto;perspective:900px;cursor:pointer}
+.cor-door-frame{position:absolute;inset:0;display:flex;border:2px solid rgba(124,58,237,.3);border-radius:8px;overflow:hidden;box-shadow:0 0 40px rgba(124,58,237,.15),inset 0 0 60px rgba(5,4,16,.8);background:linear-gradient(180deg,rgba(15,12,35,.95),rgba(8,6,22,.98))}
+.cor-door-panel{width:50%;height:100%;background:linear-gradient(180deg,rgba(20,16,45,.9),rgba(10,8,28,.95));border:1px solid rgba(124,58,237,.15);transition:transform .9s cubic-bezier(.4,0,.2,1);position:relative}
+.cor-door-panel::before{content:'';position:absolute;inset:16px;border:1px solid rgba(124,58,237,.1);border-radius:4px}
+.cor-door-panel::after{content:'';position:absolute;top:50%;left:50%;width:32px;height:32px;transform:translate(-50%,-50%) rotate(45deg);border:1px solid rgba(196,181,253,.12)}
+.cor-door-l{transform-origin:left center;border-right:1px solid rgba(124,58,237,.2)}
+.cor-door-r{transform-origin:right center;border-left:1px solid rgba(124,58,237,.2)}
+.cor-door.open .cor-door-l{transform:rotateY(-110deg)}
+.cor-door.open .cor-door-r{transform:rotateY(110deg)}
+.cor-door.open .cor-lock{opacity:0;transform:translate(-50%,-50%) scale(.5)}
+.cor-door.open .cor-door-frame{box-shadow:0 0 80px rgba(124,58,237,.4),inset 0 0 100px rgba(124,58,237,.1)}
+.cor-lock{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:5;transition:all .5s ease;cursor:pointer}
+.cor-lock-icon{font-size:52px;display:block;filter:drop-shadow(0 0 12px rgba(196,181,253,.7));animation:lockPulse 2.5s ease-in-out infinite}
+@keyframes lockPulse{0%,100%{filter:drop-shadow(0 0 12px rgba(196,181,253,.5));transform:scale(1)}50%{filter:drop-shadow(0 0 28px rgba(196,181,253,.9));transform:scale(1.08)}}
+.cor-lock-label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;color:rgba(196,181,253,.55);margin-top:12px}
+.cor-door-tag{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;color:rgba(196,181,253,.35);margin-top:16px}
+.cor-inside{display:none;flex-direction:column;align-items:center;width:100%;max-width:720px;margin:0 auto;animation:insideReveal .7s ease .15s both}
+.cor-room.entered .cor-inside{display:flex}
+.cor-room.entered .cor-door{display:none}
+@keyframes insideReveal{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+.cor-scenario{text-align:center;margin-bottom:32px;padding:24px 0}
+.cor-case-id-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;color:rgba(196,181,253,.45);margin-bottom:14px;display:block}
+.cor-scenario h3{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(18px,2.4vw,28px);font-weight:700;color:rgba(255,255,255,.88);line-height:1.4}
+.cor-choices{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;width:100%;margin-bottom:24px}
+@media(max-width:600px){.cor-choices{grid-template-columns:1fr;grid-template-rows:none}}
+.cor-choice{display:flex;flex-direction:column;align-items:center;text-align:center;padding:18px 16px;border:1px solid rgba(124,58,237,.2);border-radius:10px;background:rgba(12,10,32,.6);cursor:pointer;transition:all .3s ease;gap:7px}
+.cor-choice:hover{border-color:rgba(124,58,237,.5);background:rgba(124,58,237,.08);transform:translateY(-2px);box-shadow:0 0 24px rgba(124,58,237,.22)}
+.cor-choice.selected{border-color:rgba(139,92,246,.6);background:rgba(124,58,237,.1);box-shadow:0 0 16px rgba(139,92,246,.25)}
+.cor-choice.selected .cor-choice-letter{border-color:#8b5cf6;background:rgba(139,92,246,.2)}
+.cor-choice.picked{border-color:#8b5cf6;background:rgba(124,58,237,.15);box-shadow:0 0 28px rgba(139,92,246,.4)}
+.cor-choice.dimmed{opacity:.25;pointer-events:none;transform:scale(.97)}
+.cor-choice-letter{width:34px;height:34px;border-radius:50%;border:2px solid rgba(124,58,237,.35);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:rgba(196,181,253,.85)}
+.cor-choice-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:rgba(255,255,255,.88);font-weight:600;line-height:1.3}
+.cor-choice-risk{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:rgba(196,181,253,.55)}
+.cor-confirm{display:none;font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:700;color:#fff;background:linear-gradient(135deg,#9333ea,#7c3aed,#6366f1);border:none;border-radius:7px;padding:12px 30px;cursor:pointer;margin:0 auto 20px;box-shadow:0 0 20px rgba(139,92,246,.4);transition:all .25s}
+.cor-confirm.show{display:block;animation:corFadeIn .35s ease both}
+.cor-confirm:hover{box-shadow:0 0 28px rgba(139,92,246,.6);transform:translateY(-1px)}
+.cor-result{width:100%;overflow:hidden;transition:max-height .55s ease,opacity .45s ease;max-height:0;opacity:0}
+.cor-result.open{max-height:500px;opacity:1;margin-bottom:16px}
+.cor-result-inner{padding:22px;border:1px solid rgba(124,58,237,.18);border-radius:10px;background:rgba(8,6,22,.75)}
+.cor-verdict{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;padding:4px 12px;border-radius:4px;display:inline-block;margin-bottom:12px}
+.cor-verdict.risk{background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
+.cor-verdict.ok{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.22);color:#6ee7b7}
+.cor-verdict.warn{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.22);color:#fcd34d}
+.cor-exposure{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,2.6vw,34px);font-weight:700;background:linear-gradient(90deg,#c084fc,#8b5cf6,#6366f1);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;display:block;margin-bottom:10px}
+.cor-explanation{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.68);line-height:1.65;margin:0}
+.cor-aria-note{font-style:italic;color:rgba(196,181,253,.72);border-left:2px solid rgba(124,58,237,.3);padding-left:12px;margin-top:12px;font-size:12.5px;line-height:1.6}
+.cor-next{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:rgba(196,181,253,.75);border:1px solid rgba(124,58,237,.3);border-radius:6px;padding:11px 26px;cursor:pointer;transition:all .28s;text-align:center;margin-top:6px}
+.cor-next:hover{background:rgba(124,58,237,.15);border-color:#8b5cf6;color:#fff;box-shadow:0 0 16px rgba(139,92,246,.3)}
+.cor-final{text-align:center;margin-top:20px}
+.cor-final-line{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(16px,1.8vw,22px);font-weight:700;color:#f4f3ff;margin-bottom:22px;line-height:1.4}
+.cor-final-sub{font-size:13px;color:rgba(244,243,255,.45);margin-bottom:22px}
+.cor-cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cor-btn-primary{padding:14px 28px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;text-decoration:none;box-shadow:0 4px 16px rgba(99,102,241,.4);transition:opacity .2s;display:inline-flex;align-items:center}
+.cor-btn-primary:hover{opacity:.88}
+.cor-btn-ghost{padding:14px 22px;background:transparent;color:rgba(196,181,253,.75);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;border:1px solid rgba(99,102,241,.3);border-radius:10px;cursor:pointer;transition:all .2s;text-decoration:none}
+.cor-btn-ghost:hover{background:rgba(99,102,241,.08);border-color:rgba(99,102,241,.5)}
+.cor-restart{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:rgba(196,181,253,.5);border:1px solid rgba(124,58,237,.2);border-radius:6px;padding:9px 22px;cursor:pointer;transition:all .25s;background:transparent;margin-top:10px;display:block;margin-left:auto;margin-right:auto}
+.cor-restart:hover{border-color:#8b5cf6;color:#fff;background:rgba(124,58,237,.1)}
+@media(max-width:768px){.corridor-section{padding:56px 20px}}
+</style>
+
+<div class="corridor-section">
+  <div class="corridor-header">
+    <div class="cor-eyebrow"><span class="cor-eyebrow-dot"></span>Intelligence Corridor &middot; Five Real Scenarios</div>
+    <h2>Before you sign up &mdash; test yourself.</h2>
+    <p>Five doors. Five real HR decisions. Each one shows you exactly what Vantage would have given you. No signup required to play.</p>
+  </div>
+  <div class="cor-case-select">
+    <p>Choose the scenario type</p>
+    <div class="cor-case-pills" id="demoCasePills">
+      <div class="cor-case-pill active" data-case="0">TERMINATION</div>
+      <div class="cor-case-pill" data-case="1">POSH / HARASSMENT</div>
+      <div class="cor-case-pill" data-case="2">RESTRUCTURING</div>
+      <div class="cor-case-pill" data-case="3">PERFORMANCE / PIP</div>
+      <div class="cor-case-pill" data-case="4">WAGE COMPLIANCE</div>
+    </div>
+  </div>
+  <div class="cor-progress" id="demoProgress">
+    <div class="cor-pip active" id="demoPip1">1</div><div class="cor-line" id="demoLine1"></div>
+    <div class="cor-pip" id="demoPip2">2</div><div class="cor-line" id="demoLine2"></div>
+    <div class="cor-pip" id="demoPip3">3</div><div class="cor-line" id="demoLine3"></div>
+    <div class="cor-pip" id="demoPip4">4</div><div class="cor-line" id="demoLine4"></div>
+    <div class="cor-pip" id="demoPip5">5</div>
+  </div>
+  <div class="cor-viewport" id="demoCorViewport">
+    <div class="cor-room active" id="demoRoom1">
+      <div class="cor-door" id="demoDoor1" onclick="openDoor(1)"><div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div><div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div><div class="cor-door-tag">ROOM 1 / CASE ANALYSIS</div></div>
       <div class="cor-inside">
-        <div class="cor-inside-header">
-          <span class="cor-case-id">CASE 2841 / Employee Relations</span>
+        <div class="cor-scenario"><span class="cor-case-id-label">CASE 2841 / Employee Relations</span><h3>Employee absent 7 days.<br>Manager wants termination tonight.<br>No written warnings on file.</h3></div>
+        <div class="cor-choices" id="demoChoices1">
+          <div class="cor-choice" onclick="selectChoice(1,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Terminate immediately</span><span class="cor-choice-risk">fast &mdash; manager is happy</span></div>
+          <div class="cor-choice" onclick="selectChoice(1,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Start domestic enquiry</span><span class="cor-choice-risk">slower &mdash; more defensible</span></div>
+          <div class="cor-choice" onclick="selectChoice(1,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Issue show-cause notice first</span><span class="cor-choice-risk">correct process &mdash; buys time</span></div>
+          <div class="cor-choice" onclick="selectChoice(1,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Escalate to legal team</span><span class="cor-choice-risk">delays the decision</span></div>
         </div>
-        <div class="cor-scenario"><h3></h3></div>
-        <div class="cor-choices">
-          <div class="cor-choice" data-room="1" data-pick="A">
-            <span class="cor-choice-letter">A</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="1" data-pick="B">
-            <span class="cor-choice-letter">B</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="1" data-pick="C">
-            <span class="cor-choice-letter">C</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="1" data-pick="D">
-            <span class="cor-choice-letter">D</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-        </div>
-        <button class="cor-confirm" id="corConfirm1" data-room="1">Confirm Choice</button>
-        <div class="cor-result" id="corResult1"></div>
-        <button class="cor-next" data-next="2">Next Room →</button>
+        <button class="cor-confirm" id="demoConfirm1" onclick="confirmChoice(1)">Confirm Choice &rarr;</button>
+        <div class="cor-result" id="demoResult1"><div class="cor-result-inner" id="demoResultInner1"></div></div>
+        <div class="cor-next" id="demoNext1" style="display:none" onclick="goToRoom(2)">Proceed to Door 2 &rarr;</div>
       </div>
     </div>
-
-    <!-- ROOM 2 -->
-    <div class="cor-room" id="corRoom2">
-      <div class="cor-door" id="corDoor2">
-        <div class="cor-lock" data-door="2">
-          <span class="cor-lock-icon">🔒</span>
-          <span class="cor-lock-label">ROOM 2</span>
-          <span class="cor-door-tag">ROOM 2 / EVIDENCE INTELLIGENCE</span>
-          <span class="cor-enter-hint">CLICK TO ENTER</span>
-        </div>
-      </div>
+    <div class="cor-room" id="demoRoom2">
+      <div class="cor-door" id="demoDoor2" onclick="openDoor(2)"><div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div><div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div><div class="cor-door-tag">ROOM 2 / EVIDENCE</div></div>
       <div class="cor-inside">
-        <div class="cor-inside-header">
-          <span class="cor-case-id">EVIDENCE ANALYSIS</span>
+        <div class="cor-scenario"><span class="cor-case-id-label">EVIDENCE ANALYSIS</span><h3>Enquiry reveals undocumented verbal warnings.<br>Two witnesses remember.<br>Nothing is on paper.</h3></div>
+        <div class="cor-choices" id="demoChoices2">
+          <div class="cor-choice" onclick="selectChoice(2,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Accept the evidence gap</span><span class="cor-choice-risk">proceed anyway</span></div>
+          <div class="cor-choice" onclick="selectChoice(2,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Reconstruct the trail</span><span class="cor-choice-risk">manager notes and calendars</span></div>
+          <div class="cor-choice" onclick="selectChoice(2,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Get written witness statements</span><span class="cor-choice-risk">signed and dated</span></div>
+          <div class="cor-choice" onclick="selectChoice(2,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Drop the case entirely</span><span class="cor-choice-risk">safest short-term option</span></div>
         </div>
-        <div class="cor-scenario"><h3></h3></div>
-        <div class="cor-choices">
-          <div class="cor-choice" data-room="2" data-pick="A">
-            <span class="cor-choice-letter">A</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="2" data-pick="B">
-            <span class="cor-choice-letter">B</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="2" data-pick="C">
-            <span class="cor-choice-letter">C</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="2" data-pick="D">
-            <span class="cor-choice-letter">D</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-        </div>
-        <button class="cor-confirm" id="corConfirm2" data-room="2">Confirm Choice</button>
-        <div class="cor-result" id="corResult2"></div>
-        <button class="cor-next" data-next="3">Next Room →</button>
+        <button class="cor-confirm" id="demoConfirm2" onclick="confirmChoice(2)">Confirm Choice &rarr;</button>
+        <div class="cor-result" id="demoResult2"><div class="cor-result-inner" id="demoResultInner2"></div></div>
+        <div class="cor-next" id="demoNext2" style="display:none" onclick="goToRoom(3)">Proceed to Door 3 &rarr;</div>
       </div>
     </div>
-
-    <!-- ROOM 3 -->
-    <div class="cor-room" id="corRoom3">
-      <div class="cor-door" id="corDoor3">
-        <div class="cor-lock" data-door="3">
-          <span class="cor-lock-icon">🔒</span>
-          <span class="cor-lock-label">ROOM 3</span>
-          <span class="cor-door-tag">ROOM 3 / FINANCIAL IMPACT</span>
-          <span class="cor-enter-hint">CLICK TO ENTER</span>
-        </div>
-      </div>
+    <div class="cor-room" id="demoRoom3">
+      <div class="cor-door" id="demoDoor3" onclick="openDoor(3)"><div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div><div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div><div class="cor-door-tag">ROOM 3 / BOARDROOM</div></div>
       <div class="cor-inside">
-        <div class="cor-inside-header">
-          <span class="cor-case-id">BOARDROOM CHALLENGE</span>
+        <div class="cor-scenario"><span class="cor-case-id-label">BOARDROOM CHALLENGE</span><h3>CFO asks: &ldquo;What does keeping this person cost us?&rdquo;<br>The boardroom is waiting.</h3></div>
+        <div class="cor-choices" id="demoChoices3">
+          <div class="cor-choice" onclick="selectChoice(3,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Estimate from experience</span><span class="cor-choice-risk">gut feel &mdash; hard to defend</span></div>
+          <div class="cor-choice" onclick="selectChoice(3,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Pull the Human P&amp;L</span><span class="cor-choice-risk">data-backed &mdash; boardroom-ready</span></div>
+          <div class="cor-choice" onclick="selectChoice(3,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Ask for more time</span><span class="cor-choice-risk">lose the room&rsquo;s momentum</span></div>
+          <div class="cor-choice" onclick="selectChoice(3,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Cite industry benchmark</span><span class="cor-choice-risk">generic &mdash; not your org</span></div>
         </div>
-        <div class="cor-scenario"><h3></h3></div>
-        <div class="cor-choices">
-          <div class="cor-choice" data-room="3" data-pick="A">
-            <span class="cor-choice-letter">A</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="3" data-pick="B">
-            <span class="cor-choice-letter">B</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="3" data-pick="C">
-            <span class="cor-choice-letter">C</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="3" data-pick="D">
-            <span class="cor-choice-letter">D</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-        </div>
-        <button class="cor-confirm" id="corConfirm3" data-room="3">Confirm Choice</button>
-        <div class="cor-result" id="corResult3"></div>
-        <button class="cor-next" data-next="4">Next Room →</button>
+        <button class="cor-confirm" id="demoConfirm3" onclick="confirmChoice(3)">Confirm Choice &rarr;</button>
+        <div class="cor-result" id="demoResult3"><div class="cor-result-inner" id="demoResultInner3"></div></div>
+        <div class="cor-next" id="demoNext3" style="display:none" onclick="goToRoom(4)">Proceed to Door 4 &rarr;</div>
       </div>
     </div>
-
-    <!-- ROOM 4 -->
-    <div class="cor-room" id="corRoom4">
-      <div class="cor-door" id="corDoor4">
-        <div class="cor-lock" data-door="4">
-          <span class="cor-lock-icon">🔒</span>
-          <span class="cor-lock-label">ROOM 4</span>
-          <span class="cor-door-tag">ROOM 4 / ARIA PREPARATION</span>
-          <span class="cor-enter-hint">CLICK TO ENTER</span>
-        </div>
-      </div>
+    <div class="cor-room" id="demoRoom4">
+      <div class="cor-door" id="demoDoor4" onclick="openDoor(4)"><div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div><div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div><div class="cor-door-tag">ROOM 4 / ARIA</div></div>
       <div class="cor-inside">
-        <div class="cor-inside-header">
-          <span class="cor-case-id">STAKEHOLDER PREPARATION</span>
+        <div class="cor-scenario"><span class="cor-case-id-label">STAKEHOLDER PREPARATION</span><h3>COO call tomorrow morning.<br>She will ask about precedent, exposure, and your recommendation.</h3></div>
+        <div class="cor-choices" id="demoChoices4">
+          <div class="cor-choice" onclick="selectChoice(4,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Prepare mentally, wing it</span><span class="cor-choice-risk">unprepared</span></div>
+          <div class="cor-choice" onclick="selectChoice(4,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Run ARIA rehearsal</span><span class="cor-choice-risk">rehearsed &mdash; walk in ready</span></div>
+          <div class="cor-choice" onclick="selectChoice(4,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Write talking points only</span><span class="cor-choice-risk">prepared on paper, not in practice</span></div>
+          <div class="cor-choice" onclick="selectChoice(4,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Ask to reschedule</span><span class="cor-choice-risk">lose the moment</span></div>
         </div>
-        <div class="cor-scenario"><h3></h3></div>
-        <div class="cor-choices">
-          <div class="cor-choice" data-room="4" data-pick="A">
-            <span class="cor-choice-letter">A</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="4" data-pick="B">
-            <span class="cor-choice-letter">B</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="4" data-pick="C">
-            <span class="cor-choice-letter">C</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="4" data-pick="D">
-            <span class="cor-choice-letter">D</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-        </div>
-        <button class="cor-confirm" id="corConfirm4" data-room="4">Confirm Choice</button>
-        <div class="cor-result" id="corResult4"></div>
-        <button class="cor-next" data-next="5">Next Room →</button>
+        <button class="cor-confirm" id="demoConfirm4" onclick="confirmChoice(4)">Confirm Choice &rarr;</button>
+        <div class="cor-result" id="demoResult4"><div class="cor-result-inner" id="demoResultInner4"></div></div>
+        <div class="cor-next" id="demoNext4" style="display:none" onclick="goToRoom(5)">Proceed to Door 5 &rarr;</div>
       </div>
     </div>
-
-    <!-- ROOM 5 -->
-    <div class="cor-room" id="corRoom5">
-      <div class="cor-door" id="corDoor5">
-        <div class="cor-lock" data-door="5">
-          <span class="cor-lock-icon">🔒</span>
-          <span class="cor-lock-label">ROOM 5</span>
-          <span class="cor-door-tag">ROOM 5 / VANTAGE RECORD</span>
-          <span class="cor-enter-hint">CLICK TO ENTER</span>
-        </div>
-      </div>
+    <div class="cor-room" id="demoRoom5">
+      <div class="cor-door" id="demoDoor5" onclick="openDoor(5)"><div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div><div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div><div class="cor-door-tag">ROOM 5 / VANTAGE RECORD</div></div>
       <div class="cor-inside">
-        <div class="cor-inside-header">
-          <span class="cor-case-id">9 MONTHS LATER</span>
+        <div class="cor-scenario"><span class="cor-case-id-label">9 MONTHS LATER</span><h3>Same scenario. New employee. New manager.<br>Everything you learned the first time...</h3></div>
+        <div class="cor-choices" id="demoChoices5">
+          <div class="cor-choice" onclick="selectChoice(5,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Start from scratch</span><span class="cor-choice-risk">rebuild it all from memory</span></div>
+          <div class="cor-choice" onclick="selectChoice(5,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Open your Vantage Record</span><span class="cor-choice-risk">built on what you already know</span></div>
+          <div class="cor-choice" onclick="selectChoice(5,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Ask a colleague</span><span class="cor-choice-risk">secondhand memory</span></div>
+          <div class="cor-choice" onclick="selectChoice(5,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Search your email</span><span class="cor-choice-risk">partial, unstructured, not yours</span></div>
         </div>
-        <div class="cor-scenario"><h3></h3></div>
-        <div class="cor-choices">
-          <div class="cor-choice" data-room="5" data-pick="A">
-            <span class="cor-choice-letter">A</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
+        <button class="cor-confirm" id="demoConfirm5" onclick="confirmChoice(5)">Confirm Choice &rarr;</button>
+        <div class="cor-result" id="demoResult5"><div class="cor-result-inner" id="demoResultInner5"></div></div>
+        <div class="cor-final" id="demoFinal" style="display:none">
+          <p class="cor-final-line">Five doors. Five decisions.<br>Now see what Vantage gives you on your own cases.</p>
+          <p class="cor-final-sub">Every tool above runs live. Describe your situation and Vantage returns real intelligence &mdash; calibrated to your state, your industry, your org.</p>
+          <div class="cor-cta-row">
+            <a href="access.html" class="cor-btn-primary">Get started &rarr;</a>
+            <button class="cor-btn-ghost" onclick="restartCorridor()">Play again</button>
           </div>
-          <div class="cor-choice" data-room="5" data-pick="B">
-            <span class="cor-choice-letter">B</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="5" data-pick="C">
-            <span class="cor-choice-letter">C</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-          <div class="cor-choice" data-room="5" data-pick="D">
-            <span class="cor-choice-letter">D</span>
-            <div><p class="cor-choice-text"></p><span class="cor-choice-risk"></span></div>
-          </div>
-        </div>
-        <button class="cor-confirm" id="corConfirm5" data-room="5">Confirm Choice</button>
-        <div class="cor-result" id="corResult5"></div>
-        <div class="cor-final">
-          <p>You've navigated all five rooms. This is a fraction of what Vantage does — every case you'll ever face, financially modelled, legally grounded, and permanently recorded.</p>
-          <a href="access.html">Get full access to Vantage →</a>
+          <button class="cor-restart" onclick="restartCorridor()">RESTART THE CORRIDOR</button>
         </div>
       </div>
     </div>
-
-  </div><!-- /#corViewport -->
-
-  <!-- Restart (wired by initCorridorV2, shown by CSS when needed) -->
-  <div style="text-align:center;">
-    <button id="corRestart">↺ Restart from Room 1</button>
   </div>
+</div>
 
-</section><!-- /#simRoom -->
+<script>
+(function() {
+  var RESULTS = {
+    1: {
+      A: { verdict:'risk', exposure:'\u20b98L \u2013 \u20b914L exposure', text:'Terminating without a show-cause notice is legally indefensible. Under the IR Code 2020, any adverse action requires documented process. A tribunal will not look at intent \u2014 only procedure. Your exposure starts here and rises.', aria:'ARIA would have flagged this before you acted: no show-cause notice on record means your P dimension is Critical. The case fails process integrity before it starts.' },
+      B: { verdict:'warn', exposure:'Partially defensible', text:'The right direction \u2014 but you have skipped step one. A domestic enquiry cannot be legally initiated without a show-cause notice preceding it. Issue the SCN first, then open the enquiry.', aria:'ARIA would have caught the sequence error. Domestic enquiry without SCN = procedural gap that a tribunal will exploit on day one.' },
+      C: { verdict:'ok',   exposure:'Risk contained', text:'The right first move. No termination or domestic enquiry can be legally defended in India without a show-cause notice on record. Issue it today, give the employee time to respond, then proceed with the enquiry. This is the sequence that holds under scrutiny.', aria:'ARIA would confirm: SCN first, response window documented, enquiry follows. This is the process the IR Code requires.' },
+      D: { verdict:'warn', exposure:'Time lost', text:'Buying time \u2014 but at a cost. The manager\'s urgency is real and valid. Legal teams take days you may not have. The show-cause notice is something HR can issue directly. Issue it now, loop in legal for the enquiry stage.', aria:'ARIA would have told you: don\'t wait for legal on step one. SCN is within HR\'s direct authority.' }
+    },
+    2: {
+      A: { verdict:'risk', exposure:'High tribunal risk', text:'Proceeding with a documented gap is the single biggest source of HR tribunal losses in India. The opposing counsel will ask for the written warning. You will not have one. The case collapses.', aria:'ARIA would have flagged this under Accountability Clarity: the evidence trail is broken. Do not proceed until it is fixed.' },
+      B: { verdict:'warn', exposure:'Partially reconstructed', text:'Manager notes and calendar records help, but they carry less weight than direct witness statements. Reconstruct what you can \u2014 but push for signed statements before the enquiry hearing.', aria:'ARIA would note: reconstruction is a valid interim step, but witness statements remain the stronger evidence form.' },
+      C: { verdict:'ok',   exposure:'Evidence secured', text:'Signed, dated witness statements become part of the formal domestic enquiry record. This is the strongest evidence path available to you when written warnings were not issued. Two co-workers confirming the pattern, on paper, with dates, is defensible.', aria:'ARIA would confirm: witness statements collected before the enquiry hearing are admissible and carry weight. Collect them now.' },
+      D: { verdict:'warn', exposure:'Precedent set', text:'Safe today. But the behaviour continues, the precedent is set, and the next action against this employee becomes much harder. Dropping the case signals that undocumented absence has no consequence.', aria:'ARIA would note: dropping the case is a decision with future cost. Document the reason for closure at minimum.' }
+    },
+    3: {
+      A: { verdict:'risk', exposure:'Credibility lost', text:'A CFO who asks for a number and receives a feeling will remember it. You lose the budget conversation and your credibility in the room. Gut estimates in a boardroom setting are not HR speaking the language of business \u2014 they are HR being dismissed from it.', aria:'ARIA would have prepared you with the People ROI Brief before this meeting. The number exists. You just didn\'t have it ready.' },
+      B: { verdict:'ok',   exposure:'\u20b98L\u2013\u20b914L documented', text:'You walk in with documented legal exposure, replacement cost model, and ramp time \u2014 not an opinion. The CFO now has a decision to make, not a feeling to dismiss. This is what HR speaking the language of business looks like.', aria:'ARIA would have built the full People ROI Brief before this call: replacement cost at 1.8x salary, 4.6 months ramp, \u20b98L\u2013\u20b914L legal exposure. The CFO cannot dismiss a number with a methodology behind it.' },
+      C: { verdict:'warn', exposure:'Moment passed', text:'You had the data available. Asking for more time signals you did not prepare for the most predictable question in an ER conversation with a CFO. The moment passes, the decision gets made without your input.', aria:'ARIA would have flagged this as a preparation failure \u2014 not an evidence gap.' },
+      D: { verdict:'warn', exposure:'Wrong number', text:'Industry benchmarks do not reflect your org\'s salary bands, attrition patterns, or role criticality. The CFO knows this. Generic data gets dismissed as exactly what it is.', aria:'ARIA would say: your org\'s numbers are always stronger than any benchmark. Use them.' }
+    },
+    4: {
+      A: { verdict:'risk', exposure:'Exposed in the room', text:'The COO will ask about precedent, legal exposure, and your recommendation in that sequence. Without ARIA rehearsal, you will be reacting to her framing rather than owning your own. One unexpected question and your confidence breaks.', aria:'ARIA exists for exactly this moment. Case Partner mode would have played the COO, pushed back on your reasoning, and surfaced the two questions you hadn\'t thought of.' },
+      B: { verdict:'ok',   exposure:'Fully prepared', text:'You have already answered the hard questions before the call started. ARIA pushed back. Your reasoning held under pressure. You walk in knowing your weakest points and how to address them. The COO cannot surprise you.', aria:'Case Partner mode simulates exactly this: a senior stakeholder who asks about legal exposure, precedent, and the financial case. You have already walked through it once.' },
+      C: { verdict:'warn', exposure:'Prepared on paper', text:'Knowing what to say is not the same as having said it under pressure. The muscle memory is not there. The COO will test your reasoning in real time. Talking points give you the what \u2014 ARIA gives you the practice of actually saying it.', aria:'ARIA would note: paper prep and conversational rehearsal are not the same capability. One of them builds the real thing.' },
+      D: { verdict:'risk', exposure:'Window closed', text:'You lose the moment, the momentum, and your positioning on this case. Decisions made without HR input in the room tend to go in directions HR then has to manage.', aria:'ARIA would say: reschedule only when you need more information \u2014 not more confidence. Confidence is what rehearsal builds.' }
+    },
+    5: {
+      A: { verdict:'warn', exposure:'Starting from zero', text:'Memory fades. You will approximate last time\'s process without the documentation. The financial exposure analysis rebuilds from scratch. The show-cause notice template gets rewritten from scratch. The outcome from Case 2841 stays in your head \u2014 not on record.', aria:'ARIA would note: every case you navigate without a record is a case you will have to rebuild from memory next time.' },
+      B: { verdict:'ok',   exposure:'Case 2841 on record', text:'Case 2841 is in your Vantage Record. The show-cause template you used, the domestic enquiry sequence, the financial exposure range, the outcome \u2014 all timestamped and documented. You are not starting over. You are building on what you already know.', aria:'This is what the Vantage Record is for. Not a log \u2014 a professional asset. It compounds. Every case you document makes the next one faster, more defensible, and better argued.' },
+      C: { verdict:'warn', exposure:'Secondhand memory', text:'A colleague who was not in the room, reconstructing a case from memory, nine months later. No documentation. No evidence trail. No ownership. And when the colleague leaves, the knowledge leaves with them.', aria:'ARIA would note: institutional knowledge that lives only in people is the most fragile kind.' },
+      D: { verdict:'warn', exposure:'Partial, not yours', text:'Fragmented threads, partial context, and attached to your company email account. When you move to your next organisation, it stays. This is your work \u2014 it should not be stored somewhere that belongs to someone else.', aria:'ARIA would say: your Vantage Record follows you. Your email inbox does not.' }
+    }
+  };
 
-<!-- FOOTER CTA -->
-<section class="demo-footer">
-  <span class="eyebrow">VANTAGE / PRIVATE INTELLIGENCE SYSTEM</span>
-  <h2>You are HR for everyone.<br><em>Who is HR for you?</em></h2>
-  <p>The private intelligence platform built for the profession that carries everyone else.</p>
-  <a class="cta-main" href="access.html">Enter Vantage ↗</a>
-</section>
+  var currentPicks = {};
 
-<!-- Floating fullscreen exit (bottom-left, shown when fullscreen is active) -->
-<button id="corFsFloating">Exit fullscreen ×</button>
+  document.getElementById('demoCasePills').addEventListener('click', function(e) {
+    var pill = e.target.closest('.cor-case-pill');
+    if (!pill) return;
+    document.querySelectorAll('#demoCasePills .cor-case-pill').forEach(function(p) { p.classList.remove('active'); });
+    pill.classList.add('active');
+  });
 
-<!-- ── SCRIPTS ─────────────────────────────────────────────── -->
-<!-- Three.js: needed by runParticles / prewarmParticleShader in curtain.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
-<!-- vantage-curtain.js: contains initCorridorV2, initCorridorFullscreen, and all corridor logic -->
-<script src="vantage-curtain.js"></script>
+  /* ── WORMHOLE ANIMATION (Canvas 2D) ── */
+  function playWormhole(cb) {
+    var canvas = document.getElementById('demoWormholeCanvas');
+    if (!canvas) { cb && setTimeout(cb, 0); return; }
+    var ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.display = 'block';
+    var startTime = null, duration = 1100;
+    var cx = canvas.width / 2, cy = canvas.height / 2;
+    var maxR = Math.max(canvas.width, canvas.height) * 0.72;
+    var particles = [];
+    for (var p = 0; p < 60; p++) {
+      particles.push({ angle: Math.random() * Math.PI * 2, radius: Math.random() * 0.4 + 0.1, speed: Math.random() * 0.4 + 0.6, size: Math.random() * 2.5 + 1, alpha: Math.random() * 0.7 + 0.3 });
+    }
+    function easeInOut(t) { return t < .5 ? 2*t*t : -1+(4-2*t)*t; }
+    function frame(ts) {
+      if (!startTime) startTime = ts;
+      var elapsed = ts - startTime;
+      var t = Math.min(elapsed / duration, 1);
+      var ease = easeInOut(t);
+      var alpha = t < 0.15 ? t/0.15 : t < 0.70 ? 1 : 1-(t-0.70)/0.30;
+      alpha = Math.max(0, Math.min(1, alpha));
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(5,4,16,' + (alpha * 0.93) + ')';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      for (var i = 0; i < 16; i++) {
+        var rp = ((ease * 2.8 + i / 16) % 1);
+        var r = rp * maxR;
+        var ra = alpha * (1 - rp) * (rp > 0.04 ? 1 : rp / 0.04);
+        if (ra <= 0) continue;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, r, r * 0.52, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = i % 3 === 0 ? 'rgba(196,181,253,' + (ra * 0.6) + ')' : 'rgba(124,58,237,' + (ra * 0.9) + ')';
+        ctx.lineWidth = i % 4 === 0 ? 2.5 : 1.2;
+        ctx.stroke();
+        if (rp > 0.7) {
+          ctx.strokeStyle = 'rgba(196,181,253,' + (ra * (rp-0.7)/0.3 * 0.4) + ')';
+          ctx.lineWidth = 6;
+          ctx.beginPath();
+          ctx.ellipse(cx, cy, r, r * 0.52, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+      particles.forEach(function(pt) {
+        var pp = ((ease * pt.speed + pt.radius) % 1);
+        var pr = pp * maxR * 0.85;
+        var pa = pt.angle + ease * Math.PI * 6;
+        var px = cx + Math.cos(pa) * pr;
+        var py = cy + Math.sin(pa) * pr * 0.52;
+        var pal = alpha * pt.alpha * (1 - pp);
+        ctx.beginPath();
+        ctx.arc(px, py, pt.size * (1 - pp * 0.6), 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(196,181,253,' + pal + ')';
+        ctx.fill();
+      });
+      var br = 60 + ease * 30;
+      var gg = ctx.createRadialGradient(cx, cy, 0, cx, cy, br);
+      gg.addColorStop(0, 'rgba(255,255,255,' + (alpha * 0.95) + ')');
+      gg.addColorStop(0.15, 'rgba(196,181,253,' + (alpha * 0.8) + ')');
+      gg.addColorStop(0.4, 'rgba(124,58,237,' + (alpha * 0.55) + ')');
+      gg.addColorStop(1, 'rgba(99,102,241,0)');
+      ctx.fillStyle = gg;
+      ctx.beginPath();
+      ctx.arc(cx, cy, br, 0, Math.PI * 2);
+      ctx.fill();
+      if (t < 1) { requestAnimationFrame(frame); }
+      else { canvas.style.display = 'none'; ctx.clearRect(0,0,canvas.width,canvas.height); cb && cb(); }
+    }
+    requestAnimationFrame(frame);
+  }
 
+  window.openDoor = function(room) {
+    playWormhole(function() {
+      var door = document.getElementById('demoDoor' + room);
+      if (!door) return;
+      door.classList.add('open');
+      setTimeout(function() {
+        var roomEl = document.getElementById('demoRoom' + room);
+        if (roomEl) roomEl.classList.add('entered');
+      }, 750);
+    });
+  };
+
+  window.selectChoice = function(room, el, pick) {
+    var grid = document.getElementById('demoChoices' + room);
+    if (!grid) return;
+    grid.querySelectorAll('.cor-choice').forEach(function(c) { c.classList.remove('selected'); });
+    el.classList.add('selected');
+    currentPicks[room] = pick;
+    var btn = document.getElementById('demoConfirm' + room);
+    if (btn) btn.classList.add('show');
+  };
+
+  window.confirmChoice = function(room) {
+    var pick = currentPicks[room];
+    if (!pick) return;
+    var result = RESULTS[room] && RESULTS[room][pick];
+    if (!result) return;
+    var grid = document.getElementById('demoChoices' + room);
+    if (grid) { grid.querySelectorAll('.cor-choice').forEach(function(c) { if (!c.classList.contains('selected')) c.classList.add('dimmed'); else c.classList.add('picked'); }); }
+    var btn = document.getElementById('demoConfirm' + room);
+    if (btn) btn.style.display = 'none';
+    var inner = document.getElementById('demoResultInner' + room);
+    if (inner) {
+      inner.innerHTML = '<div class="cor-verdict ' + result.verdict + '">' + (result.verdict === 'ok' ? 'DEFENSIBLE' : result.verdict === 'risk' ? 'HIGH RISK' : 'CAUTION') + '</div>' + (result.exposure ? '<span class="cor-exposure">' + result.exposure + '</span>' : '') + '<p class="cor-explanation">' + result.text + '</p><p class="cor-aria-note">\u2736 ARIA \u2014 ' + result.aria + '</p>';
+    }
+    var panel = document.getElementById('demoResult' + room);
+    if (panel) { setTimeout(function() { panel.classList.add('open'); }, 80); }
+    if (room < 5) {
+      var next = document.getElementById('demoNext' + room);
+      if (next) setTimeout(function() { next.style.display = 'block'; }, 600);
+    } else {
+      var final = document.getElementById('demoFinal');
+      if (final) setTimeout(function() { final.style.display = 'block'; }, 600);
+    }
+    var pip = document.getElementById('demoPip' + room);
+    if (pip) { pip.classList.remove('active'); pip.classList.add('done'); pip.textContent = '\u2713'; }
+  };
+
+  window.goToRoom = function(room) {
+    for (var i = 1; i <= 5; i++) { var r = document.getElementById('demoRoom' + i); if (r) r.classList.remove('active'); }
+    var line = document.getElementById('demoLine' + (room - 1));
+    if (line) line.classList.add('done');
+    var pip = document.getElementById('demoPip' + room);
+    if (pip) pip.classList.add('active');
+    var next = document.getElementById('demoRoom' + room);
+    if (next) { next.classList.add('active'); next.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  };
+
+  window.restartCorridor = function() {
+    currentPicks = {};
+    for (var i = 1; i <= 5; i++) {
+      var room = document.getElementById('demoRoom' + i); if (room) room.classList.remove('active','entered');
+      var door = document.getElementById('demoDoor' + i); if (door) door.classList.remove('open');
+      var choices = document.getElementById('demoChoices' + i); if (choices) choices.querySelectorAll('.cor-choice').forEach(function(c) { c.classList.remove('selected','picked','dimmed'); });
+      var confirm = document.getElementById('demoConfirm' + i); if (confirm) { confirm.classList.remove('show'); confirm.style.display = ''; }
+      var result = document.getElementById('demoResult' + i); if (result) result.classList.remove('open');
+      var next = document.getElementById('demoNext' + i); if (next) next.style.display = 'none';
+      var pip = document.getElementById('demoPip' + i); if (pip) { pip.classList.remove('active','done'); pip.textContent = i; }
+      var line = document.getElementById('demoLine' + i); if (line) line.classList.remove('done');
+    }
+    var final = document.getElementById('demoFinal'); if (final) final.style.display = 'none';
+    var r1 = document.getElementById('demoRoom1'); if (r1) r1.classList.add('active');
+    var p1 = document.getElementById('demoPip1'); if (p1) p1.classList.add('active');
+    var section = document.querySelector('.corridor-section'); if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+})();
+</script>
+
+<!-- Wormhole canvas -->
+<canvas id="demoWormholeCanvas" aria-hidden="true" style="position:fixed;inset:0;width:100vw;height:100vh;z-index:9998;display:none;pointer-events:none;"></canvas>
+
+<script>
+  var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+  var BASE = 'https://vantage.virorah.com/';
+  var demoMeridian = { state:'Maharashtra', industry:'IT / SaaS', orgType:'Corporate / Pvt Ltd', orgSize:'251 \u2013 1,000', seniority:'HR Manager', unionStatus:'Non-unionised', hrFunction:'Employee Relations specialist' };
+  function wait(ms) { return new Promise(function(resolve){ setTimeout(resolve, ms); }); }
+  function demoDelay() { return 3400 + Math.random() * 1200; }
+  var TOOL_IDS = ['pact','signal','influence','policy','offer','practice','aria'];
+  function switchTool(tool) {
+    TOOL_IDS.forEach(function(t){ document.getElementById('tab-'+t).classList.remove('active'); document.getElementById(t+'-tool').style.display = 'none'; });
+    document.getElementById('tab-'+tool).classList.add('active');
+    document.getElementById(tool+'-tool').style.display = 'block';
+  }
+  function getRiskClass(r){ return {Critical:'critical',High:'high',Medium:'medium',Low:'low'}[r]||'medium'; }
+  function getScoreClass(s){ return {'Critical':'score-critical','High':'score-high','Medium':'score-medium','Low':'score-low'}[s]||'score-medium'; }
+
+  async function runPACT() {
+    document.getElementById('pact-run-btn').disabled = true;
+    document.getElementById('pact-loading').style.display = 'block';
+    document.getElementById('pact-output').style.display = 'none';
+    try {
+      var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ isDemo:true, tool:'pact', narrative:'Rohan Mehta, Senior Software Engineer, 5 years tenure. Badge records confirm he marked attendance as present on 14 days over the past 3 months when he was not in office. Evidence gathered. No prior warnings on record. Line manager wants to proceed with immediate termination.', caseType:'Misconduct', stakeholders:'Senior Software Engineer (5 years tenure), Line Manager, HR', meridian:demoMeridian }) });
+      var data = await res.json();
+      await wait(demoDelay());
+      document.getElementById('pact-loading').style.display = 'none';
+      if (data.success) renderPACT(data.data);
+      else { document.getElementById('pact-run-btn').disabled = false; alert('Error: ' + (data.error||'Try again')); }
+    } catch(err) { document.getElementById('pact-loading').style.display = 'none'; document.getElementById('pact-run-btn').disabled = false; alert('Connection error. Try again.'); }
+  }
+  function renderPACT(r) {
+    var scores = r.pact_scores || {}, protocol = r.protocol || {};
+    var riskClass = getRiskClass(scores.overallRisk);
+    var dims = ['process','accountability','consequence','trust'];
+    var labels = ['P \u2014 Process Integrity','A \u2014 Accountability Clarity','C \u2014 Consequence Mapping','T \u2014 Trust Preservation'];
+    var pactCards = dims.map(function(d,i){ var p = scores[d] || {}; var sc = getScoreClass(p.score); var points = (p.points||[]).slice(0,2).map(function(pt){ return '<div class="pact-point"><div class="pact-dot"></div><div>'+pt+'</div></div>'; }).join(''); return '<div class="pact-card"><div class="pact-dim">'+labels[i]+'<span class="pact-score '+sc+'">'+(p.score||'Medium')+' RISK</span></div><div class="pact-status">'+(p.status||'')+'</div>'+points+'</div>'; }).join('');
+    var financial = '';
+    if (protocol.financial) { var fin = protocol.financial; var breakdown = (fin.breakdown||[]).slice(0,3).map(function(b){ return '<div style="font-size:12px;color:var(--grey);margin-bottom:6px">'+b+'</div>'; }).join(''); financial = '<div class="humacity-card"><div class="hc-header"><div class="hc-badge">HUMAC '+(fin.pillar||'')+'</div><div class="hc-title">Financial Exposure</div></div><div class="hc-exposure"><div class="hc-label">Range &middot; '+(fin.confidence||'')+' Confidence</div><div class="hc-val">'+(fin.range||'')+'</div></div>'+breakdown+'</div>'; }
+    var stepItems = [protocol.recommendation, protocol.communication, protocol.aria].filter(Boolean);
+    var stepLabels = ['Recommendation', 'What to Say', 'Practice With ARIA'];
+    var steps = stepItems.map(function(s,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text"><b style="color:#f4f3ff">'+stepLabels[i]+':</b> '+s+'</div></div>'; }).join('');
+    document.getElementById('pact-output').innerHTML = '<div class="risk-banner risk-'+riskClass+'"><div><div class="risk-title">'+(scores.overallRisk||'')+' Risk \u2014 Misconduct Case</div><div class="risk-sub">'+(scores.overallNarrative||'')+'</div></div><div class="risk-badge badge-'+riskClass+'">'+(scores.overallRisk||'').toUpperCase()+'</div></div><div class="pact-grid">'+pactCards+'</div>'+financial+'<div class="steps-card"><div class="steps-title">Unified Decision Protocol</div>'+steps+'</div><div class="demo-cta"><div class="demo-cta-title">Your real cases need real answers.</div><div class="demo-cta-sub">On the full platform, you describe your own situation. PACT reads your MERIDIAN profile and returns calibrated guidance for your exact reality.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See what else is inside</a></div></div>';
+    document.getElementById('pact-output').style.display = 'block';
+  }
+
+  async function runSIGNAL() {
+    document.getElementById('signal-run-btn').disabled = true;
+    document.getElementById('signal-loading').style.display = 'block';
+    document.getElementById('signal-output').style.display = 'none';
+    try {
+      var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ isDemo:true, tool:'signal', audience:'CFO / Finance', context:'Engineering attrition has gone from 14% to 22% in one quarter. Leadership thinks it is a market issue. I need to present to the CFO next week and change that narrative. He responds to numbers and cost arguments. I need approval for a \u20b922L retention programme.', ask:'Approval for \u20b922L retention investment for engineering cohort', metrics:{ attrition:'22', timeToHire:'58', engagement:'54', openPositions:'18', avgCTC:'14' }, meridian:demoMeridian }) });
+      var data = await res.json();
+      await wait(demoDelay());
+      document.getElementById('signal-loading').style.display = 'none';
+      if (data.success) renderSIGNAL(data.data);
+      else { document.getElementById('signal-run-btn').disabled = false; alert('Error: ' + (data.error||'Try again')); }
+    } catch(err) { document.getElementById('signal-loading').style.display = 'none'; document.getElementById('signal-run-btn').disabled = false; alert('Connection error. Try again.'); }
+  }
+  function renderSIGNAL(r) {
+    var signal = r.signal || {};
+    var dimKeys = ['situation','impact','gap','narrative','action','linkage'];
+    var dimLabels = ['S \u2014 Situation','I \u2014 Impact','G \u2014 Gap','N \u2014 Narrative','A \u2014 Action','L \u2014 Linkage'];
+    var dimClasses = ['dim-s','dim-i','dim-g','dim-n','dim-a','dim-l'];
+    var dimText = { situation: signal.situation ? signal.situation.narrative : '', impact: signal.impact ? signal.impact.narrative : '', gap: signal.gap ? signal.gap.narrative : '', narrative: signal.narrative ? signal.narrative.boardroomVersion : '', action: (signal.action && signal.action.immediate) ? signal.action.immediate.join(' ') : '', linkage: signal.linkage ? signal.linkage.businessOutcome : '' };
+    var signalCards = dimKeys.map(function(k,i){ return '<div class="signal-card"><div class="sig-dim '+dimClasses[i]+'">'+dimLabels[i]+'</div><div class="sig-content">'+(dimText[k]||'')+'</div></div>'; }).join('');
+    var immediateActions = (signal.action && signal.action.immediate) ? signal.action.immediate : [];
+    var talkingPts = immediateActions.slice(0,3).map(function(tp,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+tp+'</div></div>'; }).join('');
+    document.getElementById('signal-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : '')+'</div><div class="anchor-ctx">'+(r.headline || 'The number that opens the room.')+'</div></div><div class="signal-grid">'+signalCards+'</div><div class="steps-card"><div class="steps-title">Immediate Actions \u2014 This Week</div>'+talkingPts+'</div><div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(signal.narrative ? signal.narrative.cfoVersion : '')+'</div></div><div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. SIGNAL builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See all six tools</a></div></div>';
+    document.getElementById('signal-output').style.display = 'block';
+  }
+
+  async function runInfluence() {
+    document.getElementById('influence-run-btn').disabled = true;
+    document.getElementById('influence-loading').style.display = 'block';
+    document.getElementById('influence-output').style.display = 'none';
+    try {
+      var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ isDemo:true, tool:'influence', stakeholderType:'VP Engineering', situation:'Priya Nair has a competing offer 32% above her current CTC and owns the payments migration solo.', ask:'Approve a retention counter-offer', meridian:demoMeridian }) });
+      var data = await res.json();
+      await wait(demoDelay());
+      document.getElementById('influence-loading').style.display = 'none';
+      if (data.success) renderInfluence(data.data);
+      else { document.getElementById('influence-run-btn').disabled = false; alert('Error: ' + (data.error||'Try again')); }
+    } catch(err) { document.getElementById('influence-loading').style.display = 'none'; document.getElementById('influence-run-btn').disabled = false; alert('Connection error. Try again.'); }
+  }
+  function renderInfluence(r) {
+    var s = r.stack || {};
+    document.getElementById('influence-output').innerHTML = '<div class="influence-line">\u201c'+(r.openingLine||'')+'\u201d</div><div class="stack-layer"><div class="stack-layer-label">Data Anchor</div><div class="stack-layer-figure">'+(s.dataAnchor?s.dataAnchor.figure:'')+'</div><div class="stack-layer-body">'+(s.dataAnchor?s.dataAnchor.context:'')+'</div></div><div class="stack-layer"><div class="stack-layer-label">Risk Mirror</div><div class="stack-layer-figure">'+(s.riskMirror?s.riskMirror.revenueAtRisk:'')+'</div><div class="stack-layer-body">'+(s.riskMirror?s.riskMirror.scenario:'')+'</div></div><div class="stack-layer"><div class="stack-layer-label">Decision Runway</div><div class="stack-layer-body"><b style="color:#f4f3ff">Ask:</b> '+(s.decisionRunway?s.decisionRunway.ask:'')+'<br><b style="color:#f4f3ff">Deadline:</b> '+(s.decisionRunway?s.decisionRunway.deadline:'')+'</div></div><div class="influence-line" style="border-color:var(--lavender)">\u201c'+(r.closingLine||'')+'\u201d</div><div class="demo-cta"><div class="demo-cta-title">Build your own influence stack.</div><div class="demo-cta-sub">On the full platform, you describe your real stakeholder and situation, and get a full five-layer stack calibrated to your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
+    document.getElementById('influence-output').style.display = 'block';
+  }
+
+  async function runPolicy() {
+    document.getElementById('policy-run-btn').disabled = true;
+    document.getElementById('policy-loading').style.display = 'block';
+    document.getElementById('policy-output').style.display = 'none';
+    try {
+      var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ isDemo:true, tool:'policy', question:'Can we terminate someone right after a failed PIP without a separate notice period?', meridian:demoMeridian }) });
+      var data = await res.json();
+      await wait(demoDelay());
+      document.getElementById('policy-loading').style.display = 'none';
+      if (data.success) renderPolicy(data.data);
+      else { document.getElementById('policy-run-btn').disabled = false; alert('Error: ' + (data.error||'Try again')); }
+    } catch(err) { document.getElementById('policy-loading').style.display = 'none'; document.getElementById('policy-run-btn').disabled = false; alert('Connection error. Try again.'); }
+  }
+  function renderPolicy(r) {
+    document.getElementById('policy-output').innerHTML = '<div class="policy-output">'+(r.response||'').replace(/\\n/g,'<br>')+'</div><div class="demo-cta"><div class="demo-cta-title">Ask your own policy question.</div><div class="demo-cta-sub">On the full platform, Policy Compass answers calibrated to your MERIDIAN profile and your company\'s own policy guardrails.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
+    document.getElementById('policy-output').style.display = 'block';
+  }
+
+  async function runOffer() {
+    document.getElementById('offer-run-btn').disabled = true;
+    document.getElementById('offer-loading').style.display = 'block';
+    document.getElementById('offer-output').style.display = 'none';
+    try {
+      var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ isDemo:true, tool:'offer_intelligence', flow:'counter_offer', currentCTC:2200000, offerCTC:2900000, performanceBand:'A', tenureYears:4, roleCriticality:'High', meridian:demoMeridian }) });
+      var data = await res.json();
+      await wait(demoDelay());
+      document.getElementById('offer-loading').style.display = 'none';
+      if (data.success) renderOffer(data.data);
+      else { document.getElementById('offer-run-btn').disabled = false; alert('Error: ' + (data.error||'Try again')); }
+    } catch(err) { document.getElementById('offer-loading').style.display = 'none'; document.getElementById('offer-run-btn').disabled = false; alert('Connection error. Try again.'); }
+  }
+  function renderOffer(r) {
+    var rc = r.financialModel ? r.financialModel.replacementCost : {}, rec = r.recommendation || {};
+    document.getElementById('offer-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(rc.total||'')+'</div><div class="anchor-ctx">Projected replacement cost if this employee leaves</div></div><div class="steps-card"><div class="steps-title">Recommendation: '+(rec.primary||'')+' at '+(rec.figure||'')+'</div><div class="step-text" style="padding-left:0">'+(rec.rationale||'')+'</div></div><div class="humacity-card"><div class="hc-header"><div class="hc-badge">HUMACITY</div><div class="hc-title">Break-Even Ceiling</div></div><div class="hc-exposure"><div class="hc-label">Two-Year Cumulative Ceiling</div><div class="hc-val">'+(r.financialModel?r.financialModel.breakEvenCeiling:'')+'</div></div></div><div class="demo-cta"><div class="demo-cta-title">Model your own retention decision.</div><div class="demo-cta-sub">On the full platform, you enter your own employee\'s numbers and get the full break-even model, scenarios, and both conversation scripts.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
+    document.getElementById('offer-output').style.display = 'block';
+  }
+</script>
 </body>
 </html>
