@@ -570,6 +570,9 @@
 </head>
 <body>
 
+<!-- ── FIXED BACK TO VANTAGE — always visible regardless of nav state ── -->
+<a href="#" onclick="['vantage_prologue_seen','vantage_boot_seen','sr_prologue_seen','sr_boot_seen','prologue_seen','boot_seen','vantage_init_done','curtain_done'].forEach(function(k){try{sessionStorage.setItem(k,'1')}catch(e){}try{localStorage.setItem(k,'1')}catch(e){}});window.location.href='index.html';return false;" style="position:fixed;top:18px;left:20px;z-index:9999;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:#c4b5fd;text-decoration:none;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.45);padding:8px 14px;border-radius:8px;white-space:nowrap;backdrop-filter:blur(12px);box-shadow:0 0 14px rgba(99,102,241,0.3)" aria-label="Back to Vantage landing page">&#8592; Vantage</a>
+
 <!-- ── BACKGROUND LAYER (needed for cinematic engine) ─────────────── -->
 <canvas id="world" aria-hidden="true"></canvas>
 <canvas id="cinemaCanvas" aria-hidden="true"></canvas>
