@@ -1271,11 +1271,34 @@
   color: rgba(196,181,253,.5);
 }
 
-/* Hero kicker — DM Sans instead of JetBrains Mono; "9" reads editorial not AI */
+/* Hero copy — one consistent typeface (Cormorant Garamond) across every
+   line in the hero stack. Variation now comes only from size, italics
+   and colour, never from switching typefaces line to line. */
+.hero-tagline {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: .01em !important;
+  font-size: clamp(15px,1.5vw,19px) !important;
+  color: rgba(196,181,253,.72) !important;
+}
+.hero-tagline em {
+  font-style: normal !important;
+  font-weight: 600 !important;
+  color: rgba(244,243,255,.92) !important;
+}
 .hero-kicker {
-  font-family: 'DM Sans', sans-serif !important;
-  font-weight: 300 !important;
-  letter-spacing: .04em !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  letter-spacing: .01em !important;
+  color: rgba(255,255,255,.5) !important;
+}
+.hero-deck {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: normal !important;
+  color: rgba(244,243,255,.68) !important;
 }
 
 /* Humac Score — enriched 3-metric panel */
