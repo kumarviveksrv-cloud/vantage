@@ -2154,7 +2154,6 @@
 .cor-choices {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
   gap: 14px;
   width: 100%;
   margin-bottom: 28px;
@@ -2955,6 +2954,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 <section class="record cinematic-panel reveal-section" id="record">
   <div class="section-index">02 / VANTAGE RECORD</div>
   <div class="record-head"><p class="eyebrow">Your career lives here — not in the HRIS</p><h2>The record the org never built <span class="line accent">for you.</span></h2><p class="lede">Every decision you made. Every difficult conversation you navigated. Every rupee you protected. Vantage quietly turns the work you already do into a career record that is yours — across every org, every role, every year you've given to this profession.</p><p class="record-sub">The company owns the HRIS. <span class="line accent">Your Vantage Record belongs to you.</span></p></div>
+  <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:rgba(196,181,253,.4);margin-bottom:14px">ILLUSTRATIVE EXAMPLE &mdash; YOUR OWN VANTAGE RECORD BUILDS FROM YOUR FIRST CASE</p>
   <div class="record-dossier-wrap">
     <div class="record-dossier" id="recordDossier">
       <div class="dos-header">
@@ -3052,7 +3052,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   <div class="ms-calibrate" id="msCalibrate">
     <div class="ms-cal-header">
       <div class="ms-cal-dot"></div>
-      <div class="ms-cal-label">MERIDIAN ACTIVE &mdash; CONTEXT LOADED</div>
+      <div class="ms-cal-label">MERIDIAN ACTIVE &mdash; SAMPLE CONTEXT</div>
     </div>
     <div class="ms-cal-context">
       <span class="ms-cal-tag">Maharashtra</span>
@@ -3064,6 +3064,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
     </div>
     <div class="ms-cal-bar"><div class="ms-cal-fill"></div></div>
     <div class="ms-cal-status">88% PRECISION CONFIDENCE &mdash; ALL 7 PARAMETERS SET</div>
+    <div class="ms-cal-status" style="margin-top:5px;opacity:.65">Legal basis: IR Code 2020, in force 21 Nov 2025 &middot; Central &amp; State rules still in draft as of early 2026</div>
   </div>
 
   <div class="ms-divider">
@@ -3167,7 +3168,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
             <div class="msl-signal-tag">KEY CITATION</div>
             <div class="msl-signal-val">IR Code 2020 &middot; Maharashtra S&amp;E Act <em>BNS replaces IPC (effective Jul 2024) &middot; not IPC</em></div>
           </div>
-          <div class="msl-badge msl-badge--info">VERIFIED</div>
+          <div class="msl-badge msl-badge--info">VERIFIED 21 NOV 2025</div>
         </div>
       </div>
     </div>
@@ -3361,16 +3362,6 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-text">Start domestic enquiry</span>
               <span class="cor-choice-risk">slower — but legally defensible</span>
             </div>
-            <div class="cor-choice" data-room="1" data-pick="C">
-              <span class="cor-choice-letter">C</span>
-              <span class="cor-choice-text">Option C</span>
-              <span class="cor-choice-risk">placeholder</span>
-            </div>
-            <div class="cor-choice" data-room="1" data-pick="D">
-              <span class="cor-choice-letter">D</span>
-              <span class="cor-choice-text">Option D</span>
-              <span class="cor-choice-risk">placeholder</span>
-            </div>
           </div>
           <button class="cor-confirm" id="corConfirm1" data-room="1">Confirm Choice</button>
           <div class="cor-result" id="corResult1"></div>
@@ -3406,16 +3397,6 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-letter">B</span>
               <span class="cor-choice-text">Reconstruct the trail</span>
               <span class="cor-choice-risk">evidence properly reconstructed</span>
-            </div>
-            <div class="cor-choice" data-room="2" data-pick="C">
-              <span class="cor-choice-letter">C</span>
-              <span class="cor-choice-text">Option C</span>
-              <span class="cor-choice-risk">placeholder</span>
-            </div>
-            <div class="cor-choice" data-room="2" data-pick="D">
-              <span class="cor-choice-letter">D</span>
-              <span class="cor-choice-text">Option D</span>
-              <span class="cor-choice-risk">placeholder</span>
             </div>
           </div>
           <button class="cor-confirm" id="corConfirm2" data-room="2">Confirm Choice</button>
@@ -3453,16 +3434,6 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-text">Pull the Human P&amp;L</span>
               <span class="cor-choice-risk">data-backed — boardroom-ready</span>
             </div>
-            <div class="cor-choice" data-room="3" data-pick="C">
-              <span class="cor-choice-letter">C</span>
-              <span class="cor-choice-text">Option C</span>
-              <span class="cor-choice-risk">placeholder</span>
-            </div>
-            <div class="cor-choice" data-room="3" data-pick="D">
-              <span class="cor-choice-letter">D</span>
-              <span class="cor-choice-text">Option D</span>
-              <span class="cor-choice-risk">placeholder</span>
-            </div>
           </div>
           <button class="cor-confirm" id="corConfirm3" data-room="3">Confirm Choice</button>
           <div class="cor-result" id="corResult3"></div>
@@ -3498,16 +3469,6 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-letter">B</span>
               <span class="cor-choice-text">Run ARIA rehearsal</span>
               <span class="cor-choice-risk">rehearsed — walk in ready</span>
-            </div>
-            <div class="cor-choice" data-room="4" data-pick="C">
-              <span class="cor-choice-letter">C</span>
-              <span class="cor-choice-text">Option C</span>
-              <span class="cor-choice-risk">placeholder</span>
-            </div>
-            <div class="cor-choice" data-room="4" data-pick="D">
-              <span class="cor-choice-letter">D</span>
-              <span class="cor-choice-text">Option D</span>
-              <span class="cor-choice-risk">placeholder</span>
             </div>
           </div>
           <button class="cor-confirm" id="corConfirm4" data-room="4">Confirm Choice</button>
@@ -3545,16 +3506,6 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
               <span class="cor-choice-text">Open your Vantage Record</span>
               <span class="cor-choice-risk">built on what you already know</span>
             </div>
-            <div class="cor-choice" data-room="5" data-pick="C">
-              <span class="cor-choice-letter">C</span>
-              <span class="cor-choice-text">Option C</span>
-              <span class="cor-choice-risk">placeholder</span>
-            </div>
-            <div class="cor-choice" data-room="5" data-pick="D">
-              <span class="cor-choice-letter">D</span>
-              <span class="cor-choice-text">Option D</span>
-              <span class="cor-choice-risk">placeholder</span>
-            </div>
           </div>
           <button class="cor-confirm" id="corConfirm5" data-room="5">Confirm Choice</button>
           <div class="cor-result" id="corResult5"></div>
@@ -3578,7 +3529,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   <div class="cta-copy">
     <p class="eyebrow">The system is ready for you</p>
     <h2>You've read about it.<br><span class="line accent">Now step inside.</span></h2>
-    <p class="cta-sub">9,000+ HR decisions navigated on Vantage. Your first one is waiting.</p>
+    <p class="cta-sub">Vantage is built to handle 9,000+ kinds of HR decisions. Your first one is waiting.</p>
     <div class="cta-actions">
       <a href="demo.html" class="btn btn-primary btn-cta magnetic">
         Try the Demo — it's live <span>→</span>
