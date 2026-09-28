@@ -896,14 +896,33 @@
       setTimeout(()=>{
         const tag=document.getElementById('humacTagline');
         if(tag){
-          /* Pre-lock height before typewriter to prevent reflow during animation */
+          const fullText='84 is value-generating territory \u2014 your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.';
+          /* Pre-lock height before the reveal to prevent reflow while
+             the words fade in — same technique as before, just no
+             longer feeding into a character scramble. A full-sentence
+             scramble read as a 2-3 second glitch rather than an
+             intentional reveal; a word-by-word fade (same technique
+             the hero paragraph already uses elsewhere on the page) is
+             calmer and matches the site's own established idiom for
+             longer text. */
           tag.style.visibility='hidden';
-          tag.textContent='84 is value-generating territory \u2014 your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.';
+          tag.textContent=fullText;
           const h=tag.offsetHeight;
-          tag.textContent='';
           tag.style.minHeight=h+'px';
           tag.style.visibility='';
-          D.str(tag,'84 is value-generating territory \u2014 your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.',1600);
+          tag.textContent='';
+          const words=fullText.split(/\s+/);
+          const spans=words.map((w,i)=>{
+            const span=document.createElement('span');
+            span.textContent=w+(i<words.length-1?'\u00A0':'');
+            span.style.cssText='opacity:0;display:inline-block;transition:opacity .5s ease, transform .5s ease;transform:translateY(6px);';
+            tag.appendChild(span);
+            return span;
+          });
+          void tag.offsetHeight;
+          spans.forEach((span,i)=>{
+            setTimeout(()=>{ span.style.opacity='1'; span.style.transform='translateY(0)'; }, i*55);
+          });
         }
       },2400);
     },scoreAt);
