@@ -2955,3 +2955,31 @@
     },{threshold:0.35}).observe(el);
   })();
 })();
+
+/* ── VANTAGE hub diagram — reveal + continuous packet flow on scroll-in ── */
+(function initVantageHub(){
+  'use strict';
+  const hub = document.getElementById('vdHub');
+  if(!hub) return;
+  let fired = false;
+  new IntersectionObserver(entries=>{
+    if(!entries[0].isIntersecting || fired) return;
+    fired = true;
+    hub.classList.add('vd-hub-in');
+    setTimeout(()=>hub.classList.add('vd-hub-live'), 1500);
+  },{threshold:0.3}).observe(hub);
+})();
+
+/* ── Coverage-scope diagram — staggered reveal + traveling signal ──────── */
+(function initScopeViz(){
+  'use strict';
+  const scope = document.querySelector('.vd-scope');
+  if(!scope) return;
+  let fired = false;
+  new IntersectionObserver(entries=>{
+    if(!entries[0].isIntersecting || fired) return;
+    fired = true;
+    scope.classList.add('vd-scope-in');
+    setTimeout(()=>scope.classList.add('vd-scope-live'), 1400);
+  },{threshold:0.3}).observe(scope);
+})();
