@@ -305,13 +305,14 @@
   </div>
   <div class="dash-mock" id="dashMock">
     <div class="dash-sidebar" id="dashNavList">
-      <div class="dash-nav-item active" data-nav="Dashboard"><i></i>Dashboard</div>
-      <div class="dash-nav-item" data-nav="Case Library"><i></i>Case Library</div>
-      <div class="dash-nav-item" data-nav="Humac Score"><i></i>Humac Score</div>
-      <div class="dash-nav-item" data-nav="MERIDIAN"><i></i>MERIDIAN</div>
-      <div class="dash-nav-item" data-nav="Vantage Record"><i></i>Vantage Record</div>
-      <div class="dash-nav-item" data-nav="Monthly Debrief"><i></i>Monthly Debrief</div>
-      <div class="dash-nav-item" data-nav="Settings"><i></i>Settings</div>
+      <div class="dash-nav-item active" data-nav="Home"><i></i>Home</div>
+      <div class="dash-nav-item" data-nav="Employee Case Advisor"><i></i>Employee Case Advisor</div>
+      <div class="dash-nav-item" data-nav="People ROI Brief"><i></i>People ROI Brief</div>
+      <div class="dash-nav-item" data-nav="Leadership Communicator"><i></i>Leadership Communicator</div>
+      <div class="dash-nav-item" data-nav="Policy Advisor"><i></i>Policy Advisor</div>
+      <div class="dash-nav-item" data-nav="Retention Advisor"><i></i>Retention Advisor</div>
+      <div class="dash-nav-item" data-nav="Difficult Conversations"><i></i>Difficult Conversations</div>
+      <div class="dash-nav-item" data-nav="ARIA"><i></i>ARIA</div>
     </div>
     <div class="dash-main">
       <div class="dash-main-head"><div class="dash-main-title" id="dashMainTitle">Welcome back</div><div class="dash-main-tag">SYSTEM MEMORY / ACTIVE</div></div>
@@ -748,43 +749,43 @@
      it back in, and gives the whole mock a brief highlight pulse so
      the change actually reads as navigation, not a static screenshot. */
   var DASH_CONTENT = {
-    pact: { title: 'Employee Case Advisor', nav: 'Case Library',
+    pact: { title: 'Employee Case Advisor', nav: 'Employee Case Advisor',
       cards: [
         { tag:'CASE ADVISOR', risk:'score-high', riskLabel:'HIGH', title:'Attendance falsification &mdash; 14-day case', meta:'Filed 3 days ago &middot; Rs.4L-9L exposure' },
         { tag:'CASE ADVISOR', risk:'score-medium', riskLabel:'RESOLVED', title:'Absence pattern &mdash; final warning issued', meta:'Filed 2 weeks ago &middot; Closed' }
       ],
       stats: [ ['47','ER Cases'], ['&#8377;18.4L','Exposure Avoided'], ['17','Rehearsed'], ['9','Debriefs'] ] },
-    signal: { title: 'People ROI Brief', nav: 'Humac Score',
+    signal: { title: 'People ROI Brief', nav: 'People ROI Brief',
       cards: [
         { tag:'ROI BRIEF', risk:'score-medium', riskLabel:'APPROVED', title:'CFO retention brief &mdash; &#8377;22L ask', meta:'Filed 4 days ago &middot; Budget approved' },
         { tag:'ROI BRIEF', risk:'score-low', riskLabel:'SENT', title:'Attrition narrative &mdash; Q3 board deck', meta:'Filed 1 week ago &middot; Awaiting review' }
       ],
       stats: [ ['12','Briefs Built'], ['&#8377;41L','Budget Secured'], ['2 days','Avg Turnaround'], ['5','CFO Approvals'] ] },
-    influence: { title: 'Leadership Communicator', nav: 'Dashboard',
+    influence: { title: 'Leadership Communicator', nav: 'Leadership Communicator',
       cards: [
         { tag:'INFLUENCE', risk:'score-medium', riskLabel:'SENT', title:'VP Engineering &mdash; counter-offer ask', meta:'Filed 2 days ago &middot; Awaiting response' },
         { tag:'INFLUENCE', risk:'score-low', riskLabel:'DRAFTING', title:'COO &mdash; restructure buy-in', meta:'Started today &middot; In progress' }
       ],
       stats: [ ['9','Stacks Built'], ['7','Asks Approved'], ['14','Stakeholders Mapped'], ['1 day','Avg Response'] ] },
-    policy: { title: 'Policy Advisor', nav: 'MERIDIAN',
+    policy: { title: 'Policy Advisor', nav: 'Policy Advisor',
       cards: [
         { tag:'POLICY', risk:'score-low', riskLabel:'ANSWERED', title:'PIP + notice period query', meta:'Asked today &middot; Cited' },
         { tag:'POLICY', risk:'score-low', riskLabel:'ANSWERED', title:'Contract worker classification', meta:'Asked 3 days ago &middot; Cited' }
       ],
       stats: [ ['31','Questions Asked'], ['&lt;1 min','Avg Response'], ['58','Citations Given'], ['7','Guardrails Set'] ] },
-    offer: { title: 'Retention Advisor', nav: 'Case Library',
+    offer: { title: 'Retention Advisor', nav: 'Retention Advisor',
       cards: [
         { tag:'RETENTION', risk:'score-medium', riskLabel:'RETAINED', title:'Priya Nair &mdash; competing offer 32%', meta:'Filed 1 week ago &middot; Retained' },
         { tag:'RETENTION', risk:'score-high', riskLabel:'MONITORING', title:'Senior architect &mdash; flight risk', meta:'Flagged 2 days ago &middot; Active' }
       ],
       stats: [ ['14','Retention Cases'], ['&#8377;1.2Cr','Value Protected'], ['22','Offers Modeled'], ['11','Retained'] ] },
-    practice: { title: 'Difficult Conversations', nav: 'Vantage Record',
+    practice: { title: 'Difficult Conversations', nav: 'Difficult Conversations',
       cards: [
         { tag:'REHEARSED', risk:'score-low', riskLabel:'DEBRIEFED', title:'Denied promotion &mdash; senior associate', meta:'Practised 2 days ago &middot; Scored 8/10' },
         { tag:'REHEARSED', risk:'score-low', riskLabel:'DEBRIEFED', title:'Manager feedback &mdash; underperformance', meta:'Practised 5 days ago &middot; Scored 7/10' }
       ],
       stats: [ ['17','Rehearsed'], ['8.2/10','Avg Score'], ['17','Debriefs Filed'], ['4','This Month'] ] },
-    aria: { title: 'ARIA', nav: 'Monthly Debrief',
+    aria: { title: 'ARIA', nav: 'ARIA',
       cards: [
         { tag:'ARIA', risk:'score-low', riskLabel:'LOGGED', title:"This week's reflection &mdash; 3 ER cases", meta:'Logged today' },
         { tag:'ARIA', risk:'score-medium', riskLabel:'NOTED', title:'Pattern flagged &mdash; documentation gap', meta:'Noted 3 days ago' }
