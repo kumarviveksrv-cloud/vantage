@@ -2681,7 +2681,7 @@
 
     /* 1. Tagline types out (mixed em) — slowed from 32ms to 58ms/char,
        nearly doubling visible duration (~1.8s -> ~3.3s) */
-    await typeMixedLine(tagline, "Your intelligence ally at work. ", "Not the org's — yours.", 58, 'Tagline');
+    await typeMixedLine(tagline, "Your Personal HR Business Partner. ", "Not the org's — yours.", 58, 'Tagline');
     await delay(500);
 
     /* 2. Kicker fades in */
