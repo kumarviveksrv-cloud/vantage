@@ -2989,3 +2989,10 @@
     radar.classList.add('vd-radar-in');
   },{threshold:0.3}).observe(radar);
 })();
+
+/* ── FAQ accordion toggle ────────────────────────────────────────────── */
+function toggleFaq(btn){
+  const item = btn.closest('.faq-item');
+  if(!item) return;
+  item.classList.toggle('faq-open');
+}
