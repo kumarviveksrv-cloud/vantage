@@ -1474,6 +1474,17 @@
 #heroEnter {
   font-size: clamp(22px,2.5vw,32px) !important;
 }
+/* Gradient has to go on the individual typed spans (heText/heVantage/
+   heDot), not the #heroEnter wrapper itself — the wrapper holds no
+   direct text of its own (it's all in these children), so a
+   background-clip:text on the parent alone would clip to nothing. */
+#heText, #heVantage, #heDot {
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
 
 /* Humac Score — enriched 3-metric panel */
 .hsp-trio {
