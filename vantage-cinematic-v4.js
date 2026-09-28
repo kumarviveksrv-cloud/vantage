@@ -6,7 +6,19 @@ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Scene HUD */
 const hudMeter=$('#hudMeter'),sceneTag=$('#sceneTag'),root=document.documentElement;
-const scenes=[['01','THE DECISION'],['02','DECISION FIELD'],['03','CONTEXT'],['04','ARIA'],['05','SYSTEM'],['06','HUMACITY'],['07','VANTAGE RECORD'],['08','THE DIFFERENCE'],['09','ACCESS'],['10','EXIT']];
+/* SR21: rebuilt to match reality. cinematicSections below resolves,
+   at time of writing, to exactly 6 real elements in this DOM order:
+   meridian(Understand) -> aria(Think) -> humacity(Quantify) ->
+   record(Remember) -> cta-moment -> final. (.tools, .difference and
+   .sim-room don't exist anywhere on this page anymore, and .pricing
+   doesn't match the actual "pricing-block" class, so none of those
+   ever resolved to anything — this array previously had 10 hardcoded
+   entries built for a much older page structure and was already
+   mismatched against every section except ARIA before today's
+   reorder. Only as many entries as cinematicSections actually
+   resolves to are ever read, via Math.min() below, so trimming this
+   to 6 real entries is safe. */
+const scenes=[['01','UNDERSTAND'],['02','THINK'],['03','QUANTIFY'],['04','REMEMBER'],['05','STEP IN'],['06','ACCESS']];
 const cinematicSections=$$('.meridian,.aria,.tools,.humacity,.record,.difference,.pricing,.final,.sim-room,.cta-moment');
 function sceneProgress(){const y=scrollY+innerHeight*.5;let idx=0;cinematicSections.forEach((s,i)=>{if(y>=s.offsetTop)idx=i});const s=scenes[Math.min(idx,scenes.length-1)]||scenes[0];if(sceneTag)sceneTag.textContent=s[0]+' / '+s[1];if(hudMeter)hudMeter.style.width=Math.min(100,(y/(document.body.scrollHeight-innerHeight))*100)+'%'}
 addEventListener('scroll',sceneProgress,{passive:true});addEventListener('resize',sceneProgress);sceneProgress();
