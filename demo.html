@@ -126,7 +126,11 @@
     .dash-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
     .dash-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(22px,3vw,32px);font-weight:800;color:#f4f3ff;margin-bottom:10px}
     .dash-sub{font-size:14px;color:var(--grey);max-width:520px;margin:0 auto}
-    .dash-mock{display:grid;grid-template-columns:200px 1fr;gap:0;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.35)}
+    .dash-mock{display:grid;grid-template-columns:200px 1fr;gap:0;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.35);animation:dashAmbientGlow 3.6s ease-in-out infinite}
+    @keyframes dashAmbientGlow{
+      0%,100%{box-shadow:0 20px 60px rgba(0,0,0,0.35),0 0 0 1px rgba(99,102,241,0.12),0 0 30px rgba(99,102,241,0.08)}
+      50%{box-shadow:0 20px 60px rgba(0,0,0,0.35),0 0 0 1px rgba(99,102,241,0.35),0 0 60px rgba(99,102,241,0.22)}
+    }
     .dash-sidebar{background:rgba(5,4,16,0.6);border-right:1px solid var(--border);padding:20px 0}
     .dash-nav-item{padding:11px 20px;font-size:12px;color:var(--dim);display:flex;align-items:center;gap:10px;cursor:default}
     .dash-nav-item.active{color:#f4f3ff;background:rgba(99,102,241,0.1);border-right:2px solid var(--accent);font-weight:600}
@@ -824,6 +828,7 @@
         mockEl.classList.remove('dash-pulse');
         void mockEl.offsetWidth;
         mockEl.classList.add('dash-pulse');
+        setTimeout(function(){ mockEl.classList.remove('dash-pulse'); }, 900);
       }
     }, 220);
   }
