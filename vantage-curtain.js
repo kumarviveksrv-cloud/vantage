@@ -2971,15 +2971,14 @@
 })();
 
 /* ── Coverage-scope diagram — staggered reveal + traveling signal ──────── */
-(function initScopeViz(){
+(function initRadarViz(){
   'use strict';
-  const scope = document.querySelector('.vd-scope');
-  if(!scope) return;
+  const radar = document.getElementById('vdRadar');
+  if(!radar) return;
   let fired = false;
   new IntersectionObserver(entries=>{
     if(!entries[0].isIntersecting || fired) return;
     fired = true;
-    scope.classList.add('vd-scope-in');
-    setTimeout(()=>scope.classList.add('vd-scope-live'), 1400);
-  },{threshold:0.3}).observe(scope);
+    radar.classList.add('vd-radar-in');
+  },{threshold:0.3}).observe(radar);
 })();
