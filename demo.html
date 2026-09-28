@@ -593,66 +593,125 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     canvas.style.display = 'block';
-    var startTime = null, duration = 1100;
-    var cx = canvas.width / 2, cy = canvas.height / 2;
-    var maxR = Math.max(canvas.width, canvas.height) * 0.72;
-    var particles = [];
-    for (var p = 0; p < 60; p++) {
-      particles.push({ angle: Math.random() * Math.PI * 2, radius: Math.random() * 0.4 + 0.1, speed: Math.random() * 0.4 + 0.6, size: Math.random() * 2.5 + 1, alpha: Math.random() * 0.7 + 0.3 });
+    var duration = 1800;
+    var W = canvas.width, H = canvas.height, cx = W/2, cy = H/2;
+    var FL = W * 0.45;     /* focal length — controls perspective strength */
+    var maxZ = 1200;       /* far plane */
+
+    ctx.fillStyle = '#050410';
+    ctx.fillRect(0, 0, W, H);
+
+    /* Stars sit in real 3D space (x, y, z) and fly TOWARD the camera as
+       z decreases — this is what actually produces the Interstellar-style
+       forward-travel feel, versus the old version's flat 2D polar swirl
+       (angle + radius, no depth), which read as a spinning portal rather
+       than motion through a tunnel. */
+    var stars = [];
+    for (var i = 0; i < 500; i++) {
+      stars.push({
+        x: (Math.random()-.5) * W * 1.6,
+        y: (Math.random()-.5) * H * 1.6,
+        z: Math.random() * maxZ,
+        sz: 0.5 + Math.random()*1.8,
+        h: 240 + Math.random()*55,
+        l: 58 + Math.random()*25
+      });
     }
-    function easeInOut(t) { return t < .5 ? 2*t*t : -1+(4-2*t)*t; }
-    function frame(ts) {
-      if (!startTime) startTime = ts;
-      var elapsed = ts - startTime;
-      var t = Math.min(elapsed / duration, 1);
-      var ease = easeInOut(t);
-      var alpha = t < 0.15 ? t/0.15 : t < 0.70 ? 1 : 1-(t-0.70)/0.30;
-      alpha = Math.max(0, Math.min(1, alpha));
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'rgba(5,4,16,' + (alpha * 0.93) + ')';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      for (var i = 0; i < 16; i++) {
-        var rp = ((ease * 2.8 + i / 16) % 1);
-        var r = rp * maxR;
-        var ra = alpha * (1 - rp) * (rp > 0.04 ? 1 : rp / 0.04);
-        if (ra <= 0) continue;
-        ctx.beginPath();
-        ctx.ellipse(cx, cy, r, r * 0.52, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = i % 3 === 0 ? 'rgba(196,181,253,' + (ra * 0.6) + ')' : 'rgba(124,58,237,' + (ra * 0.9) + ')';
-        ctx.lineWidth = i % 4 === 0 ? 2.5 : 1.2;
-        ctx.stroke();
-        if (rp > 0.7) {
-          ctx.strokeStyle = 'rgba(196,181,253,' + (ra * (rp-0.7)/0.3 * 0.4) + ')';
-          ctx.lineWidth = 6;
+    /* Faint tunnel wall rings at fixed depths, also rushing past */
+    var rings = [];
+    for (var r = 0; r < 18; r++) {
+      rings.push({ z: (r/18)*maxZ, r: 240 + Math.random()*110, h: 255 + Math.random()*30 });
+    }
+
+    var t0 = performance.now();
+    var safety = setTimeout(function(){ canvas.style.display='none'; cb && cb(); }, duration+600);
+
+    function frame(now) {
+      var elapsed = now - t0;
+      var p = Math.min(1, elapsed/duration);
+      if (p >= 1) { clearTimeout(safety); canvas.style.display='none'; ctx.clearRect(0,0,W,H); cb && cb(); return; }
+
+      /* Trail fade — longer trails as speed increases */
+      ctx.fillStyle = 'rgba(5,4,16,' + (0.12+p*0.08) + ')';
+      ctx.fillRect(0, 0, W, H);
+
+      /* Speed ramps quadratically — a slow pull that accelerates hard */
+      var speed = 2 + p*p*45;
+
+      /* Tunnel rings rushing toward camera */
+      rings.forEach(function(ring){
+        ring.z -= speed*0.7;
+        if (ring.z < 1) { ring.z = maxZ; ring.r = 240+Math.random()*110; }
+        var scale = FL/Math.max(1, ring.z);
+        var rr = ring.r*scale;
+        if (rr > 2 && rr < W*2) {
+          var a = Math.min(0.18, (1-ring.z/maxZ)*0.22) * (0.4+p*0.6);
           ctx.beginPath();
-          ctx.ellipse(cx, cy, r, r * 0.52, 0, 0, Math.PI * 2);
+          ctx.arc(cx, cy, Math.max(0.1,rr), 0, Math.PI*2);
+          ctx.strokeStyle = 'hsla(' + ring.h + ',70%,55%,' + a + ')';
+          ctx.lineWidth = 1 + scale*0.8;
           ctx.stroke();
         }
-      }
-      particles.forEach(function(pt) {
-        var pp = ((ease * pt.speed + pt.radius) % 1);
-        var pr = pp * maxR * 0.85;
-        var pa = pt.angle + ease * Math.PI * 6;
-        var px = cx + Math.cos(pa) * pr;
-        var py = cy + Math.sin(pa) * pr * 0.52;
-        var pal = alpha * pt.alpha * (1 - pp);
-        ctx.beginPath();
-        ctx.arc(px, py, pt.size * (1 - pp * 0.6), 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(196,181,253,' + pal + ')';
-        ctx.fill();
       });
-      var br = 60 + ease * 30;
-      var gg = ctx.createRadialGradient(cx, cy, 0, cx, cy, br);
-      gg.addColorStop(0, 'rgba(255,255,255,' + (alpha * 0.95) + ')');
-      gg.addColorStop(0.15, 'rgba(196,181,253,' + (alpha * 0.8) + ')');
-      gg.addColorStop(0.4, 'rgba(124,58,237,' + (alpha * 0.55) + ')');
-      gg.addColorStop(1, 'rgba(99,102,241,0)');
-      ctx.fillStyle = gg;
-      ctx.beginPath();
-      ctx.arc(cx, cy, br, 0, Math.PI * 2);
-      ctx.fill();
-      if (t < 1) { requestAnimationFrame(frame); }
-      else { canvas.style.display = 'none'; ctx.clearRect(0,0,canvas.width,canvas.height); cb && cb(); }
+
+      /* Stars — true 3D-to-2D perspective projection, drawn as a streak
+         from their previous projected position to their current one, so
+         they read as rushing lights rather than static dots that jump. */
+      stars.forEach(function(s){
+        var prevZ = s.z;
+        s.z -= speed * (0.8 + s.sz*0.3);
+        if (s.z < 1) {
+          s.x = (Math.random()-.5)*W*1.6;
+          s.y = (Math.random()-.5)*H*1.6;
+          s.z = maxZ - Math.random()*200;
+          return;
+        }
+        var scale = FL/Math.max(1, s.z);
+        var sx = cx + s.x*scale, sy = cy + s.y*scale;
+        var prevScale = FL/prevZ;
+        var px = cx + s.x*prevScale, py = cy + s.y*prevScale;
+        if (sx < -50 || sx > W+50 || sy < -50 || sy > H+50) return;
+        var proximity = 1 - s.z/maxZ;
+        var alpha = proximity*proximity*(0.4+p*0.6);
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(sx, sy);
+        ctx.strokeStyle = 'hsla(' + s.h + ',85%,' + s.l + '%,' + Math.min(1,alpha) + ')';
+        ctx.lineWidth = s.sz*scale*0.8;
+        ctx.stroke();
+        if (proximity > 0.6) {
+          ctx.beginPath();
+          ctx.arc(sx, sy, Math.max(0.1, s.sz*scale*0.4), 0, Math.PI*2);
+          ctx.fillStyle = 'hsla(' + s.h + ',90%,82%,' + (alpha*0.7) + ')';
+          ctx.fill();
+        }
+      });
+
+      /* The light at the end of the tunnel */
+      var glowR = 60 + p*40;
+      var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
+      grad.addColorStop(0, 'rgba(196,181,253,' + (0.15+p*0.2) + ')');
+      grad.addColorStop(0.4, 'rgba(139,92,246,' + (0.06+p*0.08) + ')');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+
+      /* Peripheral darkening — tunnel walls rushing past at the edges */
+      var edgeGrad = ctx.createRadialGradient(cx, cy, W*0.15, cx, cy, W*0.65);
+      edgeGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      edgeGrad.addColorStop(0.6, 'rgba(79,70,229,' + (0.02+p*0.04) + ')');
+      edgeGrad.addColorStop(1, 'rgba(30,27,75,' + (0.08+p*0.15) + ')');
+      ctx.fillStyle = edgeGrad;
+      ctx.fillRect(0, 0, W, H);
+
+      /* Arrival flash */
+      if (p > 0.82) {
+        var flash = (p-0.82)/0.18;
+        ctx.fillStyle = 'rgba(255,255,255,' + (flash*flash*flash*0.85) + ')';
+        ctx.fillRect(0, 0, W, H);
+      }
+
+      requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
   }
