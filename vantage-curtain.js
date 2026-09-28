@@ -163,14 +163,29 @@
     runParticles(document.getElementById('q-canvas'), ()=>{
       ov.classList.add('q-out');
       setTimeout(()=>{
+        const cb = onDismiss; onDismiss = null;
+        if(cb){
+          /* This dismissal leads to navigation (the Demo button case).
+             Fire the callback NOW, while the overlay is still fully
+             covering the viewport — do not hide/reset it first. The
+             previous order was: hide overlay completely (display:none,
+             exposing the bare landing page underneath) → THEN navigate.
+             Since window.location.href doesn't leave the current page
+             instantly, that gap was a real, visible flash back to the
+             landing page before the browser actually left it. We're
+             unloading this page in a moment anyway, so there's no need
+             to tidy up the overlay state beforehand. */
+          cb();
+          return;
+        }
+        /* No navigation — this was an inline reveal (section curtain
+           raiser). Safe to actually hide the overlay and restore it. */
         ov.classList.remove('q-visible','q-out');
         ov.style.display = 'none';
         if(inner){ inner.style.opacity='1'; }
         if(bar){ bar.style.opacity='1'; }
         document.getElementById('q-fill').style.width = '0';
         active = false;
-        const cb = onDismiss; onDismiss = null;
-        if(cb) cb();
       }, 600);
     });
   }
@@ -212,7 +227,7 @@
         window.location.href = dest;
         return;
       }
-      showOverlay(DEMO_CARD, 4000, ()=>{
+      showOverlay(DEMO_CARD, DELAY, ()=>{
         sessionStorage.setItem('vantage_demo_curtain_seen', '1');
         window.location.href = dest;
       });
