@@ -3899,7 +3899,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 
 <section class="final cinematic-panel"><div class="final-field"><div class="final-radial"></div></div><div class="final-copy"><p class="eyebrow">VANTAGE / Private intelligence system</p><h2>Do the work.<br>Keep the record.<br><span class="line accent">Build the career.</span></h2><p>Walk into the next room with more than an answer.</p><div style="display:flex;flex-direction:column;align-items:center;gap:12px"><a href="access.html" class="btn btn-primary magnetic">Enter Vantage <span>↗</span></a><button id="pwa-cta-btn" onclick="triggerPwaInstall()" style="display:none;padding:11px 24px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:10px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap">&#x2B07;&nbsp; Install Vantage App</button><p id="pwa-device-msg" style="display:none;font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(196,181,253,.45);max-width:340px;text-align:center;line-height:1.6;margin:0"></p></div></div></section>
 
-<footer class="vantage-footer">
+<div class="vantage-footer">
   <div class="footer-grid">
     <div class="footer-brand">
       <img src="virorah-vantage-logo.png" alt="Virorah Vantage">
@@ -3919,11 +3919,14 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <span class="footer-col-h">COMPANY</span>
       <a href="about.html">About Vantage</a>
       <a href="index.html#faq">FAQ</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
     </div>
     <div class="footer-col">
       <span class="footer-col-h">START</span>
       <a href="demo.html">Try the Demo</a>
       <a href="access.html">Sign In</a>
+      <a href="https://virorah.com">Virorah Universe</a>
     </div>
   </div>
   <div class="footer-bar">
@@ -3935,10 +3938,8 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
     <span>INDIA / HR</span>
     <span>© 2026 Virorah Private Limited. All rights reserved.</span>
   </div>
-</footer>
+</div>
 </main></main>
-
-<footer><span>© 2026 Virorah Private Limited. All rights reserved.</span><div><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="https://virorah.com">Virorah Universe</a></div></footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -3995,7 +3996,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 .faq-a p { margin: 0; padding: 0 22px 20px; font: 14px/1.75 'DM Sans',sans-serif; color: rgba(244,243,255,.55); }
 
 /* ── Footer ─────────────────────────────────────────────────────────── */
-.vantage-footer { max-width: 1180px; margin: 60px auto 0; padding: 60px 24px 0; border-top: 1px solid rgba(196,181,253,.1); }
+.vantage-footer { position: static !important; display: block !important; max-width: 1180px; margin: 60px auto 0; padding: 60px 24px 0; border-top: 1px solid rgba(196,181,253,.1); }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
 .footer-brand img { height: 30px; margin-bottom: 14px; }
 .footer-tagline { font: 600 13px 'JetBrains Mono',monospace; letter-spacing: .05em; color: #c4b5fd; margin: 0 0 12px; }
