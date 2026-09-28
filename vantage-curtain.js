@@ -2836,3 +2836,83 @@
     apply();
   }
 })();
+
+/* ── Four Pillars — mini visualizations, animated on scroll-in ──────────
+   Each pillar's diagram is gated behind a "vd-viz-in" class added the
+   first time that specific card enters the viewport, one observer per
+   card so LAW's bars don't fire until LAW is actually on screen, etc.
+   Reuses the same _vDash bar/num scramble utilities the Humac Score
+   and MERIDIAN panels already use, for a consistent feel. */
+(function initPillarViz(){
+  'use strict';
+  const D = window._vDash;
+
+  function revealSimple(id){
+    const el = document.getElementById(id);
+    if(!el) return;
+    const viz = el.querySelector('.vd-viz');
+    if(!viz) return;
+    let fired = false;
+    new IntersectionObserver(entries=>{
+      if(entries[0].isIntersecting && !fired){
+        fired = true;
+        viz.classList.add('vd-viz-in');
+      }
+    },{threshold:0.35}).observe(el);
+  }
+
+  /* 01 / LAW and 03 / INFLUENCE — pure CSS reveal, no numbers to animate */
+  revealSimple('vdPillar1');
+  revealSimple('vdPillar3');
+
+  /* 02 / FINANCIAL — bars fill and rupee figures count up */
+  (function(){
+    const el = document.getElementById('vdPillar2');
+    if(!el) return;
+    const viz = el.querySelector('.vd-viz');
+    if(!viz || !D) return;
+    let fired = false;
+    new IntersectionObserver(entries=>{
+      if(!entries[0].isIntersecting || fired) return;
+      fired = true;
+      viz.classList.add('vd-viz-in');
+      viz.querySelectorAll('.vd-fin-row').forEach((row, i)=>{
+        setTimeout(()=>{
+          const fill = row.querySelector('.vd-fin-fill');
+          const val  = row.querySelector('.vd-fin-val');
+          if(fill) D.bar(fill, parseFloat(fill.dataset.w)||50, 1000);
+          if(val){
+            const target = parseFloat(val.dataset.val)||0;
+            const pre = val.dataset.pre||'';
+            const suf = val.dataset.suf||'';
+            D.num(val, target, 1100, pre, suf);
+          }
+        }, i*180);
+      });
+    },{threshold:0.35}).observe(el);
+  })();
+
+  /* 04 / RECORD — dot ledger builds, counter ticks up to 47 */
+  (function(){
+    const el = document.getElementById('vdPillar4');
+    if(!el) return;
+    const viz = el.querySelector('.vd-viz');
+    const track = document.getElementById('vdRecTrack');
+    const counter = document.getElementById('vdRecCounter');
+    if(!viz || !track) return;
+    /* Build the dot row once, up front (starts invisible via CSS) */
+    for(let i=0;i<24;i++){
+      const dot = document.createElement('div');
+      dot.className = 'vd-rec-dot';
+      dot.style.transitionDelay = (i*35)+'ms';
+      track.appendChild(dot);
+    }
+    let fired = false;
+    new IntersectionObserver(entries=>{
+      if(!entries[0].isIntersecting || fired) return;
+      fired = true;
+      viz.classList.add('vd-viz-in');
+      if(counter && D) D.num(counter, 47, 1400, '', '');
+    },{threshold:0.35}).observe(el);
+  })();
+})();
