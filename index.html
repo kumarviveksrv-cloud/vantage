@@ -1652,10 +1652,19 @@
   50% { opacity: 0; text-shadow: none; }
 }
 
-/* Curtain raiser question h2 — lining numerals so "9" sits on baseline */
+/* Curtain raiser question h2 — lining numerals so "9" sits on baseline,
+   plus the purple gradient treatment. All five question cards (the
+   four section curtain raisers and the Demo button intercept) render
+   through this one shared #q-question element, so a single rule here
+   covers all of them. */
 #q-question {
   font-variant-numeric: lining-nums !important;
   font-feature-settings: "lnum" 1 !important;
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
 }
 
 /* ═══ SIM-ROOM REBUILD (SR18) ═══ */
