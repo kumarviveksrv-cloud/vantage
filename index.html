@@ -1258,6 +1258,90 @@
 .vd-rec-counter { font: 9px 'JetBrains Mono',monospace; letter-spacing: .08em; color: rgba(196,181,253,.5); }
 .vd-rec-counter b { color: #34d399; font: 700 13px 'Space Grotesk',sans-serif; }
 
+/* ── Ambient "alive" motion — kicks in via vd-viz-live, added ~1.3s
+   after vd-viz-in once the entrance transition has settled, so nothing
+   loops before the card has actually finished revealing itself. ── */
+
+/* 01 / LAW — particles flowing old→new, winner glow pulse, scanline sweep */
+.vd-law-bar { position: relative; overflow: visible; }
+.vd-law-particle {
+  position: absolute; top: 50%; width: 4px; height: 4px; border-radius: 50%;
+  background: #a5b4fc; box-shadow: 0 0 10px #6366f1; opacity: 0;
+  transform: translateY(-50%);
+}
+.vd-viz-live .vd-law-particle { animation: vdLawFlow 2.6s linear infinite; }
+.vd-law-particle:nth-child(2) { animation-delay: .9s; }
+.vd-law-particle:nth-child(3) { animation-delay: 1.8s; }
+@keyframes vdLawFlow {
+  0%   { left: 18%; opacity: 0; transform: translateY(-50%) scale(.6); }
+  12%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { left: 78%; opacity: 0; transform: translateY(-50%) scale(1.3); }
+}
+.vd-viz-live .vd-law-new { animation: vdLawGlow 2.4s ease-in-out infinite; }
+@keyframes vdLawGlow { 0%,100% { box-shadow: none; } 50% { box-shadow: 0 0 28px rgba(99,102,241,.5); } }
+.vd-law-scan {
+  position: absolute; inset: 0; border-radius: 10px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(196,181,253,.16), transparent);
+  transform: translateX(-120%); opacity: 0;
+}
+.vd-viz-live .vd-law-scan { animation: vdScanSweep 3.4s ease-in-out infinite 1s; }
+@keyframes vdScanSweep {
+  0%   { transform: translateX(-120%); opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { transform: translateX(120%); opacity: 0; }
+  100% { transform: translateX(120%); opacity: 0; }
+}
+
+/* 02 / FINANCIAL — traveling spark per bar + shimmer on the fill */
+.vd-fin-track { position: relative; overflow: visible; }
+.vd-fin-spark {
+  position: absolute; top: 50%; width: 6px; height: 6px; border-radius: 50%;
+  background: #fff; box-shadow: 0 0 10px #a78bfa, 0 0 20px #7c3aed;
+  transform: translateY(-50%); opacity: 0; left: 0;
+}
+.vd-viz-live .vd-fin-spark { animation: vdFinSpark 2.2s ease-in-out infinite; }
+.vd-fin-row:nth-child(2) .vd-fin-spark { animation-delay: .5s; }
+.vd-fin-row:nth-child(3) .vd-fin-spark { animation-delay: 1s; }
+@keyframes vdFinSpark {
+  0%   { left: 0%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { left: var(--fin-w,60%); opacity: 0; }
+}
+.vd-viz-live .vd-fin-fill { animation: vdFinShimmer 2.6s ease-in-out infinite 1.2s; }
+@keyframes vdFinShimmer { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.4); } }
+
+/* 03 / INFLUENCE — packets traveling the connector lines, center pulse rings */
+.vd-inf-packet { fill: #7dd3fc; opacity: 0; }
+.vd-viz-live .vd-inf-packet { opacity: .9; animation: vdInfTravel 2s linear infinite; }
+@keyframes vdInfTravel { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+.vd-inf-pulse { fill: none; stroke: #38bdf8; stroke-width: 1.4; opacity: 0; }
+.vd-viz-live .vd-inf-pulse { animation: vdInfPulse 2.4s ease-out infinite; }
+@keyframes vdInfPulse { 0% { r: 17; opacity: .6; } 100% { r: 42; opacity: 0; } }
+
+/* 04 / RECORD — live pulsing dot, periodic re-flash on a random dot, scanline */
+.vd-rec-live {
+  display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+  background: #34d399; margin-right: 6px; vertical-align: middle;
+  opacity: 0;
+}
+.vd-viz-live .vd-rec-live { opacity: 1; animation: vdRecLivePulse 1.8s ease-in-out infinite; }
+@keyframes vdRecLivePulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.6); } }
+.vd-rec-dot.vd-rec-flash { animation: vdRecFlash .9s ease; }
+@keyframes vdRecFlash {
+  0%   { transform: scale(1); box-shadow: none; }
+  40%  { transform: scale(1.7); box-shadow: 0 0 14px #34d399; }
+  100% { transform: scale(1); box-shadow: none; }
+}
+.vd-rec-track { position: relative; }
+.vd-rec-scan {
+  position: absolute; inset: -4px -8px; pointer-events: none; border-radius: 6px;
+  background: linear-gradient(90deg, transparent, rgba(52,211,153,.14), transparent);
+  transform: translateX(-120%); opacity: 0;
+}
+.vd-viz-live .vd-rec-scan { animation: vdScanSweep 4s ease-in-out infinite 1.5s; }
+
 /* Closing line */
 .vd-close {
   text-align: center;
@@ -2942,6 +3026,10 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
           <div class="vd-law-old"><span class="vd-law-num">29</span><span class="vd-law-lbl">OLD LAWS</span></div>
           <div class="vd-law-arrow">&rarr;</div>
           <div class="vd-law-new"><span class="vd-law-num">4</span><span class="vd-law-lbl">LABOUR CODES</span></div>
+          <div class="vd-law-particle"></div>
+          <div class="vd-law-particle"></div>
+          <div class="vd-law-particle"></div>
+          <div class="vd-law-scan"></div>
         </div>
         <div class="vd-law-date">IN FORCE SINCE 21 NOV 2025</div>
       </div>
@@ -2951,9 +3039,9 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <h3 class="vd-pillar-h">The financial exposure &mdash; in rupees, with a confidence level.</h3>
       <p class="vd-pillar-p">Every case carries a number. Wrongful termination risk. Replacement cost. Flight risk liability. Vantage converts your HR situation into an INR figure broken down by line item &mdash; so you walk into any room with evidence, not estimates.</p>
       <div class="vd-viz">
-        <div class="vd-fin-row"><span class="vd-fin-lbl">Termination Risk</span><div class="vd-fin-track"><div class="vd-fin-fill" data-w="78"></div></div><span class="vd-fin-val" data-val="21" data-pre="&#8377;" data-suf="L">&#8377;0L</span></div>
-        <div class="vd-fin-row"><span class="vd-fin-lbl">Replacement Cost</span><div class="vd-fin-track"><div class="vd-fin-fill" data-w="52"></div></div><span class="vd-fin-val" data-val="8" data-pre="&#8377;" data-suf="L">&#8377;0L</span></div>
-        <div class="vd-fin-row"><span class="vd-fin-lbl">Flight Risk Liability</span><div class="vd-fin-track"><div class="vd-fin-fill" data-w="38"></div></div><span class="vd-fin-val" data-val="6" data-pre="&#8377;" data-suf="L">&#8377;0L</span></div>
+        <div class="vd-fin-row"><span class="vd-fin-lbl">Termination Risk</span><div class="vd-fin-track" style="--fin-w:78%"><div class="vd-fin-fill" data-w="78"></div><div class="vd-fin-spark"></div></div><span class="vd-fin-val" data-val="21" data-pre="&#8377;" data-suf="L">&#8377;0L</span></div>
+        <div class="vd-fin-row"><span class="vd-fin-lbl">Replacement Cost</span><div class="vd-fin-track" style="--fin-w:52%"><div class="vd-fin-fill" data-w="52"></div><div class="vd-fin-spark"></div></div><span class="vd-fin-val" data-val="8" data-pre="&#8377;" data-suf="L">&#8377;0L</span></div>
+        <div class="vd-fin-row"><span class="vd-fin-lbl">Flight Risk Liability</span><div class="vd-fin-track" style="--fin-w:38%"><div class="vd-fin-fill" data-w="38"></div><div class="vd-fin-spark"></div></div><span class="vd-fin-val" data-val="6" data-pre="&#8377;" data-suf="L">&#8377;0L</span></div>
       </div>
     </div>
     <div class="vd-pillar" id="vdPillar3">
@@ -2965,8 +3053,12 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
           <line class="vd-inf-line" x1="130" y1="80" x2="45" y2="28"/>
           <line class="vd-inf-line" x1="130" y1="80" x2="215" y2="28"/>
           <line class="vd-inf-line" x1="130" y1="80" x2="130" y2="140"/>
+          <circle class="vd-inf-pulse" cx="130" cy="80" r="17"/>
           <circle class="vd-inf-center" cx="130" cy="80" r="17"/>
           <text x="130" y="84" class="vd-inf-center-t">ASK</text>
+          <circle class="vd-inf-packet" r="3" style="offset-path:path('M130,80 L45,28')"></circle>
+          <circle class="vd-inf-packet" r="3" style="offset-path:path('M130,80 L215,28');animation-delay:.6s"></circle>
+          <circle class="vd-inf-packet" r="3" style="offset-path:path('M130,80 L130,140');animation-delay:1.2s"></circle>
           <circle class="vd-inf-node" cx="45" cy="28" r="10"/>
           <text x="45" y="14" class="vd-inf-node-t">MANAGER</text>
           <circle class="vd-inf-node" cx="215" cy="28" r="10"/>
@@ -2981,8 +3073,8 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <h3 class="vd-pillar-h">The career record &mdash; every decision documented and financially quantified.</h3>
       <p class="vd-pillar-p">Every case you handle on Vantage is documented &mdash; the situation, the legal position, the financial exposure, and what you recommended. Before outcomes are known, not after. So when a decision goes well, you have evidence. When it goes badly, you have proof that your judgment was sound. Over months and years, this becomes a professional record that most HR careers never produce &mdash; because most HR decisions leave no trace at all.</p>
       <div class="vd-viz">
-        <div class="vd-rec-track" id="vdRecTrack"></div>
-        <div class="vd-rec-counter"><b id="vdRecCounter">0</b> decisions documented &mdash; illustrative</div>
+        <div class="vd-rec-track" id="vdRecTrack"><div class="vd-rec-scan"></div></div>
+        <div class="vd-rec-counter"><span class="vd-rec-live"></span><b id="vdRecCounter">0</b> decisions documented &mdash; illustrative</div>
       </div>
     </div>
   </div>
@@ -3498,7 +3590,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 <script src="aria-volumetric.js"></script>
 <script src="vantage-meridian-globe.js"></script>
 <script src="vantage-autoselect.js"></script>
-<script src="vantage-curtain.js?v=3"></script>
+<script src="vantage-curtain.js?v=4"></script>
 <canvas id="wormholeCanvas" aria-hidden="true"></canvas>
 <button id="corFsFloating" aria-label="Exit fullscreen" style="display:none;">
   <span>&#x26F6;</span> Exit fullscreen
