@@ -1611,7 +1611,7 @@
          aria:'In the full platform, I run you through every objection you will face in this conversation and prepare a response for each one before you walk in.'},
        OD:{verdict:'SIGNALS UNREADINESS',vclass:'warn',num:'-1 day',
          text:'Delaying a scheduled decision-maker call reads as a lack of control over the situation, not diligence. The COO now wonders if HR is managing this case, or being managed by it.',
-         aria:'The clock on this case has been running since 9pm the first night. Does the COO know it\u2019s still running?'}},
+         aria:'The clock on this case has been running since 9 pm the first night. Does the COO know it\u2019s still running?'}},
       {tag:'ROOM 5 / VANTAGE RECORD',caseId:'9 MONTHS LATER',
        h3:'Same scenario. New employee. New manager.<br>Everything you learned the first time...',
        A:{t:'Rely on memory, repeat the manual process',r:'you\u2019ve done this before'},
