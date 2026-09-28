@@ -155,6 +155,11 @@
     .record-stat-num{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--muted)}
     .record-stat-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--dim);letter-spacing:.04em;text-transform:uppercase;margin-top:3px}
     .dash-blur-note{text-align:center;margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.04em}
+    .dash-main-title,.case-lib-grid,.record-strip{transition:opacity .28s ease}
+    .dash-fade{opacity:0!important}
+    @keyframes dashPulse{0%{box-shadow:0 20px 60px rgba(0,0,0,0.35),0 0 0 1px rgba(99,102,241,0)}35%{box-shadow:0 20px 60px rgba(0,0,0,0.35),0 0 0 1px rgba(99,102,241,0.55),0 0 40px rgba(99,102,241,0.25)}100%{box-shadow:0 20px 60px rgba(0,0,0,0.35),0 0 0 1px rgba(99,102,241,0)}}
+    .dash-mock.dash-pulse{animation:dashPulse .9s ease}
+    .dash-nav-item{transition:color .25s ease,background .25s ease}
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
     @media(max-width:768px){
@@ -185,41 +190,41 @@
 </div>
 
 <div class="tool-tabs">
-  <div class="tool-tab active" id="tab-pact" onclick="switchTool('pact')">&#x26A1; PACT ER Case Navigator</div>
-  <div class="tool-tab" id="tab-signal" onclick="switchTool('signal')">&#x1F4CA; HR Data Storyteller</div>
-  <div class="tool-tab" id="tab-influence" onclick="switchTool('influence')">&#x1F91D; Stakeholder Influence</div>
-  <div class="tool-tab" id="tab-policy" onclick="switchTool('policy')">&#x2696;&#xFE0F; Policy Compass</div>
-  <div class="tool-tab" id="tab-offer" onclick="switchTool('offer')">&#x1F4BC; Offer Intelligence</div>
-  <div class="tool-tab" id="tab-practice" onclick="switchTool('practice')">&#x1F3AD; Conversation Simulator</div>
+  <div class="tool-tab active" id="tab-pact" onclick="switchTool('pact')">&#x26A1; Employee Case Advisor</div>
+  <div class="tool-tab" id="tab-signal" onclick="switchTool('signal')">&#x1F4CA; People ROI Brief</div>
+  <div class="tool-tab" id="tab-influence" onclick="switchTool('influence')">&#x1F91D; Leadership Communicator</div>
+  <div class="tool-tab" id="tab-policy" onclick="switchTool('policy')">&#x2696;&#xFE0F; Policy Advisor</div>
+  <div class="tool-tab" id="tab-offer" onclick="switchTool('offer')">&#x1F4BC; Retention Advisor</div>
+  <div class="tool-tab" id="tab-practice" onclick="switchTool('practice')">&#x1F3AD; Difficult Conversations</div>
   <div class="tool-tab" id="tab-aria" onclick="switchTool('aria')">&#x2728; ARIA</div>
 </div>
 
 <div class="demo-panel">
   <div id="pact-tool">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x26A1; PACT ER Case Navigator <div class="demo-tag">Demo &middot; Misconduct Case</div></div></div>
+      <div class="demo-card-header"><div class="demo-card-title">&#x26A1; Employee Case Advisor <div class="demo-tag">Demo &middot; Misconduct Case</div></div></div>
       <div class="scenario-label">Pre-loaded scenario</div>
       <div class="scenario-text">Rohan Mehta, Senior Software Engineer, 5 years tenure. Badge records confirm he marked attendance as present on 14 days over the past 3 months when he was not in office. Evidence gathered. No prior warnings on record. Line manager wants to proceed with immediate termination.</div>
       <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you describe your own live cases.</div>
-      <button class="run-btn" id="pact-run-btn" onclick="runPACT()">&#x26A1; Run PACT Analysis</button>
-      <div class="loading-wrap" id="pact-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">RUNNING PACT ASSESSMENT...</div></div>
+      <button class="run-btn" id="pact-run-btn" onclick="runPACT()">&#x26A1; Run Case Analysis</button>
+      <div class="loading-wrap" id="pact-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">RUNNING CASE ANALYSIS...</div></div>
       <div class="output-wrap" id="pact-output"></div>
     </div>
   </div>
   <div id="signal-tool" style="display:none">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x1F4CA; HR Data Storyteller <div class="demo-tag">Demo &middot; CFO Presentation</div></div></div>
+      <div class="demo-card-header"><div class="demo-card-title">&#x1F4CA; People ROI Brief <div class="demo-tag">Demo &middot; CFO Presentation</div></div></div>
       <div class="scenario-label">Pre-loaded scenario</div>
       <div class="scenario-text">Attrition rate: 22% (up from 14% last quarter). Time to hire: 58 days. Engagement score: 54%. Open positions: 18. Average CTC: &#8377;14L. Audience: CFO. Context: Engineering attrition spike &mdash; need budget approval for &#8377;22L retention programme.</div>
       <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you enter your own metrics and context.</div>
-      <button class="run-btn" id="signal-run-btn" onclick="runSIGNAL()">&#x1F4CA; Generate SIGNAL Narrative</button>
-      <div class="loading-wrap" id="signal-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">BUILDING SIGNAL NARRATIVE...</div></div>
+      <button class="run-btn" id="signal-run-btn" onclick="runSIGNAL()">&#x1F4CA; Generate ROI Narrative</button>
+      <div class="loading-wrap" id="signal-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">BUILDING ROI NARRATIVE...</div></div>
       <div class="output-wrap" id="signal-output"></div>
     </div>
   </div>
   <div id="influence-tool" style="display:none">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x1F91D; Stakeholder Influence Builder <div class="demo-tag">Demo &middot; Retention Counter-Offer</div></div></div>
+      <div class="demo-card-header"><div class="demo-card-title">&#x1F91D; Leadership Communicator <div class="demo-tag">Demo &middot; Retention Counter-Offer</div></div></div>
       <div class="scenario-label">Pre-loaded scenario</div>
       <div class="scenario-text">Priya Nair, senior engineer, 4 years tenure, sole owner of the payments migration, has a signed competing offer 32% above her current CTC. You need the VP Engineering to approve a counter-offer by Wednesday.</div>
       <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you describe your own stakeholder and ask.</div>
@@ -230,7 +235,7 @@
   </div>
   <div id="policy-tool" style="display:none">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x2696;&#xFE0F; Policy Compass <div class="demo-tag">Demo &middot; PIP Compliance</div></div></div>
+      <div class="demo-card-header"><div class="demo-card-title">&#x2696;&#xFE0F; Policy Advisor <div class="demo-tag">Demo &middot; PIP Compliance</div></div></div>
       <div class="scenario-label">Pre-loaded question</div>
       <div class="scenario-text">&ldquo;Can we terminate someone right after a failed PIP without a separate notice period, since the PIP itself already warned them?&rdquo;</div>
       <div class="scenario-note">Question is pre-filled for this demo. On the full platform, you ask your own policy question.</div>
@@ -241,7 +246,7 @@
   </div>
   <div id="offer-tool" style="display:none">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x1F4BC; Offer Intelligence <div class="demo-tag">Demo &middot; Counter-Offer Modelling</div></div></div>
+      <div class="demo-card-header"><div class="demo-card-title">&#x1F4BC; Retention Advisor <div class="demo-tag">Demo &middot; Counter-Offer Modelling</div></div></div>
       <div class="scenario-label">Pre-loaded scenario</div>
       <div class="scenario-text">Same Priya Nair case: current CTC &#8377;22L, competing offer &#8377;29L (32% premium), A-band performer, 4 years tenure, high role criticality.</div>
       <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you enter your own employee&rsquo;s numbers.</div>
@@ -252,7 +257,7 @@
   </div>
   <div id="practice-tool" style="display:none">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x1F3AD; Conversation Simulator <div class="demo-tag">Example &middot; Denied Promotion</div></div></div>
+      <div class="demo-card-header"><div class="demo-card-title">&#x1F3AD; Difficult Conversations <div class="demo-tag">Example &middot; Denied Promotion</div></div></div>
       <div class="scenario-label">Example transcript &mdash; read-only preview</div>
       <div class="scenario-text">On the full platform this is a live, typed back-and-forth. Below is a real example of how a session plays out, so you can see the shape of it before you try it yourself.</div>
       <div class="transcript-wrap">
@@ -296,20 +301,20 @@
   <div class="dash-header">
     <div class="dash-eyebrow">&#x1F512; Behind the login</div>
     <div class="dash-title">This is what your dashboard actually looks like.</div>
-    <div class="dash-sub">A visual preview of your Vantage home &mdash; your Humac Score, your Case Library, your professional record. This is a static mockup with illustrative numbers, not a live account.</div>
+    <div class="dash-sub">A visual preview of your Vantage home &mdash; it updates to reflect whichever tool you're exploring above. Illustrative numbers throughout, not a live account.</div>
   </div>
-  <div class="dash-mock">
-    <div class="dash-sidebar">
-      <div class="dash-nav-item active"><i></i>Dashboard</div>
-      <div class="dash-nav-item"><i></i>Case Library</div>
-      <div class="dash-nav-item"><i></i>Humac Score</div>
-      <div class="dash-nav-item"><i></i>MERIDIAN</div>
-      <div class="dash-nav-item"><i></i>Vantage Record</div>
-      <div class="dash-nav-item"><i></i>Monthly Debrief</div>
-      <div class="dash-nav-item"><i></i>Settings</div>
+  <div class="dash-mock" id="dashMock">
+    <div class="dash-sidebar" id="dashNavList">
+      <div class="dash-nav-item active" data-nav="Dashboard"><i></i>Dashboard</div>
+      <div class="dash-nav-item" data-nav="Case Library"><i></i>Case Library</div>
+      <div class="dash-nav-item" data-nav="Humac Score"><i></i>Humac Score</div>
+      <div class="dash-nav-item" data-nav="MERIDIAN"><i></i>MERIDIAN</div>
+      <div class="dash-nav-item" data-nav="Vantage Record"><i></i>Vantage Record</div>
+      <div class="dash-nav-item" data-nav="Monthly Debrief"><i></i>Monthly Debrief</div>
+      <div class="dash-nav-item" data-nav="Settings"><i></i>Settings</div>
     </div>
     <div class="dash-main">
-      <div class="dash-main-head"><div class="dash-main-title">Welcome back</div><div class="dash-main-tag">SYSTEM MEMORY / ACTIVE</div></div>
+      <div class="dash-main-head"><div class="dash-main-title" id="dashMainTitle">Welcome back</div><div class="dash-main-tag">SYSTEM MEMORY / ACTIVE</div></div>
       <div class="humac-gauge">
         <div><div class="gauge-num">742</div><div class="gauge-band">Strong Band</div></div>
         <div class="gauge-bars">
@@ -320,11 +325,11 @@
           <div class="gauge-bar-row"><span class="gauge-bar-label">L5</span><div class="gauge-bar-track"><div class="gauge-bar-fill" style="width:71%"></div></div></div>
         </div>
       </div>
-      <div class="case-lib-grid">
-        <div class="case-lib-card"><div class="clc-top"><span class="clc-tag">PACT / ER</span><span class="clc-risk score-high">HIGH</span></div><div class="clc-title">Attendance falsification &mdash; 14-day case</div><div class="clc-meta">Filed 3 days ago &middot; Rs.4L-9L exposure</div></div>
-        <div class="case-lib-card"><div class="clc-top"><span class="clc-tag">OFFER INTEL</span><span class="clc-risk score-medium">RESOLVED</span></div><div class="clc-title">Retention counter-offer &mdash; senior engineer</div><div class="clc-meta">Filed 1 week ago &middot; Retained</div></div>
+      <div class="case-lib-grid" id="dashCaseLib">
+        <div class="case-lib-card"><div class="clc-top"><span class="clc-tag">CASE ADVISOR</span><span class="clc-risk score-high">HIGH</span></div><div class="clc-title">Attendance falsification &mdash; 14-day case</div><div class="clc-meta">Filed 3 days ago &middot; Rs.4L-9L exposure</div></div>
+        <div class="case-lib-card"><div class="clc-top"><span class="clc-tag">RETENTION</span><span class="clc-risk score-medium">RESOLVED</span></div><div class="clc-title">Retention counter-offer &mdash; senior engineer</div><div class="clc-meta">Filed 1 week ago &middot; Retained</div></div>
       </div>
-      <div class="record-strip">
+      <div class="record-strip" id="dashRecordStrip">
         <div class="record-stat"><div class="record-stat-num">47</div><div class="record-stat-lbl">ER Cases</div></div>
         <div class="record-stat"><div class="record-stat-num">&#8377;18.4L</div><div class="record-stat-lbl">Exposure Avoided</div></div>
         <div class="record-stat"><div class="record-stat-num">17</div><div class="record-stat-lbl">Rehearsed</div></div>
@@ -735,11 +740,100 @@
   function wait(ms) { return new Promise(function(resolve){ setTimeout(resolve, ms); }); }
   function demoDelay() { return 3400 + Math.random() * 1200; }
   var TOOL_IDS = ['pact','signal','influence','policy','offer','practice','aria'];
+
+  /* ── DYNAMIC DASHBOARD PREVIEW ──────────────────────────────────────
+     Each tool tab has its own "page" of the dashboard mock: a matching
+     active sidebar item, two illustrative case cards, and four record
+     stats. Switching tabs fades the old content out, swaps it, fades
+     it back in, and gives the whole mock a brief highlight pulse so
+     the change actually reads as navigation, not a static screenshot. */
+  var DASH_CONTENT = {
+    pact: { title: 'Employee Case Advisor', nav: 'Case Library',
+      cards: [
+        { tag:'CASE ADVISOR', risk:'score-high', riskLabel:'HIGH', title:'Attendance falsification &mdash; 14-day case', meta:'Filed 3 days ago &middot; Rs.4L-9L exposure' },
+        { tag:'CASE ADVISOR', risk:'score-medium', riskLabel:'RESOLVED', title:'Absence pattern &mdash; final warning issued', meta:'Filed 2 weeks ago &middot; Closed' }
+      ],
+      stats: [ ['47','ER Cases'], ['&#8377;18.4L','Exposure Avoided'], ['17','Rehearsed'], ['9','Debriefs'] ] },
+    signal: { title: 'People ROI Brief', nav: 'Humac Score',
+      cards: [
+        { tag:'ROI BRIEF', risk:'score-medium', riskLabel:'APPROVED', title:'CFO retention brief &mdash; &#8377;22L ask', meta:'Filed 4 days ago &middot; Budget approved' },
+        { tag:'ROI BRIEF', risk:'score-low', riskLabel:'SENT', title:'Attrition narrative &mdash; Q3 board deck', meta:'Filed 1 week ago &middot; Awaiting review' }
+      ],
+      stats: [ ['12','Briefs Built'], ['&#8377;41L','Budget Secured'], ['2 days','Avg Turnaround'], ['5','CFO Approvals'] ] },
+    influence: { title: 'Leadership Communicator', nav: 'Dashboard',
+      cards: [
+        { tag:'INFLUENCE', risk:'score-medium', riskLabel:'SENT', title:'VP Engineering &mdash; counter-offer ask', meta:'Filed 2 days ago &middot; Awaiting response' },
+        { tag:'INFLUENCE', risk:'score-low', riskLabel:'DRAFTING', title:'COO &mdash; restructure buy-in', meta:'Started today &middot; In progress' }
+      ],
+      stats: [ ['9','Stacks Built'], ['7','Asks Approved'], ['14','Stakeholders Mapped'], ['1 day','Avg Response'] ] },
+    policy: { title: 'Policy Advisor', nav: 'MERIDIAN',
+      cards: [
+        { tag:'POLICY', risk:'score-low', riskLabel:'ANSWERED', title:'PIP + notice period query', meta:'Asked today &middot; Cited' },
+        { tag:'POLICY', risk:'score-low', riskLabel:'ANSWERED', title:'Contract worker classification', meta:'Asked 3 days ago &middot; Cited' }
+      ],
+      stats: [ ['31','Questions Asked'], ['&lt;1 min','Avg Response'], ['58','Citations Given'], ['7','Guardrails Set'] ] },
+    offer: { title: 'Retention Advisor', nav: 'Case Library',
+      cards: [
+        { tag:'RETENTION', risk:'score-medium', riskLabel:'RETAINED', title:'Priya Nair &mdash; competing offer 32%', meta:'Filed 1 week ago &middot; Retained' },
+        { tag:'RETENTION', risk:'score-high', riskLabel:'MONITORING', title:'Senior architect &mdash; flight risk', meta:'Flagged 2 days ago &middot; Active' }
+      ],
+      stats: [ ['14','Retention Cases'], ['&#8377;1.2Cr','Value Protected'], ['22','Offers Modeled'], ['11','Retained'] ] },
+    practice: { title: 'Difficult Conversations', nav: 'Vantage Record',
+      cards: [
+        { tag:'REHEARSED', risk:'score-low', riskLabel:'DEBRIEFED', title:'Denied promotion &mdash; senior associate', meta:'Practised 2 days ago &middot; Scored 8/10' },
+        { tag:'REHEARSED', risk:'score-low', riskLabel:'DEBRIEFED', title:'Manager feedback &mdash; underperformance', meta:'Practised 5 days ago &middot; Scored 7/10' }
+      ],
+      stats: [ ['17','Rehearsed'], ['8.2/10','Avg Score'], ['17','Debriefs Filed'], ['4','This Month'] ] },
+    aria: { title: 'ARIA', nav: 'Monthly Debrief',
+      cards: [
+        { tag:'ARIA', risk:'score-low', riskLabel:'LOGGED', title:"This week's reflection &mdash; 3 ER cases", meta:'Logged today' },
+        { tag:'ARIA', risk:'score-medium', riskLabel:'NOTED', title:'Pattern flagged &mdash; documentation gap', meta:'Noted 3 days ago' }
+      ],
+      stats: [ ['22','Check-ins'], ['6','Patterns Flagged'], ['9','This Month'], ['14 days','Streak'] ] }
+  };
+
+  function renderDashCards(cards) {
+    return cards.map(function(c){
+      return '<div class="case-lib-card"><div class="clc-top"><span class="clc-tag">'+c.tag+'</span><span class="clc-risk '+c.risk+'">'+c.riskLabel+'</span></div><div class="clc-title">'+c.title+'</div><div class="clc-meta">'+c.meta+'</div></div>';
+    }).join('');
+  }
+  function renderDashStats(stats) {
+    return stats.map(function(s){
+      return '<div class="record-stat"><div class="record-stat-num">'+s[0]+'</div><div class="record-stat-lbl">'+s[1]+'</div></div>';
+    }).join('');
+  }
+  function updateDashboardPreview(tool) {
+    var data = DASH_CONTENT[tool];
+    if (!data) return;
+    var titleEl = document.getElementById('dashMainTitle');
+    var cardsEl = document.getElementById('dashCaseLib');
+    var statsEl = document.getElementById('dashRecordStrip');
+    var mockEl = document.getElementById('dashMock');
+    if (!titleEl || !cardsEl || !statsEl) return;
+    [titleEl, cardsEl, statsEl].forEach(function(el){ el.classList.add('dash-fade'); });
+    setTimeout(function() {
+      titleEl.textContent = data.title;
+      cardsEl.innerHTML = renderDashCards(data.cards);
+      statsEl.innerHTML = renderDashStats(data.stats);
+      document.querySelectorAll('#dashNavList .dash-nav-item').forEach(function(item) {
+        item.classList.toggle('active', item.getAttribute('data-nav') === data.nav);
+      });
+      [titleEl, cardsEl, statsEl].forEach(function(el){ el.classList.remove('dash-fade'); });
+      if (mockEl) {
+        mockEl.classList.remove('dash-pulse');
+        void mockEl.offsetWidth;
+        mockEl.classList.add('dash-pulse');
+      }
+    }, 220);
+  }
+
   function switchTool(tool) {
     TOOL_IDS.forEach(function(t){ document.getElementById('tab-'+t).classList.remove('active'); document.getElementById(t+'-tool').style.display = 'none'; });
     document.getElementById('tab-'+tool).classList.add('active');
     document.getElementById(tool+'-tool').style.display = 'block';
+    updateDashboardPreview(tool);
   }
+  document.addEventListener('DOMContentLoaded', function() { updateDashboardPreview('pact'); });
   function getRiskClass(r){ return {Critical:'critical',High:'high',Medium:'medium',Low:'low'}[r]||'medium'; }
   function getScoreClass(s){ return {'Critical':'score-critical','High':'score-high','Medium':'score-medium','Low':'score-low'}[s]||'score-medium'; }
 
@@ -767,7 +861,7 @@
     var stepItems = [protocol.recommendation, protocol.communication, protocol.aria].filter(Boolean);
     var stepLabels = ['Recommendation', 'What to Say', 'Practice With ARIA'];
     var steps = stepItems.map(function(s,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text"><b style="color:#f4f3ff">'+stepLabels[i]+':</b> '+s+'</div></div>'; }).join('');
-    document.getElementById('pact-output').innerHTML = '<div class="risk-banner risk-'+riskClass+'"><div><div class="risk-title">'+(scores.overallRisk||'')+' Risk \u2014 Misconduct Case</div><div class="risk-sub">'+(scores.overallNarrative||'')+'</div></div><div class="risk-badge badge-'+riskClass+'">'+(scores.overallRisk||'').toUpperCase()+'</div></div><div class="pact-grid">'+pactCards+'</div>'+financial+'<div class="steps-card"><div class="steps-title">Unified Decision Protocol</div>'+steps+'</div><div class="demo-cta"><div class="demo-cta-title">Your real cases need real answers.</div><div class="demo-cta-sub">On the full platform, you describe your own situation. PACT reads your MERIDIAN profile and returns calibrated guidance for your exact reality.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See what else is inside</a></div></div>';
+    document.getElementById('pact-output').innerHTML = '<div class="risk-banner risk-'+riskClass+'"><div><div class="risk-title">'+(scores.overallRisk||'')+' Risk \u2014 Misconduct Case</div><div class="risk-sub">'+(scores.overallNarrative||'')+'</div></div><div class="risk-badge badge-'+riskClass+'">'+(scores.overallRisk||'').toUpperCase()+'</div></div><div class="pact-grid">'+pactCards+'</div>'+financial+'<div class="steps-card"><div class="steps-title">Unified Decision Protocol</div>'+steps+'</div><div class="demo-cta"><div class="demo-cta-title">Your real cases need real answers.</div><div class="demo-cta-sub">On the full platform, you describe your own situation. Employee Case Advisor reads your MERIDIAN profile and returns calibrated guidance for your exact reality.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See what else is inside</a></div></div>';
     document.getElementById('pact-output').style.display = 'block';
   }
 
@@ -793,7 +887,7 @@
     var signalCards = dimKeys.map(function(k,i){ return '<div class="signal-card"><div class="sig-dim '+dimClasses[i]+'">'+dimLabels[i]+'</div><div class="sig-content">'+(dimText[k]||'')+'</div></div>'; }).join('');
     var immediateActions = (signal.action && signal.action.immediate) ? signal.action.immediate : [];
     var talkingPts = immediateActions.slice(0,3).map(function(tp,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+tp+'</div></div>'; }).join('');
-    document.getElementById('signal-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : '')+'</div><div class="anchor-ctx">'+(r.headline || 'The number that opens the room.')+'</div></div><div class="signal-grid">'+signalCards+'</div><div class="steps-card"><div class="steps-title">Immediate Actions \u2014 This Week</div>'+talkingPts+'</div><div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(signal.narrative ? signal.narrative.cfoVersion : '')+'</div></div><div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. SIGNAL builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See all six tools</a></div></div>';
+    document.getElementById('signal-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : '')+'</div><div class="anchor-ctx">'+(r.headline || 'The number that opens the room.')+'</div></div><div class="signal-grid">'+signalCards+'</div><div class="steps-card"><div class="steps-title">Immediate Actions \u2014 This Week</div>'+talkingPts+'</div><div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(signal.narrative ? signal.narrative.cfoVersion : '')+'</div></div><div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. People ROI Brief builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See all six tools</a></div></div>';
     document.getElementById('signal-output').style.display = 'block';
   }
 
@@ -830,7 +924,7 @@
     } catch(err) { document.getElementById('policy-loading').style.display = 'none'; document.getElementById('policy-run-btn').disabled = false; alert('Connection error. Try again.'); }
   }
   function renderPolicy(r) {
-    document.getElementById('policy-output').innerHTML = '<div class="policy-output">'+(r.response||'').replace(/\\n/g,'<br>')+'</div><div class="demo-cta"><div class="demo-cta-title">Ask your own policy question.</div><div class="demo-cta-sub">On the full platform, Policy Compass answers calibrated to your MERIDIAN profile and your company\'s own policy guardrails.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
+    document.getElementById('policy-output').innerHTML = '<div class="policy-output">'+(r.response||'').replace(/\\n/g,'<br>')+'</div><div class="demo-cta"><div class="demo-cta-title">Ask your own policy question.</div><div class="demo-cta-sub">On the full platform, Policy Advisor answers calibrated to your MERIDIAN profile and your company\'s own policy guardrails.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
     document.getElementById('policy-output').style.display = 'block';
   }
 
