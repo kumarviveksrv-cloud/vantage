@@ -1201,6 +1201,63 @@
   margin: 0;
 }
 
+/* ── Four Pillars — mini visualizations, animated on scroll-in ──────────
+   Each reuses its card's own accent color (indigo/violet/cyan/green,
+   already set via .vd-pillar:nth-child(n)::before above). The class
+   vd-viz-in is added by JS once the card scrolls into view; every
+   animated piece below is gated behind that class so nothing moves
+   until the visitor actually reaches it. */
+.vd-viz {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(196,181,253,.1);
+}
+
+/* 01 / LAW — 29 laws consolidating into 4 Codes */
+.vd-law-bar { display: flex; align-items: center; gap: 14px; }
+.vd-law-old, .vd-law-new {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 10px 18px; border-radius: 10px;
+  border: 1px solid rgba(196,181,253,.14);
+  background: rgba(255,255,255,.02);
+  opacity: 0; transform: translateX(-14px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.vd-law-new { transform: translateX(14px); transition-delay: .3s; border-color: rgba(99,102,241,.3); background: rgba(99,102,241,.07); }
+.vd-viz-in .vd-law-old, .vd-viz-in .vd-law-new { opacity: 1; transform: none; }
+.vd-law-num { font: 700 26px 'Space Grotesk',sans-serif; color: rgba(244,243,255,.55); }
+.vd-law-new .vd-law-num { color: #818cf8; }
+.vd-law-lbl { font: 8px 'JetBrains Mono',monospace; letter-spacing: .1em; color: rgba(196,181,253,.45); }
+.vd-law-arrow { font-size: 18px; color: rgba(196,181,253,.35); opacity: 0; transition: opacity .5s ease .55s; }
+.vd-viz-in .vd-law-arrow { opacity: 1; }
+.vd-law-date { margin-top: 12px; font: 8px 'JetBrains Mono',monospace; letter-spacing: .1em; color: rgba(196,181,253,.4); }
+
+/* 02 / FINANCIAL — three animated exposure bars */
+.vd-fin-row { display: grid; grid-template-columns: 128px 1fr 56px; align-items: center; gap: 10px; margin-bottom: 11px; }
+.vd-fin-row:last-child { margin-bottom: 0; }
+.vd-fin-lbl { font: 10px 'JetBrains Mono',monospace; letter-spacing: .03em; color: rgba(196,181,253,.5); }
+.vd-fin-track { height: 5px; background: rgba(255,255,255,.06); border-radius: 3px; overflow: hidden; }
+.vd-fin-fill { height: 100%; width: 0; background: linear-gradient(90deg,#7c3aed,#a78bfa); border-radius: 3px; transition: width 1.1s cubic-bezier(.16,1,.3,1); }
+.vd-fin-val { font: 700 12px 'Space Grotesk',sans-serif; color: #a78bfa; text-align: right; }
+
+/* 03 / INFLUENCE — stakeholder radial diagram */
+.vd-inf-svg { width: 100%; max-width: 260px; display: block; margin: 4px auto 0; }
+.vd-inf-line { stroke: rgba(56,189,248,.35); stroke-width: 1.4; stroke-dasharray: 150; stroke-dashoffset: 150; fill: none; transition: stroke-dashoffset 1s ease; }
+.vd-viz-in .vd-inf-line { stroke-dashoffset: 0; }
+.vd-inf-center { fill: rgba(56,189,248,.16); stroke: #38bdf8; stroke-width: 1.4; opacity: 0; transform: scale(.5); transform-origin: 130px 80px; transition: opacity .5s ease .35s, transform .5s ease .35s; }
+.vd-viz-in .vd-inf-center { opacity: 1; transform: scale(1); }
+.vd-inf-center-t { font: 7px 'JetBrains Mono',monospace; fill: #f4f3ff; text-anchor: middle; letter-spacing: .04em; }
+.vd-inf-node { fill: #050410; stroke: rgba(56,189,248,.5); stroke-width: 1.4; opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(.4); transition: opacity .5s ease .55s, transform .5s ease .55s; }
+.vd-viz-in .vd-inf-node { opacity: 1; transform: scale(1); }
+.vd-inf-node-t { font: 6px 'JetBrains Mono',monospace; fill: rgba(196,181,253,.55); text-anchor: middle; letter-spacing: .03em; }
+
+/* 04 / RECORD — a growing ledger of documented decisions */
+.vd-rec-track { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 12px; }
+.vd-rec-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(196,181,253,.14); opacity: 0; transform: scale(.3); transition: opacity .4s ease, transform .4s ease, background .4s ease; }
+.vd-viz-in .vd-rec-dot { opacity: 1; transform: scale(1); background: linear-gradient(135deg,#10b981,#34d399); }
+.vd-rec-counter { font: 9px 'JetBrains Mono',monospace; letter-spacing: .08em; color: rgba(196,181,253,.5); }
+.vd-rec-counter b { color: #34d399; font: 700 13px 'Space Grotesk',sans-serif; }
+
 /* Closing line */
 .vd-close {
   text-align: center;
@@ -2876,25 +2933,57 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   </div>
 
   <div class="vd-pillars">
-    <div class="vd-pillar">
+    <div class="vd-pillar" id="vdPillar1">
       <div class="vd-pillar-num">01 / LAW</div>
       <h3 class="vd-pillar-h">The law &mdash; current, cited, and calibrated to you.</h3>
       <p class="vd-pillar-p">India&rsquo;s 29 central employment laws became 4 Labour Codes on 21 November 2025. The Industrial Disputes Act is gone. The Industrial Relations Code replaced it. The gap between the old laws and the new Codes is where most legal exposure now sits. Vantage runs on what is actually in force today &mdash; the specific Code, the specific section, and the exact threshold that applies to your state, your org size, and the case on your desk right now.</p>
+      <div class="vd-viz">
+        <div class="vd-law-bar">
+          <div class="vd-law-old"><span class="vd-law-num">29</span><span class="vd-law-lbl">OLD LAWS</span></div>
+          <div class="vd-law-arrow">&rarr;</div>
+          <div class="vd-law-new"><span class="vd-law-num">4</span><span class="vd-law-lbl">LABOUR CODES</span></div>
+        </div>
+        <div class="vd-law-date">IN FORCE SINCE 21 NOV 2025</div>
+      </div>
     </div>
-    <div class="vd-pillar">
+    <div class="vd-pillar" id="vdPillar2">
       <div class="vd-pillar-num">02 / FINANCIAL</div>
       <h3 class="vd-pillar-h">The financial exposure &mdash; in rupees, with a confidence level.</h3>
       <p class="vd-pillar-p">Every case carries a number. Wrongful termination risk. Replacement cost. Flight risk liability. Vantage converts your HR situation into an INR figure broken down by line item &mdash; so you walk into any room with evidence, not estimates.</p>
+      <div class="vd-viz">
+        <div class="vd-fin-row"><span class="vd-fin-lbl">Termination Risk</span><div class="vd-fin-track"><div class="vd-fin-fill" data-w="78"></div></div><span class="vd-fin-val" data-val="21" data-pre="&#8377;" data-suf="L">&#8377;0L</span></div>
+        <div class="vd-fin-row"><span class="vd-fin-lbl">Replacement Cost</span><div class="vd-fin-track"><div class="vd-fin-fill" data-w="52"></div></div><span class="vd-fin-val" data-val="8" data-pre="&#8377;" data-suf="L">&#8377;0L</span></div>
+        <div class="vd-fin-row"><span class="vd-fin-lbl">Flight Risk Liability</span><div class="vd-fin-track"><div class="vd-fin-fill" data-w="38"></div></div><span class="vd-fin-val" data-val="6" data-pre="&#8377;" data-suf="L">&#8377;0L</span></div>
+      </div>
     </div>
-    <div class="vd-pillar">
+    <div class="vd-pillar" id="vdPillar3">
       <div class="vd-pillar-num">03 / INFLUENCE</div>
       <h3 class="vd-pillar-h">The stakeholder strategy &mdash; not just what&rsquo;s right, but how to get it through.</h3>
       <p class="vd-pillar-p">Knowing the right answer is half the job. Getting a busy manager, a skeptical department head, or a resistant business partner to act on it is the other half. Vantage builds the argument, the language, and the communication approach &mdash; calibrated to the person you need to move. And when the conversation feels high-stakes, ARIA will play the other person so you can practice it before it&rsquo;s real.</p>
+      <div class="vd-viz">
+        <svg class="vd-inf-svg" viewBox="0 0 260 160">
+          <line class="vd-inf-line" x1="130" y1="80" x2="45" y2="28"/>
+          <line class="vd-inf-line" x1="130" y1="80" x2="215" y2="28"/>
+          <line class="vd-inf-line" x1="130" y1="80" x2="130" y2="140"/>
+          <circle class="vd-inf-center" cx="130" cy="80" r="17"/>
+          <text x="130" y="84" class="vd-inf-center-t">ASK</text>
+          <circle class="vd-inf-node" cx="45" cy="28" r="10"/>
+          <text x="45" y="14" class="vd-inf-node-t">MANAGER</text>
+          <circle class="vd-inf-node" cx="215" cy="28" r="10"/>
+          <text x="215" y="14" class="vd-inf-node-t">DEPT HEAD</text>
+          <circle class="vd-inf-node" cx="130" cy="140" r="10"/>
+          <text x="130" y="158" class="vd-inf-node-t">PARTNER</text>
+        </svg>
+      </div>
     </div>
-    <div class="vd-pillar">
+    <div class="vd-pillar" id="vdPillar4">
       <div class="vd-pillar-num">04 / RECORD</div>
       <h3 class="vd-pillar-h">The career record &mdash; every decision documented and financially quantified.</h3>
       <p class="vd-pillar-p">Every case you handle on Vantage is documented &mdash; the situation, the legal position, the financial exposure, and what you recommended. Before outcomes are known, not after. So when a decision goes well, you have evidence. When it goes badly, you have proof that your judgment was sound. Over months and years, this becomes a professional record that most HR careers never produce &mdash; because most HR decisions leave no trace at all.</p>
+      <div class="vd-viz">
+        <div class="vd-rec-track" id="vdRecTrack"></div>
+        <div class="vd-rec-counter"><b id="vdRecCounter">0</b> decisions documented &mdash; illustrative</div>
+      </div>
     </div>
   </div>
 
@@ -3409,7 +3498,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 <script src="aria-volumetric.js"></script>
 <script src="vantage-meridian-globe.js"></script>
 <script src="vantage-autoselect.js"></script>
-<script src="vantage-curtain.js?v=2"></script>
+<script src="vantage-curtain.js?v=3"></script>
 <canvas id="wormholeCanvas" aria-hidden="true"></canvas>
 <button id="corFsFloating" aria-label="Exit fullscreen" style="display:none;">
   <span>&#x26F6;</span> Exit fullscreen
