@@ -2587,7 +2587,8 @@
        words are wrapped separately. A tight two-stop lavender range
        keeps the accent styling but reads as one cohesive colour. */
     const gradientCSS = 'background:linear-gradient(135deg,#d8cbff 0%,#b39ef0 100%);'+
-      '-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;';
+      '-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;'+
+      'padding-right:.12em;margin-right:-.12em;';
     const spans = words.map((w,i)=>{
       const span = document.createElement('span');
       span.textContent = w + (i < words.length-1 ? '\u00A0' : '');
