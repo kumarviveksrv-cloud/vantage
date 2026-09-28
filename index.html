@@ -1223,7 +1223,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 16px;
+  margin: 20px 0;
   font: 600 11px 'JetBrains Mono',monospace;
   letter-spacing: .12em;
   color: rgba(196,181,253,.65);
@@ -1234,6 +1234,13 @@
   transition: color .2s, border-color .2s;
 }
 .hero-about-link:hover { color: #c4b5fd; border-color: rgba(196,181,253,.4); }
+
+/* Vertical breathing room for the crowded bottom-of-hero cluster —
+   CTA buttons → prologue/about links → foot tags. These were all
+   sitting nearly flush against each other. */
+.hero-actions { margin: 28px 0 24px !important; }
+#prologue-back { margin: 20px 16px 20px 0 !important; }
+.hero-foot { margin-top: 40px !important; }
 
 /* Vantage definition → sections bridge */
 .vd-bridge {
