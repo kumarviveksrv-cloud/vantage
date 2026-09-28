@@ -1241,10 +1241,28 @@
 .vd-radar-out-t { font: 7px 'JetBrains Mono',monospace; fill: rgba(255,255,255,.28); text-anchor: middle; letter-spacing: .05em; opacity: 0; transition: opacity .5s ease; }
 .vd-radar-in .vd-radar-out-t { opacity: 1; }
 
-.vd-radar-legend { display: flex; justify-content: center; gap: 22px; margin-top: 2px; font: 9px 'JetBrains Mono',monospace; letter-spacing: .05em; color: rgba(196,181,253,.5); }
-.vd-radar-legend-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
-.vd-radar-legend-dot--in { background: rgba(99,102,241,.5); border: 1px solid rgba(196,181,253,.5); }
-.vd-radar-legend-dot--out { background: transparent; border: 1px solid rgba(255,255,255,.25); }
+.vd-radar-legend {
+  max-width: 520px;
+  margin: 32px auto 0;
+  text-align: center;
+}
+.vd-radar-legend-main {
+  font: 500 clamp(19px,2.4vw,28px)/1.45 'Cormorant Garamond',serif;
+  font-style: italic;
+  letter-spacing: -.005em;
+  margin: 0;
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.vd-radar-legend-sub {
+  margin: 10px 0 0;
+  font: 12px 'DM Sans',sans-serif;
+  letter-spacing: .01em;
+  color: rgba(244,243,255,.42);
+}
 
 /* Four pillars */
 .vd-pillars {
@@ -3227,7 +3245,8 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 
         </svg>
         <div class="vd-radar-legend">
-          <span><i class="vd-radar-legend-dot vd-radar-legend-dot--in"></i>Where Vantage focuses &mdash; the decisions that need judgment, not the systems that need data entry</span>
+          <p class="vd-radar-legend-main">Where Vantage focuses &mdash; the decisions that need judgment, not the systems that need data entry.</p>
+          <p class="vd-radar-legend-sub">The systems already exist everywhere. The judgment is what&rsquo;s been missing.</p>
         </div>
       </div>
     </div>
