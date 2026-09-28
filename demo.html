@@ -407,7 +407,7 @@
 .cor-confirm.show{display:block;animation:corFadeIn .35s ease both}
 .cor-confirm:hover{box-shadow:0 0 28px rgba(139,92,246,.6);transform:translateY(-1px)}
 .cor-result{width:100%;overflow:hidden;transition:max-height .55s ease,opacity .45s ease;max-height:0;opacity:0}
-.cor-result.open{max-height:500px;opacity:1;margin-bottom:16px}
+.cor-result.open{max-height:2000px;opacity:1;margin-bottom:16px}
 .cor-result-inner{padding:22px;border:1px solid rgba(124,58,237,.18);border-radius:10px;background:rgba(8,6,22,.75)}
 .cor-verdict{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;padding:4px 12px;border-radius:4px;display:inline-block;margin-bottom:12px}
 .cor-verdict.risk{background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.3);color:#fca5a5}
@@ -460,10 +460,10 @@
       <div class="cor-inside">
         <div class="cor-scenario"><span class="cor-case-id-label">CASE 2841 / Employee Relations</span><h3>Employee absent 7 days.<br>Manager wants termination tonight.<br>No written warnings on file.</h3></div>
         <div class="cor-choices" id="demoChoices1">
-          <div class="cor-choice" onclick="selectChoice(1,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Terminate immediately</span><span class="cor-choice-risk">fast &mdash; manager is happy</span></div>
-          <div class="cor-choice" onclick="selectChoice(1,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Start domestic enquiry</span><span class="cor-choice-risk">slower &mdash; more defensible</span></div>
-          <div class="cor-choice" onclick="selectChoice(1,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Issue show-cause notice first</span><span class="cor-choice-risk">correct process &mdash; buys time</span></div>
-          <div class="cor-choice" onclick="selectChoice(1,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Escalate to legal team</span><span class="cor-choice-risk">delays the decision</span></div>
+          <div class="cor-choice" onclick="selectChoice(1,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Terminate immediately</span><span class="cor-choice-risk">close it out tonight</span></div>
+          <div class="cor-choice" onclick="selectChoice(1,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Start domestic enquiry</span><span class="cor-choice-risk">a formal hearing process</span></div>
+          <div class="cor-choice" onclick="selectChoice(1,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Issue show-cause notice first</span><span class="cor-choice-risk">a written notice, then wait for a response</span></div>
+          <div class="cor-choice" onclick="selectChoice(1,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Escalate to legal team</span><span class="cor-choice-risk">hand the decision to legal</span></div>
         </div>
         <button class="cor-confirm" id="demoConfirm1" onclick="confirmChoice(1)">Confirm Choice &rarr;</button>
         <div class="cor-result" id="demoResult1"><div class="cor-result-inner" id="demoResultInner1"></div></div>
@@ -478,7 +478,7 @@
           <div class="cor-choice" onclick="selectChoice(2,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Accept the evidence gap</span><span class="cor-choice-risk">proceed anyway</span></div>
           <div class="cor-choice" onclick="selectChoice(2,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Reconstruct the trail</span><span class="cor-choice-risk">manager notes and calendars</span></div>
           <div class="cor-choice" onclick="selectChoice(2,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Get written witness statements</span><span class="cor-choice-risk">signed and dated</span></div>
-          <div class="cor-choice" onclick="selectChoice(2,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Drop the case entirely</span><span class="cor-choice-risk">safest short-term option</span></div>
+          <div class="cor-choice" onclick="selectChoice(2,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Drop the case entirely</span><span class="cor-choice-risk">close it, no further action</span></div>
         </div>
         <button class="cor-confirm" id="demoConfirm2" onclick="confirmChoice(2)">Confirm Choice &rarr;</button>
         <div class="cor-result" id="demoResult2"><div class="cor-result-inner" id="demoResultInner2"></div></div>
@@ -490,10 +490,10 @@
       <div class="cor-inside">
         <div class="cor-scenario"><span class="cor-case-id-label">BOARDROOM CHALLENGE</span><h3>CFO asks: &ldquo;What does keeping this person cost us?&rdquo;<br>The boardroom is waiting.</h3></div>
         <div class="cor-choices" id="demoChoices3">
-          <div class="cor-choice" onclick="selectChoice(3,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Estimate from experience</span><span class="cor-choice-risk">gut feel &mdash; hard to defend</span></div>
-          <div class="cor-choice" onclick="selectChoice(3,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Pull the Human P&amp;L</span><span class="cor-choice-risk">data-backed &mdash; boardroom-ready</span></div>
-          <div class="cor-choice" onclick="selectChoice(3,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Ask for more time</span><span class="cor-choice-risk">lose the room&rsquo;s momentum</span></div>
-          <div class="cor-choice" onclick="selectChoice(3,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Cite industry benchmark</span><span class="cor-choice-risk">generic &mdash; not your org</span></div>
+          <div class="cor-choice" onclick="selectChoice(3,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Estimate from experience</span><span class="cor-choice-risk">a number based on judgment</span></div>
+          <div class="cor-choice" onclick="selectChoice(3,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Present the full cost breakdown</span><span class="cor-choice-risk">replacement cost, ramp time, legal exposure</span></div>
+          <div class="cor-choice" onclick="selectChoice(3,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Ask for more time</span><span class="cor-choice-risk">come back with a number later</span></div>
+          <div class="cor-choice" onclick="selectChoice(3,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Cite this year&rsquo;s sector benchmark</span><span class="cor-choice-risk">the published salary &amp; attrition survey, cited exactly</span></div>
         </div>
         <button class="cor-confirm" id="demoConfirm3" onclick="confirmChoice(3)">Confirm Choice &rarr;</button>
         <div class="cor-result" id="demoResult3"><div class="cor-result-inner" id="demoResultInner3"></div></div>
@@ -505,10 +505,10 @@
       <div class="cor-inside">
         <div class="cor-scenario"><span class="cor-case-id-label">STAKEHOLDER PREPARATION</span><h3>COO call tomorrow morning.<br>She will ask about precedent, exposure, and your recommendation.</h3></div>
         <div class="cor-choices" id="demoChoices4">
-          <div class="cor-choice" onclick="selectChoice(4,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Prepare mentally, wing it</span><span class="cor-choice-risk">unprepared</span></div>
-          <div class="cor-choice" onclick="selectChoice(4,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Run ARIA rehearsal</span><span class="cor-choice-risk">rehearsed &mdash; walk in ready</span></div>
-          <div class="cor-choice" onclick="selectChoice(4,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Write talking points only</span><span class="cor-choice-risk">prepared on paper, not in practice</span></div>
-          <div class="cor-choice" onclick="selectChoice(4,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Ask to reschedule</span><span class="cor-choice-risk">lose the moment</span></div>
+          <div class="cor-choice" onclick="selectChoice(4,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Go in without preparing</span><span class="cor-choice-risk">rely on the moment</span></div>
+          <div class="cor-choice" onclick="selectChoice(4,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Rehearse the conversation first</span><span class="cor-choice-risk">practice the likely questions out loud</span></div>
+          <div class="cor-choice" onclick="selectChoice(4,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Write talking points only</span><span class="cor-choice-risk">notes, no run-through</span></div>
+          <div class="cor-choice" onclick="selectChoice(4,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Ask to reschedule</span><span class="cor-choice-risk">buy more time first</span></div>
         </div>
         <button class="cor-confirm" id="demoConfirm4" onclick="confirmChoice(4)">Confirm Choice &rarr;</button>
         <div class="cor-result" id="demoResult4"><div class="cor-result-inner" id="demoResultInner4"></div></div>
@@ -520,10 +520,10 @@
       <div class="cor-inside">
         <div class="cor-scenario"><span class="cor-case-id-label">9 MONTHS LATER</span><h3>Same scenario. New employee. New manager.<br>Everything you learned the first time...</h3></div>
         <div class="cor-choices" id="demoChoices5">
-          <div class="cor-choice" onclick="selectChoice(5,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Start from scratch</span><span class="cor-choice-risk">rebuild it all from memory</span></div>
-          <div class="cor-choice" onclick="selectChoice(5,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Open your Vantage Record</span><span class="cor-choice-risk">built on what you already know</span></div>
-          <div class="cor-choice" onclick="selectChoice(5,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Ask a colleague</span><span class="cor-choice-risk">secondhand memory</span></div>
-          <div class="cor-choice" onclick="selectChoice(5,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Search your email</span><span class="cor-choice-risk">partial, unstructured, not yours</span></div>
+          <div class="cor-choice" onclick="selectChoice(5,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Start from scratch</span><span class="cor-choice-risk">rebuild the process from memory</span></div>
+          <div class="cor-choice" onclick="selectChoice(5,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Pull up your documented case history</span><span class="cor-choice-risk">reference what you did last time</span></div>
+          <div class="cor-choice" onclick="selectChoice(5,this,'C')"><span class="cor-choice-letter">C</span><span class="cor-choice-text">Ask a colleague</span><span class="cor-choice-risk">rely on their memory of it</span></div>
+          <div class="cor-choice" onclick="selectChoice(5,this,'D')"><span class="cor-choice-letter">D</span><span class="cor-choice-text">Search your email</span><span class="cor-choice-risk">piece it together from old threads</span></div>
         </div>
         <button class="cor-confirm" id="demoConfirm5" onclick="confirmChoice(5)">Confirm Choice &rarr;</button>
         <div class="cor-result" id="demoResult5"><div class="cor-result-inner" id="demoResultInner5"></div></div>
