@@ -2857,15 +2857,18 @@
       if(entries[0].isIntersecting && !fired){
         fired = true;
         viz.classList.add('vd-viz-in');
+        setTimeout(()=>viz.classList.add('vd-viz-live'), 1300);
       }
     },{threshold:0.35}).observe(el);
   }
 
-  /* 01 / LAW and 03 / INFLUENCE — pure CSS reveal, no numbers to animate */
+  /* 01 / LAW and 03 / INFLUENCE — CSS reveal + CSS-driven ambient motion,
+     nothing to count, so vd-viz-live is all these two need. */
   revealSimple('vdPillar1');
   revealSimple('vdPillar3');
 
-  /* 02 / FINANCIAL — bars fill and rupee figures count up */
+  /* 02 / FINANCIAL — bars fill and rupee figures count up, then the
+     ambient shimmer/spark layer kicks in once they've settled. */
   (function(){
     const el = document.getElementById('vdPillar2');
     if(!el) return;
@@ -2889,10 +2892,13 @@
           }
         }, i*180);
       });
+      setTimeout(()=>viz.classList.add('vd-viz-live'), 1900);
     },{threshold:0.35}).observe(el);
   })();
 
-  /* 04 / RECORD — dot ledger builds, counter ticks up to 47 */
+  /* 04 / RECORD — dot ledger builds, counter ticks up to 47, then a
+     live-pulse dot and a periodic random re-flash on the ledger keep
+     it feeling active rather than a one-time animation that just stops. */
   (function(){
     const el = document.getElementById('vdPillar4');
     if(!el) return;
@@ -2901,11 +2907,13 @@
     const counter = document.getElementById('vdRecCounter');
     if(!viz || !track) return;
     /* Build the dot row once, up front (starts invisible via CSS) */
+    const dots = [];
     for(let i=0;i<24;i++){
       const dot = document.createElement('div');
       dot.className = 'vd-rec-dot';
       dot.style.transitionDelay = (i*35)+'ms';
       track.appendChild(dot);
+      dots.push(dot);
     }
     let fired = false;
     new IntersectionObserver(entries=>{
@@ -2913,6 +2921,18 @@
       fired = true;
       viz.classList.add('vd-viz-in');
       if(counter && D) D.num(counter, 47, 1400, '', '');
+      setTimeout(()=>{
+        viz.classList.add('vd-viz-live');
+        /* Periodic re-flash on a random dot — same idea as the Vantage
+           Record dossier's own random-entry re-flash elsewhere on the
+           page, just applied here at ledger scale. */
+        setInterval(()=>{
+          const dot = dots[Math.floor(Math.random()*dots.length)];
+          dot.classList.remove('vd-rec-flash');
+          void dot.offsetWidth;
+          dot.classList.add('vd-rec-flash');
+        }, 1400);
+      }, 1600);
     },{threshold:0.35}).observe(el);
   })();
 })();
