@@ -1235,6 +1235,13 @@
         span.style.cssText = 'opacity:0;display:inline-block;transition:opacity '+wordDuration+'ms ease, transform '+wordDuration+'ms ease;transform:translateY(5px);';
         el.appendChild(span);
         spans.push(span);
+        /* Hard break after "decision" — the natural word-wrap was
+           landing mid-sentence over the man's monitor in the prologue
+           photo. A forced break here always ends line 1 at "decision"
+           regardless of viewport width. */
+        if(w === 'decision'){
+          el.appendChild(document.createElement('br'));
+        }
       });
       el.appendChild(document.createElement('br'));
       const emWrap = document.createElement('em');
