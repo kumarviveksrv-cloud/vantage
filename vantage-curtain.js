@@ -160,26 +160,28 @@
     const bar = document.getElementById('q-bar');
     if(inner) inner.style.opacity = '0';
     if(bar) bar.style.opacity = '0';
+    const cb = onDismiss; onDismiss = null;
     runParticles(document.getElementById('q-canvas'), ()=>{
+      if(cb){
+        /* Navigating away (the Demo button case). Do NOT add the
+           'q-out' class here — that class drives a CSS fade-out
+           transition on the overlay itself (the 600ms wait below
+           exists to match that transition's duration), which fades
+           the overlay to transparent on its own, independent of when
+           this JS callback fires. That fade is exactly what exposed
+           the landing page underneath, regardless of how early cb()
+           was called. For navigation, the overlay needs to stay
+           fully opaque right up until the browser actually leaves
+           this page — so fire the callback immediately, with the
+           overlay untouched, and skip the fade/cleanup entirely
+           since this page is about to unload anyway. */
+        cb();
+        return;
+      }
+      /* No navigation — this was an inline reveal (section curtain
+         raiser). Safe to run the actual fade-out and restore state. */
       ov.classList.add('q-out');
       setTimeout(()=>{
-        const cb = onDismiss; onDismiss = null;
-        if(cb){
-          /* This dismissal leads to navigation (the Demo button case).
-             Fire the callback NOW, while the overlay is still fully
-             covering the viewport — do not hide/reset it first. The
-             previous order was: hide overlay completely (display:none,
-             exposing the bare landing page underneath) → THEN navigate.
-             Since window.location.href doesn't leave the current page
-             instantly, that gap was a real, visible flash back to the
-             landing page before the browser actually left it. We're
-             unloading this page in a moment anyway, so there's no need
-             to tidy up the overlay state beforehand. */
-          cb();
-          return;
-        }
-        /* No navigation — this was an inline reveal (section curtain
-           raiser). Safe to actually hide the overlay and restore it. */
         ov.classList.remove('q-visible','q-out');
         ov.style.display = 'none';
         if(inner){ inner.style.opacity='1'; }
