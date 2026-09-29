@@ -492,7 +492,7 @@
     banner.style.cssText = 'position:fixed;bottom:' + bottomOffset + ';left:50%;transform:translateX(-50%);background:#0d0b1e;border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.4);max-width:380px;width:calc(100% - 48px)';
     banner.innerHTML = '<div style="font-size:28px;flex-shrink:0">📱</div>' +
       '<div style="flex:1"><div style="font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:14px;color:#fff;margin-bottom:3px">Install Vantage</div>' +
-      '<div style="font-size:12px;color:rgba(255,255,255,0.70);line-height:1.4">Add to home screen for instant access — works offline too.</div></div>' +
+      '<div style="font-size:12px;color:rgba(255,255,255,0.70);line-height:1.4">Add to home screen for instant access. Works offline too.</div></div>' +
       '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">' +
       '<button onclick="installPWA()" style="padding:8px 14px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:12px;border:none;border-radius:7px;cursor:pointer">Install</button>' +
       '<button onclick="dismissPWA()" style="padding:6px 14px;background:transparent;color:rgba(255,255,255,0.65);font-size:12px;border:none;cursor:pointer">Not now</button>' +
@@ -710,7 +710,7 @@
           { icon: '\uD83C\uDFAF', label: 'Leadership Communicator', sub: 'Frame the right conversation', href: 'leadership-communicator.html', page: 'stakeholder-influence' },
           { icon: '\uD83C\uDFAD', label: 'Difficult Conversations', sub: 'Rehearse before you walk in', href: 'difficult-conversations.html', page: 'conversation-simulator' },
           { icon: '\uD83E\uDDED', label: 'Policy Advisor', sub: 'Applicable law, every time', href: 'policy-advisor.html', page: 'policy-compass' },
-          { icon: '\u2696\uFE0F', label: 'Retention Advisor', sub: 'Stay or go — model the cost', href: 'retention-advisor.html', page: 'offer-intelligence' },
+          { icon: '\u2696\uFE0F', label: 'Retention Advisor', sub: 'Stay or go: model the cost', href: 'retention-advisor.html', page: 'offer-intelligence' },
           { icon: '\u2726', label: 'ARIA', sub: 'Your private HR intelligence ally', href: 'aria.html', page: 'aria' },
         ]
       },
