@@ -56,7 +56,7 @@ a{color:inherit;text-decoration:none}
 .ab-scope-visual::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.4),transparent)}
 .ab-scope-tag{font:8px var(--mono);letter-spacing:.18em;color:rgba(196,181,253,.4);margin-bottom:18px}
 .ab-timeline-wrap{position:relative;padding:24px 0}
-.ab-tl-bar{height:3px;background:rgba(196,181,253,.08);border-radius:2px;position:relative;margin:0 0 14px}
+.ab-tl-bar{height:3px;background:rgba(196,181,252,.08);border-radius:2px;position:relative;margin:0 0 14px}
 .ab-tl-zone{position:absolute;top:-8px;left:18%;right:18%;height:18px;border-radius:6px;background:linear-gradient(90deg,rgba(99,102,241,.2),rgba(124,58,237,.3),rgba(99,102,241,.2));border:1px solid rgba(99,102,241,.35)}
 .ab-tl-glow{position:absolute;top:-4px;left:18%;right:18%;height:10px;border-radius:6px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.4),transparent);filter:blur(4px)}
 .ab-tl-labels{display:flex;justify-content:space-between;margin-top:8px}
@@ -173,7 +173,7 @@ a{color:inherit;text-decoration:none}
   <div class="ab-hero-content">
     <span class="ab-eyebrow">VIRORAH VANTAGE &mdash; WHAT IT IS AND WHAT IT DOES</span>
     <h1>The professional intelligence system for<br><em>the employment relationship.</em></h1>
-    <p class="ab-hero-def">Not all of HR. Not recruitment pipelines, training budgets, or payroll runs. The decisions that sit at the intersection of law, people, and money — the ones where getting it wrong has a <strong>financial and legal cost</strong> that someone has to answer for. That is what Vantage is built for.</p>
+    <p class="ab-hero-def">Not all of HR. Not recruitment pipelines, training budgets, or payroll runs. The decisions that sit at the intersection of law, people, and money &mdash; the ones where getting it wrong has a <strong>financial and legal cost</strong> that someone has to answer for. That is what Vantage is built for.</p>
     <div class="ab-hero-actions">
       <a href="demo.html" class="ab-btn-primary">Try the Demo &rarr;</a>
       <a href="access.html" class="ab-btn-ghost">Sign In &#8599;</a>
@@ -185,14 +185,15 @@ a{color:inherit;text-decoration:none}
 <section class="ab-section" id="scope">
   <span class="ab-section-label">01 / SCOPE</span>
   <h2>The employment relationship &mdash;<br><em>in its full complexity.</em></h2>
-  <p class="ab-section-lede">The moment someone joins your organisation until the moment they leave — every decision in between that carries legal exposure, financial consequence, or stakeholder risk. That is the zone Vantage operates in.</p>
+  <p class="ab-section-lede">The moment someone joins your organisation until the moment they leave &mdash; every decision in between that carries legal exposure, financial consequence, or stakeholder risk. That is the zone Vantage operates in.</p>
 
   <div class="ab-scope-grid">
     <div class="ab-scope-copy">
-      <p>Most HR tools try to cover all of HR. Vantage doesn't. It covers the part that requires the most professional judgment, carries the highest financial and legal stakes, and produces — when handled well — the kind of evidence that changes how an HR professional is perceived in any room they walk into.</p>
+      <p>Most HR tools try to cover all of HR. Vantage doesn't. It covers the part that requires the most professional judgment, carries the highest financial and legal stakes, and produces &mdash; when handled well &mdash; the kind of evidence that changes how an HR professional is perceived in any room they walk into.</p>
       <p>That part is the <strong>employment relationship</strong>. The live, ongoing relationship between an employer and the people already inside the organisation. Every disciplinary process. Every at-risk conversation. Every moment where the line between a good outcome and an expensive tribunal starts to matter.</p>
-      <p>Vantage doesn't touch talent acquisition — that's the pipeline before someone joins. It doesn't touch L&D programme design — that's the curriculum after they're settled. It doesn't do payroll, HRIS configuration, or compensation benchmarking. These are deliberate choices, not limitations. The employment relationship is complex enough to deserve a platform built entirely around it.</p>
-      <p style="font:italic 600 16px/1.5 var(--display);color:rgba(244,243,255,.82);margin-top:8px">Five capabilities. One zone of consequence. Every decision documented.</p>
+      <p>Vantage doesn't touch talent acquisition &mdash; that's the pipeline before someone joins. It doesn't touch L&D programme design &mdash; that's the curriculum after they're settled. It doesn't do payroll, HRIS configuration, or compensation benchmarking. These are deliberate choices, not limitations. The employment relationship is complex enough to deserve a platform built entirely around it.</p>
+      <!-- FIX 1: "Five" → "Six" (caps-grid shows 6 capabilities, copy said 5 — mismatch fixed) -->
+      <p style="font:italic 600 16px/1.5 var(--display);color:rgba(244,243,255,.82);margin-top:8px">Six capabilities. One zone of consequence. Every decision documented.</p>
     </div>
 
     <div class="ab-scope-visual">
@@ -240,50 +241,53 @@ a{color:inherit;text-decoration:none}
 <section class="ab-section" id="tools">
   <span class="ab-section-label">02 / THE TOOLS</span>
   <h2>Six tools and ARIA.<br><em>Each one built for a specific moment.</em></h2>
-  <p class="ab-section-lede">Each tool in Vantage is its own structured intelligence engine — its own frameworks, its own financial models, its own legal calibration. ARIA is different in kind. She thinks with you. The tools think for the situation.</p>
+  <!-- FIX 2: Removed "its own legal calibration" — each tool has its own framework/model,
+       but legal calibration flows from MERIDIAN (shared context engine), not built separately
+       into each tool. Aligned with §03 and with index.html's own MERIDIAN section. -->
+  <p class="ab-section-lede">Each tool in Vantage is its own structured intelligence engine &mdash; its own diagnostic frameworks, its own financial models, all calibrated through MERIDIAN to your specific professional context. ARIA is different in kind. She thinks with you. The tools think for the situation.</p>
 
   <div class="ab-tools-grid">
     <div class="ab-tool">
       <div class="ab-tool-icon">&#x26A1;</div>
       <div class="ab-tool-name">Employee Case Advisor</div>
       <div class="ab-tool-when">USE WHEN: You have an ER situation with legal stakes</div>
-      <div class="ab-tool-scenario">A manager wants to terminate a 5-year employee with no written warning on file. You describe the situation. The Case Advisor runs the PACT diagnostic — process gaps, accountability clarity, consequence mapping, trust impact — and gives you the exact legal position, the financial exposure in INR, what documentation you need today, and the recommended path forward. <em>Not a template. A structured decision.</em></div>
+      <div class="ab-tool-scenario">A manager wants to terminate a 5-year employee with no written warning on file. You describe the situation. The Case Advisor runs the PACT diagnostic &mdash; process gaps, accountability clarity, consequence mapping, trust impact &mdash; and gives you the exact legal position, the financial exposure in INR, what documentation you need today, and the recommended path forward. <em>Not a template. A structured decision.</em></div>
     </div>
     <div class="ab-tool">
       <div class="ab-tool-icon">&#x1F4CA;</div>
       <div class="ab-tool-name">People ROI Brief</div>
       <div class="ab-tool-when">USE WHEN: You have HR numbers that need to become a business argument</div>
-      <div class="ab-tool-scenario">Your attrition jumped from 14% to 22% in one quarter. You need ₹22L approved for a retention programme. The People ROI Brief converts your metrics into a CFO-grade financial narrative — revenue at risk, cost per departure, sector benchmark comparison, and three audience-specific versions: boardroom, CFO, CEO. <em>You walk in with a rupee figure, not an HR report.</em></div>
+      <div class="ab-tool-scenario">Your attrition jumped from 14% to 22% in one quarter. You need &#x20B9;22L approved for a retention programme. The People ROI Brief converts your metrics into a CFO-grade financial narrative &mdash; revenue at risk, cost per departure, sector benchmark comparison, and three audience-specific versions: boardroom, CFO, CEO. <em>You walk in with a rupee figure, not an HR report.</em></div>
     </div>
     <div class="ab-tool">
       <div class="ab-tool-icon">&#x1F3AF;</div>
       <div class="ab-tool-name">Leadership Communicator</div>
       <div class="ab-tool-when">USE WHEN: You need a specific person to take a specific action</div>
-      <div class="ab-tool-scenario">You need your VP Engineering to approve a counter-offer before Friday. She responds to financial risk, not people narratives. The Leadership Communicator builds the five-layer influence stack — credibility anchor, data anchor, narrative bridge, risk mirror, decision runway — calibrated to how that specific stakeholder thinks. <em>Opening line, closing line, and everything in between.</em></div>
+      <div class="ab-tool-scenario">You need your VP Engineering to approve a counter-offer before Friday. She responds to financial risk, not people narratives. The Leadership Communicator builds the five-layer influence stack &mdash; credibility anchor, data anchor, narrative bridge, risk mirror, decision runway &mdash; calibrated to how that specific stakeholder thinks. <em>Opening line, closing line, and everything in between.</em></div>
     </div>
     <div class="ab-tool">
       <div class="ab-tool-icon">&#x1F3AD;</div>
       <div class="ab-tool-name">Difficult Conversations</div>
       <div class="ab-tool-when">USE WHEN: The conversation tomorrow feels high-stakes</div>
-      <div class="ab-tool-scenario">You have to tell a line manager that his star performer is leaving and he contributed to it. ARIA plays the manager — resistant, defensive, not ready to hear it. You practice the conversation until the argument lands cleanly and you've heard every form of pushback before the real meeting. <em>Not a script. A rehearsal that makes the real thing easier to navigate.</em></div>
+      <div class="ab-tool-scenario">You have to tell a line manager that his star performer is leaving and he contributed to it. ARIA plays the manager &mdash; resistant, defensive, not ready to hear it. You practice the conversation until the argument lands cleanly and you've heard every form of pushback before the real meeting. <em>Not a script. A rehearsal that makes the real thing easier to navigate.</em></div>
     </div>
     <div class="ab-tool">
       <div class="ab-tool-icon">&#x1F9ED;</div>
       <div class="ab-tool-name">Policy Advisor</div>
       <div class="ab-tool-when">USE WHEN: The policy is unclear or you're not sure what applies</div>
-      <div class="ab-tool-scenario">A manager asks if he can extend a fixed-term contract employee's probation. You don't know if your Standing Orders cover it. The Policy Advisor gives you the applicable law, the specific section, what your state's rules say, and the recommended path — in plain language, without needing a lawyer on speed dial. <em>Three paragraphs. Cited. Actionable today.</em></div>
+      <div class="ab-tool-scenario">A manager asks if he can extend a fixed-term contract employee's probation. You don't know if your Standing Orders cover it. The Policy Advisor gives you the applicable law, the specific section, what your state's rules say, and the recommended path &mdash; in plain language, without needing a lawyer on speed dial. <em>Three paragraphs. Cited. Actionable today.</em></div>
     </div>
     <div class="ab-tool">
       <div class="ab-tool-icon">&#x2696;&#xFE0F;</div>
       <div class="ab-tool-name">Retention Advisor</div>
       <div class="ab-tool-when">USE WHEN: Someone might leave and the cost isn't clear yet</div>
-      <div class="ab-tool-scenario">Your senior data architect just got a 35% offer from a competitor. She's been here four years and owns half the platform's institutional knowledge. The Retention Advisor models the full replacement cost — recruitment, ramp time, knowledge transfer — against the cost of matching or exceeding the offer, and gives you the break-even ceiling, the recommended position, and the exact language for both conversations. <em>Walk in knowing your number before they ask for theirs.</em></div>
+      <div class="ab-tool-scenario">Your senior data architect just got a 35% offer from a competitor. She's been here four years and owns half the platform's institutional knowledge. The Retention Advisor models the full replacement cost &mdash; recruitment, ramp time, knowledge transfer &mdash; against the cost of matching or exceeding the offer, and gives you the break-even ceiling, the recommended position, and the exact language for both conversations. <em>Walk in knowing your number before they ask for theirs.</em></div>
     </div>
     <div class="ab-tool" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(124,58,237,.06));border-color:rgba(99,102,241,.3)">
       <div class="ab-tool-icon">&#x2736;</div>
       <div class="ab-tool-name">ARIA &mdash; Your HR Intelligence Companion</div>
       <div class="ab-tool-when">DIFFERENT IN KIND &mdash; NOT A STRUCTURED TOOL. A THINKING PARTNER.</div>
-      <div class="ab-tool-scenario">The six tools above give you structured outputs for specific situations. ARIA is the one you talk to when the situation is still messy. When you don't know which tool to reach for. When you're processing a difficult week. When you want to think out loud at 9pm and have someone who understands the Indian HR professional reality ask you the question you hadn't thought to ask yourself. She doesn't produce a formatted output. She listens, reflects, and moves your thinking forward — one question at a time. <em>The tools think for the situation. ARIA thinks with you.</em></div>
+      <div class="ab-tool-scenario">The six tools above give you structured outputs for specific situations. ARIA is the one you talk to when the situation is still messy. When you don't know which tool to reach for. When you're processing a difficult week. When you want to think out loud at 9pm and have someone who understands the Indian HR professional reality ask you the question you hadn't thought to ask yourself. She doesn't produce a formatted output. She listens, reflects, and moves your thinking forward &mdash; one question at a time. <em>The tools think for the situation. ARIA thinks with you.</em></div>
     </div>
   </div>
 </section>
@@ -296,27 +300,33 @@ a{color:inherit;text-decoration:none}
 
   <div class="ab-aria-grid">
     <div class="ab-aria-copy">
-      <p>Each Vantage tool — the Employee Case Advisor, the People ROI Brief, the Policy Advisor, all of them — is its own structured intelligence engine. Each has its own diagnostic framework, its own financial model, its own legal calibration specific to Indian employment law. When you use the Employee Case Advisor, you are not having a conversation with ARIA. You are running a structured protocol that produces a formatted output every time.</p>
+      <!-- FIX 3: Removed "its own legal calibration specific to Indian employment law" from the
+           per-tool description. Legal calibration flows from MERIDIAN (the shared context engine),
+           not from independent silos inside each tool. This resolves the internal contradiction
+           with §06 (Day 1-3 journey: "every output Vantage gives you is calibrated to your
+           specific professional context") and with index.html's own MERIDIAN section
+           ("Every tool in Vantage pulls from this engine"). -->
+      <p>Each Vantage tool &mdash; the Employee Case Advisor, the People ROI Brief, the Policy Advisor, all of them &mdash; is its own structured intelligence engine. Each has its own diagnostic framework and its own financial model. Every output runs through MERIDIAN &mdash; the single context engine that every tool draws from &mdash; which sets the legal and professional parameters for your specific situation: your state's labour law, your org's size, your seniority, your policy guardrails. The legal calibration isn't built separately into each tool; it flows from MERIDIAN and shapes everything. When you use the Employee Case Advisor, you are not having a conversation with ARIA. You are running a structured protocol that produces a formatted output every time.</p>
       <p>ARIA is different in kind, not just in name. She is your <strong>conversational professional companion</strong>. The one you talk to when the situation is too messy for a structured tool. When you don't know what you're dealing with yet. When you're at 9pm and the call tomorrow morning is in your head and you need to think, not process.</p>
       <p>The tools give you answers. ARIA helps you figure out what you're actually asking.</p>
-      <p style="font:italic 600 18px/1.4 var(--display);color:rgba(244,243,255,.8);margin-top:4px">"Each Vantage tool is its own intelligence engine. ARIA is the one that thinks with you — not for you."</p>
+      <p style="font:italic 600 18px/1.4 var(--display);color:rgba(244,243,255,.8);margin-top:4px">"Each Vantage tool has its own intelligence engine. MERIDIAN calibrates all of them to you. ARIA is the one that thinks with you &mdash; not for you."</p>
     </div>
     <div class="ab-aria-card">
       <div class="ab-aria-orb">&#x2736;</div>
-      <div class="ab-aria-quote">"Somewhere between the situation and the decision — ARIA sits in that space."</div>
+      <div class="ab-aria-quote">"Somewhere between the situation and the decision &mdash; ARIA sits in that space."</div>
       <div class="ab-aria-distinction">
         <div class="ab-aria-row">
           <div class="ab-aria-row-icon">&#x1F4CB;</div>
           <div class="ab-aria-row-text">
             <span class="ab-aria-row-label">THE SIX TOOLS</span>
-            <div class="ab-aria-row-desc">Structured inputs → structured outputs. A formatted decision, legal position, financial model, or influence stack. Built for situations you can name.</div>
+            <div class="ab-aria-row-desc">Structured inputs &rarr; structured outputs. A formatted decision, legal position, financial model, or influence stack. Built for situations you can name. All calibrated through MERIDIAN.</div>
           </div>
         </div>
         <div class="ab-aria-row" style="border-color:rgba(99,102,241,.25);background:rgba(99,102,241,.06)">
           <div class="ab-aria-row-icon">&#x2736;</div>
           <div class="ab-aria-row-text">
             <span class="ab-aria-row-label" style="color:#a5b4fc">ARIA</span>
-            <div class="ab-aria-row-desc">A conversation. One question at a time. For situations that are still forming — when you don't know what you need yet, or when you need to think out loud before the real conversation.</div>
+            <div class="ab-aria-row-desc">A conversation. One question at a time. For situations that are still forming &mdash; when you don't know what you need yet, or when you need to think out loud before the real conversation.</div>
           </div>
         </div>
         <div class="ab-aria-row">
@@ -335,22 +345,31 @@ a{color:inherit;text-decoration:none}
 <section class="ab-section" id="capital">
   <span class="ab-section-label">04 / HR DECISION CAPITAL</span>
   <h2>The number your HR career<br><em>has never been able to produce.</em></h2>
-  <p class="ab-section-lede">Every HR professional knows what they've done. Almost none of them can prove it — in rupees, with evidence attached.</p>
+  <p class="ab-section-lede">Every HR professional knows what they've done. Almost none of them can prove it &mdash; in rupees, with evidence attached.</p>
 
   <div class="ab-hdc-grid">
     <div class="ab-hdc-copy">
-      <p>When you navigate a termination risk that carried a ₹14L tribunal exposure and handled it correctly — that's documented. When you retained someone whose departure would have cost ₹34L to replace — that's documented. When you landed the ₹22L retention programme business case in a room full of CFO scepticism — that's documented.</p>
-      <p>HR Decision Capital is the sum of all of it. Every case you navigated on Vantage, every financial exposure you handled, every business case you landed — converted into a single cumulative figure that tells the financial story of your HR practice.</p>
-      <p>It is not your salary. It is not your job title. It is the documented financial impact of your professional judgment — specific to the employment relationship, where that judgment is most exposed and most consequential.</p>
-      <p><strong>It is computed from three components:</strong></p>
-      <p>Financial exposure navigated — the INR ranges from every PACT case, at midpoint. Retention value protected — the replacement cost avoided from every flight risk you managed. Business cases landed — the programmes approved because of your People ROI Brief.</p>
-      <p>A first year on Vantage builds a number. Three years builds a career argument. Five years builds something no other HR professional in India can produce — a financially quantified, timestamped, defensible record of what your professional practice is actually worth.</p>
+      <p>When you navigate a termination risk that carried a &#x20B9;14L tribunal exposure and handled it correctly &mdash; that's documented. When you retained someone whose departure would have cost &#x20B9;34L to replace &mdash; that's documented. When you landed the &#x20B9;22L retention programme business case in a room full of CFO scepticism &mdash; that's documented.</p>
+      <p>HR Decision Capital is the sum of all of it. Every case you navigated on Vantage, every financial exposure you handled, every business case you landed &mdash; converted into a single cumulative figure that tells the financial story of your HR practice.</p>
+      <p>It is not your salary. It is not your job title. It is the documented financial impact of your professional judgment &mdash; specific to the employment relationship, where that judgment is most exposed and most consequential.</p>
+      <!-- FIX 4: Rewrote the three-component description from "It is computed from three components"
+           (implies all three are live today) to "built from three components, each wired in as you
+           use the tools that produce them" — Component 1 (Financial Exposure Navigated) is live
+           from the first Employee Case Advisor session. Components 2 and 3 grow in as you use
+           Retention Advisor and People ROI Brief. Accurate, honest, and still compelling. -->
+      <p><strong>It is built from three components, each wired in as you use the tools that produce them.</strong></p>
+      <p>The first &mdash; <strong>Financial Exposure Navigated</strong> &mdash; is live from your very first Employee Case Advisor session. Every case you navigate generates a documented financial exposure in INR, and every case adds to your running total automatically, in your Vantage Record.</p>
+      <p>The second &mdash; <strong>Retention Value Protected</strong> &mdash; accumulates from every flight risk decision you model through Retention Advisor: the replacement cost avoided, the counter-offer ceiling you calculated, the decision you made with numbers attached.</p>
+      <p>The third &mdash; <strong>Business Cases Landed</strong> &mdash; grows from every programme that gets approved on the back of your People ROI Brief. When your retention initiative gets a green light because you walked in with a CFO-grade argument, that figure enters your HR Decision Capital.</p>
+      <p>A first year on Vantage builds a number. Three years builds a career argument. Five years builds something no other HR professional in India can produce &mdash; a financially quantified, timestamped, defensible record of what your professional practice is actually worth.</p>
       <p style="font:italic 600 17px/1.4 var(--display);color:rgba(244,243,255,.8)">At your next job interview, walk in with this number. Most HR professionals bring opinions. You bring receipts.</p>
     </div>
     <div class="ab-hdc-card">
       <div class="ab-hdc-label">HR DECISION CAPITAL &mdash; ILLUSTRATIVE EXAMPLE</div>
       <div class="ab-hdc-number">&#x20B9;18.4L</div>
-      <div class="ab-hdc-sublabel">Documented value of your employment relations practice</div>
+      <!-- FIX 5: Card sublabel now says "Illustrative" clearly — not "Documented value of your
+           employment relations practice" which implied this number is computed right now. -->
+      <div class="ab-hdc-sublabel">Illustrative &mdash; what one year of active use across all three components builds</div>
       <div class="ab-hdc-breakdown">
         <div class="ab-hdc-row">
           <span class="ab-hdc-row-label">FINANCIAL EXPOSURE NAVIGATED</span>
@@ -365,7 +384,10 @@ a{color:inherit;text-decoration:none}
           <span class="ab-hdc-row-val">&#x20B9;1.6L</span>
         </div>
       </div>
-      <p class="ab-hdc-note">Computed from financial exposure navigated, retention value protected, and business cases landed — across all documented cases on Vantage. Covers ER case management, people economics, and stakeholder influence. Does not include talent acquisition or L&D outcomes — by design.</p>
+      <!-- FIX 6: Card note now honestly describes what's live (Component 1) vs what
+           accumulates as more tools are used (Components 2 and 3). Replaces the previous
+           "Computed from..." note which implied all three were live and being calculated. -->
+      <p class="ab-hdc-note">Financial Exposure Navigated accumulates from your first Employee Case Advisor session &mdash; automatically, in your Vantage Record. Retention Value Protected and Business Cases Landed expand the figure as you use Retention Advisor and People ROI Brief. The &#x20B9;18.4L above is illustrative &mdash; what the full formula builds toward at one year of active use. Does not include talent acquisition or L&amp;D outcomes &mdash; by design.</p>
     </div>
   </div>
 </section>
@@ -374,23 +396,23 @@ a{color:inherit;text-decoration:none}
 <section class="ab-section" id="for">
   <span class="ab-section-label">05 / WHO IT&rsquo;S FOR</span>
   <h2>Built for Indian HR professionals<br><em>at every level of the game.</em></h2>
-  <p class="ab-section-lede">Vantage is designed for the HR professional who makes decisions that carry consequence — not for teams that process requests.</p>
+  <p class="ab-section-lede">Vantage is designed for the HR professional who makes decisions that carry consequence &mdash; not for teams that process requests.</p>
 
   <div class="ab-for-grid">
     <div class="ab-for-card">
       <div class="ab-for-role">HR Manager</div>
-      <div class="ab-for-context">100–500 PERSON ORG &middot; GENERALIST OR ER FOCUS</div>
-      <div class="ab-for-gets">You handle everything. ER cases, policy queries, manager hand-holding, and no one to escalate to. Vantage gives you the legal position, the financial exposure, and the recommended path — so you stop second-guessing and start building a record that proves your value when appraisal season arrives.</div>
+      <div class="ab-for-context">100&ndash;500 PERSON ORG &middot; GENERALIST OR ER FOCUS</div>
+      <div class="ab-for-gets">You handle everything. ER cases, policy queries, manager hand-holding, and no one to escalate to. Vantage gives you the legal position, the financial exposure, and the recommended path &mdash; so you stop second-guessing and start building a record that proves your value when appraisal season arrives.</div>
     </div>
     <div class="ab-for-card">
       <div class="ab-for-role">Senior HR / HRBP</div>
-      <div class="ab-for-context">500–2,000 PERSON ORG &middot; BUSINESS PARTNER ROLE</div>
-      <div class="ab-for-gets">You sit in the business. You need to influence without authority and translate HR decisions into language that lands with finance and operations. Vantage builds the business case, the stakeholder argument, and the financial narrative — so you stop being the HR person in the room and start being the person with the numbers.</div>
+      <div class="ab-for-context">500&ndash;2,000 PERSON ORG &middot; BUSINESS PARTNER ROLE</div>
+      <div class="ab-for-gets">You sit in the business. You need to influence without authority and translate HR decisions into language that lands with finance and operations. Vantage builds the business case, the stakeholder argument, and the financial narrative &mdash; so you stop being the HR person in the room and start being the person with the numbers.</div>
     </div>
     <div class="ab-for-card">
       <div class="ab-for-role">HR Head / VP HR</div>
       <div class="ab-for-context">ANY ORG SIZE &middot; STRATEGIC LEADERSHIP ROLE</div>
-      <div class="ab-for-gets">The legal and financial complexity of your decisions has grown faster than your team's capability to document and defend them. Vantage calibrates every output to your specific org context — size, state, union status, seniority — and builds the kind of documented record that matters in boardrooms, audits, and across the lifetime of your career.</div>
+      <div class="ab-for-gets">The legal and financial complexity of your decisions has grown faster than your team's capability to document and defend them. Vantage calibrates every output to your specific org context &mdash; size, state, union status, seniority &mdash; and builds the kind of documented record that matters in boardrooms, audits, and across the lifetime of your career.</div>
     </div>
   </div>
 </section>
@@ -407,7 +429,7 @@ a{color:inherit;text-decoration:none}
       <div class="ab-journey-content">
         <span class="ab-journey-period">DAY 1&ndash;3 &mdash; FOUNDATION</span>
         <div class="ab-journey-title">MERIDIAN is set. Vantage knows who you are.</div>
-        <div class="ab-journey-desc">Seven inputs. Your state, industry, org size, seniority, union status, HR function, and policy guardrails. From this moment, every output Vantage gives you is calibrated to your specific professional context — not a generic Indian HR professional, you specifically.</div>
+        <div class="ab-journey-desc">Seven inputs. Your state, industry, org size, seniority, union status, HR function, and policy guardrails. From this moment, every output Vantage gives you is calibrated to your specific professional context &mdash; not a generic Indian HR professional, you specifically.</div>
       </div>
     </div>
     <div class="ab-journey-item">
@@ -415,7 +437,7 @@ a{color:inherit;text-decoration:none}
       <div class="ab-journey-content">
         <span class="ab-journey-period">WEEK 1&ndash;2 &mdash; FIRST CASE</span>
         <div class="ab-journey-title">Your first documented decision lands in the Vantage Record.</div>
-        <div class="ab-journey-desc">The first ER case you navigate gives you a legal position, a financial exposure range, and a recommended path — and saves itself to your Vantage Record automatically. That's the first entry in a professional record that didn't exist before. Every case after this one adds to it.</div>
+        <div class="ab-journey-desc">The first ER case you navigate gives you a legal position, a financial exposure range, and a recommended path &mdash; and saves itself to your Vantage Record automatically. That's the first entry in a professional record that didn't exist before. Every case after this one adds to it.</div>
       </div>
     </div>
     <div class="ab-journey-item">
@@ -423,7 +445,7 @@ a{color:inherit;text-decoration:none}
       <div class="ab-journey-content">
         <span class="ab-journey-period">MONTH 1 &mdash; THE DEBRIEF</span>
         <div class="ab-journey-title">Your first Monthly Debrief arrives. The record starts to speak.</div>
-        <div class="ab-journey-desc">On the last working day of the month, Vantage generates your Monthly Debrief — a structured narrative of every case you handled, every pattern detected, and the financial exposure you navigated. It calculates your HR Decision Capital for the month. This arrives in your inbox. It reads like a professional story, not a log.</div>
+        <div class="ab-journey-desc">On the last working day of the month, Vantage generates your Monthly Debrief &mdash; a structured narrative of every case you handled, every pattern detected, and the financial exposure you navigated. It calculates your HR Decision Capital for the month. This arrives in your inbox. It reads like a professional story, not a log.</div>
       </div>
     </div>
     <div class="ab-journey-item">
@@ -431,7 +453,7 @@ a{color:inherit;text-decoration:none}
       <div class="ab-journey-content">
         <span class="ab-journey-period">MONTH 2&ndash;3 &mdash; PATTERN EMERGES</span>
         <div class="ab-journey-title">You start seeing your own practice more clearly.</div>
-        <div class="ab-journey-desc">Three months of documented decisions reveal patterns most HR professionals never see — which case types recur, where your exposure concentrates, which stakeholder conversations you keep having. Your HR Decision Capital is now a number with context. Your Humac Score tells you how your organisation's human capital position is trending. You know things about your professional reality that most of your peers don't know about their own.</div>
+        <div class="ab-journey-desc">Three months of documented decisions reveal patterns most HR professionals never see &mdash; which case types recur, where your exposure concentrates, which stakeholder conversations you keep having. Your HR Decision Capital is now a number with context. Your Humac Score tells you how your organisation's human capital position is trending. You know things about your professional reality that most of your peers don't know about their own.</div>
       </div>
     </div>
     <div class="ab-journey-item">
@@ -439,7 +461,7 @@ a{color:inherit;text-decoration:none}
       <div class="ab-journey-content">
         <span class="ab-journey-period">BEYOND &mdash; THE CAREER RECORD</span>
         <div class="ab-journey-title">The record compounds. The number gets harder to ignore.</div>
-        <div class="ab-journey-desc">At 12 months, Vantage generates a comprehensive career record across every decision, every pattern, and every financial moment of the year. At three years — at the end of a company tenure — you have a documented, financially quantified professional story no other HR professional in India can produce. That is the document you walk into your next interview with. It is not a CV. It is evidence.</div>
+        <div class="ab-journey-desc">At 12 months, Vantage generates a comprehensive career record across every decision, every pattern, and every financial moment of the year. At three years &mdash; at the end of a company tenure &mdash; you have a documented, financially quantified professional story no other HR professional in India can produce. That is the document you walk into your next interview with. It is not a CV. It is evidence.</div>
       </div>
     </div>
   </div>
