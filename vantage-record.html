@@ -355,44 +355,54 @@
     // result in sessionStorage so dashboard.html can read it on
     // next load without a second API round-trip.
     // ─────────────────────────────────────────────────────────────
+    // Phase 3: sums all 3 HDC components
+    //   Component 1 = financial_exposure  (Employee Case Advisor)
+    //   Component 2 = retention_value     (Retention Advisor)
+    //   Component 3 = business_case_value (People ROI Brief)
     function computeAndRenderHDC() {
-      var total = 0;
-      var casesWithExposure = 0;
+      var comp1 = 0, comp2 = 0, comp3 = 0;
+      var comp1Cases = 0, comp2Cases = 0, comp3Cases = 0;
 
       allCases.forEach(function(c) {
-        var raw = ((c.fields || {})['financial_exposure'] || '');
-        var val = parseExposureLakhs(raw);
-        if (val > 0) {
-          total += val;
-          casesWithExposure++;
-        }
+        var fields = c.fields || {};
+        var v1 = parseExposureLakhs(fields['financial_exposure'] || '');
+        if (v1 > 0) { comp1 += v1; comp1Cases++; }
+        var v2 = parseExposureLakhs(fields['retention_value'] || '');
+        if (v2 > 0) { comp2 += v2; comp2Cases++; }
+        var v3 = parseExposureLakhs(fields['business_case_value'] || '');
+        if (v3 > 0) { comp3 += v3; comp3Cases++; }
       });
 
-      if (total <= 0) return; // No parseable exposure data — keep banner hidden
+      var total = comp1 + comp2 + comp3;
+      if (total <= 0) return;
 
-      var banner   = document.getElementById('hdc-banner');
-      var numEl    = document.getElementById('hdc-total');
-      var countEl  = document.getElementById('hdc-case-count');
+      function fmtL(n) {
+        if (n <= 0) return null;
+        return '\u20B9' + (n % 1 === 0 ? n : (Math.round(n * 10) / 10)) + 'L';
+      }
 
-      // Format to one decimal place, drop the .0 if it's a whole number
-      var formatted = total % 1 === 0
-        ? '\u20B9' + total + 'L'
-        : '\u20B9' + (Math.round(total * 10) / 10) + 'L';
+      var formatted = fmtL(total);
+      var banner  = document.getElementById('hdc-banner');
+      var numEl   = document.getElementById('hdc-total');
+      var countEl = document.getElementById('hdc-case-count');
 
-      if (numEl)   numEl.textContent   = formatted;
-      if (countEl) countEl.textContent = casesWithExposure + (casesWithExposure === 1 ? ' case documented' : ' cases documented') + ' \u00b7 Component 1 of HR Decision Capital';
-      if (banner)  banner.style.display = 'block';
+      if (numEl) numEl.textContent = formatted;
 
-      // Write to sessionStorage so dashboard.html can surface this without
-      // making its own Worker call. Key: vantage_hdc_exposure
+      var parts = [];
+      if (comp1 > 0) parts.push('Exposure ' + fmtL(comp1));
+      if (comp2 > 0) parts.push('Retention ' + fmtL(comp2));
+      if (comp3 > 0) parts.push('ROI ' + fmtL(comp3));
+      var totalCases = comp1Cases + comp2Cases + comp3Cases;
+      if (countEl) countEl.textContent = totalCases + (totalCases === 1 ? ' entry' : ' entries') + ' \u00b7 ' + parts.join(' \u00b7 ');
+      if (banner) banner.style.display = 'block';
+
       try {
         sessionStorage.setItem('vantage_hdc_exposure', JSON.stringify({
-          value:   total,
-          display: formatted,
-          cases:   casesWithExposure,
+          value: total, display: formatted, cases: totalCases,
+          comp1: comp1, comp2: comp2, comp3: comp3,
           updated: new Date().toISOString()
         }));
-      } catch(e) { /* sessionStorage unavailable — non-fatal */ }
+      } catch(e) {}
     }
 
     async function loadCases() {
