@@ -440,6 +440,28 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     <!-- HUMAC SCORE WIDGET -->
     <div id="humac-widget"></div>
 
+    <!-- ═══════════════════════════════════════════════════════════
+         HR DECISION CAPITAL — COMPONENT 1 CARD (Phase 2)
+         Reads vantage_hdc_exposure set by vantage-record.html.
+         Hidden by default; shown by JS when real data exists.
+         No Worker call required — sessionStorage only.
+         ═══════════════════════════════════════════════════════════ -->
+    <div id="hdc-dash-card" style="display:none;background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(124,58,237,.04));border:1px solid rgba(99,102,241,.22);border-radius:12px;padding:16px 22px;margin-bottom:24px;animation:fadeIn .4s ease .12s both;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(196,181,253,.28),transparent)"></div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,181,253,.4);margin-bottom:4px">HR Decision Capital &middot; Component 1</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,181,253,.6);margin-bottom:6px">Financial Exposure Navigated</div>
+          <div id="hdc-dash-number" style="font-family:'Space Grotesk',sans-serif;font-size:1.85rem;font-weight:700;letter-spacing:-.03em;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1">&mdash;</div>
+          <div id="hdc-dash-count" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(244,243,255,.28);margin-top:4px"></div>
+        </div>
+        <div style="text-align:right;max-width:240px">
+          <div style="font-size:.76rem;color:rgba(244,243,255,.38);line-height:1.65;margin-bottom:10px">Running total from your Vantage Record. Grows with every Employee Case Advisor session. Components 2 and 3 expand this figure as you use Retention Advisor and People ROI Brief.</div>
+          <a href="vantage-record.html" style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.08em;color:rgba(165,180,252,.32);text-decoration:none;transition:color .2s" onmouseover="this.style.color='rgba(165,180,252,.65)'" onmouseout="this.style.color='rgba(165,180,252,.32)'">View full Vantage Record &rarr;</a>
+        </div>
+      </div>
+    </div>
+
     <div class="cal-banner">
       <div class="cal-icon">&#x1F4C5;</div>
       <div>
@@ -875,6 +897,32 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
           setTimeout(waitForClerkRestore, 150);
         }
       })();
+    })();
+
+    // ─────────────────────────────────────────────────────────────
+    // HR DECISION CAPITAL — COMPONENT 1 READER (Phase 2)
+    // Reads vantage_hdc_exposure from sessionStorage (written by
+    // vantage-record.html after loadCases() completes). Surfaces
+    // HDC Component 1 on the dashboard without a second Worker call.
+    // ─────────────────────────────────────────────────────────────
+    (function renderHDCDashCard() {
+      try {
+        var raw = sessionStorage.getItem('vantage_hdc_exposure');
+        if (!raw) return;
+        var hdc = JSON.parse(raw);
+        if (!hdc || !hdc.value || hdc.value <= 0) return;
+        var card  = document.getElementById('hdc-dash-card');
+        var numEl = document.getElementById('hdc-dash-number');
+        var cntEl = document.getElementById('hdc-dash-count');
+        if (!card) return;
+        if (numEl) numEl.textContent = hdc.display || ('₹' + hdc.value + 'L');
+        if (cntEl) {
+          var dateStr = '';
+          try { dateStr = ' · updated ' + new Date(hdc.updated).toLocaleDateString('en-IN', {day:'numeric',month:'short'}); } catch(e) {}
+          cntEl.textContent = (hdc.cases || 0) + ' case' + (hdc.cases === 1 ? '' : 's') + ' documented' + dateStr;
+        }
+        card.style.display = 'block';
+      } catch(e) { /* sessionStorage unavailable or malformed — non-fatal */ }
     })();
   </script>
 
