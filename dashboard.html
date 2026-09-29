@@ -441,22 +441,22 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     <div id="humac-widget"></div>
 
     <!-- ═══════════════════════════════════════════════════════════
-         HR DECISION CAPITAL — COMPONENT 1 CARD (Phase 2)
-         Reads vantage_hdc_exposure set by vantage-record.html.
-         Hidden by default; shown by JS when real data exists.
-         No Worker call required — sessionStorage only.
+         HR DECISION CAPITAL CARD (Phase 4)
+         Primary path: live get_cases Worker call on page load.
+         Fast path: sessionStorage (set by vantage-record.html).
+         Shows as soon as either path has data; live path wins.
          ═══════════════════════════════════════════════════════════ -->
     <div id="hdc-dash-card" style="display:none;background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(124,58,237,.04));border:1px solid rgba(99,102,241,.22);border-radius:12px;padding:16px 22px;margin-bottom:24px;animation:fadeIn .4s ease .12s both;position:relative;overflow:hidden">
       <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(196,181,253,.28),transparent)"></div>
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
         <div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,181,253,.4);margin-bottom:4px">HR Decision Capital &middot; Component 1</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,181,253,.6);margin-bottom:6px">Financial Exposure Navigated</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,181,253,.4);margin-bottom:4px">HR Decision Capital</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,181,253,.6);margin-bottom:6px">Cases &middot; Retention &middot; ROI</div>
           <div id="hdc-dash-number" style="font-family:'Space Grotesk',sans-serif;font-size:1.85rem;font-weight:700;letter-spacing:-.03em;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1">&mdash;</div>
           <div id="hdc-dash-count" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(244,243,255,.28);margin-top:4px"></div>
         </div>
         <div style="text-align:right;max-width:240px">
-          <div style="font-size:.76rem;color:rgba(244,243,255,.38);line-height:1.65;margin-bottom:10px">Running total from your Vantage Record. Grows with every Employee Case Advisor session. Components 2 and 3 expand this figure as you use Retention Advisor and People ROI Brief.</div>
+          <div style="font-size:.76rem;color:rgba(244,243,255,.38);line-height:1.65;margin-bottom:10px">The documented financial impact of your HR practice — financial exposure navigated, retention value protected, and ROI arguments built across all active tools.</div>
           <a href="vantage-record.html" style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.08em;color:rgba(165,180,252,.32);text-decoration:none;transition:color .2s" onmouseover="this.style.color='rgba(165,180,252,.65)'" onmouseout="this.style.color='rgba(165,180,252,.32)'">View full Vantage Record &rarr;</a>
         </div>
       </div>
@@ -475,13 +475,13 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-label">Cases This Month</div>
-        <div class="stat-value" style="color:var(--muted)">0</div>
-        <div class="stat-sub">Start your first case</div>
+        <div class="stat-value" id="dash-stat-month" style="color:var(--muted)">0</div>
+        <div class="stat-sub" id="dash-stat-month-sub">Start your first case</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Open Cases</div>
-        <div class="stat-value" style="color:var(--amber)">0</div>
-        <div class="stat-sub">Nothing active yet</div>
+        <div class="stat-value" id="dash-stat-open" style="color:var(--amber)">0</div>
+        <div class="stat-sub" id="dash-stat-open-sub">Nothing active yet</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Conversations Practiced</div>
@@ -490,8 +490,8 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
       </div>
       <div class="stat-card">
         <div class="stat-label">Frameworks Applied</div>
-        <div class="stat-value">0</div>
-        <div class="stat-sub">Across all Vantage tools</div>
+        <div class="stat-value" id="dash-stat-total">0</div>
+        <div class="stat-sub" id="dash-stat-total-sub">Across all Vantage tools</div>
       </div>
     </div>
 
@@ -899,13 +899,93 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
       })();
     })();
 
-    // ─────────────────────────────────────────────────────────────
-    // HR DECISION CAPITAL — COMPONENT 1 READER (Phase 2)
-    // Reads vantage_hdc_exposure from sessionStorage (written by
-    // vantage-record.html after loadCases() completes). Surfaces
-    // HDC Component 1 on the dashboard without a second Worker call.
-    // ─────────────────────────────────────────────────────────────
-    (function renderHDCDashCard() {
+    // ═══════════════════════════════════════════════════════════
+    // HR DECISION CAPITAL + STAT CARDS — PHASE 4
+    // Primary: live get_cases call on page load (Worker → Airtable)
+    // Fast path: sessionStorage written by vantage-record.html
+    // Both run independently; live path refreshes whatever sessionStorage showed.
+    // ═══════════════════════════════════════════════════════════
+
+    // Re-used from vantage-record.html — parses "₹8L–₹14L" etc. → lakhs midpoint
+    function parseExposureLakhsDash(str) {
+      if (!str) return 0;
+      var s = str.replace(/[₹,\s]/g, '').replace(/lakhs?/gi, '').replace(/[–—]/g, '-');
+      var range = s.match(/(\d+(?:\.\d+)?)[Ll]?-(\d+(?:\.\d+)?)[Ll]?/);
+      if (range) return (parseFloat(range[1]) + parseFloat(range[2])) / 2;
+      var single = s.match(/(\d+(?:\.\d+)?)[Ll]?/);
+      if (single) return parseFloat(single[1]);
+      return 0;
+    }
+
+    // Writes live case data to every dashboard element that depends on it
+    function updateDashboardFromCases(cases) {
+      if (!Array.isArray(cases) || cases.length === 0) return;
+      var now = new Date();
+      var thisMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+
+      // ── Stat cards ──────────────────────────────────────────────
+      var monthCount = 0, openCount = 0, total = cases.length;
+      cases.forEach(function(f) {
+        var created = (f.date_created || '').substring(0, 7); // "2026-09"
+        if (created === thisMonth) monthCount++;
+        if ((f.status || 'Open').toLowerCase() === 'open') openCount++;
+      });
+
+      var mEl   = document.getElementById('dash-stat-month');
+      var mSub  = document.getElementById('dash-stat-month-sub');
+      var oEl   = document.getElementById('dash-stat-open');
+      var oSub  = document.getElementById('dash-stat-open-sub');
+      var tEl   = document.getElementById('dash-stat-total');
+      var tSub  = document.getElementById('dash-stat-total-sub');
+
+      if (mEl)  mEl.textContent  = monthCount;
+      if (mSub) mSub.textContent = monthCount === 0 ? 'Start your first case' : monthCount === 1 ? '1 case this month' : monthCount + ' cases this month';
+      if (oEl)  oEl.textContent  = openCount;
+      if (oSub) oSub.textContent = openCount === 0 ? 'Nothing active yet' : openCount === 1 ? '1 case in progress' : openCount + ' cases in progress';
+      if (tEl)  tEl.textContent  = total;
+      if (tSub) tSub.textContent = total === 0 ? 'Across all Vantage tools' : 'Total across all tools';
+
+      // ── HR Decision Capital (all 3 components) ─────────────────
+      var comp1 = 0, comp2 = 0, comp3 = 0, entries = 0;
+      cases.forEach(function(f) {
+        var v1 = parseExposureLakhsDash(f.financial_exposure || '');
+        if (v1 > 0) { comp1 += v1; entries++; }
+        var v2 = parseExposureLakhsDash(f.retention_value || '');
+        if (v2 > 0) { comp2 += v2; entries++; }
+        var v3 = parseExposureLakhsDash(f.business_case_value || '');
+        if (v3 > 0) { comp3 += v3; entries++; }
+      });
+      var hdcTotal = comp1 + comp2 + comp3;
+      if (hdcTotal <= 0) return;
+
+      function fmtL(n) { return n <= 0 ? null : '\u20B9' + (n % 1 === 0 ? n : (Math.round(n * 10) / 10)) + 'L'; }
+      var hdcDisplay = fmtL(hdcTotal);
+
+      var card  = document.getElementById('hdc-dash-card');
+      var numEl = document.getElementById('hdc-dash-number');
+      var cntEl = document.getElementById('hdc-dash-count');
+      if (!card) return;
+      if (numEl) numEl.textContent = hdcDisplay;
+
+      var parts = [];
+      if (comp1 > 0) parts.push('Exposure ' + fmtL(comp1));
+      if (comp2 > 0) parts.push('Retention ' + fmtL(comp2));
+      if (comp3 > 0) parts.push('ROI ' + fmtL(comp3));
+      if (cntEl) cntEl.textContent = entries + (entries === 1 ? ' entry' : ' entries') + (parts.length ? ' \u00b7 ' + parts.join(' \u00b7 ') : '');
+      card.style.display = 'block';
+
+      // Write to sessionStorage so any other tab can read it
+      try {
+        sessionStorage.setItem('vantage_hdc_exposure', JSON.stringify({
+          value: hdcTotal, display: hdcDisplay, cases: entries,
+          comp1: comp1, comp2: comp2, comp3: comp3, updated: new Date().toISOString()
+        }));
+      } catch(e) {}
+    }
+
+    // Fast path: if sessionStorage has data from a prior Vantage Record visit,
+    // show it immediately without waiting for the Worker call below.
+    (function renderHDCFromSession() {
       try {
         var raw = sessionStorage.getItem('vantage_hdc_exposure');
         if (!raw) return;
@@ -915,14 +995,38 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
         var numEl = document.getElementById('hdc-dash-number');
         var cntEl = document.getElementById('hdc-dash-count');
         if (!card) return;
-        if (numEl) numEl.textContent = hdc.display || ('₹' + hdc.value + 'L');
-        if (cntEl) {
-          var dateStr = '';
-          try { dateStr = ' · updated ' + new Date(hdc.updated).toLocaleDateString('en-IN', {day:'numeric',month:'short'}); } catch(e) {}
-          cntEl.textContent = (hdc.cases || 0) + ' case' + (hdc.cases === 1 ? '' : 's') + ' documented' + dateStr;
-        }
+        if (numEl) numEl.textContent = hdc.display || ('\u20B9' + hdc.value + 'L');
+        if (cntEl) cntEl.textContent = (hdc.cases || 0) + (hdc.cases === 1 ? ' entry' : ' entries') + (hdc.updated ? ' \u00b7 updated ' + new Date(hdc.updated).toLocaleDateString('en-IN', {day:'numeric',month:'short'}) : '');
         card.style.display = 'block';
-      } catch(e) { /* sessionStorage unavailable or malformed — non-fatal */ }
+      } catch(e) {}
+    })();
+
+    // Live path: call get_cases on page load. Updates stats + HDC with fresh Airtable data.
+    // Runs in parallel with the Humac restore; each updates its own part of the dashboard.
+    (function loadDashboardCases() {
+      var WORKER_URL = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+
+      function attemptLoad() {
+        if (window.Clerk && window.Clerk.session) {
+          window.Clerk.session.getToken().then(function(token) {
+            fetch(WORKER_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+              body: JSON.stringify({ tool: 'get_cases' })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+              if (d.success && Array.isArray(d.data)) {
+                updateDashboardFromCases(d.data);
+              }
+            })
+            .catch(function() { /* non-fatal — stat cards stay at 0 */ });
+          }).catch(function() {});
+        } else {
+          setTimeout(attemptLoad, 200);
+        }
+      }
+      attemptLoad();
     })();
   </script>
 
