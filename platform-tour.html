@@ -121,14 +121,37 @@
     .af-link{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(99,102,241,.5);text-decoration:none;letter-spacing:.06em;transition:color .2s}
     .af-link:hover{color:#a5b4fc}
 
+    /* Mobile top bar — hidden on desktop (sidebar covers navigation there) */
+    .mobile-top-bar{display:none}
     @media(max-width:768px){
       .sidebar{display:none}
       .main{margin-left:0}
-      .content{padding:32px 20px 60px}
+      .content{padding:20px 20px 72px}
       .hero-btns{flex-direction:column;align-items:stretch}
       .hbtn{max-width:100%}
       .lookup-row{flex-direction:column;align-items:flex-start;gap:8px}
       .lookup-tool{align-self:flex-start}
+      .mobile-top-bar{
+        display:flex;align-items:center;justify-content:space-between;
+        padding:12px 20px;
+        background:rgba(5,4,16,.96);
+        border-bottom:1px solid rgba(99,102,241,.14);
+        position:sticky;top:0;z-index:100;
+        backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      }
+      .mobile-back{
+        font-family:'JetBrains Mono',monospace;font-size:11px;
+        letter-spacing:.08em;color:rgba(165,180,252,.75);
+        text-decoration:none;display:flex;align-items:center;gap:8px;
+        transition:color .2s;
+      }
+      .mobile-back:hover,.mobile-back:active{color:#c4b5fd}
+      .mobile-back-arrow{font-size:14px;line-height:1}
+      .mobile-page-label{
+        font-family:'JetBrains Mono',monospace;font-size:9px;
+        letter-spacing:.16em;text-transform:uppercase;
+        color:rgba(99,102,241,.5);
+      }
     }
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-thumb{background:rgba(99,102,241,.15);border-radius:2px}
@@ -166,6 +189,13 @@
   </div>
 
   <div class="main">
+    <!-- Mobile-only sticky top bar — desktop uses the left sidebar instead -->
+    <div class="mobile-top-bar">
+      <a href="dashboard.html" class="mobile-back">
+        <span class="mobile-back-arrow">&#8592;</span>Dashboard
+      </a>
+      <span class="mobile-page-label">Platform Tour</span>
+    </div>
     <div class="content">
 
       <!-- HERO -->
