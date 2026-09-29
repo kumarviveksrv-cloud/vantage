@@ -47,10 +47,32 @@
     .filter-btn:hover{border-color:rgba(99,102,241,0.3);color:#f4f3ff}
     .filter-btn.active{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.4);color:#c4b5fd;font-weight:500}
 
-    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
     .stat-mini{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
     .stat-mini-val{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--muted);letter-spacing:-0.5px;margin-bottom:4px}
     .stat-mini-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+
+    /* HDC BANNER — Phase 2 addition */
+    .hdc-banner{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(124,58,237,.06));border:1px solid rgba(99,102,241,.28);border-radius:14px;padding:22px 28px;margin-bottom:20px;position:relative;overflow:hidden;animation:fadeIn .4s ease .1s both;display:none}
+    .hdc-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(196,181,253,.45),transparent)}
+    .hdc-banner-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap}
+    .hdc-banner-left{}
+    .hdc-banner-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,181,253,.45);margin-bottom:4px}
+    .hdc-banner-sublabel{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,181,253,.6);margin-bottom:8px}
+    .hdc-banner-number{font-family:'Space Grotesk',sans-serif;font-size:2.2rem;font-weight:700;letter-spacing:-.04em;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.05;margin-bottom:6px}
+    .hdc-banner-count{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:rgba(244,243,255,.3);margin-top:2px}
+    .hdc-banner-right{max-width:320px;text-align:right}
+    .hdc-banner-desc{font-size:.78rem;color:rgba(244,243,255,.42);line-height:1.68;margin-bottom:10px}
+    .hdc-banner-link{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.08em;color:rgba(165,180,252,.32);text-decoration:none;transition:color .2s}
+    .hdc-banner-link:hover{color:rgba(165,180,252,.65)}
+    .hdc-banner-components{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .hdc-comp{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:6px;border:1px solid rgba(99,102,241,.2);background:rgba(99,102,241,.06)}
+    .hdc-comp-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+    .hdc-comp-dot.live{background:#4ade80;box-shadow:0 0 6px rgba(74,222,128,.5)}
+    .hdc-comp-dot.pending{background:rgba(165,180,252,.2)}
+    .hdc-comp-text{font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.06em}
+    .hdc-comp.live .hdc-comp-text{color:rgba(74,222,128,.65)}
+    .hdc-comp.pending .hdc-comp-text{color:rgba(165,180,252,.3)}
 
     .cases-grid{display:flex;flex-direction:column;gap:12px}
     .case-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;cursor:pointer;transition:all .2s;animation:fadeIn .3s ease}
@@ -166,6 +188,44 @@
         <div class="stat-mini"><div class="stat-mini-val" id="stat-critical" style="color:#FF4D6D">0</div><div class="stat-mini-label">Critical risk</div></div>
         <div class="stat-mini"><div class="stat-mini-val" id="stat-closed">0</div><div class="stat-mini-label">Closed</div></div>
       </div>
+
+      <!-- ═══════════════════════════════════════════
+           HR DECISION CAPITAL — COMPONENT 1 BANNER
+           Phase 2: shows once loadCases() has run and
+           at least one case has a parseable financial_exposure.
+           Hidden by default, revealed by JS after computation.
+           Value stored in sessionStorage as vantage_hdc_exposure
+           so dashboard.html can read it without a second API call.
+           ═══════════════════════════════════════════ -->
+      <div class="hdc-banner" id="hdc-banner">
+        <div class="hdc-banner-inner">
+          <div class="hdc-banner-left">
+            <div class="hdc-banner-eyebrow">HR Decision Capital &middot; Component 1 of 3</div>
+            <div class="hdc-banner-sublabel">Financial Exposure Navigated</div>
+            <div class="hdc-banner-number" id="hdc-total">&#x20B9;—</div>
+            <div class="hdc-banner-count" id="hdc-case-count">Computing from your case record&hellip;</div>
+            <div class="hdc-banner-components">
+              <div class="hdc-comp live">
+                <div class="hdc-comp-dot live"></div>
+                <span class="hdc-comp-text">EXPOSURE NAVIGATED &middot; LIVE</span>
+              </div>
+              <div class="hdc-comp pending">
+                <div class="hdc-comp-dot pending"></div>
+                <span class="hdc-comp-text">RETENTION VALUE &middot; COMING</span>
+              </div>
+              <div class="hdc-comp pending">
+                <div class="hdc-comp-dot pending"></div>
+                <span class="hdc-comp-text">BUSINESS CASES &middot; COMING</span>
+              </div>
+            </div>
+          </div>
+          <div class="hdc-banner-right">
+            <div class="hdc-banner-desc">The running INR total of every financial exposure you've navigated through Employee Case Advisor. This is Component 1 of your HR Decision Capital — computed from your actual case record, not illustrative. Retention Value Protected and Business Cases Landed expand this figure as you use more of Vantage.</div>
+            <a href="about.html#capital" class="hdc-banner-link">How HR Decision Capital works &#8594;</a>
+          </div>
+        </div>
+      </div>
+
       <div class="filter-bar">
         <div class="filter-btn active" onclick="filterCases('all',this)">All cases</div>
         <div class="filter-btn" onclick="filterCases('Open',this)">Open</div>
@@ -266,6 +326,75 @@
       window.location.href = BASE + 'employee-case-advisor.html';
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // HR DECISION CAPITAL — COMPONENT 1 PARSER
+    // Phase 2 addition. Parses the financial_exposure string stored
+    // by the Worker (e.g. "₹8L–₹14L", "₹11.2L", "₹8–14 lakhs")
+    // and returns a number in lakhs at the midpoint of any range.
+    // Falls back to 0 if the string is unparseable — never throws.
+    // ─────────────────────────────────────────────────────────────
+    function parseExposureLakhs(str) {
+      if (!str) return 0;
+      // Strip ₹, commas, whitespace, "lakhs"/"lakh", "cr"/"crore" (not expected but safe)
+      var s = str.replace(/[₹,\s]/g, '').replace(/lakhs?/gi, '').replace(/[–—]/g, '-');
+      // Range pattern: "8L-14L" or "8-14L" or "8-14" or "8.5L-12L"
+      var range = s.match(/(\d+(?:\.\d+)?)[Ll]?-(\d+(?:\.\d+)?)[Ll]?/);
+      if (range) {
+        return (parseFloat(range[1]) + parseFloat(range[2])) / 2;
+      }
+      // Single value: "11.2L" or "11L" or "11.2"
+      var single = s.match(/(\d+(?:\.\d+)?)[Ll]?/);
+      if (single) return parseFloat(single[1]);
+      return 0;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // HDC COMPONENT 1 — COMPUTE AND RENDER
+    // Called after allCases is populated. Sums midpoint financial
+    // exposure across all cases, shows the HDC banner, stores the
+    // result in sessionStorage so dashboard.html can read it on
+    // next load without a second API round-trip.
+    // ─────────────────────────────────────────────────────────────
+    function computeAndRenderHDC() {
+      var total = 0;
+      var casesWithExposure = 0;
+
+      allCases.forEach(function(c) {
+        var raw = ((c.fields || {})['financial_exposure'] || '');
+        var val = parseExposureLakhs(raw);
+        if (val > 0) {
+          total += val;
+          casesWithExposure++;
+        }
+      });
+
+      if (total <= 0) return; // No parseable exposure data — keep banner hidden
+
+      var banner   = document.getElementById('hdc-banner');
+      var numEl    = document.getElementById('hdc-total');
+      var countEl  = document.getElementById('hdc-case-count');
+
+      // Format to one decimal place, drop the .0 if it's a whole number
+      var formatted = total % 1 === 0
+        ? '\u20B9' + total + 'L'
+        : '\u20B9' + (Math.round(total * 10) / 10) + 'L';
+
+      if (numEl)   numEl.textContent   = formatted;
+      if (countEl) countEl.textContent = casesWithExposure + (casesWithExposure === 1 ? ' case documented' : ' cases documented') + ' \u00b7 Component 1 of HR Decision Capital';
+      if (banner)  banner.style.display = 'block';
+
+      // Write to sessionStorage so dashboard.html can surface this without
+      // making its own Worker call. Key: vantage_hdc_exposure
+      try {
+        sessionStorage.setItem('vantage_hdc_exposure', JSON.stringify({
+          value:   total,
+          display: formatted,
+          cases:   casesWithExposure,
+          updated: new Date().toISOString()
+        }));
+      } catch(e) { /* sessionStorage unavailable — non-fatal */ }
+    }
+
     async function loadCases() {
       // Require a live Clerk session — Clerk is loaded by clerk-auth.js below
       var token = null;
@@ -293,6 +422,9 @@
           document.getElementById('stat-critical').innerText = critical;
           document.getElementById('stat-closed').innerText   = closed;
           renderCases(allCases);
+
+          // Phase 2: compute and surface HR Decision Capital Component 1
+          computeAndRenderHDC();
         } else {
           renderCases([]);
         }
