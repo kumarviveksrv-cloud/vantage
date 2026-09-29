@@ -28,8 +28,22 @@
     .hero-note{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.04em;position:relative;z-index:1}
     .tool-tabs{display:flex;justify-content:center;gap:10px;padding:32px 40px 0;flex-wrap:wrap}
     .tool-tab{padding:12px 22px;background:rgba(99,102,241,0.06);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--grey);display:flex;align-items:center;gap:8px}
+    .tool-tab.tab-live{border-color:rgba(52,211,153,0.4);box-shadow:0 0 14px rgba(52,211,153,0.15)}
+    .tool-tab.tab-live:hover{border-color:rgba(52,211,153,0.65);box-shadow:0 0 20px rgba(52,211,153,0.25)}
+    .tab-live-dot{width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px rgba(52,211,153,0.8);animation:pulse 1.8s ease-in-out infinite;flex-shrink:0}
+    .live-nudge{position:fixed;bottom:24px;right:24px;max-width:300px;background:linear-gradient(135deg,rgba(15,12,35,.97),rgba(10,8,28,.98));border:1px solid rgba(52,211,153,.35);border-radius:14px;padding:18px 20px;box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 30px rgba(52,211,153,.12);z-index:500;opacity:0;transform:translateY(16px) scale(.96);pointer-events:none;transition:opacity .4s ease,transform .4s ease}
+    .live-nudge.show{opacity:1;transform:none;pointer-events:auto}
+    .live-nudge-close{position:absolute;top:8px;right:10px;background:none;border:none;color:rgba(244,243,255,.35);font-size:17px;cursor:pointer;line-height:1;padding:4px}
+    .live-nudge-close:hover{color:#fff}
+    .live-nudge-emoji{font-size:22px;margin-bottom:6px}
+    .live-nudge-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;color:#f4f3ff;margin-bottom:6px;padding-right:14px}
+    .live-nudge-body{font-size:12px;color:rgba(244,243,255,.6);line-height:1.55;margin-bottom:14px}
+    .live-nudge-cta{width:100%;padding:10px;background:linear-gradient(135deg,#34d399,#10b981);color:#04140d;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12.5px;border:none;border-radius:8px;cursor:pointer;transition:opacity .2s}
+    .live-nudge-cta:hover{opacity:.88}
+    @media(max-width:480px){.live-nudge{left:16px;right:16px;bottom:16px;max-width:none}}
     .tool-tab:hover{border-color:rgba(99,102,241,0.3);color:#f4f3ff;background:rgba(99,102,241,0.1)}
     .tool-tab.active{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.45);color:#c4b5fd;font-weight:600}
+    .tool-tab.tab-live.active{border-color:rgba(52,211,153,0.5);box-shadow:0 0 16px rgba(52,211,153,0.18)}
     .demo-panel{max-width:760px;margin:0 auto;padding:28px 40px 60px}
     .demo-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:30px;animation:fadeIn .35s ease;position:relative;overflow:hidden}
     .demo-card::before{content:'';position:absolute;inset:-1px;border-radius:18px;background:linear-gradient(135deg,rgba(99,102,241,0.1),transparent 55%);z-index:0;pointer-events:none}
@@ -205,7 +219,7 @@
 </div>
 
 <div class="tool-tabs">
-  <div class="tool-tab active" id="tab-pact" onclick="switchTool('pact')">&#x26A1; Employee Case Advisor</div>
+  <div class="tool-tab active tab-live" id="tab-pact" onclick="switchTool('pact')"><span class="tab-live-dot"></span>&#x26A1; Employee Case Advisor</div>
   <div class="tool-tab" id="tab-signal" onclick="switchTool('signal')">&#x1F4CA; People ROI Brief</div>
   <div class="tool-tab" id="tab-influence" onclick="switchTool('influence')">&#x1F91D; Leadership Communicator</div>
   <div class="tool-tab" id="tab-policy" onclick="switchTool('policy')">&#x2696;&#xFE0F; Policy Advisor</div>
@@ -914,6 +928,33 @@
     updateDashboardPreview(tool);
   }
   document.addEventListener('DOMContentLoaded', function() { updateDashboardPreview('pact'); });
+
+  // One-time celebratory nudge pointing at the live tab — shown once per
+  // browser (localStorage-gated), never re-shown once dismissed either
+  // way (× or the CTA), so returning visitors aren't nagged.
+  document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('vantage_live_nudge_seen')) return;
+    setTimeout(function() {
+      var el = document.getElementById('liveNudge');
+      if (el) el.classList.add('show');
+    }, 1400);
+  });
+  function dismissLiveNudge() {
+    localStorage.setItem('vantage_live_nudge_seen', '1');
+    var el = document.getElementById('liveNudge');
+    if (el) el.classList.remove('show');
+  }
+  function tryLiveNudge() {
+    dismissLiveNudge();
+    switchTool('pact');
+    var panel = document.querySelector('.demo-panel');
+    if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function() {
+      var input = document.getElementById('live-input');
+      if (input) input.focus();
+    }, 500);
+  }
+
   function getRiskClass(r){ return {Critical:'critical',High:'high',Medium:'medium',Low:'low'}[r]||'medium'; }
   function getScoreClass(s){ return {'Critical':'score-critical','High':'score-high','Medium':'score-medium','Low':'score-low'}[s]||'score-medium'; }
 
@@ -1038,10 +1079,16 @@
     document.getElementById('pact-output').style.display = 'none';
 
     try {
+      // Admin testing convenience: ?admin_key=... in the URL bypasses the
+      // free-preview rate limits server-side. It travels in the request
+      // body just like any other field, so it's visible in the browser's
+      // network tab and URL bar — fine for your own testing, but don't
+      // paste a link containing it anywhere it could leak.
+      var adminKey = new URLSearchParams(window.location.search).get('admin_key') || undefined;
       var resp = await fetch(PREVIEW_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ situation: situation, device_id: getDeviceId(), consent: document.getElementById('live-consent').checked }),
+        body: JSON.stringify({ situation: situation, device_id: getDeviceId(), consent: document.getElementById('live-consent').checked, admin_key: adminKey }),
       });
       var data = await resp.json();
 
@@ -1183,5 +1230,13 @@
     document.getElementById('offer-output').style.display = 'block';
   }
 </script>
+<div class="live-nudge" id="liveNudge">
+  <button class="live-nudge-close" onclick="dismissLiveNudge()" aria-label="Dismiss">&times;</button>
+  <div class="live-nudge-emoji">&#x1F389;</div>
+  <div class="live-nudge-title">Psst &mdash; one of these is real.</div>
+  <div class="live-nudge-body">The Employee Case Advisor tab isn&rsquo;t a script like the rest. Type your actual situation and get one real, live answer.</div>
+  <button class="live-nudge-cta" onclick="tryLiveNudge()">Try it now &rarr;</button>
+</div>
+
 </body>
 </html>
