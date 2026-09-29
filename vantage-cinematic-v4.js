@@ -99,13 +99,13 @@ $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.ge
   A:{state:'risk',risk:'HIGH',signal:'EXPOSURE RISING',process:'WEAK',impact:'HIGH',def:'LOW',exposure:'₹18L–₹24L',
     expNum:'₹21L',
     pact:'No documented warnings precede this termination. Without a paper trail, tribunal challenge is near-certain. This path cannot be legally defended in Maharashtra under the Industrial Disputes Act.',
-    aria:'Before this goes further — are the two verbal warnings logged anywhere, even informally? That single detail changes everything here.',
+    aria:'Before this goes further: are the two verbal warnings logged anywhere, even informally? That single detail changes everything here.',
     verdict:'HIGH EXPOSURE · Do not proceed tonight.'
   },
   B:{state:'partial',risk:'MATERIAL',signal:'PROCESS OPEN',process:'PARTIAL',impact:'MODERATE',def:'MEDIUM',exposure:'₹4L–₹8L',
     expNum:'₹6L',
     pact:'The written warning creates a paper trail forward, but the prior verbal warnings are undocumented. Partial protection only. The case remains open and must be followed up within 30 days or exposure increases.',
-    aria:'Has the employee formally acknowledged receipt of verbal warnings in any form — WhatsApp, email, even informally? That changes the defensibility score significantly.',
+    aria:'Has the employee formally acknowledged receipt of verbal warnings in any form: WhatsApp, email, even informally? That changes the defensibility score significantly.',
     verdict:'PARTIAL PROTECTION · Case still open.'
   },
   C:{state:'defensible',risk:'LOW',signal:'FIELD RESOLVED',process:'STRONG',impact:'LOW',def:'HIGH',exposure:'₹1L–₹3L',
@@ -136,10 +136,10 @@ $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.ge
    const expNum=document.getElementById('resultExpNum');
    if(pactEl) pactEl.textContent=o.pact||'';
    if(ariaEl) ariaEl.textContent=o.aria||'';
-   if(expNum) expNum.textContent=o.expNum||o.exposure||'—';
+   if(expNum) expNum.textContent=o.expNum||o.exposure||'-';
    if(riEl) riEl.classList.add('ri-active');
  }));
- $('#caseReset')?.addEventListener('click',()=>{if(stage){stage.dataset.state='';$('.decision-state b',stage).textContent='AWAITING CHOICE'}if(machine)machine.dataset.outcome='';if(field.process)field.process.textContent='WAITING';if(field.exposure)field.exposure.textContent='—';if(field.impact)field.impact.textContent='—';if(field.def)field.def.textContent='—';setRail('risk','UNRESOLVED');setRail('signal','LISTENING');setSystem('');const riReset=document.getElementById('resultIntelligence');if(riReset)riReset.classList.remove('ri-active');});
+ $('#caseReset')?.addEventListener('click',()=>{if(stage){stage.dataset.state='';$('.decision-state b',stage).textContent='AWAITING CHOICE'}if(machine)machine.dataset.outcome='';if(field.process)field.process.textContent='WAITING';if(field.exposure)field.exposure.textContent='-';if(field.impact)field.impact.textContent='-';if(field.def)field.def.textContent='-';setRail('risk','UNRESOLVED');setRail('signal','LISTENING');setSystem('');const riReset=document.getElementById('resultIntelligence');if(riReset)riReset.classList.remove('ri-active');});
  // Meridian becomes a context lock sequence.
  const meridian=$('.meridian'),status=$('#meridianStatus');
  if(meridian){const labels=$$('.orbit-label',meridian);const observer=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){meridian.dataset.calibrated='true';setRail('context','RESOLVED');setRail('signal','PRECISION');setTimeout(()=>setRail('signal','READY'),900);observer.disconnect()}},{threshold:.35});observer.observe(meridian)}
