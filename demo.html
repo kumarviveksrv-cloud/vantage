@@ -914,6 +914,7 @@
   function getScoreClass(s){ return {'Critical':'score-critical','High':'score-high','Medium':'score-medium','Low':'score-low'}[s]||'score-medium'; }
 
   // ── Live preview — the one real tool ──────────────────────────────
+  // ⚠ Fill in your actual deployed Worker URL before this goes live.
   var PREVIEW_ENDPOINT = 'https://vantage-preview.kumarvivek-srv.workers.dev/api/preview';
 
   function getDeviceId() {
@@ -946,6 +947,16 @@
   function renderLiveResult(result, alreadyUsed) {
     var riskClass = mapVclass(result.vclass);
 
+    // The model writes explanation as two paragraphs separated by \n\n —
+    // HTML collapses raw newlines by default, so without this the whole
+    // thing rendered as one dense block regardless of what was actually
+    // in the string.
+    function formatParagraphs(text) {
+      return (text || '').split(/\n\s*\n/).map(function(p) {
+        return p.trim();
+      }).filter(Boolean).join('<br><br>');
+    }
+
     var signalsBlock = '';
     if (Array.isArray(result.signals) && result.signals.length) {
       var signalCards = result.signals.map(function(s) {
@@ -953,6 +964,13 @@
           '<div class="pact-status" style="margin-top:6px">' + (s.note || '') + '</div></div>';
       }).join('');
       signalsBlock = '<div class="pact-grid">' + signalCards + '</div>';
+    }
+
+    var orgImpactBlock = '';
+    if (result.org_impact) {
+      orgImpactBlock =
+        '<div class="steps-card"><div class="steps-title">What this actually costs if handled poorly</div>' +
+          '<div class="risk-sub">' + formatParagraphs(result.org_impact) + '</div></div>';
     }
 
     var exposureBlock = '';
@@ -983,10 +1001,11 @@
       alreadyUsedNote +
       '<div class="risk-banner risk-' + riskClass + '">' +
         '<div><div class="risk-title">' + (result.verdict || '') + '</div>' +
-          '<div class="risk-sub">' + (result.explanation || '') + '</div></div>' +
+          '<div class="risk-sub">' + formatParagraphs(result.explanation) + '</div></div>' +
         '<div class="risk-badge badge-' + riskClass + '">' + (result.vclass || '').toUpperCase() + '</div>' +
       '</div>' +
       signalsBlock +
+      orgImpactBlock +
       exposureBlock +
       '<div class="steps-card"><div class="steps-title">What ARIA would ask next</div>' +
         '<div class="risk-sub" style="font-style:italic">' + (result.next_step || '') + '</div></div>' +
