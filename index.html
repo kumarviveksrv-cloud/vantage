@@ -4166,15 +4166,39 @@ function hideAllInstallUI(){
   hidePwaToast();
 }
 
+var _toastScrollHandler=null;
+/* True once the hero's bottom edge has scrolled up far enough that a bottom-anchored
+   toast can no longer sit on top of any hero text. */
+function _heroIsClear(){
+  var h=document.querySelector('.hero');
+  if(!h)return true;
+  return h.getBoundingClientRect().bottom < window.innerHeight-140;
+}
 function showPwaToast(){
   var t=document.getElementById('pwa-toast');
-  if(t){setTimeout(function(){t.classList.add('pwa-show');},800);
-  _toastTimer=setTimeout(function(){hidePwaToast();},12000);}
+  if(!t)return;
+  function reveal(){
+    setTimeout(function(){t.classList.add('pwa-show');},800);
+    _toastTimer=setTimeout(function(){hidePwaToast();},12000);
+  }
+  /* SR23: never cover the hero. It now ends with the tagline and deck at the bottom of
+     the screen, exactly where this toast sits, so wait until the visitor has scrolled
+     past it. The nav Install button is already visible in the meantime. */
+  if(_heroIsClear()){reveal();return;}
+  _toastScrollHandler=function(){
+    if(_heroIsClear()){
+      window.removeEventListener('scroll',_toastScrollHandler);
+      _toastScrollHandler=null;
+      reveal();
+    }
+  };
+  window.addEventListener('scroll',_toastScrollHandler,{passive:true});
 }
 function hidePwaToast(){
   var t=document.getElementById('pwa-toast');
   if(t)t.classList.remove('pwa-show');
   if(_toastTimer){clearTimeout(_toastTimer);_toastTimer=null;}
+  if(_toastScrollHandler){window.removeEventListener('scroll',_toastScrollHandler);_toastScrollHandler=null;}
 }
 
 function triggerPwaInstall(){
