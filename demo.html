@@ -61,14 +61,14 @@
     .risk-medium{background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.25)}
     .risk-low{background:rgba(244,243,255,0.04);border:1px solid rgba(244,243,255,0.1)}
     .risk-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:#f4f3ff;margin-bottom:5px}
-    .risk-sub{font-size:13px;color:var(--grey);line-height:1.5;max-width:500px}
+    .risk-sub{font-size:13px;color:rgba(244,243,255,0.78);line-height:1.65;max-width:640px}
     .risk-badge{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;flex-shrink:0}
     .badge-critical{color:#FF4D6D;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3)}
     .badge-high{color:#FFB547;background:rgba(255,181,71,0.15);border:1px solid rgba(255,181,71,0.3)}
     .badge-medium{color:var(--muted);background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3)}
     .badge-low{color:var(--grey);background:rgba(244,243,255,0.06);border:1px solid rgba(244,243,255,0.1)}
     .pact-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-    .pact-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px}
+    .pact-card{background:var(--card2);border:1px solid var(--border);border-left:3px solid rgba(139,92,246,0.55);border-radius:10px;padding:16px}
     .pact-dim{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between}
     .pact-score{font-size:10px;font-family:'JetBrains Mono',monospace;padding:2px 7px;border-radius:4px}
     .score-critical{color:#FF4D6D;background:rgba(255,77,109,0.12);border:1px solid rgba(255,77,109,0.2)}
@@ -92,6 +92,10 @@
     .hc-block-label.green{color:var(--muted)}
     .hc-block-text{font-size:12px;color:var(--grey);line-height:1.5}
     .steps-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:20px}
+    .steps-card.card-impact{background:linear-gradient(135deg,rgba(255,181,71,0.09),rgba(255,181,71,0.02));border-color:rgba(255,181,71,0.28);border-left:3px solid #FFB547}
+    .steps-card.card-impact .steps-title{color:#FFB547}
+    .steps-card.card-aria{background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(99,102,241,0.03));border-color:rgba(99,102,241,0.32);border-left:3px solid var(--accent)}
+    .steps-card.card-aria .steps-title{color:var(--lavender)}
     .steps-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;margin-bottom:14px;color:#f4f3ff}
     .step-item{display:flex;gap:10px;margin-bottom:10px}
     .step-num{width:22px;height:22px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0;font-weight:700}
@@ -969,7 +973,7 @@
     var orgImpactBlock = '';
     if (result.org_impact) {
       orgImpactBlock =
-        '<div class="steps-card"><div class="steps-title">What this actually costs if handled poorly</div>' +
+        '<div class="steps-card card-impact"><div class="steps-title">What this actually costs if handled poorly</div>' +
           '<div class="risk-sub">' + formatParagraphs(result.org_impact) + '</div></div>';
     }
 
@@ -1007,7 +1011,7 @@
       signalsBlock +
       orgImpactBlock +
       exposureBlock +
-      '<div class="steps-card"><div class="steps-title">What ARIA would ask next</div>' +
+      '<div class="steps-card card-aria"><div class="steps-title">What ARIA would ask next</div>' +
         '<div class="risk-sub" style="font-style:italic">' + (result.next_step || '') + '</div></div>' +
       '<div class="demo-cta"><div class="demo-cta-title">This was your real answer, not a script.</div>' +
         '<div class="demo-cta-sub">Sign in to save this as the first entry in your Vantage Record, see the full financial breakdown, and keep going with your own cases.</div>' +
