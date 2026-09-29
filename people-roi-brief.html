@@ -407,6 +407,7 @@
         <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="buildInfluence()">Build Influence Stack &#x2192;</button>
+          <button class="btn-ghost" id="save-record-btn" onclick="saveToRecord()">Save to Vantage Record &#x2192;</button>
           <button class="btn-ghost" onclick="fileToLedger()">File to Ledger &rarr;</button>
           <button class="btn-ghost" onclick="startNew()">New Story</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
@@ -644,6 +645,43 @@
         headline: document.getElementById('headline-text').innerText
       }));
       window.location.href = BASE + 'aria.html';
+    }
+
+    // Phase 3: save People ROI Brief output to Vantage Record
+    // business_case_value = Revenue at Risk figure (the financial exposure surfaced)
+    async function saveToRecord() {
+      if (!currentResult) return;
+      var rar = currentResult.revenueAtRisk || {};
+      var businessCaseValue = rar.figure || '';
+      var narrative = 'People ROI Brief. Audience: ' + (selectedAudience || 'Unknown') + '. Revenue at Risk: ' + (rar.figure || 'N/A') + '. Headline: ' + ((currentResult.headline || '').substring(0, 200));
+
+      try {
+        var token = null;
+        if (window.Clerk && window.Clerk.session) {
+          try { token = await window.Clerk.session.getToken(); } catch(e) {}
+        }
+        var headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        var res = await fetch(WORKER, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({
+            tool: 'save_case',
+            caseType: 'People ROI Brief — ' + (selectedAudience || 'General'),
+            narrative: narrative,
+            result: currentResult,
+            business_case_value: businessCaseValue,
+            status: 'Open'
+          })
+        });
+        var data = await res.json();
+        if (data.success) {
+          var btn = document.getElementById('save-record-btn');
+          if (btn) { btn.textContent = 'Saved ✓'; btn.disabled = true; }
+          try { localStorage.setItem('sr_last_case_id', (data.data && data.data.airtableId) || 'saved'); } catch(e) {}
+        }
+      } catch(e) { /* silent fail */ }
     }
 
     function buildInfluence() {
