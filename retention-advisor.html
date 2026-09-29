@@ -359,7 +359,7 @@
     <div id="output-view" style="display:none">
       <div class="output-section" id="output-content"></div>
       <div class="action-row">
-        <button class="action-btn primary" onclick="saveToLibrary()">Save to Case Library</button>
+        <button class="action-btn primary" onclick="saveToLibrary()">Save to Vantage Record &#x2192;</button>
         <button class="action-btn" onclick="fileToLedger()">File to Ledger &rarr;</button>
         <button class="action-btn" onclick="showView('intake-view');currentResult=null;">New Analysis</button>
       </div>
@@ -674,32 +674,52 @@
       window.location.href = 'standpoint.html';
     }
 
+    // Phase 3: saveToLibrary — fixed auth, retention_value extraction, localStorage write
     async function saveToLibrary() {
       if (!currentResult) return;
       var ep = currentResult.employeeProfile || {};
       var rec = currentResult.recommendation || {};
       var humac = currentResult.humac || {};
       var flow = currentResult.flow;
+      var fm = currentResult.financialModel || {};
+
       var narrative = flow === 'counter_offer'
         ? 'Counter-offer decision. Current CTC: ' + formatINR(ep.currentCTC) + '. Competing offer: ' + formatINR(ep.offerCTC) + '. Band: ' + ep.performanceBand + '. Flight risk: ' + ep.flightRisk + '.'
         : 'Flight risk assessment. Current CTC: ' + formatINR(ep.currentCTC) + '. Band: ' + ep.performanceBand + '. Risk: ' + ep.flightRisk + '. Est. timeline: ' + (ep.estimatedTimeToLeave || 'Unknown') + '.';
 
+      // Retention Value Protected = replacement cost (what we avoided losing)
+      // counter_offer: replacementCost.total  |  proactive: costOfLosingThem.total
+      var retentionValue = flow === 'counter_offer'
+        ? ((fm.replacementCost && fm.replacementCost.total) || (humac.range || ''))
+        : ((fm.costOfLosingThem && fm.costOfLosingThem.total) || (humac.range || ''));
+
       try {
+        // Phase 3 fix: include Clerk JWT so the Worker auth check passes
+        var token = null;
+        if (window.Clerk && window.Clerk.session) {
+          try { token = await window.Clerk.session.getToken(); } catch(e) {}
+        }
+        var headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
         var res = await fetch(WORKER, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: headers,
           body: JSON.stringify({
             tool: 'save_case',
             caseType: flow === 'counter_offer' ? 'Retention Advisor — Counter-offer' : 'Retention Advisor — Flight Risk',
             narrative: narrative,
             result: currentResult,
+            retention_value: retentionValue,
             status: 'Open'
           })
         });
         var data = await res.json();
         if (data.success) {
           var btn = document.querySelector('.action-btn.primary');
-          if (btn) { btn.textContent = 'Saved ✓'; btn.disabled = true; }
+          if (btn) { btn.textContent = 'Saved to Vantage Record ✓'; btn.disabled = true; }
+          // Signal dashboard setup card that a case exists
+          try { localStorage.setItem('sr_last_case_id', (data.data && data.data.airtableId) || 'saved'); } catch(e) {}
         }
       } catch(e) { /* silent fail */ }
     }
