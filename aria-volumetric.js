@@ -268,8 +268,8 @@
        show the right affordance for whichever input this actually is. */
     const isTouch = matchMedia('(hover: none), (pointer: coarse)').matches;
     reactionText.textContent = isTouch
-      ? 'Touch and drag over her — she notices.'
-      : 'Move your cursor over her — she notices.';
+      ? 'Touch and drag over her. She notices.'
+      : 'Move your cursor over her. She notices.';
     reaction.classList.add('live');
 
     /* On mobile the nudge wasn't appearing at all — its positioning
