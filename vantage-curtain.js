@@ -2706,48 +2706,47 @@
     if(isPostSkip) sessionStorage.removeItem('vantage_post_skip');
     await delay(isPayingUser ? 400 : (isPostSkip ? 400 : 600));
 
-    /* 1. Tagline types out (mixed em) — slowed from 32ms to 58ms/char,
-       nearly doubling visible duration (~1.8s -> ~3.3s) */
-    await typeMixedLine(tagline, "Your Personal HR Business Partner. ", "Not the org's. Yours.", 58, 'Tagline');
-    await delay(500);
+    /* SR23 hero reorder. The story leads and the definition lands last:
+       scene, evidence, feeling, identity, question, "Enter VANTAGE.", then the
+       tagline and the deck. Every per-step timing below is unchanged from
+       before; only the ORDER of the steps moved. */
 
-    /* 2. Kicker fades in */
-    await fadeIn(kicker, 650);
-    await delay(700);
-
-    /* 3. H1 line 1 (dim) types out — slowed significantly, 34ms -> 70ms/char
-       (~1.6s -> ~3.4s total for this 48-character line) */
+    /* 1. H1 line 1 (dim) types out, 70ms/char (~3.4s for this 48-char line) */
     await typeSimpleLine(lineDim, 'Every HR professional has had that 9 pm moment.', 70, 'H1-dim');
     await delay(350);
 
-    /* 3b. "The manager wants closure..." context line fades in WORD BY
-       WORD to its own intended dim opacity (0.62), slowly. */
+    /* 2. "The one that can't wait for morning..." context line fades in
+       WORD BY WORD. */
     if(heroContext){
       await fadeInWordsTo(heroContext, 1, 150, 450);
       await delay(500);
     }
 
-    /* 4. H1 lines 2+3 (accent) fade in WORD BY WORD, one line at a time
-       — slowed substantially: 130ms->220ms between words, 420ms->650ms
-       per word's own fade+rise. */
+    /* 3. Kicker ("You carry everyone's hardest moments. Alone.") fades in. */
+    await fadeIn(kicker, 650);
+    await delay(700);
+
+    /* 4. H1 accent lines fade in WORD BY WORD, one line at a time. */
     for(const line of lineAccents){
       await fadeInWords(line, 220, 650);
       await delay(450);
     }
     await delay(700);
 
-    /* 5. "Enter Vantage." typewriter sequence (existing logic) — now
-       AWAITED so hero-deck can reveal only after it finishes, instead
-       of firing in parallel. */
+    /* 5. "Enter Vantage." typewriter sequence (existing logic), AWAITED so
+       the tagline only starts once it has finished. */
     console.log('[HeroSeq] Handing off to heroEnter');
     if(window._heroEnterRun) await window._heroEnterRun();
 
-    /* 6. hero-deck ("HR for HR — the private intelligence ally...")
-       fades in word by word. em portion built from the original
-       <em> element's text; plain portion is whatever textContent
-       remains after that. */
+    /* 6. Tagline types out (mixed em), 58ms/char (~3.3s). */
+    await delay(500);
+    await typeMixedLine(tagline, "Your Personal HR Business Partner. ", "Not the org's. Yours.", 58, 'Tagline');
+
+    /* 7. hero-deck fades in word by word. The em portion is built from the
+       original <em> element's text (none today); the plain portion is
+       whatever textContent remains after that. */
     if(heroDeck){
-      await delay(400);
+      await delay(500);
       const emEl = heroDeck.querySelector('em');
       const emText = emEl ? emEl.textContent : '';
       const fullText = heroDeck.textContent;
