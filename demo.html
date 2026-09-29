@@ -40,6 +40,13 @@
     .scenario-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
     .scenario-text{background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-size:13px;color:rgba(244,243,255,0.65);line-height:1.7;margin-bottom:8px;font-style:italic}
     .scenario-note{font-size:11px;color:var(--dim);margin-bottom:22px;font-family:'JetBrains Mono',monospace;letter-spacing:.03em}
+    .live-textarea{width:100%;min-height:110px;background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;padding:16px 18px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:rgba(244,243,255,0.88);line-height:1.7;margin-bottom:8px;resize:vertical;transition:border-color .2s}
+    .live-textarea:focus{outline:none;border-color:rgba(99,102,241,0.5)}
+    .live-textarea::placeholder{color:rgba(244,243,255,0.32);font-style:italic}
+    .exposure-blur{filter:blur(6px);user-select:none;cursor:pointer;transition:filter .2s}
+    .exposure-blur:hover{filter:blur(4px)}
+    .exposure-tease{display:flex;align-items:center;justify-content:space-between;gap:14px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:14px 18px;margin:16px 0}
+    .exposure-tease-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
     .run-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.4);display:flex;align-items:center;justify-content:center;gap:8px}
     .run-btn:hover{opacity:.88}
     .run-btn:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
@@ -206,12 +213,16 @@
 <div class="demo-panel">
   <div id="pact-tool">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x26A1; Employee Case Advisor <div class="demo-tag">Demo &middot; Misconduct Case</div></div></div>
-      <div class="scenario-label">Pre-loaded scenario</div>
-      <div class="scenario-text">Rohan Mehta, Senior Software Engineer, 5 years tenure. Badge records confirm he marked attendance as present on 14 days over the past 3 months when he was not in office. Evidence gathered. No prior warnings on record. Line manager wants to proceed with immediate termination.</div>
-      <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you describe your own live cases.</div>
-      <button class="run-btn" id="pact-run-btn" onclick="runPACT()">&#x26A1; Run Case Analysis</button>
-      <div class="loading-wrap" id="pact-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">RUNNING CASE ANALYSIS...</div></div>
+      <div class="demo-card-header"><div class="demo-card-title">&#x26A1; Employee Case Advisor <div class="demo-tag" style="background:rgba(52,211,153,0.15);color:#34d399;border-color:rgba(52,211,153,0.3)">Live &middot; Your Real Case</div></div></div>
+      <div class="scenario-label">Describe your actual situation &mdash; this one&rsquo;s real, not a script</div>
+      <textarea id="live-input" class="live-textarea" maxlength="800" placeholder="e.g. Employee has been marking attendance as present while working from an unapproved location for 3 weeks. No prior written warnings on file. Manager wants to terminate today."></textarea>
+      <div class="scenario-note" id="live-charcount">0 / 800 &mdash; one free, real answer per visitor. No sign-up needed to see it.</div>
+      <label style="display:flex;align-items:flex-start;gap:9px;margin-bottom:16px;font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;line-height:1.6;cursor:pointer">
+        <input type="checkbox" id="live-consent" style="margin-top:2px;accent-color:#6366f1" onchange="document.getElementById('pact-run-btn').disabled=!this.checked">
+        I understand this isn&rsquo;t legal advice, and my anonymised input is processed by AI to generate this answer.
+      </label>
+      <button class="run-btn" id="pact-run-btn" onclick="runLivePreview()" disabled>&#x26A1; Get My Real Answer</button>
+      <div class="loading-wrap" id="pact-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">READING YOUR SITUATION...</div></div>
       <div class="output-wrap" id="pact-output"></div>
     </div>
   </div>
@@ -901,6 +912,122 @@
   document.addEventListener('DOMContentLoaded', function() { updateDashboardPreview('pact'); });
   function getRiskClass(r){ return {Critical:'critical',High:'high',Medium:'medium',Low:'low'}[r]||'medium'; }
   function getScoreClass(s){ return {'Critical':'score-critical','High':'score-high','Medium':'score-medium','Low':'score-low'}[s]||'score-medium'; }
+
+  // ── Live preview — the one real tool ──────────────────────────────
+  // ⚠ Fill in your actual deployed Worker URL before this goes live.
+  var PREVIEW_ENDPOINT = 'https://vantage-preview.kumarvivek-srv.workers.dev/api/preview';
+
+  function getDeviceId() {
+    var key = 'vantage_device_id';
+    var id = localStorage.getItem(key);
+    if (!id) {
+      id = (crypto.randomUUID ? crypto.randomUUID() : 'dev-' + Date.now() + '-' + Math.random().toString(16).slice(2));
+      localStorage.setItem(key, id);
+    }
+    return id;
+  }
+
+  // vclass from the Worker (risk/warn/ok) → this page's existing 4-tier badge classes
+  function mapVclass(vclass) {
+    return { risk: 'critical', warn: 'medium', ok: 'low' }[vclass] || 'medium';
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('live-input');
+    var counter = document.getElementById('live-charcount');
+    if (input && counter) {
+      input.addEventListener('input', function() {
+        var n = input.value.length;
+        counter.textContent = n + ' / 800 \u2014 one free, real answer per visitor. No sign-up needed to see it.';
+        counter.style.color = n > 800 ? '#FF4D6D' : '';
+      });
+    }
+  });
+
+  function renderLiveResult(result, alreadyUsed) {
+    var riskClass = mapVclass(result.vclass);
+    var exposureBlock = '';
+    if (result.exposure_estimate) {
+      exposureBlock =
+        '<div class="exposure-tease">' +
+          '<div><div class="exposure-tease-label">Estimated Financial Exposure</div>' +
+            '<span class="exposure-blur" onclick="this.classList.remove(\'exposure-blur\')" title="Click to reveal — full breakdown needs sign-in">' + result.exposure_estimate + '</span>' +
+          '</div>' +
+          '<a href="access.html" class="btn-p" style="white-space:nowrap;padding:10px 16px;font-size:12px">See Full Breakdown \u2192</a>' +
+        '</div>';
+    }
+    var alreadyUsedNote = alreadyUsed
+      ? '<div class="scenario-note" style="margin-bottom:14px">This is the answer from your earlier free preview \u2014 sign in to ask a new one.</div>'
+      : '';
+    document.getElementById('pact-output').innerHTML =
+      alreadyUsedNote +
+      '<div class="risk-banner risk-' + riskClass + '">' +
+        '<div><div class="risk-title">' + (result.verdict || '') + '</div>' +
+          '<div class="risk-sub">' + (result.explanation || '') + '</div></div>' +
+        '<div class="risk-badge badge-' + riskClass + '">' + (result.vclass || '').toUpperCase() + '</div>' +
+      '</div>' +
+      exposureBlock +
+      '<div class="steps-card"><div class="steps-title">What ARIA would ask next</div>' +
+        '<div class="risk-sub" style="font-style:italic">' + (result.next_step || '') + '</div></div>' +
+      '<div class="demo-cta"><div class="demo-cta-title">This was your real answer, not a script.</div>' +
+        '<div class="demo-cta-sub">Sign in to save this as the first entry in your Vantage Record, see the full financial breakdown, and keep going with your own cases.</div>' +
+        '<div class="cta-btns"><a href="access.html" class="btn-p">Get Started \u2192</a><a href="index.html" class="btn-g">See what else is inside</a></div></div>';
+    document.getElementById('pact-output').style.display = 'block';
+  }
+
+  async function runLivePreview() {
+    var input = document.getElementById('live-input');
+    var situation = (input.value || '').trim();
+
+    if (!document.getElementById('live-consent').checked) {
+      alert('Please check the box above first \u2014 it\u2019s a quick one.');
+      return;
+    }
+    if (situation.length < 10) {
+      alert('Give it a bit more detail \u2014 a sentence or two about what\u2019s actually going on.');
+      return;
+    }
+
+    var btn = document.getElementById('pact-run-btn');
+    btn.disabled = true;
+    document.getElementById('pact-loading').style.display = 'block';
+    document.getElementById('pact-output').style.display = 'none';
+
+    try {
+      var resp = await fetch(PREVIEW_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ situation: situation, device_id: getDeviceId(), consent: document.getElementById('live-consent').checked }),
+      });
+      var data = await resp.json();
+
+      document.getElementById('pact-loading').style.display = 'none';
+      btn.disabled = false;
+
+      if (!resp.ok && !data.already_used) {
+        document.getElementById('pact-output').innerHTML =
+          '<div class="scenario-note" style="color:#FF4D6D">' + (data.error || 'Something went wrong \u2014 please try again.') + '</div>';
+        document.getElementById('pact-output').style.display = 'block';
+        return;
+      }
+
+      if (data.already_used && data.result) {
+        renderLiveResult(data.result, true);
+      } else if (data.already_used) {
+        document.getElementById('pact-output').innerHTML =
+          '<div class="scenario-note">' + (data.message || 'You\u2019ve already used your free preview.') + ' <a href="access.html" style="color:var(--muted)">Sign in to continue \u2192</a></div>';
+        document.getElementById('pact-output').style.display = 'block';
+      } else {
+        renderLiveResult(data.result, false);
+      }
+    } catch (err) {
+      document.getElementById('pact-loading').style.display = 'none';
+      btn.disabled = false;
+      document.getElementById('pact-output').innerHTML =
+        '<div class="scenario-note" style="color:#FF4D6D">Couldn\u2019t reach Vantage right now \u2014 please try again in a moment.</div>';
+      document.getElementById('pact-output').style.display = 'block';
+    }
+  }
 
   async function runPACT() {
     document.getElementById('pact-run-btn').disabled = true;
