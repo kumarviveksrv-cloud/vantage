@@ -6,7 +6,7 @@
   <link rel="shortcut icon" href="favicon.png"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Live Demo &mdash; Virorah Vantage</title>
+  <title>Live Demo | Virorah Vantage</title>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet" />
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -232,9 +232,9 @@
   <div id="pact-tool">
     <div class="demo-card">
       <div class="demo-card-header"><div class="demo-card-title">&#x26A1; Employee Case Advisor <div class="demo-tag" style="background:rgba(52,211,153,0.15);color:#34d399;border-color:rgba(52,211,153,0.3)">Live &middot; Your Real Case</div></div></div>
-      <div class="scenario-label">Describe your actual situation &mdash; this one&rsquo;s real, not a script</div>
+      <div class="scenario-label">Describe your actual situation. This one&rsquo;s real, not a script</div>
       <textarea id="live-input" class="live-textarea" maxlength="800" placeholder="e.g. Employee has been marking attendance as present while working from an unapproved location for 3 weeks. No prior written warnings on file. Manager wants to terminate today."></textarea>
-      <div class="scenario-note" id="live-charcount">0 / 800 &mdash; one free, real answer per visitor. No sign-up needed to see it.</div>
+      <div class="scenario-note" id="live-charcount">0 / 800 &middot; one free, real answer per visitor. No sign-up needed to see it.</div>
       <label style="display:flex;align-items:flex-start;gap:9px;margin-bottom:16px;font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;line-height:1.6;cursor:pointer">
         <input type="checkbox" id="live-consent" style="margin-top:2px;accent-color:#6366f1" onchange="document.getElementById('pact-run-btn').disabled=!this.checked">
         I understand this isn&rsquo;t legal advice, and my anonymised input is processed by AI to generate this answer.
@@ -248,7 +248,7 @@
     <div class="demo-card">
       <div class="demo-card-header"><div class="demo-card-title">&#x1F4CA; People ROI Brief <div class="demo-tag">Demo &middot; CFO Presentation</div></div></div>
       <div class="scenario-label">Pre-loaded scenario</div>
-      <div class="scenario-text">Attrition rate: 22% (up from 14% last quarter). Time to hire: 58 days. Engagement score: 54%. Open positions: 18. Average CTC: &#8377;14L. Audience: CFO. Context: Engineering attrition spike &mdash; need budget approval for &#8377;22L retention programme.</div>
+      <div class="scenario-text">Attrition rate: 22% (up from 14% last quarter). Time to hire: 58 days. Engagement score: 54%. Open positions: 18. Average CTC: &#8377;14L. Audience: CFO. Context: Engineering attrition spike: need budget approval for &#8377;22L retention programme.</div>
       <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you enter your own metrics and context.</div>
       <button class="run-btn" id="signal-run-btn" onclick="runSIGNAL()">&#x1F4CA; Generate ROI Narrative</button>
       <div class="loading-wrap" id="signal-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">BUILDING ROI NARRATIVE...</div></div>
@@ -291,12 +291,12 @@
   <div id="practice-tool" style="display:none">
     <div class="demo-card">
       <div class="demo-card-header"><div class="demo-card-title">&#x1F3AD; Difficult Conversations <div class="demo-tag">Example &middot; Denied Promotion</div></div></div>
-      <div class="scenario-label">Example transcript &mdash; read-only preview</div>
+      <div class="scenario-label">Example transcript &middot; read-only preview</div>
       <div class="scenario-text">On the full platform this is a live, typed back-and-forth. Below is a real example of how a session plays out, so you can see the shape of it before you try it yourself.</div>
       <div class="transcript-wrap">
-        <div class="t-bubble t-sys">STAKES BRIEFING &mdash; Financial exposure: Low &middot; Humac pillar: L3 &middot; Practising with: a results-driven senior associate who has been told &ldquo;not yet&rdquo; once before</div>
+        <div class="t-bubble t-sys">STAKES BRIEFING &middot; Financial exposure: Low &middot; Humac pillar: L3 &middot; Practising with: a results-driven senior associate who has been told &ldquo;not yet&rdquo; once before</div>
         <div class="t-bubble t-you"><span class="t-label">You (Manager)</span>I wanted to talk through this year&rsquo;s promotion cycle with you directly.</div>
-        <div class="t-bubble t-them"><span class="t-label">Employee</span>Let me guess &mdash; not this cycle either.</div>
+        <div class="t-bubble t-them"><span class="t-label">Employee</span>Let me guess. Not this cycle either.</div>
         <div class="t-bubble t-you"><span class="t-label">You</span>Not this cycle. Your delivery has been strong, but the panel wants to see more cross-team influence before senior level.</div>
         <div class="t-bubble t-them"><span class="t-label">Employee</span>I&rsquo;ve heard &ldquo;cross-team influence&rdquo; for two cycles now with no clear definition of what that actually looks like.</div>
         <div class="t-bubble t-you"><span class="t-label">You</span>That&rsquo;s fair, and it&rsquo;s on me to make it concrete. Let&rsquo;s define two specific cross-team initiatives you&rsquo;ll lead this quarter, and I&rsquo;ll bring that evidence to the panel myself next cycle.</div>
@@ -305,7 +305,7 @@
       <div class="t-debrief">
         <div class="t-debrief-title">Debrief</div>
         <div class="t-debrief-row"><b>What worked:</b> Naming the specific gap instead of a vague deferral, and owning the ambiguity rather than defending the panel&rsquo;s decision.</div>
-        <div class="t-debrief-row"><b>Inflection point:</b> Turn 4 &mdash; offering to define concrete initiatives converted the conversation from a decision announcement into a plan the employee could act on.</div>
+        <div class="t-debrief-row"><b>Inflection point:</b> Turn 4: offering to define concrete initiatives converted the conversation from a decision announcement into a plan the employee could act on.</div>
         <div class="t-debrief-row"><b>Technique for next time:</b> Put the two initiatives in writing within 24 hours, before the conversation&rsquo;s momentum fades.</div>
       </div>
       <div class="demo-cta"><div class="demo-cta-title">Practice this exact conversation yourself.</div><div class="demo-cta-sub">On the full platform, you type your own responses and the AI stays fully in character, scored on empathy, clarity, and outcome.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>
@@ -314,18 +314,18 @@
   <div id="aria-tool" style="display:none">
     <div class="demo-card">
       <div class="demo-card-header"><div class="demo-card-title">&#x2728; ARIA <div class="demo-tag">Example &middot; Reflection Mode</div></div></div>
-      <div class="scenario-label">Example conversation &mdash; read-only preview</div>
+      <div class="scenario-label">Example conversation &middot; read-only preview</div>
       <div class="scenario-text">ARIA is your permanent coaching companion inside Vantage. This is a real example of a Reflection mode session, shown as a preview since this is a conversational experience.</div>
       <div class="transcript-wrap">
         <div class="t-bubble t-them"><span class="t-label">ARIA</span>How&rsquo;s this week sitting with you?</div>
         <div class="t-bubble t-you"><span class="t-label">You</span>Heavy. Three ER cases in five days, and I feel like I handled the last one badly.</div>
-        <div class="t-bubble t-them"><span class="t-label">ARIA</span>What does &ldquo;badly&rdquo; mean to you here &mdash; the outcome, or how you got there?</div>
+        <div class="t-bubble t-them"><span class="t-label">ARIA</span>What does &ldquo;badly&rdquo; mean to you here: the outcome, or how you got there?</div>
         <div class="t-bubble t-you"><span class="t-label">You</span>How I got there. I rushed the conversation because the manager was pushing for closure.</div>
         <div class="t-bubble t-them"><span class="t-label">ARIA</span>That&rsquo;s a pattern worth naming, not just this case. When a manager&rsquo;s urgency starts setting your pace on process, what usually gets sacrificed first?</div>
         <div class="t-bubble t-you"><span class="t-label">You</span>Documentation. I skip the written step when I feel rushed.</div>
         <div class="t-bubble t-them"><span class="t-label">ARIA</span>That&rsquo;s the exact gap PACT would have flagged on this case if you&rsquo;d run it first. One concrete insight to carry into next week: build the five-minute documentation step into your process before the conversation happens, not after.</div>
       </div>
-      <div class="demo-cta"><div class="demo-cta-title">ARIA remembers your patterns, not just your cases.</div><div class="demo-cta-sub">On the full platform, ARIA is with you across every tool, every case, every month &mdash; building a coaching relationship, not a chatbot session.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>
+      <div class="demo-cta"><div class="demo-cta-title">ARIA remembers your patterns, not just your cases.</div><div class="demo-cta-sub">On the full platform, ARIA is with you across every tool, every case, every month, building a coaching relationship, not a chatbot session.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>
     </div>
   </div>
 </div>
@@ -334,7 +334,7 @@
   <div class="dash-header">
     <div class="dash-eyebrow">&#x1F512; Behind the login</div>
     <div class="dash-title">This is what your dashboard actually looks like.</div>
-    <div class="dash-sub">A visual preview of your Vantage home &mdash; it updates to reflect whichever tool you're exploring above. Illustrative numbers throughout, not a live account.</div>
+    <div class="dash-sub">A visual preview of your Vantage home. It updates to reflect whichever tool you're exploring above. Illustrative numbers throughout, not a live account.</div>
   </div>
   <div class="dash-mock" id="dashMock">
     <div class="dash-sidebar" id="dashNavList">
@@ -360,8 +360,8 @@
         </div>
       </div>
       <div class="case-lib-grid" id="dashCaseLib">
-        <div class="case-lib-card"><div class="clc-top"><span class="clc-tag">CASE ADVISOR</span><span class="clc-risk score-high">HIGH</span></div><div class="clc-title">Attendance falsification &mdash; 14-day case</div><div class="clc-meta">Filed 3 days ago &middot; Rs.4L-9L exposure</div></div>
-        <div class="case-lib-card"><div class="clc-top"><span class="clc-tag">RETENTION</span><span class="clc-risk score-medium">RESOLVED</span></div><div class="clc-title">Retention counter-offer &mdash; senior engineer</div><div class="clc-meta">Filed 1 week ago &middot; Retained</div></div>
+        <div class="case-lib-card"><div class="clc-top"><span class="clc-tag">CASE ADVISOR</span><span class="clc-risk score-high">HIGH</span></div><div class="clc-title">Attendance falsification: 14-day case</div><div class="clc-meta">Filed 3 days ago &middot; Rs.4L-9L exposure</div></div>
+        <div class="case-lib-card"><div class="clc-top"><span class="clc-tag">RETENTION</span><span class="clc-risk score-medium">RESOLVED</span></div><div class="clc-title">Retention counter-offer: senior engineer</div><div class="clc-meta">Filed 1 week ago &middot; Retained</div></div>
       </div>
       <div class="record-strip" id="dashRecordStrip">
         <div class="record-stat"><div class="record-stat-num">47</div><div class="record-stat-lbl">ER Cases</div></div>
@@ -371,7 +371,7 @@
       </div>
     </div>
   </div>
-  <div class="dash-blur-note">Illustrative preview &mdash; your real dashboard reflects your own cases, your own Humac Score, and your own professional record.</div>
+  <div class="dash-blur-note">Illustrative preview: your real dashboard reflects your own cases, your own Humac Score, and your own professional record.</div>
 </div>
 
 <!-- ── INTELLIGENCE CORRIDOR ──────────────────────────────────────── -->
@@ -463,7 +463,7 @@
 <div class="corridor-section">
   <div class="corridor-header">
     <div class="cor-eyebrow"><span class="cor-eyebrow-dot"></span>Intelligence Corridor &middot; Five Real Scenarios</div>
-    <h2>Before you sign up &mdash; test yourself.</h2>
+    <h2>Before you sign up, test yourself.</h2>
     <p>Five doors. Five real HR decisions. Each one shows you exactly what Vantage would have given you. No signup required to play.</p>
   </div>
   <div class="cor-case-select">
@@ -558,7 +558,7 @@
         <div class="cor-result" id="demoResult5"><div class="cor-result-inner" id="demoResultInner5"></div></div>
         <div class="cor-final" id="demoFinal" style="display:none">
           <p class="cor-final-line">Five doors. Five decisions.<br>Now see what Vantage gives you on your own cases.</p>
-          <p class="cor-final-sub">Every tool above runs live. Describe your situation and Vantage returns real intelligence &mdash; calibrated to your state, your industry, your org.</p>
+          <p class="cor-final-sub">Every tool above runs live. Describe your situation and Vantage returns real intelligence, calibrated to your state, your industry, your org.</p>
           <div class="cor-cta-row">
             <a href="access.html" class="cor-btn-primary">Get started &rarr;</a>
             <button class="cor-btn-ghost" onclick="restartCorridor()">Play again</button>
@@ -574,34 +574,34 @@
 (function() {
   var RESULTS = {
     1: {
-      A: { verdict:'risk', exposure:'\u20b98L \u2013 \u20b914L exposure', text:'Terminating without a show-cause notice is legally indefensible. Under the IR Code 2020, any adverse action requires documented process. A tribunal will not look at intent \u2014 only procedure. Your exposure starts here and rises.', aria:'ARIA would have flagged this before you acted: no show-cause notice on record means your P dimension is Critical. The case fails process integrity before it starts.' },
-      B: { verdict:'warn', exposure:'Partially defensible', text:'The right direction \u2014 but you have skipped step one. A domestic enquiry cannot be legally initiated without a show-cause notice preceding it. Issue the SCN first, then open the enquiry.', aria:'ARIA would have caught the sequence error. Domestic enquiry without SCN = procedural gap that a tribunal will exploit on day one.' },
+      A: { verdict:'risk', exposure:'\u20b98L \u2013 \u20b914L exposure', text:'Terminating without a show-cause notice is legally indefensible. Under the IR Code 2020, any adverse action requires documented process. A tribunal will not look at intent, only procedure. Your exposure starts here and rises.', aria:'ARIA would have flagged this before you acted: no show-cause notice on record means your P dimension is Critical. The case fails process integrity before it starts.' },
+      B: { verdict:'warn', exposure:'Partially defensible', text:'The right direction, but you have skipped step one. A domestic enquiry cannot be legally initiated without a show-cause notice preceding it. Issue the SCN first, then open the enquiry.', aria:'ARIA would have caught the sequence error. Domestic enquiry without SCN = procedural gap that a tribunal will exploit on day one.' },
       C: { verdict:'ok',   exposure:'Risk contained', text:'The right first move. No termination or domestic enquiry can be legally defended in India without a show-cause notice on record. Issue it today, give the employee time to respond, then proceed with the enquiry. This is the sequence that holds under scrutiny.', aria:'ARIA would confirm: SCN first, response window documented, enquiry follows. This is the process the IR Code requires.' },
-      D: { verdict:'warn', exposure:'Time lost', text:'Buying time \u2014 but at a cost. The manager\'s urgency is real and valid. Legal teams take days you may not have. The show-cause notice is something HR can issue directly. Issue it now, loop in legal for the enquiry stage.', aria:'ARIA would have told you: don\'t wait for legal on step one. SCN is within HR\'s direct authority.' }
+      D: { verdict:'warn', exposure:'Time lost', text:'Buying time, but at a cost. The manager\'s urgency is real and valid. Legal teams take days you may not have. The show-cause notice is something HR can issue directly. Issue it now, loop in legal for the enquiry stage.', aria:'ARIA would have told you: don\'t wait for legal on step one. SCN is within HR\'s direct authority.' }
     },
     2: {
       A: { verdict:'risk', exposure:'High tribunal risk', text:'Proceeding with a documented gap is the single biggest source of HR tribunal losses in India. The opposing counsel will ask for the written warning. You will not have one. The case collapses.', aria:'ARIA would have flagged this under Accountability Clarity: the evidence trail is broken. Do not proceed until it is fixed.' },
-      B: { verdict:'warn', exposure:'Partially reconstructed', text:'Manager notes and calendar records help, but they carry less weight than direct witness statements. Reconstruct what you can \u2014 but push for signed statements before the enquiry hearing.', aria:'ARIA would note: reconstruction is a valid interim step, but witness statements remain the stronger evidence form.' },
+      B: { verdict:'warn', exposure:'Partially reconstructed', text:'Manager notes and calendar records help, but they carry less weight than direct witness statements. Reconstruct what you can, but push for signed statements before the enquiry hearing.', aria:'ARIA would note: reconstruction is a valid interim step, but witness statements remain the stronger evidence form.' },
       C: { verdict:'ok',   exposure:'Evidence secured', text:'Signed, dated witness statements become part of the formal domestic enquiry record. This is the strongest evidence path available to you when written warnings were not issued. Two co-workers confirming the pattern, on paper, with dates, is defensible.', aria:'ARIA would confirm: witness statements collected before the enquiry hearing are admissible and carry weight. Collect them now.' },
       D: { verdict:'warn', exposure:'Precedent set', text:'Safe today. But the behaviour continues, the precedent is set, and the next action against this employee becomes much harder. Dropping the case signals that undocumented absence has no consequence.', aria:'ARIA would note: dropping the case is a decision with future cost. Document the reason for closure at minimum.' }
     },
     3: {
-      A: { verdict:'risk', exposure:'Credibility lost', text:'A CFO who asks for a number and receives a feeling will remember it. You lose the budget conversation and your credibility in the room. Gut estimates in a boardroom setting are not HR speaking the language of business \u2014 they are HR being dismissed from it.', aria:'ARIA would have prepared you with the People ROI Brief before this meeting. The number exists. You just didn\'t have it ready.' },
-      B: { verdict:'ok',   exposure:'\u20b98L\u2013\u20b914L documented', text:'You walk in with documented legal exposure, replacement cost model, and ramp time \u2014 not an opinion. The CFO now has a decision to make, not a feeling to dismiss. This is what HR speaking the language of business looks like.', aria:'ARIA would have built the full People ROI Brief before this call: replacement cost at 1.8x salary, 4.6 months ramp, \u20b98L\u2013\u20b914L legal exposure. The CFO cannot dismiss a number with a methodology behind it.' },
-      C: { verdict:'warn', exposure:'Moment passed', text:'You had the data available. Asking for more time signals you did not prepare for the most predictable question in an ER conversation with a CFO. The moment passes, the decision gets made without your input.', aria:'ARIA would have flagged this as a preparation failure \u2014 not an evidence gap.' },
+      A: { verdict:'risk', exposure:'Credibility lost', text:'A CFO who asks for a number and receives a feeling will remember it. You lose the budget conversation and your credibility in the room. Gut estimates in a boardroom setting are not HR speaking the language of business. They are HR being dismissed from it.', aria:'ARIA would have prepared you with the People ROI Brief before this meeting. The number exists. You just didn\'t have it ready.' },
+      B: { verdict:'ok',   exposure:'\u20b98L\u2013\u20b914L documented', text:'You walk in with documented legal exposure, replacement cost model, and ramp time, not an opinion. The CFO now has a decision to make, not a feeling to dismiss. This is what HR speaking the language of business looks like.', aria:'ARIA would have built the full People ROI Brief before this call: replacement cost at 1.8x salary, 4.6 months ramp, \u20b98L\u2013\u20b914L legal exposure. The CFO cannot dismiss a number with a methodology behind it.' },
+      C: { verdict:'warn', exposure:'Moment passed', text:'You had the data available. Asking for more time signals you did not prepare for the most predictable question in an ER conversation with a CFO. The moment passes, the decision gets made without your input.', aria:'ARIA would have flagged this as a preparation failure, not an evidence gap.' },
       D: { verdict:'warn', exposure:'Wrong number', text:'Industry benchmarks do not reflect your org\'s salary bands, attrition patterns, or role criticality. The CFO knows this. Generic data gets dismissed as exactly what it is.', aria:'ARIA would say: your org\'s numbers are always stronger than any benchmark. Use them.' }
     },
     4: {
       A: { verdict:'risk', exposure:'Exposed in the room', text:'The COO will ask about precedent, legal exposure, and your recommendation in that sequence. Without ARIA rehearsal, you will be reacting to her framing rather than owning your own. One unexpected question and your confidence breaks.', aria:'ARIA exists for exactly this moment. Case Partner mode would have played the COO, pushed back on your reasoning, and surfaced the two questions you hadn\'t thought of.' },
       B: { verdict:'ok',   exposure:'Fully prepared', text:'You have already answered the hard questions before the call started. ARIA pushed back. Your reasoning held under pressure. You walk in knowing your weakest points and how to address them. The COO cannot surprise you.', aria:'Case Partner mode simulates exactly this: a senior stakeholder who asks about legal exposure, precedent, and the financial case. You have already walked through it once.' },
-      C: { verdict:'warn', exposure:'Prepared on paper', text:'Knowing what to say is not the same as having said it under pressure. The muscle memory is not there. The COO will test your reasoning in real time. Talking points give you the what \u2014 ARIA gives you the practice of actually saying it.', aria:'ARIA would note: paper prep and conversational rehearsal are not the same capability. One of them builds the real thing.' },
-      D: { verdict:'risk', exposure:'Window closed', text:'You lose the moment, the momentum, and your positioning on this case. Decisions made without HR input in the room tend to go in directions HR then has to manage.', aria:'ARIA would say: reschedule only when you need more information \u2014 not more confidence. Confidence is what rehearsal builds.' }
+      C: { verdict:'warn', exposure:'Prepared on paper', text:'Knowing what to say is not the same as having said it under pressure. The muscle memory is not there. The COO will test your reasoning in real time. Talking points give you the what. ARIA gives you the practice of actually saying it.', aria:'ARIA would note: paper prep and conversational rehearsal are not the same capability. One of them builds the real thing.' },
+      D: { verdict:'risk', exposure:'Window closed', text:'You lose the moment, the momentum, and your positioning on this case. Decisions made without HR input in the room tend to go in directions HR then has to manage.', aria:'ARIA would say: reschedule only when you need more information, not more confidence. Confidence is what rehearsal builds.' }
     },
     5: {
-      A: { verdict:'warn', exposure:'Starting from zero', text:'Memory fades. You will approximate last time\'s process without the documentation. The financial exposure analysis rebuilds from scratch. The show-cause notice template gets rewritten from scratch. The outcome from Case 2841 stays in your head \u2014 not on record.', aria:'ARIA would note: every case you navigate without a record is a case you will have to rebuild from memory next time.' },
-      B: { verdict:'ok',   exposure:'Case 2841 on record', text:'Case 2841 is in your Vantage Record. The show-cause template you used, the domestic enquiry sequence, the financial exposure range, the outcome \u2014 all timestamped and documented. You are not starting over. You are building on what you already know.', aria:'This is what the Vantage Record is for. Not a log \u2014 a professional asset. It compounds. Every case you document makes the next one faster, more defensible, and better argued.' },
+      A: { verdict:'warn', exposure:'Starting from zero', text:'Memory fades. You will approximate last time\'s process without the documentation. The financial exposure analysis rebuilds from scratch. The show-cause notice template gets rewritten from scratch. The outcome from Case 2841 stays in your head, not on record.', aria:'ARIA would note: every case you navigate without a record is a case you will have to rebuild from memory next time.' },
+      B: { verdict:'ok',   exposure:'Case 2841 on record', text:'Case 2841 is in your Vantage Record. The show-cause template you used, the domestic enquiry sequence, the financial exposure range, the outcome: all timestamped and documented. You are not starting over. You are building on what you already know.', aria:'This is what the Vantage Record is for. Not a log. A professional asset. It compounds. Every case you document makes the next one faster, more defensible, and better argued.' },
       C: { verdict:'warn', exposure:'Secondhand memory', text:'A colleague who was not in the room, reconstructing a case from memory, nine months later. No documentation. No evidence trail. No ownership. And when the colleague leaves, the knowledge leaves with them.', aria:'ARIA would note: institutional knowledge that lives only in people is the most fragile kind.' },
-      D: { verdict:'warn', exposure:'Partial, not yours', text:'Fragmented threads, partial context, and attached to your company email account. When you move to your next organisation, it stays. This is your work \u2014 it should not be stored somewhere that belongs to someone else.', aria:'ARIA would say: your Vantage Record follows you. Your email inbox does not.' }
+      D: { verdict:'warn', exposure:'Partial, not yours', text:'Fragmented threads, partial context, and attached to your company email account. When you move to your next organisation, it stays. This is your work. It should not be stored somewhere that belongs to someone else.', aria:'ARIA would say: your Vantage Record follows you. Your email inbox does not.' }
     }
   };
 
@@ -778,7 +778,7 @@
     if (btn) btn.style.display = 'none';
     var inner = document.getElementById('demoResultInner' + room);
     if (inner) {
-      inner.innerHTML = '<div class="cor-verdict ' + result.verdict + '">' + (result.verdict === 'ok' ? 'DEFENSIBLE' : result.verdict === 'risk' ? 'HIGH RISK' : 'CAUTION') + '</div>' + (result.exposure ? '<span class="cor-exposure">' + result.exposure + '</span>' : '') + '<p class="cor-explanation">' + result.text + '</p><p class="cor-aria-note">\u2736 ARIA \u2014 ' + result.aria + '</p>';
+      inner.innerHTML = '<div class="cor-verdict ' + result.verdict + '">' + (result.verdict === 'ok' ? 'DEFENSIBLE' : result.verdict === 'risk' ? 'HIGH RISK' : 'CAUTION') + '</div>' + (result.exposure ? '<span class="cor-exposure">' + result.exposure + '</span>' : '') + '<p class="cor-explanation">' + result.text + '</p><p class="cor-aria-note">\u2736 ARIA: ' + result.aria + '</p>';
     }
     var panel = document.getElementById('demoResult' + room);
     if (panel) { setTimeout(function() { panel.classList.add('open'); }, 80); }
@@ -843,20 +843,20 @@
   var DASH_CONTENT = {
     pact: { title: 'Employee Case Advisor', nav: 'Employee Case Advisor',
       cards: [
-        { tag:'CASE ADVISOR', risk:'score-high', riskLabel:'HIGH', title:'Attendance falsification &mdash; 14-day case', meta:'Filed 3 days ago &middot; Rs.4L-9L exposure' },
-        { tag:'CASE ADVISOR', risk:'score-medium', riskLabel:'RESOLVED', title:'Absence pattern &mdash; final warning issued', meta:'Filed 2 weeks ago &middot; Closed' }
+        { tag:'CASE ADVISOR', risk:'score-high', riskLabel:'HIGH', title:'Attendance falsification: 14-day case', meta:'Filed 3 days ago &middot; Rs.4L-9L exposure' },
+        { tag:'CASE ADVISOR', risk:'score-medium', riskLabel:'RESOLVED', title:'Absence pattern: final warning issued', meta:'Filed 2 weeks ago &middot; Closed' }
       ],
       stats: [ ['47','ER Cases'], ['&#8377;18.4L','Exposure Avoided'], ['17','Rehearsed'], ['9','Debriefs'] ] },
     signal: { title: 'People ROI Brief', nav: 'People ROI Brief',
       cards: [
-        { tag:'ROI BRIEF', risk:'score-medium', riskLabel:'APPROVED', title:'CFO retention brief &mdash; &#8377;22L ask', meta:'Filed 4 days ago &middot; Budget approved' },
-        { tag:'ROI BRIEF', risk:'score-low', riskLabel:'SENT', title:'Attrition narrative &mdash; Q3 board deck', meta:'Filed 1 week ago &middot; Awaiting review' }
+        { tag:'ROI BRIEF', risk:'score-medium', riskLabel:'APPROVED', title:'CFO retention brief: &#8377;22L ask', meta:'Filed 4 days ago &middot; Budget approved' },
+        { tag:'ROI BRIEF', risk:'score-low', riskLabel:'SENT', title:'Attrition narrative: Q3 board deck', meta:'Filed 1 week ago &middot; Awaiting review' }
       ],
       stats: [ ['12','Briefs Built'], ['&#8377;41L','Budget Secured'], ['2 days','Avg Turnaround'], ['5','CFO Approvals'] ] },
     influence: { title: 'Leadership Communicator', nav: 'Leadership Communicator',
       cards: [
-        { tag:'INFLUENCE', risk:'score-medium', riskLabel:'SENT', title:'VP Engineering &mdash; counter-offer ask', meta:'Filed 2 days ago &middot; Awaiting response' },
-        { tag:'INFLUENCE', risk:'score-low', riskLabel:'DRAFTING', title:'COO &mdash; restructure buy-in', meta:'Started today &middot; In progress' }
+        { tag:'INFLUENCE', risk:'score-medium', riskLabel:'SENT', title:'VP Engineering: counter-offer ask', meta:'Filed 2 days ago &middot; Awaiting response' },
+        { tag:'INFLUENCE', risk:'score-low', riskLabel:'DRAFTING', title:'COO: restructure buy-in', meta:'Started today &middot; In progress' }
       ],
       stats: [ ['9','Stacks Built'], ['7','Asks Approved'], ['14','Stakeholders Mapped'], ['1 day','Avg Response'] ] },
     policy: { title: 'Policy Advisor', nav: 'Policy Advisor',
@@ -867,20 +867,20 @@
       stats: [ ['31','Questions Asked'], ['&lt;1 min','Avg Response'], ['58','Citations Given'], ['7','Guardrails Set'] ] },
     offer: { title: 'Retention Advisor', nav: 'Retention Advisor',
       cards: [
-        { tag:'RETENTION', risk:'score-medium', riskLabel:'RETAINED', title:'Priya Nair &mdash; competing offer 32%', meta:'Filed 1 week ago &middot; Retained' },
-        { tag:'RETENTION', risk:'score-high', riskLabel:'MONITORING', title:'Senior architect &mdash; flight risk', meta:'Flagged 2 days ago &middot; Active' }
+        { tag:'RETENTION', risk:'score-medium', riskLabel:'RETAINED', title:'Priya Nair: competing offer 32%', meta:'Filed 1 week ago &middot; Retained' },
+        { tag:'RETENTION', risk:'score-high', riskLabel:'MONITORING', title:'Senior architect: flight risk', meta:'Flagged 2 days ago &middot; Active' }
       ],
       stats: [ ['14','Retention Cases'], ['&#8377;1.2Cr','Value Protected'], ['22','Offers Modeled'], ['11','Retained'] ] },
     practice: { title: 'Difficult Conversations', nav: 'Difficult Conversations',
       cards: [
-        { tag:'REHEARSED', risk:'score-low', riskLabel:'DEBRIEFED', title:'Denied promotion &mdash; senior associate', meta:'Practised 2 days ago &middot; Scored 8/10' },
-        { tag:'REHEARSED', risk:'score-low', riskLabel:'DEBRIEFED', title:'Manager feedback &mdash; underperformance', meta:'Practised 5 days ago &middot; Scored 7/10' }
+        { tag:'REHEARSED', risk:'score-low', riskLabel:'DEBRIEFED', title:'Denied promotion: senior associate', meta:'Practised 2 days ago &middot; Scored 8/10' },
+        { tag:'REHEARSED', risk:'score-low', riskLabel:'DEBRIEFED', title:'Manager feedback: underperformance', meta:'Practised 5 days ago &middot; Scored 7/10' }
       ],
       stats: [ ['17','Rehearsed'], ['8.2/10','Avg Score'], ['17','Debriefs Filed'], ['4','This Month'] ] },
     aria: { title: 'ARIA', nav: 'ARIA',
       cards: [
-        { tag:'ARIA', risk:'score-low', riskLabel:'LOGGED', title:"This week's reflection &mdash; 3 ER cases", meta:'Logged today' },
-        { tag:'ARIA', risk:'score-medium', riskLabel:'NOTED', title:'Pattern flagged &mdash; documentation gap', meta:'Noted 3 days ago' }
+        { tag:'ARIA', risk:'score-low', riskLabel:'LOGGED', title:"This week's reflection: 3 ER cases", meta:'Logged today' },
+        { tag:'ARIA', risk:'score-medium', riskLabel:'NOTED', title:'Pattern flagged: documentation gap', meta:'Noted 3 days ago' }
       ],
       stats: [ ['22','Check-ins'], ['6','Patterns Flagged'], ['9','This Month'], ['14 days','Streak'] ] }
   };
@@ -983,7 +983,7 @@
     if (input && counter) {
       input.addEventListener('input', function() {
         var n = input.value.length;
-        counter.textContent = n + ' / 800 \u2014 one free, real answer per visitor. No sign-up needed to see it.';
+        counter.textContent = n + ' / 800 \u00b7 one free, real answer per visitor. No sign-up needed to see it.';
         counter.style.color = n > 800 ? '#FF4D6D' : '';
       });
     }
@@ -1023,7 +1023,7 @@
       exposureBlock =
         '<div class="exposure-tease">' +
           '<div><div class="exposure-tease-label">Estimated Financial Exposure</div>' +
-            '<span class="exposure-blur" onclick="this.classList.remove(\'exposure-blur\')" title="Click to reveal — full breakdown needs sign-in">' + result.exposure_estimate + '</span>' +
+            '<span class="exposure-blur" onclick="this.classList.remove(\'exposure-blur\')" title="Click to reveal: full breakdown needs sign-in">' + result.exposure_estimate + '</span>' +
           '</div>' +
           '<a href="access.html" class="btn-p" style="white-space:nowrap;padding:10px 16px;font-size:12px">See Full Breakdown \u2192</a>' +
         '</div>';
@@ -1040,7 +1040,7 @@
     }
 
     var alreadyUsedNote = alreadyUsed
-      ? '<div class="scenario-note" style="margin-bottom:14px">This is the answer from your earlier free preview \u2014 sign in to ask a new one.</div>'
+      ? '<div class="scenario-note" style="margin-bottom:14px">This is the answer from your earlier free preview. Sign in to ask a new one.</div>'
       : '';
     document.getElementById('pact-output').innerHTML =
       alreadyUsedNote +
@@ -1065,11 +1065,11 @@
     var situation = (input.value || '').trim();
 
     if (!document.getElementById('live-consent').checked) {
-      alert('Please check the box above first \u2014 it\u2019s a quick one.');
+      alert('Please check the box above first. It\u2019s a quick one.');
       return;
     }
     if (situation.length < 10) {
-      alert('Give it a bit more detail \u2014 a sentence or two about what\u2019s actually going on.');
+      alert('Give it a bit more detail: a sentence or two about what\u2019s actually going on.');
       return;
     }
 
@@ -1097,7 +1097,7 @@
 
       if (!resp.ok && !data.already_used) {
         document.getElementById('pact-output').innerHTML =
-          '<div class="scenario-note" style="color:#FF4D6D">' + (data.error || 'Something went wrong \u2014 please try again.') + '</div>';
+          '<div class="scenario-note" style="color:#FF4D6D">' + (data.error || 'Something went wrong. Please try again.') + '</div>';
         document.getElementById('pact-output').style.display = 'block';
         return;
       }
@@ -1115,7 +1115,7 @@
       document.getElementById('pact-loading').style.display = 'none';
       btn.disabled = false;
       document.getElementById('pact-output').innerHTML =
-        '<div class="scenario-note" style="color:#FF4D6D">Couldn\u2019t reach Vantage right now \u2014 please try again in a moment.</div>';
+        '<div class="scenario-note" style="color:#FF4D6D">Couldn\u2019t reach Vantage right now. Please try again in a moment.</div>';
       document.getElementById('pact-output').style.display = 'block';
     }
   }
@@ -1137,14 +1137,14 @@
     var scores = r.pact_scores || {}, protocol = r.protocol || {};
     var riskClass = getRiskClass(scores.overallRisk);
     var dims = ['process','accountability','consequence','trust'];
-    var labels = ['P \u2014 Process Integrity','A \u2014 Accountability Clarity','C \u2014 Consequence Mapping','T \u2014 Trust Preservation'];
+    var labels = ['P: Process Integrity','A: Accountability Clarity','C: Consequence Mapping','T: Trust Preservation'];
     var pactCards = dims.map(function(d,i){ var p = scores[d] || {}; var sc = getScoreClass(p.score); var points = (p.points||[]).slice(0,2).map(function(pt){ return '<div class="pact-point"><div class="pact-dot"></div><div>'+pt+'</div></div>'; }).join(''); return '<div class="pact-card"><div class="pact-dim">'+labels[i]+'<span class="pact-score '+sc+'">'+(p.score||'Medium')+' RISK</span></div><div class="pact-status">'+(p.status||'')+'</div>'+points+'</div>'; }).join('');
     var financial = '';
     if (protocol.financial) { var fin = protocol.financial; var breakdown = (fin.breakdown||[]).slice(0,3).map(function(b){ return '<div style="font-size:12px;color:var(--grey);margin-bottom:6px">'+b+'</div>'; }).join(''); financial = '<div class="humacity-card"><div class="hc-header"><div class="hc-badge">HUMAC '+(fin.pillar||'')+'</div><div class="hc-title">Financial Exposure</div></div><div class="hc-exposure"><div class="hc-label">Range &middot; '+(fin.confidence||'')+' Confidence</div><div class="hc-val">'+(fin.range||'')+'</div></div>'+breakdown+'</div>'; }
     var stepItems = [protocol.recommendation, protocol.communication, protocol.aria].filter(Boolean);
     var stepLabels = ['Recommendation', 'What to Say', 'Practice With ARIA'];
     var steps = stepItems.map(function(s,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text"><b style="color:#f4f3ff">'+stepLabels[i]+':</b> '+s+'</div></div>'; }).join('');
-    document.getElementById('pact-output').innerHTML = '<div class="risk-banner risk-'+riskClass+'"><div><div class="risk-title">'+(scores.overallRisk||'')+' Risk \u2014 Misconduct Case</div><div class="risk-sub">'+(scores.overallNarrative||'')+'</div></div><div class="risk-badge badge-'+riskClass+'">'+(scores.overallRisk||'').toUpperCase()+'</div></div><div class="pact-grid">'+pactCards+'</div>'+financial+'<div class="steps-card"><div class="steps-title">Unified Decision Protocol</div>'+steps+'</div><div class="demo-cta"><div class="demo-cta-title">Your real cases need real answers.</div><div class="demo-cta-sub">On the full platform, you describe your own situation. Employee Case Advisor reads your MERIDIAN profile and returns calibrated guidance for your exact reality.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See what else is inside</a></div></div>';
+    document.getElementById('pact-output').innerHTML = '<div class="risk-banner risk-'+riskClass+'"><div><div class="risk-title">'+(scores.overallRisk||'')+' Risk: Misconduct Case</div><div class="risk-sub">'+(scores.overallNarrative||'')+'</div></div><div class="risk-badge badge-'+riskClass+'">'+(scores.overallRisk||'').toUpperCase()+'</div></div><div class="pact-grid">'+pactCards+'</div>'+financial+'<div class="steps-card"><div class="steps-title">Unified Decision Protocol</div>'+steps+'</div><div class="demo-cta"><div class="demo-cta-title">Your real cases need real answers.</div><div class="demo-cta-sub">On the full platform, you describe your own situation. Employee Case Advisor reads your MERIDIAN profile and returns calibrated guidance for your exact reality.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See what else is inside</a></div></div>';
     document.getElementById('pact-output').style.display = 'block';
   }
 
@@ -1164,13 +1164,13 @@
   function renderSIGNAL(r) {
     var signal = r.signal || {};
     var dimKeys = ['situation','impact','gap','narrative','action','linkage'];
-    var dimLabels = ['S \u2014 Situation','I \u2014 Impact','G \u2014 Gap','N \u2014 Narrative','A \u2014 Action','L \u2014 Linkage'];
+    var dimLabels = ['S: Situation','I: Impact','G: Gap','N: Narrative','A: Action','L: Linkage'];
     var dimClasses = ['dim-s','dim-i','dim-g','dim-n','dim-a','dim-l'];
     var dimText = { situation: signal.situation ? signal.situation.narrative : '', impact: signal.impact ? signal.impact.narrative : '', gap: signal.gap ? signal.gap.narrative : '', narrative: signal.narrative ? signal.narrative.boardroomVersion : '', action: (signal.action && signal.action.immediate) ? signal.action.immediate.join(' ') : '', linkage: signal.linkage ? signal.linkage.businessOutcome : '' };
     var signalCards = dimKeys.map(function(k,i){ return '<div class="signal-card"><div class="sig-dim '+dimClasses[i]+'">'+dimLabels[i]+'</div><div class="sig-content">'+(dimText[k]||'')+'</div></div>'; }).join('');
     var immediateActions = (signal.action && signal.action.immediate) ? signal.action.immediate : [];
     var talkingPts = immediateActions.slice(0,3).map(function(tp,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+tp+'</div></div>'; }).join('');
-    document.getElementById('signal-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : '')+'</div><div class="anchor-ctx">'+(r.headline || 'The number that opens the room.')+'</div></div><div class="signal-grid">'+signalCards+'</div><div class="steps-card"><div class="steps-title">Immediate Actions \u2014 This Week</div>'+talkingPts+'</div><div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(signal.narrative ? signal.narrative.cfoVersion : '')+'</div></div><div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. People ROI Brief builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See all six tools</a></div></div>';
+    document.getElementById('signal-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : '')+'</div><div class="anchor-ctx">'+(r.headline || 'The number that opens the room.')+'</div></div><div class="signal-grid">'+signalCards+'</div><div class="steps-card"><div class="steps-title">Immediate Actions: This Week</div>'+talkingPts+'</div><div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(signal.narrative ? signal.narrative.cfoVersion : '')+'</div></div><div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. People ROI Brief builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See all six tools</a></div></div>';
     document.getElementById('signal-output').style.display = 'block';
   }
 
@@ -1233,7 +1233,7 @@
 <div class="live-nudge" id="liveNudge">
   <button class="live-nudge-close" onclick="dismissLiveNudge()" aria-label="Dismiss">&times;</button>
   <div class="live-nudge-emoji">&#x1F389;</div>
-  <div class="live-nudge-title">Psst &mdash; one of these is real.</div>
+  <div class="live-nudge-title">Psst, one of these is real.</div>
   <div class="live-nudge-body">The Employee Case Advisor tab isn&rsquo;t a script like the rest. Type your actual situation and get one real, live answer.</div>
   <button class="live-nudge-cta" onclick="tryLiveNudge()">Try it now &rarr;</button>
 </div>
