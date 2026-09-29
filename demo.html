@@ -914,7 +914,6 @@
   function getScoreClass(s){ return {'Critical':'score-critical','High':'score-high','Medium':'score-medium','Low':'score-low'}[s]||'score-medium'; }
 
   // ── Live preview — the one real tool ──────────────────────────────
-  // ⚠ Fill in your actual deployed Worker URL before this goes live.
   var PREVIEW_ENDPOINT = 'https://vantage-preview.kumarvivek-srv.workers.dev/api/preview';
 
   function getDeviceId() {
@@ -946,6 +945,16 @@
 
   function renderLiveResult(result, alreadyUsed) {
     var riskClass = mapVclass(result.vclass);
+
+    var signalsBlock = '';
+    if (Array.isArray(result.signals) && result.signals.length) {
+      var signalCards = result.signals.map(function(s) {
+        return '<div class="pact-card"><div class="pact-dim">' + (s.label || '') + '</div>' +
+          '<div class="pact-status" style="margin-top:6px">' + (s.note || '') + '</div></div>';
+      }).join('');
+      signalsBlock = '<div class="pact-grid">' + signalCards + '</div>';
+    }
+
     var exposureBlock = '';
     if (result.exposure_estimate) {
       exposureBlock =
@@ -955,7 +964,18 @@
           '</div>' +
           '<a href="access.html" class="btn-p" style="white-space:nowrap;padding:10px 16px;font-size:12px">See Full Breakdown \u2192</a>' +
         '</div>';
+    } else if (result.tool_hook) {
+      // No financial angle here — instead of an empty slot, surface which
+      // other Vantage capability this case actually calls for.
+      exposureBlock =
+        '<div class="exposure-tease">' +
+          '<div><div class="exposure-tease-label">Vantage Sees More Here</div>' +
+            '<span style="font-size:13px;color:rgba(244,243,255,0.85)">' + result.tool_hook + '</span>' +
+          '</div>' +
+          '<a href="access.html" class="btn-p" style="white-space:nowrap;padding:10px 16px;font-size:12px">See All Tools \u2192</a>' +
+        '</div>';
     }
+
     var alreadyUsedNote = alreadyUsed
       ? '<div class="scenario-note" style="margin-bottom:14px">This is the answer from your earlier free preview \u2014 sign in to ask a new one.</div>'
       : '';
@@ -966,6 +986,7 @@
           '<div class="risk-sub">' + (result.explanation || '') + '</div></div>' +
         '<div class="risk-badge badge-' + riskClass + '">' + (result.vclass || '').toUpperCase() + '</div>' +
       '</div>' +
+      signalsBlock +
       exposureBlock +
       '<div class="steps-card"><div class="steps-title">What ARIA would ask next</div>' +
         '<div class="risk-sub" style="font-style:italic">' + (result.next_step || '') + '</div></div>' +
