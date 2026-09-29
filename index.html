@@ -227,6 +227,13 @@
   font-weight: 500 !important;
 }
 
+/* SR23 hero reorder: the kicker now lives INSIDE the h1 as a span (valid HTML, keeps the
+   heading in one piece). A span has none of the block/line-height a <p> had, so restore it. */
+.hero-title .hero-kicker{display:block;line-height:1.8;margin:0 0 24px}
+/* tagline now sits between "Enter VANTAGE." and the deck: give it air above, tuck the deck under it */
+.hero-enter + .hero-tagline{margin:26px 0 0}
+.hero-tagline + .hero-deck{margin-top:16px;text-wrap:balance}
+
 /* TIER 4: Body copy — enforce across all sections */
 .lede, .body-copy, .hero-deck, .plan-desc, p:not(.eyebrow):not(.aria-eyebrow):not(.aria-ally):not(.aria-tagline):not(.aria-actions-label):not(.aria-cta-note):not(.pricing-note):not(.sim-pre):not(.sim-sub) {
   font-size: clamp(15px,1.55vw,20px);
@@ -3141,16 +3148,16 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <span>INDIA / HR</span><span>CASE RECORDING ACTIVE</span>
       <span id="liveClock">21:07:00</span>
     </div>
-    <p class="hero-tagline" style="opacity:0">Your Personal HR Business Partner. <em>Not the org's. Yours.</em></p>
-    <p class="hero-kicker split-reveal" style="opacity:0">You carry everyone's hardest moments. Alone.</p>
     <h1 class="hero-title">
       <span class="line dim" style="opacity:0">Every HR professional has had that 9 pm moment.</span>
       <span class="line dim hero-context" style="opacity:0">The one that can&rsquo;t wait for morning: a termination, a boardroom fight, a call with no second opinion.</span>
+      <span class="hero-kicker split-reveal" style="opacity:0">You carry everyone's hardest moments. Alone.</span>
       <span class="line accent" style="opacity:0">You are HR for everyone.</span>
       <span class="line accent" style="opacity:0">Who is HR for you?</span>
     </h1>
     <p class="hero-enter" id="heroEnter" style="opacity:0"></p>
-    <p class="hero-deck" style="opacity:0">The HR Business Partner you take with you: the intelligence ally built for the profession that carries everyone else, and has always had to carry it alone.</p>
+    <p class="hero-tagline" style="opacity:0">Your Personal HR Business Partner. <em>Not the org's. Yours.</em></p>
+    <p class="hero-deck" style="opacity:0">The intelligence ally you take with you, built for the profession that carries everyone else.</p>
     <div class="hero-actions">
       <a href="demo.html" class="btn btn-primary magnetic">Try the Demo: it's live <span>→</span></a>
       <a href="access.html" class="btn btn-ghost magnetic">Sign In <span>↗</span></a>
@@ -4041,7 +4048,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 <script src="aria-volumetric.js?v=2"></script>
 <script src="vantage-meridian-globe.js"></script>
 <script src="vantage-autoselect.js"></script>
-<script src="vantage-curtain.js?v=12"></script>
+<script src="vantage-curtain.js?v=13"></script>
 <canvas id="wormholeCanvas" aria-hidden="true"></canvas>
 <button id="corFsFloating" aria-label="Exit fullscreen" style="display:none;">
   <span>&#x26F6;</span> Exit fullscreen
