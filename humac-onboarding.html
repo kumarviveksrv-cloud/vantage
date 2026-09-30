@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Humac Score — Vantage</title>
+<title>Humac Score | Vantage</title>
 <link rel="apple-touch-icon" href="favicon.png"/>
 <link rel="icon" type="image/png" href="favicon.png"/>
 <link rel="shortcut icon" href="favicon.png"/>
@@ -945,7 +945,7 @@ function renderScoreReveal(){
     var pb=getBand(p.score);
     var accentDim=pb.color+'20';
     var accentGlow=pb.color+'33';
-    return '<a href="'+href+'" class="pillar-card-v2'+(pb.name==="Value Destruction"?" is-destruction":"")'+'" style="--pop-delay:'+(i*0.1)+'s;--pillar-accent:'+pb.color+';--pillar-accent-dim:'+accentDim+';--pillar-accent-glow:'+accentGlow+'">'+
+    return '<a href="'+href+'" class="pillar-card-v2'+(pb.name==="Value Destruction"?" is-destruction":"")+'" style="--pop-delay:'+(i*0.1)+'s;--pillar-accent:'+pb.color+';--pillar-accent-dim:'+accentDim+';--pillar-accent-glow:'+accentGlow+'">'+
       '<div class="pillar-badge-v2"><div class="pillar-badge-num-v2">'+p.score+'</div><div class="pillar-badge-label-v2">'+p.label+'</div></div>'+
       '<div class="pillar-body-v2">'+
         '<div class="pillar-title-v2">'+p.name+'</div>'+
