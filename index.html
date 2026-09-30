@@ -3151,7 +3151,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   <nav>
     <a href="#system">MERIDIAN</a><a href="#aria">ARIA</a><a href="#humacity">Humacity</a><a href="#record">Vantage Record</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
   </nav>
-  <div class="nav-actions"><a class="nav-sign" href="access.html">Sign in</a><a class="nav-cta" href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}" style="white-space:nowrap">Try the Demo <b>↗</b></a><button id="pwa-nav-btn" onclick="triggerPwaInstall()" style="display:none;padding:6px 12px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:7px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;cursor:pointer;transition:all .2s;white-space:nowrap" title="Install Vantage as an app">&#x2B07; Install</button></div>
+  <div class="nav-actions"><a class="nav-sign vantage-auth-link" href="access.html" data-signed-in-text="Dashboard" data-signed-in-href="dashboard.html">Sign in</a><a class="nav-cta" href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}" style="white-space:nowrap">Try the Demo <b>↗</b></a><button id="pwa-nav-btn" onclick="triggerPwaInstall()" style="display:none;padding:6px 12px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:7px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;cursor:pointer;transition:all .2s;white-space:nowrap" title="Install Vantage as an app">&#x2B07; Install</button></div>
 </header>
 
 <div id="tada-overlay" aria-hidden="true">
@@ -3183,7 +3183,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
     <p class="hero-deck" style="opacity:0">The intelligence ally you take with you, built for the profession that carries everyone else.</p>
     <div class="hero-actions">
       <a href="demo.html" class="btn btn-primary magnetic" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">Try the Demo: it's live <span>→</span></a>
-      <a href="access.html" class="btn btn-ghost magnetic">Sign In <span>↗</span></a>
+      <a href="access.html" class="btn btn-ghost magnetic vantage-auth-link" data-signed-in-text="Dashboard" data-signed-in-href="dashboard.html">Sign In <span>↗</span></a>
     </div>
     <a href="#" id="prologue-back" onclick="sessionStorage.removeItem('vantage_prologue_seen');sessionStorage.removeItem('vantage_boot_seen');sessionStorage.removeItem('vantage_hero_animated');sessionStorage.removeItem('vantage_demo_curtain_seen');sessionStorage.removeItem('vantage_dash_animated');localStorage.removeItem('vantage_paid_user');localStorage.removeItem('vantage_clerk_signed_in');location.reload();return false;">← Watch the opening sequence</a>
     <a href="about.html" class="hero-about-link" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">About Vantage: what it is and what it does &#8594;</a>
@@ -3928,7 +3928,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
       <a href="demo.html" class="btn btn-primary btn-cta magnetic" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">
         Try the Demo: it's live <span>→</span>
       </a>
-      <a href="access.html" class="btn btn-ghost magnetic">Sign In <span>↗</span></a>
+      <a href="access.html" class="btn btn-ghost magnetic vantage-auth-link" data-signed-in-text="Dashboard" data-signed-in-href="dashboard.html">Sign In <span>↗</span></a>
     </div>
     <p class="cta-note">No enterprise procurement. No annual lock-in. Your account is yours.</p>
   </div>
@@ -4064,7 +4064,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
     <div class="footer-col">
       <span class="footer-col-h">START</span>
       <a href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">Try the Demo</a>
-      <a href="access.html">Sign In</a>
+      <a href="access.html" class="vantage-auth-link" data-signed-in-text="Dashboard" data-signed-in-href="dashboard.html">Sign In</a>
       <a href="https://virorah.com">Virorah Universe</a>
     </div>
   </div>
