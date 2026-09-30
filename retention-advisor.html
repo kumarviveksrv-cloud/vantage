@@ -6,7 +6,7 @@
   <link rel="shortcut icon" href="favicon.png"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Retention Advisor — Virorah Vantage</title>
+  <title>Retention Advisor | Virorah Vantage</title>
   <link rel="stylesheet" href="vantage-theme.css"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -223,13 +223,13 @@
           <div class="flow-icon">📩</div>
           <div class="flow-tag">Live Situation</div>
           <div class="flow-title">Counter-offer Decision</div>
-          <div class="flow-desc">Employee has resigned or disclosed a competing offer. You need to know the financial case for matching, the break-even ceiling, and what to say — to them and to the BU Head.</div>
+          <div class="flow-desc">Employee has resigned or disclosed a competing offer. You need to know the financial case for matching, the break-even ceiling, and what to say, to them and to the BU Head.</div>
         </div>
         <div class="flow-card" onclick="selectFlow('proactive', this)">
           <div class="flow-icon">🔭</div>
           <div class="flow-tag">Proactive Signal</div>
           <div class="flow-title">Flight Risk Assessment</div>
-          <div class="flow-desc">No offer yet, but something's shifted. Assess the flight risk, the cost of losing them, and whether to act now or monitor — before they walk in with an offer letter.</div>
+          <div class="flow-desc">No offer yet, but something's shifted. Assess the flight risk, the cost of losing them, and whether to act now or monitor, before they walk in with an offer letter.</div>
         </div>
       </div>
     </div>
@@ -548,7 +548,7 @@
         // Primary recommendation
         html += '<div class="rec-card">';
         html += '<div class="rec-eyebrow">🎯 Primary Recommendation <span class="rec-primary-badge">FLAGGED</span></div>';
-        html += '<div class="rec-figure">' + (rec.primary || '') + (rec.figure ? ' — ' + rec.figure : '') + '</div>';
+        html += '<div class="rec-figure">' + (rec.primary || '') + (rec.figure ? ' : ' + rec.figure : '') + '</div>';
         html += '<div class="rec-rationale">' + (rec.rationale || '') + '</div>';
         html += '</div>';
 
@@ -580,7 +580,7 @@
 
         // Humac
         html += '<div class="humac-row">';
-        html += '<div class="humac-chip"><div class="hc-label">Humac Pillar</div><div class="hc-val">' + (humac.pillar || '') + ' — ' + (humac.pillarRationale || '') + '</div></div>';
+        html += '<div class="humac-chip"><div class="hc-label">Humac Pillar</div><div class="hc-val">' + (humac.pillar || '') + ' : ' + (humac.pillarRationale || '') + '</div></div>';
         html += '<div class="humac-chip"><div class="hc-label">Financial Range</div><div class="hc-val">' + (humac.range || '') + '</div></div>';
         html += '<div class="humac-chip"><div class="hc-label">Trajectory Signal</div><div class="hc-val">' + (humac.trajectorySignal || '') + '</div></div>';
         if (d.greenCategory) html += '<div class="humac-chip"><div class="hc-label">Business Impact</div><div class="hc-val">' + renderGreenCat(d.greenCategory) + '</div></div>';
@@ -639,7 +639,7 @@
 
         // Humac
         html += '<div class="humac-row">';
-        html += '<div class="humac-chip"><div class="hc-label">Humac Pillar</div><div class="hc-val">' + (humac2.pillar || '') + ' — ' + (humac2.pillarRationale || '') + '</div></div>';
+        html += '<div class="humac-chip"><div class="hc-label">Humac Pillar</div><div class="hc-val">' + (humac2.pillar || '') + ' : ' + (humac2.pillarRationale || '') + '</div></div>';
         html += '<div class="humac-chip"><div class="hc-label">Financial Range</div><div class="hc-val">' + (humac2.range || '') + '</div></div>';
         html += '<div class="humac-chip"><div class="hc-label">Trajectory Signal</div><div class="hc-val">' + (humac2.trajectorySignal || '') + '</div></div>';
         html += '</div>';
@@ -674,7 +674,7 @@
       window.location.href = 'standpoint.html';
     }
 
-    // Phase 3: saveToLibrary — fixed auth, retention_value extraction, localStorage write
+    // Phase 3: saveToLibrary: fixed auth, retention_value extraction, localStorage write
     async function saveToLibrary() {
       if (!currentResult) return;
       var ep = currentResult.employeeProfile || {};
