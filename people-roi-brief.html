@@ -6,7 +6,7 @@
   <link rel="shortcut icon" href="favicon.png"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>People ROI Brief | Virorah Vantage</title>
+  <title>The Business Case | Virorah Vantage</title>
   <link rel="stylesheet" href="vantage-theme.css"/>
   <!-- SR18: vantage-theme.css above is the canonical palette + typography
        source. Local :root below is KEPT INTACT as a fallback: same
@@ -193,6 +193,60 @@
       70%{box-shadow:0 0 0 10px rgba(124,58,237,0)}
       100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}
     }
+
+    /* ── Imported from Stakeholder Influence for the merged stakeholder flow ── */
+.anchor-headline{font-size:12px;color:var(--grey);text-align:right;margin-top:4px;max-width:240px;line-height:1.4}
+.anchor-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;text-align:right;margin-top:4px}
+.anchor-number{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:var(--lavender);letter-spacing:-0.5px;white-space:nowrap}
+.anchor-wrap{text-align:right;flex-shrink:0}
+.closing-card{border-left-color:var(--violet);background:rgba(124,58,237,0.06)}
+.hi-item{background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.1);border-radius:8px;padding:12px 14px}
+.hi-k{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.45);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+.hi-v{font-size:13px;color:rgba(244,243,255,0.75);line-height:1.45}
+/* HUMAC CARD */
+    .humac-influence-card{background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(99,102,241,0.02));border:1px solid rgba(99,102,241,0.25);border-radius:14px;padding:20px 24px;margin-bottom:16px}
+.humac-influence-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.humac-influence-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+.humac-influence-meridian{font-size:12px;color:var(--grey);line-height:1.6;margin-bottom:10px}
+.humac-traj-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(165,180,252,0.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.humac-traj-note{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.12);border-radius:7px;padding:9px 12px}
+.humac-traj-text{font-size:12px;color:var(--grey);line-height:1.5}
+.ih-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.ih-profile{font-size:13px;color:var(--grey);line-height:1.6;max-width:520px}
+/* STAKEHOLDER PROFILE + DATA ANCHOR HEADER */
+    .influence-header{background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.22);border-radius:16px;padding:24px 28px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+/* INFLUENCE STACK — 5 LAYERS */
+    .influence-stack{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.l-alt-item{display:flex;gap:8px;font-size:12px;color:var(--dim);line-height:1.5}
+.l-alt-num{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.4);flex-shrink:0;margin-top:2px}
+.l-alternatives{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.l-figure{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--lavender);letter-spacing:-0.3px;margin-bottom:6px}
+.l-humac-basis{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.12);border-radius:7px;padding:9px 12px;font-size:12px;color:var(--grey);line-height:1.5;margin-top:10px}
+.l-humac-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(165,180,252,0.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.l-prob-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase}
+.l-rar-figure{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#FF4D6D;letter-spacing:-0.3px}
+.l-rar{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+.l-sub{font-size:12px;color:var(--dim);line-height:1.6}
+.l-success-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(34,197,94,0.5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.l-success{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:7px;padding:9px 12px;font-size:12px;color:rgba(244,243,255,0.6);line-height:1.5;margin-top:10px}
+.l-tactic{font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;letter-spacing:.03em;margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
+/* Layer content styles */
+    .l-text{font-size:13px;color:var(--grey);line-height:1.7;margin-bottom:10px}
+.layer-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 26px;transition:border-color .2s}
+.layer-header{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.layer-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.layer-num{width:28px;height:28px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--muted);flex-shrink:0}
+.line-card-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.line-card-text{font-size:14px;color:#f4f3ff;line-height:1.65;font-style:italic}
+/* OPENING / CLOSING LINE CARDS */
+    .line-card{border-left:3px solid var(--accent);border-radius:0 12px 12px 0;background:var(--card);padding:16px 22px;margin-bottom:16px}
+.hi-v.pillar{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;color:#c4b5fd}
+.prob-high{color:rgba(255,77,109,0.9);background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.25)}
+.prob-low{color:var(--muted);background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2)}
+.prob-medium{color:#FFB547;background:rgba(255,181,71,0.1);border:1px solid rgba(255,181,71,0.25)}
+.stakeholder-btn{background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;color:var(--grey);font-size:12px;font-family:'Plus Jakarta Sans',sans-serif}
+.stakeholder-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stakeholder-icon{font-size:18px;display:block;margin-bottom:4px}
   </style>
 </head>
 <body>
@@ -211,8 +265,7 @@
     <a href="humac-onboarding.html" class="nav-item" id="nav-humac"><span class="icon">&#x1F4C8;</span> Humac Score</a>
     <div class="nav-section">Your Active Tools</div>
     <a href="employee-case-advisor.html" class="nav-item"><span class="icon">&#x26A1;</span> Employee Case Advisor</a>
-    <a href="people-roi-brief.html" class="nav-item"><span class="icon">&#x1F4CA;</span> People ROI Brief</a>
-    <a href="leadership-communicator.html" class="nav-item"><span class="icon">&#x1F3AF;</span> Stakeholder Influence</a>
+    <a href="people-roi-brief.html" class="nav-item active"><span class="icon">&#x1F4BC;</span> The Business Case</a>
     <a href="difficult-conversations.html" class="nav-item"><span class="icon">&#x1F3AD;</span> Difficult Conversations</a>
     <a href="policy-advisor.html" class="nav-item"><span class="icon">&#x1F9ED;</span> Policy Advisor</a>
     <a href="retention-advisor.html" class="nav-item"><span class="icon">&#x2696;&#xFE0F;</span> Retention Advisor</a>
@@ -238,10 +291,33 @@
   <div class="main">
 
     <!-- INTAKE VIEW -->
-    <div id="intake-view">
+        <div id="selector-view">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; People ROI Brief</div>
-        <div class="page-title">&#x1F4CA; People ROI Brief</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; The Business Case</div>
+        <div class="page-title">&#x1F4BC; The Business Case</div>
+        <div class="page-sub">Turn a situation into an argument that moves people.</div>
+      </div>
+      <div class="intro-card">
+        <div class="intro-title">Two ways to make it. Pick the one you need.</div>
+        <div class="intro-body">
+          Whether it's a boardroom that needs the number to be undeniable, or one specific person who needs to hear something that makes saying no the riskier choice, this is where the case gets built.
+        </div>
+      </div>
+      <div class="intake-card" style="text-align:center;padding:40px 32px">
+        <div class="form-section" style="margin-bottom:0">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f4f3ff;margin-bottom:24px;text-align:center;text-transform:none;letter-spacing:normal">Is there a specific person you need to convince, or do you need the general business case?</div>
+          <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+            <button class="submit-btn" style="flex:1;min-width:240px;max-width:320px;position:static" onclick="showView('intake-view-stakeholder')">A specific person to convince &#x2192;</button>
+            <button class="submit-btn" style="flex:1;min-width:240px;max-width:320px;position:static;background:rgba(99,102,241,0.1);color:#c4b5fd;border:1px solid rgba(99,102,241,0.3)" onclick="showView('intake-view-general')">The general business case &#x2192;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="intake-view-general" style="display:none">
+      <div class="page-header">
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; The Business Case</div>
+        <div class="page-title">&#x1F4BC; The Business Case</div>
         <div class="page-sub">Your numbers already tell a story. Let's make sure the right people hear it.</div>
       </div>
       <div class="intro-card">
@@ -286,13 +362,60 @@
           <label class="form-label">What action or budget are you seeking? (optional)</label>
           <input type="text" id="ask" placeholder='e.g. "&#8377;18L retention investment for the engineering cohort" or "approval to run exit interview overhaul"' />
         </div>
-        <button class="submit-btn" id="submit-btn" onclick="runSIGNAL()" disabled>Generate SIGNAL Narrative &#x2192;</button>
+        <button class="submit-btn" id="submit-btn-general" onclick="runSIGNAL()" disabled>Generate SIGNAL Narrative &#x2192;</button>
       </div>
     </div>
 
+<div id="intake-view-stakeholder" style="display:none">
+      <div class="page-header">
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; The Business Case</div>
+        <div class="page-title">&#x1F3AF; The Business Case</div>
+        <div class="page-sub">Walk in with a five-layer strategy and one irrefutable number. Walk out with a decision.</div>
+      </div>
+      <div class="intro-card">
+        <div class="intro-title">The meeting where HR usually loses.</div>
+        <div class="intro-body">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);padding:3px 8px;border-radius:3px;margin-right:8px">INFLUENCE</span>
+          Five layers before you say a word: <strong style="color:rgba(244,243,255,0.8)">Credibility</strong> (why they should listen), <strong style="color:rgba(244,243,255,0.8)">Data Anchor</strong> (the Humac-grounded number that reframes the conversation), <strong style="color:rgba(244,243,255,0.8)">Narrative Bridge</strong> (the story that makes it land), <strong style="color:rgba(244,243,255,0.8)">Risk Mirror</strong> (Revenue at Risk — the cost of saying no), <strong style="color:rgba(244,243,255,0.8)">Decision Runway</strong> (the specific ask with a deadline and two alternatives). Plus the exact opening and closing line.
+        </div>
+      </div>
+      <div class="intake-card">
+        <div class="form-section">
+          <label class="form-label">Who are you influencing?</label>
+          <div class="stakeholder-grid">
+            <div class="stakeholder-btn" onclick="selectStakeholder(this,'CEO / Founder')"><span class="stakeholder-icon">&#x26A1;</span>CEO / Founder</div>
+            <div class="stakeholder-btn" onclick="selectStakeholder(this,'CFO / Finance head')"><span class="stakeholder-icon">&#x1F4B0;</span>CFO / Finance</div>
+            <div class="stakeholder-btn" onclick="selectStakeholder(this,'CHRO / HR Head')"><span class="stakeholder-icon">&#x1F451;</span>CHRO / HR Head</div>
+            <div class="stakeholder-btn" onclick="selectStakeholder(this,'Board / Investors')"><span class="stakeholder-icon">&#x1F3DB;</span>Board / Investors</div>
+            <div class="stakeholder-btn" onclick="selectStakeholder(this,'Business Unit Head')"><span class="stakeholder-icon">&#x1F3E2;</span>BU Head</div>
+            <div class="stakeholder-btn" onclick="selectStakeholder(this,'Line Manager')"><span class="stakeholder-icon">&#x1F464;</span>Line Manager</div>
+            <div class="stakeholder-btn" onclick="selectStakeholder(this,'Legal / Compliance')"><span class="stakeholder-icon">&#x2696;&#xFE0F;</span>Legal / Compliance</div>
+            <div class="stakeholder-btn" onclick="selectStakeholder(this,'Leadership Team')"><span class="stakeholder-icon">&#x1F4CB;</span>Leadership Team</div>
+          </div>
+        </div>
+        <div class="form-section">
+          <label class="form-label">What are you trying to get them to do?</label>
+          <textarea id="stakeholder-ask" placeholder='e.g. "Approve &#8377;18L retention investment for the engineering team" or "Sign off on a formal PIP process for three underperformers" or "Agree to loop in legal before the termination proceeds"' rows="3"></textarea>
+        </div>
+        <div class="form-section">
+          <label class="form-label">What's the situation? What resistance do you expect? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic</span></label>
+          <div class="voice-wrap">
+          <textarea id="situation" placeholder='e.g. "CFO thinks attrition is a market issue, not an HR problem. He&apos;s cut two HR budgets this year already. He responds to numbers and cost arguments, not culture or engagement talk. I have 20 minutes in the Monday review meeting."' rows="4" style="padding-right:48px"></textarea>
+          <button class="voice-btn" id="situation-mic" onclick="toggleVoiceInput('situation', this)" title="Tap to speak">&#127908;</button>
+          </div>
+        </div>
+        <div class="form-section">
+          <label class="form-label">What's your strongest data point? (optional — included as additional context)</label>
+          <input type="text" id="data-point" placeholder='e.g. "22% attrition in engineering this quarter, up from 14% last quarter" or "&#8377;2.4 crore estimated replacement cost for 8 senior exits"' />
+        </div>
+        <button class="submit-btn" id="submit-btn-stakeholder" onclick="runInfluence()" disabled>Build INFLUENCE Stack &rarr;</button>
+      </div>
+    </div>
+
+    
     <!-- LOADING VIEW -->
     <div id="loading-view" style="display:none">
-      <div class="page-header"><div class="page-title">&#x1F4CA; People ROI Brief</div></div>
+      <div class="page-header"><div class="page-title">&#x1F4BC; The Business Case</div></div>
       <div class="loading-state">
         <div class="loading-orb">
           <svg width="64" height="64" viewBox="0 0 64 64">
@@ -305,9 +428,9 @@
     </div>
 
     <!-- OUTPUT VIEW -->
-    <div id="output-view" style="display:none">
+    <div id="output-view-general" style="display:none">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="people-roi-brief.html">People ROI Brief</a> &middot; SIGNAL Output</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; The Business Case &middot; SIGNAL Output</div>
         <div class="page-title">Your SIGNAL Narrative</div>
         <div class="page-sub" id="output-audience-label">Ready to present</div>
       </div>
@@ -406,15 +529,94 @@
 
         <!-- Action row -->
         <div class="action-row">
-          <button class="btn-primary" onclick="buildInfluence()">Build Influence Stack &#x2192;</button>
+          <button class="btn-primary" onclick="switchToStakeholderFlow()">Now Make It Personal &#x2192;</button>
           <button class="btn-ghost" id="save-record-btn" onclick="saveToRecord()">Save to Vantage Record &#x2192;</button>
-          <button class="btn-ghost" onclick="fileToLedger()">File to Ledger &rarr;</button>
-          <button class="btn-ghost" onclick="startNew()">New Story</button>
+          <button class="btn-ghost" onclick="fileToLedgerGeneral()">File to Ledger &rarr;</button>
+          <button class="btn-ghost" onclick="startNewGeneral()">New Story</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
         </div>
 
       </div>
     </div>
+
+<div id="output-view-stakeholder" style="display:none">
+      <div class="page-header">
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; The Business Case &middot; INFLUENCE Stack</div>
+        <div class="page-title">Your INFLUENCE Stack</div>
+        <div class="page-sub" id="output-stakeholder-label">Ready to present</div>
+      </div>
+      <div class="output-section">
+
+        <!-- Opening line -->
+        <div class="line-card">
+          <div class="line-card-label">Opening line — the first sentence you say in the room</div>
+          <div class="line-card-text" id="opening-line">&#8212;</div>
+        </div>
+
+        <!-- Stakeholder profile + Data Anchor header -->
+        <div class="influence-header">
+          <div>
+            <div class="ih-label">Stakeholder Profile &middot; <span id="ih-stakeholder"></span></div>
+            <div class="ih-profile" id="ih-profile">&#8212;</div>
+          </div>
+          <div class="anchor-wrap">
+            <div class="anchor-number" id="anchor-number">&#8212;</div>
+            <div class="anchor-headline" id="anchor-headline"></div>
+            <div class="anchor-label">Data Anchor</div>
+          </div>
+        </div>
+
+        <!-- 5-layer INFLUENCE Stack -->
+        <div class="influence-stack" id="influence-layers"></div>
+
+        <!-- Humac financial intelligence -->
+        <div class="humac-influence-card" id="humac-influence-card" style="display:none">
+          <div class="humac-influence-label">&#x1F4B0; Humac Financial Intelligence</div>
+          <div class="humac-influence-grid">
+            <div class="hi-item">
+              <div class="hi-k">Humac pillar</div>
+              <div class="hi-v pillar" id="hi-pillar">&#8212;</div>
+            </div>
+            <div class="hi-item">
+              <div class="hi-k">Confidence</div>
+              <div class="hi-v" id="hi-confidence">&#8212;</div>
+            </div>
+          </div>
+          <div id="hi-green-cat" style="margin-top:10px;margin-bottom:4px"></div>
+          <div class="humac-influence-meridian" id="hi-meridian"></div>
+          <div class="humac-traj-note" id="hi-traj-wrap" style="display:none">
+            <div class="humac-traj-label">Trajectory Note</div>
+            <div class="humac-traj-text" id="hi-trajectory"></div>
+          </div>
+        </div>
+
+        <!-- Closing line -->
+        <div class="line-card closing-card" style="margin-top:-4px">
+          <div class="line-card-label">Closing line — the last sentence before you leave the room</div>
+          <div class="line-card-text" id="closing-line">&#8212;</div>
+        </div>
+
+        <!-- ARIA offer -->
+        <div class="aria-offer-card">
+          <div class="aria-offer-inner">
+            <div class="aria-offer-label">✦ ARIA — Rehearse this conversation</div>
+            <div class="aria-offer-text" id="aria-offer-text-stakeholder">ARIA can play the stakeholder so you can rehearse holding the financial case under pressure.</div>
+          </div>
+          <button class="aria-offer-btn" onclick="goToARIA()">Talk to ARIA &rarr;</button>
+        </div>
+
+        <!-- Action row -->
+        <div class="action-row">
+          <button class="btn-primary" onclick="practiceConversation()">Simulate the Conversation &rarr;</button>
+          <button class="btn-ghost" onclick="fileToLedgerStakeholder()">File to Ledger &rarr;</button>
+          <button class="btn-ghost" onclick="startNewStakeholder()">New Stack</button>
+          <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
 
   </div>
 
@@ -433,8 +635,7 @@
     }
     var VANTAGE_TOOL_URLS = {
       'Employee Case Advisor': 'employee-case-advisor.html',
-      'People ROI Brief': 'people-roi-brief.html',
-      'Stakeholder Influence': 'leadership-communicator.html',
+      'The Business Case': 'people-roi-brief.html',
       'Policy Advisor': 'policy-advisor.html',
       'Retention Advisor': 'retention-advisor.html',
       'Difficult Conversations': 'difficult-conversations.html'
@@ -447,46 +648,115 @@
       if (linkEl) { linkEl.textContent = 'Open ' + (suggestedTool || 'the right tool') + ' \u2192'; linkEl.href = url; }
       var el = document.getElementById('vantage-wrongtool');
       if (el) el.style.display = 'block';
-      showView('intake-view');
+      showView('intake-view-general');
     }
 
     function showError(msg) {
       document.getElementById('vantage-error-msg').textContent = msg;
       document.getElementById('vantage-error').style.display = 'block';
-      showView('intake-view');
+      showView('intake-view-general');
       setTimeout(function(){ var el=document.getElementById('vantage-error'); if(el)el.style.display='none'; }, 10000);
     }
     var BASE = 'https://vantage.virorah.com/';
     var selectedAudience = '';
+    var selectedStakeholder = '';
     var currentResult = null;
     var narrativeVersions = {};
+    var activeFlow = 'general';
 
     if (sessionStorage.getItem('sr_access') !== 'true') {
       window.location.href = BASE + 'access.html';
     }
 
+    // Anyone arriving via the old leadership-communicator.html redirect stub
+    // (a bookmark, an external link) lands straight in the stakeholder flow
+    // instead of the selector, matching what that old URL used to do.
+    if (new URLSearchParams(window.location.search).get('flow') === 'stakeholder') {
+      showView('intake-view-stakeholder');
+    }
+
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
+
+    // ── HUMAC CONTEXT — fetched once per session, cached exactly like MERIDIAN
+    // above and ARIA's own context. Makes The Business Case the third surface,
+    // after the monthly Debrief and ARIA, to use the person's real Humac Score
+    // rather than just the L1-L5 pillar taxonomy both merged flows already use.
+    var businessCaseHumacContext = null;
+    (function loadBusinessCaseHumacContext() {
+      var cached = sessionStorage.getItem('sr_business_case_humac');
+      if (cached) {
+        try { businessCaseHumacContext = JSON.parse(cached); return; } catch(e) {}
+      }
+      var token = null;
+      var doFetch = function() {
+        fetch(WORKER, {
+          method: 'POST',
+          headers: Object.assign({'Content-Type': 'application/json'}, token ? {'Authorization': 'Bearer ' + token} : {}),
+          body: JSON.stringify({ tool: 'get_business_case_context' })
+        })
+        .then(function(res){ return res.json(); })
+        .then(function(data){
+          if (data.success && data.data) {
+            businessCaseHumacContext = data.data;
+            try { sessionStorage.setItem('sr_business_case_humac', JSON.stringify(data.data)); } catch(e) {}
+          }
+        })
+        .catch(function(){ /* silent — humac context is a nice-to-have, never blocks the tool */ });
+      };
+      if (window.Clerk && window.Clerk.session) {
+        window.Clerk.session.getToken().then(function(t){ token = t; doFetch(); }).catch(doFetch);
+      } else {
+        doFetch();
+      }
+    })();
     document.getElementById('meridian-chip-val').innerText =
       (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
 
-    document.getElementById('context').addEventListener('input', checkSubmit);
-    document.getElementById('ask').addEventListener('input', checkSubmit);
+    document.getElementById('context').addEventListener('input', checkSubmitGeneral);
+    document.getElementById('ask').addEventListener('input', checkSubmitGeneral);
 
     function selectAudience(el, audience) {
       document.querySelectorAll('.audience-btn').forEach(function(b){ b.classList.remove('selected'); });
       el.classList.add('selected');
       selectedAudience = audience;
-      checkSubmit();
+      checkSubmitGeneral();
     }
 
-    function checkSubmit() {
+    // Pre-existing gap found during the merge: this function was called in
+    // both flows but never defined anywhere in the original file or either
+    // external script, meaning every submission threw a ReferenceError here
+    // before the fetch call even fired. Genuinely new, not a rename.
+    function animateLoading(flow) {
+      var messagesGeneral = [
+        'BUILDING YOUR SIGNAL NARRATIVE...',
+        'CALCULATING REVENUE AT RISK...',
+        'CALIBRATING FOR YOUR AUDIENCE...',
+        'FINALIZING THE NARRATIVE...'
+      ];
+      var messagesStakeholder = [
+        'BUILDING YOUR INFLUENCE STACK...',
+        'FINDING THE DATA ANCHOR...',
+        'MAPPING THE RISK MIRROR...',
+        'FINALIZING THE STRATEGY...'
+      ];
+      var messages = (flow === 'stakeholder') ? messagesStakeholder : messagesGeneral;
+      var i = 0;
+      var el = document.getElementById('loading-text');
+      if (el) el.innerText = messages[0];
+      return setInterval(function() {
+        i = (i + 1) % messages.length;
+        if (el) el.innerText = messages[i];
+      }, 1800);
+    }
+
+    function checkSubmitGeneral() {
       var ctx = document.getElementById('context').value.trim();
-      document.getElementById('submit-btn').disabled = !(selectedAudience && ctx.length > 20);
+      document.getElementById('submit-btn-general').disabled = !(selectedAudience && ctx.length > 20);
     }
 
     function showView(view) {
-      ['intake-view','loading-view','output-view'].forEach(function(v){
+      ['selector-view','intake-view-general','intake-view-stakeholder','loading-view','output-view-general','output-view-stakeholder'].forEach(function(v){
         document.getElementById(v).style.display = 'none';
       });
       document.getElementById(view).style.display = 'block';
@@ -515,17 +785,19 @@
       var ask = document.getElementById('ask').value.trim();
       if (!selectedAudience || !ctx) return;
       showView('loading-view');
-      var loadInterval = animateLoading();
+      var loadInterval = animateLoading('general');
       try {
         var res = await fetch(WORKER, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
-            tool: 'signal',
+            tool: 'business_case',
+            flow: 'general',
             audience: selectedAudience,
             context: ctx,
             metrics: buildMetricsText(),   // sends a readable string, not [object Object]
-            meridian: meridian
+            meridian: meridian,
+            humacContext: businessCaseHumacContext
           })
         });
         var data = await res.json();
@@ -534,9 +806,10 @@
           showWrongTool(data.data.reason, data.data.suggestedTool);
         } else if (data.success) {
           currentResult = data.data;
-          renderOutput();
+          activeFlow = 'general';
+          renderOutputGeneral();
         } else {
-          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You\u2019ve reached your daily limit for People ROI Brief. Resets tomorrow.') : 'Analysis failed. ' + (data.error || 'Please try again.'));
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You\u2019ve reached your daily limit for The Business Case. Resets tomorrow.') : 'Analysis failed. ' + (data.error || 'Please try again.'));
         }
       } catch(err) {
         clearInterval(loadInterval);
@@ -548,7 +821,7 @@
       return { High: 'conf-high', Medium: 'conf-medium', Low: 'conf-low' }[conf] || 'conf-medium';
     }
 
-    function renderOutput() {
+    function renderOutputGeneral() {
       var r = currentResult;
       if (!r) return;
 
@@ -643,7 +916,7 @@
         document.getElementById('aria-offer-text').innerText = r.aria;
       }
 
-      showView('output-view');
+      showView('output-view-general');
     }
 
     var ntabNotes = {
@@ -660,21 +933,57 @@
     }
 
     function goToARIA() {
+      var scenario, headline;
+      if (activeFlow === 'stakeholder') {
+        var stAsk = document.getElementById('stakeholder-ask');
+        scenario = 'The Business Case: ' + selectedStakeholder + (stAsk ? ', ' + stAsk.value.substring(0, 150) : '');
+        headline = (currentResult && currentResult.openingLine) || '';
+      } else {
+        scenario = 'The Business Case: presenting to ' + selectedAudience;
+        var hEl = document.getElementById('headline-text');
+        headline = hEl ? hEl.innerText : '';
+      }
       sessionStorage.setItem('sr_aria_context', JSON.stringify({
-        mode: 'conversation_coach',
-        scenario: 'People ROI Brief: presenting to ' + selectedAudience,
-        headline: document.getElementById('headline-text').innerText
+        mode: 'explore',
+        scenario: scenario,
+        headline: headline
       }));
       window.location.href = BASE + 'aria.html';
     }
 
-    // Phase 3: save People ROI Brief output to Vantage Record
+    // Repurposed from the old cross-page "Build Influence Stack" link, now an
+    // in-page handoff between the two flows of the same tool instead of a
+    // navigation to a separate page. Carries the general-flow result over
+    // directly rather than round-tripping through sessionStorage.
+    function switchToStakeholderFlow() {
+      showView('intake-view-stakeholder');
+      if (currentResult && activeFlow === 'general') {
+        var narr = narrativeVersions.cfo || '';
+        var headline = currentResult.headline || '';
+        if (narr) {
+          document.getElementById('situation').value = 'Context from the general business case: ' + narr;
+        }
+        if (headline) {
+          document.getElementById('data-point').value = headline;
+        }
+        if (selectedAudience) {
+          document.querySelectorAll('.stakeholder-btn').forEach(function(b) {
+            if (b.innerText.trim().toLowerCase().indexOf(selectedAudience.split('/')[0].trim().toLowerCase()) > -1) {
+              selectStakeholder(b, selectedAudience);
+            }
+          });
+        }
+        checkSubmitStakeholder();
+      }
+    }
+
+    // Phase 3: save The Business Case (general flow) output to Vantage Record
     // business_case_value = Revenue at Risk figure (the financial exposure surfaced)
     async function saveToRecord() {
       if (!currentResult) return;
       var rar = currentResult.revenueAtRisk || {};
       var businessCaseValue = rar.figure || '';
-      var narrative = 'People ROI Brief. Audience: ' + (selectedAudience || 'Unknown') + '. Revenue at Risk: ' + (rar.figure || 'N/A') + '. Headline: ' + ((currentResult.headline || '').substring(0, 200));
+      var narrative = 'The Business Case. Audience: ' + (selectedAudience || 'Unknown') + '. Revenue at Risk: ' + (rar.figure || 'N/A') + '. Headline: ' + ((currentResult.headline || '').substring(0, 200));
 
       try {
         var token = null;
@@ -689,7 +998,7 @@
           headers: headers,
           body: JSON.stringify({
             tool: 'save_case',
-            caseType: 'People ROI Brief: ' + (selectedAudience || 'General'),
+            caseType: 'The Business Case: ' + (selectedAudience || 'General'),
             narrative: narrative,
             result: currentResult,
             business_case_value: businessCaseValue,
@@ -705,24 +1014,13 @@
       } catch(e) { /* silent fail */ }
     }
 
-    function buildInfluence() {
-      if (currentResult) {
-        sessionStorage.setItem('sr_signal_context', JSON.stringify({
-          audience: selectedAudience,
-          narrative: narrativeVersions.cfo ? narrativeVersions.cfo.substring(0, 400) : '',
-          headline: currentResult.headline || ''
-        }));
-      }
-      window.location.href = BASE + 'leadership-communicator.html';
-    }
-
-    function fileToLedger() {
+    function fileToLedgerGeneral() {
       if (!currentResult) return;
       var r = currentResult;
       var gc = r.greenCategory || {};
       var rar = r.revenueAtRisk || {};
       var prefill = {
-        sourceTool: 'signal',
+        sourceTool: 'business_case',
         situationSummary: r.headline || '',
         hrRecommendation: (r.signal && r.signal.action && r.signal.action.immediate) ? r.signal.action.immediate.join('; ') : '',
         predictedOutcome: rar.basis || '',
@@ -733,7 +1031,7 @@
       window.location.href = 'standpoint.html';
     }
 
-    function startNew() {
+    function startNewGeneral() {
       selectedAudience = '';
       currentResult = null;
       narrativeVersions = {};
@@ -743,9 +1041,213 @@
         document.getElementById(id).value = '';
       });
       document.querySelectorAll('.audience-btn').forEach(function(b){ b.classList.remove('selected'); });
-      document.getElementById('submit-btn').disabled = true;
-      showView('intake-view');
+      document.getElementById('submit-btn-general').disabled = true;
+      showView('intake-view-general');
     }
+
+
+    function selectStakeholder(el, stakeholder) {
+      document.querySelectorAll('.stakeholder-btn').forEach(function(b){ b.classList.remove('selected'); });
+      el.classList.add('selected');
+      selectedStakeholder = stakeholder;
+      checkSubmitStakeholder();
+    }
+
+    function checkSubmitStakeholder() {
+      var ask = document.getElementById('stakeholder-ask').value.trim();
+      var sit = document.getElementById('situation').value.trim();
+      document.getElementById('submit-btn-stakeholder').disabled = !(selectedStakeholder && ask.length > 10 && sit.length > 20);
+    }
+
+    async function runInfluence() {
+      var ask = document.getElementById('stakeholder-ask').value.trim();
+      var sit = document.getElementById('situation').value.trim();
+      var dp = document.getElementById('data-point').value.trim();
+      if (!selectedStakeholder || !ask || !sit) return;
+      showView('loading-view');
+      var loadInterval = animateLoading('stakeholder');
+      try {
+        var res = await fetch(WORKER, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            tool: 'business_case',
+            flow: 'stakeholder',
+            stakeholderType: selectedStakeholder,
+            situation: sit,
+            ask: ask,
+            context: dp ? 'Key data point: ' + dp : '',
+            meridian: meridian,
+            humacContext: businessCaseHumacContext
+          })
+        });
+        var data = await res.json();
+        clearInterval(loadInterval);
+        if (data.success && data.data && data.data.wrongTool) {
+          showWrongTool(data.data.reason, data.data.suggestedTool);
+        } else if (data.success) {
+          currentResult = data.data;
+          activeFlow = 'stakeholder';
+          renderOutputStakeholder();
+        } else {
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You\u2019ve reached your daily limit for The Business Case. Resets tomorrow.') : 'Analysis failed. ' + (data.error || 'Please try again.'));
+        }
+      } catch(err) {
+        clearInterval(loadInterval);
+        showError('Connection error. Please check your network and try again.');
+      }
+    }
+
+    function getProbClass(prob) {
+      return { High: 'prob-high', Medium: 'prob-medium', Low: 'prob-low' }[prob] || 'prob-medium';
+    }
+
+    function renderLayer(num, name, content) {
+      var card = document.createElement('div');
+      card.className = 'layer-card';
+      var header = '<div class="layer-header"><div class="layer-num">' + num + '</div><div class="layer-name">' + name + '</div></div>';
+      card.innerHTML = header + content;
+      return card;
+    }
+
+    function renderOutputStakeholder() {
+      var r = currentResult;
+      if (!r) return;
+      var s = r.stack || {};
+      var h = r.humac || {};
+
+      document.getElementById('output-stakeholder-label').innerText = 'Built for ' + selectedStakeholder;
+      document.getElementById('ih-stakeholder').innerText = selectedStakeholder;
+      document.getElementById('ih-profile').innerText = r.stakeholderProfile || '';
+
+      // Data Anchor header
+      var da = s.dataAnchor || {};
+      document.getElementById('anchor-number').innerText = da.figure || '\u2014';
+      document.getElementById('anchor-headline').innerText = da.headline || '';
+
+      // Opening / closing lines
+      document.getElementById('opening-line').innerText = r.openingLine || '\u2014';
+      document.getElementById('closing-line').innerText = r.closingLine || '\u2014';
+
+      // Build layers
+      var layersEl = document.getElementById('influence-layers');
+      layersEl.innerHTML = '';
+
+      // Layer 1 — Credibility
+      var cred = s.credibility || {};
+      layersEl.appendChild(renderLayer(1, 'Credibility Foundation',
+        '<div class="l-text">' + (cred.statement || '') + '</div>' +
+        (cred.evidence ? '<div class="l-sub">' + cred.evidence + '</div>' : '') +
+        (cred.deliveryNote ? '<div class="l-tactic"><strong>Delivery:</strong> ' + cred.deliveryNote + '</div>' : '')
+      ));
+
+      // Layer 2 — Data Anchor
+      layersEl.appendChild(renderLayer(2, 'Data Anchor',
+        '<div class="l-figure">' + (da.figure || '\u2014') + '</div>' +
+        '<div class="l-text">' + (da.context || '') + '</div>' +
+        (da.humacBasis ? '<div class="l-humac-basis"><div class="l-humac-label">Humac basis</div>' + da.humacBasis + '</div>' : '')
+      ));
+
+      // Layer 3 — Narrative Bridge
+      var nb = s.narrativeBridge || {};
+      layersEl.appendChild(renderLayer(3, 'Narrative Bridge',
+        '<div class="l-text">' + (nb.story || '') + '</div>' +
+        (nb.connection ? '<div class="l-sub" style="margin-bottom:8px">' + nb.connection + '</div>' : '') +
+        (nb.emotionalHook ? '<div class="l-tactic"><strong>The human fact inside the financial case:</strong> ' + nb.emotionalHook + '</div>' : '')
+      ));
+
+      // Layer 4 — Risk Mirror
+      var rm = s.riskMirror || {};
+      var probText = rm.probability ? rm.probability.split(' — ')[0].split('.')[0] : '';
+      var probClass = getProbClass(probText);
+      layersEl.appendChild(renderLayer(4, 'Risk Mirror — Revenue at Risk',
+        '<div class="l-rar">' +
+          '<div class="l-rar-figure">' + (rm.revenueAtRisk || '\u2014') + '</div>' +
+          (probText ? '<span class="l-prob-badge ' + probClass + '">' + probText + ' probability</span>' : '') +
+        '</div>' +
+        (rm.revenueAtRiskBasis ? '<div class="l-sub" style="margin-bottom:8px">' + rm.revenueAtRiskBasis + '</div>' : '') +
+        '<div class="l-text">' + (rm.scenario || '') + '</div>' +
+        (rm.timeline ? '<div class="l-tactic"><strong>Timeline:</strong> ' + rm.timeline + '</div>' : '')
+      ));
+
+      // Layer 5 — Decision Runway
+      var dr = s.decisionRunway || {};
+      var altsHtml = '';
+      if (dr.alternatives && dr.alternatives.length > 0) {
+        altsHtml = '<div class="l-alternatives">' +
+          dr.alternatives.map(function(a, i) {
+            return '<div class="l-alt-item"><span class="l-alt-num">' + (i === 0 ? 'Alt A' : 'Alt B') + '</span><span>' + a + '</span></div>';
+          }).join('') +
+        '</div>';
+      }
+      layersEl.appendChild(renderLayer(5, 'Decision Runway',
+        '<div class="l-text">' + (dr.ask || '') + '</div>' +
+        (dr.deadline ? '<div class="l-sub" style="margin-bottom:10px"><strong>Deadline:</strong> ' + dr.deadline + '</div>' : '') +
+        altsHtml +
+        (dr.successMetric ? '<div class="l-success"><div class="l-success-label">What you commit to report in 90 days</div>' + dr.successMetric + '</div>' : '')
+      ));
+
+      // Humac card
+      if (h.pillar || h.meridianCalibration) {
+        document.getElementById('hi-green-cat').innerHTML = renderGreenCat(r.greenCategory);
+        document.getElementById('hi-pillar').innerText = h.pillar ? 'Humac ' + h.pillar : '\u2014';
+        document.getElementById('hi-confidence').innerText = (h.confidence || '\u2014') + ' confidence';
+        document.getElementById('hi-meridian').innerText = (h.pillarRationale ? h.pillarRationale + ' ' : '') + (h.meridianCalibration || '');
+        if (h.trajectoryNote) {
+          document.getElementById('hi-trajectory').innerText = h.trajectoryNote;
+          document.getElementById('hi-traj-wrap').style.display = 'block';
+        }
+        document.getElementById('humac-influence-card').style.display = 'block';
+      }
+
+      // ARIA offer
+      if (r.aria) {
+        document.getElementById('aria-offer-text-stakeholder').innerText = r.aria;
+      }
+
+      showView('output-view-stakeholder');
+    }
+
+    function practiceConversation() {
+      sessionStorage.setItem('sr_practice_context', JSON.stringify({
+        narrative: document.getElementById('situation').value.substring(0, 300),
+        role: selectedStakeholder
+      }));
+      window.location.href = BASE + 'difficult-conversations.html';
+    }
+
+    function fileToLedgerStakeholder() {
+      if (!currentResult) return;
+      var r = currentResult;
+      var gc = r.greenCategory || {};
+      var rm = (r.stack && r.stack.riskMirror) ? r.stack.riskMirror : {};
+      var dr = (r.stack && r.stack.decisionRunway) ? r.stack.decisionRunway : {};
+      var prefill = {
+        sourceTool: 'business_case',
+        situationSummary: r.stakeholderProfile || '',
+        hrRecommendation: dr.ask || '',
+        predictedOutcome: rm.scenario || '',
+        financialRangePredicted: rm.revenueAtRisk || '',
+        greenCategory: gc.primary || ''
+      };
+      try { sessionStorage.setItem('ledger_prefill', JSON.stringify(prefill)); } catch(e) {}
+      window.location.href = 'standpoint.html';
+    }
+
+    function startNewStakeholder() {
+      selectedStakeholder = '';
+      currentResult = null;
+      document.getElementById('stakeholder-ask').value = '';
+      document.getElementById('situation').value = '';
+      document.getElementById('data-point').value = '';
+      document.querySelectorAll('.stakeholder-btn').forEach(function(b){ b.classList.remove('selected'); });
+      document.getElementById('submit-btn-stakeholder').disabled = true;
+      showView('intake-view-stakeholder');
+    }
+
+    ['stakeholder-ask','situation'].forEach(function(id) {
+      document.getElementById(id).addEventListener('input', checkSubmitStakeholder);
+    });
   </script>
 
   <script>
@@ -899,7 +1401,7 @@
       <span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x26A0;&#xFE0F;</span>
       <div style="flex:1">
         <div id="vantage-error-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:rgba(244,243,255,.85);line-height:1.55"></div>
-        <button onclick="document.getElementById('vantage-error').style.display='none';showView('intake-view')" style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:#a5b4fc;background:transparent;border:1px solid rgba(99,102,241,.3);border-radius:6px;padding:5px 12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(99,102,241,.6)'" onmouseout="this.style.borderColor='rgba(99,102,241,.3)'">&#x2190; Try again</button>
+        <button onclick="document.getElementById('vantage-error').style.display='none';showView('intake-view-general')" style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:#a5b4fc;background:transparent;border:1px solid rgba(99,102,241,.3);border-radius:6px;padding:5px 12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(99,102,241,.6)'" onmouseout="this.style.borderColor='rgba(99,102,241,.3)'">&#x2190; Try again</button>
       </div>
       <button onclick="document.getElementById('vantage-error').style.display='none'" style="background:none;border:none;color:rgba(244,243,255,.3);cursor:pointer;font-size:16px;padding:0;line-height:1;flex-shrink:0">&#x2715;</button>
     </div>
