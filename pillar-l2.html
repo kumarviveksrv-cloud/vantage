@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>L2 · Talent Premium — Vantage</title>
+<title>L2 · Talent Premium | Vantage</title>
 <link rel="apple-touch-icon" href="favicon.png"/><link rel="icon" type="image/png" href="favicon.png"/><link rel="shortcut icon" href="favicon.png"/><link rel="manifest" href="manifest.json"/><meta name="theme-color" content="#050410"/>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="vantage-theme.css"/>
@@ -147,7 +147,7 @@ var l2Mode=hd.l2Mode||'estimate';
 var q2=ra.q2,q3=ra.q3,q4=ra.q4,q5=ra.q5,q6=ra.q6;
 
 function clampL2(n,lo,hi){return Math.max(lo,Math.min(hi,n));}
-// Real per-verdict breakdown — identical formula to Revenue Fluent's original L2 verdict scoring
+// Real per-verdict breakdown: identical formula to Revenue Fluent's original L2 verdict scoring
 function computeRealL2(a){
   var headcount=a.cq1_headcount||0,stars=a.cq1_stars||0,hipo=a.cq5_hipo||0;
   var promoted=a.cq2_promoted12mo||0,promotedEx=a.cq2_promotedexcelling||0;
