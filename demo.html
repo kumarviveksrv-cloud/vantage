@@ -200,13 +200,15 @@
   </style>
 </head>
 <body>
+<div id="page-fade-overlay" style="position:fixed;inset:0;background:#050410;z-index:99999;opacity:1;transition:opacity .5s ease;pointer-events:none"></div>
+<script src="vantage-page-fade.js"></script>
 
 <nav>
-  <a href="index.html" style="display:flex;align-items:center;text-decoration:none">
+  <a href="index.html" onclick="return vantageGoHome()" style="display:flex;align-items:center;text-decoration:none">
     <img src="virorah-vantage-logo.png" alt="Virorah Vantage" style="height:52px;width:auto;display:block;mix-blend-mode:screen;flex-shrink:0"/>
   </a>
   <div class="nav-right">
-    <a href="#" onclick="sessionStorage.setItem('vantage_skip_intro_from','1');window.location.href='index.html';return false;" style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;color:#c4b5fd;text-decoration:none;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.5);padding:8px 16px;border-radius:8px;transition:all .25s;box-shadow:0 0 14px rgba(99,102,241,0.35),0 0 36px rgba(99,102,241,0.12)" onmouseover="this.style.background='rgba(99,102,241,0.26)';this.style.boxShadow='0 0 22px rgba(99,102,241,0.55),0 0 56px rgba(99,102,241,0.22)';this.style.borderColor='rgba(99,102,241,0.75)'" onmouseout="this.style.background='rgba(99,102,241,0.15)';this.style.boxShadow='0 0 14px rgba(99,102,241,0.35),0 0 36px rgba(99,102,241,0.12)';this.style.borderColor='rgba(99,102,241,0.5)'">&larr; Back to Vantage</a>
+    <a href="#" onclick="return vantageGoHome()" style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;color:#c4b5fd;text-decoration:none;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.5);padding:8px 16px;border-radius:8px;transition:all .25s;box-shadow:0 0 14px rgba(99,102,241,0.35),0 0 36px rgba(99,102,241,0.12)" onmouseover="this.style.background='rgba(99,102,241,0.26)';this.style.boxShadow='0 0 22px rgba(99,102,241,0.55),0 0 56px rgba(99,102,241,0.22)';this.style.borderColor='rgba(99,102,241,0.75)'" onmouseout="this.style.background='rgba(99,102,241,0.15)';this.style.boxShadow='0 0 14px rgba(99,102,241,0.35),0 0 36px rgba(99,102,241,0.12)';this.style.borderColor='rgba(99,102,241,0.5)'">&larr; Back to Vantage</a>
     <div class="demo-badge">&#x1F1EE;&#x1F1F3; India Edition &middot; Live Demo</div>
   </div>
 </nav>
@@ -1056,7 +1058,7 @@
         '<div class="risk-sub" style="font-style:italic">' + (result.next_step || '') + '</div></div>' +
       '<div class="demo-cta"><div class="demo-cta-title">This was your real answer, not a script.</div>' +
         '<div class="demo-cta-sub">Sign in to save this as the first entry in your Vantage Record, see the full financial breakdown, and keep going with your own cases.</div>' +
-        '<div class="cta-btns"><a href="access.html" class="btn-p">Get Started \u2192</a><a href="index.html" class="btn-g">See what else is inside</a></div></div>';
+        '<div class="cta-btns"><a href="access.html" class="btn-p">Get Started \u2192</a><a href="index.html" class="btn-g" onclick="return vantageGoHome()">See what else is inside</a></div></div>';
     document.getElementById('pact-output').style.display = 'block';
   }
 
@@ -1144,7 +1146,7 @@
     var stepItems = [protocol.recommendation, protocol.communication, protocol.aria].filter(Boolean);
     var stepLabels = ['Recommendation', 'What to Say', 'Practice With ARIA'];
     var steps = stepItems.map(function(s,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text"><b style="color:#f4f3ff">'+stepLabels[i]+':</b> '+s+'</div></div>'; }).join('');
-    document.getElementById('pact-output').innerHTML = '<div class="risk-banner risk-'+riskClass+'"><div><div class="risk-title">'+(scores.overallRisk||'')+' Risk: Misconduct Case</div><div class="risk-sub">'+(scores.overallNarrative||'')+'</div></div><div class="risk-badge badge-'+riskClass+'">'+(scores.overallRisk||'').toUpperCase()+'</div></div><div class="pact-grid">'+pactCards+'</div>'+financial+'<div class="steps-card"><div class="steps-title">Unified Decision Protocol</div>'+steps+'</div><div class="demo-cta"><div class="demo-cta-title">Your real cases need real answers.</div><div class="demo-cta-sub">On the full platform, you describe your own situation. Employee Case Advisor reads your MERIDIAN profile and returns calibrated guidance for your exact reality.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See what else is inside</a></div></div>';
+    document.getElementById('pact-output').innerHTML = '<div class="risk-banner risk-'+riskClass+'"><div><div class="risk-title">'+(scores.overallRisk||'')+' Risk: Misconduct Case</div><div class="risk-sub">'+(scores.overallNarrative||'')+'</div></div><div class="risk-badge badge-'+riskClass+'">'+(scores.overallRisk||'').toUpperCase()+'</div></div><div class="pact-grid">'+pactCards+'</div>'+financial+'<div class="steps-card"><div class="steps-title">Unified Decision Protocol</div>'+steps+'</div><div class="demo-cta"><div class="demo-cta-title">Your real cases need real answers.</div><div class="demo-cta-sub">On the full platform, you describe your own situation. Employee Case Advisor reads your MERIDIAN profile and returns calibrated guidance for your exact reality.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g" onclick="return vantageGoHome()">See what else is inside</a></div></div>';
     document.getElementById('pact-output').style.display = 'block';
   }
 
@@ -1170,7 +1172,7 @@
     var signalCards = dimKeys.map(function(k,i){ return '<div class="signal-card"><div class="sig-dim '+dimClasses[i]+'">'+dimLabels[i]+'</div><div class="sig-content">'+(dimText[k]||'')+'</div></div>'; }).join('');
     var immediateActions = (signal.action && signal.action.immediate) ? signal.action.immediate : [];
     var talkingPts = immediateActions.slice(0,3).map(function(tp,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+tp+'</div></div>'; }).join('');
-    document.getElementById('signal-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : '')+'</div><div class="anchor-ctx">'+(r.headline || 'The number that opens the room.')+'</div></div><div class="signal-grid">'+signalCards+'</div><div class="steps-card"><div class="steps-title">Immediate Actions: This Week</div>'+talkingPts+'</div><div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(signal.narrative ? signal.narrative.cfoVersion : '')+'</div></div><div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. People ROI Brief builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g">See all six tools</a></div></div>';
+    document.getElementById('signal-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : '')+'</div><div class="anchor-ctx">'+(r.headline || 'The number that opens the room.')+'</div></div><div class="signal-grid">'+signalCards+'</div><div class="steps-card"><div class="steps-title">Immediate Actions: This Week</div>'+talkingPts+'</div><div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(signal.narrative ? signal.narrative.cfoVersion : '')+'</div></div><div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. People ROI Brief builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g" onclick="return vantageGoHome()">See all six tools</a></div></div>';
     document.getElementById('signal-output').style.display = 'block';
   }
 
@@ -1238,5 +1240,6 @@
   <button class="live-nudge-cta" onclick="tryLiveNudge()">Try it now &rarr;</button>
 </div>
 
+<script>if(window.VantageFade){VantageFade.hide(150);}</script>
 </body>
 </html>
