@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>L4 · Human P&L — Vantage</title>
+<title>L4 · Human P&L | Vantage</title>
 <link rel="apple-touch-icon" href="favicon.png"/><link rel="icon" type="image/png" href="favicon.png"/><link rel="shortcut icon" href="favicon.png"/><link rel="manifest" href="manifest.json"/><meta name="theme-color" content="#050410"/>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="vantage-theme.css"/>
@@ -64,7 +64,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .stat .sv{font-family:var(--mono);font-size:1.05rem;font-weight:500;margin-bottom:3px}
 .stat .sl{font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,243,255,.45)}
 .sv-teal{color:#6366f1}.sv-gold{color:#c4b5fd}.sv-cobalt{color:#a5b4fc}.sv-dim{color:rgba(244,243,255,.45)}.sv-green{color:#4ade80}.sv-red{color:#E05C3A}
-/* P&L STATEMENT — Revenue Fluent exact treatment */
+/* P&L STATEMENT: Revenue Fluent exact treatment */
 .pl-wrap{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:16px;overflow:hidden;margin-bottom:28px;animation:hero-pulse 3s ease-in-out infinite;position:relative}
 .pl-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.4),rgba(99,102,241,.2),rgba(99,102,241,.4),transparent)}
 .pl-header{padding:18px 28px;background:linear-gradient(90deg,rgba(99,102,241,.06),transparent);border-bottom:1px solid var(--cobalt-border);display:flex;align-items:center;justify-content:space-between}
@@ -161,7 +161,7 @@ function fmtINR(n){
   return sign+'\u20b9'+Math.round(abs);
 }
 
-// Real Human P&L — identical formula to Revenue Fluent's original computePL()
+// Real Human P&L: identical formula to Revenue Fluent's original computePL()
 function computeRealL4(a){
   var headcount=a.cq1_headcount||0, compBase=a.cq1_compbase||0;
   var avgSalary=headcount>0?compBase/headcount:0;
