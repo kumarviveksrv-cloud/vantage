@@ -1392,7 +1392,14 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
   }
 
   function init(){
-    if(alreadyOnboarded()) return;
+    // A ?welcome=1 link (see sidebar-shared.js) forces the overlay open
+    // regardless of the one-time flag, so someone can replay it deliberately
+    // from the sidebar after the automatic first-sign-in showing is long gone.
+    var forcedReplay = new URLSearchParams(window.location.search).get('welcome') === '1';
+    if(!forcedReplay && alreadyOnboarded()) return;
+    if(forcedReplay){
+      try { history.replaceState(null, '', window.location.pathname); } catch(e) {}
+    }
 
     // Wait for Clerk to confirm a real signed-in session
     // before showing the overlay. Polls every 150ms for up to 6s.
