@@ -640,7 +640,7 @@
       'Retention Advisor': 'retention-advisor.html',
       'Difficult Conversations': 'difficult-conversations.html'
     };
-    function showWrongTool(reason, suggestedTool) {
+    function showWrongTool(reason, suggestedTool, flow) {
       var url = VANTAGE_TOOL_URLS[suggestedTool] || 'dashboard.html';
       var msgEl = document.getElementById('vantage-wrongtool-msg');
       var linkEl = document.getElementById('vantage-wrongtool-link');
@@ -648,7 +648,7 @@
       if (linkEl) { linkEl.textContent = 'Open ' + (suggestedTool || 'the right tool') + ' \u2192'; linkEl.href = url; }
       var el = document.getElementById('vantage-wrongtool');
       if (el) el.style.display = 'block';
-      showView('intake-view-general');
+      showView(flow === 'stakeholder' ? 'intake-view-stakeholder' : 'intake-view-general');
     }
 
     function showError(msg) {
@@ -803,7 +803,7 @@
         var data = await res.json();
         clearInterval(loadInterval);
         if (data.success && data.data && data.data.wrongTool) {
-          showWrongTool(data.data.reason, data.data.suggestedTool);
+          showWrongTool(data.data.reason, data.data.suggestedTool, 'general');
         } else if (data.success) {
           currentResult = data.data;
           activeFlow = 'general';
@@ -1084,7 +1084,7 @@
         var data = await res.json();
         clearInterval(loadInterval);
         if (data.success && data.data && data.data.wrongTool) {
-          showWrongTool(data.data.reason, data.data.suggestedTool);
+          showWrongTool(data.data.reason, data.data.suggestedTool, 'stakeholder');
         } else if (data.success) {
           currentResult = data.data;
           activeFlow = 'stakeholder';
