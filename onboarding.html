@@ -6,7 +6,7 @@
   <link rel="shortcut icon" href="favicon.png"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MERIDIAN Setup — Virorah Vantage</title>
+  <title>MERIDIAN Setup | Virorah Vantage</title>
   <link rel="stylesheet" href="vantage-theme.css"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -95,7 +95,7 @@
   <div class="header">
     <div class="header-badge"><div class="header-dot"></div>MERIDIAN Context Engine</div>
     <div class="header-title">Build your professional context.</div>
-    <div class="header-sub">Seven parameters. Every Virorah tool uses these to calibrate its output to your exact reality — not generic advice. Takes 5 minutes.</div>
+    <div class="header-sub">Seven parameters. Every Virorah tool uses these to calibrate its output to your exact reality, not generic advice. Takes 5 minutes.</div>
   </div>
 
   <div class="progress-bar">
@@ -126,7 +126,7 @@
 
     var STEPS = [
       {
-        id:'state', title:'Which state do you operate in?', sub:'This calibrates your advice to the correct labour law jurisdiction — termination norms, standing order requirements, and dispute resolution vary significantly by state.',
+        id:'state', title:'Which state do you operate in?', sub:'This calibrates your advice to the correct labour law jurisdiction: termination norms, standing order requirements, and dispute resolution vary significantly by state.',
         type:'grid', cols:4,
         options:[
           'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh',
@@ -146,7 +146,7 @@
         options:['IT / SaaS','BPO / KPO','Banking / NBFC','Insurance','Manufacturing','Automobile / Auto Ancillary','Healthcare / Pharma','Retail / FMCG','Consulting / Professional Services','Education / EdTech','Logistics / Supply Chain','Telecom','Media / Entertainment','Real Estate / Construction','Aviation','Oil & Gas / Energy','Textiles / Apparel','Chemicals / Fertilizers','Agriculture / Agri-business','Government / PSU','Startup','Other']
       },
       {
-        id:'orgType', title:'What type of organisation?', sub:'This determines which employment law provisions apply — registered factories, shops & establishments, or contract labour regulations.',
+        id:'orgType', title:'What type of organisation?', sub:'This determines which employment law provisions apply: registered factories, shops & establishments, or contract labour regulations.',
         type:'grid', cols:2,
         options:[
           'Corporate / Pvt Ltd','MNC','Listed / Public Company',
@@ -156,7 +156,7 @@
         ]
       },
       {
-        id:'orgSize', title:'How large is your organisation?', sub:'Headcount determines which statutes apply — Industrial Disputes Act thresholds, retrenchment requirements, and Works Committee obligations vary by size.',
+        id:'orgSize', title:'How large is your organisation?', sub:'Headcount determines which statutes apply: Industrial Disputes Act thresholds, retrenchment requirements, and Works Committee obligations vary by size.',
         type:'grid', cols:3,
         options:[
           '1 \u2013 50','51 \u2013 250','251 \u2013 500','501 \u2013 1,000',
@@ -164,7 +164,7 @@
         ]
       },
       {
-        id:'seniority', title:'What is your role and seniority?', sub:'This calibrates the depth of advice — an HRBP needs different output than a CHRO or an HR Coordinator.',
+        id:'seniority', title:'What is your role and seniority?', sub:'This calibrates the depth of advice: an HRBP needs different output than a CHRO or an HR Coordinator.',
         type:'grid', cols:3,
         options:[
           'HR Executive / Coordinator','Assistant HR Manager','HR Manager','Senior HR Manager',
@@ -174,7 +174,7 @@
         ]
       },
       {
-        id:'unionStatus', title:'Is your workforce unionised?', sub:'Union status fundamentally changes your ER approach — conciliation, charter of demands, and recognition disputes require entirely different handling.',
+        id:'unionStatus', title:'Is your workforce unionised?', sub:'Union status fundamentally changes your ER approach: conciliation, charter of demands, and recognition disputes require entirely different handling.',
         type:'grid', cols:2,
         options:['Non-unionised','Partially unionised','Fully unionised \u2014 recognised union','Multiple unions','Collective bargaining in place','Not sure']
       },
@@ -193,7 +193,7 @@
         ]
       },
       {
-        id:'policy', title:'Your Policy Guardrails', sub:'Optional — helps the platform understand your company context and policy boundaries. All fields are optional.',
+        id:'policy', title:'Your Policy Guardrails', sub:'Optional: helps the platform understand your company context and policy boundaries. All fields are optional.',
         type:'policy'
       }
     ];
@@ -263,7 +263,7 @@
               '</div>' +
               '<div>' +
                 '<label class="form-label">Actual Annual Attrition Rate (optional)</label>' +
-                '<input type="text" id="pol-attrition" placeholder="e.g. 14% — if provided, this replaces the generic industry benchmark everywhere it is used" value="' + (profile.policyAttritionRate||'') + '" oninput="profile.policyAttritionRate=this.value" />' +
+                '<input type="text" id="pol-attrition" placeholder="e.g. 14%, if provided, this replaces the generic industry benchmark everywhere it is used" value="' + (profile.policyAttritionRate||'') + '" oninput="profile.policyAttritionRate=this.value" />' +
               '</div>' +
             '</div>' +
           '</div>';
