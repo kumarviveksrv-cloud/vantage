@@ -269,8 +269,16 @@
 }
 
 /* SR20: prologue-message text-shadow for readability against busy background */
+/* SR-fix: line-height was only ever set inside the two mobile media queries
+   below (1.35 at <=480px, 1.3 at <=700px height) — the base desktop rule had
+   none, so it silently inherited whatever line-height cascaded in from
+   elsewhere, producing uneven vertical spacing between the three <br>-
+   separated lines (most visible as "Alone." sitting too close to the line
+   above it). Declared explicitly here, matching the mobile value, so all
+   three lines get the same deliberate rhythm at every viewport width. */
 .prologue-message {
   font-size: clamp(26px,3.4vw,46px) !important;
+  line-height: 1.35 !important;
   text-shadow: 0 2px 24px rgba(0,0,0,0.92), 0 0 60px rgba(0,0,0,0.75) !important;
 }
 
