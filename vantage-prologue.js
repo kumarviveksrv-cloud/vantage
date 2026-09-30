@@ -9,6 +9,31 @@
 (function () {
   'use strict';
 
+  /* A signed-in visitor landing on this page (any path — back-navigation,
+     a bookmark, a shared link) sees "Sign in" on four different elements,
+     which is a false claim once you're already signed in. access.html
+     itself already redirects a signed-in visitor onward correctly, so
+     nothing was ever functionally broken — this only fixes what the page
+     SAYS to someone who is, in fact, signed in already. Runs inside the
+     same fast-path branches that already hold the fade overlay opaque for
+     a signed-in user, so the swap is always complete before anything is
+     ever visible — never a race, never a flash. */
+  function swapAuthLinksForSignedIn() {
+    document.querySelectorAll('.vantage-auth-link').forEach(function (el) {
+      var text = el.getAttribute('data-signed-in-text');
+      var href = el.getAttribute('data-signed-in-href');
+      if (text) {
+        var span = el.querySelector('span, b');
+        if (span) {
+          el.childNodes[0].textContent = text + ' ';
+        } else {
+          el.textContent = text;
+        }
+      }
+      if (href) el.setAttribute('href', href);
+    });
+  }
+
   /* SR20: Skip prologue when navigating back from an internal page (e.g. about.html).
      about.html sets vantage_skip_intro_from before navigating — cinematic.js
      reads it first (skips boot), then we read it here to hide the prologue
@@ -25,6 +50,9 @@
     var _prologueEl = document.getElementById('prologue');
     if (_prologueEl) _prologueEl.style.display = 'none';
     document.body.classList.add('prologue-complete');
+    try {
+      if (localStorage.getItem('vantage_clerk_signed_in') === '1') swapAuthLinksForSignedIn();
+    } catch(e) {}
     /* Longer hold here than the other exit paths below: this is the
        specific path where the hero's climax lines have shown a brief
        raw-gradient flash before their word-by-word JS reveal settles.
@@ -66,6 +94,7 @@
   if (cameFromDemo || isPayingUser) {
     pro.style.display = 'none';
     document.body.classList.add('prologue-complete');
+    if (isPayingUser) swapAuthLinksForSignedIn();
     if (window.VantageFade) { window.VantageFade.hide(500); }
     return;
   }
