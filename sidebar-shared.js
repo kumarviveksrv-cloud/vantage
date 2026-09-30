@@ -707,7 +707,7 @@
         items: [
           { icon: '\u26A1', label: 'Employee Case Advisor', sub: 'Navigate any employee situation', href: 'employee-case-advisor.html', page: 'er-case-navigator' },
           { icon: '\uD83D\uDCCA', label: 'People ROI Brief', sub: 'HR metrics to boardroom argument', href: 'people-roi-brief.html', page: 'hr-data-storyteller' },
-          { icon: '\uD83C\uDFAF', label: 'Leadership Communicator', sub: 'Frame the right conversation', href: 'leadership-communicator.html', page: 'stakeholder-influence' },
+          { icon: '\uD83C\uDFAF', label: 'Stakeholder Influence', sub: 'Frame the right conversation', href: 'leadership-communicator.html', page: 'stakeholder-influence' },
           { icon: '\uD83C\uDFAD', label: 'Difficult Conversations', sub: 'Rehearse before you walk in', href: 'difficult-conversations.html', page: 'conversation-simulator' },
           { icon: '\uD83E\uDDED', label: 'Policy Advisor', sub: 'Applicable law, every time', href: 'policy-advisor.html', page: 'policy-compass' },
           { icon: '\u2696\uFE0F', label: 'Retention Advisor', sub: 'Stay or go: model the cost', href: 'retention-advisor.html', page: 'offer-intelligence' },
