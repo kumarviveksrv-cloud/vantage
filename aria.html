@@ -244,8 +244,7 @@
           <div class="aria-sub">Adaptive Reflective Intelligence for Advancement · MERIDIAN Active</div>
         </div>
         <div class="pills">
-          <div class="pill on" onclick="setMode(this,'case_partner')">Case Partner</div>
-          <div class="pill" onclick="setMode(this,'conversation_coach')">Conversation Coach</div>
+          <div class="pill on" onclick="setMode(this,'explore')">Explore</div>
           <div class="pill" onclick="setMode(this,'reflection')">Reflection</div>
         </div>
         <button class="endb" id="end-btn" onclick="endSession()">End Session</button>
@@ -277,7 +276,7 @@
     <!-- CHAT PANEL -->
     <div class="panel">
       <div class="panel-top">
-        <div class="panel-title" id="panel-title">Case Partner</div>
+        <div class="panel-title" id="panel-title">Explore</div>
         <div class="panel-sub">ARIA · Adaptive Reflective Intelligence for Advancement</div>
         <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
           <select id="voice-select" onchange="changeVoice(this.value)" style="padding:5px 8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;cursor:pointer;flex:1;min-width:0;-webkit-appearance:none">
@@ -327,20 +326,15 @@
             <div class="intro-text">Every response ARIA generates knows your state, your industry, your org type, your seniority, and your company's policy guardrails — because your MERIDIAN profile is injected into every prompt. You are not getting a generic HR answer. You are getting an answer calibrated to your exact professional reality.</div>
           </div>
           <div class="intro-block">
-            <div class="intro-heading">The three modes</div>
+            <div class="intro-heading">The two modes</div>
             <div class="intro-mode-card">
-              <div class="imc-name">Case Partner</div>
-              <div class="imc-desc">Talk through a live ER case — disciplinary, termination, grievance, PIP, harassment, or any situation that's landed on your desk. ARIA guides you through the PACT framework in real time: Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation. She helps you see the case the way a labour court would, before you act.</div>
-              <div class="imc-when">Use this when: something just happened and you need to think through it fast, without calling a lawyer at 9pm.</div>
-            </div>
-            <div class="intro-mode-card">
-              <div class="imc-name">Conversation Coach</div>
-              <div class="imc-desc">Practice the exact conversation you need to have — with a difficult direct report, a resistant manager, the CFO who doesn't believe in HR, or an employee who's about to resign. ARIA plays the other person. She pushes back. She gets defensive. She gives you real pressure so the actual conversation feels easier.</div>
-              <div class="imc-when">Use this when: you know what you need to say but you're not sure how to say it, or you're worried about the reaction.</div>
+              <div class="imc-name">Explore</div>
+              <div class="imc-desc">Something has landed on your desk and you're not yet sure what kind of problem it is. Talk it through with ARIA. She knows your Vantage history, your Humac Score, your case record, so she isn't starting from zero. She'll help you see the shape of it, and point you to Employee Case Advisor, Difficult Conversations, or whichever tool actually fits once that's clear.</div>
+              <div class="imc-when">Use this when: something just happened and you need to think it through fast, before you know which tool you need.</div>
             </div>
             <div class="intro-mode-card">
               <div class="imc-name">Reflection</div>
-              <div class="imc-desc">Think out loud about your month — the cases you navigated, the decisions that still sit with you, the patterns you're noticing, the things you'd do differently. ARIA listens, asks one question at a time, and surfaces what's actually underneath what you're saying. It's a structured professional retrospective, not a therapy session.</div>
+              <div class="imc-desc">Think out loud about your month: the cases you navigated, the decisions that still sit with you, the patterns you're noticing, the things you'd do differently. ARIA knows your actual case count, your Humac Score trend, and your most recent Debrief, so this isn't generic reflection prompting, it's grounded in what you've actually built on Vantage. She listens, asks one question at a time, and surfaces what's actually underneath what you're saying. It's a structured professional retrospective, not a therapy session.</div>
               <div class="imc-when">Use this when: you feel like you've been on autopilot and want to step back and understand what's actually been happening.</div>
             </div>
           </div>
@@ -373,8 +367,22 @@
     var meridian = mr ? JSON.parse(mr) : {};
     document.getElementById('mcv').innerText = (meridian.state||'Not set')+' \xb7 '+(meridian.industry||'Not set');
 
+    // ARIA's Vantage history context, fetched once per session, cached exactly
+    // like meridian above, then sent along with every 'aria' call so the
+    // Worker never re-fetches it per message.
+    var ariaContext = null;
+    (function loadAriaContext(){
+      var cached = sessionStorage.getItem('sr_aria_context');
+      if (cached) { try { ariaContext = JSON.parse(cached); } catch(e) {} return; }
+      var authTok = sessionStorage.getItem('sr_clerk_jwt') || '';
+      fetch(WORKER, { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+authTok }, body: JSON.stringify({ tool:'get_aria_context' }) })
+        .then(function(r){ return r.json(); })
+        .then(function(data){ if (data.success) { ariaContext = data.data; sessionStorage.setItem('sr_aria_context', JSON.stringify(ariaContext)); } })
+        .catch(function(){ /* non-fatal, ARIA still works without history context */ });
+    })();
+
     // ── VOICE SYSTEM ─────────────────────────────────────────
-    var ariaState='idle', curMode='case_partner', hist=[];
+    var ariaState='idle', curMode='explore', hist=[];
     var isListen=false, isSpeak=false, recog=null, voices=[], reviewMode=true;
     var silenceTimer=null, liveTranscript='';
 
@@ -422,7 +430,7 @@
     window.setMode=function(el,mode) {
       document.querySelectorAll('.pill').forEach(function(p){p.classList.remove('on');});
       el.classList.add('on'); curMode=mode; hist=[];
-      var labels={case_partner:'Case Partner',conversation_coach:'Conversation Coach',reflection:'Reflection'};
+      var labels={explore:'Explore',reflection:'Reflection'};
       document.getElementById('panel-title').innerText=labels[mode];
       clearMessages(); setState('idle');
     };
@@ -456,7 +464,7 @@
     function callARIA(msg) {
       hist.push({role:'user',content:msg});
       addMsg('user',msg); addMsg('aria','',true); setState('thinking');
-      fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'aria',mode:curMode,history:hist,meridian:meridian})})
+      fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'aria',mode:curMode,history:hist,meridian:meridian,ariaContext:ariaContext})})
       .then(function(r){return r.json();})
       .then(function(data){
         rmTyping();
@@ -600,7 +608,7 @@
     function saveSession() {
       if(hist.length<2)return;
       var sessions=JSON.parse(localStorage.getItem('aria_sessions')||'[]');
-      var modes={case_partner:'Case Partner',conversation_coach:'Conversation Coach',reflection:'Reflection'};
+      var modes={explore:'Explore',reflection:'Reflection'};
       sessions.unshift({id:Date.now(),mode:curMode,modeLabel:modes[curMode],timestamp:new Date().toISOString(),messages:hist.slice(),preview:hist[0]?hist[0].content.substring(0,80):''});
       sessions=sessions.slice(0,5);
       localStorage.setItem('aria_sessions',JSON.stringify(sessions));
@@ -623,7 +631,7 @@
       var sessions=JSON.parse(localStorage.getItem('aria_sessions')||'[]');
       var s=sessions[idx]; if(!s)return;
       savedCurrentChat={hist:hist.slice(),mode:curMode};
-      var modes={case_partner:'Case Partner',conversation_coach:'Conversation Coach',reflection:'Reflection'};
+      var modes={explore:'Explore',reflection:'Reflection'};
       document.getElementById('panel-title').innerText=(modes[s.mode]||s.mode)+' (History)';
       document.getElementById('messages').innerHTML='<div style="text-align:center;padding:8px"><button onclick="returnToCurrent()" style="padding:7px 16px;background:rgba(99,102,241,.12);color:#a5b4fc;border:1px solid rgba(99,102,241,.3);border-radius:7px;cursor:pointer;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.06em">\u2190 Back to current session</button></div>';
       s.messages.forEach(function(m){addMsg(m.role==='user'?'user':'aria',m.content,false);});
@@ -636,7 +644,7 @@
     window.returnToCurrent=function(){
       if(!savedCurrentChat)return;
       hist=savedCurrentChat.hist;
-      var modes={case_partner:'Case Partner',conversation_coach:'Conversation Coach',reflection:'Reflection'};
+      var modes={explore:'Explore',reflection:'Reflection'};
       document.getElementById('panel-title').innerText=modes[savedCurrentChat.mode]||savedCurrentChat.mode;
       document.getElementById('messages').innerHTML='';
       if(hist.length===0){
