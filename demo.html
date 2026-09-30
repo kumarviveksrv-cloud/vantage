@@ -215,15 +215,14 @@
 
 <div class="hero">
   <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Real tool outputs &middot; No mockups on the tools themselves</div>
-  <div class="hero-title">Six tools. Real outputs.<br>See exactly what Indian HR professionals use every day.</div>
+  <div class="hero-title">Five tools. Real outputs.<br>See exactly what Indian HR professionals use every day.</div>
   <div class="hero-sub">to navigate the cases, conversations, and data moments that define their careers.</div>
   <div class="hero-note">These reflect real Vantage output quality on fixed example scenarios. On the full platform, every output is generated live from your own case.</div>
 </div>
 
 <div class="tool-tabs">
   <div class="tool-tab active tab-live" id="tab-pact" onclick="switchTool('pact')"><span class="tab-live-dot"></span>&#x26A1; Employee Case Advisor</div>
-  <div class="tool-tab" id="tab-signal" onclick="switchTool('signal')">&#x1F4CA; People ROI Brief</div>
-  <div class="tool-tab" id="tab-influence" onclick="switchTool('influence')">&#x1F91D; Stakeholder Influence</div>
+  <div class="tool-tab" id="tab-business_case" onclick="switchTool('business_case')">&#x1F4BC; The Business Case</div>
   <div class="tool-tab" id="tab-policy" onclick="switchTool('policy')">&#x2696;&#xFE0F; Policy Advisor</div>
   <div class="tool-tab" id="tab-offer" onclick="switchTool('offer')">&#x1F4BC; Retention Advisor</div>
   <div class="tool-tab" id="tab-practice" onclick="switchTool('practice')">&#x1F3AD; Difficult Conversations</div>
@@ -246,26 +245,32 @@
       <div class="output-wrap" id="pact-output"></div>
     </div>
   </div>
-  <div id="signal-tool" style="display:none">
+  <div id="business_case-tool" style="display:none">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x1F4CA; People ROI Brief <div class="demo-tag">Demo &middot; CFO Presentation</div></div></div>
-      <div class="scenario-label">Pre-loaded scenario</div>
-      <div class="scenario-text">Attrition rate: 22% (up from 14% last quarter). Time to hire: 58 days. Engagement score: 54%. Open positions: 18. Average CTC: &#8377;14L. Audience: CFO. Context: Engineering attrition spike: need budget approval for &#8377;22L retention programme.</div>
-      <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you enter your own metrics and context.</div>
-      <button class="run-btn" id="signal-run-btn" onclick="runSIGNAL()">&#x1F4CA; Generate ROI Narrative</button>
-      <div class="loading-wrap" id="signal-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">BUILDING ROI NARRATIVE...</div></div>
-      <div class="output-wrap" id="signal-output"></div>
-    </div>
-  </div>
-  <div id="influence-tool" style="display:none">
-    <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x1F91D; Stakeholder Influence <div class="demo-tag">Demo &middot; Retention Counter-Offer</div></div></div>
-      <div class="scenario-label">Pre-loaded scenario</div>
-      <div class="scenario-text">Priya Nair, senior engineer, 4 years tenure, sole owner of the payments migration, has a signed competing offer 32% above her current CTC. You need the VP Engineering to approve a counter-offer by Wednesday.</div>
-      <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you describe your own stakeholder and ask.</div>
-      <button class="run-btn" id="influence-run-btn" onclick="runInfluence()">&#x1F91D; Build Influence Stack</button>
-      <div class="loading-wrap" id="influence-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">BUILDING INFLUENCE STACK...</div></div>
-      <div class="output-wrap" id="influence-output"></div>
+      <div class="demo-card-header"><div class="demo-card-title">&#x1F4BC; The Business Case <div class="demo-tag">Demo</div></div></div>
+      <div class="scenario-label">Two ways this tool works &mdash; try either</div>
+      <div style="display:flex;gap:10px;margin-bottom:18px">
+        <div class="tool-tab active" id="bc-tab-general" onclick="switchBCDemo('general')" style="flex:1;justify-content:center">CFO Presentation</div>
+        <div class="tool-tab" id="bc-tab-stakeholder" onclick="switchBCDemo('stakeholder')" style="flex:1;justify-content:center">Persuading One Person</div>
+      </div>
+
+      <div id="bc-general-panel">
+        <div class="scenario-label">Pre-loaded scenario</div>
+        <div class="scenario-text">Attrition rate: 22% (up from 14% last quarter). Time to hire: 58 days. Engagement score: 54%. Open positions: 18. Average CTC: &#8377;14L. Audience: CFO. Context: Engineering attrition spike: need budget approval for &#8377;22L retention programme.</div>
+        <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you enter your own metrics and context.</div>
+        <button class="run-btn" id="signal-run-btn" onclick="runSIGNAL()">&#x1F4CA; Generate ROI Narrative</button>
+        <div class="loading-wrap" id="signal-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">BUILDING ROI NARRATIVE...</div></div>
+        <div class="output-wrap" id="signal-output"></div>
+      </div>
+
+      <div id="bc-stakeholder-panel" style="display:none">
+        <div class="scenario-label">Pre-loaded scenario</div>
+        <div class="scenario-text">Priya Nair, senior engineer, 4 years tenure, sole owner of the payments migration, has a signed competing offer 32% above her current CTC. You need the VP Engineering to approve a counter-offer by Wednesday.</div>
+        <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you describe your own stakeholder and ask.</div>
+        <button class="run-btn" id="influence-run-btn" onclick="runInfluence()">&#x1F91D; Build Influence Stack</button>
+        <div class="loading-wrap" id="influence-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">BUILDING INFLUENCE STACK...</div></div>
+        <div class="output-wrap" id="influence-output"></div>
+      </div>
     </div>
   </div>
   <div id="policy-tool" style="display:none">
@@ -342,8 +347,7 @@
     <div class="dash-sidebar" id="dashNavList">
       <div class="dash-nav-item active" data-nav="Home"><i></i>Home</div>
       <div class="dash-nav-item" data-nav="Employee Case Advisor"><i></i>Employee Case Advisor</div>
-      <div class="dash-nav-item" data-nav="People ROI Brief"><i></i>People ROI Brief</div>
-      <div class="dash-nav-item" data-nav="Stakeholder Influence"><i></i>Stakeholder Influence</div>
+      <div class="dash-nav-item" data-nav="The Business Case"><i></i>The Business Case</div>
       <div class="dash-nav-item" data-nav="Policy Advisor"><i></i>Policy Advisor</div>
       <div class="dash-nav-item" data-nav="Retention Advisor"><i></i>Retention Advisor</div>
       <div class="dash-nav-item" data-nav="Difficult Conversations"><i></i>Difficult Conversations</div>
@@ -588,8 +592,8 @@
       D: { verdict:'warn', exposure:'Precedent set', text:'Safe today. But the behaviour continues, the precedent is set, and the next action against this employee becomes much harder. Dropping the case signals that undocumented absence has no consequence.', aria:'ARIA would note: dropping the case is a decision with future cost. Document the reason for closure at minimum.' }
     },
     3: {
-      A: { verdict:'risk', exposure:'Credibility lost', text:'A CFO who asks for a number and receives a feeling will remember it. You lose the budget conversation and your credibility in the room. Gut estimates in a boardroom setting are not HR speaking the language of business. They are HR being dismissed from it.', aria:'ARIA would have prepared you with the People ROI Brief before this meeting. The number exists. You just didn\'t have it ready.' },
-      B: { verdict:'ok',   exposure:'\u20b98L\u2013\u20b914L documented', text:'You walk in with documented legal exposure, replacement cost model, and ramp time, not an opinion. The CFO now has a decision to make, not a feeling to dismiss. This is what HR speaking the language of business looks like.', aria:'ARIA would have built the full People ROI Brief before this call: replacement cost at 1.8x salary, 4.6 months ramp, \u20b98L\u2013\u20b914L legal exposure. The CFO cannot dismiss a number with a methodology behind it.' },
+      A: { verdict:'risk', exposure:'Credibility lost', text:'A CFO who asks for a number and receives a feeling will remember it. You lose the budget conversation and your credibility in the room. Gut estimates in a boardroom setting are not HR speaking the language of business. They are HR being dismissed from it.', aria:'ARIA would have prepared you with The Business Case before this meeting. The number exists. You just didn\'t have it ready.' },
+      B: { verdict:'ok',   exposure:'\u20b98L\u2013\u20b914L documented', text:'You walk in with documented legal exposure, replacement cost model, and ramp time, not an opinion. The CFO now has a decision to make, not a feeling to dismiss. This is what HR speaking the language of business looks like.', aria:'ARIA would have built the full Business Case before this call: replacement cost at 1.8x salary, 4.6 months ramp, \u20b98L\u2013\u20b914L legal exposure. The CFO cannot dismiss a number with a methodology behind it.' },
       C: { verdict:'warn', exposure:'Moment passed', text:'You had the data available. Asking for more time signals you did not prepare for the most predictable question in an ER conversation with a CFO. The moment passes, the decision gets made without your input.', aria:'ARIA would have flagged this as a preparation failure, not an evidence gap.' },
       D: { verdict:'warn', exposure:'Wrong number', text:'Industry benchmarks do not reflect your org\'s salary bands, attrition patterns, or role criticality. The CFO knows this. Generic data gets dismissed as exactly what it is.', aria:'ARIA would say: your org\'s numbers are always stronger than any benchmark. Use them.' }
     },
@@ -834,7 +838,7 @@
   var demoMeridian = { state:'Maharashtra', industry:'IT / SaaS', orgType:'Corporate / Pvt Ltd', orgSize:'251 \u2013 1,000', seniority:'HR Manager', unionStatus:'Non-unionised', hrFunction:'Employee Relations specialist' };
   function wait(ms) { return new Promise(function(resolve){ setTimeout(resolve, ms); }); }
   function demoDelay() { return 3400 + Math.random() * 1200; }
-  var TOOL_IDS = ['pact','signal','influence','policy','offer','practice','aria'];
+  var TOOL_IDS = ['pact','business_case','policy','offer','practice','aria'];
 
   /* ── DYNAMIC DASHBOARD PREVIEW ──────────────────────────────────────
      Each tool tab has its own "page" of the dashboard mock: a matching
@@ -849,18 +853,12 @@
         { tag:'CASE ADVISOR', risk:'score-medium', riskLabel:'RESOLVED', title:'Absence pattern: final warning issued', meta:'Filed 2 weeks ago &middot; Closed' }
       ],
       stats: [ ['47','ER Cases'], ['&#8377;18.4L','Exposure Avoided'], ['17','Rehearsed'], ['9','Debriefs'] ] },
-    signal: { title: 'People ROI Brief', nav: 'People ROI Brief',
+    business_case: { title: 'The Business Case', nav: 'The Business Case',
       cards: [
-        { tag:'ROI BRIEF', risk:'score-medium', riskLabel:'APPROVED', title:'CFO retention brief: &#8377;22L ask', meta:'Filed 4 days ago &middot; Budget approved' },
-        { tag:'ROI BRIEF', risk:'score-low', riskLabel:'SENT', title:'Attrition narrative: Q3 board deck', meta:'Filed 1 week ago &middot; Awaiting review' }
+        { tag:'BUSINESS CASE', risk:'score-medium', riskLabel:'APPROVED', title:'CFO retention brief: &#8377;22L ask', meta:'Filed 4 days ago &middot; Budget approved' },
+        { tag:'BUSINESS CASE', risk:'score-medium', riskLabel:'SENT', title:'VP Engineering: counter-offer ask', meta:'Filed 2 days ago &middot; Awaiting response' }
       ],
-      stats: [ ['12','Briefs Built'], ['&#8377;41L','Budget Secured'], ['2 days','Avg Turnaround'], ['5','CFO Approvals'] ] },
-    influence: { title: 'Stakeholder Influence', nav: 'Stakeholder Influence',
-      cards: [
-        { tag:'INFLUENCE', risk:'score-medium', riskLabel:'SENT', title:'VP Engineering: counter-offer ask', meta:'Filed 2 days ago &middot; Awaiting response' },
-        { tag:'INFLUENCE', risk:'score-low', riskLabel:'DRAFTING', title:'COO: restructure buy-in', meta:'Started today &middot; In progress' }
-      ],
-      stats: [ ['9','Stacks Built'], ['7','Asks Approved'], ['14','Stakeholders Mapped'], ['1 day','Avg Response'] ] },
+      stats: [ ['21','Cases Built'], ['&#8377;63L','Business Impact'], ['12','Stakeholders Mapped'], ['9','Approvals Secured'] ] },
     policy: { title: 'Policy Advisor', nav: 'Policy Advisor',
       cards: [
         { tag:'POLICY', risk:'score-low', riskLabel:'ANSWERED', title:'PIP + notice period query', meta:'Asked today &middot; Cited' },
@@ -928,6 +926,12 @@
     document.getElementById('tab-'+tool).classList.add('active');
     document.getElementById(tool+'-tool').style.display = 'block';
     updateDashboardPreview(tool);
+  }
+  function switchBCDemo(which) {
+    document.getElementById('bc-tab-general').classList.toggle('active', which === 'general');
+    document.getElementById('bc-tab-stakeholder').classList.toggle('active', which === 'stakeholder');
+    document.getElementById('bc-general-panel').style.display = which === 'general' ? 'block' : 'none';
+    document.getElementById('bc-stakeholder-panel').style.display = which === 'stakeholder' ? 'block' : 'none';
   }
   document.addEventListener('DOMContentLoaded', function() { updateDashboardPreview('pact'); });
 
@@ -1155,7 +1159,7 @@
     document.getElementById('signal-loading').style.display = 'block';
     document.getElementById('signal-output').style.display = 'none';
     try {
-      var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ isDemo:true, tool:'signal', audience:'CFO / Finance', context:'Engineering attrition has gone from 14% to 22% in one quarter. Leadership thinks it is a market issue. I need to present to the CFO next week and change that narrative. He responds to numbers and cost arguments. I need approval for a \u20b922L retention programme.', ask:'Approval for \u20b922L retention investment for engineering cohort', metrics:{ attrition:'22', timeToHire:'58', engagement:'54', openPositions:'18', avgCTC:'14' }, meridian:demoMeridian }) });
+      var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ isDemo:true, tool:'business_case_general', audience:'CFO / Finance', context:'Engineering attrition has gone from 14% to 22% in one quarter. Leadership thinks it is a market issue. I need to present to the CFO next week and change that narrative. He responds to numbers and cost arguments. I need approval for a \u20b922L retention programme.', ask:'Approval for \u20b922L retention investment for engineering cohort', metrics:{ attrition:'22', timeToHire:'58', engagement:'54', openPositions:'18', avgCTC:'14' }, meridian:demoMeridian }) });
       var data = await res.json();
       await wait(demoDelay());
       document.getElementById('signal-loading').style.display = 'none';
@@ -1172,7 +1176,7 @@
     var signalCards = dimKeys.map(function(k,i){ return '<div class="signal-card"><div class="sig-dim '+dimClasses[i]+'">'+dimLabels[i]+'</div><div class="sig-content">'+(dimText[k]||'')+'</div></div>'; }).join('');
     var immediateActions = (signal.action && signal.action.immediate) ? signal.action.immediate : [];
     var talkingPts = immediateActions.slice(0,3).map(function(tp,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+tp+'</div></div>'; }).join('');
-    document.getElementById('signal-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : '')+'</div><div class="anchor-ctx">'+(r.headline || 'The number that opens the room.')+'</div></div><div class="signal-grid">'+signalCards+'</div><div class="steps-card"><div class="steps-title">Immediate Actions: This Week</div>'+talkingPts+'</div><div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(signal.narrative ? signal.narrative.cfoVersion : '')+'</div></div><div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. People ROI Brief builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g" onclick="return vantageGoHome()">See all six tools</a></div></div>';
+    document.getElementById('signal-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : '')+'</div><div class="anchor-ctx">'+(r.headline || 'The number that opens the room.')+'</div></div><div class="signal-grid">'+signalCards+'</div><div class="steps-card"><div class="steps-title">Immediate Actions: This Week</div>'+talkingPts+'</div><div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(signal.narrative ? signal.narrative.cfoVersion : '')+'</div></div><div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. The Business Case builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g" onclick="return vantageGoHome()">See all five tools</a></div></div>';
     document.getElementById('signal-output').style.display = 'block';
   }
 
@@ -1181,7 +1185,7 @@
     document.getElementById('influence-loading').style.display = 'block';
     document.getElementById('influence-output').style.display = 'none';
     try {
-      var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ isDemo:true, tool:'influence', stakeholderType:'VP Engineering', situation:'Priya Nair has a competing offer 32% above her current CTC and owns the payments migration solo.', ask:'Approve a retention counter-offer', meridian:demoMeridian }) });
+      var res = await fetch(WORKER, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ isDemo:true, tool:'business_case_stakeholder', stakeholderType:'VP Engineering', situation:'Priya Nair has a competing offer 32% above her current CTC and owns the payments migration solo.', ask:'Approve a retention counter-offer', meridian:demoMeridian }) });
       var data = await res.json();
       await wait(demoDelay());
       document.getElementById('influence-loading').style.display = 'none';
