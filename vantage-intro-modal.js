@@ -5,7 +5,7 @@
    Manual: VantageIntro.show('aria');
 
    v2: Added sequential "Next:" progression button across all tool pages.
-   Sequence: Employee Case Advisor → Retention Advisor → Leadership Communicator
+   Sequence: Employee Case Advisor → Retention Advisor → Stakeholder Influence
    → People ROI Brief → Difficult Conversations → Policy Advisor
    → ARIA → Vantage Record → Standpoint → The Debrief
 */
@@ -106,15 +106,15 @@ var MODALS = {
     does: 'Gives you the number you need before any retention conversation. Not a gut feel — a calculated position you can defend in the room.',
     start: 'Enter the person\'s current CTC, their role, and the situation. Retention Advisor models both paths — retain and lose — so you walk in prepared.',
     next: 'stakeholder-influence',
-    nextLabel: 'Leadership Communicator'
+    nextLabel: 'Stakeholder Influence'
   },
   'stakeholder-influence': {
     icon: '◬',
-    name: 'Leadership Communicator',
+    name: 'Stakeholder Influence',
     tagline: 'Know how to say it to this specific person, before you say it.',
-    what: 'Leadership Communicator models how a specific leader — your CEO, CFO, a line manager, the board — receives information, what language moves them, and how to frame your recommendation to land.',
+    what: 'Stakeholder Influence models how a specific leader — your CEO, CFO, a line manager, the board — receives information, what language moves them, and how to frame your recommendation to land.',
     does: 'Same facts. Right framing. Every people decision you need to communicate, positioned in the language that reaches the specific person you\'re walking in to meet.',
-    start: 'Name the person, describe the decision you need to communicate, and specify the outcome you\'re driving. Leadership Communicator maps the path.',
+    start: 'Name the person, describe the decision you need to communicate, and specify the outcome you\'re driving. Stakeholder Influence maps the path.',
     next: 'hr-storyteller',
     nextLabel: 'People ROI Brief'
   },
