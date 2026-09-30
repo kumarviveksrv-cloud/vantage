@@ -155,6 +155,16 @@
     tourBtn.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid rgba(99,102,241,0.18);text-decoration:none;color:rgba(255,255,255,0.6);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;background:rgba(99,102,241,0.06);margin-bottom:10px';
     tourBtn.innerHTML = '<span style="display:flex;align-items:center;gap:10px"><span style="font-size:15px">🗺</span>Platform Tour</span><span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.08em;background:#6366f1;color:#fff;padding:2px 7px;border-radius:4px;font-weight:600">START</span>';
 
+    // Small, deliberately subtle link back to the one-time welcome overlay
+    // (dashboard.html's vw-backdrop). ?welcome=1 forces it open regardless
+    // of the vantage_onboarded_v1 flag — see dashboard.html's init().
+    var replayWelcome = document.createElement('a');
+    replayWelcome.href = 'dashboard.html?welcome=1';
+    replayWelcome.style.cssText = 'display:block;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,.45);text-decoration:none;padding:0 12px;margin:-4px 0 12px;transition:color .15s';
+    replayWelcome.innerText = 'Replay welcome tour \u2192';
+    replayWelcome.onmouseover = function(){ this.style.color = '#a5b4fc'; };
+    replayWelcome.onmouseout = function(){ this.style.color = 'rgba(165,180,252,.45)'; };
+
     var overviewNs = document.createElement('div');
     overviewNs.className = 'nav-section';
     overviewNs.style.cssText = 'font-family:JetBrains Mono,monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:4px 10px;margin:0 0 6px';
@@ -176,6 +186,7 @@
     aboutLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">✦</span>About Vantage';
 
     overview.appendChild(tourBtn);
+    overview.appendChild(replayWelcome);
     overview.appendChild(overviewNs);
     overview.appendChild(homeLink);
     overview.appendChild(aboutLink);
