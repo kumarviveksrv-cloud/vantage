@@ -95,6 +95,16 @@
   display: block;
 }
 
+/* SR-fix: cta-moment had no dedicated rule at all, only inheriting
+   .cinematic-panel, so there was a visible divider before pricing-block
+   (its own border-top below) but none before cta-moment itself, leaving
+   the transition after Vantage Record's "And it's yours to keep." with
+   no equivalent break. Same line, same color, same weight, so the two
+   dividers now read as one consistent pattern between all three sections. */
+.cta-moment {
+  border-top: 1px solid rgba(196,181,253,.07);
+}
+
 /* Item 11: Pricing section */
 .pricing-block {
   padding: clamp(80px,10vw,140px) clamp(24px,6vw,100px);
