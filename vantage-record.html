@@ -3,10 +3,10 @@
 <head> 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vantage Record — Virorah Vantage</title>
+  <title>Vantage Record | Virorah Vantage</title>
   <link rel="stylesheet" href="vantage-theme.css"/>
   <!-- SR18: vantage-theme.css above is the canonical palette + typography
-       source. Local :root below is KEPT INTACT as a fallback — same
+       source. Local :root below is KEPT INTACT as a fallback: same
        pattern as employee-case-advisor.html and dashboard.html. Only
        .page-title and .empty-title were swapped to Cormorant Garamond
        (genuine headline moments); everything else stays sans-serif. -->
@@ -52,7 +52,7 @@
     .stat-mini-val{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--muted);letter-spacing:-0.5px;margin-bottom:4px}
     .stat-mini-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
 
-    /* HDC BANNER — Phase 2 addition */
+    /* HDC BANNER: Phase 2 addition */
     .hdc-banner{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(124,58,237,.06));border:1px solid rgba(99,102,241,.28);border-radius:14px;padding:22px 28px;margin-bottom:20px;position:relative;overflow:hidden;animation:fadeIn .4s ease .1s both;display:none}
     .hdc-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(196,181,253,.45),transparent)}
     .hdc-banner-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap}
@@ -190,7 +190,7 @@
       </div>
 
       <!-- ═══════════════════════════════════════════
-           HR DECISION CAPITAL — COMPONENT 1 BANNER
+           HR DECISION CAPITAL: COMPONENT 1 BANNER
            Phase 2: shows once loadCases() has run and
            at least one case has a parseable financial_exposure.
            Hidden by default, revealed by JS after computation.
@@ -202,7 +202,7 @@
           <div class="hdc-banner-left">
             <div class="hdc-banner-eyebrow">HR Decision Capital &middot; Component 1 of 3</div>
             <div class="hdc-banner-sublabel">Financial Exposure Navigated</div>
-            <div class="hdc-banner-number" id="hdc-total">&#x20B9;—</div>
+            <div class="hdc-banner-number" id="hdc-total">&#x20B9;-</div>
             <div class="hdc-banner-count" id="hdc-case-count">Computing from your case record&hellip;</div>
             <div class="hdc-banner-components">
               <div class="hdc-comp live">
@@ -220,7 +220,7 @@
             </div>
           </div>
           <div class="hdc-banner-right">
-            <div class="hdc-banner-desc">The running INR total of every financial exposure you've navigated through Employee Case Advisor. This is Component 1 of your HR Decision Capital — computed from your actual case record, not illustrative. Retention Value Protected and Business Cases Landed expand this figure as you use more of Vantage.</div>
+            <div class="hdc-banner-desc">The running INR total of every financial exposure you've navigated through Employee Case Advisor. This is Component 1 of your HR Decision Capital: computed from your actual case record, not illustrative. Retention Value Protected and Business Cases Landed expand this figure as you use more of Vantage.</div>
             <a href="about.html#capital" class="hdc-banner-link">How HR Decision Capital works &#8594;</a>
           </div>
         </div>
@@ -245,7 +245,7 @@
     var allCases = [];
     var currentFilter = 'all';
 
-    // MERIDIAN chip — loaded from sessionStorage, set by onboarding.html
+    // MERIDIAN chip: loaded from sessionStorage, set by onboarding.html
     var meridianRaw = sessionStorage.getItem('sr_meridian');
     var meridian = meridianRaw ? JSON.parse(meridianRaw) : {};
     document.getElementById('meridian-chip-val').innerText = (meridian.state || 'Not set') + ' \xb7 ' + (meridian.industry || 'Not set');
@@ -269,10 +269,10 @@
     function renderCases(cases) {
       var grid = document.getElementById('cases-grid');
       if (!cases || cases.length === 0) {
-        grid.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x25CE;</div><div class="empty-title">No cases here yet.</div><div class="empty-sub">Navigate a case through the Employee Case Advisor and save it — it will appear here permanently.</div><a href="employee-case-advisor.html" class="new-case-btn" style="display:inline-flex;margin:0 auto">Navigate your first case &rarr;</a></div>';
+        grid.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x25CE;</div><div class="empty-title">No cases here yet.</div><div class="empty-sub">Navigate a case through the Employee Case Advisor and save it. It will appear here permanently.</div><a href="employee-case-advisor.html" class="new-case-btn" style="display:inline-flex;margin:0 auto">Navigate your first case &rarr;</a></div>';
         return;
       }
-      // Worker returns r.fields directly — all field names are snake_case
+      // Worker returns r.fields directly: all field names are snake_case
       grid.innerHTML = cases.map(function(c, idx) {
         var fields = c.fields || {};
         var risk       = fields['overall_risk'] || '';
@@ -327,11 +327,11 @@
     }
 
     // ─────────────────────────────────────────────────────────────
-    // HR DECISION CAPITAL — COMPONENT 1 PARSER
+    // HR DECISION CAPITAL: COMPONENT 1 PARSER
     // Phase 2 addition. Parses the financial_exposure string stored
     // by the Worker (e.g. "₹8L–₹14L", "₹11.2L", "₹8–14 lakhs")
     // and returns a number in lakhs at the midpoint of any range.
-    // Falls back to 0 if the string is unparseable — never throws.
+    // Falls back to 0 if the string is unparseable: never throws.
     // ─────────────────────────────────────────────────────────────
     function parseExposureLakhs(str) {
       if (!str) return 0;
@@ -349,7 +349,7 @@
     }
 
     // ─────────────────────────────────────────────────────────────
-    // HDC COMPONENT 1 — COMPUTE AND RENDER
+    // HDC COMPONENT 1: COMPUTE AND RENDER
     // Called after allCases is populated. Sums midpoint financial
     // exposure across all cases, shows the HDC banner, stores the
     // result in sessionStorage so dashboard.html can read it on
@@ -406,7 +406,7 @@
     }
 
     async function loadCases() {
-      // Require a live Clerk session — Clerk is loaded by clerk-auth.js below
+      // Require a live Clerk session: Clerk is loaded by clerk-auth.js below
       var token = null;
       try { token = await window.Clerk.session.getToken(); } catch(e) {}
       if (!token) { window.location.href = BASE + 'access.html'; return; }
@@ -421,7 +421,7 @@
         document.getElementById('loading-view').style.display = 'none';
         document.getElementById('main-content').style.display = 'block';
         if (data.success && data.data) {
-          // Worker returns an array of field objects (r.fields) — wrap for internal consistency
+          // Worker returns an array of field objects (r.fields): wrap for internal consistency
           allCases = data.data.map(function(f) { return { fields: f }; });
           var total    = allCases.length;
           var open     = allCases.filter(function(c) { return ((c.fields || {})['status'] || 'Open').toLowerCase() === 'open'; }).length;
@@ -445,7 +445,7 @@
       }
     }
 
-    // Defer loadCases until Clerk is ready — clerk-auth.js fires 'clerk:ready'
+    // Defer loadCases until Clerk is ready: clerk-auth.js fires 'clerk:ready'
     // when the session is confirmed. If already fired (same-page revisit), call
     // directly via a short poll so we never wait forever.
     document.addEventListener('clerk:ready', function() { loadCases(); });
