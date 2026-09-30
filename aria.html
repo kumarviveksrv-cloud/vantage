@@ -135,6 +135,9 @@
     .empty-chat{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
     .ec-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#fff;margin-bottom:8px}
     .ec-sub{font-size:13px;color:rgba(255,255,255,.62);line-height:1.6}
+    .ec-suggestions{display:flex;flex-direction:column;gap:8px;margin-top:20px;align-items:center}
+    .ec-chip{font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;color:#c4b5fd;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.3);border-radius:20px;padding:8px 16px;cursor:pointer;transition:background .15s,border-color .15s}
+    .ec-chip:hover{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.5)}
     .text-wrap{padding:12px 14px;border-top:1px solid rgba(255,255,255,.05);flex-shrink:0}
     .review-toggle-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
     .review-label-small{font-size:12px;color:rgba(255,255,255,.62);font-family:'JetBrains Mono',monospace}
@@ -298,6 +301,7 @@
             <div class="empty-chat" id="empty-chat">
               <div class="ec-title">ARIA is ready.</div>
               <div class="ec-sub">You're not talking to a chatbot.<br>You're talking to the intelligence behind Vantage.<br><br>Use the mic or type to begin.</div>
+              <div class="ec-suggestions" id="ec-suggestions"></div>
             </div>
           </div>
           <div class="text-wrap">
@@ -371,18 +375,37 @@
     // like meridian above, then sent along with every 'aria' call so the
     // Worker never re-fetches it per message.
     var ariaContext = null;
-    (function loadAriaContext(){
+    // Resolved as a promise, not fire-and-forget: without this, a fast first
+    // message can fire before the fetch resolves and ARIA gets no history at
+    // all. The auth header is intentionally omitted here: clerk-auth.js's
+    // global fetch interceptor injects the real Clerk token into every call
+    // to WORKER automatically, so setting one manually here was redundant and,
+    // worse, made it look like this call had its own auth path when it didn't.
+    var ariaContextReady = (function loadAriaContext(){
       var cached = sessionStorage.getItem('sr_aria_context');
-      if (cached) { try { ariaContext = JSON.parse(cached); } catch(e) {} return; }
-      var authTok = sessionStorage.getItem('sr_clerk_jwt') || '';
-      fetch(WORKER, { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+authTok }, body: JSON.stringify({ tool:'get_aria_context' }) })
+      if (cached) {
+        try { ariaContext = JSON.parse(cached); } catch(e) {}
+        return Promise.resolve(ariaContext);
+      }
+      var fetchPromise = fetch(WORKER, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ tool:'get_aria_context' }) })
         .then(function(r){ return r.json(); })
-        .then(function(data){ if (data.success) { ariaContext = data.data; sessionStorage.setItem('sr_aria_context', JSON.stringify(ariaContext)); } })
-        .catch(function(){ /* non-fatal, ARIA still works without history context */ });
+        .then(function(data){
+          if (data.success) { ariaContext = data.data; sessionStorage.setItem('sr_aria_context', JSON.stringify(ariaContext)); }
+          return ariaContext;
+        })
+        .catch(function(){ return null; /* non-fatal, ARIA still works without history context */ });
+      // Cap the wait so a slow or failed fetch never blocks the first message
+      // indefinitely: after 4s, proceed with whatever we have (likely null).
+      var timeoutPromise = new Promise(function(resolve){ setTimeout(function(){ resolve(ariaContext); }, 4000); });
+      return Promise.race([fetchPromise, timeoutPromise]);
     })();
 
     // ── VOICE SYSTEM ─────────────────────────────────────────
     var ariaState='idle', curMode='explore', hist=[];
+    document.addEventListener('DOMContentLoaded', function(){
+      var initial = document.getElementById('empty-chat');
+      if (initial) initial.outerHTML = emptyChatHTML(curMode);
+    });
     var isListen=false, isSpeak=false, recog=null, voices=[], reviewMode=true;
     var silenceTimer=null, liveTranscript='';
 
@@ -435,8 +458,42 @@
       clearMessages(); setState('idle');
     };
 
+    // Scoped exactly to what ariaContext actually contains: Humac Score and
+    // trend, Vantage Record case counts and exposure total, the latest
+    // Debrief summary. No suggestion here implies ARIA can recall the
+    // specific content of an individual past case, she can't, by design,
+    // and a suggested question that implied otherwise would just move the
+    // "she doesn't know" moment one step later instead of preventing it.
+    var SUGGESTED_QUESTIONS = {
+      explore: [
+        "What's on my Vantage Record so far?",
+        "What's my Humac Score telling me right now?",
+        "I'm not sure what tool I need for this."
+      ],
+      reflection: [
+        "How's my quarter looking overall?",
+        "What patterns are showing up in my cases?",
+        "Read me my last Debrief."
+      ]
+    };
+
+    function emptyChatHTML(mode) {
+      var qs = SUGGESTED_QUESTIONS[mode] || SUGGESTED_QUESTIONS.explore;
+      var chips = qs.map(function(q){
+        return '<button type="button" class="ec-chip" onclick="askSuggested(this)">' + q + '</button>';
+      }).join('');
+      return '<div class="empty-chat" id="empty-chat"><div class="ec-title">ARIA is ready.</div><div class="ec-sub">Use the mic or type to begin, or try one of these.</div><div class="ec-suggestions">' + chips + '</div></div>';
+    }
+
+    window.askSuggested = function(el) {
+      var text = el.textContent;
+      var input = document.getElementById('ti');
+      if (input) input.value = '';
+      callARIA(text);
+    };
+
     function clearMessages() {
-      document.getElementById('messages').innerHTML='<div class="empty-chat" id="empty-chat"><div class="ec-title">ARIA is ready.</div><div class="ec-sub">Use the mic or type to begin.</div></div>';
+      document.getElementById('messages').innerHTML = emptyChatHTML(curMode);
     }
 
     function addMsg(role,text,typing) {
@@ -464,7 +521,9 @@
     function callARIA(msg) {
       hist.push({role:'user',content:msg});
       addMsg('user',msg); addMsg('aria','',true); setState('thinking');
-      fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'aria',mode:curMode,history:hist,meridian:meridian,ariaContext:ariaContext})})
+      ariaContextReady.then(function(){
+      return fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'aria',mode:curMode,history:hist,meridian:meridian,ariaContext:ariaContext})});
+      })
       .then(function(r){return r.json();})
       .then(function(data){
         rmTyping();
@@ -648,7 +707,7 @@
       document.getElementById('panel-title').innerText=modes[savedCurrentChat.mode]||savedCurrentChat.mode;
       document.getElementById('messages').innerHTML='';
       if(hist.length===0){
-        document.getElementById('messages').innerHTML='<div class="empty-chat" id="empty-chat"><div class="ec-title">ARIA is ready.</div><div class="ec-sub">Use the mic or type to begin.</div></div>';
+        document.getElementById('messages').innerHTML=emptyChatHTML(savedCurrentChat.mode);
       } else {
         hist.forEach(function(m){addMsg(m.role==='user'?'user':'aria',m.content,false);});
       }
