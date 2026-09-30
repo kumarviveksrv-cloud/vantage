@@ -167,8 +167,7 @@
     <a href="dashboard.html" class="nav-item"><span class="nav-icon">⊞</span>Dashboard</a>
     <div class="nav-section">Core Tools</div>
     <a href="employee-case-advisor.html" class="nav-item"><span class="nav-icon">⚡</span>Employee Case Advisor</a>
-    <a href="people-roi-brief.html" class="nav-item"><span class="nav-icon">📊</span>People ROI Brief</a>
-    <a href="leadership-communicator.html" class="nav-item"><span class="nav-icon">🎯</span>Stakeholder Influence</a>
+    <a href="people-roi-brief.html" class="nav-item"><span class="nav-icon">💼</span>The Business Case</a>
     <a href="retention-advisor.html" class="nav-item"><span class="nav-icon">⚖️</span>Retention Advisor</a>
     <div class="nav-section">Intelligence</div>
     <a href="aria.html" class="nav-item"><span class="nav-icon">✦</span>ARIA</a>
@@ -350,14 +349,14 @@
         ['A process question: notice period, warning letter, domestic enquiry', 'Policy Advisor', 'policy-advisor.html']
       ]},
       { group: 'I need to influence someone', items: [
-        ['Convincing a CFO or CEO with financial numbers', 'Stakeholder Influence', 'leadership-communicator.html'],
-        ['Building a business case for a people programme', 'Stakeholder Influence', 'leadership-communicator.html'],
-        ['Getting budget approved for an HR initiative', 'Stakeholder Influence', 'leadership-communicator.html']
+        ['Convincing a CFO or CEO with financial numbers', 'The Business Case', 'people-roi-brief.html?flow=stakeholder'],
+        ['Building a business case for a people programme', 'The Business Case', 'people-roi-brief.html?flow=stakeholder'],
+        ['Getting budget approved for an HR initiative', 'The Business Case', 'people-roi-brief.html?flow=stakeholder']
       ]},
       { group: 'I have data that needs to become an argument', items: [
-        ['Attrition numbers, engagement scores, or time-to-hire data', 'People ROI Brief', 'people-roi-brief.html'],
-        ['A board meeting or leadership review tomorrow', 'People ROI Brief', 'people-roi-brief.html'],
-        ['Making HR metrics mean something financially', 'People ROI Brief', 'people-roi-brief.html']
+        ['Attrition numbers, engagement scores, or time-to-hire data', 'The Business Case', 'people-roi-brief.html'],
+        ['A board meeting or leadership review tomorrow', 'The Business Case', 'people-roi-brief.html'],
+        ['Making HR metrics mean something financially', 'The Business Case', 'people-roi-brief.html']
       ]},
       { group: 'I have a hard conversation coming up', items: [
         ['A PIP conversation, termination meeting, or salary pushback', 'Difficult Conversations', 'difficult-conversations.html'],
@@ -408,12 +407,11 @@
     var TOOLS = [
       { num:'01', icon:'⚡', tag:'HERO · Entry point', name:'Employee Case Advisor', desc:'Describe any employee situation with legal stakes: termination, POSH, disciplinary, PIP. Get the exact process, financial exposure, and documentation needed.', path:'employee-case-advisor.html', flagship:true,  color:'#f43f5e', rgb:'244,63,94' },
       { num:'02', icon:'\u2696\ufe0f', tag:'Core', name:'Retention Advisor', desc:'Model the full cost of keeping or losing a specific person: flight risk, replacement cost, counter-offer position, and the break-even ceiling.', path:'retention-advisor.html', flagship:false, color:'#eab308', rgb:'234,179,8' },
-      { num:'03', icon:'🎯', tag:'Core', name:'Stakeholder Influence', desc:'Name a specific person and what you need them to decide. Get a communication strategy framed in the language that reaches that person specifically.', path:'leadership-communicator.html', flagship:false, color:'#f59e0b', rgb:'245,158,11' },
-      { num:'04', icon:'📊', tag:'Core', name:'People ROI Brief', desc:'Enter your HR metrics: attrition, engagement, cost-per-hire. Get a CFO-ready financial argument your leadership cannot dismiss.', path:'people-roi-brief.html', flagship:false, color:'#0ea5e9', rgb:'14,165,233' },
-      { num:'05', icon:'🎭', tag:'Intelligence', name:'Difficult Conversations', desc:'ARIA plays the other person. Rehearse before the termination meeting, performance discussion, or leadership alignment call that matters.', path:'difficult-conversations.html', flagship:false, color:'#a855f7', rgb:'168,85,247' },
-      { num:'06', icon:'🧭', tag:'Intelligence', name:'Policy Advisor', desc:'Describe the policy gap or situation. Get the applicable legal framework (BNS, BNSS, BSA, POSH) calibrated to your state and org type.', path:'policy-advisor.html', flagship:false, color:'#10b981', rgb:'16,185,129' },
-      { num:'07', icon:'✦', tag:'Intelligence Layer', name:'ARIA', desc:'Adaptive Reflective Intelligence for Advancement. Case Partner, Conversation Coach, Reflection. One question at a time.', path:'aria.html', flagship:true,  color:'#6366f1', rgb:'99,102,241' },
-      { num:'08', icon:'📜', tag:'Your Record · Career Protection', name:'Standpoint', desc:'File your professional position before the outcome is known. Timestamped, permanent. When leadership overrules you and it goes wrong, this shows what you said and when.', path:'standpoint.html', flagship:true,  color:'#4ade80', rgb:'74,222,128' }
+      { num:'03', icon:'💼', tag:'Core', name:'The Business Case', desc:'Name a specific person to convince, or bring your HR metrics for the wider room. Get a five-layer influence stack calibrated to that person, or a CFO-ready financial argument your leadership cannot dismiss.', path:'people-roi-brief.html', flagship:false, color:'#f59e0b', rgb:'245,158,11' },
+      { num:'04', icon:'🎭', tag:'Intelligence', name:'Difficult Conversations', desc:'ARIA plays the other person. Rehearse before the termination meeting, performance discussion, or leadership alignment call that matters.', path:'difficult-conversations.html', flagship:false, color:'#a855f7', rgb:'168,85,247' },
+      { num:'05', icon:'🧭', tag:'Intelligence', name:'Policy Advisor', desc:'Describe the policy gap or situation. Get the applicable legal framework (BNS, BNSS, BSA, POSH) calibrated to your state and org type.', path:'policy-advisor.html', flagship:false, color:'#10b981', rgb:'16,185,129' },
+      { num:'06', icon:'✦', tag:'Intelligence Layer', name:'ARIA', desc:'Adaptive Reflective Intelligence for Advancement. Explore, Reflection. One question at a time.', path:'aria.html', flagship:true,  color:'#6366f1', rgb:'99,102,241' },
+      { num:'07', icon:'📜', tag:'Your Record · Career Protection', name:'Standpoint', desc:'File your professional position before the outcome is known. Timestamped, permanent. When leadership overrules you and it goes wrong, this shows what you said and when.', path:'standpoint.html', flagship:true,  color:'#4ade80', rgb:'74,222,128' }
     ];
 
     var toolWrap = document.getElementById('tool-cards');
