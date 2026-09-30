@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#050410">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard — Virorah Vantage</title>
+  <title>Dashboard | Virorah Vantage</title>
   <link rel="stylesheet" href="vantage-theme.css"/>
   <!-- SR17: vantage-theme.css above is the canonical palette + typography
        source. Cormorant Garamond loads via that file's @import, so the
@@ -456,7 +456,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
           <div id="hdc-dash-count" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(244,243,255,.28);margin-top:4px"></div>
         </div>
         <div style="text-align:right;max-width:240px">
-          <div style="font-size:.76rem;color:rgba(244,243,255,.38);line-height:1.65;margin-bottom:10px">The documented financial impact of your HR practice — financial exposure navigated, retention value protected, and ROI arguments built across all active tools.</div>
+          <div style="font-size:.76rem;color:rgba(244,243,255,.38);line-height:1.65;margin-bottom:10px">The documented financial impact of your HR practice: financial exposure navigated, retention value protected, and ROI arguments built across all active tools.</div>
           <a href="vantage-record.html" style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.08em;color:rgba(165,180,252,.32);text-decoration:none;transition:color .2s" onmouseover="this.style.color='rgba(165,180,252,.65)'" onmouseout="this.style.color='rgba(165,180,252,.32)'">View full Vantage Record &rarr;</a>
         </div>
       </div>
@@ -549,7 +549,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
         <a href="policy-advisor.html" class="tool-card tc-policy">
           <div class="tool-icon">&#x1F9ED;</div>
           <div class="tool-name">Policy Advisor</div>
-          <div class="tool-desc">Describe a policy gap — get the applicable legal framework.</div>
+          <div class="tool-desc">Describe a policy gap, get the applicable legal framework.</div>
         </a>
         <a href="retention-advisor.html" class="tool-card">
           <div class="tool-icon">&#x2696;&#xFE0F;</div>
@@ -578,7 +578,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
         <a href="debrief.html" class="tool-card">
           <div class="tool-icon">&#x1F4CB;</div>
           <div class="tool-name">The Debrief</div>
-          <div class="tool-desc">Your month in numbers — auto-generated at month end.</div>
+          <div class="tool-desc">Your month in numbers, auto-generated at month end.</div>
         </a>
       </div>
     </div>
@@ -900,13 +900,13 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     })();
 
     // ═══════════════════════════════════════════════════════════
-    // HR DECISION CAPITAL + STAT CARDS — PHASE 4
+    // HR DECISION CAPITAL + STAT CARDS: PHASE 4
     // Primary: live get_cases call on page load (Worker → Airtable)
     // Fast path: sessionStorage written by vantage-record.html
     // Both run independently; live path refreshes whatever sessionStorage showed.
     // ═══════════════════════════════════════════════════════════
 
-    // Re-used from vantage-record.html — parses "₹8L–₹14L" etc. → lakhs midpoint
+    // Re-used from vantage-record.html: parses "₹8L–₹14L" etc. → lakhs midpoint
     function parseExposureLakhsDash(str) {
       if (!str) return 0;
       var s = str.replace(/[₹,\s]/g, '').replace(/lakhs?/gi, '').replace(/[–—]/g, '-');
@@ -1020,7 +1020,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
                 updateDashboardFromCases(d.data);
               }
             })
-            .catch(function() { /* non-fatal — stat cards stay at 0 */ });
+            .catch(function() { /* non-fatal: stat cards stay at 0 */ });
           }).catch(function() {});
         } else {
           setTimeout(attemptLoad, 200);
@@ -1072,7 +1072,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
   })();
   </script>
   <!-- ═══════════════════════════════════════════════════════════
-     VANTAGE — WELCOME OVERLAY
+     VANTAGE: WELCOME OVERLAY
      Paste this entire block before </body> in dashboard.html
      Fires once on first sign-in. localStorage flag: vantage_onboarded_v1
      Three paths: ARIA (live situation) · Tour (explore) · Case Advisor (specific)
@@ -1320,7 +1320,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     <h1 class="vw-headline">You are HR for everyone.<br>Who is HR for you?</h1>
 
     <p class="vw-sub">
-      Vantage is your private thinking partner — for the cases, decisions,
+      Vantage is your private thinking partner: for the cases, decisions,
       and hard moments you've always handled alone. Where would you like to start?
     </p>
 
@@ -1356,7 +1356,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     </div>
 
     <button class="vw-skip" onclick="vwDismiss()">
-      Skip for now — go to Dashboard
+      Skip for now, go to Dashboard
     </button>
 
   </div>
@@ -1410,12 +1410,12 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     function waitForSession(){
       attempts++;
       if(attempts > maxAttempts){
-        // Clerk didn't load — show overlay anyway
+        // Clerk didn't load: show overlay anyway
         showOverlay();
         return;
       }
       if(window.Clerk && window.Clerk.session){
-        // Confirmed signed in — show overlay
+        // Confirmed signed in: show overlay
         showOverlay();
       } else {
         setTimeout(waitForSession, 150);
