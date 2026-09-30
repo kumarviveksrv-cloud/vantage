@@ -6,7 +6,7 @@
   <link rel="shortcut icon" href="favicon.png"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Leadership Communicator — Virorah Vantage</title>
+  <title>Stakeholder Influence — Virorah Vantage</title>
   <link rel="stylesheet" href="vantage-theme.css"/>
   <!-- SR18: vantage-theme.css above is the canonical palette + typography
        source. Local :root below is KEPT INTACT as a fallback — same
@@ -199,7 +199,7 @@
     <div class="nav-section">Your Active Tools</div>
     <a href="employee-case-advisor.html" class="nav-item"><span class="icon">&#x26A1;</span> Employee Case Advisor</a>
     <a href="people-roi-brief.html" class="nav-item"><span class="icon">&#x1F4CA;</span> People ROI Brief</a>
-    <a href="leadership-communicator.html" class="nav-item"><span class="icon">&#x1F3AF;</span> Leadership Communicator</a>
+    <a href="leadership-communicator.html" class="nav-item"><span class="icon">&#x1F3AF;</span> Stakeholder Influence</a>
     <a href="difficult-conversations.html" class="nav-item"><span class="icon">&#x1F3AD;</span> Difficult Conversations</a>
     <a href="policy-advisor.html" class="nav-item"><span class="icon">&#x1F9ED;</span> Policy Advisor</a>
     <a href="retention-advisor.html" class="nav-item"><span class="icon">&#x2696;&#xFE0F;</span> Retention Advisor</a>
@@ -227,8 +227,8 @@
     <!-- INTAKE VIEW -->
     <div id="intake-view">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Leadership Communicator</div>
-        <div class="page-title">&#x1F3AF; Leadership Communicator</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Stakeholder Influence</div>
+        <div class="page-title">&#x1F3AF; Stakeholder Influence</div>
         <div class="page-sub">Walk in with a five-layer strategy and one irrefutable number. Walk out with a decision.</div>
       </div>
       <div class="intro-card">
@@ -273,7 +273,7 @@
 
     <!-- LOADING VIEW -->
     <div id="loading-view" style="display:none">
-      <div class="page-header"><div class="page-title">&#x1F3AF; Leadership Communicator</div></div>
+      <div class="page-header"><div class="page-title">&#x1F3AF; Stakeholder Influence</div></div>
       <div class="loading-state">
         <div class="loading-orb">
           <svg width="64" height="64" viewBox="0 0 64 64">
@@ -288,7 +288,7 @@
     <!-- OUTPUT VIEW -->
     <div id="output-view" style="display:none">
       <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="leadership-communicator.html">Leadership Communicator</a> &middot; INFLUENCE Stack</div>
+        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="leadership-communicator.html">Stakeholder Influence</a> &middot; INFLUENCE Stack</div>
         <div class="page-title">Your INFLUENCE Stack</div>
         <div class="page-sub" id="output-stakeholder-label">Ready to present</div>
       </div>
@@ -470,7 +470,7 @@
           currentResult = data.data;
           renderOutput();
         } else {
-          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You\u2019ve reached your daily limit for Leadership Communicator. Resets tomorrow.') : 'Analysis failed. ' + (data.error || 'Please try again.'));
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You\u2019ve reached your daily limit for Stakeholder Influence. Resets tomorrow.') : 'Analysis failed. ' + (data.error || 'Please try again.'));
         }
       } catch(err) {
         clearInterval(loadInterval);
@@ -591,7 +591,7 @@
     function goToARIA() {
       sessionStorage.setItem('sr_aria_context', JSON.stringify({
         mode: 'conversation_coach',
-        scenario: 'Leadership Communicator — ' + selectedStakeholder + ' — ' + document.getElementById('ask').value.substring(0, 150)
+        scenario: 'Stakeholder Influence: ' + selectedStakeholder + ', ' + document.getElementById('ask').value.substring(0, 150)
       }));
       window.location.href = BASE + 'aria.html';
     }
