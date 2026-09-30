@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>L3 · Org Vitals — Vantage</title>
+<title>L3 · Org Vitals | Vantage</title>
 <link rel="apple-touch-icon" href="favicon.png"/>
 <link rel="icon" type="image/png" href="favicon.png"/>
 <link rel="shortcut icon" href="favicon.png"/>
@@ -50,7 +50,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .page-eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .page-title{font-family:var(--font);font-size:2rem;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-.03em}
 .page-sub{font-size:.88rem;color:var(--text-dim);margin-bottom:32px;line-height:1.6}
-/* SCORE HERO — Revenue Fluent treatment */
+/* SCORE HERO: Revenue Fluent treatment */
 .score-hero{padding:48px 52px;margin-bottom:28px;background:linear-gradient(135deg,rgba(13,11,30,.8),rgba(5,4,16,.95));border:1px solid var(--cobalt-border);border-radius:20px;position:relative;overflow:hidden;animation:hero-pulse 3s ease-in-out infinite}
 .score-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.5),rgba(99,102,241,.3),rgba(99,102,241,.5),transparent)}
 .score-hero::after{content:'';position:absolute;bottom:-60px;left:20%;width:400px;height:200px;background:radial-gradient(ellipse,rgba(99,102,241,.1) 0%,transparent 65%);pointer-events:none}
@@ -92,7 +92,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .yn:hover{border-color:rgba(99,102,241,.4);color:var(--muted)}
 .yn.sel-yes{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.35);color:#4ade80}
 .yn.sel-no{background:rgba(224,92,58,.08);border-color:rgba(224,92,58,.25);color:#E05C3A}
-/* DNA REVEAL — Revenue Fluent statement treatment */
+/* DNA REVEAL: Revenue Fluent statement treatment */
 .dna-reveal{background:rgba(13,11,30,.5);border:1px solid var(--cobalt-border);border-radius:14px;border-left:3px solid var(--cobalt);padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;display:none;animation:hero-pulse 3s ease-in-out infinite}
 .dna-reveal.visible{display:block}
 .dna-reveal::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--cobalt),var(--lavender))}
@@ -119,7 +119,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .action-num{width:28px;height:28px;border-radius:50%;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.22);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:var(--muted);flex-shrink:0;margin-top:2px}
 .action-title{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.3}
 .action-body{font-size:.82rem;color:var(--text-dim);line-height:1.65}
-/* INTEL CARD — RF statement treatment */
+/* INTEL CARD: RF statement treatment */
 .intel-card{padding:26px 30px;background:rgba(13,11,30,.5);border:1px solid var(--cobalt-border);border-radius:14px;border-left:3px solid var(--cobalt);position:relative;overflow:hidden;animation:hero-pulse 3s ease-in-out infinite;margin-bottom:32px}
 .intel-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--cobalt),#a5b4fc)}
 .intel-eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;background:linear-gradient(90deg,var(--cobalt),#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px}
@@ -365,7 +365,7 @@ function renderPage(){
     var vs=vitalScore(vital);
     var status=vitalStatus(vs);
     var badgeCls=status==='healthy'?'healthy':status==='warning'?'warning':status==='critical'?'critical':'partial';
-    var badgeText=vs.total===0?'—':vs.yes+'/'+vs.total+' healthy';
+    var badgeText=vs.total===0?'-':vs.yes+'/'+vs.total+' healthy';
     vitalsHTML+='<div class="vital-card"><div class="vital-header"><div class="vital-name">'+vital.name+'</div><div class="vital-score-badge '+badgeCls+'">'+badgeText+'</div></div>';
     vital.signals.forEach(function(sig){
       var val=getSignal(sig.id);
