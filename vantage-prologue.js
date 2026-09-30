@@ -25,13 +25,19 @@
     var _prologueEl = document.getElementById('prologue');
     if (_prologueEl) _prologueEl.style.display = 'none';
     document.body.classList.add('prologue-complete');
+    /* Longer hold here than the other exit paths below: this is the
+       specific path where the hero's climax lines have shown a brief
+       raw-gradient flash before their word-by-word JS reveal settles.
+       Holding the overlay opaque a bit longer masks that window entirely
+       rather than chasing the exact race condition underneath it. */
+    if (window.VantageFade) { window.VantageFade.hide(500); }
     return;
   }
 
   const $ = (selector, parent = document) => parent.querySelector(selector);
   const pro = $('#prologue');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!pro || reduce) return;
+  if (!pro || reduce) { if (window.VantageFade) { window.VantageFade.hide(100); } return; }
 
   /* ── PAYING USER BYPASS ──────────────────────────────────────────────────
      Two signals — either is enough to skip the prologue permanently:
@@ -60,6 +66,7 @@
   if (cameFromDemo || isPayingUser) {
     pro.style.display = 'none';
     document.body.classList.add('prologue-complete');
+    if (window.VantageFade) { window.VantageFade.hide(500); }
     return;
   }
 
@@ -73,6 +80,8 @@
   const countdown = $('.prologue-countdown');
   const countNum = $('#prologueCountNum');
   const fade = $('.prologue-fade');
+
+  if (window.VantageFade) { window.VantageFade.hide(150); }
 
   let active = true;
   let timers = [];
