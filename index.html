@@ -3409,11 +3409,31 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 .bring-arc-flow{color:rgba(196,181,253,.42);white-space:nowrap}
 @media(max-width:480px){.bring-arc-flow{white-space:normal;text-align:center}}
 @media(max-width:768px){.bring-cards{grid-template-columns:1fr 1fr}}
-@media(max-width:480px){.bring-cards{grid-template-columns:1fr}}
+@media(max-width:480px){.bring-cards{grid-template-columns:1fr}
+  /* SR23: record-links + record-payoff mobile fix.
+     Desktop: two links side by side (existing flex row, no change).
+     Mobile ≤480px: stack links vertically, center everything, add breathing room. */
+  .record-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 32px 24px 0;
+    text-align: center;
+  }
+  .record-links .text-link {
+    font: 600 14px 'JetBrains Mono', monospace;
+    letter-spacing: .06em;
+    color: #a5b4fc;
+    text-decoration: none;
+  }
+  .record-payoff {
+    text-align: center;
+  }
+}
 </style>
 <section class="bring-it reveal-section" id="bring">
   <div class="bring-head">
-    <span class="eyebrow">What to bring Vantage</span>
+    <span class="eyebrow">What to bring</span>
     <h2>Start with what&rsquo;s <em>on your desk.</em></h2>
     <p>No frameworks to learn first. No setup required. Bring the real problem. Vantage figures out the rest.</p>
   </div>
