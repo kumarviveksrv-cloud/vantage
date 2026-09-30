@@ -43,11 +43,22 @@
      surrounding JS string literal. A call site with no quote characters
      at all is safe to embed inside any quoting context without escaping. */
   window.vantageGoHome = function(){
-    try { sessionStorage.setItem('vantage_skip_intro_from', '1'); } catch(e){}
+    /* A signed-in user clicking "Back to Vantage" belongs on their dashboard,
+       not the public marketing landing page. index.html's nav has no
+       authenticated state at all, it always shows "Sign in" regardless of
+       who's actually logged in, so a signed-in user routed there sees
+       exactly what a logged-out visitor sees. That's not a real sign-out,
+       but it reads as one, and it's the wrong destination either way. */
+    var isSignedIn = false;
+    try { isSignedIn = localStorage.getItem('vantage_clerk_signed_in') === '1'; } catch(e){}
+    var target = isSignedIn ? 'dashboard.html' : 'index.html';
+    if (!isSignedIn) {
+      try { sessionStorage.setItem('vantage_skip_intro_from', '1'); } catch(e){}
+    }
     if (window.VantageFade) {
-      window.VantageFade.navigateWithFade('index.html');
+      window.VantageFade.navigateWithFade(target);
     } else {
-      window.location.href = 'index.html';
+      window.location.href = target;
     }
     return false;
   };
