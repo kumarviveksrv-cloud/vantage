@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>L1 · Value Ledger — Vantage</title>
+<title>L1 · Value Ledger | Vantage</title>
 <link rel="apple-touch-icon" href="favicon.png"/>
 <link rel="icon" type="image/png" href="favicon.png"/>
 <link rel="shortcut icon" href="favicon.png"/>
@@ -70,7 +70,7 @@ body{
 .eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:#a5b4fc;margin-bottom:16px}
 .page-title{font-family:'Sora',sans-serif;font-size:2rem;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-.03em}
 .page-sub{font-size:.88rem;color:var(--text-dim);margin-bottom:32px;line-height:1.6}
-/* HERO — Revenue Fluent treatment */
+/* HERO: Revenue Fluent treatment */
 @keyframes hero-pulse{
   0%,100%{box-shadow:0 0 0 1px rgba(99,102,241,.2),0 0 16px rgba(99,102,241,.1),0 0 40px rgba(99,102,241,.05)}
   50%{box-shadow:0 0 0 1px rgba(99,102,241,.45),0 0 32px rgba(99,102,241,.2),0 0 64px rgba(99,102,241,.1)}
@@ -241,7 +241,7 @@ function fmtINR(n){
   return sign+'\u20b9'+Math.round(abs);
 }
 
-// Real per-component formulas — identical to Revenue Fluent's original buildAuto()
+// Real per-component formulas: identical to Revenue Fluent's original buildAuto()
 function computeRealLedger(a){
   var headcount=a.cq1_headcount||0, compBase=a.cq1_compbase||0;
   var avgSalary=headcount>0?compBase/headcount:0;
@@ -276,7 +276,7 @@ var realRatioPct=realLedger&&realLedger.compBase>0?(realLedger.totalRet/realLedg
 var q1Ratio=realLedger?(realRatioPct/100).toFixed(2)+'x':(q1Pct/100).toFixed(2)+'x';
 var q1Display=realLedger?'\u20b9'+realRatioPct.toFixed(0):(q1Pct>0?'\u20b9'+q1Pct.toFixed(0):'N/A');
 
-// Ledger component indices — derived from q1Pct (estimate mode only; unused when l1Mode==='computed')
+// Ledger component indices: derived from q1Pct (estimate mode only; unused when l1Mode==='computed')
 var totalIdx=q1Pct;
 var components=[
   {id:'E001',action:'Retention Savings',note:'High Performers retained \xd7 1.8\xd7 salary \u2014 replacement cost avoided',pill:'Cost-Saving',pillCls:'p-cost',
