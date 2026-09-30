@@ -113,7 +113,7 @@
   // ── Question data ───────────────────────────────────────────────────────
   const CARDS = [
     { trigger:'.meridian.cinematic-panel', pre:'A question for you', q:'The intelligence you\'re using right now: does it actually know your reality?', sub:'Or is it answering someone else\u2019s question, dressed up to look like yours?', nudge:'A question about MERIDIAN' },
-    { trigger:'.aria.cinematic-panel',     pre:'Another question',   q:'What would you do if you had a brilliant HR colleague available at 9 pm tonight?', sub:'Not a chatbot. Someone who knows your context, your policies, your history, and asks the right questions back.', nudge:'A question about ARIA' },
+    { trigger:'.aria.cinematic-panel',     pre:'Another question',   q:'Who do you call at 9 pm tonight, when the decision is yours to make alone?', sub:'Not a chatbot. Someone who knows your context, your policies, your history, and asks the right questions back.', nudge:'A question about ARIA' },
     { trigger:'.humacity.cinematic-panel', pre:'Still with us?',     q:'Do you know the rupee value of the work you did last quarter?', sub:'Not headcount. Not engagement scores. The actual financial contribution HR made to the business.', nudge:'A question about Humacity' },
     { trigger:'.record.cinematic-panel',   pre:'One last question',  q:'When you leave this organisation, what do you take with you?', sub:'Every decision navigated. Every case closed. Every difficult conversation held. Is any of it saved anywhere?', nudge:'A question about your Record' },
   ];
