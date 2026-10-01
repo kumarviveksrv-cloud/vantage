@@ -261,7 +261,7 @@
     f.appendChild(ns('Your Record'));
     f.appendChild(ni('standpoint.html',    '\uD83D\uDCDC', 'Standpoint'));
     f.appendChild(ni('debrief.html',       '\uD83D\uDCCB', 'The Debrief'));
-    f.appendChild(ni('vantage-record.html','\u25CE',         'Vantage Record'));
+    f.appendChild(ni('vantage-record.html','🗄️', 'Vantage Record'));
 
     // ACCOUNT
     f.appendChild(ns('Account'));
@@ -566,7 +566,7 @@
       { icon: '\u229E', label: 'Home',    href: 'dashboard.html',         page: 'dashboard' },
       { icon: '\u26A1', label: 'Cases',   href: 'employee-case-advisor.html', page: 'er-case-navigator' },
       { icon: '\u2726', label: 'ARIA',    href: 'aria.html',              page: 'aria' },
-      { icon: '\u25CE', label: 'Record',  href: 'vantage-record.html',      page: 'case-library' },
+      { icon: '🗄️', label: 'Record',  href: 'vantage-record.html',      page: 'case-library' },
       { icon: '\u22EF', label: 'More',    href: null,                     page: 'more' },
     ];
 
@@ -619,7 +619,7 @@
         items: [
           { icon: '\uD83D\uDCDC', label: 'Standpoint', sub: 'File your position before the outcome', href: 'standpoint.html', page: 'ledger' },
           { icon: '\uD83D\uDCCB', label: 'The Debrief', sub: 'Auto-generated monthly', href: 'debrief.html', page: 'debrief' },
-          { icon: '\u25CE', label: 'Vantage Record', sub: 'Your complete case archive', href: 'vantage-record.html', page: 'case-library' },
+          { icon: '🗄️', label: 'Vantage Record', sub: 'Your complete case archive', href: 'vantage-record.html', page: 'case-library' },
         ]
       },
       {
