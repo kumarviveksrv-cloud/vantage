@@ -199,7 +199,7 @@
       if (isActivePage(href)) cls += ' active';
       if (opts.cls) cls += ' ' + opts.cls;
       a.className = cls;
-      a.innerHTML = '<span style="font-size:16px;flex-shrink:0">' + icon + '</span> ' + label;
+      a.innerHTML = '<span style="font-size:16px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;text-align:center">' + icon + '</span> ' + label;
       return a;
     }
 
@@ -271,7 +271,7 @@
     pricingEl.className = 'nav-item' + (isActivePage('pricing.html') ? ' active' : '');
     pricingEl.innerHTML =
       '<span style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">' +
-        '<span style="font-size:16px;flex-shrink:0">\uD83E\uDE99</span>' +
+        '<span style="font-size:16px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;text-align:center">\uD83E\uDE99</span>' +
         '<span>Pricing</span>' +
       '</span>' +
       '<span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.04em;' +
@@ -303,7 +303,7 @@
       so.style.marginTop = '8px';
       so.style.borderTop = '1px solid rgba(99,102,241,.1)';
       so.style.paddingTop = '14px';
-      so.innerHTML = '<span style="font-size:16px;flex-shrink:0">\u21A9</span> Sign out';
+      so.innerHTML = '<span style="font-size:16px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;text-align:center">\u21A9</span> Sign out';
       sidebar.appendChild(so);
     }
 
