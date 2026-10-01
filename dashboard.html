@@ -389,8 +389,8 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
         <div class="welcome-sub">Your MERIDIAN context is ready. What's happening today?</div>
       </div>
       <div class="header-aria" onclick="window.location.href='aria.html'">
-        <div class="face-area" style="width:96px;height:96px;position:relative;flex-shrink:0">
-          <canvas id="aria-canvas" style="width:100%;height:100%;display:block;opacity:0;transition:opacity 1.2s ease"></canvas>
+        <div class="face-area" style="width:108px;height:108px;position:relative;flex-shrink:0;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 50% 45%,rgba(99,102,241,0.18),rgba(5,4,16,0.98) 68%);box-shadow:0 0 24px rgba(99,102,241,0.15)">
+          <canvas id="aria-canvas" style="width:100%;height:100%;display:block;opacity:0;transition:opacity 1.2s ease;mix-blend-mode:screen"></canvas>
           <!-- Fallback ring shown until WebGL face loads -->
           <div id="aria-fallback-ring" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
             <svg viewBox="0 0 96 96" width="96" height="96" xmlns="http://www.w3.org/2000/svg" style="animation:float 3s ease-in-out infinite">
