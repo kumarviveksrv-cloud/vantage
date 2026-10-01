@@ -625,6 +625,13 @@
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
 
+    async function getClerkToken() {
+      if (window.Clerk && window.Clerk.session) {
+        try { return await window.Clerk.session.getToken(); } catch(e) {}
+      }
+      return sessionStorage.getItem('sr_session_token') || '';
+    }
+
     function renderGreenCat(gc) {
       if (!gc || !gc.primary) return '';
       var icons = {'Revenue Growth':'&#x2191;','Cost Efficiency':'&#x2193;','Risk Mitigation':'&#x26A0;'};
@@ -789,9 +796,10 @@
       showView('loading-view');
       var loadInterval = animateLoading('general');
       try {
+        var clerkToken = await getClerkToken();
         var res = await fetch(WORKER, {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
+          headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + clerkToken},
           body: JSON.stringify({
             tool: 'business_case',
             flow: 'general',
@@ -1069,9 +1077,10 @@
       showView('loading-view');
       var loadInterval = animateLoading('stakeholder');
       try {
+        var clerkToken = await getClerkToken();
         var res = await fetch(WORKER, {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
+          headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + clerkToken},
           body: JSON.stringify({
             tool: 'business_case',
             flow: 'stakeholder',
