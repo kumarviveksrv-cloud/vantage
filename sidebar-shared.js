@@ -1302,9 +1302,8 @@
     'humac-onboarding.html':       'humac',
     'employee-case-advisor.html':      'case-navigator',
     'policy-advisor.html':         'policy-compass',
-    'people-roi-brief.html':    'hr-storyteller',
+    'people-roi-brief.html':    'business-case',
     'retention-advisor.html':     'offer-intelligence',
-    'leadership-communicator.html':  'stakeholder-influence',
     'difficult-conversations.html': 'conversation-simulator',
     'vantage-record.html':           'case-library'
   };
