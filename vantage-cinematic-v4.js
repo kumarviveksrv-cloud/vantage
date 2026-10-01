@@ -157,7 +157,7 @@ $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.ge
 })();
 
 
-/* MERIDIAN readout — constant 7-parameter cycling animation (SR18) */
+/* MERIDIAN readout — constant 8-parameter cycling animation (SR18) */
 (function initMeridianReadout(){
   'use strict';
   const status=document.getElementById('meridianStatus');
@@ -171,6 +171,7 @@ $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.ge
     {key:'SENIORITY',val:'HR MANAGER'},
     {key:'UNION',val:'NON-UNION'},
     {key:'FUNCTION',val:'ER SPECIALIST'},
+    {key:'POLICY',val:'CONFIGURED'},
   ];
   const bars=[...readout.querySelectorAll('i')];
   let step=0,interval=null;
