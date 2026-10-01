@@ -143,160 +143,59 @@
   ].join('\n');
   document.head.insertBefore(styleOverride, document.head.firstChild);
 
-  // ── PLATFORM TOUR + OVERVIEW SECTION ─────────────────────
-  var dashLink = document.querySelector('.sb a.ni[href="dashboard.html"],a.ni[href="dashboard.html"],.sidebar a.nav-item[href="dashboard.html"],a.nav-item[href="dashboard.html"]');
-  var alreadyHasOverview = document.getElementById('vs-overview');
-  if (dashLink && !alreadyHasOverview) {
-    var overview = document.createElement('div');
-    overview.id = 'vs-overview';
+  // ── SIDEBAR REBUILD ──────────────────────────────────────
+  // Single canonical function replaces all piecemeal injections.
+  // Preserves: .logo, #meridian-chip (page JS holds references to its children),
+  // and any existing clerkSignOut link (so clerk-auth.js keeps working).
+  (function rebuildSidebar() {
+    var sidebar = document.querySelector('.sidebar, #sidebar');
+    if (!sidebar) return;
 
-    var tourBtn = document.createElement('a');
-    tourBtn.href = 'platform-tour.html';
-    tourBtn.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid rgba(99,102,241,0.18);text-decoration:none;color:rgba(255,255,255,0.6);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;background:rgba(99,102,241,0.06);margin-bottom:10px';
-    tourBtn.innerHTML = '<span style="display:flex;align-items:center;gap:10px"><span style="font-size:15px">🗺</span>Platform Tour</span><span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.08em;background:#6366f1;color:#fff;padding:2px 7px;border-radius:4px;font-weight:600">START</span>';
+    var currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
 
-    // Small, deliberately subtle link back to the one-time welcome overlay
-    // (dashboard.html's vw-backdrop). ?welcome=1 forces it open regardless
-    // of the vantage_onboarded_v1 flag — see dashboard.html's init().
-    var replayWelcome = document.createElement('a');
-    replayWelcome.href = 'dashboard.html?welcome=1';
-    replayWelcome.style.cssText = 'display:block;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,.45);text-decoration:none;padding:0 12px;margin:-4px 0 12px;transition:color .15s';
-    replayWelcome.innerText = 'Replay welcome tour \u2192';
-    replayWelcome.onmouseover = function(){ this.style.color = '#a5b4fc'; };
-    replayWelcome.onmouseout = function(){ this.style.color = 'rgba(165,180,252,.45)'; };
-
-    var overviewNs = document.createElement('div');
-    overviewNs.className = 'nav-section';
-    overviewNs.style.cssText = 'font-family:JetBrains Mono,monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:4px 10px;margin:0 0 6px';
-    overviewNs.innerText = 'Overview';
-
-    var isOnAbout = window.location.pathname.includes('about');
-    var isOnDash  = window.location.pathname.includes('dashboard') || window.location.pathname === '/' || window.location.pathname.endsWith('/vantage/');
-
-    var homeLink = document.createElement('a');
-    homeLink.href = 'dashboard.html';
-    homeLink.className = 'nav-item' + (isOnDash ? ' active' : '');
-    homeLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,.45);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
-    homeLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">⊞</span>Home';
-
-    var aboutLink = document.createElement('a');
-    aboutLink.href = 'about.html';
-    aboutLink.className = 'nav-item' + (isOnAbout ? ' active' : '');
-    aboutLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,.45);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:10px';
-    aboutLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">✦</span>About Vantage';
-
-    overview.appendChild(tourBtn);
-    overview.appendChild(replayWelcome);
-    overview.appendChild(overviewNs);
-    overview.appendChild(homeLink);
-    overview.appendChild(aboutLink);
-
-    dashLink.parentNode.insertBefore(overview, dashLink);
-    dashLink.style.display = 'none';
-  }
-
-  // ── LEDGER NAV INJECTION ──────────────────────────────────
-  var clNavLink = document.querySelector('a[href="vantage-record.html"]');
-  var alreadyHasLedger = document.querySelector('a[href="standpoint.html"]');
-  if (clNavLink && !alreadyHasLedger) {
-    var currentPage2 = window.location.pathname.split('/').pop();
-    var ledgerLink = document.createElement('a');
-    ledgerLink.href = 'standpoint.html';
-    var isNiClass2 = clNavLink.classList.contains('ni');
-    ledgerLink.className = isNiClass2 ? 'ni' : 'nav-item';
-    if (currentPage2 === 'standpoint.html') ledgerLink.className += ' active';
-    ledgerLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.65);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
-    ledgerLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">\u{1F4DC}</span> Standpoint';
-    clNavLink.parentNode.insertBefore(ledgerLink, clNavLink.nextSibling);
-  }
-
-  // ── OFFER INTELLIGENCE NAV INJECTION ─────────────────────
-  var siNavLink = document.querySelector('a[href="leadership-communicator.html"]');
-  var alreadyHasOI = document.querySelector('a[href="retention-advisor.html"]');
-  if (siNavLink && !alreadyHasOI) {
-    var currentPage = window.location.pathname.split('/').pop();
-    var oiLink = document.createElement('a');
-    oiLink.href = 'retention-advisor.html';
-    var isNiClass = siNavLink.classList.contains('ni');
-    oiLink.className = isNiClass ? 'ni' : 'nav-item';
-    if (currentPage === 'retention-advisor.html') oiLink.className += ' active';
-    oiLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.65);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
-    oiLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">\u2696\uFE0F</span> Retention Advisor';
-    siNavLink.parentNode.insertBefore(oiLink, siNavLink.nextSibling);
-  }
-
-  // ── MERIDIAN PROFILE LINK INJECTION ──────────────────────
-  var dataPrivacyLink = document.querySelector('a[href*="data-dashboard"]');
-  var alreadyInjected = document.querySelector('.nav-item[href*="onboarding"],.ni[href*="onboarding"]');
-
-  // ── PHILOSOPHY & LEGAL SECTION INJECTION ─────────────────
-  var alreadyHasPhilosophy = document.querySelector('a[href*="humacity.com"]');
-  if (dataPrivacyLink && !alreadyHasPhilosophy) {
-    var accountSection = dataPrivacyLink.closest
-      ? dataPrivacyLink.parentElement
-      : dataPrivacyLink.parentNode;
-
-    var allNavSections = document.querySelectorAll('.nav-section, .ns');
-    var accountHeading = null;
-    allNavSections.forEach(function(el){
-      if (el.innerText.trim().toUpperCase() === 'ACCOUNT') accountHeading = el;
-    });
-
-    var insertBefore = accountHeading || dataPrivacyLink;
-    var parent = insertBefore.parentNode;
-
-    var philSection = document.createElement('div');
-    philSection.className = 'nav-section';
-    philSection.innerText = 'Philosophy';
-    parent.insertBefore(philSection, insertBefore);
-
-    var humacityLink = document.createElement('a');
-    humacityLink.href = 'https://humacity.com';
-    humacityLink.target = '_blank';
-    humacityLink.className = 'nav-item';
-    humacityLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.72);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
-    humacityLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">🌀</span> Humacity';
-    parent.insertBefore(humacityLink, insertBefore);
-
-    var legalSection = document.createElement('div');
-    legalSection.className = 'nav-section';
-    legalSection.innerText = 'Legal';
-    parent.insertBefore(legalSection, insertBefore);
-
-    var termsLink = document.createElement('a');
-    termsLink.href = 'terms.html';
-    termsLink.className = 'nav-item';
-    termsLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.72);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
-    termsLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">📄</span> Terms of Service';
-    parent.insertBefore(termsLink, insertBefore);
-
-    var privacyLink2 = document.createElement('a');
-    privacyLink2.href = 'privacy.html';
-    privacyLink2.className = 'nav-item';
-    privacyLink2.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.72);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
-    privacyLink2.innerHTML = '<span style="font-size:16px;flex-shrink:0">🔒</span> Privacy Policy';
-    parent.insertBefore(privacyLink2, insertBefore);
-  }
-
-  if (dataPrivacyLink && !alreadyInjected) {
-    var meridianLink = document.createElement('a');
-    meridianLink.href = 'onboarding.html';
-    meridianLink.className = 'nav-item';
-    meridianLink.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,0.72);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
-    meridianLink.innerHTML = '<span style="font-size:16px;flex-shrink:0">🧭</span> MERIDIAN Profile';
-    if (window.location.pathname.includes('onboarding')) {
-      meridianLink.style.background = 'rgba(99,102,241,0.10)';
-      meridianLink.style.borderColor = 'rgba(99,102,241,0.25)';
-      meridianLink.style.color = '#a5b4fc';
-      meridianLink.style.fontWeight = '500';
+    function isActivePage(href) {
+      if (!href || href.indexOf('http') === 0) return false;
+      return href.split('?')[0] === currentPage;
     }
-    dataPrivacyLink.parentNode.insertBefore(meridianLink, dataPrivacyLink);
-  }
 
-  // ── PRICING LINK + BILLING STATUS ────────────────────────
-  var alreadyHasPricing = document.querySelector('a[href*="pricing"]');
-  if (dataPrivacyLink && !alreadyHasPricing) {
-    function _getBillingStatus() {
+    // Preserve elements that page-specific JS references
+    var chipEl    = document.getElementById('meridian-chip') || sidebar.querySelector('.meridian-chip');
+    var signoutEl = sidebar.querySelector('[onclick*="clerkSignOut"]');
+    var logoEl    = sidebar.querySelector('.logo');
+    if (chipEl    && chipEl.parentNode)    chipEl.parentNode.removeChild(chipEl);
+    if (signoutEl && signoutEl.parentNode) signoutEl.parentNode.removeChild(signoutEl);
+
+    // Clear sidebar except the logo
+    var toRemove = [];
+    for (var i = 0; i < sidebar.childNodes.length; i++) {
+      if (sidebar.childNodes[i] !== logoEl) toRemove.push(sidebar.childNodes[i]);
+    }
+    toRemove.forEach(function(n) { sidebar.removeChild(n); });
+
+    // Helpers
+    function ns(text) {
+      var d = document.createElement('div');
+      d.className = 'nav-section';
+      d.style.cssText = 'font-family:JetBrains Mono,monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;margin:16px 0 6px';
+      d.textContent = text;
+      return d;
+    }
+
+    function ni(href, icon, label, opts) {
+      opts = opts || {};
+      var a = document.createElement('a');
+      a.href = href;
+      if (opts.external) a.target = '_blank';
+      var cls = 'nav-item';
+      if (isActivePage(href)) cls += ' active';
+      if (opts.cls) cls += ' ' + opts.cls;
+      a.className = cls;
+      a.innerHTML = '<span style="font-size:16px;flex-shrink:0">' + icon + '</span> ' + label;
+      return a;
+    }
+
+    // Billing status for Pricing badge (will be replaced by Razorpay data)
+    function getBillingStatus() {
       try {
         var plan = JSON.parse(localStorage.getItem('vantage_plan') || 'null');
         if (!plan) return { label: 'Early Access', color: 'rgba(255,181,71,.85)', bg: 'rgba(255,181,71,.1)' };
@@ -309,141 +208,118 @@
         return { label: 'Early Access', color: 'rgba(255,181,71,.85)', bg: 'rgba(255,181,71,.1)' };
       }
     }
-    var _billing = _getBillingStatus();
-    var _isOnPricing = window.location.pathname.includes('pricing');
 
-    var pricingLink = document.createElement('a');
-    pricingLink.href = 'pricing.html';
-    pricingLink.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,.45);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;margin-bottom:2px';
-    if (_isOnPricing) {
-      pricingLink.style.background = 'rgba(99,102,241,0.10)';
-      pricingLink.style.borderColor = 'rgba(99,102,241,0.25)';
-      pricingLink.style.color = '#a5b4fc';
-      pricingLink.style.fontWeight = '500';
-    }
-    pricingLink.innerHTML =
-      '<span style="display:flex;align-items:center;gap:10px;min-width:0">' +
-        '<span style="font-size:16px;flex-shrink:0">🪙</span>' +
+    var f = document.createDocumentFragment();
+
+    // Platform Tour
+    var tourBtn = document.createElement('a');
+    tourBtn.href = 'platform-tour.html';
+    tourBtn.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid rgba(99,102,241,0.18);text-decoration:none;color:rgba(255,255,255,0.6);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;background:rgba(99,102,241,0.06);margin-bottom:10px';
+    tourBtn.innerHTML = '<span style="display:flex;align-items:center;gap:10px"><span style="font-size:15px">\uD83D\uDDFA</span>Platform Tour</span><span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.08em;background:#6366f1;color:#fff;padding:2px 7px;border-radius:4px;font-weight:600">START</span>';
+    f.appendChild(tourBtn);
+
+    var replayLink = document.createElement('a');
+    replayLink.href = 'dashboard.html?welcome=1';
+    replayLink.style.cssText = 'display:block;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,.45);text-decoration:none;padding:0 12px;margin:-4px 0 12px;transition:color .15s';
+    replayLink.textContent = 'Replay welcome tour \u2192';
+    replayLink.onmouseover = function(){ this.style.color = '#a5b4fc'; };
+    replayLink.onmouseout  = function(){ this.style.color = 'rgba(165,180,252,.45)'; };
+    f.appendChild(replayLink);
+
+    // OVERVIEW
+    f.appendChild(ns('Overview'));
+    f.appendChild(ni('dashboard.html', '\u229E', 'Home'));
+    f.appendChild(ni('https://humacity.com', '\uD83C\uDF00', 'Humacity', { external: true }));
+
+    // YOUR FOUNDATION
+    f.appendChild(ns('Your Foundation'));
+    f.appendChild(ni('onboarding.html', '\u2B21', 'MERIDIAN Profile'));
+    f.appendChild(ni('humac-onboarding.html', '\uD83D\uDCC8', 'Humac Score'));
+
+    // YOUR HRBP
+    f.appendChild(ns('Your HRBP'));
+    f.appendChild(ni('aria.html', '\u2736', 'ARIA', { cls: 'nav-item--aria' }));
+
+    // YOUR CORE TOOLS
+    f.appendChild(ns('Your Core Tools'));
+    f.appendChild(ni('employee-case-advisor.html', '\u26A1', 'Employee Case Advisor'));
+    f.appendChild(ni('people-roi-brief.html',       '\uD83D\uDCBC', 'The Business Case'));
+    f.appendChild(ni('policy-advisor.html',          '\uD83E\uDDED', 'Policy Advisor'));
+    f.appendChild(ni('retention-advisor.html',       '\u2696\uFE0F', 'Retention Advisor'));
+    f.appendChild(ni('difficult-conversations.html', '\uD83C\uDFAD', 'Difficult Conversations'));
+
+    // YOUR RECORD
+    f.appendChild(ns('Your Record'));
+    f.appendChild(ni('standpoint.html',    '\uD83D\uDCDC', 'Standpoint'));
+    f.appendChild(ni('debrief.html',       '\uD83D\uDCCB', 'The Debrief'));
+    f.appendChild(ni('vantage-record.html','\u25CE',         'Vantage Record'));
+
+    // ACCOUNT
+    f.appendChild(ns('Account'));
+    var billing = getBillingStatus();
+    var pricingEl = document.createElement('a');
+    pricingEl.href = 'pricing.html';
+    pricingEl.className = 'nav-item' + (isActivePage('pricing.html') ? ' active' : '');
+    pricingEl.innerHTML =
+      '<span style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">' +
+        '<span style="font-size:16px;flex-shrink:0">\uD83E\uDE99</span>' +
         '<span>Pricing</span>' +
       '</span>' +
       '<span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.04em;' +
-        'background:' + _billing.bg + ';color:' + _billing.color + ';' +
+        'background:' + billing.bg + ';color:' + billing.color + ';' +
         'padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0">' +
-        _billing.label +
+        billing.label +
       '</span>';
+    f.appendChild(pricingEl);
+    f.appendChild(ni('data-dashboard.html', '\uD83D\uDD12', 'My Data & Privacy'));
 
-    dataPrivacyLink.parentNode.insertBefore(pricingLink, dataPrivacyLink);
-  }
+    // LEGAL
+    f.appendChild(ns('Legal'));
+    f.appendChild(ni('terms.html',   '\uD83D\uDCC4', 'Terms of Service'));
+    f.appendChild(ni('privacy.html', '\uD83D\uDD12', 'Privacy Policy'));
 
-  // ── MERIDIAN NOT-CONFIGURED WARNING BANNER ────────────────
-  var TOOL_PAGES = [
-    'er-case-navigator',
-    'stakeholder-influence',
-    'hr-data-storyteller',
-    'policy-compass',
-    'conversation-simulator'
-  ];
+    sidebar.appendChild(f);
 
-  var currentPath = window.location.pathname;
-  var isToolPage = TOOL_PAGES.some(function(page) {
-    return currentPath.includes(page);
-  });
+    // Sign out
+    if (signoutEl) {
+      signoutEl.style.marginTop = '8px';
+      signoutEl.style.borderTop = '1px solid rgba(99,102,241,.1)';
+      signoutEl.style.paddingTop = '14px';
+      sidebar.appendChild(signoutEl);
+    } else {
+      var so = document.createElement('a');
+      so.href = '#';
+      so.className = 'nav-item';
+      so.setAttribute('onclick', 'clerkSignOut(); return false;');
+      so.style.marginTop = '8px';
+      so.style.borderTop = '1px solid rgba(99,102,241,.1)';
+      so.style.paddingTop = '14px';
+      so.innerHTML = '<span style="font-size:16px;flex-shrink:0">\u21A9</span> Sign out';
+      sidebar.appendChild(so);
+    }
 
-  // FIX: sessionStorage['sr_meridian'] only gets set during onboarding's own
-  // completion flow within that session — it does not survive a closed
-  // browser. A returning user with a genuinely saved profile would see this
-  // return empty on a fresh session and get a false "your results will be
-  // generic" warning, even though real MERIDIAN data exists in the backend.
-  // Falls back to the cross-session localStorage backup, and repopulates
-  // sessionStorage from it so any OTHER code on the page reading
-  // sr_meridian directly (e.g. the meridian-chip display) also self-heals,
-  // not just this one check.
-  function isMeridianConfigured() {
-    if (sessionStorage.getItem('sr_meridian')) return true;
-    var email = sessionStorage.getItem('sr_user_email') || localStorage.getItem('sr_user_email');
-    if (email) {
-      var backup = localStorage.getItem('sr_meridian_' + email);
-      if (backup) {
-        sessionStorage.setItem('sr_meridian', backup);
-        return true;
+    // Re-append MERIDIAN chip (page-specific JS references its child IDs)
+    if (chipEl) {
+      sidebar.appendChild(chipEl);
+      // Virorah attribution
+      if (!chipEl.querySelector('.vr-attr')) {
+        var attr = document.createElement('div');
+        attr.className = 'vr-attr';
+        attr.style.cssText = 'padding-top:10px;margin-top:8px;border-top:1px solid rgba(255,255,255,0.06);text-align:center';
+        var attrA = document.createElement('a');
+        attrA.href = 'https://virorah.com';
+        attrA.target = '_blank';
+        attrA.textContent = 'A Virorah Product ↗';
+        attrA.style.cssText = 'font-family:JetBrains Mono,monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-decoration:none;display:block;transition:color .2s';
+        attrA.onmouseover = function(){ this.style.color = 'rgba(99,102,241,0.6)'; };
+        attrA.onmouseout  = function(){ this.style.color = 'rgba(255,255,255,0.35)'; };
+        attr.appendChild(attrA);
+        chipEl.appendChild(attr);
       }
     }
-    return false;
-  }
-  var meridianConfigured = isMeridianConfigured();
-  var bannerDismissed = !!sessionStorage.getItem('meridian_banner_dismissed');
+  })();
 
-  if (isToolPage && !meridianConfigured && !bannerDismissed) {
-    var banner = document.createElement('div');
-    banner.id = 'meridian-warning-banner';
-    banner.style.cssText = [
-      'position:fixed',
-      'top:0',
-      'left:0',
-      'right:0',
-      'z-index:9998',
-      'background:rgba(255,181,71,0.10)',
-      'border-bottom:1px solid rgba(255,181,71,0.35)',
-      'padding:10px 20px',
-      'display:flex',
-      'align-items:center',
-      'justify-content:space-between',
-      'gap:12px',
-      'flex-wrap:wrap'
-    ].join(';');
-
-    // FIX: dismiss button now calls a named function that restores the exact
-    // padding this banner added, instead of just removing the element and
-    // leaving .main permanently padded for the rest of the session.
-    banner.innerHTML =
-      '<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">' +
-        '<span style="font-size:16px;flex-shrink:0">⚠️</span>' +
-        '<span style="font-family:Plus Jakarta Sans,sans-serif;font-size:12px;color:rgba(255,181,71,0.95);line-height:1.4">' +
-          'Your results will be generic until MERIDIAN is configured. ' +
-          '<a href="onboarding.html" style="color:#FFB547;font-weight:600;text-decoration:underline">Set up your 7-parameter profile \u2192</a>' +
-          ' \u00a0\u00b7\u00a0 5 minutes.' +
-        '</span>' +
-      '</div>' +
-      '<button onclick="window.vantageDismissMeridianBanner()" ' +
-        'style="background:transparent;border:none;color:rgba(255,181,71,0.6);font-size:18px;cursor:pointer;flex-shrink:0;line-height:1;padding:0 4px">' +
-        '\u00d7' +
-      '</button>';
-
-    document.body.insertBefore(banner, document.body.firstChild);
-
-    window.addEventListener('load', function() {
-      var bannerEl = document.getElementById('meridian-warning-banner');
-      var mainEl = document.querySelector('.main') || document.querySelector('main');
-      if (bannerEl && mainEl) {
-        var addedHeight = bannerEl.offsetHeight;
-        mainEl.setAttribute('data-meridian-banner-padding', String(addedHeight));
-        mainEl.style.paddingTop = (parseInt(mainEl.style.paddingTop || 0) + addedHeight) + 'px';
-      }
-    });
-
-    window.vantageDismissMeridianBanner = function() {
-      sessionStorage.setItem('meridian_banner_dismissed', '1');
-      var b = document.getElementById('meridian-warning-banner');
-      if (b) b.remove();
-      var mainEl = document.querySelector('.main') || document.querySelector('main');
-      if (mainEl) {
-        var addedHeight = parseInt(mainEl.getAttribute('data-meridian-banner-padding') || '0', 10);
-        if (addedHeight > 0) {
-          mainEl.style.paddingTop = (parseInt(mainEl.style.paddingTop || 0) - addedHeight) + 'px';
-          mainEl.removeAttribute('data-meridian-banner-padding');
-        }
-      }
-    };
-  }
-
-  // ── VIRORAH ATTRIBUTION ───────────────────────────────────
-  var chip = document.querySelector('.meridian-chip');
-  if (chip) {
-    var attribution = document.createElement('div');
-    attribution.style.cssText = 'padding-top:10px;margin-top:8px;border-top:1px solid rgba(255,255,255,0.06);text-align:center';
-    attribution.innerHTML = '<a href="https://kumarviveksrv-cloud.github.io/virorah/" target="_blank" style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-decoration:none;display:block;transition:color .2s" onmouseover="this.style.color=\'rgba(99,102,241,0.6)\'" onmouseout="this.style.color=\'rgba(255,255,255,0.35)\'">A Virorah Product &#x2197;</a>';
-    chip.appendChild(attribution);
-  }
+  // ── MERIDIAN NOT-CONFIGURED WARNING BANNER ────────────────
 
   // ── PWA META TAGS ─────────────────────────────────────────
   function addMeta(name, content) {
@@ -703,7 +579,7 @@
         title: 'Overview',
         items: [
           { icon: '\uD83D\uDDFA', label: 'Platform Tour', sub: 'Guided walkthrough', href: 'platform-tour.html', page: 'platform-tour' },
-          { icon: '\u2139\uFE0F', label: 'About Vantage', sub: '', href: 'about.html', page: 'about' },
+          { icon: '\uD83C\uDF00', label: 'Humacity', sub: '', href: 'https://humacity.com', page: 'humacity', external: true },
         ]
       },
       {
@@ -714,29 +590,35 @@
         ]
       },
       {
-        title: 'Your Active Tools',
+        title: 'Your HRBP',
+        items: [
+          { icon: '\u2736', label: 'ARIA', sub: 'Your private HR intelligence ally', href: 'aria.html', page: 'aria' },
+        ]
+      },
+      {
+        title: 'Your Core Tools',
         items: [
           { icon: '\u26A1', label: 'Employee Case Advisor', sub: 'Navigate any employee situation', href: 'employee-case-advisor.html', page: 'er-case-navigator' },
-          { icon: '\uD83D\uDCCA', label: 'People ROI Brief', sub: 'HR metrics to boardroom argument', href: 'people-roi-brief.html', page: 'hr-data-storyteller' },
-          { icon: '\uD83C\uDFAF', label: 'Stakeholder Influence', sub: 'Frame the right conversation', href: 'leadership-communicator.html', page: 'stakeholder-influence' },
-          { icon: '\uD83C\uDFAD', label: 'Difficult Conversations', sub: 'Rehearse before you walk in', href: 'difficult-conversations.html', page: 'conversation-simulator' },
+          { icon: '\uD83D\uDCBC', label: 'The Business Case', sub: 'Numbers for the room, or one specific person', href: 'people-roi-brief.html', page: 'business-case' },
           { icon: '\uD83E\uDDED', label: 'Policy Advisor', sub: 'Applicable law, every time', href: 'policy-advisor.html', page: 'policy-compass' },
           { icon: '\u2696\uFE0F', label: 'Retention Advisor', sub: 'Stay or go: model the cost', href: 'retention-advisor.html', page: 'offer-intelligence' },
-          { icon: '\u2726', label: 'ARIA', sub: 'Your private HR intelligence ally', href: 'aria.html', page: 'aria' },
+          { icon: '\uD83C\uDFAD', label: 'Difficult Conversations', sub: 'Rehearse before you walk in', href: 'difficult-conversations.html', page: 'conversation-simulator' },
         ]
       },
       {
         title: 'Your Record',
         items: [
-          { icon: '\u25CE', label: 'Vantage Record', sub: 'Your complete case archive', href: 'vantage-record.html', page: 'case-library' },
           { icon: '\uD83D\uDCDC', label: 'Standpoint', sub: 'File your position before the outcome', href: 'standpoint.html', page: 'ledger' },
           { icon: '\uD83D\uDCCB', label: 'The Debrief', sub: 'Auto-generated monthly', href: 'debrief.html', page: 'debrief' },
+          { icon: '\u25CE', label: 'Vantage Record', sub: 'Your complete case archive', href: 'vantage-record.html', page: 'case-library' },
         ]
       },
       {
-        title: 'Philosophy',
+        title: 'Account',
         items: [
-          { icon: '\uD83C\uDF00', label: 'Humacity', sub: '', href: 'https://humacity.com', page: 'humacity', external: true },
+          { icon: '\uD83E\uDE99', label: 'Pricing', sub: '', href: 'pricing.html', page: 'pricing' },
+          { icon: '\uD83D\uDD12', label: 'My Data & Privacy', sub: 'Your data settings', href: 'data-dashboard.html', page: 'data-dashboard' },
+          { icon: '\u21A9', label: 'Sign Out', sub: '', href: 'access.html', page: 'signout', signout: true },
         ]
       },
       {
@@ -744,15 +626,6 @@
         items: [
           { icon: '\uD83D\uDCC4', label: 'Terms of Service', sub: '', href: 'terms.html', page: 'terms' },
           { icon: '\uD83D\uDD12', label: 'Privacy Policy', sub: '', href: 'privacy.html', page: 'privacy' },
-        ]
-      },
-      {
-        title: 'Account',
-        items: [
-          { icon: '\uD83E\uDDED', label: 'MERIDIAN Profile', sub: '', href: 'onboarding.html', page: 'onboarding' },
-          { icon: '\uD83E\uDE99', label: 'Pricing', sub: '', href: 'pricing.html', page: 'pricing' },
-          { icon: '\uD83D\uDD12', label: 'Data & Privacy', sub: 'Your data settings', href: 'data-dashboard.html', page: 'data-dashboard' },
-          { icon: '\u21A9', label: 'Sign Out', sub: '', href: 'access.html', page: 'signout', signout: true },
         ]
       },
     ];
