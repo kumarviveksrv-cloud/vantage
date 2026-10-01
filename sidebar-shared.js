@@ -26,6 +26,15 @@
 
     while (logoEl.firstChild) logoEl.removeChild(logoEl.firstChild);
     logoEl.appendChild(img);
+
+    // Override the hardcoded index.html destination on every page.
+    // Inside the app, the logo should return you to your dashboard,
+    // not the public landing page. Only route to index.html when signed out.
+    logoEl.onclick = function() {
+      var signedIn = false;
+      try { signedIn = localStorage.getItem('vantage_clerk_signed_in') === '1'; } catch(e) {}
+      window.location.href = signedIn ? 'dashboard.html' : 'index.html';
+    };
   })();
 
   // ── GLOBAL COLOR SYSTEM OVERRIDE ─────────────────────────
