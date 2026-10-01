@@ -308,7 +308,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
         </div>
         <div class="meridian-modal-badge">MERIDIAN Context Engine</div>
         <div class="meridian-modal-title">First, tell Vantage who you are.</div>
-        <div class="meridian-modal-body">Without MERIDIAN, every tool gives you <strong>generic advice</strong>. With it, every output is calibrated to your exact professional reality &mdash; your state's labour law, your org's size, your role's depth of authority. Takes under 90 seconds.</div>
+        <div class="meridian-modal-body">Without MERIDIAN, every tool gives you <strong>generic advice</strong>. With it, every output is calibrated to your exact professional reality &mdash; your state's labour law, your org's size, your role's depth of authority. Takes under 90 seconds.<br/><br/><em style="color:rgba(165,180,252,.45);font-size:13px">Once this is set, your next step is your Humac Score &mdash; the financial baseline that closes the gap between direction and numbers.</em></div>
         <div class="meridian-modal-params">
           <div class="meridian-param">&#127987; State jurisdiction</div>
           <div class="meridian-param">&#127970; Industry context</div>
@@ -340,7 +340,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
         </div>
         <div class="meridian-modal-badge">Humac Score</div>
         <div class="meridian-modal-title">Measure your org's human capital.</div>
-        <div class="meridian-modal-body">Your <strong>Humac Score</strong> is a 0&ndash;100 composite that converts how efficiently your organisation turns people investment into financial value. Five weighted pillars. One number you can take into any boardroom.<br/><br/>Takes about <strong>10 minutes</strong>. You can always do it later &mdash; but having it makes every other tool sharper.</div>
+        <div class="meridian-modal-body">Your <strong>Humac Score</strong> is a 0&ndash;100 composite that converts how efficiently your organisation turns people investment into financial value. Five weighted pillars. One number you can take into any boardroom.<br/><br/>This is what <strong>The Business Case</strong> uses to calculate your actual Revenue at Risk &mdash; not a sector benchmark, your org's real number. It's also what ARIA draws on when it contextualises your decisions against your actual position.<br/><br/>Takes about <strong>10 minutes</strong>. You can do it later &mdash; but once you have it, the gap between generic advice and real intelligence closes.</div>
         <div class="meridian-modal-params">
           <div class="meridian-param">L1 &middot; Value Ledger &middot; 25%</div>
           <div class="meridian-param">L2 &middot; Talent Premium &middot; 15%</div>
@@ -413,7 +413,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     <div id="setup-card">
       <div class="setup-eyebrow">Getting started</div>
       <div class="setup-title">Complete your setup</div>
-      <div class="setup-sub">Three steps to get the most out of Vantage. Come back to any of these any time.</div>
+      <div class="setup-sub">Vantage gives you advice calibrated to your reality, not generic HR best practice. MERIDIAN sets your professional context. Your Humac Score sets your org's financial baseline. Every tool then runs against both.</div>
       <div class="setup-steps" id="setup-steps-list"></div>
       <div class="setup-dismiss">
         <button class="setup-dismiss-btn" onclick="dismissSetupCard()">I'm all set, hide this</button>
@@ -652,11 +652,11 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
 
     var SETUP_STEPS = [
       {key:'meridian',done:hasMeridian,icon:'&#x1F9ED;',name:'Set up MERIDIAN',
-       desc:'Your 7-parameter professional context. Required for all tools.',href:'onboarding.html',cta:'Set up \u2192'},
+       desc:'Your professional context. Without this, every tool gives generic advice. Sets your state, industry, org size, and authority depth.',href:'onboarding.html',cta:'Set up \u2192'},
       {key:'humac',done:hasHumac,icon:'&#x1F4CA;',name:'Generate your Humac Score',
-       desc:'18 questions. One number measuring your org\u2019s human capital position.',href:'humac-onboarding.html',cta:'Start \u2192'},
+       desc:'18 questions. One number. What The Business Case uses to calculate your actual Revenue at Risk \u2014 not a sector estimate, your org\u2019s real number.',href:'humac-onboarding.html',cta:'Start \u2192'},
       {key:'case',done:hasSavedCase,icon:'&#x26A1;',
-       name:'Navigate your first case',desc:'Describe a real situation \u2014 get legal position, financial exposure, and exact next steps.',href:'employee-case-advisor.html',cta:'Go \u2192'}
+       name:'Navigate your first case',desc:'Now calibrated to your context and your org\u2019s baseline. Describe a real situation \u2014 get legal position, financial exposure, and exact next steps.',href:'employee-case-advisor.html',cta:'Go \u2192'}
     ];
 
     function renderSetupCard() {
