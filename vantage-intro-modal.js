@@ -4,15 +4,14 @@
    Usage: called automatically by sidebar-shared.js per-page detection.
    Manual: VantageIntro.show('aria');
 
-   v2: Added sequential "Next:" progression button across all tool pages.
-   Sequence: Employee Case Advisor → Retention Advisor → Stakeholder Influence
-   → People ROI Brief → Difficult Conversations → Policy Advisor
-   → ARIA → Vantage Record → Standpoint → The Debrief
+   v3: Merged hr-storyteller + stakeholder-influence into business-case.
+   Sequence: Employee Case Advisor → Retention Advisor → The Business Case
+   → Difficult Conversations → Policy Advisor → ARIA → Vantage Record
+   → Standpoint → The Debrief
 */
 (function(){
 'use strict';
 
-// Page paths for navigation
 var PAGE_PATHS = {
   'aria':                   'aria.html',
   'debrief':                'debrief.html',
@@ -20,9 +19,8 @@ var PAGE_PATHS = {
   'humac':                  'humac-onboarding.html',
   'case-navigator':         'employee-case-advisor.html',
   'policy-compass':         'policy-advisor.html',
-  'hr-storyteller':         'people-roi-brief.html',
+  'business-case':          'people-roi-brief.html',
   'offer-intelligence':     'retention-advisor.html',
-  'stakeholder-influence':  'leadership-communicator.html',
   'conversation-simulator': 'difficult-conversations.html',
   'case-library':           'vantage-record.html'
 };
@@ -33,7 +31,7 @@ var MODALS = {
     name: 'ARIA',
     tagline: 'Your private HR intelligence, on call at 9pm.',
     what: 'ARIA is a context-aware intelligence layer built on your organisation\'s exact reality: your state, your policies, your case history. Not a chatbot. Not a generic AI trained on someone else\'s problems.',
-    does: 'She reads your situation, asks the right questions back, and gives you advice calibrated to your reality: the kind that would survive a boardroom challenge.',
+    does: 'She reads your situation, asks the right questions back, and gives you advice calibrated to your reality — the kind that would survive a boardroom challenge.',
     start: 'Tell ARIA what\'s happening right now. The more specific you are (role, stakes, what\'s been tried), the more precise the advice.',
     next: 'case-library',
     nextLabel: 'Vantage Record'
@@ -52,7 +50,7 @@ var MODALS = {
     icon: '📜',
     name: 'Standpoint',
     tagline: 'Your professional position, on record before the outcome.',
-    what: 'Standpoint is where you file your professional stance before a decision\'s outcome is known. Every time you take a position that could later be questioned (a recommendation overruled, a risk you flagged, an alternative you proposed), you file it here, timestamped.',
+    what: 'Standpoint is where you file your professional stance before a decision\'s outcome is known. Every time you take a position that could later be questioned — a recommendation overruled, a risk you flagged, an alternative you proposed — you file it here, timestamped.',
     does: 'When leadership overrules you and it goes wrong six weeks later, Standpoint shows exactly what you said and when you said it. Not a complaint. Not a diary. Documented professional judgment.',
     start: 'The next time you take a stand that leadership might override: file it here before the outcome is known. One entry is worth more than a year of silence.',
     next: 'debrief',
@@ -69,17 +67,17 @@ var MODALS = {
     nextLabel: null
   },
   'case-navigator': {
-    icon: '⊞',
+    icon: '⚡',
     name: 'Employee Case Advisor',
     tagline: 'Navigate any employee situation, with the full picture.',
-    what: 'Employee Case Advisor takes your real situation (a termination, a POSH complaint, a disciplinary issue, a PIP, an absenteeism case) and tells you exactly what to do, what process to follow, and what the financial exposure looks like if you get it wrong.',
+    what: 'Employee Case Advisor takes your real situation — a termination, a POSH complaint, a disciplinary issue, a PIP, an absenteeism case — and tells you exactly what to do, what process to follow, and what the financial exposure looks like if you get it wrong.',
     does: 'Calibrated to your state, your industry, and your org type. Every recommendation is grounded in the law that actually applies to you, not generic HR advice.',
     start: 'Describe the situation as it is right now. The more specific you are (what happened, who\'s involved, what\'s been done), the more precise the advice.',
     next: 'offer-intelligence',
     nextLabel: 'Retention Advisor'
   },
   'policy-compass': {
-    icon: '⊕',
+    icon: '🧭',
     name: 'Policy Advisor',
     tagline: 'The right policy for your exact situation, not a template.',
     what: 'Policy Advisor generates policy frameworks calibrated to your state, industry, and organisation type. Built on India\'s actual legal framework (BNS, BNSS, BSA), not generic HR boilerplate.',
@@ -88,38 +86,28 @@ var MODALS = {
     next: 'aria',
     nextLabel: 'ARIA'
   },
-  'hr-storyteller': {
-    icon: '◎',
-    name: 'People ROI Brief',
-    tagline: 'Your HR numbers, translated into a boardroom argument.',
-    what: 'People ROI Brief takes your raw HR metrics (attrition rates, engagement scores, cost-per-hire, headcount data) and builds the financial argument your leadership cannot dismiss.',
-    does: 'Converts HR data into board-level narrative with rupee-value anchors. The same numbers your CFO sees, told in the language that actually moves decisions.',
-    start: 'Enter your key HR metrics, choose your audience (CEO, CFO, Board), and describe the outcome you\'re driving toward.',
+  'business-case': {
+    icon: '💼',
+    name: 'The Business Case',
+    tagline: 'Numbers for the room, or an argument for one specific person.',
+    what: 'The Business Case has two modes. The general flow builds a board-ready SIGNAL narrative from your HR metrics — revenue at risk, financial anchors, the argument your CFO cannot dismiss. The stakeholder flow maps how one specific leader receives information and frames your recommendation to land with them.',
+    does: 'Same facts. Right framing. Whether you\'re presenting to a room or walking into a one-on-one that matters, The Business Case builds the argument from your real Humac Score data — not sector benchmarks.',
+    start: 'Choose your mode: the general business case for a room, or a specific person to convince. Describe what you\'re trying to move and who needs to move it.',
     next: 'conversation-simulator',
     nextLabel: 'Difficult Conversations'
   },
   'offer-intelligence': {
-    icon: '◇',
+    icon: '⚖️',
     name: 'Retention Advisor',
     tagline: 'Model the real cost of keeping or losing this person.',
     what: 'Retention Advisor models the full financial picture of a retention decision: what it costs to keep someone, what it costs to lose them, replacement cost, ramp time, flight risk, and the counter-offer position.',
-    does: 'Gives you the number you need before any retention conversation. Not a gut feel, a calculated position you can defend in the room.',
+    does: 'Gives you the number you need before any retention conversation. Not a gut feel — a calculated position you can defend in the room.',
     start: 'Enter the person\'s current CTC, their role, and the situation. Retention Advisor models both paths (retain and lose), so you walk in prepared.',
-    next: 'stakeholder-influence',
-    nextLabel: 'Stakeholder Influence'
-  },
-  'stakeholder-influence': {
-    icon: '◬',
-    name: 'Stakeholder Influence',
-    tagline: 'Know how to say it to this specific person, before you say it.',
-    what: 'Stakeholder Influence models how a specific leader (your CEO, CFO, a line manager, the board) receives information, what language moves them, and how to frame your recommendation to land.',
-    does: 'Same facts. Right framing. Every people decision you need to communicate, positioned in the language that reaches the specific person you\'re walking in to meet.',
-    start: 'Name the person, describe the decision you need to communicate, and specify the outcome you\'re driving. Stakeholder Influence maps the path.',
-    next: 'hr-storyteller',
-    nextLabel: 'People ROI Brief'
+    next: 'business-case',
+    nextLabel: 'The Business Case'
   },
   'conversation-simulator': {
-    icon: '◈',
+    icon: '🎭',
     name: 'Difficult Conversations',
     tagline: 'Rehearse before the conversation that matters.',
     what: 'Difficult Conversations is a real-time simulation environment for the conversations HR professionals dread most: performance discussions, terminations, disciplinary hearings, leadership alignment calls. ARIA plays the other person.',
@@ -129,17 +117,16 @@ var MODALS = {
     nextLabel: 'Policy Advisor'
   },
   'case-library': {
-    icon: '▦',
+    icon: '◎',
     name: 'Vantage Record',
     tagline: 'Every case you\'ve navigated, permanently yours.',
     what: 'Vantage Record is your complete professional case archive, auto-populated every time you use the platform. Every employee case, every brief, every session: saved, searchable by date, and portable across organisations.',
-    does: 'The record the org never built for you. After two years on Vantage, you have a searchable archive of every difficult situation you handled and how you handled it: proof that your experience is real.',
+    does: 'The record the org never built for you. After two years on Vantage, you have a searchable archive of every difficult situation you handled and how you handled it — proof that your experience is real.',
     start: 'Start using the tools. Every session is saved here automatically. Search by date to see what you were navigating on any given day.',
     next: 'ledger',
     nextLabel: 'Standpoint'
   }
 };
-
 
 var PREFIX = 'vip_seen_';
 
@@ -177,8 +164,6 @@ function injectCSS(){
 function build(key){
   var d=MODALS[key];if(!d)return null;
   var el=document.createElement('div');el.id='vip-backdrop';
-
-  // Build button row: "Got it" always present; "Next: [Tool]" only when sequence continues
   var btnRow = d.next
     ? '<div class="vip-btns">' +
         '<button class="vip-cta-ghost" id="vip-got-it">Got it</button>' +
@@ -187,7 +172,6 @@ function build(key){
     : '<div class="vip-btns">' +
         '<button class="vip-cta" id="vip-got-it">Got it, let\'s go \u2192</button>' +
       '</div>';
-
   el.innerHTML='<div id="vip-modal">'+
     '<button id="vip-close" aria-label="Close">&#xd7;</button>'+
     '<span class="vip-icon">'+d.icon+'</span>'+
@@ -211,8 +195,8 @@ function dismiss(key){
 }
 
 function navigateTo(key){
-  var path = PAGE_PATHS[key];
-  if(path) window.location.href = path;
+  var path=PAGE_PATHS[key];
+  if(path)window.location.href=path;
 }
 
 function injectTrigger(key){
@@ -234,34 +218,22 @@ function show(key,force){
   if(ex&&ex.parentNode)ex.parentNode.removeChild(ex);
   var oldTrigger=document.getElementById('vip-trigger');
   if(oldTrigger&&oldTrigger.parentNode)oldTrigger.parentNode.removeChild(oldTrigger);
-
   injectCSS();
   var modal=build(key);
   document.body.appendChild(modal);
-
-  var d = MODALS[key];
-
-  function close(){ dismiss(key); }
-
-  document.getElementById('vip-close').addEventListener('click', close);
-  document.getElementById('vip-got-it').addEventListener('click', close);
-
-  // Next button: mark current page seen, navigate to next tool
+  var d=MODALS[key];
+  function close(){dismiss(key);}
+  document.getElementById('vip-close').addEventListener('click',close);
+  document.getElementById('vip-got-it').addEventListener('click',close);
   if(d.next){
-    document.getElementById('vip-next').addEventListener('click', function(){
-      try{ localStorage.setItem(PREFIX+key,'1'); }catch(e){}
+    document.getElementById('vip-next').addEventListener('click',function(){
+      try{localStorage.setItem(PREFIX+key,'1');}catch(e){}
       var el=document.getElementById('vip-backdrop');
       if(el){el.style.opacity='0';el.style.transition='opacity .18s ease';
-        setTimeout(function(){
-          if(el.parentNode)el.parentNode.removeChild(el);
-          navigateTo(d.next);
-        },180);
-      } else {
-        navigateTo(d.next);
-      }
+        setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);navigateTo(d.next);},180);
+      }else{navigateTo(d.next);}
     });
   }
-
   modal.addEventListener('click',function(e){if(e.target===modal)close();});
   function onKey(e){if(e.key==='Escape'){close();document.removeEventListener('keydown',onKey);}}
   document.addEventListener('keydown',onKey);
