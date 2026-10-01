@@ -117,7 +117,7 @@ var MODALS = {
     nextLabel: 'Policy Advisor'
   },
   'case-library': {
-    icon: '◎',
+    icon: '🗄️',
     name: 'Vantage Record',
     tagline: 'Every case you\'ve navigated, permanently yours.',
     what: 'Vantage Record is your complete professional case archive, auto-populated every time you use the platform. Every employee case, every brief, every session: saved, searchable by date, and portable across organisations.',
