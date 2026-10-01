@@ -83,7 +83,7 @@
        The landing page has no Clerk SDK loaded, so the loop has nowhere to
        run. This also matches the desired UX: returning users land on the
        hero page with Sign In available in the nav. */
-    var landingUrl = 'https://vantage.virorah.com/?signed_out=1';
+    var landingUrl = 'https://vantage.virorah.com/';
     if (window.Clerk && window.Clerk.signOut) {
       window.Clerk.signOut().then(function () {
         window.location.replace(landingUrl);
