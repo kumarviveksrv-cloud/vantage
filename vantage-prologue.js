@@ -94,7 +94,11 @@
   if (cameFromDemo || isPayingUser) {
     pro.style.display = 'none';
     document.body.classList.add('prologue-complete');
-    if (isPayingUser) swapAuthLinksForSignedIn();
+    // Only swap auth links to "Dashboard" when the user has an ACTIVE Clerk
+    // session — not just because vantage_paid_user is set. vantage_paid_user
+    // is permanent and survives signout; using it here caused "Dashboard" to
+    // appear on the landing page for signed-out returning users.
+    if (localStorage.getItem('vantage_clerk_signed_in') === '1') swapAuthLinksForSignedIn();
     if (window.VantageFade) { window.VantageFade.hide(500); }
     return;
   }
