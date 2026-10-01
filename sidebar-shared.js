@@ -594,7 +594,7 @@
       {
         title: 'Your Foundation',
         items: [
-          { icon: '\u2B21', label: 'MERIDIAN Profile', sub: '7-parameter context', href: 'onboarding.html', page: 'onboarding' },
+          { icon: '\u2B21', label: 'MERIDIAN Profile', sub: '8-parameter context', href: 'onboarding.html', page: 'onboarding' },
           { icon: '\uD83D\uDCC8', label: 'Humac Score', sub: 'Your people finance number', href: 'humac-onboarding.html', page: 'humac-onboarding' },
         ]
       },
