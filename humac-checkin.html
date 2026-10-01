@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quarterly Check-in | Virorah Vantage</title>
+<link rel="icon" href="favicon.png">
+<link rel="stylesheet" href="vantage-theme.css">
+<style>
+:root { --sidebar: 220px; }
+
+/* ── LAYOUT ─────────────────────────────────────────────── */
+.sidebar{width:var(--sidebar);flex-shrink:0;position:fixed;top:0;left:0;bottom:0;
+  background:rgba(5,4,16,.98);border-right:1px solid rgba(99,102,241,.18);
+  display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto;z-index:200}
+.wrap{margin-left:var(--sidebar);padding:40px 48px 100px;max-width:820px}
+
+/* ── BREADCRUMB ─────────────────────────────────────────── */
+.breadcrumb{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.06em;
+  color:rgba(99,102,241,.45);margin-bottom:28px;display:flex;align-items:center;gap:6px}
+.breadcrumb a{color:rgba(99,102,241,.45);text-decoration:none;transition:color .15s}
+.breadcrumb a:hover{color:#a5b4fc}
+.breadcrumb-sep{color:rgba(99,102,241,.22)}
+
+/* ── PAGE TITLE ─────────────────────────────────────────── */
+.page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;
+  color:#f4f3ff;margin-bottom:4px}
+.page-sub{font-size:13px;color:rgba(244,243,255,.55);margin-bottom:36px;line-height:1.6}
+
+/* ── SCORE CARD ─────────────────────────────────────────── */
+.score-card{background:rgba(13,11,30,.7);border:1px solid rgba(99,102,241,.18);
+  border-radius:16px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden}
+.score-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,#6366f1,transparent)}
+.score-top{display:flex;align-items:flex-start;justify-content:space-between;
+  gap:20px;flex-wrap:wrap;margin-bottom:20px}
+.score-nums{display:flex;align-items:baseline;gap:20px;flex-wrap:wrap}
+.score-block{}
+.score-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(244,243,255,.5);margin-bottom:2px}
+.score-num{font-family:'Space Grotesk',sans-serif;font-size:3.6rem;font-weight:700;
+  line-height:1;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-num.adj{font-size:2.6rem;background:linear-gradient(135deg,#a5b4fc,#7c3aed);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-sep{color:rgba(99,102,241,.22);font-size:2rem;align-self:center}
+.score-meta{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.band-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;
+  border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:.6rem}
+.score-date{font-family:'JetBrains Mono',monospace;font-size:.62rem;
+  color:rgba(244,243,255,.45)}
+
+/* ── PILLAR BARS ─────────────────────────────────────────── */
+.pillars-row{display:flex;gap:0;border:1px solid rgba(99,102,241,.1);
+  border-radius:8px;overflow:hidden;margin-top:4px}
+.pillar-cell{flex:1;padding:8px 0;text-align:center;
+  border-right:1px solid rgba(99,102,241,.08)}
+.pillar-cell:last-child{border-right:none}
+.pillar-code{font-family:'JetBrains Mono',monospace;font-size:.62rem;
+  color:rgba(244,243,255,.5);margin-bottom:4px}
+.pillar-bar-track{height:3px;background:rgba(99,102,241,.1);margin:0 8px 4px;
+  border-radius:2px;overflow:hidden}
+.pillar-bar-fill{height:100%;background:linear-gradient(90deg,#6366f1,#7c3aed);border-radius:2px}
+.pillar-score{font-family:'JetBrains Mono',monospace;font-size:.68rem;
+  font-weight:500;color:#a5b4fc}
+
+/* ── TRAJECTORY ─────────────────────────────────────────── */
+.traj-card{background:rgba(13,11,30,.7);border:1px solid rgba(99,102,241,.14);
+  border-radius:16px;padding:24px 28px;margin-bottom:24px}
+.traj-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.16em;
+  text-transform:uppercase;color:#a5b4fc;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px}
+.traj-eyebrow::before{content:'';width:16px;height:1px;background:rgba(99,102,241,.4)}
+.traj-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.traj-delta{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700}
+.traj-label{font-size:.82rem;color:rgba(244,243,255,.55);line-height:1.5}
+.traj-none{font-size:.85rem;color:rgba(244,243,255,.45);line-height:1.65;font-style:italic}
+
+/* ── WHAT TO EXPECT ─────────────────────────────────────── */
+.expect-card{background:rgba(99,102,241,.05);border:1px solid rgba(99,102,241,.15);
+  border-radius:16px;padding:24px 28px;margin-bottom:28px}
+.expect-title{font-family:'Bricolage Grotesque',sans-serif;font-size:.95rem;font-weight:700;
+  color:#f4f3ff;margin-bottom:14px;letter-spacing:-.01em}
+.expect-list{display:flex;flex-direction:column;gap:10px}
+.expect-item{display:flex;align-items:flex-start;gap:12px;font-size:.83rem;
+  color:rgba(244,243,255,.65);line-height:1.6}
+.expect-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+
+/* ── LOADING STATE ──────────────────────────────────────── */
+.loading-state{display:flex;align-items:center;gap:12px;padding:32px 0;
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;
+  color:rgba(165,180,252,.45)}
+.loading-dot{width:7px;height:7px;border-radius:50%;background:rgba(99,102,241,.5);
+  animation:dotPulse 1.2s ease-in-out infinite}
+.loading-dot:nth-child(2){animation-delay:.2s}
+.loading-dot:nth-child(3){animation-delay:.4s}
+@keyframes dotPulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ── CTA ────────────────────────────────────────────────── */
+.cta-area{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;
+  font-family:'Bricolage Grotesque',sans-serif;font-size:.88rem;font-weight:700;
+  padding:14px 28px;border-radius:10px;
+  background:linear-gradient(135deg,#6366f1,#7c3aed);
+  color:#fff;text-decoration:none;
+  box-shadow:0 4px 20px rgba(99,102,241,.35);
+  transition:all .2s;cursor:pointer;border:none}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(99,102,241,.45)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-ghost{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.06em;
+  color:rgba(244,243,255,.35);text-decoration:none;transition:color .15s}
+.btn-ghost:hover{color:rgba(244,243,255,.65)}
+
+/* ── NO SCORE STATE ─────────────────────────────────────── */
+.no-score-card{background:rgba(13,11,30,.7);border:1px solid rgba(99,102,241,.14);
+  border-radius:16px;padding:32px;text-align:center;margin-bottom:28px}
+.no-score-title{font-family:'Bricolage Grotesque',sans-serif;font-size:1.1rem;font-weight:700;
+  color:#f4f3ff;margin-bottom:10px}
+.no-score-sub{font-size:.85rem;color:rgba(244,243,255,.55);line-height:1.65;margin-bottom:20px}
+
+@media(max-width:768px){
+  .wrap{margin-left:0;padding:24px 20px 80px}
+  .sidebar{display:none}
+  .score-num{font-size:2.8rem}
+  .score-num.adj{font-size:2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR — rebuilt by sidebar-shared.js -->
+<div class="sidebar">
+  <div class="logo" onclick="window.location.href='dashboard.html'" style="cursor:pointer">
+    <img src="virorah-vantage-logo.png" alt="Virorah Vantage" style="height:32px;width:auto">
+  </div>
+  <div class="meridian-chip">
+    <div class="label">MERIDIAN</div>
+    <div class="val" id="meridian-chip-val">Loading...</div>
+  </div>
+  <nav id="sidebar-nav"></nav>
+</div>
+
+<div class="wrap">
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="dashboard.html">Dashboard</a>
+    <span class="breadcrumb-sep">·</span>
+    Quarterly Check-in
+  </div>
+
+  <!-- PAGE TITLE -->
+  <div class="page-title">🗓 Quarterly Check-in</div>
+  <div class="page-sub" id="page-sub-text">Loading your Humac baseline…</div>
+
+  <!-- LOADING -->
+  <div class="loading-state" id="loading-state">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <span>Restoring your Humac Score…</span>
+  </div>
+
+  <!-- CONTENT — hidden until score loaded -->
+  <div id="main-content" style="display:none">
+
+    <!-- CURRENT SCORE CARD -->
+    <div class="score-card" id="score-card">
+      <div class="score-top">
+        <div class="score-nums">
+          <div class="score-block">
+            <div class="score-label">Humac</div>
+            <div class="score-num" id="score-humac">—</div>
+          </div>
+          <div class="score-sep">|</div>
+          <div class="score-block">
+            <div class="score-label">HCI-adjusted</div>
+            <div class="score-num adj" id="score-hci-adj">—</div>
+          </div>
+        </div>
+        <div class="score-meta">
+          <div class="band-chip" id="band-chip">—</div>
+          <div class="score-date" id="score-date">—</div>
+        </div>
+      </div>
+      <div class="pillars-row" id="pillars-row"></div>
+    </div>
+
+    <!-- TRAJECTORY -->
+    <div class="traj-card" id="traj-card">
+      <div class="traj-eyebrow">Trajectory Index</div>
+      <div id="traj-content"></div>
+    </div>
+
+    <!-- WHAT TO EXPECT -->
+    <div class="expect-card">
+      <div class="expect-title">What happens in this check-in</div>
+      <div class="expect-list">
+        <div class="expect-item">
+          <span class="expect-icon">⏱</span>
+          <span>Same 18 questions as your baseline — takes about 5 minutes. Most answers won't have changed.</span>
+        </div>
+        <div class="expect-item">
+          <span class="expect-icon">📊</span>
+          <span>Your new score is compared question-by-question against your last answer. The Trajectory Index is the delta — the precise direction your organisation's Humacity has moved.</span>
+        </div>
+        <div class="expect-item">
+          <span class="expect-icon">🧭</span>
+          <span>L3 Org Vitals answers are the most meaningful to update — signal flips there drive the Trajectory reading more than any other pillar.</span>
+        </div>
+        <div class="expect-item">
+          <span class="expect-icon">💾</span>
+          <span>Your previous score is preserved. The new score and Trajectory Index save to your record automatically.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-area">
+      <button class="btn-primary" id="start-btn" onclick="startCheckin()">
+        Start check-in →
+      </button>
+      <a href="dashboard.html" class="btn-ghost">Back to Dashboard</a>
+    </div>
+
+  </div><!-- /main-content -->
+
+  <!-- NO SCORE STATE -->
+  <div id="no-score-state" style="display:none">
+    <div class="no-score-card">
+      <div class="no-score-title">No baseline score found</div>
+      <div class="no-score-sub">You need to establish a Humac Score baseline before running a check-in. The baseline is your starting point — the check-in measures how far you've moved from it.</div>
+      <a href="humac-onboarding.html" class="btn-primary">Establish your baseline →</a>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script src="clerk-auth.js"></script>
+<script src="sidebar-shared.js"></script>
+<script>
+(function() {
+  var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+
+  if (sessionStorage.getItem('sr_access') !== 'true') {
+    window.location.href = 'access.html';
+    return;
+  }
+
+  // Wire up MERIDIAN chip
+  try {
+    var m = JSON.parse(sessionStorage.getItem('sr_meridian') || '{}');
+    document.getElementById('meridian-chip-val').innerText =
+      (m.state || 'Not set') + ' · ' + (m.industry || 'Not set');
+  } catch(e) {}
+
+  function getBandStyle(band) {
+    var map = {
+      'Value Destruction':  { color: '#E05C3A', bg: 'rgba(224,92,58,.1)',  border: 'rgba(224,92,58,.25)'  },
+      'Value Neutral':      { color: '#a5b4fc', bg: 'rgba(99,102,241,.1)', border: 'rgba(99,102,241,.25)' },
+      'Value Generating':   { color: '#a5b4fc', bg: 'rgba(99,102,241,.1)', border: 'rgba(99,102,241,.25)' },
+      'Value Compounding':  { color: '#c4b5fd', bg: 'rgba(124,58,237,.1)', border: 'rgba(124,58,237,.3)'  },
+      'Value Exceptional':  { color: '#f4f3ff', bg: 'rgba(196,181,253,.1)',border: 'rgba(196,181,253,.3)' },
+    };
+    return map[band] || { color: '#a5b4fc', bg: 'rgba(99,102,241,.1)', border: 'rgba(99,102,241,.25)' };
+  }
+
+  function renderScore(data) {
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+
+    // Numbers
+    document.getElementById('score-humac').innerText   = data.humac   || 0;
+    document.getElementById('score-hci-adj').innerText = data.hciAdj  || 0;
+
+    // Band chip
+    var band  = data.band || '';
+    var bstyle = getBandStyle(band);
+    var chip  = document.getElementById('band-chip');
+    chip.innerHTML =
+      '<span style="width:7px;height:7px;border-radius:50%;background:' + bstyle.color +
+      ';display:inline-block;margin-right:6px"></span>' + (band || '—');
+    chip.style.cssText += ';color:' + bstyle.color + ';background:' + bstyle.bg +
+      ';border:1px solid ' + bstyle.border;
+
+    // Date
+    if (data.timestamp) {
+      var d = new Date(data.timestamp);
+      document.getElementById('score-date').innerText =
+        'Set ' + d.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+    }
+
+    // Page subtitle
+    var sub = document.getElementById('page-sub-text');
+    var daysSince = data.timestamp
+      ? Math.floor((Date.now() - new Date(data.timestamp)) / 86400000)
+      : null;
+    if (daysSince !== null) {
+      if (daysSince < 1)       sub.innerText = 'Your baseline was set today. Run your first check-in when a quarter has passed.';
+      else if (daysSince < 80) sub.innerText = 'Your baseline was set ' + daysSince + ' day' + (daysSince !== 1 ? 's' : '') + ' ago. Check-ins are most meaningful after a quarter.';
+      else                     sub.innerText = 'Your baseline was set ' + daysSince + ' days ago. A quarter or more has passed — this is a good time to check in.';
+    } else {
+      sub.innerText = 'Review your current position and update what has changed.';
+    }
+
+    // Pillar bars
+    var pillars = [
+      { code: 'L1', score: data.l1 || 0 },
+      { code: 'L2', score: data.l2 || 0 },
+      { code: 'L3', score: data.l3 || 0 },
+      { code: 'L4', score: data.l4 || 0 },
+      { code: 'L5', score: data.l5 || 0 },
+    ];
+    document.getElementById('pillars-row').innerHTML = pillars.map(function(p, i) {
+      return '<div class="pillar-cell">' +
+        '<div class="pillar-code">' + p.code + '</div>' +
+        '<div class="pillar-bar-track"><div class="pillar-bar-fill" style="width:' + p.score + '%"></div></div>' +
+        '<div class="pillar-score">' + p.score + '</div>' +
+        '</div>';
+    }).join('');
+
+    // Trajectory
+    var traj = data.trajectory;
+    var trajEl = document.getElementById('traj-content');
+    if (traj && typeof traj.delta === 'number' && traj.delta !== 0) {
+      var delta  = traj.delta;
+      var arrow  = delta > 0 ? '↗' : '↘';
+      var color  = delta > 0 ? '#4ade80' : '#E05C3A';
+      var sign   = delta > 0 ? '+' : '';
+      trajEl.innerHTML =
+        '<div class="traj-row">' +
+          '<div class="traj-delta" style="color:' + color + '">' + arrow + ' ' + sign + delta + '</div>' +
+          '<div class="traj-label">points since your last check-in.<br>' +
+          (data.checkInNumber ? 'Check-in #' + data.checkInNumber + '.' : '') + '</div>' +
+        '</div>';
+    } else if (traj && traj.delta === 0) {
+      trajEl.innerHTML =
+        '<div class="traj-row">' +
+          '<div class="traj-delta" style="color:#a5b4fc">→ 0</div>' +
+          '<div class="traj-label">No movement since your last check-in.<br>Score held steady.</div>' +
+        '</div>';
+    } else {
+      trajEl.innerHTML =
+        '<div class="traj-none">No Trajectory Index yet — this is your baseline. ' +
+        'After this check-in, your Trajectory establishes. Every subsequent check-in ' +
+        'measures the delta from the one before it.</div>';
+    }
+  }
+
+  function showNoScore() {
+    document.getElementById('loading-state').style.display  = 'none';
+    document.getElementById('no-score-state').style.display = 'block';
+  }
+
+  function loadScore() {
+    // Try sessionStorage first
+    var cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem('vantage_humac') || 'null'); } catch(e) {}
+    if (cached && cached.humac) { renderScore(cached); return; }
+
+    // Fetch from Airtable via Worker
+    (function waitForClerk() {
+      if (window.Clerk && window.Clerk.session) {
+        window.Clerk.session.getToken().then(function(token) {
+          fetch(WORKER, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ tool: 'get_humac' })
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (d.success && d.data && d.data.humac) {
+              try { sessionStorage.setItem('vantage_humac', JSON.stringify(d.data)); } catch(e) {}
+              renderScore(d.data);
+            } else {
+              showNoScore();
+            }
+          })
+          .catch(function() { showNoScore(); });
+        }).catch(function() { showNoScore(); });
+      } else {
+        setTimeout(waitForClerk, 150);
+      }
+    })();
+  }
+
+  window.startCheckin = function() {
+    // humac-onboarding.html auto-detects check-in mode from sessionStorage
+    window.location.href = 'humac-onboarding.html';
+  };
+
+  loadScore();
+})();
+</script>
+
+</body>
+</html>
