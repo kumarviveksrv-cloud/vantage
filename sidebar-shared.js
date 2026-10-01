@@ -4,7 +4,7 @@
 
   // ── VIRORAH VANTAGE LOGO MARK ────────────────────────────────────────────────
   (function injectLogoMark() {
-    var logoEl = document.querySelector('.logo');
+    var logoEl = document.querySelector('.logo, .sb .logo, .sb > a.logo');
     if (!logoEl) return;
 
     if (!document.getElementById('vantage-logo-css')) {
@@ -157,7 +157,7 @@
   // Preserves: .logo, #meridian-chip (page JS holds references to its children),
   // and any existing clerkSignOut link (so clerk-auth.js keeps working).
   (function rebuildSidebar() {
-    var sidebar = document.querySelector('.sidebar, #sidebar');
+    var sidebar = document.querySelector('.sidebar, #sidebar, .sb');
     if (!sidebar) return;
 
     var currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
