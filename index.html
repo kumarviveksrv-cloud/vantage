@@ -1711,12 +1711,18 @@
    heDot), not the #heroEnter wrapper itself — the wrapper holds no
    direct text of its own (it's all in these children), so a
    background-clip:text on the parent alone would clip to nothing. */
+/* SR27: the 3-stop gradient was being independently re-clipped by each
+   of these three short spans (Enter / VANTAGE / .), so each one cycled
+   through the FULL purple->indigo->pink range on its own — the visual
+   result was every letter looking individually gradient-saturated, busy
+   and overdone. A single flat colour (matching the lavender already used
+   for climax accents elsewhere) reads as calm and intentional instead,
+   while the existing .hero-enter text-shadow glow still gives it the
+   CTA-weight presence it needs. */
 #heText, #heVantage, #heDot {
-  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
+  background: none !important;
+  color: #c4b5fd !important;
+  -webkit-text-fill-color: #c4b5fd !important;
 }
 
 /* Humac Score — enriched 3-metric panel */
@@ -3016,47 +3022,69 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   HERO MASTER TYPE SCALE (SR26)
-   Sized to match .hero-tagline (clamp(19px,2vw,26px)) — the line the user
-   confirmed reads as the correct, elegant scale ("Your Personal HR
-   Business Partner. Not the org's. Yours."). The SR25 scale (clamp(30,4,52))
-   was reported as "obscenely big" at 80% zoom and screaming for attention.
-   Reference: "Every HR professional has had that 9 pm moment." now sits
-   at the SAME scale as the tagline below it, not dramatically larger.
-   Differentiation between lines comes from colour, weight, italic, opacity,
-   spacing and animation — NEVER font size.
+   HERO TYPE HIERARCHY (SR27)
+   SR26 made every hero line the SAME size — fixed the "obscenely big"
+   problem but deleted the hero's narrative shape in the process. The
+   copy is written as an arc: open > aside > climax > CTA. A flat single
+   size reads as a stacked paragraph, not a cinematic reveal. Reinstating
+   THREE tiers (not the old chaotic SIX-tier SR18 system) so the eye has
+   somewhere to land, while keeping sizes modest — no tier goes back to
+   SR25's "screaming" 52-68px range.
+
+   TIER A — headline + climax (opening line, and the two accent lines
+            that are the emotional payoff of the whole sequence)
+   TIER B — supporting/aside copy (the context line, the kicker) — this
+            is exactly the .hero-tagline size the user confirmed looks
+            elegant
+   TIER C — CTA ("Enter VANTAGE.") — its own modest step, between B and A
    ═══════════════════════════════════════════════════════════════════════ */
 
 #top .hero-title {
+  font-size: clamp(26px, 3vw, 36px) !important;
+  line-height: 1.25 !important;
+}
+
+/* TIER A: headline line + the two climax accent lines */
+#top .hero-title .line.dim:not(.hero-context),
+#top .hero-title .line.accent {
+  font-size: clamp(26px, 3vw, 36px) !important;
+  line-height: 1.25 !important;
+}
+
+/* TIER B: the supporting aside line + kicker — tagline-matched, quiet */
+#top .hero-title .line.dim.hero-context,
+#top .hero-title .hero-kicker {
   font-size: clamp(19px, 2vw, 26px) !important;
   line-height: 1.3 !important;
 }
 
-#top .hero-title .line,
-#top .hero-title .hero-kicker,
+/* TIER C: the CTA line — a deliberate step between B and A, never equal
+   to either, so it reads as its own moment rather than competing */
 #top #heroEnter {
-  font-size: clamp(19px, 2vw, 26px) !important;
+  font-size: clamp(20px, 2.2vw, 28px) !important;
   line-height: 1.3 !important;
 }
 
-/* Kicker: roman (not italic — explicit user request), matches size + line-height */
+/* Kicker: roman (not italic — explicit user request) */
 #top .hero-title .hero-kicker {
   display: block !important;
   font-family: 'Cormorant Garamond', serif !important;
   font-style: normal !important;
   font-weight: 400 !important;
-  margin: 0 0 18px !important;
+  margin: 0 0 20px !important;
 }
 
-/* Breathing room between the two accent questions — scaled down to match
-   the smaller type size (was 0.35em against a 52px base; 0.5em against
-   this 26px base keeps the same visual gap in actual pixels) */
+/* Breathing room before the climax pair, and between the two climax lines */
+#top .hero-title .line.accent {
+  margin-top: 0.3em !important;
+}
 #top .hero-title .line.accent + .line.accent {
-  margin-top: 0.5em !important;
+  margin-top: 0.4em !important;
 }
 
 /* Prevent any nested animation span (from fadeInWords etc) from
-   shrinking the typography — spans must inherit the parent's scale */
+   shrinking the typography — spans must inherit their OWN parent's
+   tier, not a single global size */
 #top .hero-title .line span,
 #top .hero-title .hero-kicker span,
 #top #heroEnter span {
