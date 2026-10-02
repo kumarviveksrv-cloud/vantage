@@ -3092,6 +3092,27 @@
   line-height: inherit !important;
 }
 
+/* SR29 — desktop vertical rhythm fix. The previous margins mixed units
+   across tiers: hero-context used fixed 40px/36px, kicker used a fixed
+   20px, but the two accent lines used em-based margins (0.3em/0.4em) —
+   and since em scales with THAT element's own font-size, and the accent
+   lines sit in the larger 26-36px tier, their margins computed to a
+   DIFFERENT absolute pixel value than the fixed-px gaps elsewhere. The
+   net result: every gap between hero statements was a different number
+   of actual pixels (roughly 95/79/67/72/78/99px across the six gaps in
+   this section), which reads as uneven rhythm even though each value
+   looked reasonable on its own. Standardizing every gap to the SAME
+   fixed 32px margin-top, regardless of tier or font-size, so desktop
+   spacing reads as one even, intentional rhythm. */
+#top .hero-title .line,
+#top .hero-title .hero-kicker,
+#top #heroEnter {
+  margin-top: 32px !important;
+}
+#top .hero-title .line:first-child {
+  margin-top: 0 !important;
+}
+
 /* SR28 — mobile congestion fix. Desktop confirmed correct by user; this
    is scoped to narrow viewports only. On mobile, every hero statement
    wraps to 2-3 lines instead of 1, so each paragraph block is much
