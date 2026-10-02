@@ -1695,7 +1695,6 @@
    Bigger than the intro lines, purple gradient, but well short of the
    climax size below it. */
 .hero-title .line.dim:not(.hero-context) {
-  font-size: clamp(30px,4vw,48px) !important;
   background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
@@ -1705,9 +1704,7 @@
 /* "You are HR for everyone." / "Who is HR for you?" — the climax.
    The biggest text on the page; everything before it has been
    building to this. */
-.hero-title .line.accent {
-  font-size: clamp(38px,5.2vw,68px) !important;
-}
+/* .hero-title .line.accent — size now inherits base; colour + weight differentiate */
 /* "Enter VANTAGE." — a CTA-weight moment, deliberately a step down
    from the climax so it reads as a call to action, not a rival to it. */
 #heroEnter {
@@ -3023,7 +3020,7 @@
 
 /* Hero h1 sized down a notch — more elegant, less overwhelming (SR18) */
 .hero-title {
-  font-size: clamp(32px, 4.8vw, 66px) !important;
+  font-size: clamp(30px, 4vw, 52px) !important;
 }
 /* Breathing room between the two accent lines */
 .hero-title .line.accent + .line.accent {
