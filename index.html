@@ -3026,7 +3026,13 @@
 .hero-title .line.accent + .line.accent {
   margin-top: 0.5em;
 }
-
+/* SR24: Hero headline size uniformity — dim and accent lines rendered at
+   the same size as the base .hero-title. Differentiation via colour
+   (purple gradient on dim), italic weight, and caps only — not font-size. */
+.hero-title .line.dim:not(.hero-context),
+.hero-title .line.accent {
+  font-size: clamp(30px, 4vw, 52px) !important;
+}
 </style>
 <style id="prologue-startup-guard">
 /* Startup guard: later inline typography overrides must not expose the
