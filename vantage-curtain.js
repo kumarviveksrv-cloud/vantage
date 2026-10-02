@@ -2569,45 +2569,43 @@
      time with a stagger. The line itself is set to opacity:1 first so
      the wrapper is visible; individual words carry their own opacity. */
   async function fadeInWords(el, wordDelay, wordDuration){
+    /* SR25: rewritten to use display:inline + opacity-only transitions.
+       The previous version used display:inline-block + translateY(6px) on
+       every word span, which prevented the browser from kerning adjacent
+       word boxes against each other — "HR for" was visually colliding into
+       "HRfor" as a result. By keeping each span as display:inline (which
+       is how plain text already lays out), the browser handles word
+       spacing natively and no words collide. The gradient is applied
+       directly to the PARENT element with a wide bounding box via
+       background-size, so background-clip:text works across all words
+       as one continuous gradient rather than needing to re-clip per span. */
     const text = el.textContent.trim();
     const words = text.split(/\s+/);
     el.textContent = '';
     el.style.setProperty('opacity','1','important');
     el.style.setProperty('visibility','visible','important');
-    el.style.setProperty('font-style','normal','important'); /* SR24: force roman on accent parent */
-    /* .line.accent's purple gradient relies on background-clip:text
-       painted on the element whose direct text it clips to. Once we
-       wrap each word in its own inline-block span, the PARENT has no
-       direct text nodes left, and background-clip:text stops clipping
-       correctly through nested inline-block boxes — the words render
-       with color:transparent and nothing else, i.e. invisible. Fix:
-       give each word span its OWN copy of the same gradient, so every
-       word clips its own background independently of the parent. */
-    /* Subtler gradient — a full 3-stop rainbow (lavender->indigo->rose)
-       repeated on EVERY individual word reads as busy/disjointed once
-       words are wrapped separately. A tight two-stop lavender range
-       keeps the accent styling but reads as one cohesive colour. */
-    const gradientCSS = 'background:linear-gradient(135deg,#d8cbff 0%,#b39ef0 100%);'+
-      '-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;'+
-      'padding-right:.12em;margin-right:-.12em;font-style:normal;'; /* SR24 */
+    el.style.setProperty('font-style','normal','important');
+    /* Parent carries the gradient. Each child span inherits it via the CSS
+       rules in the SR25 master block (font-size:inherit, color:transparent
+       is already in effect from the parent's -webkit-text-fill-color). */
+    el.style.setProperty('background','linear-gradient(135deg,#d8cbff 0%,#b39ef0 100%)','important');
+    el.style.setProperty('-webkit-background-clip','text','important');
+    el.style.setProperty('background-clip','text','important');
+    el.style.setProperty('color','transparent','important');
+    el.style.setProperty('-webkit-text-fill-color','transparent','important');
     const spans = words.map((w,i)=>{
       const span = document.createElement('span');
       span.textContent = w + (i < words.length-1 ? '\u00A0' : '');
-      span.style.cssText = gradientCSS;
-      span.style.opacity = '0';
-      span.style.display = 'inline-block';
-      span.style.transition = 'opacity '+wordDuration+'ms ease, transform '+wordDuration+'ms ease';
-      span.style.transform = 'translateY(6px)';
+      /* display:inline is the key change — words lay out as normal text
+         and kern against each other naturally, no collision. No transform,
+         just an opacity fade. */
+      span.style.cssText = 'display:inline;opacity:0;transition:opacity '+wordDuration+'ms ease;font:inherit;line-height:inherit;letter-spacing:inherit;vertical-align:baseline;';
       el.appendChild(span);
       return span;
     });
-    /* Force layout so the initial opacity:0 is actually painted before
-       we start revealing — otherwise the browser can coalesce the
-       "hidden" and "first word visible" states into one frame. */
     void el.offsetHeight;
     for(const span of spans){
       span.style.opacity = '1';
-      span.style.transform = 'translateY(0)';
       await delay(wordDelay);
     }
     await delay(wordDuration);
