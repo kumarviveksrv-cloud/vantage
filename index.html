@@ -239,7 +239,7 @@
 
 /* SR23 hero reorder: the kicker now lives INSIDE the h1 as a span (valid HTML, keeps the
    heading in one piece). A span has none of the block/line-height a <p> had, so restore it. */
-.hero-title .hero-kicker{display:block;line-height:1.8;margin:0 0 24px}
+.hero-title .hero-kicker{display:block;line-height:1.12;margin:0 0 24px}
 /* tagline now sits between "Enter VANTAGE." and the deck: give it air above, tuck the deck under it */
 .hero-enter + .hero-tagline{margin:38px 0 0}
 /* keep "Not the org's. Yours." together on narrow screens instead of splitting after "Not" */
@@ -1683,7 +1683,7 @@
   font-style: italic !important;
   font-weight: 400 !important;
   letter-spacing: .01em !important;
-  font-size: clamp(17px,1.8vw,22px) !important;
+  /* font-size unified in SR24 master block — see end of inline CSS */
   color: rgba(255,255,255,.5) !important;
 }
 .hero-deck {
@@ -1705,11 +1705,8 @@
    The biggest text on the page; everything before it has been
    building to this. */
 /* .hero-title .line.accent — size now inherits base; colour + weight differentiate */
-/* "Enter VANTAGE." — a CTA-weight moment, deliberately a step down
-   from the climax so it reads as a call to action, not a rival to it. */
-#heroEnter {
-  font-size: clamp(22px,2.5vw,32px) !important;
-}
+/* "Enter VANTAGE." — now part of the unified hero type scale (SR25).
+   font-size defined in the master block at the end of inline CSS. */
 /* Gradient has to go on the individual typed spans (heText/heVantage/
    heDot), not the #heroEnter wrapper itself — the wrapper holds no
    direct text of its own (it's all in these children), so a
@@ -3019,19 +3016,46 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   HERO TYPOGRAPHY — ONE STANDARD SIZE
-   All five hero statements intentionally use the same type scale.
-   Reference size: "Every HR professional has had that 9 pm moment."
+   HERO MASTER TYPE SCALE (SR25)
+   One standard size + one standard line-height for every primary hero
+   statement. Reference: "Every HR professional has had that 9 pm moment."
+   Differentiation between lines comes from colour, weight, italic, opacity,
+   spacing and animation — NEVER font size.
    ═══════════════════════════════════════════════════════════════════════ */
 
-#top .hero-title .line,
-#top .hero-title .hero-kicker {
+#top .hero-title {
   font-size: clamp(30px, 4vw, 52px) !important;
+  line-height: 1.12 !important;
 }
 
-/* Preserve the deliberate breathing room before the final question */
+#top .hero-title .line,
+#top .hero-title .hero-kicker,
+#top #heroEnter {
+  font-size: clamp(30px, 4vw, 52px) !important;
+  line-height: 1.12 !important;
+}
+
+/* Kicker keeps its italic/weight styling but matches size + line-height */
+#top .hero-title .hero-kicker {
+  display: block !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  margin: 0 0 24px !important;
+}
+
+/* Breathing room between the two accent questions */
 #top .hero-title .line.accent + .line.accent {
-  margin-top: 0.5em;
+  margin-top: 0.35em !important;
+}
+
+/* Prevent any nested animation span (from fadeInWords etc) from
+   shrinking the typography — spans must inherit the parent's scale */
+#top .hero-title .line span,
+#top .hero-title .hero-kicker span,
+#top #heroEnter span {
+  font-size: inherit !important;
+  line-height: inherit !important;
 }
 </style>
 <style id="prologue-startup-guard">
