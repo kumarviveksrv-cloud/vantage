@@ -2432,30 +2432,37 @@
   /* Re-measure once web fonts are confirmed loaded, in case the first
      pass happened against fallback-font metrics that were smaller
      than the real font's — only grows a reservation, never shrinks
-     one already correctly set. */
+     one already correctly set.
+
+     SR25 BUG FIX: the previous version measured el.getBoundingClientRect()
+     DIRECTLY on elements with no cachedText arg (tagline, kicker, both
+     dim lines, both accent lines, heroContext, heroDeck — i.e. every
+     reserved element except heroEnterEl/heroCopy). But by the time this
+     runs, that element's height is ALREADY pinned via inline height+
+     !important from lockExactHeight's first pass. Measuring a box whose
+     height is hard-locked just returns the locked value again — it can
+     never discover that the real (post-font-load) content needs more
+     room. This is why the hero-kicker stayed locked at a 1-line height
+     (58px) even once "You carry everyone's hardest moments. Alone."
+     actually needed 2 lines (116px) at the larger font, causing the next
+     hero line to render on top of it. Fix: ALWAYS measure via a cloned,
+     disconnected copy with height:auto — using the element's own current
+     textContent as a fallback when no explicit cachedText is given —
+     exactly like the heroEnterEl/heroCopy path already did correctly. */
   function relockIfTaller(el, cachedText){
     if(!el) return;
     const priorHeight = parseFloat(el.style.height) || 0;
-    let h;
-    if(cachedText !== undefined){
-      /* Never write cachedText into the real element — it may have
-         live children (like heroEnterEl's four typing spans) that
-         would be destroyed by a direct .textContent assignment, the
-         exact bug that made "Enter VANTAGE." vanish entirely. Measure
-         against a throwaway clone instead. */
-      const ghost = el.cloneNode(false);
-      ghost.textContent = cachedText;
-      ghost.style.cssText = el.style.cssText;
-      ghost.style.position = 'absolute';
-      ghost.style.visibility = 'hidden';
-      ghost.style.pointerEvents = 'none';
-      ghost.style.height = 'auto';
-      el.parentNode.insertBefore(ghost, el.nextSibling);
-      h = ghost.getBoundingClientRect().height;
-      ghost.remove();
-    } else {
-      h = el.getBoundingClientRect().height;
-    }
+    const textForGhost = (cachedText !== undefined) ? cachedText : el.textContent;
+    const ghost = el.cloneNode(false);
+    ghost.textContent = textForGhost;
+    ghost.style.cssText = el.style.cssText;
+    ghost.style.position = 'absolute';
+    ghost.style.visibility = 'hidden';
+    ghost.style.pointerEvents = 'none';
+    ghost.style.height = 'auto';
+    el.parentNode.insertBefore(ghost, el.nextSibling);
+    const h = ghost.getBoundingClientRect().height;
+    ghost.remove();
     if(h > priorHeight){
       el.style.setProperty('height', h + 'px', 'important');
     }
