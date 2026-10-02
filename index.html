@@ -3103,6 +3103,15 @@
    for everyone." — the exact congestion in the screenshot. Desktop
    rules above are untouched; only mobile spacing is widened here. */
 @media (max-width: 700px) {
+  /* Gap between "...second opinion." and "You carry everyone's hardest
+     moments." — was reading as almost no gap at all next to the other
+     (now-fixed) gaps on this same screen, even though the base
+     .hero-context rule already sets a 36px bottom margin. Setting it
+     explicitly here, scoped + high-specificity, so nothing upstream can
+     collapse or override it on mobile specifically. */
+  #top .hero-title .line.dim.hero-context {
+    margin: 24px 0 32px !important;
+  }
   #top .hero-title .hero-kicker {
     margin: 0 0 36px !important;
   }
