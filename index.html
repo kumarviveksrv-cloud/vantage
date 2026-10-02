@@ -1852,7 +1852,7 @@
   font-size: clamp(18px,1.9vw,24px) !important;
   font-weight: 400 !important;
   opacity: 1 !important;
-  margin: 40px 0 36px !important;
+  margin: 0 !important; /* SR30: old 40px/36px removed — SR29's margin-top:32px is the single source of truth for hero-title spacing now */
   background: none !important;
   -webkit-text-fill-color: rgba(196,181,253,0.90) !important;
   color: rgba(196,181,253,0.90) !important;
@@ -3071,16 +3071,17 @@
   font-family: 'Cormorant Garamond', serif !important;
   font-style: normal !important;
   font-weight: 400 !important;
-  margin: 0 0 20px !important;
+  margin: 0 !important; /* SR30: bottom-margin removed — SR29's margin-top is now the single source of truth for spacing, nothing left to collapse against or add to it */
 }
 
-/* Breathing room before the climax pair, and between the two climax lines */
-#top .hero-title .line.accent {
-  margin-top: 0.3em !important;
-}
-#top .hero-title .line.accent + .line.accent {
-  margin-top: 0.4em !important;
-}
+/* SR30: the 0.3em/0.4em accent margins below were REMOVED — their
+   selector (.line.accent, 3 matched classes) has higher CSS specificity
+   than SR29's catch-all (.line, 2 matched classes), so they silently
+   overrode SR29's uniform 32px rhythm regardless of source order,
+   collapsing to 10.8px and 14.4px (0.3em/0.4em of a 36px font) instead.
+   That's exactly the two broken gaps confirmed by direct measurement.
+   Deleting them lets SR29's single 32px rule apply to every hero line,
+   accent included, with nothing left to contest it. */
 
 /* Prevent any nested animation span (from fadeInWords etc) from
    shrinking the typography — spans must inherit their OWN parent's
