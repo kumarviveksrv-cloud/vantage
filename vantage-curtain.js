@@ -2996,3 +2996,22 @@ function toggleFaq(btn){
   if(!item) return;
   item.classList.toggle('faq-open');
 }
+
+/* SR24: Force accent lines to roman — catches CSS, GSAP and any
+   dynamically-created child spans */
+(function fixAccentItalic(){
+  function fix(){
+    document.querySelectorAll('.hero-title .line.accent').forEach(function(el){
+      el.style.setProperty('font-style','normal','important');
+      el.querySelectorAll('*').forEach(function(child){
+        child.style.setProperty('font-style','normal','important');
+      });
+    });
+  }
+  fix();
+  document.addEventListener('DOMContentLoaded', fix);
+  window.addEventListener('load', fix);
+  setTimeout(fix, 1000);
+  setTimeout(fix, 3000);
+  setTimeout(fix, 6000);
+})();
