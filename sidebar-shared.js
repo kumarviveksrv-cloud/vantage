@@ -368,6 +368,57 @@
   // ── PWA INSTALL PROMPT ────────────────────────────────────
   var deferredPrompt = null;
 
+  // iOS Safari never fires beforeinstallprompt — detect and show manual nudge
+  (function() {
+    var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase());
+    var isStandalone = window.navigator.standalone === true;
+    if (isIOS && !isStandalone && !sessionStorage.getItem('pwa_dismissed')) {
+      setTimeout(function() {
+        if (document.getElementById('pwa-banner')) return;
+        var banner = document.createElement('div');
+        banner.id = 'pwa-banner';
+        var isMobile = window.innerWidth <= 768;
+        banner.style.cssText = [
+          'position:fixed',
+          isMobile ? 'bottom:calc(64px + env(safe-area-inset-bottom,0px))' : 'bottom:24px',
+          'left:50%',
+          'transform:translateX(-50%)',
+          'z-index:99999',
+          'background:#0d0b1e',
+          'border:1px solid rgba(99,102,241,0.35)',
+          'border-radius:14px',
+          'padding:14px 18px',
+          'display:flex',
+          'align-items:center',
+          'gap:12px',
+          'max-width:340px',
+          'width:calc(100vw - 48px)',
+          'box-shadow:0 8px 32px rgba(0,0,0,0.5)',
+          'font-family:Plus Jakarta Sans,sans-serif',
+        ].join(';');
+        banner.innerHTML = [
+          '<div style="flex:1">',
+            '<div style="font-size:12px;font-weight:700;color:#f4f3ff;margin-bottom:3px">Install Vantage</div>',
+            '<div style="font-size:11px;color:rgba(244,243,255,0.5);line-height:1.5">',
+              'Tap <strong style="color:#a5b4fc">Share ↑</strong> then <strong style="color:#a5b4fc">Add to Home Screen</strong>',
+            '</div>',
+          '</div>',
+          '<button id="pwa-ios-dismiss" ',
+            'style="background:none;border:none;color:rgba(244,243,255,0.35);font-size:18px;cursor:pointer;padding:4px;line-height:1;flex-shrink:0">✕</button>',
+        ].join('');
+        document.body.appendChild(banner);
+        var dismissBtn = document.getElementById('pwa-ios-dismiss');
+        if (dismissBtn) {
+          dismissBtn.addEventListener('click', function() {
+            sessionStorage.setItem('pwa_dismissed', '1');
+            var b = document.getElementById('pwa-banner');
+            if (b) b.remove();
+          });
+        }
+      }, 2500);
+    }
+  })();
+
   window.addEventListener('beforeinstallprompt', function(e) {
     e.preventDefault();
     deferredPrompt = e;
@@ -452,37 +503,53 @@
       '    display: flex;',
       '    flex-direction: column;',
       '    align-items: center;',
-      '    gap: 4px;',
-      '    padding: 4px 12px;',
+      '    justify-content: flex-start;',
+      '    gap: 2px;',
+      '    padding: 6px 4px 4px;',
       '    text-decoration: none;',
       '    cursor: pointer;',
       '    flex: 1;',
+      '    min-height: 52px;',
       '    border: none;',
       '    background: transparent;',
       '    -webkit-tap-highlight-color: transparent;',
       '  }',
+      '  .vbn-icon-wrap {',
+      '    width: 44px;',
+      '    height: 30px;',
+      '    display: flex;',
+      '    align-items: center;',
+      '    justify-content: center;',
+      '    border-radius: 15px;',
+      '    transition: background 0.2s ease;',
+      '    margin-bottom: 2px;',
+      '  }',
+      '  .vbn-item.active .vbn-icon-wrap {',
+      '    background: rgba(99,102,241,0.2);',
+      '  }',
       '  .vbn-icon {',
       '    font-size: 20px;',
       '    line-height: 1;',
-      '    transition: transform 0.2s ease;',
+      '    transition: transform 0.15s ease;',
+      '  }',
+      '  .vbn-item.active .vbn-icon {',
+      '    transform: scale(1.12);',
       '  }',
       '  .vbn-label {',
       '    font-family: "JetBrains Mono", monospace;',
-      '    font-size: 9px;',
-      '    letter-spacing: 0.04em;',
+      '    font-size: 9.5px;',
+      '    letter-spacing: 0.03em;',
       '    text-transform: uppercase;',
-      '    color: rgba(244,243,255,0.62);',
-      '    transition: color 0.2s ease;',
+      '    color: rgba(244,243,255,0.42);',
+      '    transition: color 0.15s ease;',
       '    white-space: nowrap;',
       '  }',
       '  .vbn-item.active .vbn-label {',
       '    color: #a5b4fc;',
+      '    font-weight: 600;',
       '  }',
-      '  .vbn-item.active .vbn-icon {',
-      '    transform: scale(1.15);',
-      '  }',
-      '  .vbn-item:not(.active):hover .vbn-label {',
-      '    color: rgba(244,243,255,0.6);',
+      '  .vbn-item:active .vbn-icon-wrap {',
+      '    background: rgba(99,102,241,0.15);',
       '  }',
       '  .vbn-drawer-overlay {',
       '    display: none;',
@@ -555,19 +622,23 @@
       '    font-family: "JetBrains Mono", monospace;',
       '    letter-spacing: 0.04em;',
       '  }',
-      '  .main, main, .main-content, body > div:not(.vantage-bottom-nav):not(.vbn-drawer-overlay) {',
-      '    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;',
+      '  .main, main, .main-content, .wrap, .content, .page-content,',
+      '  body > div:not(.vantage-bottom-nav):not(.vbn-drawer-overlay) {',
+      '    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;',
+      '  }',
+      '  body {',
+      '    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));',
       '  }',
       '}',
     ].join('\n');
     document.head.appendChild(style);
 
     var navItems = [
-      { icon: '\u229E', label: 'Home',    href: 'dashboard.html',         page: 'dashboard' },
-      { icon: '\u26A1', label: 'Cases',   href: 'employee-case-advisor.html', page: 'er-case-navigator' },
-      { icon: '\u2726', label: 'ARIA',    href: 'aria.html',              page: 'aria' },
-      { icon: '🗄️', label: 'Record',  href: 'vantage-record.html',      page: 'case-library' },
-      { icon: '\u22EF', label: 'More',    href: null,                     page: 'more' },
+      { icon: '\u229E', label: 'Home',   href: 'dashboard.html',              page: 'dashboard' },
+      { icon: '\u26A1', label: 'Tools',  href: 'employee-case-advisor.html',  page: 'er-case-navigator' },
+      { icon: '\u2736', label: 'ARIA',   href: 'aria.html',                   page: 'aria' },
+      { icon: '\u229F', label: 'Record', href: 'vantage-record.html',         page: 'case-library' },
+      { icon: '\u22EF', label: 'More',   href: null,                          page: 'more' },
     ];
 
     // FIX: this list previously had 7 flat items and had fallen out of sync
@@ -655,12 +726,12 @@
         var a = document.createElement('a');
         a.className = 'vbn-item' + (active ? ' active' : '');
         a.href = item.href;
-        a.innerHTML = '<span class="vbn-icon">' + item.icon + '</span><span class="vbn-label">' + item.label + '</span>';
+        a.innerHTML = '<span class="vbn-icon-wrap"><span class="vbn-icon">' + item.icon + '</span></span><span class="vbn-label">' + item.label + '</span>';
         nav.appendChild(a);
       } else {
         var btn = document.createElement('button');
         btn.className = 'vbn-item' + (active ? ' active' : '');
-        btn.innerHTML = '<span class="vbn-icon">' + item.icon + '</span><span class="vbn-label">' + item.label + '</span>';
+        btn.innerHTML = '<span class="vbn-icon-wrap"><span class="vbn-icon">' + item.icon + '</span></span><span class="vbn-label">' + item.label + '</span>';
         btn.onclick = function(e) { e.stopPropagation(); toggleDrawer(); };
         nav.appendChild(btn);
       }
@@ -687,7 +758,19 @@
         a.className = 'vbn-drawer-item' + (active ? ' active' : '');
         a.href = item.href;
         if (item.external) a.target = '_blank';
-        if (item.signout) { a.onclick = function() { sessionStorage.clear(); }; }
+        if (item.signout) {
+          a.onclick = function(e) {
+            e.preventDefault();
+            if (window.clerkSignOut) {
+              window.clerkSignOut();
+            } else {
+              sessionStorage.clear();
+              localStorage.setItem('vantage_clerk_signed_in', '0');
+              window.location.href = 'https://vantage.virorah.com/';
+            }
+            return false;
+          };
+        }
         a.innerHTML = [
           '<span class="vbn-drawer-icon">' + item.icon + '</span>',
           '<span class="vbn-drawer-label">' + item.label + (item.sub ? '<br><span class="vbn-drawer-sub">' + item.sub + '</span>' : '') + '</span>',
