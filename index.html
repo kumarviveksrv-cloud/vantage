@@ -1680,7 +1680,7 @@
 }
 .hero-kicker {
   font-family: 'Cormorant Garamond', serif !important;
-  font-style: italic !important;
+  font-style: normal !important; /* SR25: user explicitly does not want this italicized */
   font-weight: 400 !important;
   letter-spacing: .01em !important;
   /* font-size unified in SR24 master block — see end of inline CSS */
@@ -3035,11 +3035,11 @@
   line-height: 1.12 !important;
 }
 
-/* Kicker keeps its italic/weight styling but matches size + line-height */
+/* Kicker: roman (not italic — explicit user request), matches size + line-height */
 #top .hero-title .hero-kicker {
   display: block !important;
   font-family: 'Cormorant Garamond', serif !important;
-  font-style: italic !important;
+  font-style: normal !important;
   font-weight: 400 !important;
   margin: 0 0 24px !important;
 }
