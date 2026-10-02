@@ -3144,11 +3144,23 @@
   #top .hero-title .line.dim.hero-context {
     margin: 24px 0 0 !important;
   }
+  /* SR32: console-measured proof that SR31's 32px gaps WERE correctly
+     applying (gap: 32.0px confirmed for both transitions below) — this
+     wasn't a broken rule. It's a perception issue: the headline is
+     large, bold, bright purple, so a modest 24px gap after it reads as
+     spacious. Context and kicker are both small, quiet, similarly-muted
+     italic lines sitting next to each other with no visual contrast to
+     signal "new statement" — the SAME 32px gap that looks fine next to
+     a bold headline doesn't register as separation between two quiet
+     lines. Deliberately over-compensating with more raw space for
+     these two low-contrast transitions specifically. Headline->context
+     (24px, confirmed "absolutely perfect") and accent1->accent2 (36px,
+     never flagged) are untouched. */
   #top .hero-title .hero-kicker {
-    margin: 32px 0 0 !important;
+    margin: 48px 0 0 !important;
   }
   #top .hero-title .line.accent {
-    margin-top: 32px !important;
+    margin-top: 48px !important;
   }
   #top .hero-title .line.accent + .line.accent {
     margin-top: 36px !important;
