@@ -2999,19 +2999,39 @@ function toggleFaq(btn){
 
 /* SR24: Force accent lines to roman — catches CSS, GSAP and any
    dynamically-created child spans */
-(function fixAccentItalic(){
-  function fix(){
+(function guardAccentRoman(){
+  'use strict';
+  function forceRoman(){
     document.querySelectorAll('.hero-title .line.accent').forEach(function(el){
-      el.style.setProperty('font-style','normal','important');
-      el.querySelectorAll('*').forEach(function(child){
-        child.style.setProperty('font-style','normal','important');
+      if(el.style.getPropertyValue('font-style')!=='normal'||el.style.getPropertyPriority('font-style')!=='important'){
+        el.style.setProperty('font-style','normal','important');
+      }
+      el.querySelectorAll('*').forEach(function(ch){
+        if(ch.style.getPropertyValue('font-style')==='italic'){
+          ch.style.setProperty('font-style','normal','important');
+        }
       });
     });
   }
-  fix();
-  document.addEventListener('DOMContentLoaded', fix);
-  window.addEventListener('load', fix);
-  setTimeout(fix, 1000);
-  setTimeout(fix, 3000);
-  setTimeout(fix, 6000);
+  forceRoman();
+  document.addEventListener('DOMContentLoaded',forceRoman);
+  window.addEventListener('load',forceRoman);
+  /* KEY FIX: fires right after hero animation ends */
+  window.addEventListener('vantage-hero-ready',function(){
+    forceRoman();setTimeout(forceRoman,200);setTimeout(forceRoman,800);
+  });
+  [1000,3000,6000,15000,25000].forEach(function(t){setTimeout(forceRoman,t);});
+  /* MutationObserver: catches anything that re-applies italic afterward */
+  function startObserver(){
+    var h1=document.querySelector('.hero-title');
+    if(!h1)return;
+    new MutationObserver(function(muts){
+      var needs=false;
+      muts.forEach(function(m){
+        if(m.type==='attributes'&&m.target.style.getPropertyValue('font-style')==='italic')needs=true;
+      });
+      if(needs)forceRoman();
+    }).observe(h1,{attributes:true,attributeFilter:['style'],subtree:true});
+  }
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',startObserver):startObserver();
 })();
