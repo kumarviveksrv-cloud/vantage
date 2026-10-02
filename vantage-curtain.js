@@ -2574,6 +2574,7 @@
     el.textContent = '';
     el.style.setProperty('opacity','1','important');
     el.style.setProperty('visibility','visible','important');
+    el.style.setProperty('font-style','normal','important'); /* SR24: force roman on accent parent */
     /* .line.accent's purple gradient relies on background-clip:text
        painted on the element whose direct text it clips to. Once we
        wrap each word in its own inline-block span, the PARENT has no
@@ -3006,10 +3007,8 @@ function toggleFaq(btn){
       if(el.style.getPropertyValue('font-style')!=='normal'||el.style.getPropertyPriority('font-style')!=='important'){
         el.style.setProperty('font-style','normal','important');
       }
-      el.querySelectorAll('*').forEach(function(ch){
-        if(ch.style.getPropertyValue('font-style')==='italic'){
-          ch.style.setProperty('font-style','normal','important');
-        }
+      el.querySelectorAll('*').forEach(function(child){
+        child.style.setProperty('font-style','normal','important');
       });
     });
   }
