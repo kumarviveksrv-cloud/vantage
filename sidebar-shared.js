@@ -668,12 +668,21 @@
       '    font-family: "JetBrains Mono", monospace;',
       '    letter-spacing: 0.04em;',
       '  }',
+      /* SR34: was 88px — just barely enough to clear the nav bar's own
+         icons, leaving zero breathing room below whatever content sits
+         last on the page (e.g. the Debrief card, reported as clipped
+         flush against the nav). This rule is injected at RUNTIME by this
+         shared script, landing later in the cascade than any per-page
+         .main padding rule (same specificity, both !important — later
+         wins), so it silently overrides page-level fixes like
+         dashboard.html's own 120px rule. Bumping to 140px here, at the
+         shared source, so it can't be quietly re-overridden per page. */
       '  .main, main, .main-content, .wrap, .content, .page-content,',
       '  body > div:not(.vantage-bottom-nav):not(.vbn-drawer-overlay) {',
-      '    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;',
+      '    padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px)) !important;',
       '  }',
       '  body {',
-      '    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));',
+      '    padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px));',
       '  }',
       '}',
     ].join('\n');
