@@ -241,7 +241,7 @@
    heading in one piece). A span has none of the block/line-height a <p> had, so restore it. */
 .hero-title .hero-kicker{display:block;line-height:1.12;margin:0 0 24px}
 /* tagline now sits between "Enter VANTAGE." and the deck: give it air above, tuck the deck under it */
-.hero-enter + .hero-tagline{margin:38px 0 0}
+.hero-enter + .hero-tagline{margin:20px 0 0} /* SR31: was 38px, on top of heroEnter's own margin — read as excess space before the tagline; reduced to sit closer to the established rhythm */
 /* keep "Not the org's. Yours." together on narrow screens instead of splitting after "Not" */
 .hero-tagline em{white-space:nowrap}
 .hero-tagline + .hero-deck{margin:26px auto 72px;text-wrap:balance;line-height:2 !important}
@@ -3125,26 +3125,36 @@
    for everyone." — the exact congestion in the screenshot. Desktop
    rules above are untouched; only mobile spacing is widened here. */
 @media (max-width: 700px) {
-  /* Gap between "...second opinion." and "You carry everyone's hardest
-     moments." — was reading as almost no gap at all next to the other
-     (now-fixed) gaps on this same screen, even though the base
-     .hero-context rule already sets a 36px bottom margin. Setting it
-     explicitly here, scoped + high-specificity, so nothing upstream can
-     collapse or override it on mobile specifically. */
+  /* SR31: the context->kicker->accent1 region on mobile was still
+     cramped after SR29/SR30, because the accent lines' mobile override
+     below was still EM-based (0.6em/0.7em). em scales with the
+     element's OWN font-size, and on narrow mobile the vw component of
+     the clamp() contributes almost nothing, so the accent lines sit at
+     their CLAMP FLOOR (26px) — making 0.6em/0.7em compute to just
+     ~15.6px/18.2px. That's smaller than the 32px rhythm everywhere
+     else, which is backwards: mobile wraps every line to 2-3 rows and
+     needs MORE separation between statements, not less. Every value
+     below is now a flat px number (no em), so nothing shrinks just
+     because a line's own font got smaller on a narrow screen. The
+     "Every HR..." → context gap (24px, confirmed "absolutely perfect"
+     by the user) is untouched; every subsequent gap now explicitly
+     carries its own margin-top so nothing relies on collapsing with a
+     neighbour's bottom-margin, which is what made the actual rendered
+     gaps hard to reason about in the first place. */
   #top .hero-title .line.dim.hero-context {
-    margin: 24px 0 32px !important;
+    margin: 24px 0 0 !important;
   }
   #top .hero-title .hero-kicker {
-    margin: 0 0 36px !important;
+    margin: 32px 0 0 !important;
   }
   #top .hero-title .line.accent {
-    margin-top: 0.6em !important;
+    margin-top: 32px !important;
   }
   #top .hero-title .line.accent + .line.accent {
-    margin-top: 0.7em !important;
+    margin-top: 36px !important;
   }
   #top #heroEnter {
-    margin-top: 28px !important;
+    margin-top: 32px !important;
   }
 }
 </style>
