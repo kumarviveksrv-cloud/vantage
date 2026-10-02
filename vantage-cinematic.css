@@ -664,7 +664,8 @@ p em, .lede em, .hero-deck em, .diff-yours em,
 
 /* Signal strip — sentence case */
 .signal-track span { text-transform: none !important; }
-
+/* SR24: Force accent lines to roman — belt & suspenders alongside JS fix */
+.hero-title .line.accent { font-style: normal !important; }
 
 /* ═══ SR17 FINAL v2 — Em gradient with matched specificity ════════════════ */
 
