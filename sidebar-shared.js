@@ -467,6 +467,34 @@
   // ── MOBILE BOTTOM NAV ────────────────────────────────────
   function injectMobileNav() {
     if (window.innerWidth > 768) return;
+
+    // SVG icon set — stroke-based, currentColor, consistent 1.8px weight
+    var S = 'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
+    var IC = {
+      home:      '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" '+S+'><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>',
+      tools:     '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" '+S+'><path d="M13 2L4 14h8L10 22l10-12h-8L13 2z"/></svg>',
+      aria_tab:  '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" '+S+'><path d="M12 2l2 5.5 5.5 2-5.5 2L12 17l-2-5.5L4.5 9.5l5.5-2z"/><path d="M19 17l.7 2.3L22 20l-2.3.7L19 23l-.7-2.3L16 20l2.3-.7z"/></svg>',
+      record_tab:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" '+S+'><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1"/><line x1="10" y1="12" x2="14" y2="12"/></svg>',
+      more:      '<svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
+      map:       '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>',
+      globe:     '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M12 3c-3 4-3 14 0 18M12 3c3 4 3 14 0 18"/></svg>',
+      hex:       '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M12 2l8.66 5v10L12 22 3.34 17V7z"/></svg>',
+      chart:     '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>',
+      sparkle:   '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M12 2l2 5.5 5.5 2-5.5 2L12 17l-2-5.5L4.5 9.5l5.5-2z"/></svg>',
+      bolt:      '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M13 2L4 14h8L10 22l10-12h-8L13 2z"/></svg>',
+      briefcase: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>',
+      book:      '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>',
+      scale:     '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><line x1="12" y1="3" x2="12" y2="21"/><path d="M7 3h10"/><path d="M3.5 9l3.5 7H0l3.5-7zM16.5 9l3.5 7H13l3.5-7z"/></svg>',
+      chat:      '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>',
+      pin:       '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M12 22s-8-5.6-8-12a8 8 0 0116 0c0 6.4-8 12-8 12z"/><circle cx="12" cy="10" r="3"/></svg>',
+      file:      '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>',
+      archive:   '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1"/><line x1="10" y1="12" x2="14" y2="12"/></svg>',
+      tag:       '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg>',
+      shield:    '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+      logout:    '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+      doc:       '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+      lock:      '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>',
+    };
     // FIX: no other injection in this file lacks this check — without it,
     // any second call to this function (e.g. from the resize fix below)
     // would create a duplicate nav bar, duplicate style tag, and duplicate
@@ -528,12 +556,16 @@
       '    background: rgba(99,102,241,0.2);',
       '  }',
       '  .vbn-icon {',
-      '    font-size: 20px;',
+      '    display: flex;',
+      '    align-items: center;',
+      '    justify-content: center;',
       '    line-height: 1;',
       '    transition: transform 0.15s ease;',
+      '    color: rgba(244,243,255,0.55);',
       '  }',
       '  .vbn-item.active .vbn-icon {',
-      '    transform: scale(1.12);',
+      '    transform: scale(1.1);',
+      '    color: #a5b4fc;',
       '  }',
       '  .vbn-label {',
       '    font-family: "JetBrains Mono", monospace;',
@@ -620,7 +652,15 @@
       '    color: #a5b4fc;',
       '    background: rgba(99,102,241,0.06);',
       '  }',
-      '  .vbn-drawer-icon { font-size: 18px; flex-shrink: 0; }',
+      '  .vbn-drawer-icon {',
+      '    display: flex;',
+      '    align-items: center;',
+      '    justify-content: center;',
+      '    width: 28px;',
+      '    flex-shrink: 0;',
+      '    color: rgba(244,243,255,0.5);',
+      '  }',
+      '  .vbn-drawer-item.active .vbn-drawer-icon { color: #a5b4fc; }',,
       '  .vbn-drawer-label { flex: 1; }',
       '  .vbn-drawer-sub {',
       '    font-size: 11px;',
@@ -640,11 +680,11 @@
     document.head.appendChild(style);
 
     var navItems = [
-      { icon: '\u229E', label: 'Home',   href: 'dashboard.html',              page: 'dashboard' },
-      { icon: '\u26A1', label: 'Tools',  href: 'employee-case-advisor.html',  page: 'er-case-navigator' },
-      { icon: '\u2736', label: 'ARIA',   href: 'aria.html',                   page: 'aria' },
-      { icon: '\u229F', label: 'Record', href: 'vantage-record.html',         page: 'case-library' },
-      { icon: '\u22EF', label: 'More',   href: null,                          page: 'more' },
+      { icon: IC.home,       label: 'Home',   href: 'dashboard.html',              page: 'dashboard' },
+      { icon: IC.tools,      label: 'Tools',  href: 'employee-case-advisor.html',  page: 'er-case-navigator' },
+      { icon: IC.aria_tab,   label: 'ARIA',   href: 'aria.html',                   page: 'aria' },
+      { icon: IC.record_tab, label: 'Record', href: 'vantage-record.html',         page: 'case-library' },
+      { icon: IC.more,       label: 'More',   href: null,                          page: 'more' },
     ];
 
     // FIX: this list previously had 7 flat items and had fallen out of sync
@@ -664,54 +704,54 @@
       {
         title: 'Overview',
         items: [
-          { icon: '\uD83D\uDDFA', label: 'Platform Tour', sub: 'Guided walkthrough', href: 'platform-tour.html', page: 'platform-tour' },
-          { icon: '\uD83C\uDF00', label: 'Humacity', sub: '', href: 'https://humacity.com', page: 'humacity', external: true },
+          { icon: IC.map, label: 'Platform Tour', sub: 'Guided walkthrough', href: 'platform-tour.html', page: 'platform-tour' },
+          { icon: IC.globe, label: 'Humacity', sub: '', href: 'https://humacity.com', page: 'humacity', external: true },
         ]
       },
       {
         title: 'Your Foundation',
         items: [
-          { icon: '\u2B21', label: 'MERIDIAN Profile', sub: '8-parameter context', href: 'onboarding.html', page: 'onboarding' },
-          { icon: '\uD83D\uDCC8', label: 'Humac Score', sub: 'Your people finance number', href: 'humac-onboarding.html', page: 'humac-onboarding' },
+          { icon: IC.hex, label: 'MERIDIAN Profile', sub: '8-parameter context', href: 'onboarding.html', page: 'onboarding' },
+          { icon: IC.chart, label: 'Humac Score', sub: 'Your people finance number', href: 'humac-onboarding.html', page: 'humac-onboarding' },
         ]
       },
       {
         title: 'Your HRBP',
         items: [
-          { icon: '\u2736', label: 'ARIA', sub: 'Your private HR intelligence ally', href: 'aria.html', page: 'aria' },
+          { icon: IC.sparkle, label: 'ARIA', sub: 'Your private HR intelligence ally', href: 'aria.html', page: 'aria' },
         ]
       },
       {
         title: 'Your Core Tools',
         items: [
-          { icon: '\u26A1', label: 'Employee Case Advisor', sub: 'Navigate any employee situation', href: 'employee-case-advisor.html', page: 'er-case-navigator' },
-          { icon: '\uD83D\uDCBC', label: 'The Business Case', sub: 'Numbers for the room, or one specific person', href: 'people-roi-brief.html', page: 'business-case' },
-          { icon: '\uD83E\uDDED', label: 'Policy Advisor', sub: 'Applicable law, every time', href: 'policy-advisor.html', page: 'policy-compass' },
-          { icon: '\u2696\uFE0F', label: 'Retention Advisor', sub: 'Stay or go: model the cost', href: 'retention-advisor.html', page: 'offer-intelligence' },
-          { icon: '\uD83C\uDFAD', label: 'Difficult Conversations', sub: 'Rehearse before you walk in', href: 'difficult-conversations.html', page: 'conversation-simulator' },
+          { icon: IC.bolt, label: 'Employee Case Advisor', sub: 'Navigate any employee situation', href: 'employee-case-advisor.html', page: 'er-case-navigator' },
+          { icon: IC.briefcase, label: 'The Business Case', sub: 'Numbers for the room, or one specific person', href: 'people-roi-brief.html', page: 'business-case' },
+          { icon: IC.book, label: 'Policy Advisor', sub: 'Applicable law, every time', href: 'policy-advisor.html', page: 'policy-compass' },
+          { icon: IC.scale, label: 'Retention Advisor', sub: 'Stay or go: model the cost', href: 'retention-advisor.html', page: 'offer-intelligence' },
+          { icon: IC.chat, label: 'Difficult Conversations', sub: 'Rehearse before you walk in', href: 'difficult-conversations.html', page: 'conversation-simulator' },
         ]
       },
       {
         title: 'Your Record',
         items: [
-          { icon: '\uD83D\uDCDC', label: 'Standpoint', sub: 'File your position before the outcome', href: 'standpoint.html', page: 'ledger' },
-          { icon: '\uD83D\uDCCB', label: 'The Debrief', sub: 'Auto-generated monthly', href: 'debrief.html', page: 'debrief' },
-          { icon: '🗄️', label: 'Vantage Record', sub: 'Your complete case archive', href: 'vantage-record.html', page: 'case-library' },
+          { icon: IC.pin, label: 'Standpoint', sub: 'File your position before the outcome', href: 'standpoint.html', page: 'ledger' },
+          { icon: IC.file, label: 'The Debrief', sub: 'Auto-generated monthly', href: 'debrief.html', page: 'debrief' },
+          { icon: IC.archive, label: 'Vantage Record', sub: 'Your complete case archive', href: 'vantage-record.html', page: 'case-library' },
         ]
       },
       {
         title: 'Account',
         items: [
-          { icon: '\uD83E\uDE99', label: 'Pricing', sub: '', href: 'pricing.html', page: 'pricing' },
-          { icon: '\uD83D\uDD12', label: 'My Data & Privacy', sub: 'Your data settings', href: 'data-dashboard.html', page: 'data-dashboard' },
-          { icon: '\u21A9', label: 'Sign Out', sub: '', href: 'access.html', page: 'signout', signout: true },
+          { icon: IC.tag, label: 'Pricing', sub: '', href: 'pricing.html', page: 'pricing' },
+          { icon: IC.shield, label: 'My Data & Privacy', sub: 'Your data settings', href: 'data-dashboard.html', page: 'data-dashboard' },
+          { icon: IC.logout, label: 'Sign Out', sub: '', href: 'access.html', page: 'signout', signout: true },
         ]
       },
       {
         title: 'Legal',
         items: [
-          { icon: '\uD83D\uDCC4', label: 'Terms of Service', sub: '', href: 'terms.html', page: 'terms' },
-          { icon: '\uD83D\uDD12', label: 'Privacy Policy', sub: '', href: 'privacy.html', page: 'privacy' },
+          { icon: IC.doc, label: 'Terms of Service', sub: '', href: 'terms.html', page: 'terms' },
+          { icon: IC.lock, label: 'Privacy Policy', sub: '', href: 'privacy.html', page: 'privacy' },
         ]
       },
     ];
