@@ -3091,6 +3091,31 @@
   font-size: inherit !important;
   line-height: inherit !important;
 }
+
+/* SR28 — mobile congestion fix. Desktop confirmed correct by user; this
+   is scoped to narrow viewports only. On mobile, every hero statement
+   wraps to 2-3 lines instead of 1, so each paragraph block is much
+   taller — but the margins between blocks (kicker's 20px bottom margin
+   colliding/collapsing with accent1's 0.3em top margin, per standard
+   CSS adjacent-sibling margin collapsing, nets out to just ~20px) stayed
+   fixed at desktop-appropriate values. Against much taller wrapped
+   blocks, that reads as "Alone." sitting almost on top of "You are HR
+   for everyone." — the exact congestion in the screenshot. Desktop
+   rules above are untouched; only mobile spacing is widened here. */
+@media (max-width: 700px) {
+  #top .hero-title .hero-kicker {
+    margin: 0 0 36px !important;
+  }
+  #top .hero-title .line.accent {
+    margin-top: 0.6em !important;
+  }
+  #top .hero-title .line.accent + .line.accent {
+    margin-top: 0.7em !important;
+  }
+  #top #heroEnter {
+    margin-top: 28px !important;
+  }
+}
 </style>
 <style id="prologue-startup-guard">
 /* Startup guard: later inline typography overrides must not expose the
