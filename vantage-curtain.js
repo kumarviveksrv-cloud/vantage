@@ -50,7 +50,7 @@
     }
     document.querySelectorAll('span.accent').forEach(el=>{
       el.style.setProperty('display','block','important');
-      el.style.setProperty('font-style','italic','important');
+      el.style.setProperty('font-style', 'normal', 'important')
       el.style.setProperty('font-family',"'Cormorant Garamond',serif",'important');
       el.style.setProperty('background', grad,'important');
       el.style.setProperty('-webkit-background-clip','text','important');
@@ -2588,7 +2588,7 @@
        keeps the accent styling but reads as one cohesive colour. */
     const gradientCSS = 'background:linear-gradient(135deg,#d8cbff 0%,#b39ef0 100%);'+
       '-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;'+
-      'padding-right:.12em;margin-right:-.12em;';
+      'padding-right:.12em;margin-right:-.12em;font-style:normal;'; /* SR24 */
     const spans = words.map((w,i)=>{
       const span = document.createElement('span');
       span.textContent = w + (i < words.length-1 ? '\u00A0' : '');
