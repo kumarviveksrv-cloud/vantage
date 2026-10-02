@@ -3018,19 +3018,20 @@
   display: flex !important;
 }
 
-/* Hero h1 sized down a notch — more elegant, less overwhelming (SR18) */
-.hero-title {
+/* ═══════════════════════════════════════════════════════════════════════
+   HERO TYPOGRAPHY — ONE STANDARD SIZE
+   All five hero statements intentionally use the same type scale.
+   Reference size: "Every HR professional has had that 9 pm moment."
+   ═══════════════════════════════════════════════════════════════════════ */
+
+#top .hero-title .line,
+#top .hero-title .hero-kicker {
   font-size: clamp(30px, 4vw, 52px) !important;
 }
-/* Breathing room between the two accent lines */
-.hero-title .line.accent + .line.accent {
+
+/* Preserve the deliberate breathing room before the final question */
+#top .hero-title .line.accent + .line.accent {
   margin-top: 0.5em;
-}
-/* SR24 v2: ID-anchored so this beats any class-only rule in external CSS.
-   #top is the hero section's own id. Specificity 1,2,0 beats any 0,n,0 rule. */
-#top .hero-title .line.dim:not(.hero-context),
-#top .hero-title .line.accent {
-  font-size: clamp(30px, 4vw, 52px) !important;
 }
 </style>
 <style id="prologue-startup-guard">
