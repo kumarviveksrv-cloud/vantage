@@ -1680,7 +1680,7 @@
 }
 .hero-kicker {
   font-family: 'Cormorant Garamond', serif !important;
-  font-style: normal !important; /* SR25: user explicitly does not want this italicized */
+  font-style: normal !important; /* SR26: user explicitly does not want this italicized */
   font-weight: 400 !important;
   letter-spacing: .01em !important;
   /* font-size unified in SR24 master block — see end of inline CSS */
@@ -3016,23 +3016,27 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   HERO MASTER TYPE SCALE (SR25)
-   One standard size + one standard line-height for every primary hero
-   statement. Reference: "Every HR professional has had that 9 pm moment."
+   HERO MASTER TYPE SCALE (SR26)
+   Sized to match .hero-tagline (clamp(19px,2vw,26px)) — the line the user
+   confirmed reads as the correct, elegant scale ("Your Personal HR
+   Business Partner. Not the org's. Yours."). The SR25 scale (clamp(30,4,52))
+   was reported as "obscenely big" at 80% zoom and screaming for attention.
+   Reference: "Every HR professional has had that 9 pm moment." now sits
+   at the SAME scale as the tagline below it, not dramatically larger.
    Differentiation between lines comes from colour, weight, italic, opacity,
    spacing and animation — NEVER font size.
    ═══════════════════════════════════════════════════════════════════════ */
 
 #top .hero-title {
-  font-size: clamp(30px, 4vw, 52px) !important;
-  line-height: 1.12 !important;
+  font-size: clamp(19px, 2vw, 26px) !important;
+  line-height: 1.3 !important;
 }
 
 #top .hero-title .line,
 #top .hero-title .hero-kicker,
 #top #heroEnter {
-  font-size: clamp(30px, 4vw, 52px) !important;
-  line-height: 1.12 !important;
+  font-size: clamp(19px, 2vw, 26px) !important;
+  line-height: 1.3 !important;
 }
 
 /* Kicker: roman (not italic — explicit user request), matches size + line-height */
@@ -3041,12 +3045,14 @@
   font-family: 'Cormorant Garamond', serif !important;
   font-style: normal !important;
   font-weight: 400 !important;
-  margin: 0 0 24px !important;
+  margin: 0 0 18px !important;
 }
 
-/* Breathing room between the two accent questions */
+/* Breathing room between the two accent questions — scaled down to match
+   the smaller type size (was 0.35em against a 52px base; 0.5em against
+   this 26px base keeps the same visual gap in actual pixels) */
 #top .hero-title .line.accent + .line.accent {
-  margin-top: 0.35em !important;
+  margin-top: 0.5em !important;
 }
 
 /* Prevent any nested animation span (from fadeInWords etc) from
