@@ -221,18 +221,18 @@
 </div>
 
 <div class="tool-tabs">
-  <div class="tool-tab active tab-live" id="tab-pact" onclick="switchTool('pact')"><span class="tab-live-dot"></span>&#x26A1; Employee Case Advisor</div>
-  <div class="tool-tab" id="tab-business_case" onclick="switchTool('business_case')">&#x1F4BC; The Business Case</div>
-  <div class="tool-tab" id="tab-policy" onclick="switchTool('policy')">&#x2696;&#xFE0F; Policy Advisor</div>
-  <div class="tool-tab" id="tab-offer" onclick="switchTool('offer')">&#x1F4BC; Retention Advisor</div>
-  <div class="tool-tab" id="tab-practice" onclick="switchTool('practice')">&#x1F3AD; Difficult Conversations</div>
-  <div class="tool-tab" id="tab-aria" onclick="switchTool('aria')">&#x2728; ARIA</div>
+  <div class="tool-tab active tab-live" id="tab-pact" onclick="switchTool('pact')"><span class="tab-live-dot"></span><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h8L10 22l10-12h-8L13 2z"/></svg></span> Employee Case Advisor</div>
+  <div class="tool-tab" id="tab-business_case" onclick="switchTool('business_case')"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></span> The Business Case</div>
+  <div class="tool-tab" id="tab-policy" onclick="switchTool('policy')"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span> Policy Advisor</div>
+  <div class="tool-tab" id="tab-offer" onclick="switchTool('offer')"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><path d="M7 3h10"/><path d="M3.5 9l3.5 7H0l3.5-7zM16.5 9l3.5 7H13l3.5-7z"/></svg></span> Retention Advisor</div>
+  <div class="tool-tab" id="tab-practice" onclick="switchTool('practice')"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span> Difficult Conversations</div>
+  <div class="tool-tab" id="tab-aria" onclick="switchTool('aria')"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2 5.5 5.5 2-5.5 2L12 17l-2-5.5L4.5 9.5l5.5-2z"/><path d="M19 17l.7 2.3L22 20l-2.3.7L19 23l-.7-2.3L16 20l2.3-.7z"/></svg></span> ARIA</div>
 </div>
 
 <div class="demo-panel">
   <div id="pact-tool">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x26A1; Employee Case Advisor <div class="demo-tag" style="background:rgba(52,211,153,0.15);color:#34d399;border-color:rgba(52,211,153,0.3)">Live &middot; Your Real Case</div></div></div>
+      <div class="demo-card-header"><div class="demo-card-title"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h8L10 22l10-12h-8L13 2z"/></svg></span> Employee Case Advisor <div class="demo-tag" style="background:rgba(52,211,153,0.15);color:#34d399;border-color:rgba(52,211,153,0.3)">Live &middot; Your Real Case</div></div></div>
       <div class="scenario-label">Describe your actual situation. This one&rsquo;s real, not a script</div>
       <textarea id="live-input" class="live-textarea" maxlength="800" placeholder="e.g. Employee has been marking attendance as present while working from an unapproved location for 3 weeks. No prior written warnings on file. Manager wants to terminate today."></textarea>
       <div class="scenario-note" id="live-charcount">0 / 800 &middot; one free, real answer per visitor. No sign-up needed to see it.</div>
@@ -240,14 +240,14 @@
         <input type="checkbox" id="live-consent" style="margin-top:2px;accent-color:#6366f1" onchange="document.getElementById('pact-run-btn').disabled=!this.checked">
         I understand this isn&rsquo;t legal advice, and my anonymised input is processed by AI to generate this answer.
       </label>
-      <button class="run-btn" id="pact-run-btn" onclick="runLivePreview()" disabled>&#x26A1; Get My Real Answer</button>
+      <button class="run-btn" id="pact-run-btn" onclick="runLivePreview()" disabled><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h8L10 22l10-12h-8L13 2z"/></svg></span> Get My Real Answer</button>
       <div class="loading-wrap" id="pact-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">READING YOUR SITUATION...</div></div>
       <div class="output-wrap" id="pact-output"></div>
     </div>
   </div>
   <div id="business_case-tool" style="display:none">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x1F4BC; The Business Case <div class="demo-tag">Demo</div></div></div>
+      <div class="demo-card-header"><div class="demo-card-title"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></span> The Business Case <div class="demo-tag">Demo</div></div></div>
       <div class="scenario-label">Two ways this tool works &mdash; try either</div>
       <div style="display:flex;gap:10px;margin-bottom:18px">
         <div class="tool-tab active" id="bc-tab-general" onclick="switchBCDemo('general')" style="flex:1;justify-content:center">CFO Presentation</div>
@@ -258,7 +258,7 @@
         <div class="scenario-label">Pre-loaded scenario</div>
         <div class="scenario-text">Attrition rate: 22% (up from 14% last quarter). Time to hire: 58 days. Engagement score: 54%. Open positions: 18. Average CTC: &#8377;14L. Audience: CFO. Context: Engineering attrition spike: need budget approval for &#8377;22L retention programme.</div>
         <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you enter your own metrics and context.</div>
-        <button class="run-btn" id="signal-run-btn" onclick="runSIGNAL()">&#x1F4CA; Generate ROI Narrative</button>
+        <button class="run-btn" id="signal-run-btn" onclick="runSIGNAL()"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></span> Generate ROI Narrative</button>
         <div class="loading-wrap" id="signal-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">BUILDING ROI NARRATIVE...</div></div>
         <div class="output-wrap" id="signal-output"></div>
       </div>
@@ -267,7 +267,7 @@
         <div class="scenario-label">Pre-loaded scenario</div>
         <div class="scenario-text">Priya Nair, senior engineer, 4 years tenure, sole owner of the payments migration, has a signed competing offer 32% above her current CTC. You need the VP Engineering to approve a counter-offer by Wednesday.</div>
         <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you describe your own stakeholder and ask.</div>
-        <button class="run-btn" id="influence-run-btn" onclick="runInfluence()">&#x1F91D; Build Influence Stack</button>
+        <button class="run-btn" id="influence-run-btn" onclick="runInfluence()"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></span> Build Influence Stack</button>
         <div class="loading-wrap" id="influence-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">BUILDING INFLUENCE STACK...</div></div>
         <div class="output-wrap" id="influence-output"></div>
       </div>
@@ -275,29 +275,29 @@
   </div>
   <div id="policy-tool" style="display:none">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x2696;&#xFE0F; Policy Advisor <div class="demo-tag">Demo &middot; PIP Compliance</div></div></div>
+      <div class="demo-card-header"><div class="demo-card-title"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span> Policy Advisor <div class="demo-tag">Demo &middot; PIP Compliance</div></div></div>
       <div class="scenario-label">Pre-loaded question</div>
       <div class="scenario-text">&ldquo;Can we terminate someone right after a failed PIP without a separate notice period, since the PIP itself already warned them?&rdquo;</div>
       <div class="scenario-note">Question is pre-filled for this demo. On the full platform, you ask your own policy question.</div>
-      <button class="run-btn" id="policy-run-btn" onclick="runPolicy()">&#x2696;&#xFE0F; Get Policy Guidance</button>
+      <button class="run-btn" id="policy-run-btn" onclick="runPolicy()"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span> Get Policy Guidance</button>
       <div class="loading-wrap" id="policy-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">CHECKING LEGAL POSITION...</div></div>
       <div class="output-wrap" id="policy-output"></div>
     </div>
   </div>
   <div id="offer-tool" style="display:none">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x1F4BC; Retention Advisor <div class="demo-tag">Demo &middot; Counter-Offer Modelling</div></div></div>
+      <div class="demo-card-header"><div class="demo-card-title"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><path d="M7 3h10"/><path d="M3.5 9l3.5 7H0l3.5-7zM16.5 9l3.5 7H13l3.5-7z"/></svg></span> Retention Advisor <div class="demo-tag">Demo &middot; Counter-Offer Modelling</div></div></div>
       <div class="scenario-label">Pre-loaded scenario</div>
       <div class="scenario-text">Same Priya Nair case: current CTC &#8377;22L, competing offer &#8377;29L (32% premium), A-band performer, 4 years tenure, high role criticality.</div>
       <div class="scenario-note">Scenario is pre-filled for this demo. On the full platform, you enter your own employee&rsquo;s numbers.</div>
-      <button class="run-btn" id="offer-run-btn" onclick="runOffer()">&#x1F4BC; Model the Retention Decision</button>
+      <button class="run-btn" id="offer-run-btn" onclick="runOffer()"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><path d="M7 3h10"/><path d="M3.5 9l3.5 7H0l3.5-7zM16.5 9l3.5 7H13l3.5-7z"/></svg></span> Model the Retention Decision</button>
       <div class="loading-wrap" id="offer-loading"><div class="loading-orb"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="24" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="2"/><circle cx="28" cy="28" r="24" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="38 114" stroke-linecap="round"/></svg></div><div class="loading-text">RUNNING FINANCIAL MODEL...</div></div>
       <div class="output-wrap" id="offer-output"></div>
     </div>
   </div>
   <div id="practice-tool" style="display:none">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x1F3AD; Difficult Conversations <div class="demo-tag">Example &middot; Denied Promotion</div></div></div>
+      <div class="demo-card-header"><div class="demo-card-title"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span> Difficult Conversations <div class="demo-tag">Example &middot; Denied Promotion</div></div></div>
       <div class="scenario-label">Example transcript &middot; read-only preview</div>
       <div class="scenario-text">On the full platform this is a live, typed back-and-forth. Below is a real example of how a session plays out, so you can see the shape of it before you try it yourself.</div>
       <div class="transcript-wrap">
@@ -320,7 +320,7 @@
   </div>
   <div id="aria-tool" style="display:none">
     <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title">&#x2728; ARIA <div class="demo-tag">Example &middot; Reflection Mode</div></div></div>
+      <div class="demo-card-header"><div class="demo-card-title"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2 5.5 5.5 2-5.5 2L12 17l-2-5.5L4.5 9.5l5.5-2z"/><path d="M19 17l.7 2.3L22 20l-2.3.7L19 23l-.7-2.3L16 20l2.3-.7z"/></svg></span> ARIA <div class="demo-tag">Example &middot; Reflection Mode</div></div></div>
       <div class="scenario-label">Example conversation &middot; read-only preview</div>
       <div class="scenario-text">ARIA is your permanent coaching companion inside Vantage. This is a real example of a Reflection mode session, shown as a preview since this is a conversational experience.</div>
       <div class="transcript-wrap">
