@@ -229,7 +229,7 @@
   <div id="no-score-state" style="display:none">
     <div class="no-score-card">
       <div class="no-score-title">No baseline score found</div>
-      <div class="no-score-sub">You need to establish a Humac Score baseline before running a check-in. The baseline is your starting point — the check-in measures how far you've moved from it.</div>
+      <div class="no-score-sub">You need to establish a Humac Score baseline before running a check-in. The baseline is your starting point — the check-in measures how the provisional index has moved from it, only where the same pillars were scored both times.</div>
       <a href="humac-onboarding.html" class="btn-primary">Establish your baseline →</a>
     </div>
   </div>
@@ -273,13 +273,16 @@
     document.getElementById('score-humac').innerText   = data.humac   || 0;
     document.getElementById('score-hci-adj').innerText = data.hciAdj  || 0;
 
-    // Band chip
+    // Band chip — "Provisional band" is deliberately printed here, not just
+    // implied: this chip is the one element on this page a screenshot
+    // isolates, so the word needs to travel with it rather than relying on
+    // the score-label or expect-card copy elsewhere on the page.
     var band  = data.band || '';
     var bstyle = getBandStyle(band);
     var chip  = document.getElementById('band-chip');
     chip.innerHTML =
       '<span style="width:7px;height:7px;border-radius:50%;background:' + bstyle.color +
-      ';display:inline-block;margin-right:6px"></span>' + (band || '—');
+      ';display:inline-block;margin-right:6px"></span>Provisional band: ' + (band || '—');
     chip.style.cssText += ';color:' + bstyle.color + ';background:' + bstyle.bg +
       ';border:1px solid ' + bstyle.border;
 
@@ -332,14 +335,14 @@ if (trajComparable && traj.delta !== 0) {
       trajEl.innerHTML =
         '<div class="traj-row">' +
           '<div class="traj-delta" style="color:' + color + '">' + arrow + ' ' + sign + delta + '</div>' +
-          '<div class="traj-label">points since your last check-in.<br>' +
+          '<div class="traj-label">provisional points since your last check-in.<br>' +
           (data.checkInNumber ? 'Check-in #' + data.checkInNumber + '.' : '') + '</div>' +
         '</div>';
     } else if (trajComparable && traj.delta === 0) {
       trajEl.innerHTML =
         '<div class="traj-row">' +
           '<div class="traj-delta" style="color:#a5b4fc">→ 0</div>' +
-          '<div class="traj-label">No movement since your last check-in.<br>Score held steady.</div>' +
+          '<div class="traj-label">No movement since your last check-in.<br>Provisional score held steady.</div>' +
         '</div>';
         } else if (traj && traj.comparable === false) {
       trajEl.innerHTML =
