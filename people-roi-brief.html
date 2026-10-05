@@ -863,10 +863,10 @@
       document.getElementById('humac-breakdown').innerHTML = (humac.breakdown || []).map(function(item) {
         return '<div class="humac-breakdown-item"><span class="humac-breakdown-dot">·</span><span>' + item + '</span></div>';
       }).join('');
-      if (humac.trajectoryConnection) {
-        document.getElementById('humac-trajectory').innerText = humac.trajectoryConnection;
-        document.getElementById('humac-trajectory-wrap').style.display = 'block';
-      }
+      if (humac.trajectorySignal) {
+  document.getElementById('humac-trajectory').innerText = humac.trajectorySignal;
+  document.getElementById('humac-trajectory-wrap').style.display = 'block';
+}
 
       // S: Situation
       var sit = sig.situation || {};
@@ -1204,10 +1204,10 @@
         document.getElementById('hi-pillar').innerText = h.pillar ? 'Humac ' + h.pillar : '\u2014';
         document.getElementById('hi-confidence').innerText = (h.confidence || '\u2014') + ' confidence';
         document.getElementById('hi-meridian').innerText = (h.pillarRationale ? h.pillarRationale + ' ' : '') + (h.meridianCalibration || '');
-        if (h.trajectoryNote) {
-          document.getElementById('hi-trajectory').innerText = h.trajectoryNote;
-          document.getElementById('hi-traj-wrap').style.display = 'block';
-        }
+        if (h.trajectorySignal) {
+  document.getElementById('hi-trajectory').innerText = h.trajectorySignal;
+  document.getElementById('hi-traj-wrap').style.display = 'block';
+}
         document.getElementById('humac-influence-card').style.display = 'block';
       }
 
