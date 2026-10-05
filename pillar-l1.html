@@ -229,11 +229,11 @@ var scenario='base';
 /* Planning assumptions. Base matches the previous point estimates.
    L4 must read vantage_l1_book and must not reprice these cohorts. */
 var ASSUMPTIONS={
-  retention:{low:1.2,base:1.8,high:2.5,cost:0.05,label:'Replacement-cost multiple',note:'Common planning range for replacement cost is about 0.5–2.0× salary. 1.8 is the high base, not a measured return.'},
-  hire:{low:1.0,base:1.4,high:1.8,cost:0.15,label:'Quality-of-hire multiple',note:'First-year value of a revenue-role hire, as a planning multiple of salary. Not an observed revenue attribution.'},
-  dri:{low:1.5,base:2.8,high:4.0,spend:0.04,label:'Development return index',note:'Multiplier on structured development spend. Uncalibrated until a before/after performance check exists.'},
-  engage:{low:0.03,base:0.08,high:0.12,cost:0.01,label:'Tenure productivity premium',note:'Output premium attributed to long tenure. A hypothesis, not a measured productivity study.'},
-  risk:{low:0.30,base:0.60,high:0.80,cost:0.02,label:'Risk contained',note:'Share of at-risk salary treated as exposure contained by active management.'}
+  retention:{low:0.5,base:1.0,high:2.0,cost:0.05,label:'Replacement-cost multiple',note:'Role-mix planning range, 0.5–2.0× pay. Base is 1.0×, the middle of a mixed workforce, not a senior-only 1.8×.'},
+  hire:{low:0.5,base:1.0,high:1.5,cost:0.15,label:'Quality-of-hire multiple',note:'Attributed first-year value of a revenue-role hire. Planning range, not observed revenue.'},
+  dri:{low:0,base:1.0,high:3.0,spend:0.02,label:'Development return index',note:'Applied to 2% of pay. Base return is 2% of salary. The old 2.8× on 4% of pay is retired.'},
+  engage:{low:0.02,base:0.03,high:0.06,cost:0.01,label:'Tenure productivity premium',note:'2–6% of pay, base 3%. A planning premium, not a productivity study.'},
+  risk:{low:0.15,base:0.30,high:0.50,cost:0.02,label:'Risk contained',note:'0.15–0.50× pay, base 0.30×. Not 0.60× of salary booked as contained.'}
 };
 function m(key){return ASSUMPTIONS[key][scenario];}
 function fmtINR(n){
@@ -253,7 +253,7 @@ function computeRealLedger(a){
   if(!inputsPresent) return {rows:[], totalCost:0, totalRet:0, totalNet:0, compBase:compBase, avgSalary:0, insufficient:true, reason:'Headcount and compensation base are required before a computed ledger can be shown.'};
   if(stars>0){var ss=stars*avgSalary;rows.push({id:'E001',key:'retention',action:'Retention Savings',note:stars+' Star'+(stars!==1?'s':'')+' retained \xd7 '+m('retention').toFixed(2)+'\xd7 salary \u2014 replacement-cost assumption',pill:'Cost-Saving',pillCls:'p-cost',cost:ss*ASSUMPTIONS.retention.cost,ret:ss*m('retention'),formula:'Stars ('+stars+') \xd7 avg salary (\u20b9'+Math.round(avgSalary).toLocaleString('en-IN')+') \xd7 '+m('retention').toFixed(2)+' = assumed replacement cost avoided',working:ASSUMPTIONS.retention.note});}
   if(revHires>0){var rs=revHires*avgSalary;rows.push({id:'E002',key:'hire',action:'Quality of Hire',note:revHires+' revenue-role hire'+(revHires!==1?'s':'')+' (last 12mo) \xd7 salary \xd7 '+m('hire').toFixed(2),pill:'Revenue-Generating',pillCls:'p-rev',cost:rs*ASSUMPTIONS.hire.cost,ret:rs*m('hire'),formula:'Revenue-role hires ('+revHires+') \xd7 avg salary \xd7 '+m('hire').toFixed(2)+' = planning value, not observed revenue',working:ASSUMPTIONS.hire.note});}
-  if(emerging>0){var dc=emerging*avgSalary*ASSUMPTIONS.dri.spend;rows.push({id:'E003',key:'dri',action:'Development Return',note:emerging+' Emerging Talent \xd7 4% dev spend \xd7 '+m('dri').toFixed(1)+' DRI',pill:'Development',pillCls:'p-dev',cost:dc,ret:dc*m('dri'),formula:'Emerging Talent ('+emerging+') \xd7 avg salary \xd7 4% \xd7 '+m('dri').toFixed(1)+' DRI',working:ASSUMPTIONS.dri.note});}
+  if(emerging>0){var dc=emerging*avgSalary*ASSUMPTIONS.dri.spend;rows.push({id:'E003',key:'dri',action:'Development Return',note:emerging+' Emerging Talent \xd7 2% dev spend \xd7 '+m('dri').toFixed(1)+' DRI',pill:'Development',pillCls:'p-dev',cost:dc,ret:dc*m('dri'),formula:'Emerging Talent ('+emerging+') \xd7 avg salary \xd7 2% \xd7 '+m('dri').toFixed(1)+' DRI',working:ASSUMPTIONS.dri.note});}
   if(tenured5>0){var ts=tenured5*avgSalary;rows.push({id:'E004',key:'engage',action:'Engagement Premium',note:tenured5+' employee'+(tenured5!==1?'s':'')+' at 5+ yrs tenure \xd7 '+(m('engage')*100).toFixed(0)+'% premium assumption',pill:'Culture & Engagement',pillCls:'p-culture',cost:ts*ASSUMPTIONS.engage.cost,ret:ts*m('engage'),formula:'Tenured 5+ yrs ('+tenured5+') \xd7 avg salary \xd7 '+(m('engage')*100).toFixed(0)+'%',working:ASSUMPTIONS.engage.note});}
   if(atRisk>0){var as2=atRisk*avgSalary;rows.push({id:'E005',key:'risk',action:'Risk Management Value',note:atRisk+' at-risk performer'+(atRisk!==1?'s':'')+' \xd7 '+(m('risk')*100).toFixed(0)+'% exposure assumed contained',pill:'Risk & Compliance',pillCls:'p-risk',cost:as2*ASSUMPTIONS.risk.cost,ret:as2*m('risk'),formula:'At-risk performers ('+atRisk+') \xd7 avg salary \xd7 '+(m('risk')*100).toFixed(0)+'%',working:ASSUMPTIONS.risk.note});}
   var totalCost=rows.reduce(function(s,r){return s+r.cost;},0);
