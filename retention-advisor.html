@@ -640,7 +640,7 @@
         html += '</div>';
 
         // Risk rationale
-        html += '<div class="rec-card"><div class="rec-eyebrow">🔭 Flight Risk Assessment</div><div class="rec-figure">' + (ep2.flightRisk || '') + ' Risk</div><div class="rec-rationale">' + (ep2.flightRiskRationale || '') + '</div></div>';
+        html += '<div class="rec-card"><div class="rec-eyebrow">🔭 Flight Risk Assessment</div><div class="rec-figure">' + (ep2.flightRisk ? ep2.flightRisk + ' Risk' : 'Not assessed') + '</div><div class="rec-rationale">' + (ep2.flightRiskRationale || '') + '</div></div>';
 
         // Financial stakes
         var costLoss = fm2.costOfLosingThem || {};
