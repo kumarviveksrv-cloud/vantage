@@ -30,9 +30,9 @@ var MODALS = {
     icon: '◈',
     name: 'ARIA',
     tagline: 'Your private HR intelligence, on call at 9pm.',
-    what: 'ARIA is a context-aware intelligence layer built on your organisation\'s exact reality: your state, your policies, your case history. Not a chatbot. Not a generic AI trained on someone else\'s problems.',
-    does: 'She reads your situation, asks the right questions back, and gives you advice calibrated to your reality — the kind that would survive a boardroom challenge.',
-    start: 'Tell ARIA what\'s happening right now. The more specific you are (role, stakes, what\'s been tried), the more precise the advice.',
+    what: 'ARIA is a context-aware intelligence layer calibrated to your organisation\'s context: your state, your policies, your case history. Not a chatbot. Not a generic AI trained on someone else\'s problems.',
+    does: 'She reads your situation, asks the right questions back, and gives you guidance calibrated to your context — built to hold up well if challenged, not guaranteed to.',
+    start: 'Tell ARIA what\'s happening right now. The more specific you are (role, stakes, what\'s been tried), the more precise the guidance.',
     next: 'case-library',
     nextLabel: 'Vantage Record'
   },
@@ -40,8 +40,8 @@ var MODALS = {
     icon: '◉',
     name: 'The Debrief',
     tagline: 'Your month, synthesised and sent to you.',
-    what: 'The Debrief is auto-generated on the last working day of every month. You don\'t write it. Vantage does. It reads your entire month\'s activity and produces a professional narrative: cases navigated, tools used, financial exposure managed, growth signal, and one provocation.',
-    does: 'Twelve Debriefs become a year. A year becomes a career record that answers the question every HR leader eventually faces: what have I actually delivered? You receive it. You don\'t build it.',
+    what: 'The Debrief is auto-generated on the last working day of every month. You don\'t write it. Vantage does. It reads your entire month\'s activity and produces a professional narrative: cases navigated, tools used, modelled financial exposure, growth signal, and one provocation.',
+    does: 'Twelve Debriefs become a year. A year becomes a documented record you can point to when reflecting on what you worked through. You receive it. You don\'t build it.',
     start: 'Use the platform through the month: every tool session, every case, every conversation feeds into it. The Debrief arrives automatically at month end.',
     next: null,
     nextLabel: null
@@ -60,8 +60,8 @@ var MODALS = {
     icon: '⬡',
     name: 'Humac Score',
     tagline: 'One number that speaks the CFO\'s language.',
-    what: 'The Humac Score synthesises five forces (Value Ledger, Talent Premium, Org Vitals, Human P&L, and Net Human Worth) into a single index that quantifies HR\'s financial contribution to the organisation.',
-    does: 'Gives leadership a number they can read, track, and benchmark against. Not a feeling. Not a survey. A calculation that survives cross-examination.',
+    what: 'The Humac Score synthesises five forces (Value Ledger, Talent Premium, Org Vitals, Human P&L, and Net Human Worth) into a single provisional index modelling HR\'s financial contribution to the organisation.',
+    does: 'Gives leadership a number they can read, track, and benchmark against. Not a feeling. Not a survey. A modelled estimate, not a verified or audited figure.',
     start: 'Complete the onboarding below to build your baseline score. It takes about 10 minutes and unlocks your full Humacity profile.',
     next: null,
     nextLabel: null
@@ -70,18 +70,18 @@ var MODALS = {
     icon: '⚡',
     name: 'Employee Case Advisor',
     tagline: 'Navigate any employee situation, with the full picture.',
-    what: 'Employee Case Advisor takes your real situation — a termination, a POSH complaint, a disciplinary issue, a PIP, an absenteeism case — and tells you exactly what to do, what process to follow, and what the financial exposure looks like if you get it wrong.',
-    does: 'Calibrated to your state, your industry, and your org type. Every recommendation is grounded in the law that actually applies to you, not generic HR advice.',
-    start: 'Describe the situation as it is right now. The more specific you are (what happened, who\'s involved, what\'s been done), the more precise the advice.',
+    what: 'Employee Case Advisor takes your real situation — a termination, a POSH complaint, a disciplinary issue, a PIP, an absenteeism case — and gives you guidance on what to consider, what process to follow, and what the financial exposure could look like if it\'s mishandled.',
+    does: 'Calibrated to your state, your industry, and your org type. Recommendations are grounded in the law relevant to your situation, not generic HR advice, but this is guidance, not a decision on the case.',
+    start: 'Describe the situation as it is right now. The more specific you are (what happened, who\'s involved, what\'s been done), the more precise the guidance.',
     next: 'offer-intelligence',
     nextLabel: 'Retention Advisor'
   },
   'policy-compass': {
     icon: '🧭',
     name: 'Policy Advisor',
-    tagline: 'The right policy for your exact situation, not a template.',
+    tagline: 'A policy draft calibrated to your situation, not a template.',
     what: 'Policy Advisor generates policy frameworks calibrated to your state, industry, and organisation type. Built on India\'s actual legal framework (BNS, BNSS, BSA), not generic HR boilerplate.',
-    does: 'Drafts defensible policies grounded in the regulations that actually apply to you. Jurisdiction-specific, role-aware, and ready to withstand challenge.',
+    does: 'Drafts policy frameworks grounded in the regulations relevant to you. Jurisdiction-specific and role-aware, a starting draft to review and adapt, not a tested or finalised policy.',
     start: 'Describe the policy gap you\'re trying to fill: what\'s unclear, what\'s missing, what situation triggered this. Policy Advisor builds from there.',
     next: 'aria',
     nextLabel: 'ARIA'
@@ -90,8 +90,8 @@ var MODALS = {
     icon: '💼',
     name: 'The Business Case',
     tagline: 'Numbers for the room, or an argument for one specific person.',
-    what: 'The Business Case has two modes. The general flow builds a board-ready SIGNAL narrative from your HR metrics — revenue at risk, financial anchors, the argument your CFO cannot dismiss. The stakeholder flow maps how one specific leader receives information and frames your recommendation to land with them.',
-    does: 'Same facts. Right framing. Whether you\'re presenting to a room or walking into a one-on-one that matters, The Business Case builds the argument from your real Humac Score data — not sector benchmarks.',
+    what: 'The Business Case has two modes. The general flow builds a board-ready SIGNAL narrative from your HR metrics — revenue at risk, financial anchors, an argument that\'s harder to wave away than an opinion. The stakeholder flow maps how one specific leader receives information and frames your recommendation to land with them.',
+    does: 'Same facts. Right framing. Whether you\'re presenting to a room or walking into a one-on-one that matters, The Business Case builds the argument from your own modelled Humac Score figures — not sector benchmarks — to give the room something harder to wave away than an opinion.',
     start: 'Choose your mode: the general business case for a room, or a specific person to convince. Describe what you\'re trying to move and who needs to move it.',
     next: 'conversation-simulator',
     nextLabel: 'Difficult Conversations'
@@ -99,9 +99,9 @@ var MODALS = {
   'offer-intelligence': {
     icon: '⚖️',
     name: 'Retention Advisor',
-    tagline: 'Model the real cost of keeping or losing this person.',
+    tagline: 'Model the likely cost of keeping or losing this person.',
     what: 'Retention Advisor models the full financial picture of a retention decision: what it costs to keep someone, what it costs to lose them, replacement cost, ramp time, flight risk, and the counter-offer position.',
-    does: 'Gives you the number you need before any retention conversation. Not a gut feel — a calculated position you can defend in the room.',
+    does: 'Gives you a modelled number before any retention conversation. Not a gut feel — a calculated position, grounded in assumptions you can walk through and defend in the room.',
     start: 'Enter the person\'s current CTC, their role, and the situation. Retention Advisor models both paths (retain and lose), so you walk in prepared.',
     next: 'business-case',
     nextLabel: 'The Business Case'
@@ -111,7 +111,7 @@ var MODALS = {
     name: 'Difficult Conversations',
     tagline: 'Rehearse before the conversation that matters.',
     what: 'Difficult Conversations is a real-time simulation environment for the conversations HR professionals dread most: performance discussions, terminations, disciplinary hearings, leadership alignment calls. ARIA plays the other person.',
-    does: 'A safe space to test your approach, anticipate pushback, and walk into the real conversation already knowing what\'s coming. ARIA holds nothing back.',
+    does: 'A safe space to test your approach, anticipate pushback, and walk into the real conversation having already rehearsed it, not knowing exactly what will happen. ARIA holds nothing back.',
     start: 'Choose the conversation type, set the context (role, stakes, what you\'re trying to achieve), and start. Treat it like the real thing.',
     next: 'policy-compass',
     nextLabel: 'Policy Advisor'
@@ -119,9 +119,9 @@ var MODALS = {
   'case-library': {
     icon: '🗄️',
     name: 'Vantage Record',
-    tagline: 'Every case you\'ve navigated, permanently yours.',
+    tagline: 'Every case you\'ve navigated, yours to keep.',
     what: 'Vantage Record is your complete professional case archive, auto-populated every time you use the platform. Every employee case, every brief, every session: saved, searchable by date, and portable across organisations.',
-    does: 'The record the org never built for you. After two years on Vantage, you have a searchable archive of every difficult situation you handled and how you handled it — proof that your experience is real.',
+    does: 'The record the org never built for you. After two years on Vantage, you have a searchable archive of every difficult situation you documented and how you approached it — a record of what you handled, in your own words at the time.',
     start: 'Start using the tools. Every session is saved here automatically. Search by date to see what you were navigating on any given day.',
     next: 'ledger',
     nextLabel: 'Standpoint'
