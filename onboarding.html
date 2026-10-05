@@ -95,7 +95,7 @@
   <div class="header">
     <div class="header-badge"><div class="header-dot"></div>MERIDIAN Context Engine</div>
     <div class="header-title">Build your professional context.</div>
-    <div class="header-sub">Eight parameters. Every Virorah tool uses these to calibrate its output to your exact reality, not generic advice. Takes 5 minutes.</div>
+    <div class="header-sub">Eight parameters. Every Virorah tool uses these to calibrate its output to your organisation context, not a generic default. Takes 5 minutes.</div>
   </div>
 
   <div class="progress-bar">
@@ -156,7 +156,7 @@
         ]
       },
       {
-        id:'orgSize', title:'How large is your organisation?', sub:'Headcount determines which statutes apply: Industrial Disputes Act thresholds, retrenchment requirements, and Works Committee obligations vary by size.',
+        id:'orgSize', title:'How large is your organisation?', sub:'Headcount determines which statutes apply: the Industrial Relations Code 2020 sets the threshold for prior government permission on retrenchment or layoff at 300 workers, and Works Committee obligations vary by size.',
         type:'grid', cols:3,
         options:[
           '1 \u2013 50','51 \u2013 250','251 \u2013 500','501 \u2013 1,000',
@@ -255,7 +255,7 @@
               '<div>' +
                 '<label class="form-label">Standing Orders Status</label>' +
                 '<div class="options-grid col3" id="pol-so-grid">' +
-                  ['Certified standing orders','Model standing orders apply','Not applicable (< 50 employees)','Service rules / employment contract','Not sure','Under process'].map(function(o){
+                  ['Certified standing orders','Model standing orders apply','Not applicable','Service rules / employment contract','Not sure','Under process'].map(function(o){
                     var sel = profile.policyStandingOrders === o ? ' selected' : '';
                     return '<div class="opt-btn'+sel+'" onclick="selectPolicyOpt(\'policyStandingOrders\',\''+o+'\',this)">'+o+'</div>';
                   }).join('') +
@@ -337,7 +337,7 @@
         '<div class="complete-card">' +
           '<div class="complete-icon">&#x1F9ED;</div>' +
           '<div class="complete-title">MERIDIAN is ready.</div>' +
-          '<div class="complete-sub">Your seven-parameter professional context is set. Every tool in Vantage will now calibrate its output to your exact reality. You can update this at any time from your account settings.</div>' +
+          '<div class="complete-sub">Your eight-parameter professional context is set. Every tool in Vantage will now calibrate its output to your organisation context, not a generic default. You can update this at any time from your account settings.</div>' +
           '<div class="meridian-summary">' +
             '<div class="ms-item"><div class="ms-label">State</div><div class="ms-val">'+(profile.state||'Not set')+'</div></div>' +
             '<div class="ms-item"><div class="ms-label">Industry</div><div class="ms-val">'+(profile.industry||'Not set')+'</div></div>' +
