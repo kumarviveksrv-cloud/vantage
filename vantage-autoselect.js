@@ -1,7 +1,9 @@
 /* vantage-autoselect.js
-   Auto-selects Option C (Domestic enquiry — defensible) on page load.
-   Option C keeps ARIA calm and coherent (face visible, lavender/green).
-   Also injects the causal cue banner on Decision Field section.
+   Injects the causal cue banner on the Decision Field section, prompting
+   the visitor to make their own choice. No option is pre-selected or
+   auto-clicked — a prior version did this to keep ARIA's face calm by
+   default, which made a staged demo state look like a real evaluated
+   choice. Removed for that reason.
 */
 (function(){
   'use strict';
