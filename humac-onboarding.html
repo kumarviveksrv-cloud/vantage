@@ -925,6 +925,7 @@ function renderScoreReveal(){
   document.getElementById('rv-band').textContent=band.name;
   document.getElementById('rv-band').style.color=band.color;
   document.getElementById('rv-desc').textContent=band.desc+' Computed scores are normalized against a provisional range, not a published benchmark. That scale will be recalibrated once at least 30 organisations have computed scores.';
+  if(!document.getElementById('rv-method')){var n=document.createElement('a'); n.id='rv-method'; n.href='https://humacity.com/humacity-method.html'; n.target='_blank'; n.rel='noopener'; n.textContent='Method note · Humac Score v0.9'; n.style.cssText='display:inline-block;margin-top:10px;font-family:monospace;font-size:12px;color:#a5b4fc'; document.getElementById('rv-desc').insertAdjacentElement('afterend', n);}
   document.getElementById('rv-dot').style.background=band.color;
   document.getElementById('rv-hci').textContent=hci.toFixed(2)+'x';
   var badge=document.getElementById('rv-conf-badge');badge.className='conf-badge '+confLevel;badge.textContent=confLevel.charAt(0).toUpperCase()+confLevel.slice(1)+' confidence';
