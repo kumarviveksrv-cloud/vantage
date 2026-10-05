@@ -241,11 +241,11 @@
 
       <div class="form-group">
         <label class="form-label">The outcome you recorded</label>
-        <textarea id="r-outcome" class="form-textarea" placeholder="The actual outcome, specifically"></textarea>
+        <textarea id="r-outcome" class="form-textarea" placeholder="The outcome you recorded, specifically"></textarea>
       </div>
       <div class="form-group">
         <label class="form-label">The financial outcome you recorded</label>
-        <input type="text" id="r-variance" class="form-input" placeholder="e.g. Rs.11L actual — within your predicted range" />
+        <input type="text" id="r-variance" class="form-input" placeholder="e.g. Rs.11L recorded — within your predicted range" />
       </div>
       <div class="form-group">
         <label class="form-label">Vindication</label>
@@ -364,7 +364,7 @@
       var outcome = document.getElementById('r-outcome').value.trim();
       var variance = document.getElementById('r-variance').value.trim();
       var vindication = document.getElementById('r-vindication').value;
-      if (!outcome) { showError('Please describe what actually happened.'); return; }
+      if (!outcome) { showError('Please record the outcome.'); return; }
       try {
         var data = await callWorker({
           tool: 'resolve_position',
