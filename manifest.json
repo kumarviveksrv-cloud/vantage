@@ -1,7 +1,7 @@
 {
   "name": "Virorah Vantage",
   "short_name": "Vantage",
-  "description": "Walk into any room ready for anything. HR intelligence, calibrated to your exact professional reality.",
+  "description": "Walk into any room ready for anything. HR intelligence, calibrated to your context.",
   "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
@@ -35,10 +35,10 @@
   ],
   "shortcuts": [
     {
-      "name": "ER Case Navigator",
+      "name": "Employee Case Advisor",
       "short_name": "ER Cases",
-      "description": "Navigate a new ER case with PACT",
-      "url": "/er-case-navigator.html",
+      "description": "Navigate a new employee case with structured guidance",
+      "url": "/employee-case-advisor.html",
       "icons": [
         {
           "src": "icon-192.png",
@@ -59,10 +59,10 @@
       ]
     },
     {
-      "name": "Policy Compass",
+      "name": "Policy Advisor",
       "short_name": "Policy",
       "description": "Get policy guidance instantly",
-      "url": "/policy-compass.html",
+      "url": "/policy-advisor.html",
       "icons": [
         {
           "src": "icon-192.png",
