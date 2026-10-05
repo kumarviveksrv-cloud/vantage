@@ -204,17 +204,17 @@
     }
 
     // Billing status for Pricing badge (will be replaced by Razorpay data)
-    function getBillingStatus() {
+      function getBillingStatus() {
       try {
         var plan = JSON.parse(localStorage.getItem('vantage_plan') || 'null');
-        if (!plan) return { label: 'Early Access', color: 'rgba(255,181,71,.85)', bg: 'rgba(255,181,71,.1)' };
+        if (!plan) return { label: 'Billing not connected', color: 'rgba(165,180,252,.65)', bg: 'rgba(99,102,241,.08)' };
         if (plan.status === 'active') {
           var tier = plan.tier === 'consultant' ? 'Consultant' : 'Core';
           return { label: 'Active \u00b7 ' + tier, color: 'rgba(74,222,128,.85)', bg: 'rgba(74,222,128,.1)' };
         }
         return { label: 'Inactive', color: 'rgba(248,113,113,.85)', bg: 'rgba(248,113,113,.1)' };
       } catch(e) {
-        return { label: 'Early Access', color: 'rgba(255,181,71,.85)', bg: 'rgba(255,181,71,.1)' };
+        return { label: 'Billing not connected', color: 'rgba(165,180,252,.65)', bg: 'rgba(99,102,241,.08)' };
       }
     }
 
