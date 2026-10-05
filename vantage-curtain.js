@@ -861,7 +861,7 @@
       const hcix=document.getElementById('humacHCIx');if(hcix)hcix.textContent='0.94x';
       const tNum=document.getElementById('humacTrajNum');if(tNum)tNum.textContent='+6';
       const tSt=document.getElementById('humacTrajStatus');if(tSt)tSt.textContent='Improving';
-      const tag=document.getElementById('humacTagline');if(tag){tag.style.visibility='hidden';tag.textContent='84 is value-generating territory: your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.';const _h=tag.offsetHeight;tag.style.minHeight=_h+'px';tag.style.visibility='';}
+      const tag=document.getElementById('humacTagline');if(tag){tag.style.visibility='hidden';tag.textContent='84 is modelled as value-generating territory in this example: the people investment is shown returning more than it costs. The +6 trajectory is the figure that would walk into the next budget conversation ahead of you.';const _h=tag.offsetHeight;tag.style.minHeight=_h+'px';tag.style.visibility='';}
       panel.style.position='relative';panel.style.overflow='hidden';
       if(!panel.querySelector('.humac-scanline')){const sc=document.createElement('div');sc.className='humac-scanline';panel.appendChild(sc);}
       return;
