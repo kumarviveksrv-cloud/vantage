@@ -848,7 +848,7 @@
       document.getElementById('rar-figure').innerText = rar.figure || '\u2014';
       document.getElementById('rar-basis').innerText = rar.basis || '';
       var rarConf = document.getElementById('rar-conf');
-      rarConf.innerText = (rar.confidence || '') + ' confidence';
+      rarConf.innerText = (rar.confidence || '') + ' input coverage';
       rarConf.className = 'rar-conf ' + getConfClass(rar.confidence);
 
       // Humac
@@ -857,7 +857,7 @@
       var pillarBadge = document.getElementById('humac-pillar-badge');
       pillarBadge.innerText = humac.pillar ? 'Humac ' + humac.pillar : '';
       var humacConf = document.getElementById('humac-conf');
-      humacConf.innerText = (humac.confidence || '') + ' confidence';
+      humacConf.innerText = (humac.confidence || '') + ' input coverage';
       humacConf.className = 'rar-conf ' + getConfClass(humac.confidence);
       document.getElementById('humac-rationale').innerText = humac.pillarRationale || '';
       document.getElementById('humac-breakdown').innerHTML = (humac.breakdown || []).map(function(item) {
@@ -1174,7 +1174,7 @@
       layersEl.appendChild(renderLayer(4, 'Risk Mirror — Revenue at Risk',
         '<div class="l-rar">' +
           '<div class="l-rar-figure">' + (rm.revenueAtRisk || '\u2014') + '</div>' +
-          (probText ? '<span class="l-prob-badge ' + probClass + '">' + probText + ' probability</span>' : '') +
+          (probText ? '<span class="l-prob-badge ' + probClass + '">' + probText + ' modelled likelihood</span>' : '') +
         '</div>' +
         (rm.revenueAtRiskBasis ? '<div class="l-sub" style="margin-bottom:8px">' + rm.revenueAtRiskBasis + '</div>' : '') +
         '<div class="l-text">' + (rm.scenario || '') + '</div>' +
@@ -1202,7 +1202,7 @@
       if (h.pillar || h.meridianCalibration) {
         document.getElementById('hi-green-cat').innerHTML = renderGreenCat(r.greenCategory);
         document.getElementById('hi-pillar').innerText = h.pillar ? 'Humac ' + h.pillar : '\u2014';
-        document.getElementById('hi-confidence').innerText = (h.confidence || '\u2014') + ' confidence';
+        document.getElementById('hi-confidence').innerText = (h.confidence || '\u2014') + ' input coverage';
         document.getElementById('hi-meridian').innerText = (h.pillarRationale ? h.pillarRationale + ' ' : '') + (h.meridianCalibration || '');
         if (h.trajectorySignal) {
   document.getElementById('hi-trajectory').innerText = h.trajectorySignal;
