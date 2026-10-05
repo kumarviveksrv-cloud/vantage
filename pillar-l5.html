@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="vantage-theme.css"/>
 <style>
 :root{
+  --cobalt-glow:rgba(99,102,241,.08);
   --gold:#c4b5fd;
   --hero:'Bebas Neue',sans-serif;
 }
@@ -50,9 +51,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .hero-grid{display:grid;grid-template-columns:1fr 1px 1fr;gap:48px;align-items:center;position:relative;z-index:1}
 .hero-divider{background:rgba(99,102,241,.08)}
 .ratio-lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:#a5b4fc;margin-bottom:12px}
-.nhw-num{font-family:var(--hero);font-size:6.5rem;line-height:.88;letter-spacing:.02em;background:linear-gradient(135deg,#f4f3ff 0%,#c4b5fd 50%,#6366f1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(200,160,40,.25));margin-bottom:10px}
-.nhw-num.pos{background:linear-gradient(135deg,#60E8A0 0%,#6366f1 40%,#20A870 100%);-webkit-background-clip:text;background-clip:text}
-.nhw-num.neg{background:linear-gradient(135deg,#F08070 0%,#E05C3A 50%,#C04020 100%);-webkit-background-clip:text;background-clip:text}
+.ratio-num{font-family:var(--hero);font-size:7.5rem;line-height:.88;letter-spacing:.02em;background:linear-gradient(135deg,#f4f3ff 0%,#c4b5fd 50%,#6366f1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(200,160,40,.25));margin-bottom:10px}
 .score-band-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:5px;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;font-weight:500;margin-top:12px}
 .story-rule{width:32px;height:2px;background:linear-gradient(90deg,var(--cobalt),#a5b4fc);margin-bottom:14px}
 .hook{font-style:italic;font-size:1.1rem;line-height:1.5;color:#f4f3ff;margin-bottom:10px}
@@ -64,37 +63,28 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .stat .sv{font-family:var(--mono);font-size:1.05rem;font-weight:500;margin-bottom:3px}
 .stat .sl{font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,243,255,.45)}
 .sv-teal{color:#6366f1}.sv-gold{color:#c4b5fd}.sv-cobalt{color:#a5b4fc}.sv-dim{color:rgba(244,243,255,.45)}.sv-green{color:#4ade80}.sv-red{color:#E05C3A}
-/* BALANCE SHEET: Revenue Fluent exact treatment */
-.bs-wrap{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:16px;overflow:hidden;margin-bottom:28px;animation:hero-pulse 3s ease-in-out infinite;position:relative}
-.bs-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.4),rgba(99,102,241,.2),rgba(99,102,241,.4),transparent)}
-.bs-header{padding:16px 28px;background:linear-gradient(90deg,rgba(99,102,241,.06),transparent);border-bottom:1px solid var(--cobalt-border);display:flex;align-items:center;justify-content:space-between}
-.bs-header-title{font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;background:linear-gradient(90deg,#a5b4fc,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.bs-header-sub{font-family:var(--mono);font-size:.62rem;color:var(--text-dim)}
-.bs-cols{display:grid;grid-template-columns:1fr 1px 1fr}
-.bs-col-divider{background:var(--cobalt-border)}
-.bs-col-head{padding:14px 24px;background:rgba(99,102,241,.05);border-bottom:1px solid var(--cobalt-border)}
-.bs-col-head span{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase}
-.bs-col-head.assets span{color:var(--teal)}
-.bs-col-head.liabs span{color:var(--red)}
-.bs-item{padding:14px 24px;border-bottom:1px solid rgba(99,102,241,.05)}
-.bs-item-name{font-size:.86rem;color:rgba(244,243,255,.75);margin-bottom:3px}
-.bs-item-val{font-family:var(--mono);font-size:.9rem;font-weight:600;margin-bottom:5px}
-.bs-item-val.asset{color:#4ade80}
-.bs-item-val.liab{color:var(--red)}
-.bs-item-desc{font-size:.74rem;color:var(--text-dim);line-height:1.5;font-style:italic}
-.bs-total{padding:16px 24px;background:rgba(13,11,30,.5);border-top:1px solid rgba(99,102,241,.15)}
-.bs-total-label{font-family:var(--mono);font-size:.68rem;font-weight:500;color:rgba(244,243,255,.5);margin-bottom:4px}
-.bs-total-val{font-family:var(--hero);font-size:2.8rem;line-height:1}
-.bs-total-val.asset{background:linear-gradient(135deg,#60E8A0 0%,#6366f1 40%,#20A870 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.bs-total-val.liab{background:linear-gradient(135deg,#F08070 0%,#E05C3A 50%,#C04020 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.bs-nhw{display:grid;grid-template-columns:1fr auto;align-items:center;padding:20px 28px;background:rgba(99,102,241,.06);border-top:2px solid rgba(99,102,241,.25)}
-.bs-nhw-left{}
-.bs-nhw-label{font-family:var(--mono);font-size:.68rem;font-weight:600;color:rgba(244,243,255,.75);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px}
-.bs-nhw-desc{font-size:.8rem;color:var(--text-dim);line-height:1.5}
-.bs-nhw-val{font-family:var(--hero);font-size:5rem;line-height:1;text-align:right}
-.bs-nhw-val.pos{background:linear-gradient(135deg,#60E8A0 0%,#6366f1 40%,#20A870 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.bs-nhw-val.neg{background:linear-gradient(135deg,#F08070 0%,#E05C3A 50%,#C04020 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-/* STATEMENT + ACTIONS + COMPLETE */
+/* VERDICT ROWS */
+.verdicts-section{margin-bottom:28px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.sec-head h2{font-size:.92rem;font-weight:500;color:rgba(244,243,255,.45);display:flex;align-items:center;gap:10px}
+.sec-head h2 .step{font-family:var(--mono);font-size:.64rem;color:#a5b4fc;border:1px solid rgba(99,102,241,.35);border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.verdict-card{background:var(--bg2);border:1px solid rgba(99,102,241,.14);border-radius:14px;padding:22px 24px;margin-bottom:10px;border-left:4px solid transparent;transition:border-color .2s}
+.verdict-card.passed{border-left-color:rgba(74,222,128,.5)}
+.verdict-card.failed{border-left-color:rgba(224,92,58,.45)}
+.verdict-card.unanswered{border-left-color:rgba(99,102,241,.2)}
+.verdict-card.na{border-left-color:rgba(165,180,252,.3);border-left-style:dashed}
+.verdict-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:12px}
+.verdict-signal{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,243,255,.5);font-weight:500}
+.verdict-badge{font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;padding:3px 10px;border-radius:4px;font-weight:600}
+.verdict-badge.strong{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
+.verdict-badge.gap{background:rgba(224,92,58,.08);color:#E05C3A;border:1px solid rgba(224,92,58,.2)}
+.verdict-badge.pending{background:rgba(99,102,241,.08);color:#a5b4fc;border:1px solid rgba(99,102,241,.15)}
+.verdict-badge.na{background:rgba(165,180,252,.06);color:#a5b4fc;border:1px dashed rgba(165,180,252,.3)}
+.verdict-text{font-size:.86rem;color:var(--text-dim);line-height:1.7;margin-bottom:12px}
+.verdict-text b{color:#c4b5fd;font-weight:400}
+.verdict-action-lbl{font-family:var(--mono);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(165,180,252,.3);margin-bottom:5px}
+.verdict-action-txt{font-size:.78rem;color:rgba(244,243,255,.3);line-height:1.6;font-style:italic}
+/* STATEMENT + ACTIONS */
 .statement{padding:26px 30px;background:rgba(13,11,30,.5);border:1px solid var(--cobalt-border);border-radius:14px;border-left:3px solid var(--cobalt);position:relative;overflow:hidden;animation:hero-pulse 3s ease-in-out infinite;margin-bottom:32px}
 .statement::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--cobalt),#a5b4fc)}
 .stmt-lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;background:linear-gradient(90deg,var(--cobalt),#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px}
@@ -103,21 +93,26 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .section-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:#a5b4fc;margin-bottom:6px}
 .section-title{font-family:'Sora',sans-serif;font-size:1.45rem;font-weight:600;color:var(--text);margin-bottom:20px;line-height:1.2}
 .action-item{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid rgba(99,102,241,.06)}
-.action-item:last-child{border-bottom:none;margin-bottom:32px}
+.action-item:last-child{border-bottom:none;margin-bottom:28px}
 .action-num{width:28px;height:28px;border-radius:50%;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.22);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:#a5b4fc;flex-shrink:0;margin-top:2px}
 .action-title{font-size:.92rem;font-weight:600;color:#f4f3ff;margin-bottom:6px;line-height:1.3}
 .action-body{font-size:.82rem;color:var(--text-dim);line-height:1.65}
-.complete-card{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2);border-radius:16px;padding:32px;text-align:center;margin-bottom:32px;animation:hero-pulse 3s ease-in-out infinite}
-.complete-title{font-family:var(--hero);font-size:2.4rem;color:var(--text);margin-bottom:10px;letter-spacing:.02em}
-.complete-sub{font-size:.86rem;color:var(--text-dim);line-height:1.7;margin-bottom:20px}
-.complete-cta{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;background:var(--cobalt);color:#fff;padding:12px 28px;border-radius:9px;text-decoration:none;transition:all .15s}
-.complete-cta:hover{background:#5254d4;transform:translateY(-1px)}
 .bottom-nav{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .btn-back{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;background:transparent;border:1px solid rgba(99,102,241,.2);color:#a5b4fc;padding:10px 20px;border-radius:8px;text-decoration:none;transition:all .15s}
 .btn-back:hover{border-color:rgba(99,102,241,.4);color:var(--text)}
 .btn-next{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;background:var(--cobalt);border:none;color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;transition:all .15s}
 .btn-next:hover{background:#5254d4;transform:translateY(-1px)}
-@media(max-width:768px){.wrap{margin-left:0;padding:24px 20px 60px}.sidebar{display:none}.hero-grid{grid-template-columns:1fr}.hero-divider{display:none}.nhw-num{font-size:4rem}.stats{flex-wrap:wrap}.stat{flex:0 0 calc(50% - 1px)}.bs-cols{grid-template-columns:1fr}.bs-col-divider{display:none}.bs-nhw{grid-template-columns:1fr}.bs-nhw-val{text-align:left;margin-top:10px}}
+@media(max-width:768px){.wrap{margin-left:0;padding:24px 20px 60px}.sidebar{display:none}.hero-grid{grid-template-columns:1fr}.hero-divider{display:none}.ratio-num{font-size:5rem}.stats{flex-wrap:wrap}.stat{flex:0 0 calc(50% - 1px)}}
+
+.assumption-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding:12px 16px;border:1px solid rgba(99,102,241,.22);border-radius:10px;background:rgba(13,11,30,.45)}
+.assumption-note{font-size:.78rem;color:var(--text-dim);line-height:1.5;max-width:560px}
+.sc-btn{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:7px 12px;border-radius:7px;border:1px solid rgba(99,102,241,.25);background:transparent;color:#a5b4fc;cursor:pointer}
+.sc-btn.active{background:rgba(99,102,241,.16);border-color:rgba(99,102,241,.5);color:#f4f3ff}
+.assumptions{width:100%;border-collapse:collapse;margin-top:8px;font-size:.78rem}
+.assumptions th,.assumptions td{text-align:left;padding:7px 8px;border-bottom:1px solid rgba(99,102,241,.08);color:var(--text-dim);vertical-align:top}
+.assumptions th{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:#a5b4fc}
+.gate{padding:18px 20px;border:1px solid rgba(224,92,58,.28);background:rgba(224,92,58,.08);border-radius:12px;margin-bottom:18px;color:var(--text-dim);font-size:.86rem;line-height:1.6}
+
 </style>
 </head>
 <body>
@@ -151,160 +146,54 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 </div>
 <div class="wrap" id="main-wrap"></div>
 <script>
-(function(){var raw=sessionStorage.getItem('sr_meridian');if(raw){try{var m=JSON.parse(raw);document.getElementById('meridian-summary').innerText=(m.state||'')+' \xb7 '+(m.industry||'');var b=document.getElementById('meridian-badge');b.innerText='Active';b.className='m-badge complete';}catch(e){}}})();
-var hd=null,md=null;
+
+(function(){var raw=sessionStorage.getItem('sr_meridian');if(raw){try{var m=JSON.parse(raw);document.getElementById('meridian-summary').innerText=(m.state||'')+' · '+(m.industry||'');var b=document.getElementById('meridian-badge');b.innerText='Active';b.className='m-badge complete';}catch(e){}}})();
+var hd=null;
 try{hd=JSON.parse(sessionStorage.getItem('vantage_humac')||'null');}catch(e){}
-try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
 if(!hd){window.location.href='humac-onboarding.html';}
-var l1=hd.l1||0,l2=hd.l2||0,l3=hd.l3||0,l4=hd.l4||0,l5=hd.l5||0;
 var ra=hd.rawAnswers||{};
-var l5Mode=hd.l5Mode||'estimate';
-var q16=ra.q16;
-var q17=(ra.q17!=null)?Number(ra.q17):0;
-var q18=ra.q18||'medium';
-
-function fmtINR(n){
-  var abs=Math.abs(n),sign=n<0?'-':'';
-  if(abs>=10000000)return sign+'\u20b9'+(abs/10000000).toFixed(2)+'Cr';
-  if(abs>=100000)return sign+'\u20b9'+(abs/100000).toFixed(1)+'L';
-  if(abs>=1000)return sign+'\u20b9'+Math.round(abs/1000)+'K';
-  return sign+'\u20b9'+Math.round(abs);
+var scenario='base';
+var A={
+  talent:{low:0.2,base:0.4,high:0.6,label:'Talent equity multiple'},
+  learn:{low:0.15,base:0.35,high:0.5,label:'Learning velocity multiple'},
+  rel:{low:0.25,base:0.5,high:0.7,label:'Relationship capital multiple'},
+  culture:{low:0.04,base:0.08,high:0.12,label:'Culture asset premium'},
+  skill:{low:0.015,base:0.03,high:0.05,label:'Skill debt share of payroll'},
+  growth:{low:0.01,base:0.02,high:0.04,label:'Growth-readiness gap'},
+  cliab:{low:0.005,base:0.01,high:0.02,label:'Culture liability'}
+};
+function m(k){return A[k][scenario];}
+function fmtINR(n){var abs=Math.abs(n),sign=n<0?'-':'';if(abs>=10000000)return sign+'₹'+(abs/10000000).toFixed(2)+'Cr';if(abs>=100000)return sign+'₹'+(abs/100000).toFixed(1)+'L';return sign+'₹'+Math.round(abs);}
+function render(){
+  var book=null;
+  try{book=JSON.parse(sessionStorage.getItem('vantage_l1_book')||'null');}catch(e){}
+  var headcount=ra.cq1_headcount||0, comp=ra.cq1_compbase||0, avg=headcount?comp/headcount:0;
+  var insufficient=!(comp>0);
+  var blocked=!book||book.insufficient;
+  var know=(ra.cq5_seniorcount||0)*avg*Math.min((ra.cq5_seniortenure||0)*0.08,0.6);
+  var rel=(ra.cq5_revemployees||0)*avg*m('rel');
+  var hipoLiab=(ra.cq5_hipo||0)*avg*0.25;
+  var assets=know+rel;
+  var skill=comp*m('skill'), growth=comp*m('growth'), cliab=comp*m('cliab');
+  var liab=hipoLiab+skill+growth+cliab;
+  var nhw=assets-liab;
+  var per=comp>0?(nhw/comp)*100:null;
+  try{sessionStorage.setItem('vantage_l5_book', JSON.stringify({scenario:scenario,nhw:nhw,per100:per,compBase:comp,insufficient:insufficient,blockedSharedLines:blocked,forbidden:['cq1_stars','cq1_emerging','cq1_tenured5','cq1_atrisk'],l1Return:book&&book.totalRet}));}catch(e){}
+  var rows=['rel','skill','growth','cliab'].map(function(k){return '<tr><td>'+A[k].label+'</td><td>'+A[k].low+'</td><td>'+A[k].base+'</td><td>'+A[k].high+'</td><td>L5-original. Does not reprice an L1 cohort.</td></tr>';}).join('');
+  var shared=blocked?'<div class="gate"><b style="color:#f4f3ff">Shared cohorts are not repriced here.</b> Complete the Value Ledger to see the return already booked for stars, emerging talent, tenure, and at-risk people. Those lines are excluded from Net Human Worth.</div>':'<div class="assumption-note" style="margin-bottom:12px">L1 already books <b>'+fmtINR(book.totalRet||0)+'</b> for the shared cohorts. That figure is not added again.</div>';
+  var hero=insufficient?'<div class="gate"><b style="color:#f4f3ff">Insufficient data.</b> Compensation base is required before Net Human Worth per ₹100 of payroll can be shown.</div>':
+    '<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">Net Human Worth per ₹100 payroll</div><div class="nhw-num '+(per>=0?'pos':'neg')+'">₹'+(per).toFixed(1)+'</div><div class="context">Primary figure. Comparable across company size.</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+(per>=0?'Net-positive':'Net-negative')+' at ₹'+per.toFixed(1)+' per ₹100 of payroll.</div><div class="context">Rupee stock, secondary: <b>'+(nhw>=0?'+':'')+fmtINR(nhw)+'</b>. '+scenario+' case.</div></div></div></div>';
+  document.getElementById('main-wrap').innerHTML=
+    shared+'<div class="pillar-nav-strip"><a href="pillar-l4.html" class="pillar-back">← L4</a><a href="dashboard.html" class="pillar-forward">Dashboard →</a></div>'+
+    '<div class="eyebrow">Vantage · Humac Score · L5 · 10% weight</div><h1 class="page-title">The Human Balance Sheet</h1><p class="page-sub">Stars, emerging talent, tenure, and at-risk exposure stay in the Value Ledger. This sheet prices senior count, senior tenure, revenue-employee relationships, and HiPo concentration only.</p>'+hero+
+    '<div class="assumption-bar"><div class="assumption-note"><b>'+scenario+' case.</b> Asset and liability rates are assumptions.</div><div><button class="sc-btn'+(scenario==='low'?' active':'')+'" onclick="setScenario(\'low\')">Low</button> <button class="sc-btn'+(scenario==='base'?' active':'')+'" onclick="setScenario(\'base\')">Base</button> <button class="sc-btn'+(scenario==='high'?' active':'')+'" onclick="setScenario(\'high\')">High</button></div></div>'+
+    '<table class="assumptions"><tr><th>Line</th><th>Low</th><th>Base</th><th>High</th><th>Status</th></tr>'+rows+'</table>'+
+    '<div class="statement"><div class="stmt-lbl">Intelligence Statement · L5</div><div class="stmt-txt">'+(insufficient?'No payroll base, so no ratio.':'Net human worth is <b>₹'+(per).toFixed(1)+' per ₹100 of payroll</b> under the '+scenario+' case. The rupee stock is context, not the comparison.')+'</div></div>';
 }
+function setScenario(s){scenario=s;render();}
+render();
 
-// Real Human Balance Sheet: identical formula to Revenue Fluent's original computeBS(),
-// restoring the full 5-asset / 5-liability structure that the estimate-mode UI simplified to 3/3.
-function computeRealL5(a){
-  var headcount=a.cq1_headcount||0, compBase=a.cq1_compbase||0;
-  var avgSalary=headcount>0?compBase/headcount:0;
-  var stars=a.cq1_stars||0, hipo=a.cq5_hipo||0, atRisk=a.cq1_atrisk||0,
-      tenured5=a.cq1_tenured5||0, seniorCount=a.cq5_seniorcount||0,
-      seniorTenure=a.cq5_seniortenure||0, emerging=a.cq1_emerging||0,
-      revEmployees=a.cq5_revemployees||0;
-  var talentEquity=stars>0?(stars*avgSalary)*0.4:0;
-  var instKnowledge=seniorCount>0?seniorCount*avgSalary*Math.min(seniorTenure*0.08,0.6):0;
-  var orgLearning=emerging>0?(emerging*avgSalary)*0.35:0;
-  var relCapital=revEmployees>0?(revEmployees*avgSalary)*0.5:0;
-  var cultureAsset=tenured5>0?(tenured5*avgSalary)*0.08:0;
-  var totalAssets=talentEquity+instKnowledge+orgLearning+relCapital+cultureAsset;
-  var talentConc=(atRisk*avgSalary*0.6)+(hipo*avgSalary*0.25);
-  var skillDebt=compBase*0.03;
-  var growthGap=compBase*0.02;
-  var cultureLiab=compBase*0.01;
-  var totalLiab=talentConc+skillDebt+growthGap+cultureLiab;
-  var nhw=totalAssets-totalLiab;
-  return {talentEquity:talentEquity,instKnowledge:instKnowledge,orgLearning:orgLearning,relCapital:relCapital,cultureAsset:cultureAsset,
-          totalAssets:totalAssets,talentConc:talentConc,skillDebt:skillDebt,growthGap:growthGap,cultureLiab:cultureLiab,
-          totalLiab:totalLiab,nhw:nhw};
-}
-var realL5=(l5Mode==='computed')?computeRealL5(ra):null;
-var hci=hd.hci||1,conf=hd.confidence||'medium';
-var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
-var industry='',state='';
-if(md){industry=md.industry||'';state=md.state||'';}
-var orgTypeLower=md?(md.orgType||'').toLowerCase():'';
-var tier=orgTypeLower.includes('startup')||orgTypeLower.includes('series')||orgTypeLower.includes('seed')?'startup':orgTypeLower.includes('large')||orgTypeLower.includes('enterprise')||orgTypeLower.includes('psu')||orgTypeLower.includes('government')?'enterprise':'mid';
-var tenureLabel=tier==='startup'?'2+':tier==='enterprise'?'5+':'3+';
-var sb=(function(s){if(s<=25)return{name:'Minimum',color:'#E05C3A'};if(s<=50)return{name:'Emerging',color:'#a5b4fc'};if(s<=72)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};})(l5);
-
-// Balance sheet computations
-var talentEq=q16==='yes'?72:q16==='no'?28:50;
-var instKnow=Math.min(100,Math.max(10,q17>0?Math.round(q17*8):40));
-var growthCap=q16==='yes'?55:35;
-var totalAssets=talentEq+instKnow+growthCap;
-var flightRisk=q18==='low'?20:q18==='high'?75:45;
-var skillDebt=q16==='yes'?25:55;
-var growthGap=q17>=4?20:q17>=2?40:60;
-var totalLiabs=flightRisk+skillDebt+growthGap;
-var nhw=totalAssets-totalLiabs;
-var nhwPos=realL5?realL5.nhw>=0:nhw>=0;
-
-function bsHTML(){
-  if(realL5){
-    return '<div class="bs-wrap">'+
-      '<div class="bs-header"><div class="bs-header-title">Human Balance Sheet</div><div class="bs-header-sub">Real figures \xb7 '+scoreDate+' baseline</div></div>'+
-      '<div class="bs-cols">'+
-        '<div>'+
-          '<div class="bs-col-head assets"><span>Human Assets</span></div>'+
-          bsAssetReal('Talent Equity',realL5.talentEquity,'Stars \xd7 salary \xd7 40%')+
-          bsAssetReal('Institutional Knowledge',realL5.instKnowledge,'Senior/leadership \xd7 salary \xd7 tenure-scaled premium')+
-          bsAssetReal('Org Learning Velocity',realL5.orgLearning,'Emerging Talent \xd7 salary \xd7 35%')+
-          bsAssetReal('Relationship Capital',realL5.relCapital,'Revenue-role employees (2+ yrs) \xd7 salary \xd7 50%')+
-          bsAssetReal('Culture Asset',realL5.cultureAsset,'Tenured 5+ yrs \xd7 salary \xd7 8%')+
-          '<div class="bs-total"><div class="bs-total-label">TOTAL HUMAN ASSETS</div><div class="bs-total-val asset">'+fmtINR(realL5.totalAssets)+'</div></div>'+
-        '</div>'+
-        '<div class="bs-col-divider"></div>'+
-        '<div>'+
-          '<div class="bs-col-head liabs"><span>Human Liabilities</span></div>'+
-          bsLiabReal('Talent Concentration Risk',realL5.talentConc,'At-risk \xd7 salary \xd7 60% + HiPo \xd7 salary \xd7 25%')+
-          bsLiabReal('Skill Debt',realL5.skillDebt,'3% of total comp base')+
-          bsLiabReal('Growth Readiness Gap',realL5.growthGap,'2% of total comp base')+
-          bsLiabReal('Culture Liability',realL5.cultureLiab,'1% of total comp base')+
-          '<div class="bs-total"><div class="bs-total-label">TOTAL HUMAN LIABILITIES</div><div class="bs-total-val liab">'+fmtINR(realL5.totalLiab)+'</div></div>'+
-        '</div>'+
-      '</div>'+
-      '<div class="bs-nhw">'+
-        '<div class="bs-nhw-left"><div class="bs-nhw-label">Net Human Worth (NHW)</div><div class="bs-nhw-desc">'+(nhwPos?'Assets exceed liabilities. Your human capital base is net-positive.':'Liabilities exceed assets. Human capital is depleting faster than it is accumulating.')+'</div></div>'+
-        '<div class="bs-nhw-val '+(nhwPos?'pos':'neg')+'">'+(nhwPos?'+':'')+fmtINR(realL5.nhw)+'</div>'+
-      '</div>'+
-    '</div>';
-  }
-  return '<div class="bs-wrap">'+
-    '<div class="bs-header"><div class="bs-header-title">Human Balance Sheet</div><div class="bs-header-sub">Index-based \xb7 from your L5 responses \xb7 '+scoreDate+' baseline</div></div>'+
-    '<div class="bs-cols">'+
-      '<div>'+
-        '<div class="bs-col-head assets"><span>Human Assets</span></div>'+
-        bsAsset('Talent Equity',talentEq,(q16==='yes'?'Organisation invests more in talent than it loses. Active development and retention of Stars.':q16==='no'?'Talent equity reads negative \u2014 the org is losing capability faster than it is building it.':'Talent investment posture not captured.'))+
-        bsAsset('Institutional Knowledge',instKnow,(q17>0?'Average tenure of '+q17+' years. '+(q17>=4?'Deep institutional knowledge \u2014 a genuine balance sheet asset.':q17>=2?'Moderate depth. Growing but not yet a structural advantage.':'Shallow. Most knowledge leaves within 24 months of joining.'):'Tenure data not captured.'))+
-        bsAsset('Growth Capability',growthCap,(q16==='yes'?'Development posture signals the org is building future capability, not just using current capacity.':'Below-par development posture signals growth capability is being depleted.'))+
-        '<div class="bs-total"><div class="bs-total-label">TOTAL HUMAN ASSETS</div><div class="bs-total-val asset">'+totalAssets+'</div></div>'+
-      '</div>'+
-      '<div class="bs-col-divider"></div>'+
-      '<div>'+
-        '<div class="bs-col-head liabs"><span>Human Liabilities</span></div>'+
-        bsLiab('Flight Risk Exposure',flightRisk,(q18==='low'?'Low. Retention is stable. The talent base is not actively seeking exits.':q18==='high'?'High. A significant portion is vulnerable to attrition in the next 12 months. Largest single balance sheet liability.':'Medium. Some exposure but not at crisis level.'))+
-        bsLiab('Skill Debt',skillDebt,(q16==='yes'?'Low skill debt. Development investment is exceeding skill obsolescence rate.':'High skill debt. Workforce skills are becoming less aligned with what the org needs to grow.'))+
-        bsLiab('Growth Gap',growthGap,(q17>=4?'Low. Long tenure signals the org has depth for the next phase without emergency hiring.':q17>=2?'Moderate. Enough depth for current trajectory but not a step-change.':'High. The talent depth for the next growth phase is not present internally.'))+
-        '<div class="bs-total"><div class="bs-total-label">TOTAL HUMAN LIABILITIES</div><div class="bs-total-val liab">'+totalLiabs+'</div></div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="bs-nhw">'+
-      '<div class="bs-nhw-left"><div class="bs-nhw-label">Net Human Worth (NHW)</div><div class="bs-nhw-desc">'+(nhwPos?'Assets exceed liabilities. Your human capital base is net-positive. Building and accumulating.':'Liabilities exceed assets. Human capital is depleting faster than it is accumulating.')+'</div></div>'+
-      '<div class="bs-nhw-val '+(nhwPos?'pos':'neg')+'">'+(nhwPos?'+':'')+nhw+'</div>'+
-    '</div>'+
-  '</div>';
-}
-function bsAssetReal(name,val,desc){return '<div class="bs-item"><div class="bs-item-name">'+name+'</div><div class="bs-item-val asset">+'+fmtINR(val)+'</div><div class="bs-item-desc">'+desc+'</div></div>';}
-function bsLiabReal(name,val,desc){return '<div class="bs-item"><div class="bs-item-name">'+name+'</div><div class="bs-item-val liab">-'+fmtINR(val)+'</div><div class="bs-item-desc">'+desc+'</div></div>';}
-function bsAsset(name,val,desc){return '<div class="bs-item"><div class="bs-item-name">'+name+'</div><div class="bs-item-val asset">+'+val+'</div><div class="bs-item-desc">'+desc+'</div></div>';}
-function bsLiab(name,val,desc){return '<div class="bs-item"><div class="bs-item-name">'+name+'</div><div class="bs-item-val liab">-'+val+'</div><div class="bs-item-desc">'+desc+'</div></div>';}
-
-function intelText(){
-  var ctx=industry?' in the '+industry+' sector':'';
-  var nhwDisplay=realL5?fmtINR(realL5.nhw):nhw;
-  if(nhwPos)return'An L5 score of <b>'+l5+'</b>'+ctx+' with a net-positive NHW of <b>+'+nhwDisplay+'</b> means your human capital base is accumulating, not depleting. Assets exceed liabilities. Present this alongside your financial balance sheet. "Our human balance sheet is net-positive" is a statement no CFO has ever heard from HR \u2014 and one that almost none of them can make.';
-  return'An L5 score of <b>'+l5+'</b>'+ctx+' with a net-negative NHW of <b>'+nhwDisplay+'</b> means liabilities are exceeding assets. Flight risk, skill debt, or growth gap \u2014 or all three \u2014 are consuming the human capital base faster than it is being built. The four actions above address this sequentially.';
-}
-
-var acts=[
-  {title:'Address your largest liability first',body:q18==='high'?'High flight risk is your highest-priority balance sheet liability. Segment the top 15% at-risk employees by role criticality and attrition probability. Assign each a 90-day retention action.':q16==='no'?'Talent equity reads negative. Run a formal talent development inventory: for every key role, identify whether the internal successor exists. The percentage without an internal candidate is your talent equity gap.':'Your balance sheet is directionally positive. Deepening tenure in key roles is your highest-leverage move \u2014 long-tenured employees carry institutional knowledge that cannot be rebuilt quickly.'},
-  {title:'Build institutional knowledge documentation',body:'Institutional knowledge walks out with every senior exit. Before your next departure: conduct a knowledge-transfer session. Document the top 10 things this person knows that no one else does. Three sessions per year is your institutional knowledge programme.'},
-  {title:'Run a talent depth audit',body:'For your top 20 most critical roles, answer: is there an internal candidate who could step in within 90 days? The percentage that answer No is your talent depth gap. That number drives your Growth Gap liability on this balance sheet.'},
-  {title:'Present your NHW to leadership',body:'Net Human Worth is a concept, not an IFRS line item. But the conversation it creates is real. "'+(nhwPos?'Our human balance sheet shows a positive NHW \u2014 our people assets are exceeding our talent liabilities.':'Our human balance sheet is currently negative \u2014 here is what that means and what we are going to do about it.')+'\" That conversation has almost never happened in most organisations. Have it.'}
-];
-
-var w=document.getElementById('main-wrap');
-var pdots=[{label:'L1',score:l1,href:'pillar-l1.html'},{label:'L2',score:l2,href:'pillar-l2.html'},{label:'L3',score:l3,href:'pillar-l3.html'},{label:'L4',score:l4,href:'pillar-l4.html'},{label:'L5',score:l5,href:'pillar-l5.html',active:true}];
-var nav='<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+p.score+'</span></a>';}).join('')+'</div><a href="humac-onboarding.html" class="pillar-forward">Humac Score \u2192</a></div>';
-var header='<div class="eyebrow">Vantage \xb7 Humac Score \xb7 L5 \xb7 10% weight</div><h1 class="page-title">The Human Balance Sheet</h1><p class="page-sub">'+(md&&industry?industry+' \xb7 ':'')+(md&&state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate:'Your L5 pillar intelligence')+'</p>';
-var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L5 Score</div><div class="ratio-num">'+l5+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div class="ratio-lbl">Net Human Worth</div><div class="nhw-num '+(nhwPos?'pos':'neg')+'">'+(nhwPos?'+':'')+(realL5?fmtINR(realL5.nhw):nhw)+'</div><div class="context">'+(nhwPos?'<b>Human assets exceed liabilities.</b> Your people investment is compounding, not depleting.':'<b>Human liabilities exceed assets.</b> Talent is depleting faster than it is accumulating.')+'<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' confidence \xb7 L5 carries 10% of Humac Score</div></div></div></div>';
-var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l5+'/100</div><div class="sl">L5 Score</div></div><div class="stat"><div class="sv '+(nhwPos?'sv-green':'sv-red')+'">'+(nhwPos?'+':'')+(realL5?fmtINR(realL5.nhw):nhw)+'</div><div class="sl">Net Human Worth</div></div><div class="stat"><div class="sv '+(q18==='low'?'sv-green':q18==='high'?'sv-red':'sv-cobalt')+'">'+(q18||'\u2014').charAt(0).toUpperCase()+(q18||'\u2014').slice(1)+'</div><div class="sl">Flight risk level</div></div><div class="stat"><div class="sv sv-gold">'+(q17>0?q17+' yr':'\u2014')+'</div><div class="sl">Avg tenure</div></div></div>';
-var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L5 Human Balance Sheet</div><div class="stmt-txt">'+intelText()+'</div></div>';
-var actions='<div class="section-eyebrow">What to do next</div><div class="section-title">Strengthening your Human Balance Sheet</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('');
-var complete='<div class="complete-card"><div class="complete-title">All Five Pillars Complete.</div><div class="complete-sub">L1 Value Ledger \xb7 L2 Talent Premium \xb7 L3 Org Vitals \xb7 L4 Human P&L \xb7 L5 Balance Sheet<br>Return to your Humac Score. Start with the pillar at the lowest score \u2014 that is where the highest-leverage action lives.</div><a href="humac-onboarding.html" class="complete-cta">Return to Humac Score \u2192</a></div>';
-var bottomNav='<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><a href="humac-onboarding.html" class="btn-next">Humac Score \u2192</a></div>';
-w.innerHTML=nav+header+hero+stats+bsHTML()+stmt+actions+complete+bottomNav;
 </script>
 <script src="clerk-auth.js"></script>
 <script src="sidebar-shared.js"></script>
-</body>
-</html>
+</body></html>
