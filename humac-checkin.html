@@ -169,7 +169,7 @@
       <div class="score-top">
         <div class="score-nums">
           <div class="score-block">
-            <div class="score-label">Humac</div>
+            <div class="score-label">Humac, provisional</div>
             <div class="score-num" id="score-humac">—</div>
           </div>
           <div class="score-sep">|</div>
@@ -202,11 +202,11 @@
         </div>
         <div class="expect-item">
           <span class="expect-icon">📊</span>
-          <span>Your new score is compared question-by-question against your last answer. The Trajectory Index is the delta — the precise direction your organisation's Humacity has moved.</span>
+          <span>Your new score is compared question-by-question against your last answer. The Trajectory Index is the delta between your two scores — a change in the provisional index, measured only where the same pillars were scored both times.</span>
         </div>
         <div class="expect-item">
           <span class="expect-icon">🧭</span>
-          <span>L3 Org Vitals answers are the most meaningful to update — signal flips there drive the Trajectory reading more than any other pillar.</span>
+          <span>L3 Org Vitals answers are the most meaningful to update — it carries 30% of the overall score, the largest single weight of the five pillars, so signal flips there move the Trajectory reading more than any other pillar.</span>
         </div>
         <div class="expect-item">
           <span class="expect-icon">💾</span>
@@ -305,24 +305,26 @@
 
     // Pillar bars
     var pillars = [
-      { code: 'L1', score: data.l1 || 0 },
-      { code: 'L2', score: data.l2 || 0 },
-      { code: 'L3', score: data.l3 || 0 },
-      { code: 'L4', score: data.l4 || 0 },
-      { code: 'L5', score: data.l5 || 0 },
-    ];
-    document.getElementById('pillars-row').innerHTML = pillars.map(function(p, i) {
-      return '<div class="pillar-cell">' +
-        '<div class="pillar-code">' + p.code + '</div>' +
-        '<div class="pillar-bar-track"><div class="pillar-bar-fill" style="width:' + p.score + '%"></div></div>' +
-        '<div class="pillar-score">' + p.score + '</div>' +
-        '</div>';
-    }).join('');
+  { code: 'L1', score: data.l1 },
+  { code: 'L2', score: data.l2 },
+  { code: 'L3', score: data.l3 },
+  { code: 'L4', score: data.l4 },
+  { code: 'L5', score: data.l5 },
+];
+document.getElementById('pillars-row').innerHTML = pillars.map(function(p, i) {
+  var scored = typeof p.score === 'number';
+  return '<div class="pillar-cell">' +
+    '<div class="pillar-code">' + p.code + '</div>' +
+    '<div class="pillar-bar-track">' + (scored ? '<div class="pillar-bar-fill" style="width:' + p.score + '%"></div>' : '') + '</div>' +
+    '<div class="pillar-score">' + (scored ? p.score : '—') + '</div>' +
+    '</div>';
+}).join('');
 
     // Trajectory
     var traj = data.trajectory;
-    var trajEl = document.getElementById('traj-content');
-    if (traj && typeof traj.delta === 'number' && traj.delta !== 0) {
+var trajEl = document.getElementById('traj-content');
+var trajComparable = !!(traj && traj.comparable && typeof traj.delta === 'number');
+if (trajComparable && traj.delta !== 0) {
       var delta  = traj.delta;
       var arrow  = delta > 0 ? '↗' : '↘';
       var color  = delta > 0 ? '#4ade80' : '#E05C3A';
@@ -333,12 +335,18 @@
           '<div class="traj-label">points since your last check-in.<br>' +
           (data.checkInNumber ? 'Check-in #' + data.checkInNumber + '.' : '') + '</div>' +
         '</div>';
-    } else if (traj && traj.delta === 0) {
+    } else if (trajComparable && traj.delta === 0) {
       trajEl.innerHTML =
         '<div class="traj-row">' +
           '<div class="traj-delta" style="color:#a5b4fc">→ 0</div>' +
           '<div class="traj-label">No movement since your last check-in.<br>Score held steady.</div>' +
         '</div>';
+        } else if (traj && traj.comparable === false) {
+      trajEl.innerHTML =
+        '<div class="traj-none">Not comparable this time' +
+        (traj.checkInNumber ? ' (check-in #' + traj.checkInNumber + ')' : '') +
+        ' — one or more pillars weren\'t scored the same way in both check-ins, ' +
+        'so no reliable delta can be shown. Your next comparable check-in will pick up from here.</div>';
     } else {
       trajEl.innerHTML =
         '<div class="traj-none">No Trajectory Index yet — this is your baseline. ' +
