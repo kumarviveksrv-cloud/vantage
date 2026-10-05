@@ -301,18 +301,33 @@ function countAnswered(){
 
 // Dynamic L3 recompute from ALL answered signals (pre + draft), including Peer &
 // Recognition Culture \u2014 it feeds the real score even though it never feeds DNA typing.
+function l3Coverage(){
+  var groups=VITALS.concat([PEER_VITAL]);
+  var yes=0,total=0,thin=[];
+  groups.forEach(function(v){
+    var gYes=0,gTot=0;
+    v.signals.forEach(function(s){var val=getSignal(s.id);if(val!==null){gTot++;total++;if(val){gYes++;yes++;}}});
+    if(gTot<3) thin.push(v.name||v.id||'vital');
+  });
+  var eligible=total>=15 && thin.length===0;
+  return {yes:yes,total:total,thin:thin,eligible:eligible,score:eligible?Math.round((yes/total)*100):null};
+}
 function computeDraftL3(){
-  var yes=0,total=0;
-  VITALS.forEach(function(v){v.signals.forEach(function(s){var val=getSignal(s.id);if(val!==null){total++;if(val)yes++;}});});
-  PEER_VITAL.signals.forEach(function(s){var val=getSignal(s.id);if(val!==null){total++;if(val)yes++;}});
-  return total>0?Math.round((yes/total)*100):0;
+  var cov=l3Coverage();
+  window.__l3cov=cov;
+  try{sessionStorage.setItem('vantage_l3_gate', JSON.stringify({eligible:cov.eligible,answered:cov.total,required:15,perVital:3,thin:cov.thin,score:cov.score,note:'Unanswered signals are not dropped from a live percentage. Below 15 answers, or below 3 in any vital, L3 does not enter the weighted Humac Score.'}));}catch(e){}
+  return cov.eligible?cov.score:(hd.l3||0);
 }
 
 var HUMAC_WEIGHTS={l1:0.25,l2:0.15,l3:0.30,l4:0.20,l5:0.10};
 function computeDraftHumac(draftL3){
+  var cov=window.__l3cov||l3Coverage();
+  if(!cov.eligible){
+    return {raw:hd.humac||0,hciAdj:hd.hciAdj||Math.round((hd.humac||0)*(hd.hci||1)),l3Excluded:true,l3Answered:cov.total,persisted:false};
+  }
   var raw=Math.round((hd.l1||0)*HUMAC_WEIGHTS.l1+(hd.l2||0)*HUMAC_WEIGHTS.l2+draftL3*HUMAC_WEIGHTS.l3+(hd.l4||0)*HUMAC_WEIGHTS.l4+(hd.l5||0)*HUMAC_WEIGHTS.l5);
   var hciAdj=Math.round(raw*(hd.hci||1));
-  return {raw:raw,hciAdj:hciAdj};
+  return {raw:raw,hciAdj:hciAdj,l3Excluded:false,l3Answered:cov.total,persisted:true};
 }
 function getBandL3(s){if(s<=30)return{name:'Value Destruction',color:'#E05C3A'};if(s<=50)return{name:'Value Neutral',color:'#a5b4fc'};if(s<=70)return{name:'Value Generating',color:'#6366f1'};if(s<=85)return{name:'Value Compounding',color:'#7c3aed'};return{name:'Value Exceptional',color:'#c4b5fd'};}
 
@@ -342,8 +357,12 @@ function renderPage(){
 
   var draftL3=computeDraftL3();
   var draftHumac=computeDraftHumac(draftL3);
+  var l3Gate=window.__l3cov||{eligible:false,total:0,thin:[]};
   var hasChange=draftL3!==(hd.l3||0)&&answered>0;
   var deltaBar='';
+  if(!l3Gate.eligible){
+    deltaBar='<div style="background:rgba(224,92,58,.08);border:1px solid rgba(224,92,58,.28);border-radius:12px;padding:16px 20px;margin-bottom:24px;font-size:.86rem;color:var(--text-dim);line-height:1.6"><b style="color:#f4f3ff">L3 is a partial reading, not a score.</b> '+l3Gate.total+' of 25 signals answered. It does not enter the weighted Humac until 15 answers and at least 3 per vital'+(l3Gate.thin&&l3Gate.thin.length?' (thin: '+l3Gate.thin.join(', ')+')':'')+'. Saving now keeps the existing Humac figure. It is not rewritten as if L3 scored zero.</div>';
+  }
   if(hasChange&&!deltaDiscarded){
     var l3Up=draftL3>=(hd.l3||0);
     var humacUp=draftHumac.raw>=(hd.humac||0);
@@ -473,9 +492,17 @@ function saveL3Update(){
   var l3Mode=computeDNA()!==null?'computed':'estimate';
 
   var scoreData=Object.assign({},hd,{
-    l3:draftL3,humac:draftHumac.raw,hciAdj:draftHumac.hciAdj,band:band.name,
-    timestamp:new Date().toISOString(),rawAnswers:mergedAnswers,l3Mode:l3Mode
+    timestamp:new Date().toISOString(),rawAnswers:mergedAnswers,l3Mode:l3Mode,l3Eligible:!!draftHumac.persisted
   });
+  if(draftHumac.persisted){
+    scoreData.l3=draftL3;
+    scoreData.humac=draftHumac.raw;
+    scoreData.hciAdj=draftHumac.hciAdj;
+    scoreData.band=band.name;
+  } else {
+    scoreData.l3Excluded=true;
+    scoreData.l3Answered=draftHumac.l3Answered;
+  }
 
   try{sessionStorage.setItem('vantage_humac',JSON.stringify(scoreData));}catch(e){}
   hd=scoreData;
