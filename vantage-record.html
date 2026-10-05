@@ -167,7 +167,7 @@
       <div>
         <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; Vantage Record</div>
         <div class="page-title">&#x1F5C4;&#xFE0F; Vantage Record</div>
-        <div class="page-sub">Every case you've navigated through Vantage, permanently saved.</div>
+        <div class="page-sub">Every case you've navigated through Vantage, yours to keep.</div>
       </div>
       <a href="employee-case-advisor.html" class="new-case-btn">+ New Case</a>
     </div>
@@ -191,37 +191,43 @@
       </div>
 
       <!-- ═══════════════════════════════════════════
-           HR DECISION CAPITAL: COMPONENT 1 BANNER
-           Phase 2: shows once loadCases() has run and
-           at least one case has a parseable financial_exposure.
-           Hidden by default, revealed by JS after computation.
+           HR DECISION CAPITAL BANNER
+           Shows once loadCases() has run and at least one
+           case has a parseable modelled figure. Hidden by
+           default, revealed by JS after computation.
            Value stored in sessionStorage as vantage_hdc_exposure
            so dashboard.html can read it without a second API call.
+           Component chips reflect ACTUAL presence of data for
+           each field (set dynamically in computeAndRenderHDC),
+           not a hardcoded claim — a component with no saved
+           cases yet shows "not yet recorded", not "coming soon"
+           dressed up as a roadmap promise, and not "live" until
+           it genuinely has something to show.
            ═══════════════════════════════════════════ -->
       <div class="hdc-banner" id="hdc-banner">
         <div class="hdc-banner-inner">
           <div class="hdc-banner-left">
-            <div class="hdc-banner-eyebrow">HR Decision Capital &middot; Component 1 of 3</div>
-            <div class="hdc-banner-sublabel">Financial Exposure Navigated</div>
+            <div class="hdc-banner-eyebrow">HR Decision Capital</div>
+            <div class="hdc-banner-sublabel">Modelled Exposure Recorded</div>
             <div class="hdc-banner-number" id="hdc-total">&#x20B9;-</div>
             <div class="hdc-banner-count" id="hdc-case-count">Computing from your case record&hellip;</div>
             <div class="hdc-banner-components">
-              <div class="hdc-comp live">
-                <div class="hdc-comp-dot live"></div>
-                <span class="hdc-comp-text">EXPOSURE NAVIGATED &middot; LIVE</span>
+              <div class="hdc-comp pending" id="hdc-comp-1">
+                <div class="hdc-comp-dot pending" id="hdc-comp-dot-1"></div>
+                <span class="hdc-comp-text" id="hdc-comp-text-1">EXPOSURE &middot; NOT YET RECORDED</span>
               </div>
-              <div class="hdc-comp pending">
-                <div class="hdc-comp-dot pending"></div>
-                <span class="hdc-comp-text">MODELLED REPLACEMENT COST &middot; COMING</span>
+              <div class="hdc-comp pending" id="hdc-comp-2">
+                <div class="hdc-comp-dot pending" id="hdc-comp-dot-2"></div>
+                <span class="hdc-comp-text" id="hdc-comp-text-2">MODELLED REPLACEMENT COST &middot; NOT YET RECORDED</span>
               </div>
-              <div class="hdc-comp pending">
-                <div class="hdc-comp-dot pending"></div>
-                <span class="hdc-comp-text">BUSINESS CASES &middot; COMING</span>
+              <div class="hdc-comp pending" id="hdc-comp-3">
+                <div class="hdc-comp-dot pending" id="hdc-comp-dot-3"></div>
+                <span class="hdc-comp-text" id="hdc-comp-text-3">BUSINESS CASES &middot; NOT YET RECORDED</span>
               </div>
             </div>
           </div>
           <div class="hdc-banner-right">
-            <div class="hdc-banner-desc">The running INR total of every financial exposure you've navigated through Employee Case Advisor. This is Component 1 of your HR Decision Capital: computed from your actual case record, not illustrative. Modelled Replacement Cost and Business Cases Landed expand this figure as you use more of Vantage.</div>
+            <div class="hdc-banner-desc">The running INR total of the modelled exposure, replacement cost, and business case figures you've recorded through Vantage. Each figure is the midpoint of a saved range, not a verified or audited total. It grows as you record more cases.</div>
             <a href="about.html#capital" class="hdc-banner-link">How HR Decision Capital works &#8594;</a>
           </div>
         </div>
@@ -270,7 +276,7 @@
     function renderCases(cases) {
       var grid = document.getElementById('cases-grid');
       if (!cases || cases.length === 0) {
-        grid.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x1F5C4;&#xFE0F;</div><div class="empty-title">No cases here yet.</div><div class="empty-sub">Navigate a case through the Employee Case Advisor and save it. It will appear here permanently.</div><a href="employee-case-advisor.html" class="new-case-btn" style="display:inline-flex;margin:0 auto">Navigate your first case &rarr;</a></div>';
+        grid.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x1F5C4;&#xFE0F;</div><div class="empty-title">No cases here yet.</div><div class="empty-sub">Navigate a case through the Employee Case Advisor and save it. It will appear here, yours to keep.</div><a href="employee-case-advisor.html" class="new-case-btn" style="display:inline-flex;margin:0 auto">Navigate your first case &rarr;</a></div>';
         return;
       }
       // Worker returns r.fields directly: all field names are snake_case
@@ -328,11 +334,12 @@
     }
 
     // ─────────────────────────────────────────────────────────────
-    // HR DECISION CAPITAL: COMPONENT 1 PARSER
-    // Phase 2 addition. Parses the financial_exposure string stored
-    // by the Worker (e.g. "₹8L–₹14L", "₹11.2L", "₹8–14 lakhs")
-    // and returns a number in lakhs at the midpoint of any range.
-    // Falls back to 0 if the string is unparseable: never throws.
+    // HR DECISION CAPITAL: PARSER
+    // Parses a stored financial range string (e.g. "₹8L–₹14L",
+    // "₹11.2L", "₹8–14 lakhs") and returns a number in lakhs at the
+    // midpoint of any range. Falls back to 0 if the string is
+    // unparseable: never throws. Every figure this produces is a
+    // midpoint of a modelled range, never a verified or audited total.
     // ─────────────────────────────────────────────────────────────
     function parseExposureLakhs(str) {
       if (!str) return 0;
@@ -350,16 +357,36 @@
     }
 
     // ─────────────────────────────────────────────────────────────
-    // HDC COMPONENT 1: COMPUTE AND RENDER
-    // Called after allCases is populated. Sums midpoint financial
-    // exposure across all cases, shows the HDC banner, stores the
+    // HDC: COMPUTE AND RENDER
+    // Called after allCases is populated. Sums midpoint modelled
+    // figures across all cases, shows the HDC banner, stores the
     // result in sessionStorage so dashboard.html can read it on
     // next load without a second API round-trip.
+    //   Component 1 = financial_exposure         (Employee Case Advisor)
+    //   Component 2 = modelled_replacement_cost   (Retention Advisor)
+    //   Component 3 = business_case_value          (The Business Case)
+    // Each component's chip is set to "live"/"not yet recorded" based
+    // on whether that field actually has any saved data — never
+    // hardcoded, so the chip never claims a status the data doesn't
+    // back up.
     // ─────────────────────────────────────────────────────────────
-    // Phase 3: sums all 3 HDC components
-    //   Component 1 = financial_exposure  (Employee Case Advisor)
-    //   Component 2 = modelled_replacement_cost (Retention Advisor)
-    //   Component 3 = business_case_value (The Business Case)
+    function setChipState(idx, has) {
+      var labels = { 1: 'EXPOSURE', 2: 'MODELLED REPLACEMENT COST', 3: 'BUSINESS CASES' };
+      var wrap = document.getElementById('hdc-comp-' + idx);
+      var dot  = document.getElementById('hdc-comp-dot-' + idx);
+      var text = document.getElementById('hdc-comp-text-' + idx);
+      if (!wrap || !dot || !text) return;
+      if (has) {
+        wrap.classList.remove('pending'); wrap.classList.add('live');
+        dot.classList.remove('pending'); dot.classList.add('live');
+        text.textContent = labels[idx] + ' \u00b7 RECORDED';
+      } else {
+        wrap.classList.remove('live'); wrap.classList.add('pending');
+        dot.classList.remove('live'); dot.classList.add('pending');
+        text.textContent = labels[idx] + ' \u00b7 NOT YET RECORDED';
+      }
+    }
+
     function computeAndRenderHDC() {
       var comp1 = 0, comp2 = 0, comp3 = 0;
       var comp1Cases = 0, comp2Cases = 0, comp3Cases = 0;
@@ -375,6 +402,11 @@
       });
 
       var total = comp1 + comp2 + comp3;
+
+      setChipState(1, comp1Cases > 0);
+      setChipState(2, comp2Cases > 0);
+      setChipState(3, comp3Cases > 0);
+
       if (total <= 0) return;
 
       function fmtL(n) {
@@ -392,9 +424,9 @@
       var parts = [];
       if (comp1 > 0) parts.push('Exposure ' + fmtL(comp1));
       if (comp2 > 0) parts.push('Modelled replacement cost ' + fmtL(comp2));
-      if (comp3 > 0) parts.push('ROI ' + fmtL(comp3));
+      if (comp3 > 0) parts.push('Business case value ' + fmtL(comp3));
       var totalCases = comp1Cases + comp2Cases + comp3Cases;
-      if (countEl) countEl.textContent = totalCases + (totalCases === 1 ? ' entry' : ' entries') + ' \u00b7 ' + parts.join(' \u00b7 ');
+      if (countEl) countEl.textContent = totalCases + (totalCases === 1 ? ' entry' : ' entries') + ' \u00b7 ' + parts.join(' \u00b7 ') + ' \u00b7 midpoint of saved ranges, not a verified total';
       if (banner) banner.style.display = 'block';
 
       try {
@@ -434,7 +466,7 @@
           document.getElementById('stat-closed').innerText   = closed;
           renderCases(allCases);
 
-          // Phase 2: compute and surface HR Decision Capital Component 1
+          // Compute and surface HR Decision Capital
           computeAndRenderHDC();
         } else {
           renderCases([]);
