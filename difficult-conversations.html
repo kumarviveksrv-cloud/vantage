@@ -252,7 +252,7 @@
       <div class="setup-scroll">
         <div style="background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:14px;padding:22px 26px;margin-bottom:16px;animation:fadeIn .3s ease">
           <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f4f3ff;margin-bottom:12px">The real conversation is coming.</div>
-          <div style="font-size:14px;color:rgba(244,243,255,0.72);line-height:1.75">Pick the person you need to face. Describe what's at stake. Then have the conversation — text or voice — in a space where there are <strong style="color:rgba(244,243,255,0.8)">no consequences for getting it wrong</strong>. Before you start, you'll see the financial stakes — what this conversation is actually protecting or fighting for. The coaching debrief after tells you exactly what to do differently when it counts.</div>
+          <div style="font-size:14px;color:rgba(244,243,255,0.72);line-height:1.75">Pick the person you need to face. Describe what's at stake. Then have the conversation — text or voice — in a space where there are <strong style="color:rgba(244,243,255,0.8)">no consequences for getting it wrong</strong>. Before you start, you'll see the financial stakes — what this conversation is actually protecting or fighting for. The coaching debrief after shows you what landed and one thing worth trying differently.</div>
         </div>
         <div class="intake-card">
           <div class="form-section">
@@ -374,7 +374,7 @@
         </div>
 
         <div class="highlight-card">
-          <div class="highlight-label">The moment that would have changed everything</div>
+          <div class="highlight-label">The moment most worth replaying</div>
           <div class="highlight-text" id="inflection-point">&#8212;</div>
         </div>
 
@@ -388,7 +388,7 @@
           <div class="fin-context-label">&#x1F4B0; Financial Context — what was at stake in this conversation</div>
           <div class="fin-context-grid">
             <div class="fin-ctx-item">
-              <div class="fin-ctx-k">At stake</div>
+              <div class="fin-ctx-k">Modelled exposure at stake</div>
               <div class="fin-ctx-v range" id="fc-at-stake">&#8212;</div>
             </div>
             <div class="fin-ctx-item">
@@ -655,9 +655,9 @@
       var practisingMatch = briefingText.match(/You are practising with:\s*([^\n]+)/i);
 
       var items = [];
-      if (exposureMatch)   items.push({ k: 'Financial exposure',      v: exposureMatch[1].trim(),   cls: 'financial' });
-      if (pillarMatch)     items.push({ k: 'Humac pillar',            v: pillarMatch[1].trim(),     cls: '' });
-      if (atStakeMatch)    items.push({ k: 'What is at stake',        v: atStakeMatch[1].trim(),    cls: '' });
+      if (exposureMatch)   items.push({ k: 'Modelled financial exposure', v: exposureMatch[1].trim(),   cls: 'financial' });
+      if (pillarMatch)     items.push({ k: 'Humac pillar',                v: pillarMatch[1].trim(),     cls: '' });
+      if (atStakeMatch)    items.push({ k: 'Modelled stakes',             v: atStakeMatch[1].trim(),    cls: '' });
       if (practisingMatch) items.push({ k: 'You are practising with', v: practisingMatch[1].trim(), cls: '' });
 
       if (items.length === 0) {
