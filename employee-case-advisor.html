@@ -274,7 +274,7 @@
         <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f4f3ff;margin-bottom:12px">Something's landed on your desk.</div>
         <div style="font-size:14px;color:rgba(244,243,255,0.72);line-height:1.75">
           <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);padding:3px 8px;border-radius:3px;margin-right:8px">PACT + PROTOCOL</span>
-          Two layers, always. The <strong style="color:rgba(244,243,255,0.8)">PACT diagnostic</strong> scans across Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation. The <strong style="color:rgba(244,243,255,0.8)">Unified Decision Protocol</strong> translates that scan into assessment, legal position, financial exposure, one clear recommendation, and the exact language to use in the room.
+          Two layers, always. The <strong style="color:rgba(244,243,255,0.8)">PACT diagnostic</strong> scans across Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation. The <strong style="color:rgba(244,243,255,0.8)">Unified Decision Protocol</strong> translates that scan into assessment, legal position, financial exposure, one clear recommendation, and suggested wording for the room — a draft to adapt, not a script to read verbatim.
         </div>
       </div>
 
@@ -384,6 +384,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         <div class="two-col-proto">
           <div class="protocol-section legal-section">
             <div class="proto-label"><span class="proto-icon">⚖️</span> Legal Position</div>
+            <div style="font-size:11px;color:var(--dim);margin-bottom:8px">A reading of the process against the Codes, not a formal legal opinion.</div>
             <div class="proto-text" id="proto-legal"></div>
           </div>
           <div class="protocol-section">
@@ -394,9 +395,10 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
 
         <!-- Protocol: Financial -->
         <div class="fin-card">
-          <div class="proto-label" style="margin-bottom:10px"><span class="proto-icon">💰</span> Financial Exposure</div>
+          <div class="proto-label" style="margin-bottom:10px"><span class="proto-icon">💰</span> Modelled Financial Exposure</div>
           <div class="fin-top">
             <div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.5);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Modelled range, not a measured figure</div>
               <div class="fin-range" id="fin-range">-</div>
               <div class="fin-badges">
                 <span class="fin-badge" id="fin-confidence-badge"></span>
@@ -413,11 +415,13 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
               <div class="fin-pillar-text" id="fin-pillar-rationale"></div>
             </div>
           </div>
-          <div class="fin-trajectory" style="margin-top:12px">
-            <div class="fin-traj-label">Trajectory Signal</div>
+          <div class="fin-trajectory" id="fin-trajectory-row" style="margin-top:12px;display:none">
+            <div class="fin-traj-label">Planning Signal for This Case</div>
             <div class="fin-traj-text" id="fin-trajectory"></div>
           </div>
         </div>
+
+        <!-- Protocol: Recommendation -->
 
         <!-- Protocol: Recommendation -->
         <div class="recommendation-card">
@@ -646,10 +650,10 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       document.getElementById('proto-context').innerText = pr.context || '';
 
       // Protocol: Financial
-      document.getElementById('fin-green-cat').innerHTML = renderGreenCat(result.greenCategory);
+      document.getElementById('fin-green-cat').innerHTML = renderGreenCat(r.greenCategory);
       document.getElementById('fin-range').innerText = fin.range || 'Not calculated';
       var confBadge = document.getElementById('fin-confidence-badge');
-      confBadge.innerText = (fin.confidence || '') + ' confidence';
+      confBadge.innerText = (fin.confidence || '') + ' input coverage';
       confBadge.className = 'fin-badge ' + getConfClass(fin.confidence);
       var pillarBadge = document.getElementById('fin-pillar-badge');
       pillarBadge.innerText = fin.pillar ? 'Humac ' + fin.pillar : '';
@@ -658,7 +662,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         return '<div class="fin-breakdown-item"><span class="fin-breakdown-dot">·</span><span>' + item + '</span></div>';
       }).join('');
       document.getElementById('fin-pillar-rationale').innerText = fin.pillarRationale || '';
-      document.getElementById('fin-trajectory').innerText = fin.trajectorySignal || '';
+      if (fin.trajectorySignal) {         document.getElementById('fin-trajectory').innerText = fin.trajectorySignal;         document.getElementById('fin-trajectory-row').style.display = 'block';       }
 
       // Protocol: Recommendation
       document.getElementById('proto-recommendation').innerText = pr.recommendation || '';
