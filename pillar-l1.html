@@ -35,7 +35,6 @@ body{
   background-size:100% 100%,100% 100%,52px 52px,52px 52px;
   min-height:100vh;
 }
-/* SIDEBAR */
 .sidebar{width:var(--sidebar);flex-shrink:0;position:fixed;top:0;left:0;bottom:0;background:rgba(5,4,16,.98);border-right:1px solid rgba(99,102,241,.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto;z-index:200}
 .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
 .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--cobalt);box-shadow:0 0 10px rgba(99,102,241,.6);animation:pulse-dot 2s ease-in-out infinite;flex-shrink:0}
@@ -53,10 +52,8 @@ body{
 .meridian-chip .m-badge{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:10px;background:rgba(239,68,68,.15);color:rgba(239,68,68,.8)}
 .meridian-chip .m-badge.complete{background:rgba(34,197,94,.12);color:rgba(34,197,94,.7)}
 .meridian-chip .val{font-size:12px;color:var(--text-dim);line-height:1.4}
-/* MAIN */
 .wrap{margin-left:var(--sidebar);padding:40px 48px 80px;max-width:960px;animation:fadeIn .3s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-/* PILLAR NAV */
 .pillar-nav-strip{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
 .pillar-back,.pillar-forward{font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;color:rgba(165,180,252,.45);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .15s}
 .pillar-back:hover,.pillar-forward:hover{color:#a5b4fc}
@@ -66,11 +63,9 @@ body{
 .pd.active{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.45);color:var(--cobalt)}
 .pd-label{font-weight:600;font-size:.62rem}
 .pd-score{font-size:.54rem;opacity:.7}
-/* PAGE HEADER */
 .eyebrow{font-family:var(--mono);font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:#a5b4fc;margin-bottom:16px}
 .page-title{font-family:'Sora',sans-serif;font-size:2rem;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-.03em}
 .page-sub{font-size:.88rem;color:var(--text-dim);margin-bottom:32px;line-height:1.6}
-/* HERO: Revenue Fluent treatment */
 @keyframes hero-pulse{
   0%,100%{box-shadow:0 0 0 1px rgba(99,102,241,.2),0 0 16px rgba(99,102,241,.1),0 0 40px rgba(99,102,241,.05)}
   50%{box-shadow:0 0 0 1px rgba(99,102,241,.45),0 0 32px rgba(99,102,241,.2),0 0 64px rgba(99,102,241,.1)}
@@ -82,8 +77,6 @@ body{
 .hero-divider{background:rgba(99,102,241,.08)}
 .ratio-lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:#a5b4fc;margin-bottom:12px}
 .ratio-num{font-family:var(--hero);font-size:7.5rem;line-height:.88;letter-spacing:.02em;background:linear-gradient(135deg,#f4f3ff 0%,#c4b5fd 50%,#6366f1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(200,160,40,.25));margin-bottom:10px}
-.ratio-num.pos{background:linear-gradient(135deg,#60E8A0 0%,#6366f1 40%,#20A870 100%);-webkit-background-clip:text;background-clip:text}
-.ratio-num.neg{background:linear-gradient(135deg,#F08070 0%,#E05C3A 50%,#C04020 100%);-webkit-background-clip:text;background-clip:text}
 .ratio-desc{font-size:.86rem;color:var(--text-dim);line-height:1.6}
 .ratio-desc b{color:#c4b5fd;font-weight:400}
 .score-band-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:5px;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;font-weight:500;margin-top:12px}
@@ -91,7 +84,6 @@ body{
 .hook{font-style:italic;font-size:1.1rem;line-height:1.5;color:#f4f3ff;margin-bottom:10px}
 .context{font-size:.84rem;color:var(--text-dim);line-height:1.7}
 .context b{color:#f4f3ff;font-weight:500}
-/* STATS ROW */
 .stats{display:flex;gap:0;margin-bottom:28px;border:1px solid var(--cobalt-border);border-radius:10px;overflow:hidden;animation:hero-pulse 3s ease-in-out infinite}
 .stat{flex:1;padding:17px 20px;border-right:1px solid var(--cobalt-border);background:rgba(13,11,30,.4);transition:all .15s}
 .stat:last-child{border-right:none}
@@ -99,7 +91,6 @@ body{
 .stat .sv{font-family:var(--mono);font-size:1.05rem;font-weight:500;margin-bottom:3px}
 .stat .sl{font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,243,255,.45)}
 .sv-teal{color:var(--teal)}.sv-gold{color:var(--gold)}.sv-cobalt{color:#a5b4fc}.sv-dim{color:rgba(244,243,255,.45)}
-/* INTRO COLLAPSIBLE */
 @keyframes cobalt-pulse{
   0%,100%{box-shadow:0 0 1px rgba(99,102,241,.3),0 0 8px rgba(99,102,241,.15),0 0 20px rgba(99,102,241,.06)}
   50%{box-shadow:0 0 0 1px rgba(99,102,241,.6),0 0 20px rgba(99,102,241,.4),0 0 40px rgba(99,102,241,.18)}
@@ -119,7 +110,15 @@ body{
 .intro-sec-lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px}
 .intro-sec-txt{font-size:.9rem;color:var(--text-dim);line-height:1.7}
 .intro-sec-txt b{color:#f4f3ff;font-weight:500}
-/* LEDGER */
+.assumption-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding:12px 16px;border:1px solid rgba(99,102,241,.22);border-radius:10px;background:rgba(13,11,30,.45)}
+.assumption-note{font-size:.78rem;color:var(--text-dim);line-height:1.5;max-width:520px}
+.assumption-note b{color:#f4f3ff;font-weight:500}
+.scenario-btns{display:flex;gap:6px}
+.sc-btn{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:7px 12px;border-radius:7px;border:1px solid rgba(99,102,241,.25);background:transparent;color:#a5b4fc;cursor:pointer}
+.sc-btn.active{background:rgba(99,102,241,.16);border-color:rgba(99,102,241,.5);color:#f4f3ff}
+.assumptions{width:100%;border-collapse:collapse;margin-top:8px;font-size:.78rem}
+.assumptions th,.assumptions td{text-align:left;padding:7px 8px;border-bottom:1px solid rgba(99,102,241,.08);color:var(--text-dim);vertical-align:top}
+.assumptions th{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:#a5b4fc;font-weight:500}
 .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
 .sec-head h2{font-size:.92rem;font-weight:500;color:rgba(244,243,255,.45);display:flex;align-items:center;gap:10px}
 .sec-head h2 .step{font-family:var(--mono);font-size:.64rem;color:#a5b4fc;border:1px solid rgba(99,102,241,.35);border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -154,7 +153,6 @@ body{
 .total-ret{font-family:var(--mono);font-size:.88rem;color:var(--gold);font-weight:600;text-align:right;white-space:nowrap;padding-left:8px}
 .total-net{font-family:var(--mono);font-size:.88rem;font-weight:700;text-align:right;white-space:nowrap;padding-left:8px}
 .total-net.pos{color:var(--teal)}.total-net.neg{color:var(--red)}
-/* SHOW WORKINGS */
 .sw-trigger{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:#a5b4fc;cursor:pointer;border:none;background:none;padding:3px 0;transition:color .15s;margin-top:4px}
 .sw-trigger:hover{color:#c4b5fd}
 .sw-trigger svg{width:10px;height:10px;transition:transform .2s}
@@ -167,13 +165,11 @@ body{
 .sw-val{font-size:.82rem;color:var(--text-dim);line-height:1.6}
 .sw-formula{font-family:var(--mono);font-size:.76rem;color:#a5b4fc;background:rgba(99,102,241,.06);padding:4px 8px;border-radius:4px;display:block;margin-top:4px}
 .sw-result{font-family:var(--mono);font-size:.8rem;color:#6366f1;font-weight:500}
-/* STATEMENT */
 .statement{padding:26px 30px;background:rgba(13,11,30,.5);border:1px solid var(--cobalt-border);border-radius:14px;border-left:3px solid var(--cobalt);position:relative;overflow:hidden;animation:hero-pulse 3s ease-in-out infinite;margin-bottom:32px}
 .statement::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--cobalt),#a5b4fc)}
 .stmt-lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;background:linear-gradient(90deg,var(--cobalt),#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px}
 .stmt-txt{font-style:italic;font-size:1.06rem;line-height:1.65;color:rgba(244,243,255,.6)}
 .stmt-txt b{color:var(--gold);font-style:normal}
-/* ACTIONS */
 .section-eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:#a5b4fc;margin-bottom:6px}
 .section-title{font-family:'Sora',sans-serif;font-size:1.45rem;font-weight:600;color:var(--text);margin-bottom:20px;line-height:1.2}
 .action-item{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid rgba(99,102,241,.06)}
@@ -181,7 +177,6 @@ body{
 .action-num{width:28px;height:28px;border-radius:50%;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.22);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:#a5b4fc;flex-shrink:0;margin-top:2px}
 .action-title{font-size:.92rem;font-weight:600;color:#f4f3ff;margin-bottom:6px;line-height:1.3}
 .action-body{font-size:.82rem;color:var(--text-dim);line-height:1.65}
-/* BOTTOM NAV */
 .bottom-nav{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .btn-back{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;background:transparent;border:1px solid rgba(99,102,241,.2);color:#a5b4fc;padding:10px 20px;border-radius:8px;text-decoration:none;transition:all .15s}
 .btn-back:hover{border-color:rgba(99,102,241,.4);color:var(--text)}
@@ -212,7 +207,7 @@ body{
   <a href="debrief.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg></span> The Debrief</a>
   <div class="nav-section">Account</div>
   <a href="pricing.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg></span> Pricing</a>
-  <a href="data-dashboard.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span> Data &amp; Privacy</a>
+  <a href="data-dashboard.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span> Data & Privacy</a>
   <div class="nav-section">Legal</div>
   <a href="terms.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span> Terms of Service</a>
   <a href="privacy.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span> Privacy Policy</a>
@@ -222,17 +217,25 @@ body{
 <div class="wrap" id="main-wrap"></div>
 <script>
 (function(){var raw=sessionStorage.getItem('sr_meridian');if(raw){try{var m=JSON.parse(raw);document.getElementById('meridian-summary').innerText=(m.state||'')+' \xb7 '+(m.industry||'');var b=document.getElementById('meridian-badge');b.innerText='Active';b.className='m-badge complete';}catch(e){}}})();
-
 var hd=null,md=null;
 try{hd=JSON.parse(sessionStorage.getItem('vantage_humac')||'null');}catch(e){}
 try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
 if(!hd){window.location.href='humac-onboarding.html';}
-
 var l1=hd.l1||0,l2=hd.l2||0,l3=hd.l3||0,l4=hd.l4||0,l5=hd.l5||0;
 var ra=hd.rawAnswers||{};
 var l1Mode=hd.l1Mode||'estimate';
-var q1Pct=(ra.q1!=null)?Number(ra.q1):0;
-
+var q1Pct=(ra.q1!=null&&ra.q1!=='')?Number(ra.q1):null;
+var scenario='base';
+/* Planning assumptions. Base matches the previous point estimates.
+   L4 must read vantage_l1_book and must not reprice these cohorts. */
+var ASSUMPTIONS={
+  retention:{low:1.2,base:1.8,high:2.5,cost:0.05,label:'Replacement-cost multiple',note:'Common planning range for replacement cost is about 0.5–2.0× salary. 1.8 is the high base, not a measured return.'},
+  hire:{low:1.0,base:1.4,high:1.8,cost:0.15,label:'Quality-of-hire multiple',note:'First-year value of a revenue-role hire, as a planning multiple of salary. Not an observed revenue attribution.'},
+  dri:{low:1.5,base:2.8,high:4.0,spend:0.04,label:'Development return index',note:'Multiplier on structured development spend. Uncalibrated until a before/after performance check exists.'},
+  engage:{low:0.03,base:0.08,high:0.12,cost:0.01,label:'Tenure productivity premium',note:'Output premium attributed to long tenure. A hypothesis, not a measured productivity study.'},
+  risk:{low:0.30,base:0.60,high:0.80,cost:0.02,label:'Risk contained',note:'Share of at-risk salary treated as exposure contained by active management.'}
+};
+function m(key){return ASSUMPTIONS[key][scenario];}
 function fmtINR(n){
   var abs=Math.abs(n),sign=n<0?'-':'';
   if(abs>=10000000)return sign+'\u20b9'+(abs/10000000).toFixed(2)+'Cr';
@@ -240,205 +243,133 @@ function fmtINR(n){
   if(abs>=1000)return sign+'\u20b9'+Math.round(abs/1000)+'K';
   return sign+'\u20b9'+Math.round(abs);
 }
-
-// Real per-component formulas: identical to Revenue Fluent's original buildAuto()
 function computeRealLedger(a){
   var headcount=a.cq1_headcount||0, compBase=a.cq1_compbase||0;
   var avgSalary=headcount>0?compBase/headcount:0;
   var stars=a.cq1_stars||0, emerging=a.cq1_emerging||0, tenured5=a.cq1_tenured5||0,
       revHires=a.cq1_revhires||0, atRisk=a.cq1_atrisk||0;
   var rows=[];
-  if(stars>0){var ss=stars*avgSalary;rows.push({id:'E001',action:'Retention Savings',note:stars+' Star'+(stars!==1?'s':'')+' retained \xd7 1.8\xd7 salary \u2014 replacement cost avoided',pill:'Cost-Saving',pillCls:'p-cost',cost:ss*0.05,ret:ss*1.8,formula:'Stars ('+stars+') \xd7 avg salary (\u20b9'+Math.round(avgSalary).toLocaleString('en-IN')+') \xd7 1.80 = replacement cost avoided',working:'The highest-value component of L1. A Star who stays generates 1.8\xd7 their salary in value you did not have to spend finding their replacement.'});}
-  if(revHires>0){var rs=revHires*avgSalary;rows.push({id:'E002',action:'Quality of Hire',note:revHires+' revenue-role hire'+(revHires!==1?'s':'')+' (last 12mo) \xd7 salary \xd7 1.40',pill:'Revenue-Generating',pillCls:'p-rev',cost:rs*0.15,ret:rs*1.4,formula:'Revenue-role hires ('+revHires+') \xd7 avg salary \xd7 1.40 = talent acquisition value',working:'Every hire in a revenue-generating role who performs above average returns 1.40\xd7 their salary contribution in the first year.'});}
-  if(emerging>0){var dc=emerging*avgSalary*0.04;rows.push({id:'E003',action:'Development Return',note:emerging+' Emerging Talent \xd7 4% dev spend \xd7 2.8 DRI',pill:'Development',pillCls:'p-dev',cost:dc,ret:dc*2.8,formula:'Emerging Talent ('+emerging+') \xd7 avg salary \xd7 4% \xd7 2.8 DRI = development return',working:'The Development Return Index (2.8x) reflects the average multiplier on structured learning investment.'});}
-  if(tenured5>0){var ts=tenured5*avgSalary;rows.push({id:'E004',action:'Engagement Premium',note:tenured5+' employee'+(tenured5!==1?'s':'')+' at 5+ yrs tenure \xd7 8% productivity premium',pill:'Culture & Engagement',pillCls:'p-culture',cost:tenured5*avgSalary*0.01,ret:ts*0.08,formula:'Tenured 5+ yrs ('+tenured5+') \xd7 avg salary \xd7 8% = engagement premium',working:'Long-tenured employees generate approximately 8% more output through institutional knowledge and role mastery.'});}
-  if(atRisk>0){var as2=atRisk*avgSalary;rows.push({id:'E005',action:'Risk Management Value',note:atRisk+' at-risk performer'+(atRisk!==1?'s':'')+' \xd7 60% exposure contained',pill:'Risk & Compliance',pillCls:'p-risk',cost:atRisk*avgSalary*0.02,ret:as2*0.6,formula:'At-risk performers ('+atRisk+') \xd7 avg salary \xd7 60% = risk exposure contained',working:'Managing below-expectation performers proactively protects 60% of their salary in risk exposure per cycle.'});}
+  var inputsPresent=headcount>0&&compBase>0;
+  if(!inputsPresent) return {rows:[], totalCost:0, totalRet:0, totalNet:0, compBase:compBase, avgSalary:0, insufficient:true, reason:'Headcount and compensation base are required before a computed ledger can be shown.'};
+  if(stars>0){var ss=stars*avgSalary;rows.push({id:'E001',key:'retention',action:'Retention Savings',note:stars+' Star'+(stars!==1?'s':'')+' retained \xd7 '+m('retention').toFixed(2)+'\xd7 salary \u2014 replacement-cost assumption',pill:'Cost-Saving',pillCls:'p-cost',cost:ss*ASSUMPTIONS.retention.cost,ret:ss*m('retention'),formula:'Stars ('+stars+') \xd7 avg salary (\u20b9'+Math.round(avgSalary).toLocaleString('en-IN')+') \xd7 '+m('retention').toFixed(2)+' = assumed replacement cost avoided',working:ASSUMPTIONS.retention.note});}
+  if(revHires>0){var rs=revHires*avgSalary;rows.push({id:'E002',key:'hire',action:'Quality of Hire',note:revHires+' revenue-role hire'+(revHires!==1?'s':'')+' (last 12mo) \xd7 salary \xd7 '+m('hire').toFixed(2),pill:'Revenue-Generating',pillCls:'p-rev',cost:rs*ASSUMPTIONS.hire.cost,ret:rs*m('hire'),formula:'Revenue-role hires ('+revHires+') \xd7 avg salary \xd7 '+m('hire').toFixed(2)+' = planning value, not observed revenue',working:ASSUMPTIONS.hire.note});}
+  if(emerging>0){var dc=emerging*avgSalary*ASSUMPTIONS.dri.spend;rows.push({id:'E003',key:'dri',action:'Development Return',note:emerging+' Emerging Talent \xd7 4% dev spend \xd7 '+m('dri').toFixed(1)+' DRI',pill:'Development',pillCls:'p-dev',cost:dc,ret:dc*m('dri'),formula:'Emerging Talent ('+emerging+') \xd7 avg salary \xd7 4% \xd7 '+m('dri').toFixed(1)+' DRI',working:ASSUMPTIONS.dri.note});}
+  if(tenured5>0){var ts=tenured5*avgSalary;rows.push({id:'E004',key:'engage',action:'Engagement Premium',note:tenured5+' employee'+(tenured5!==1?'s':'')+' at 5+ yrs tenure \xd7 '+(m('engage')*100).toFixed(0)+'% premium assumption',pill:'Culture & Engagement',pillCls:'p-culture',cost:ts*ASSUMPTIONS.engage.cost,ret:ts*m('engage'),formula:'Tenured 5+ yrs ('+tenured5+') \xd7 avg salary \xd7 '+(m('engage')*100).toFixed(0)+'%',working:ASSUMPTIONS.engage.note});}
+  if(atRisk>0){var as2=atRisk*avgSalary;rows.push({id:'E005',key:'risk',action:'Risk Management Value',note:atRisk+' at-risk performer'+(atRisk!==1?'s':'')+' \xd7 '+(m('risk')*100).toFixed(0)+'% exposure assumed contained',pill:'Risk & Compliance',pillCls:'p-risk',cost:as2*ASSUMPTIONS.risk.cost,ret:as2*m('risk'),formula:'At-risk performers ('+atRisk+') \xd7 avg salary \xd7 '+(m('risk')*100).toFixed(0)+'%',working:ASSUMPTIONS.risk.note});}
   var totalCost=rows.reduce(function(s,r){return s+r.cost;},0);
   var totalRet=rows.reduce(function(s,r){return s+r.ret;},0);
-  return {rows:rows, totalCost:totalCost, totalRet:totalRet, totalNet:totalRet-totalCost, compBase:compBase, avgSalary:avgSalary};
+  return {rows:rows, totalCost:totalCost, totalRet:totalRet, totalNet:totalRet-totalCost, compBase:compBase, avgSalary:avgSalary, insufficient:rows.length===0, reason:rows.length?'':'Cohort counts are zero. Missing cohorts are not scored as average.'};
 }
-var realLedger=(l1Mode==='computed')?computeRealLedger(ra):null;
 var hci=hd.hci||1,conf=hd.confidence||'medium';
 var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
 var industry='',state='';
 if(md){industry=md.industry||'';state=md.state||'';}
-
 var orgTypeLower=md?(md.orgType||'').toLowerCase():'';
 var tier=orgTypeLower.includes('startup')||orgTypeLower.includes('series')||orgTypeLower.includes('seed')?'startup':orgTypeLower.includes('large')||orgTypeLower.includes('enterprise')||orgTypeLower.includes('psu')||orgTypeLower.includes('government')?'enterprise':'mid';
 var tenureLabel=tier==='startup'?'2+ year':tier==='enterprise'?'5+ year':'3+ year';
 var bench={startup:{weak:20,mid:44,strong:64,label:'early-stage'},mid:{weak:28,mid:50,strong:70,label:'mid-market'},enterprise:{weak:22,mid:45,strong:65,label:'enterprise'}}[tier];
-var benchPos=l1>=bench.strong?'above':l1>=bench.mid?'at':'below';
-var benchColor=benchPos==='above'?'#4ade80':benchPos==='at'?'#6366f1':'#E05C3A';
-
 function band(s){if(s<=25)return{name:'Minimum',color:'#E05C3A'};if(s<=50)return{name:'Emerging',color:'#a5b4fc'};if(s<=72)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};}
-var sb=band(l1);
-var realRatioPct=realLedger&&realLedger.compBase>0?(realLedger.totalRet/realLedger.compBase)*100:0;
-var q1Ratio=realLedger?(realRatioPct/100).toFixed(2)+'x':(q1Pct/100).toFixed(2)+'x';
-var q1Display=realLedger?'\u20b9'+realRatioPct.toFixed(0):(q1Pct>0?'\u20b9'+q1Pct.toFixed(0):'N/A');
-
-// Ledger component indices: derived from q1Pct (estimate mode only; unused when l1Mode==='computed')
-var totalIdx=q1Pct;
-var components=[
-  {id:'E001',action:'Retention Savings',note:'High Performers retained \xd7 1.8\xd7 salary \u2014 replacement cost avoided',pill:'Cost-Saving',pillCls:'p-cost',
-   cost:Math.max(1,Math.round(totalIdx*0.03)),ret:Math.round(totalIdx*0.45),
-   formula:'Stars active \xd7 avg salary \xd7 1.80 = replacement cost avoided',working:'The highest-value component of L1. A Star who stays generates 1.8\xd7 their salary in value you did not have to spend finding their replacement.'},
-  {id:'E002',action:'Quality of Hire',note:'Revenue-bearing role hires (last 12 months) \xd7 salary \xd7 1.40 \xd7 0.85',pill:'Revenue-Generating',pillCls:'p-rev',
-   cost:Math.max(1,Math.round(totalIdx*0.05)),ret:Math.round(totalIdx*0.30),
-   formula:'New hires in revenue roles \xd7 salary \xd7 1.40 \xd7 0.85 = talent acquisition value',working:'Every hire in a revenue-generating role (sales, BD, account management, client delivery) who performs above average returns 1.40\xd7 their salary contribution in the first year.'},
-  {id:'E003',action:'Development Return',note:'L&D investment \xd7 2.8 Development Return Index (DRI)',pill:'Development',pillCls:'p-dev',
-   cost:Math.max(1,Math.round(totalIdx*0.05)),ret:Math.round(totalIdx*0.15),
-   formula:'L&D spend \xd7 2.8 = development return',working:'The Development Return Index (2.8x) reflects the average multiplier on structured learning investment: improved performance, reduced flight risk, and skill gap closure.'},
-  {id:'E004',action:'Engagement Premium',note:tenureLabel+' tenure employees \xd7 salary \xd7 8% productivity premium',pill:'Culture & Engagement',pillCls:'p-culture',
-   cost:Math.max(1,Math.round(totalIdx*0.02)),ret:Math.round(totalIdx*0.07),
-   formula:'Tenured employees (\u2265 '+tenureLabel+') \xd7 salary \xd7 0.08 = engagement premium',working:'Long-tenured employees generate approximately 8% more output per hour than equivalent-seniority employees who joined recently. This is the engagement premium from institutional knowledge and deep role mastery.'},
-  {id:'E005',action:'Risk Management Value',note:'Performance risk contained \xb7 compliance exposure managed',pill:'Risk & Compliance',pillCls:'p-risk',
-   cost:Math.max(1,Math.round(totalIdx*0.01)),ret:Math.round(totalIdx*0.03),
-   formula:'Below-expectation contributors \xd7 salary \xd7 0.60 = risk exposure contained',working:'Managing below-expectation performers proactively (PIPs, documented conversations, exits) protects 60% of their salary in risk exposure per cycle. This is the value of not letting performance risk compound.'}
-];
-var totalCost=components.reduce(function(s,c){return s+c.cost;},0);
-var totalRet=components.reduce(function(s,c){return s+c.ret;},0);
-var totalNet=totalRet-totalCost;
-
-// When computed, the real ratio replaces the self-reported q1Pct entirely
-
+function estimateComponents(){
+  if(q1Pct==null||isNaN(q1Pct)) return null;
+  var totalIdx=q1Pct;
+  var scale=m('retention')/ASSUMPTIONS.retention.base;
+  return [
+    {id:'E001',action:'Retention Savings',note:'Allocated from the self-reported ratio. Not an independent measurement.',pill:'Cost-Saving',pillCls:'p-cost',cost:Math.round(totalIdx*0.03),ret:Math.round(totalIdx*0.45*scale),formula:'Share of self-reported ratio \xd7 retention assumption',working:ASSUMPTIONS.retention.note},
+    {id:'E002',action:'Quality of Hire',note:'Allocated from the self-reported ratio. Not observed hire value.',pill:'Revenue-Generating',pillCls:'p-rev',cost:Math.round(totalIdx*0.05),ret:Math.round(totalIdx*0.30*(m('hire')/ASSUMPTIONS.hire.base)),formula:'Share of self-reported ratio \xd7 hire assumption',working:ASSUMPTIONS.hire.note},
+    {id:'E003',action:'Development Return',note:'Allocated from the self-reported ratio.',pill:'Development',pillCls:'p-dev',cost:Math.round(totalIdx*0.05),ret:Math.round(totalIdx*0.15*(m('dri')/ASSUMPTIONS.dri.base)),formula:'Share of self-reported ratio \xd7 DRI assumption',working:ASSUMPTIONS.dri.note},
+    {id:'E004',action:'Engagement Premium',note:'Allocated from the self-reported ratio.',pill:'Culture & Engagement',pillCls:'p-culture',cost:Math.round(totalIdx*0.02),ret:Math.round(totalIdx*0.07*(m('engage')/ASSUMPTIONS.engage.base)),formula:'Share of self-reported ratio \xd7 tenure premium',working:ASSUMPTIONS.engage.note},
+    {id:'E005',action:'Risk Management Value',note:'Allocated from the self-reported ratio.',pill:'Risk & Compliance',pillCls:'p-risk',cost:Math.round(totalIdx*0.01),ret:Math.round(totalIdx*0.03*(m('risk')/ASSUMPTIONS.risk.base)),formula:'Share of self-reported ratio \xd7 risk assumption',working:ASSUMPTIONS.risk.note}
+  ];
+}
 function swHTML(id,c){
+  var net=c.ret-c.cost;
   return '<button class="sw-trigger" onclick="toggleSW(\''+id+'\')" id="'+id+'-btn">'+
     '<svg viewBox="0 0 10 10"><polyline points="2,3 5,7 8,3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
     'Show Workings</button>'+
     '<div class="sw-panel" id="'+id+'">'+
       '<div class="sw-row"><div class="sw-key">Formula</div><div class="sw-val"><span class="sw-formula">'+c.formula+'</span></div></div>'+
-      '<div class="sw-row"><div class="sw-key">What this measures</div><div class="sw-val">'+c.working+'</div></div>'+
-      '<div class="sw-row"><div class="sw-key">This result</div><div class="sw-val"><span class="sw-result">Return index: '+c.ret+' \xb7 Cost index: '+c.cost+' \xb7 Net: +'+(c.ret-c.cost)+'</span></div></div>'+
+      '<div class="sw-row"><div class="sw-key">Assumption</div><div class="sw-val">'+c.working+' Range is a planning band, not a confidence interval.</div></div>'+
+      '<div class="sw-row"><div class="sw-key">This result</div><div class="sw-val"><span class="sw-result">Return: '+c.ret+' \xb7 Cost: '+c.cost+' \xb7 Net: '+(net>=0?'+':'')+net+'</span></div></div>'+
     '</div>';
 }
-
-function ledgerHTML(){
-  if(realLedger){
-    var rrows=realLedger.rows.map(function(c){
-      var net=c.ret-c.cost;
-      return '<div class="ledger-row">'+
-        '<div><div class="row-date">Baseline</div></div>'+
-        '<div><div class="row-id">'+c.id+'</div><div class="row-action">'+c.action+'</div><div class="row-note">'+c.note+'</div><span class="pill '+c.pillCls+'">'+c.pill+'</span>'+swHTML('sw-'+c.id,c)+'</div>'+
-        '<div class="row-cost">'+fmtINR(c.cost)+'</div>'+
-        '<div class="row-ret">+'+fmtINR(c.ret)+'</div>'+
-        '<div class="row-net '+(net>=0?'pos':'neg')+'">'+(net>=0?'+':'')+fmtINR(net)+'</div>'+
-      '</div>';
-    }).join('');
-    return '<div class="ledger">'+
-      '<div class="ledger-hd"><span>When</span><span>Value Component</span><span>HR Cost</span><span>Return</span><span>Net</span></div>'+
-      (rrows||'<div style="padding:20px 24px;color:var(--text-dim);font-size:.82rem">No value components triggered \u2014 all cohort counts entered as zero.</div>')+
-      '<div class="ledger-total">'+
-        '<div class="total-lbl">TOTAL \xb7 '+scoreDate+' baseline \xb7 real figures</div>'+
-        '<div class="total-cost">'+fmtINR(realLedger.totalCost)+'</div>'+
-        '<div class="total-ret">+'+fmtINR(realLedger.totalRet)+'</div>'+
-        '<div class="total-net '+(realLedger.totalNet>=0?'pos':'neg')+'">'+(realLedger.totalNet>=0?'+':'')+fmtINR(realLedger.totalNet)+'</div>'+
-      '</div>'+
-    '</div>';
-  }
-  var rows=components.map(function(c){
-    var net=c.ret-c.cost;
-    return '<div class="ledger-row">'+
-      '<div><div class="row-date">Baseline</div></div>'+
-      '<div><div class="row-id">'+c.id+'</div><div class="row-action">'+c.action+'</div><div class="row-note">'+c.note+'</div><span class="pill '+c.pillCls+'">'+c.pill+'</span>'+swHTML('sw-'+c.id,c)+'</div>'+
-      '<div class="row-cost">'+(q1Pct>0?c.cost:'\u2014')+'</div>'+
-      '<div class="row-ret">'+(q1Pct>0?'+'+c.ret:'\u2014')+'</div>'+
-      '<div class="row-net '+(net>=0?'pos':'neg')+'">'+(q1Pct>0?(net>=0?'+':'')+net:'\u2014')+'</div>'+
-    '</div>';
+function persistBook(book){
+  try{sessionStorage.setItem('vantage_l1_book', JSON.stringify(book));}catch(e){}
+}
+function render(){
+  var realLedger=(l1Mode==='computed')?computeRealLedger(ra):null;
+  var components=estimateComponents();
+  var benchPos=l1>=bench.strong?'above':l1>=bench.mid?'at':'below';
+  var benchColor=benchPos==='above'?'#4ade80':benchPos==='at'?'#6366f1':'#E05C3A';
+  var sb=band(l1);
+  var realRatioPct=realLedger&&realLedger.compBase>0?(realLedger.totalRet/realLedger.compBase)*100:null;
+  var shownPct=realLedger?realRatioPct:q1Pct;
+  var q1Display=shownPct==null?'Not measured':'\u20b9'+Number(shownPct).toFixed(0);
+  var q1Ratio=shownPct==null?'not measured':(shownPct/100).toFixed(2)+'x';
+  persistBook({
+    canonical:true,
+    consumer:'L4 must use this book. Do not reprice stars, emerging, tenured, revenue hires, or at-risk cohorts.',
+    mode:l1Mode,
+    scenario:scenario,
+    insufficient:!!(realLedger&&realLedger.insufficient)||(l1Mode!=='computed'&&q1Pct==null),
+    totalCost:realLedger?realLedger.totalCost:(components?components.reduce(function(s,c){return s+c.cost;},0):null),
+    totalRet:realLedger?realLedger.totalRet:(components?components.reduce(function(s,c){return s+c.ret;},0):null),
+    compBase:realLedger?realLedger.compBase:null,
+    assumptions:ASSUMPTIONS,
+    reviewed:'2026-10-03'
+  });
+  var assumptionRows=Object.keys(ASSUMPTIONS).map(function(k){
+    var a=ASSUMPTIONS[k];
+    var fmt=k==='engage'||k==='risk'?function(n){return (n*100).toFixed(0)+'%';}:function(n){return n.toFixed(1)+'x';};
+    return '<tr><td>'+a.label+'</td><td>'+fmt(a.low)+'</td><td>'+fmt(a.base)+'</td><td>'+fmt(a.high)+'</td><td>'+a.note+'</td></tr>';
   }).join('');
-  return '<div class="ledger">'+
-    '<div class="ledger-hd"><span>When</span><span>Value Component</span><span>HR Cost idx</span><span>Return idx</span><span>Net idx</span></div>'+
-    rows+
-    '<div class="ledger-total">'+
-      '<div class="total-lbl">TOTAL \xb7 '+scoreDate+' baseline \xb7 estimated</div>'+
-      '<div class="total-cost">'+(q1Pct>0?totalCost:'\u2014')+'</div>'+
-      '<div class="total-ret">'+(q1Pct>0?'+'+totalRet:'\u2014')+'</div>'+
-      '<div class="total-net '+(totalNet>=0?'pos':'neg')+'">'+(q1Pct>0?(totalNet>=0?'+':'')+totalNet:'\u2014')+'</div>'+
-    '</div>'+
-  '</div>';
+  function ledgerHTML(){
+    if(realLedger){
+      if(realLedger.insufficient){
+        return '<div class="ledger"><div style="padding:22px 24px;color:var(--text-dim);font-size:.86rem;line-height:1.6">'+realLedger.reason+' The stored L1 score is not treated as a computed ledger.</div></div>';
+      }
+      var rrows=realLedger.rows.map(function(c){
+        var net=c.ret-c.cost;
+        return '<div class="ledger-row"><div><div class="row-date">Baseline</div></div><div><div class="row-id">'+c.id+'</div><div class="row-action">'+c.action+'</div><div class="row-note">'+c.note+'</div><span class="pill '+c.pillCls+'">'+c.pill+'</span>'+swHTML('sw-'+c.id,c)+'</div><div class="row-cost">'+fmtINR(c.cost)+'</div><div class="row-ret">+'+fmtINR(c.ret)+'</div><div class="row-net '+(net>=0?'pos':'neg')+'">'+(net>=0?'+':'')+fmtINR(net)+'</div></div>';
+      }).join('');
+      return '<div class="ledger"><div class="ledger-hd"><span>When</span><span>Value Component</span><span>HR Cost</span><span>Return</span><span>Net</span></div>'+rrows+'<div class="ledger-total"><div class="total-lbl">TOTAL \xb7 '+scoreDate+' \xb7 '+scenario+' assumption \xb7 canonical book for L4</div><div class="total-cost">'+fmtINR(realLedger.totalCost)+'</div><div class="total-ret">+'+fmtINR(realLedger.totalRet)+'</div><div class="total-net '+(realLedger.totalNet>=0?'pos':'neg')+'">'+(realLedger.totalNet>=0?'+':'')+fmtINR(realLedger.totalNet)+'</div></div></div>';
+    }
+    if(!components){
+      return '<div class="ledger"><div style="padding:22px 24px;color:var(--text-dim);font-size:.86rem">No self-reported ratio. Estimate mode is not scored as zero or as average.</div></div>';
+    }
+    var totalCost=components.reduce(function(s,c){return s+c.cost;},0);
+    var totalRet=components.reduce(function(s,c){return s+c.ret;},0);
+    var totalNet=totalRet-totalCost;
+    var rows=components.map(function(c){
+      var net=c.ret-c.cost;
+      return '<div class="ledger-row"><div><div class="row-date">Baseline</div></div><div><div class="row-id">'+c.id+'</div><div class="row-action">'+c.action+'</div><div class="row-note">'+c.note+'</div><span class="pill '+c.pillCls+'">'+c.pill+'</span>'+swHTML('sw-'+c.id,c)+'</div><div class="row-cost">'+c.cost+'</div><div class="row-ret">+'+c.ret+'</div><div class="row-net '+(net>=0?'pos':'neg')+'">'+(net>=0?'+':'')+net+'</div></div>';
+    }).join('');
+    return '<div class="ledger"><div class="ledger-hd"><span>When</span><span>Allocated component</span><span>Cost idx</span><span>Return idx</span><span>Net idx</span></div>'+rows+'<div class="ledger-total"><div class="total-lbl">TOTAL \xb7 '+scoreDate+' \xb7 estimate allocation, not five measurements</div><div class="total-cost">'+totalCost+'</div><div class="total-ret">+'+totalRet+'</div><div class="total-net '+(totalNet>=0?'pos':'neg')+'">'+(totalNet>=0?'+':'')+totalNet+'</div></div></div>';
+  }
+  var acts=[
+    {title:'Use this ledger as the only book',body:'Human P&L should divide this return by HR investment. It should not reprice stars, hires, tenure, or development. The same person cannot be a value line twice.'},
+    {title:'Show the range before the board line',body:'The base case is '+q1Display+' per \u20b9100. Low and high change the multiples, not the cohorts. Say which case you are presenting.'},
+    {title:'Replace one assumption with a count',body:'The first computed exit, hire, or development cohort is worth more than another estimated split of the same ratio.'}
+  ];
+  var w=document.getElementById('main-wrap');
+  var pdots=[{label:'L1',score:l1,href:'pillar-l1.html',active:true},{label:'L2',score:l2,href:'pillar-l2.html'},{label:'L3',score:l3,href:'pillar-l3.html'},{label:'L4',score:l4,href:'pillar-l4.html'},{label:'L5',score:l5,href:'pillar-l5.html'}];
+  w.innerHTML=
+    '<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+p.score+'</span></a>';}).join('')+'</div><a href="pillar-l2.html" class="pillar-forward">L2 Talent Premium \u2192</a></div>'+
+    '<div class="eyebrow">Vantage \xb7 Humac Score \xb7 L1 \xb7 25% weight \xb7 canonical book</div><h1 class="page-title">The Value Ledger</h1><p class="page-sub">'+(industry?industry+' \xb7 ':'')+(state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate+' \xb7 ':'')+'Planning model, not a measured return</p>'+
+    '<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L1 Score</div><div class="ratio-num">'+l1+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+q1Display+' generated for every \u20b9100 of salary bill</div><div class="context"><b style="color:'+benchColor+'">'+(benchPos==='above'?'Above':benchPos==='at'?'At':'Below')+'</b> the '+bench.label+' benchmark (L1 '+bench.weak+'\u2013'+bench.strong+') \xb7 HCI '+hci.toFixed(2)+'x \xb7 '+conf+' confidence \xb7 '+scenario+' case</div></div></div></div>'+
+    '<div class="stats"><div class="stat"><div class="sv sv-teal">'+l1+'/100</div><div class="sl">L1 Score</div></div><div class="stat"><div class="sv sv-gold">'+q1Display+'</div><div class="sl">per \u20b9100 salary</div></div><div class="stat"><div class="sv sv-cobalt">'+(benchPos==='above'?'\u2197':benchPos==='at'?'\u2192':'\u2198')+' '+benchPos+'</div><div class="sl">vs '+bench.label+'</div></div><div class="stat"><div class="sv sv-dim">'+hci.toFixed(2)+'x</div><div class="sl">HCI coefficient</div></div></div>'+
+    '<div class="assumption-bar"><div class="assumption-note"><b>'+scenario+' case.</b> Multiples are planning assumptions. L4 must consume this book and must not reprice these cohorts. Ratio shown: '+q1Ratio+'.</div><div class="scenario-btns"><button class="sc-btn'+(scenario==='low'?' active':'')+'" onclick="setScenario(\'low\')">Low</button><button class="sc-btn'+(scenario==='base'?' active':'')+'" onclick="setScenario(\'base\')">Base</button><button class="sc-btn'+(scenario==='high'?' active':'')+'" onclick="setScenario(\'high\')">High</button></div></div>'+
+    '<div class="intro-panel"><div class="intro-toggle" onclick="toggleIntro()"><div class="intro-tl"><div class="intro-icon">?</div><div><div class="intro-title">What is the Value Ledger?</div><div class="intro-sub">Canonical book of HR value lines \xb7 L1 \xb7 25% of Humac Score</div></div></div><div class="intro-chevron" id="intro-chev">\u25bc</div></div><div class="intro-body" id="intro-body"><div class="intro-sec"><div class="intro-sec-lbl">What it is</div><div class="intro-sec-txt">The only place retention, hire quality, development, tenure premium, and managed performance risk are priced. <b>Human P&L is the ratio of this book, not a second ledger.</b></div></div><div class="intro-sec"><div class="intro-sec-lbl">Assumptions \xb7 reviewed 3 Oct 2026</div><table class="assumptions"><tr><th>Line</th><th>Low</th><th>Base</th><th>High</th><th>Status</th></tr>'+assumptionRows+'</table></div><div class="intro-sec"><div class="intro-sec-lbl">What would falsify it</div><div class="intro-sec-txt">If regretted attrition, replacement cost, or quality incidents do not move with these lines over 90 days, the multiple is wrong. Missing inputs stay missing. They are not scored as average.</div></div></div></div>'+
+    '<div class="sec-head"><h2><span class="step">1</span>The Ledger \xb7 '+scoreDate+'</h2><div class="sec-sub">'+(l1Mode==='computed'?'Computed cohorts \xb7 '+scenario+' multiples':'Estimate mode allocates one self-reported ratio')+'</div></div>'+
+    '<div class="legend"><div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div>Revenue-Generating</div><div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div>Cost-Saving</div><div class="leg-item"><div class="leg-dot" style="background:#a5b4fc"></div>Development</div><div class="leg-item"><div class="leg-dot" style="background:#c4b5fd"></div>Culture</div><div class="leg-item"><div class="leg-dot" style="background:#F07060"></div>Risk</div></div>'+
+    ledgerHTML()+
+    '<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L1 Value Ledger</div><div class="stmt-txt">An L1 score of <b>'+l1+'</b>'+(industry?' in the '+industry+' sector':'')+' is a planning figure under the '+scenario+' case. It is not a measured return until the cohorts are computed and the multiples are reviewed against outcomes.</div></div>'+
+    '<div class="section-eyebrow">What to do next</div><div class="section-title">Moving your Value Ledger forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('')+
+    '<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><a href="pillar-l2.html" class="btn-next">L2 Talent Premium \u2192</a></div>';
 }
-
-var actionSets={
-  minimum:[
-    {title:'Track your next 3 exits',body:'For each departure: avg salary \xd7 1.8 = replacement cost avoided. Three exits \xd7 this formula = your first real Retention Savings figure. Largest single component of L1.'},
-    {title:'Identify your revenue-bearing roles',body:'List every sales, BD, account management, and client-facing role. For hires in the last 12 months: salary \xd7 1.40 \xd7 0.85 = Quality of Hire value. Likely your largest untapped L1 number.'},
-    {title:'Build an HR Initiative Tracker',body:'Every HR programme from the last 12 months gets one row: what it cost, and what category of value it generated. Categories first, numbers second. Start this week.'},
-    {title:'Set a 90-day target',body:'Return with computed figures for at least Block A. A computed L1 score, even a modest one, is 10\xd7 more defensible in a board conversation.'}
-  ],
-  emerging:[
-    {title:'Convert your largest estimate to computed',body:'Pull HRIS exit data from the last 12 months. Multiply Stars who left by 1.8\xd7 their salary. That is your Retention Savings gap. Add it to your L1 next check-in.'},
-    {title:'Apply the Development Return Index',body:'Whatever you spent on structured development \xd7 2.8 = your DRI return. Add it to your next L1 calculation.'},
-    {title:'Quantify your engagement premium',body:'Employees with '+tenureLabel+' tenure \xd7 avg salary \xd7 0.08. That is your Engagement Premium. The most underreported component of L1.'},
-    {title:'Build the HR ROI calculation twice this year',body:'The first calculation gives you a number. The second gives you a trend. A trend is what leadership acts on.'}
-  ],
-  active:[
-    {title:'Articulate your HR Return Ratio to leadership',body:'\u201cFor every \u20b9100 in salaries, our HR function generates \u20b9'+q1Pct.toFixed(0)+' in measurable value.\u201d That is your boardroom line. Use it.'},
-    {title:'Apply HCI before presenting',body:'"Our unadjusted ratio is '+q1Ratio+'. With a '+hci.toFixed(2)+'x HCI coefficient applied, the adjusted figure is '+((q1Pct/100)*hci).toFixed(2)+'x." State this before the CFO asks.'},
-    {title:'Document your top 3 value-generating initiatives',body:'What it cost. What it returned. In rupees. These are your evidence base for the next budget conversation, not slides.'},
-    {title:'Build a biannual HR P&L report',body:'Standing 6-month deliverable alongside the business P&L. Two data points, same time each year. That is a managed metric.'}
-  ],
-  engine:[
-    {title:'Present this ratio as a board metric',body:'Your '+q1Ratio+' HR Return Ratio is not an HR metric. It is a return on investment statement. Present it in your next QBR as a financial ratio, not an HR slide.'},
-    {title:'Establish a quarterly Humac review cycle',body:'Declining L1 scores appear here before they show up in attrition data. 90-day review cycle. Non-negotiable.'},
-    {title:'Publish the ratio internally',body:'"For every rupee invested in compensation, our HR function is protecting and generating this much financial value." Changes the conversation permanently.'},
-    {title:'Make this your market differentiator',body:'A '+q1Ratio+' HR return ratio is exceptional. Document it. Deploy it in senior hiring conversations as a cultural proof point.'}
-  ]
-};
-var acts=actionSets[l1<=25?'minimum':l1<=50?'emerging':l1<=72?'active':'engine'];
-
-function intelText(){
-  var ctx=industry?' in the '+industry+' sector':'';
-  if(l1<=25)return'An L1 score of <b>'+l1+'</b>'+ctx+' signals HR value is being generated but not captured. The Retention Savings, Quality of Hire, and Development Return components above show exactly what to compute first. Start with one exit. One calculation. The ledger builds from there.';
-  if(l1<=50)return'An L1 score of <b>'+l1+'</b>'+ctx+' confirms a real HR return, '+benchPos+' the '+bench.label+' benchmark. The gap between Emerging and Value Active is precision, not performance. Moving one ledger component from estimated to computed closes it faster than any new initiative.';
-  if(l1<=72)return'An L1 score of <b>'+l1+'</b>'+ctx+' puts your HR function in the top tier of value generators. For every \u20b9100 in salaries, HR is generating \u20b9'+q1Pct.toFixed(0)+'. The ledger above is your evidence base. Present it.';
-  return'An L1 score of <b>'+l1+'</b>'+ctx+' is exceptional. Your HR function is operating as a genuine value centre. The ledger above is board-ready. Present the '+q1Ratio+' HR Return Ratio to your next quarterly review as a financial metric, not an HR slide.';
-}
-
-var w=document.getElementById('main-wrap');
-var pdots=[{label:'L1',score:l1,href:'pillar-l1.html',active:true},{label:'L2',score:l2,href:'pillar-l2.html'},{label:'L3',score:l3,href:'pillar-l3.html'},{label:'L4',score:l4,href:'pillar-l4.html'},{label:'L5',score:l5,href:'pillar-l5.html'}];
-
-var nav='<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+p.score+'</span></a>';}).join('')+'</div><a href="pillar-l2.html" class="pillar-forward">L2 Talent Premium \u2192</a></div>';
-
-var header='<div class="eyebrow">Vantage \xb7 Humac Score \xb7 L1 \xb7 25% weight</div><h1 class="page-title">The Value Ledger</h1><p class="page-sub">'+(md&&industry?industry+' \xb7 ':'')+(md&&state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate:'Your L1 pillar intelligence')+'</p>';
-
-var hero='<div class="hero"><div class="hero-grid">'+
-  '<div><div class="ratio-lbl">L1 Score</div><div class="ratio-num">'+l1+'</div>'+
-  '<div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div>'+
-  '<div class="hero-divider"></div>'+
-  '<div><div class="story-rule"></div>'+
-  '<div class="hook">'+q1Display+' generated for every \u20b9100 of salary bill</div>'+
-  '<div class="context"><b style="color:'+benchColor+'">'+(benchPos==='above'?'Above':benchPos==='at'?'At':'Below')+'</b> the '+bench.label+' benchmark (L1 '+bench.weak+'\u2013'+bench.strong+') \xb7 HCI '+hci.toFixed(2)+'x \xb7 '+conf+' confidence</div>'+
-  '</div></div></div>';
-
-var stats='<div class="stats">'+
-  '<div class="stat"><div class="sv sv-teal">'+l1+'/100</div><div class="sl">L1 Score</div></div>'+
-  '<div class="stat"><div class="sv sv-gold">'+q1Display+'</div><div class="sl">per \u20b9100 salary</div></div>'+
-  '<div class="stat"><div class="sv sv-cobalt">'+(benchPos==='above'?'\u2197':benchPos==='at'?'\u2192':'\u2198')+' '+benchPos+'</div><div class="sl">vs '+bench.label+'</div></div>'+
-  '<div class="stat"><div class="sv sv-dim">'+hci.toFixed(2)+'x</div><div class="sl">HCI coefficient</div></div>'+
-'</div>';
-
-var intro='<div class="intro-panel">'+
-  '<div class="intro-toggle" onclick="toggleIntro()">'+
-    '<div class="intro-tl"><div class="intro-icon">?</div><div><div class="intro-title">What is the Value Ledger?</div><div class="intro-sub">The financial record of HR\u2019s contribution \xb7 L1 \xb7 25% of Humac Score</div></div></div>'+
-    '<div class="intro-chevron" id="intro-chev">\u25bc</div>'+
-  '</div>'+
-  '<div class="intro-body" id="intro-body">'+
-    '<div class="intro-sec"><div class="intro-sec-lbl">What it is</div><div class="intro-sec-txt">Every organisation\u2019s HR function generates financial value. <b>Almost none of them can state what that value is in currency.</b> The Value Ledger converts HR activity into a financial return ratio \u2014 five value components, one number, one boardroom conversation.</div></div>'+
-    '<div class="intro-sec"><div class="intro-sec-lbl">The core formula</div><div class="intro-sec-txt">HR Value Generated \xf7 Total Compensation = the L1 ratio. It measures: <b>Retention Savings</b> (Stars retained \xd7 1.8\xd7 salary), <b>Quality of Hire</b> (revenue-role hires \xd7 1.4 \xd7 0.85), <b>Development Return</b> (L&D \xd7 2.8), <b>Engagement Premium</b> (tenured employees \xd7 8%), and <b>Risk Management Value</b>.</div></div>'+
-    '<div class="intro-sec"><div class="intro-sec-lbl">Why 25% of Humac Score</div><div class="intro-sec-txt">Value generation is the foundational signal. An HR function that cannot demonstrate financial value will always lose the budget argument. L1 is the prerequisite for everything else.</div></div>'+
-  '</div>'+
-'</div>';
-
-var secHead='<div class="sec-head"><h2><span class="step">1</span>The Ledger \xb7 '+scoreDate+' baseline</h2><div class="sec-sub">Index-based \xb7 computed from your q1 answer \xb7 actual figures require HRIS data</div></div>'+
-  '<div class="legend"><div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div>Revenue-Generating</div><div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div>Cost-Saving</div><div class="leg-item"><div class="leg-dot" style="background:#a5b4fc"></div>Development</div><div class="leg-item"><div class="leg-dot" style="background:#c4b5fd"></div>Culture</div><div class="leg-item"><div class="leg-dot" style="background:#F07060"></div>Risk</div></div>';
-
-var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L1 Value Ledger</div><div class="stmt-txt">'+intelText()+'</div></div>';
-var actions='<div class="section-eyebrow">What to do next</div><div class="section-title">Moving your Value Ledger forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('');
-var bottomNav='<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><a href="pillar-l2.html" class="btn-next">L2 Talent Premium \u2192</a></div>';
-
-w.innerHTML=nav+header+hero+stats+intro+secHead+ledgerHTML()+stmt+actions+bottomNav;
-
 function toggleIntro(){var b=document.getElementById('intro-body');var c=document.getElementById('intro-chev');if(b){b.classList.toggle('open');if(c)c.classList.toggle('open');}}
 function toggleSW(id){var p=document.getElementById(id);var b=document.getElementById(id+'-btn');if(p){p.classList.toggle('open');if(b)b.classList.toggle('open');}}
+function setScenario(s){scenario=s;render();}
+render();
 </script>
 <script src="clerk-auth.js"></script>
 <script src="sidebar-shared.js"></script>
