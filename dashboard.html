@@ -753,7 +753,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
             '<div>' +
               '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px">Humac Score</div>' +
               '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;font-weight:600;color:#f4f3ff;margin-bottom:6px">Your financial baseline is not set</div>' +
-              '<div style="font-size:.86rem;color:rgba(244,243,255,.70);line-height:1.5;max-width:420px">Generate your Humac Score \u2014 the measure of how efficiently your organisation converts people investment into financial and organisational value.</div>' +
+              '<div style="font-size:.86rem;color:rgba(244,243,255,.70);line-height:1.5;max-width:420px">Generate your Humac Score \u2014 a provisional planning index, version 0.9, not a completed measure.</div>' +
             '</div>' +
             '<a href="humac-onboarding.html" style="display:inline-flex;align-items:center;gap:8px;font-family:\'JetBrains Mono\',monospace;font-size:.68rem;background:#6366f1;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;flex-shrink:0;transition:all .15s" onmouseover="this.style.background=\'#5254d4\'" onmouseout="this.style.background=\'#6366f1\'">' +
               'Generate baseline score \u2192' +
@@ -774,11 +774,11 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
       var confDots = {high: '\u25cf', medium: '\u25d0', low: '\u25cb'};
       var ts = data.timestamp ? new Date(data.timestamp).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : '';
       var pillars = [
-        {label:'L1', score: data.l1 || 0},
-        {label:'L2', score: data.l2 || 0},
-        {label:'L3', score: data.l3 || 0},
-        {label:'L4', score: data.l4 || 0},
-        {label:'L5', score: data.l5 || 0}
+        {label:'L1', score: data.l1==null?'excluded':data.l1},
+        {label:'L2', score: data.l2==null?'excluded':data.l2},
+        {label:'L3', score: data.l3==null?'excluded':data.l3},
+        {label:'L4', score: data.l4==null?'excluded':data.l4},
+        {label:'L5', score: data.l5==null?'excluded':data.l5}
       ];
 
       // Build trajectory row
@@ -840,7 +840,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
             return '<div style="flex:1;padding:8px 0;' + (i < pillars.length-1 ? 'border-right:1px solid rgba(99,102,241,.08);' : '') + '">' +
               '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.66rem;color:rgba(244,243,255,.58);margin-bottom:4px;text-align:center">' + p.label + '</div>' +
               '<div style="height:3px;background:rgba(99,102,241,.08);margin:0 8px 4px;border-radius:2px;overflow:hidden">' +
-                '<div style="height:100%;width:' + p.score + '%;background:linear-gradient(90deg,#6366f1,#7c3aed);border-radius:2px"></div>' +
+                '<div style="height:100%;width:' + (p.score==='excluded'?0:p.score) + '%;background:linear-gradient(90deg,#6366f1,#7c3aed);border-radius:2px"></div>' +
               '</div>' +
               '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.68rem;font-weight:500;color:#a5b4fc;text-align:center">' + p.score + '</div>' +
             '</div>';
