@@ -292,7 +292,7 @@
           </div>
 
           <button class="analyze-btn" onclick="analyzeOffer('counter_offer')">Run Retention Advisor →</button>
-          <div class="privacy-note">🔒 Anonymised before processing. No personal data stored in analysis.</div>
+          <div class="privacy-note">🔒 Anonymised before processing. The original stays in your record.</div>
         </div>
       </div>
 
@@ -343,7 +343,7 @@
           </div>
 
           <button class="analyze-btn" onclick="analyzeOffer('proactive')">Run Flight Risk Assessment →</button>
-          <div class="privacy-note">🔒 Anonymised before processing. No personal data stored in analysis.</div>
+          <div class="privacy-note">🔒 Anonymised before processing. The original stays in your record.</div>
         </div>
       </div>
     </div>
@@ -487,7 +487,10 @@
       return '₹' + n;
     }
 
-    function riskBadgeHTML(level) {
+        function riskBadgeHTML(level) {
+      if (!level) {
+        return '<span class="risk-badge" style="background:rgba(165,180,252,0.08);border:1px solid rgba(165,180,252,0.2);color:rgba(165,180,252,0.6)">Not assessed</span>';
+      }
       var cls = level === 'High' ? 'risk-high' : level === 'Medium' ? 'risk-medium' : 'risk-low';
       var dot = level === 'High' ? '●' : level === 'Medium' ? '●' : '●';
       return '<span class="risk-badge ' + cls + '">' + dot + ' ' + level + ' Flight Risk</span>';
@@ -564,7 +567,7 @@
         html += '<div class="profile-chip"><div class="pc-label">Competing Offer</div><div class="pc-val">' + formatINR(ep.offerCTC) + '</div></div>';
         html += '<div class="profile-chip"><div class="pc-label">Premium</div><div class="pc-val">+' + (ep.offerPremiumPct || Math.round(((ep.offerCTC - ep.currentCTC) / ep.currentCTC) * 100)) + '%</div></div>';
         html += '<div class="profile-chip"><div class="pc-label">Band &middot; Tenure</div><div class="pc-val">' + (ep.performanceBand || '') + ' &middot; ' + (ep.tenureYears || '') + 'y</div></div>';
-        html += '<div class="profile-chip"><div class="pc-label">Flight Risk</div><div class="pc-val">' + riskBadgeHTML(ep.flightRisk || 'Medium') + '</div></div>';
+        html += '<div class="profile-chip"><div class="pc-label">Flight Risk</div><div class="pc-val">' + riskBadgeHTML(ep.flightRisk) + '</div></div>';
         html += '</div>';
 
         // Financial model
@@ -573,7 +576,7 @@
         html += '<div class="fin-grid">';
         html += '<div class="fin-cell"><div class="fin-cell-label">Replacement Cost</div><div class="fin-cell-amount">' + (repCost.total || 'N/A') + '</div><ul class="breakdown-list">' + ((repCost.breakdown || []).map(function(b){ return '<li>' + b + '</li>'; }).join('')) + '</ul></div>';
         html += '<div class="fin-cell"><div class="fin-cell-label">Break-even Ceiling</div><div class="fin-cell-amount">' + (fm.breakEvenCeiling ? fm.breakEvenCeiling.split('\u2014')[0].trim() : 'N/A') + '</div><div class="fin-cell-sub">' + (fm.breakEvenCeiling || '') + '</div></div>';
-        html += '<div class="fin-cell highlight"><div class="fin-cell-label">Recommended Match</div><div class="fin-cell-amount">' + (rec.figure || '\u2014') + '</div><div class="fin-cell-sub">Confidence: ' + (rec.confidence || '') + '</div></div>';
+        html += '<div class="fin-cell highlight"><div class="fin-cell-label">Recommended Match</div><div class="fin-cell-amount">' + (rec.figure || '\u2014') + '</div></div>';
         html += '</div>';
 
         // Primary recommendation
@@ -632,7 +635,7 @@
         html += '<div class="profile-strip">';
         html += '<div class="profile-chip"><div class="pc-label">Current CTC</div><div class="pc-val">' + formatINR(ep2.currentCTC) + '</div></div>';
         html += '<div class="profile-chip"><div class="pc-label">Band &middot; Tenure</div><div class="pc-val">' + (ep2.performanceBand || '') + ' &middot; ' + (ep2.tenureYears || '') + 'y</div></div>';
-        html += '<div class="profile-chip"><div class="pc-label">Flight Risk</div><div class="pc-val">' + riskBadgeHTML(ep2.flightRisk || 'Medium') + '</div></div>';
+        html += '<div class="profile-chip"><div class="pc-label">Flight Risk</div><div class="pc-val">' + riskBadgeHTML(ep2.flightRisk) + '</div></div>';
         html += '<div class="profile-chip"><div class="pc-label">Est. Time to Exit</div><div class="pc-val">' + (ep2.estimatedTimeToLeave || 'Unknown') + '</div></div>';
         html += '</div>';
 
@@ -718,7 +721,10 @@
         ? 'Counter-offer decision. Current CTC: ' + formatINR(ep.currentCTC) + '. Competing offer: ' + formatINR(ep.offerCTC) + '. Band: ' + ep.performanceBand + '. Flight risk: ' + ep.flightRisk + '.'
         : 'Flight risk assessment. Current CTC: ' + formatINR(ep.currentCTC) + '. Band: ' + ep.performanceBand + '. Risk: ' + ep.flightRisk + '. Est. timeline: ' + (ep.estimatedTimeToLeave || 'Unknown') + '.';
 
-      // Retention Value Protected = replacement cost (what we avoided losing)
+      // Modelled replacement cost, saved as retention_value for ARIA's
+      // aggregate context. Not value protected or value retained — it's
+      // the estimated cost of replacement the recommendation was weighed
+      // against, nothing has actually been avoided or saved yet.
       // counter_offer: replacementCost.total  |  proactive: costOfLosingThem.total
       var retentionValue = flow === 'counter_offer'
         ? ((fm.replacementCost && fm.replacementCost.total) || (humac.range || ''))
