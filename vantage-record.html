@@ -212,7 +212,7 @@
               </div>
               <div class="hdc-comp pending">
                 <div class="hdc-comp-dot pending"></div>
-                <span class="hdc-comp-text">RETENTION VALUE &middot; COMING</span>
+                <span class="hdc-comp-text">MODELLED REPLACEMENT COST &middot; COMING</span>
               </div>
               <div class="hdc-comp pending">
                 <div class="hdc-comp-dot pending"></div>
@@ -221,7 +221,7 @@
             </div>
           </div>
           <div class="hdc-banner-right">
-            <div class="hdc-banner-desc">The running INR total of every financial exposure you've navigated through Employee Case Advisor. This is Component 1 of your HR Decision Capital: computed from your actual case record, not illustrative. Retention Value Protected and Business Cases Landed expand this figure as you use more of Vantage.</div>
+            <div class="hdc-banner-desc">The running INR total of every financial exposure you've navigated through Employee Case Advisor. This is Component 1 of your HR Decision Capital: computed from your actual case record, not illustrative. Modelled Replacement Cost and Business Cases Landed expand this figure as you use more of Vantage.</div>
             <a href="about.html#capital" class="hdc-banner-link">How HR Decision Capital works &#8594;</a>
           </div>
         </div>
@@ -358,7 +358,7 @@
     // ─────────────────────────────────────────────────────────────
     // Phase 3: sums all 3 HDC components
     //   Component 1 = financial_exposure  (Employee Case Advisor)
-    //   Component 2 = retention_value     (Retention Advisor)
+    //   Component 2 = modelled_replacement_cost (Retention Advisor)
     //   Component 3 = business_case_value (The Business Case)
     function computeAndRenderHDC() {
       var comp1 = 0, comp2 = 0, comp3 = 0;
@@ -368,7 +368,7 @@
         var fields = c.fields || {};
         var v1 = parseExposureLakhs(fields['financial_exposure'] || '');
         if (v1 > 0) { comp1 += v1; comp1Cases++; }
-        var v2 = parseExposureLakhs(fields['retention_value'] || '');
+        var v2 = parseExposureLakhs(fields['modelled_replacement_cost'] || '');
         if (v2 > 0) { comp2 += v2; comp2Cases++; }
         var v3 = parseExposureLakhs(fields['business_case_value'] || '');
         if (v3 > 0) { comp3 += v3; comp3Cases++; }
@@ -391,7 +391,7 @@
 
       var parts = [];
       if (comp1 > 0) parts.push('Exposure ' + fmtL(comp1));
-      if (comp2 > 0) parts.push('Retention ' + fmtL(comp2));
+      if (comp2 > 0) parts.push('Modelled replacement cost ' + fmtL(comp2));
       if (comp3 > 0) parts.push('ROI ' + fmtL(comp3));
       var totalCases = comp1Cases + comp2Cases + comp3Cases;
       if (countEl) countEl.textContent = totalCases + (totalCases === 1 ? ' entry' : ' entries') + ' \u00b7 ' + parts.join(' \u00b7 ');
