@@ -232,7 +232,7 @@
         <div class="humacity-summary">
           <div class="hs-header">
             <div class="hs-badge">HUMACITY</div>
-            <div class="hs-title">Your Human P&amp;L for the Month</div>
+            <div class="hs-title">Your modelled Human P&amp;L for the Month</div>
           </div>
           <div class="hs-assets" id="hs-assets-grid"></div>
         </div>
@@ -267,11 +267,12 @@
 
             <!-- Q1: L1 return -->
             <div style="padding:18px 24px;border-bottom:1px solid rgba(99,102,241,.06)">
-              <div style="font-size:13px;color:rgba(244,243,255,.8);margin-bottom:12px;line-height:1.5">Has your HR function's financial return changed this month?<br><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,.4)">For every ₹100 of total salaries — roughly what % does HR generate in measurable financial value?</span></div>
-              <div style="display:flex;align-items:center;gap:10px">
+              <div style="font-size:13px;color:rgba(244,243,255,.8);margin-bottom:12px;line-height:1.5">Has your HR function's attributed return changed this month?<br><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,.4)">A planning estimate, not a measured percent &mdash; roughly, what's the attributed return per &#8377;100 of payroll under your base case?</span></div>
+              <div id="dr-q1-wrap" style="display:flex;align-items:center;gap:10px">
                 <input type="number" id="dr-q1" min="0" max="500" placeholder="Leave blank = no change" style="background:rgba(5,4,16,.4);border:1px solid rgba(99,102,241,.18);color:#f4f3ff;border-radius:8px;padding:10px 14px;font-size:13px;width:200px;outline:none;font-family:'Plus Jakarta Sans',sans-serif"/>
-                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(244,243,255,.60)">% of total salaries</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(244,243,255,.60)">&#8377; per &#8377;100 of payroll</span>
               </div>
+              <div id="dr-q1-computed-note" style="display:none;font-size:12px;color:rgba(165,180,252,.55);line-height:1.6;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.15);border-radius:8px;padding:10px 14px">Your L1 baseline was built from actual cohort data, not a single estimate. A quick percentage here can't update it accurately &mdash; <a href="pillar-l1.html" style="color:#a5b4fc">update it on the Value Ledger page</a> instead. L1 stays unchanged in this refresh.</div>
             </div>
 
             <!-- Q2: HCI check -->
@@ -328,7 +329,19 @@
 
       // Pre-fill Q1 from stored rawAnswers
       var raw = stored.rawAnswers || {};
-      if (raw.q1) document.getElementById('dr-q1').value = raw.q1;
+      // A computed-mode L1 was built from real cohort data (buildL1Book), not
+      // a single percentage. Overwriting it with this quick estimate would
+      // silently replace a computed figure with a cruder one, and feed the
+      // wrong number into L4 (which reads this same book). Disable the
+      // question instead and point to the real update path.
+      if (stored.l1Mode === 'computed') {
+        var q1wrap = document.getElementById('dr-q1-wrap');
+        var q1note = document.getElementById('dr-q1-computed-note');
+        if (q1wrap) q1wrap.style.display = 'none';
+        if (q1note) q1note.style.display = 'block';
+      } else {
+        if (raw.q1) document.getElementById('dr-q1').value = raw.q1;
+      }
       if (raw.q18) document.getElementById('dr-q18').value = raw.q18;
 
       // Build HCI yes/no buttons
@@ -373,8 +386,12 @@
       if (r <= 0.40) return ((r - 0.10) / 0.30) * 50;
       return 50 + ((r - 0.40) / 0.80) * 50;
     }
-    function calcL2(n) { return [0,15,33,50,75,100][Math.max(0,Math.min(5,n))]; }
-    function calcL3(n) { return (n / 8) * 100; }
+    // calcL2 and calcL3 were removed: they dated from before the Talent
+    // Premium exclude-unmeasured rework and the 25-signal Org Vitals rebuild,
+    // and no longer match how those pillars are actually scored (see
+    // humac-onboarding.html). This quick refresh now leaves L2 and L3 exactly
+    // as currently stored rather than silently recomputing them with a
+    // formula the rest of the product no longer uses.
     function calcL4(pct) {
       var r = (pct || 0) / 100;
       if (r <= 0) return 0; if (r >= 3.0) return 100;
@@ -399,10 +416,13 @@
       if (!stored) return;
 
       var raw = Object.assign({}, stored.rawAnswers || {});
+      var l1Locked = stored.l1Mode === 'computed';
 
-      // Apply Q1 update (L1)
-      var newL1 = document.getElementById('dr-q1').value;
-      if (newL1 !== '') raw.q1 = parseFloat(newL1);
+      // Apply Q1 update (L1) — only when L1 isn't a computed-cohort baseline
+      if (!l1Locked) {
+        var newL1 = document.getElementById('dr-q1').value;
+        if (newL1 !== '') raw.q1 = parseFloat(newL1);
+      }
 
       // Apply HCI updates
       var hciIds = ['q7','q8','q9','q10'];
@@ -414,27 +434,43 @@
       var newRisk = document.getElementById('dr-q18').value;
       if (newRisk) raw.q18 = newRisk;
 
-      // Recalculate
-      var l2Ids = ['q2','q3','q4','q5','q6'];
-      var l3Ids = ['q7','q8','q9','q10','q11','q12','q13','q14'];
+      // Recalculate only what this form actually asks about. L2 and L3 are
+      // left exactly as stored — including null/excluded — since this form
+      // collects none of the data either pillar's real scoring needs, and
+      // recomputing them from old formulas would silently discard a correct
+      // exclusion or overwrite a real 25-signal L3 with a stale 8-question
+      // approximation. L1 is only touched when it wasn't computed from a
+      // cohort book; L4 is left untouched since this form has no L4 input
+      // and L4 reads the L1 book rather than taking its own answers.
       var hciIds4 = ['q7','q8','q9','q10'];
-
-      var l1 = Math.round(calcL1(raw.q1 || 0));
-      var l2 = calcL2(countYes(raw, l2Ids));
-      var l3 = Math.round(calcL3(countYes(raw, l3Ids)));
-      var l4 = Math.round(calcL4(raw.q15 || 0));
+      var l1 = l1Locked ? stored.l1 : Math.round(calcL1(raw.q1 || 0));
+      var l2 = stored.l2;
+      var l3 = stored.l3;
+      var l4 = stored.l4;
       var l5 = Math.round(calcL5(raw.q16, raw.q17, raw.q18));
       var hciYes = countYes(raw, hciIds4);
       var hci = Math.round((0.70 + hciYes * 0.15) * 100) / 100;
-      var humac = Math.round(l1*0.25 + l2*0.15 + l3*0.30 + l4*0.20 + l5*0.10);
-      var hciAdj = Math.min(100, Math.round(humac * hci));
+
+      // Exclusion-aware weighted average: a null pillar (excluded elsewhere
+      // in the product for having too little data) must not be treated as
+      // zero or silently dropped from the denominator without adjusting the
+      // rest. The same pattern as the main onboarding flow's computeDraftHumac.
+      var weights = {l1:0.25,l2:0.15,l3:0.30,l4:0.20,l5:0.10};
+      var pillars = {l1:l1,l2:l2,l3:l3,l4:l4,l5:l5};
+      var wsum = 0, weightedSum = 0;
+      Object.keys(pillars).forEach(function(k){
+        if (pillars[k] != null) { wsum += weights[k]; weightedSum += pillars[k] * weights[k]; }
+      });
+      var humac = wsum > 0 ? Math.round(weightedSum / wsum) : null;
+      var hciAdj = humac == null ? null : Math.min(100, Math.round(humac * hci));
 
       var bands = ['Value Destruction','Value Neutral','Value Generating','Value Compounding','Value Exceptional'];
-      var band = humac <= 30 ? bands[0] : humac <= 50 ? bands[1] : humac <= 70 ? bands[2] : humac <= 85 ? bands[3] : bands[4];
-      var bandColors = {'Value Destruction':'#E05C3A','Value Neutral':'#a5b4fc','Value Generating':'#6366f1','Value Compounding':'#7c3aed','Value Exceptional':'#c4b5fd'};
+      var band = humac == null ? 'Incomplete' : humac <= 30 ? bands[0] : humac <= 50 ? bands[1] : humac <= 70 ? bands[2] : humac <= 85 ? bands[3] : bands[4];
+      var bandColors = {'Value Destruction':'#E05C3A','Value Neutral':'#a5b4fc','Value Generating':'#6366f1','Value Compounding':'#7c3aed','Value Exceptional':'#c4b5fd','Incomplete':'#E05C3A'};
       var bc = bandColors[band] || '#6366f1';
 
-      // Save
+      // Save — l2/l3/l4 pass through unchanged (including null), since this
+      // form never touched them.
       var updated = Object.assign({}, stored, {
         l1: l1, l2: l2, l3: l3, l4: l4, l5: l5,
         hci: hci, humac: humac, hciAdj: hciAdj, band: band,
@@ -451,12 +487,12 @@
         '<div style="display:flex;align-items:baseline;gap:14px;margin-bottom:12px;flex-wrap:wrap">' +
           '<div>' +
             '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:rgba(244,243,255,.60);margin-bottom:2px">Humac</div>' +
-            '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:3rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + humac + '</div>' +
+            '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:3rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (humac==null?'&mdash;':humac) + '</div>' +
           '</div>' +
           '<div style="color:rgba(99,102,241,.25);font-size:1.4rem;align-self:center">|</div>' +
           '<div>' +
             '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:rgba(244,243,255,.60);margin-bottom:2px">HCI-adjusted</div>' +
-            '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:2.2rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#a5b4fc,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + hciAdj + '</div>' +
+            '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:2.2rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#a5b4fc,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (hciAdj==null?'&mdash;':hciAdj) + '</div>' +
           '</div>' +
         '</div>' +
         '<div style="display:flex;align-items:center;gap:10px">' +
