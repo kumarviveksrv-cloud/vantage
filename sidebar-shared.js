@@ -245,8 +245,8 @@
     f.appendChild(ni('onboarding.html', '\u2B21', 'MERIDIAN Profile'));
     f.appendChild(ni('humac-onboarding.html', '\uD83D\uDCC8', 'Humac Score'));
 
-    // YOUR HRBP
-    f.appendChild(ns('Your HRBP'));
+    // ARIA
+    f.appendChild(ns('Your Thinking Partner'));
     f.appendChild(ni('aria.html', '\u2736', 'ARIA', { cls: 'nav-item--aria' }));
 
     // YOUR CORE TOOLS
