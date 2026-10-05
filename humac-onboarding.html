@@ -363,7 +363,7 @@ function applyCheckinMode(score){
 var BLOCKS=[
   {id:'A',title:'Value Ledger',pillar:'L1',weight:'25% weight',
    desc:'How much financial value does HR generate relative to total salaries paid?',
-   formula:'<b>Precise formula:</b><br><code>L1 ratio = Total HR Program Value &divide; Total Compensation</code><br><br><b>Total HR Program Value includes:</b><br>&bull; High Performers currently active &times; salary &times; <code>1.80</code> (replacement cost avoided)<br>&bull; New joiners in revenue-generating roles (hired last 12 months) &times; salary &times; <code>1.40 &times; 0.85</code><br>&bull; Emerging Talent &times; L&D spend &times; <code>2.80</code> (development return index)<br>&bull; Stable employees ('+window._tenureLabel+') &times; salary &times; <code>0.08</code> (engagement premium)<br>&bull; Below-expectation contributors &times; salary &times; <code>0.60</code> (risk exposure contained)<br><br><b>Data to pull:</b> Payroll, HRIS (talent classifications, tenure), Performance system.',
+   formula:'<b>Precise formula:</b><br><code>L1 ratio = Total HR Program Value &divide; Total Compensation</code><br><br><b>Provisional scale:</b> the 0–100 score is normalized against a placeholder range, not a published benchmark or a user percentile. It will be recalibrated once at least 30 organisations have computed scores.<br><br><b>Total HR Program Value includes:</b><br>&bull; High Performers currently active &times; salary &times; <code>1.80</code> (replacement cost avoided)<br>&bull; New joiners in revenue-generating roles (hired last 12 months) &times; salary &times; <code>1.40 &times; 0.85</code><br>&bull; Emerging Talent &times; L&D spend &times; <code>2.80</code> (development return index)<br>&bull; Stable employees ('+window._tenureLabel+') &times; salary &times; <code>0.08</code> (engagement premium)<br>&bull; Below-expectation contributors &times; salary &times; <code>0.60</code> (risk exposure contained)<br><br><b>Data to pull:</b> Payroll, HRIS (talent classifications, tenure), Performance system.',
    questions:[{id:'q1',type:'pct',text:'For every \u20B9100 of total salaries, roughly what percentage does your HR function generate in measurable financial value?',sub:'Include: retention savings, quality-of-hire returns, development ROI, engagement productivity, and risk management outcomes.'}],
    computedQuestions:[
      {id:'cq1_headcount',type:'num',text:'Total current headcount',sub:'Your full active employee count today.',unit:'people',placeholder:'e.g. 120'},
@@ -435,7 +435,7 @@ var BLOCKS=[
   },
   {id:'D',title:'Human P&L',pillar:'L4',weight:'20% weight',
    desc:'For every rupee spent running HR, how much comes back?',
-   formula:'<b>The Human P&L &mdash; precise formula:</b><br><code>L4 ratio = HR Net Profit &divide; (Total COGS + Total OpEx)</code><br><br><b>Human Revenue:</b> Retention savings + talent acquisition value + performance uplift + culture premium<br><b>Human COGS:</b> Acquisition cost + development investment + HR function cost<br><b>Human OpEx:</b> Compliance &amp; admin + culture &amp; engagement spend<br><b>Net Profit</b> = Revenue &minus; COGS &minus; OpEx &minus; Adjustments',
+   formula:'<b>The Human P&L &mdash; precise formula:</b><br><code>L4 ratio = HR Net Profit &divide; (Total COGS + Total OpEx)</code><br><br><b>Provisional scale:</b> the 0–100 score is normalized against a placeholder range, not a published benchmark or a user percentile. It will be recalibrated once at least 30 organisations have computed scores.<br><br><b>Return:</b> taken from the L1 Value Ledger book. L4 does not reprice stars, hires, tenure, or at-risk people. <b>Investment:</b> HR function cost, compliance, and culture spend only<br><b>Human COGS:</b> Acquisition cost + development investment + HR function cost<br><b>Human OpEx:</b> Compliance &amp; admin + culture &amp; engagement spend<br><b>Net Profit</b> = Revenue &minus; COGS &minus; OpEx &minus; Adjustments',
    questions:[{id:'q15',type:'pct',text:'For every \u20B9100 your HR function spends on running HR \u2014 hiring costs, training, HR team salaries, tools, compliance \u2014 roughly how much measurable value does it generate?',sub:'Include: retention savings, productivity gains, avoided legal costs, and quality-of-hire outcomes. Exclude base salaries from the \u20B9100.'}],
    computedQuestions:[
      {id:'cq1_headcount',type:'num',text:'Total current headcount',sub:'Same figure as L1, if you already entered it there \u2014 no need to re-enter.',unit:'people',placeholder:'e.g. 120'},
@@ -448,7 +448,7 @@ var BLOCKS=[
   },
   {id:'E',title:'Human Balance Sheet',pillar:'L5',weight:'10% weight',
    desc:'What is the net human capital position \u2014 assets vs. liabilities?',
-   formula:'<b>5 human assets:</b> Talent Equity, Institutional Knowledge, Org Learning Velocity, Relationship Capital, Culture Asset<br><b>5 human liabilities:</b> Talent Concentration Risk, Skill Debt, Growth Readiness Gap, Culture Liability, Workforce Obsolescence Risk<br><br><code>NHW = Total Assets &minus; Total Liabilities + L4 Net Profit</code><br><code>NHW Index = (NHW &divide; Total Comp) &times; 100</code>',
+   formula:'<b>5 human assets:</b> Talent Equity, Institutional Knowledge, Org Learning Velocity, Relationship Capital, Culture Asset<br><br><b>Provisional scale:</b> the 0–100 score is normalized against a placeholder range, not a published benchmark or a user percentile. It will be recalibrated once at least 30 organisations have computed scores.<br><b>5 human liabilities:</b> Talent Concentration Risk, Skill Debt, Growth Readiness Gap, Culture Liability, Workforce Obsolescence Risk<br><br><code>NHW = Total Assets &minus; Total Liabilities + L4 Net Profit</code><br><code>NHW Index = (NHW &divide; Total Comp) &times; 100</code>',
    questions:[
      {id:'q16',type:'yn',text:'Does your organisation invest more in developing talent than it loses to exits and skill gaps?'},
      {id:'q17',type:'num',text:'What is the average number of years your current employees have been with this organisation?',sub:'This is your average tenure. Add up the years each employee has been with you, divide by headcount. It is a direct proxy for institutional knowledge \u2014 the longer people stay, the more they carry about how things actually work here.',unit:'years',placeholder:'e.g. 4'},
@@ -560,7 +560,8 @@ function calcL2Estimate(a){
     if(v==='yes'){yes++;total++;}
     else if(v==='no'){total++;}
   });
-  return total>0?Math.round((yes/total)*100):50;
+  if(total<3)return null;
+  return Math.round((yes/total)*100);
 }
 function calcL3(n,total){return(n/(total||20))*100;}
 function calcL4(pct){var r=(pct||0)/100;if(r<=0)return 0;if(r>=3.0)return 100;if(r<=1.0)return(r/1.0)*50;return 50+((r-1.0)/2.0)*50;}
@@ -792,82 +793,62 @@ function restartOnboarding(){
   window.scrollTo(0,0);
 }
 
-var L1_BENCH={min:0.264,max:1.133};
+var L1_BENCH={min:0.264,max:1.133}; /* Placeholder calibration — not yet derived from real data. Revisit once N>30 organisations have computed scores. Reviewed 2026-10-05. */
 function minMaxL1(raw){var scaled=100*(raw-L1_BENCH.min)/(L1_BENCH.max-L1_BENCH.min);return Math.round(Math.max(0,Math.min(100,scaled))*10)/10;}
-function computeL1Real(a){
+function buildL1Book(a){
   var headcount=a.cq1_headcount||0,compBase=a.cq1_compbase||0;
   var avgSalary=headcount>0?compBase/headcount:0;
   var stars=a.cq1_stars||0,emerging=a.cq1_emerging||0,tenured5=a.cq1_tenured5||0,revHires=a.cq1_revhires||0,atRisk=a.cq1_atrisk||0;
-  var totalRet=0;
-  if(stars>0)totalRet+=(stars*avgSalary)*1.8;
-  if(revHires>0)totalRet+=(revHires*avgSalary)*1.4;
-  if(emerging>0)totalRet+=(emerging*avgSalary*0.04)*2.8;
-  if(tenured5>0)totalRet+=(tenured5*avgSalary)*0.08;
-  if(atRisk>0)totalRet+=(atRisk*avgSalary)*0.6;
-  var raw=compBase>0?totalRet/compBase:0;
-  return minMaxL1(raw);
+  if(!(headcount>0&&compBase>0))return {insufficient:true,totalRet:0,compBase:compBase,reason:'Headcount and compensation base are required.'};
+  var totalRet=0,rows=0;
+  if(stars>0){totalRet+=(stars*avgSalary)*1.8;rows++;}
+  if(revHires>0){totalRet+=(revHires*avgSalary)*1.4;rows++;}
+  if(emerging>0){totalRet+=(emerging*avgSalary*0.04)*2.8;rows++;}
+  if(tenured5>0){totalRet+=(tenured5*avgSalary)*0.08;rows++;}
+  if(atRisk>0){totalRet+=(atRisk*avgSalary)*0.6;rows++;}
+  return {canonical:true,insufficient:rows===0,totalRet:totalRet,compBase:compBase,avgSalary:avgSalary,rows:rows,scenario:'base',note:'Sole book for stars, emerging, tenured, 12-month revenue hires, and at-risk. L4 and L5 must not reprice these.'};
 }
-var L4_BENCH={min:0.670,max:6.300};
+function computeL1Real(a){
+  var book=buildL1Book(a);
+  window.__l1book=book;
+  if(book.insufficient)return null;
+  return minMaxL1(book.totalRet/book.compBase);
+}
+var L4_BENCH={min:0.670,max:6.300}; /* Placeholder calibration — not yet derived from real data. Revisit once N>30 organisations have computed scores. Reviewed 2026-10-05. */
 function minMaxL4(raw){var scaled=100*(raw-L4_BENCH.min)/(L4_BENCH.max-L4_BENCH.min);return Math.round(Math.max(0,Math.min(100,scaled))*10)/10;}
 function computeL4Real(a){
-  var headcount=a.cq1_headcount||0,compBase=a.cq1_compbase||0;
-  var avgSalary=headcount>0?compBase/headcount:0;
-  var stars=a.cq1_stars||0,emerging=a.cq1_emerging||0,tenured5=a.cq1_tenured5||0,revHires24=a.cq4_revhires24||0;
-  var talentAcqValue=revHires24>0?(revHires24*avgSalary)*1.4:0;
-  var retSavings=stars>0?(stars*avgSalary*1.5)*0.3:0;
-  var perfUplift=emerging>0?(emerging*avgSalary)*0.08:0;
-  var culturePrem=tenured5>0?(tenured5*avgSalary)*0.06:0;
-  var totalRev=talentAcqValue+retSavings+perfUplift+culturePrem;
-  var acqCost=revHires24>0?(revHires24*avgSalary)*0.15:0;
-  var devInvest=emerging>0?(emerging*avgSalary)*0.04:0;
-  var hrFuncCost=compBase*0.04;
-  var totalCOGS=acqCost+devInvest+hrFuncCost;
-  var compliance=compBase*0.015;
-  var cultureSpend=compBase*0.02;
-  var totalOpEx=compliance+cultureSpend;
-  var hrInvestment=totalCOGS+totalOpEx;
-  var raw=hrInvestment>0?totalRev/hrInvestment:0;
-  return minMaxL4(raw);
+  var book=window.__l1book||buildL1Book(a);
+  if(!book||book.insufficient)return null;
+  var compBase=book.compBase||0;
+  var hrInvestment=compBase*(0.04+0.015+0.02);
+  if(!(hrInvestment>0))return null;
+  return minMaxL4(book.totalRet/hrInvestment);
 }
-var L5_BENCH={min:-0.263,max:0.687};
+var L5_BENCH={min:-0.263,max:0.687}; /* Placeholder calibration — not yet derived from real data. Revisit once N>30 organisations have computed scores. Reviewed 2026-10-05. */
 function minMaxL5(raw){var scaled=100*(raw-L5_BENCH.min)/(L5_BENCH.max-L5_BENCH.min);return Math.round(Math.max(0,Math.min(100,scaled))*10)/10;}
 function computeL5Real(a){
   var headcount=a.cq1_headcount||0,compBase=a.cq1_compbase||0;
+  if(!(compBase>0))return null;
   var avgSalary=headcount>0?compBase/headcount:0;
-  var stars=a.cq1_stars||0,hipo=a.cq5_hipo||0,atRisk=a.cq1_atrisk||0,
-      tenured5=a.cq1_tenured5||0,seniorCount=a.cq5_seniorcount||0,
-      seniorTenure=a.cq5_seniortenure||0,emerging=a.cq1_emerging||0,
-      revEmployees=a.cq5_revemployees||0;
-  var talentEquity=stars>0?(stars*avgSalary)*0.4:0;
+  var hipo=a.cq5_hipo||0,seniorCount=a.cq5_seniorcount||0,seniorTenure=a.cq5_seniortenure||0,revEmployees=a.cq5_revemployees||0;
   var instKnowledge=seniorCount>0?seniorCount*avgSalary*Math.min(seniorTenure*0.08,0.6):0;
-  var orgLearning=emerging>0?(emerging*avgSalary)*0.35:0;
   var relCapital=revEmployees>0?(revEmployees*avgSalary)*0.5:0;
-  var cultureAsset=tenured5>0?(tenured5*avgSalary)*0.08:0;
-  var totalAssets=talentEquity+instKnowledge+orgLearning+relCapital+cultureAsset;
-  var talentConc=(atRisk*avgSalary*0.6)+(hipo*avgSalary*0.25);
-  var skillDebt=compBase*0.03;
-  var growthGap=compBase*0.02;
-  var cultureLiab=compBase*0.01;
-  var totalLiab=talentConc+skillDebt+growthGap+cultureLiab;
-  var nhw=totalAssets-totalLiab;
-  var raw=compBase>0?nhw/compBase:0;
-  return minMaxL5(raw);
+  var totalAssets=instKnowledge+relCapital;
+  var totalLiab=(hipo*avgSalary*0.25)+(compBase*0.03)+(compBase*0.02)+(compBase*0.01);
+  return minMaxL5((totalAssets-totalLiab)/compBase);
 }
 function clampL2(n,lo,hi){return Math.max(lo,Math.min(hi,n));}
 function computeL2Real(a){
-  var headcount=a.cq1_headcount||0,stars=a.cq1_stars||0,hipo=a.cq5_hipo||0;
-  var promoted=a.cq2_promoted12mo||0,promotedEx=a.cq2_promotedexcelling||0;
-  var managers=a.cq2_managers||0,mgrOutperform=a.cq2_managersoutperform||0;
-  var hired=a.cq2_hired12mo||0,hiredMeeting=a.cq2_hiredmeeting||0;
-  var tenureTop=a.cq2_tenuretop||0,tenureAtRisk=a.cq2_tenureatrisk||0;
-  var promoScore=promoted>0?(promotedEx/promoted)*100:50;
-  var mgrScore=managers>0?(mgrOutperform/managers)*100:50;
-  var hireScore=hired>0?(hiredMeeting/hired)*100:50;
-  var selRetScore=50;
-  if(tenureAtRisk>0){var ratio=tenureTop/tenureAtRisk;selRetScore=clampL2((ratio/2)*100,0,100);}
-  else if(tenureTop>0){selRetScore=100;}
-  var hipoScore=headcount>0?clampL2(((hipo+stars)/headcount)*100*4,0,100):50;
-  return Math.round((promoScore+mgrScore+hireScore+selRetScore+hipoScore)/5);
+  var scores=[];
+  if((a.cq2_promoted12mo||0)>0)scores.push((a.cq2_promotedexcelling||0)/a.cq2_promoted12mo*100);
+  if((a.cq2_managers||0)>0)scores.push((a.cq2_managersoutperform||0)/a.cq2_managers*100);
+  if((a.cq2_hired12mo||0)>0)scores.push((a.cq2_hiredmeeting||0)/a.cq2_hired12mo*100);
+  if((a.cq2_tenureatrisk||0)>0)scores.push(clampL2(((a.cq2_tenuretop||0)/a.cq2_tenureatrisk)/2*100,0,100));
+  else if((a.cq2_tenuretop||0)>0)scores.push(100);
+  if((a.cq1_headcount||0)>0)scores.push(clampL2((((a.cq5_hipo||0)+(a.cq1_stars||0))/a.cq1_headcount)*100*4,0,100));
+  window.__l2measured=scores.length;
+  if(scores.length<3)return null;
+  return Math.round(scores.reduce(function(s,n){return s+n;},0)/scores.length);
 }
 function showScoreReveal(){
   document.getElementById('block-container').style.display='none';
@@ -890,22 +871,33 @@ function showScoreReveal(){
   },1000);
 }
 function renderScoreReveal(){
-  var l1=(confidence.A==='computed')?Math.round(computeL1Real(answers)):Math.round(calcL1(answers.q1||0));
-  var l2=(confidence.B==='computed')?computeL2Real(answers):calcL2Estimate(answers);
-  var l3=Math.round(calcL3(countYes(['q7','q8','q9','q10','q11','q12','q13','q14','q19','q20','q21','q22','q23','q24','q25','q26','q27','q28','q29','q30','q31','q32','q33','q34','q35']),25));
-  var l4=(confidence.D==='computed')?Math.round(computeL4Real(answers)):Math.round(calcL4(answers.q15||0));
-  var l5=(confidence.E==='computed')?Math.round(computeL5Real(answers)):Math.round(calcL5(answers.q16,answers.q17,answers.q18));
+  var l3Ids=['q7','q8','q9','q10','q11','q12','q13','q14','q19','q20','q21','q22','q23','q24','q25','q26','q27','q28','q29','q30','q31','q32','q33','q34','q35'];
+  var l3Answered=l3Ids.filter(function(id){return answers[id]==='yes'||answers[id]==='no';}).length;
+  var l3Yes=countYes(l3Ids);
+  var l1raw=(confidence.A==='computed')?computeL1Real(answers):(answers.q1==null||answers.q1==='')?null:calcL1(answers.q1);
+  if(confidence.A!=='computed')window.__l1book={canonical:true,insufficient:true,mode:'estimate',note:'Estimate mode has no cohort book. L4 must not invent one.'};
+  var l1=l1raw==null?null:Math.round(l1raw);
+  var l2raw=(confidence.B==='computed')?computeL2Real(answers):calcL2Estimate(answers);
+  var l2=l2raw==null?null:Math.round(l2raw);
+  var l3=l3Answered>=15?Math.round((l3Yes/l3Answered)*100):null;
+  var l4raw=(confidence.D==='computed')?computeL4Real(answers):(answers.q15==null||answers.q15==='')?null:calcL4(answers.q15);
+  var l4=l4raw==null?null:Math.round(l4raw);
+  var l5raw=(confidence.E==='computed')?computeL5Real(answers):((answers.q16==null&&answers.q17==null&&answers.q18==null)?null:calcL5(answers.q16,answers.q17,answers.q18));
+  var l5=l5raw==null?null:Math.round(l5raw);
   var hci=calcHCI(countYes(['q7','q8','q9','q10']));
-  var humac=Math.round(l1*0.25+l2*0.15+l3*0.30+l4*0.20+l5*0.10);
-  var hciAdj=Math.round(humac*hci);
-  var band=getBand(humac);
+  if((window.__l2measured||0)>0 && (window.__l2measured||0)<5)hci=Math.round(hci*(window.__l2measured/5)*100)/100;
+  var parts=[{k:'l1',s:l1,w:0.25},{k:'l2',s:l2,w:0.15},{k:'l3',s:l3,w:0.30},{k:'l4',s:l4,w:0.20},{k:'l5',s:l5,w:0.10}].filter(function(p){return p.s!=null;});
+  var wsum=parts.reduce(function(n,p){return n+p.w;},0);
+  var humac=wsum>0?Math.round(parts.reduce(function(n,p){return n+p.s*(p.w/wsum);},0)):null;
+  var hciAdj=humac==null?null:Math.round(humac*hci);
+  var band=getBand(humac==null?0:humac);if(humac==null)band={name:'Incomplete',color:'#E05C3A',desc:'Not enough measured pillars to score. Missing inputs were excluded, not filled in as average.'};
   var confLevel=getConfidenceLevel();
 
-  var trajectory=computeTrajectory(l1,l2,l3,l4,l5,humac,hciAdj);
+  var trajectory=humac==null?null:computeTrajectory(l1||0,l2||0,l3||0,l4||0,l5||0,humac,hciAdj||0);
 
-  var scoreData={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5,hci:hci,humac:humac,hciAdj:hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers,trajectory:trajectory,l1Mode:(confidence.A==='computed')?'computed':'estimate',l2Mode:(confidence.B==='computed')?'computed':'estimate',l4Mode:(confidence.D==='computed')?'computed':'estimate',l5Mode:(confidence.E==='computed')?'computed':'estimate',l3Scope:answers.q_scope||''};
+  var scoreData={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5,hci:hci,humac:humac,hciAdj:hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers,trajectory:trajectory,l1Mode:(confidence.A==='computed')?'computed':'estimate',l2Mode:(confidence.B==='computed')?'computed':'estimate',l4Mode:(confidence.D==='computed')?'computed':'estimate',l5Mode:(confidence.E==='computed')?'computed':'estimate',l3Scope:answers.q_scope||'',l3Eligible:l3!=null,l3Answered:l3Answered,excluded:parts.length<5,weightsRenormalized:wsum>0&&wsum<0.999};
 
-  try{sessionStorage.setItem('vantage_humac',JSON.stringify(scoreData));}catch(e){}
+  try{sessionStorage.setItem('vantage_humac',JSON.stringify(scoreData));sessionStorage.setItem('vantage_l1_book',JSON.stringify(window.__l1book||{insufficient:true}));}catch(e){}
 
   (function(){
     try{
@@ -928,26 +920,26 @@ function renderScoreReveal(){
     }catch(e){}
   })();
 
-  document.getElementById('rv-humac').textContent=humac;
-  document.getElementById('rv-adj').textContent=hciAdj;
+  document.getElementById('rv-humac').textContent=humac==null?'—':humac;
+  document.getElementById('rv-adj').textContent=hciAdj==null?'—':hciAdj;
   document.getElementById('rv-band').textContent=band.name;
   document.getElementById('rv-band').style.color=band.color;
-  document.getElementById('rv-desc').textContent=band.desc;
+  document.getElementById('rv-desc').textContent=band.desc+' Computed scores are normalized against a provisional range, not a published benchmark. That scale will be recalibrated once at least 30 organisations have computed scores.';
   document.getElementById('rv-dot').style.background=band.color;
   document.getElementById('rv-hci').textContent=hci.toFixed(2)+'x';
   var badge=document.getElementById('rv-conf-badge');badge.className='conf-badge '+confLevel;badge.textContent=confLevel.charAt(0).toUpperCase()+confLevel.slice(1)+' confidence';
 
   var scopeLabels={'the whole organisation':'Whole org view','a specific business unit, region, or division':'Business unit view','my direct team':'Direct team view'};
   var l3ScopeLabel=scopeLabels[(answers.q_scope||'').toLowerCase()]||'';
-  var pillars=[{label:'L1',name:'Value Ledger',score:l1,weight:'25%'},{label:'L2',name:'Talent Premium',score:l2,weight:'15%'},{label:'L3',name:'Org Vitals',score:l3,weight:'30%',scopeTag:l3ScopeLabel},{label:'L4',name:'Human P&L',score:l4,weight:'20%'},{label:'L5',name:'Balance Sheet',score:l5,weight:'10%'}];
+  var weightMap={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5};var pillars=[{label:'L1',name:'Value Ledger',score:l1,weight:l1==null?'excluded':'25%'},{label:'L2',name:'Talent Premium',score:l2,weight:l2==null?'excluded':'15%'},{label:'L3',name:'Org Vitals',score:l3,weight:l3==null?'excluded':'30%',scopeTag:l3ScopeLabel},{label:'L4',name:'Human P&L',score:l4,weight:l4==null?'excluded':'20%'},{label:'L5',name:'Balance Sheet',score:l5,weight:l5==null?'excluded':'10%'}];
   var pillarFiles={L1:'pillar-l1.html',L2:'pillar-l2.html',L3:'pillar-l3.html',L4:'pillar-l4.html',L5:'pillar-l5.html'};
   document.getElementById('rv-pillars').innerHTML=pillars.map(function(p,i){
     var href=pillarFiles[p.label]||'#';
-    var pb=getBand(p.score);
+    var pb=p.score==null?{name:'Insufficient',color:'#E05C3A'}:getBand(p.score);
     var accentDim=pb.color+'20';
     var accentGlow=pb.color+'33';
     return '<a href="'+href+'" class="pillar-card-v2'+(pb.name==="Value Destruction"?" is-destruction":"")+'" style="--pop-delay:'+(i*0.1)+'s;--pillar-accent:'+pb.color+';--pillar-accent-dim:'+accentDim+';--pillar-accent-glow:'+accentGlow+'">'+
-      '<div class="pillar-badge-v2"><div class="pillar-badge-num-v2">'+p.score+'</div><div class="pillar-badge-label-v2">'+p.label+'</div></div>'+
+      '<div class="pillar-badge-v2"><div class="pillar-badge-num-v2">'+(p.score==null?'—':p.score)+'</div><div class="pillar-badge-label-v2">'+p.label+'</div></div>'+
       '<div class="pillar-body-v2">'+
         '<div class="pillar-title-v2">'+p.name+'</div>'+
         '<div class="pillar-sub-v2"><span class="pillar-band-dot-v2"></span>'+pb.name+' \xb7 '+p.weight+' weight'+(p.scopeTag?' \xb7 '+p.scopeTag:'')+'</div>'+
