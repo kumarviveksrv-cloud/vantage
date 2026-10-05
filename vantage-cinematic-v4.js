@@ -104,9 +104,9 @@ $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.ge
   },
   B:{state:'partial',risk:'MATERIAL',signal:'PROCESS OPEN',process:'PARTIAL',impact:'MODERATE',def:'MEDIUM',exposure:'₹4L–₹8L (illustrative)',
     expNum:'₹6L (illustrative)',
-    pact:'The right direction, but you have skipped step one. A domestic enquiry is very difficult to legally defend without a show-cause notice preceding it. Issue the SCN first, then open the enquiry.',
-    aria:'Has the employee formally acknowledged receipt of verbal warnings in any form: WhatsApp, email, even informally? That could materially change the assessment here.',
-    verdict:'PARTIAL PROTECTION · Case still open.'
+    pact:'The right direction, but you have skipped step one. A domestic enquiry is very difficult to legally defend without a show-cause notice preceding it, and that sequencing gap is exactly what a tribunal would focus on first.',
+    aria:'Has a show-cause notice actually been issued yet, or has the enquiry started without one? That sequencing gap is the first thing a tribunal would look at.',
+    verdict:'SEQUENCING GAP · Show-cause notice still needs to come first.'
   },
   C:{state:'defensible',risk:'LOW',signal:'FIELD RESOLVED',process:'STRONG',impact:'LOW',def:'HIGH',exposure:'₹1L–₹3L (illustrative)',
     expNum:'₹2L (illustrative)',
