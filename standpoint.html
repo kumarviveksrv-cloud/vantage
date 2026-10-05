@@ -228,7 +228,7 @@
         <button class="modal-btn secondary" onclick="closeFileModal()">Cancel</button>
         <button class="modal-btn primary" onclick="filePosition()">File Position</button>
       </div>
-      <div class="privacy-note">🔒 Anonymised before processing. This record is yours.</div>
+      <div class="privacy-note">This record is yours — stored as you typed it.</div>
     </div>
   </div>
 
@@ -240,11 +240,11 @@
       <div class="modal-sub" id="resolve-sub"></div>
 
       <div class="form-group">
-        <label class="form-label">What actually happened?</label>
+        <label class="form-label">The outcome you recorded</label>
         <textarea id="r-outcome" class="form-textarea" placeholder="The actual outcome, specifically"></textarea>
       </div>
       <div class="form-group">
-        <label class="form-label">Actual financial variance</label>
+        <label class="form-label">The financial outcome you recorded</label>
         <input type="text" id="r-variance" class="form-input" placeholder="e.g. Rs.11L actual — within your predicted range" />
       </div>
       <div class="form-group">
@@ -406,7 +406,7 @@
       var sentence = document.getElementById('summary-sentence');
       if (resolved >= 3) {
         sentence.style.display = 'block';
-        sentence.innerText = total + ' position' + (total !== 1 ? 's' : '') + ' filed. ' + resolved + ' resolved. ' + vindicated + ' where the documented recommendation proved more accurate than the path taken.';
+        sentence.innerText = total + ' position' + (total !== 1 ? 's' : '') + ' filed. ' + resolved + ' resolved. ' + vindicated + ' where you recorded that the documented recommendation matched the outcome better than the path taken.';
       } else {
         sentence.style.display = 'none';
       }
@@ -421,7 +421,7 @@
           '<div class="empty-state">' +
             '<div class="empty-icon">📜</div>' +
             '<div class="empty-title">' + (allEntries.length === 0 ? 'No positions filed yet' : 'Nothing in this view') + '</div>' +
-            '<div class="empty-body">' + (allEntries.length === 0 ? 'File a position the next time leadership overrules a recommendation you\u2019ve made. Six weeks from now, you\u2019ll know exactly who was right.' : 'Try a different filter.') + '</div>' +
+            '<div class="empty-body">' + (allEntries.length === 0 ? 'File a position the next time leadership overrules a recommendation you\u2019ve made. Six weeks from now, you can record what happened.' : 'Try a different filter.') + '</div>' +
           '</div>';
         return;
       }
