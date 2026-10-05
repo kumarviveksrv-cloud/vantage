@@ -324,17 +324,17 @@
         <div class="intro-tab" id="tab-intro" style="display:none">
           <div class="intro-block">
             <div class="intro-heading">What is ARIA?</div>
-            <div class="intro-text">ARIA stands for Adaptive Reflective Intelligence for Advancement. She is the voice intelligence layer of Virorah Vantage — designed not to answer HR questions generically, but to think through your specific professional situation with you, in real time, calibrated to your MERIDIAN context.<br><br>ARIA is not a search engine. She is a thinking partner. She asks one question at a time, listens to what you say, and builds her understanding of your situation across the conversation. The more you share, the sharper she gets.</div>
+            <div class="intro-text">ARIA stands for Adaptive Reflective Intelligence for Advancement. She is the voice intelligence layer of Virorah Vantage — designed not to answer HR questions generically, but to think through your specific professional situation with you, in real time, calibrated to your MERIDIAN context.<br><br>ARIA is not a search engine. She is a thinking partner. She asks one question at a time, listens to what you say, and builds her understanding of your situation across the conversation. The more you share in this session, the sharper she gets within it &mdash; conversations aren't saved to Virorah's servers unless you explicitly save them, so that understanding starts fresh next time.</div>
           </div>
           <div class="intro-block">
             <div class="intro-heading">How is ARIA different?</div>
-            <div class="intro-text">Every response ARIA generates knows your state, your industry, your org type, your seniority, and your company's policy guardrails — because your MERIDIAN profile is injected into every prompt. You are not getting a generic HR answer. You are getting an answer calibrated to your exact professional reality.</div>
+            <div class="intro-text">Every response ARIA generates knows your state, your industry, your org type, your seniority, and your company's policy guardrails — because your MERIDIAN profile is injected into every prompt. You are not getting a generic HR answer. You are getting an answer calibrated to your professional reality.</div>
           </div>
           <div class="intro-block">
             <div class="intro-heading">The two modes</div>
             <div class="intro-mode-card">
               <div class="imc-name">Explore</div>
-              <div class="imc-desc">Something has landed on your desk and you're not yet sure what kind of problem it is. Talk it through with ARIA. She knows your Vantage history, your Humac Score, your case record, so she isn't starting from zero. She'll help you see the shape of it, and point you to Employee Case Advisor, Difficult Conversations, or whichever tool actually fits once that's clear.</div>
+              <div class="imc-desc">Something has landed on your desk and you're not yet sure what kind of problem it is. Talk it through with ARIA. She knows your Humac Score, your case count, and your exposure total, so she isn't starting from zero. She'll help you see the shape of it, and point you to Employee Case Advisor, Difficult Conversations, or whichever tool actually fits once that's clear.</div>
               <div class="imc-when">Use this when: something just happened and you need to think it through fast, before you know which tool you need.</div>
             </div>
             <div class="intro-mode-card">
@@ -497,13 +497,26 @@
       document.getElementById('messages').innerHTML = emptyChatHTML(curMode);
     }
 
+    // Escapes HTML special characters before text ever reaches innerHTML, then
+    // restores line breaks as <br> so multi-paragraph replies still read
+    // correctly. ARIA's responses use markdown-style markers (*, #, `, _ —
+    // see speak()'s stripping of the same characters), not raw HTML, so
+    // escaping here costs no intended formatting. Without this, any reply or
+    // transcribed input containing something that looks like a tag would be
+    // parsed as markup instead of shown as text.
+    function escapeHtml(s) {
+      return String(s==null?'':s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;')
+        .replace(/\n/g,'<br>');
+    }
     function addMsg(role,text,typing) {
       var ec=document.getElementById('empty-chat'); if(ec)ec.remove();
       var c=document.getElementById('messages'), d=document.createElement('div');
       d.className='msg '+(role==='aria'?'msg-a':'msg-y');
       var av=role==='aria'?'<div class="av av-a">A</div>':'<div class="av av-y">You</div>';
       if(typing){d.id='ty';d.innerHTML=av+'<div class="bb bb-a"><div class="tyd"><span></span><span></span><span></span></div></div>';}
-      else{d.innerHTML=(role==='aria'?av:'')+'<div class="bb bb-'+(role==='aria'?'a':'y')+'">'+text+'</div>'+(role==='you'?av:'');}
+      else{d.innerHTML=(role==='aria'?av:'')+'<div class="bb bb-'+(role==='aria'?'a':'y')+'">'+escapeHtml(text)+'</div>'+(role==='you'?av:'');}
       c.appendChild(d); c.scrollTop=c.scrollHeight;
     }
     function rmTyping(){var t=document.getElementById('ty');if(t)t.remove();}
