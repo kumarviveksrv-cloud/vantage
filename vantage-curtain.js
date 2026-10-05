@@ -896,7 +896,7 @@
       setTimeout(()=>{
         const tag=document.getElementById('humacTagline');
         if(tag){
-          const fullText='84 is value-generating territory: your people investment is returning more than it costs. The +6 trajectory is the number that walks into the next budget conversation ahead of you.';
+          const fullText='84 is modelled as value-generating territory in this example: the people investment is shown returning more than it costs. The +6 trajectory is the figure that would walk into the next budget conversation ahead of you.';
           /* Pre-lock height before the reveal to prevent reflow while
              the words fade in — same technique as before, just no
              longer feeding into a character scramble. A full-sentence
@@ -1631,9 +1631,9 @@
        OB:{verdict:'SECOND-HAND AND UNRELIABLE',vclass:'warn',num:'~40%',
          text:'The previous manager remembers the outcome, not the reasoning behind each step. Relying on their account risks reproducing a decision without reproducing the judgment that made it defensible.',
          aria:'Would you want your successor learning your judgment secondhand, or from the actual record?'},
-       OC:{verdict:'INSTITUTIONAL MEMORY',vclass:'ok',num:'47',
-         text:'47 decisions documented. 12 policy calls. \u20b918.4L career capital. The exact sequencing, templates, and reasoning from the first case are available immediately, not reconstructed from memory.',
-         aria:'Your next organisation will see 9 months of documented intelligence, not a blank resume. That is what a career record looks like.'},
+       OC:{verdict:'DOCUMENTED RECORD',vclass:'ok',num:'47',
+         text:'47 decisions documented. 12 policy calls. \u20b918.4L in modelled figures recorded (illustrative). The sequencing, templates, and reasoning from the first case are available immediately, not reconstructed from memory.',
+         aria:'A future organisation could see 9 months of documented intelligence instead of a blank resume. That is what a career record is meant to do.'},
        OD:{verdict:'UNNECESSARY OVERHEAD',vclass:'warn',num:'+3 weeks',
          text:'Escalating a routine, already-precedented matter to legal every time slows the organisation down and signals HR doesn\u2019t trust its own established process. Legal\u2019s time is better spent on genuinely novel questions.',
          aria:'This exact playbook has already been legally validated once. Why pay that cost twice?'}}
