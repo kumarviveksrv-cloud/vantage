@@ -45,27 +45,13 @@
     }
   }
 
-  /* ── Auto-select Option C (defensible — ARIA stays calm) ─── */
-  function autoSelectOptionC(){
-    var choices = document.querySelector('.choices');
-    if(!choices) return;
-    // Option C is the third button (index 2, data-choice="C")
-    var btnC = choices.querySelector('button[data-choice="C"]');
-    if(!btnC || btnC.classList.contains('active')) return;
-    btnC.dispatchEvent(new MouseEvent('click', {
-      bubbles: true, cancelable: true, view: window
-    }));
-  }
-
-  function init(){
+    function init(){
     injectCausalCue();
-    setTimeout(autoSelectOptionC, 900);
   }
 
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', init);
   } else {
-    window.addEventListener('load', function(){ setTimeout(autoSelectOptionC, 400); });
     init();
   }
 })();
