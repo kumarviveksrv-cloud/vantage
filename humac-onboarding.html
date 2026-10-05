@@ -580,17 +580,46 @@ function computeTrajectory(l1,l2,l3,l4,l5,humac,hciAdj){
     if(pa[qid]==='no'&&answers[qid]==='yes')posFlips++;
     if(pa[qid]==='yes'&&answers[qid]==='no')negFlips++;
   });
-  var prevHumac=previousScore.humac||0;
-  var delta=humac-prevHumac;
+
+  /* FIX: a null/excluded pillar must never be compared as if it were zero.
+     "||0" silently turns "not measured" into "measured as zero", which is
+     exactly the false-arrow failure mode flagged in review: an excluded
+     pillar reading as a steep decline, or a prior-excluded pillar reading
+     as a huge improvement against a baseline that was never real. Each
+     pillar is now only compared when BOTH periods actually have a number;
+     otherwise it's marked notComparable and the reason (which side was
+     excluded) is kept for the UI to state plainly instead of drawing an
+     arrow. Same rule applies to the overall Humac delta at the bottom. */
+  var curr={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5};
+  var prev={l1:previousScore.l1,l2:previousScore.l2,l3:previousScore.l3,l4:previousScore.l4,l5:previousScore.l5};
+  var pillarDeltas={};
+  Object.keys(curr).forEach(function(k){
+    var c=curr[k],p=prev[k];
+    var currExcluded=(c===null||c===undefined);
+    var prevExcluded=(p===null||p===undefined);
+    if(currExcluded||prevExcluded){
+      pillarDeltas[k]={comparable:false,currExcluded:currExcluded,prevExcluded:prevExcluded,value:null};
+    } else {
+      pillarDeltas[k]={comparable:true,value:Math.round(c-p)};
+    }
+  });
+
+  var prevHumacExcluded=(previousScore.humac===null||previousScore.humac===undefined);
+  var currHumacExcluded=(humac===null||humac===undefined);
+  var overallComparable=!prevHumacExcluded&&!currHumacExcluded;
+  var prevHumac=prevHumacExcluded?null:previousScore.humac;
+  var delta=overallComparable?(humac-prevHumac):null;
+
   return{
+    comparable:overallComparable,
     delta:delta,
-    direction:delta>0?'up':delta<0?'down':'flat',
-    pillarDeltas:{l1:Math.round(l1-(previousScore.l1||0)),l2:Math.round(l2-(previousScore.l2||0)),l3:Math.round(l3-(previousScore.l3||0)),l4:Math.round(l4-(previousScore.l4||0)),l5:Math.round(l5-(previousScore.l5||0))},
+    direction:!overallComparable?'na':delta>0?'up':delta<0?'down':'flat',
+    pillarDeltas:pillarDeltas,
     signalMomentum:posFlips-negFlips,
     posFlips:posFlips,
     negFlips:negFlips,
     previousScore:prevHumac,
-    previousHciAdj:previousScore.hciAdj||0,
+    previousHciAdj:previousScore.hciAdj==null?null:previousScore.hciAdj,
     previousBand:previousScore.band||'',
     previousTimestamp:previousScore.timestamp||'',
     checkInNumber:(previousScore.checkInNumber||0)+1
@@ -599,14 +628,26 @@ function computeTrajectory(l1,l2,l3,l4,l5,humac,hciAdj){
 
 function buildTrajectoryHTML(traj){
   var delta=traj.delta;
-  var arrow,color,sign;
-  if(delta>0){arrow='\u2197';color='#4ade80';sign='+';}
-  else if(delta<0){arrow='\u2198';color='#E05C3A';sign='';}
-  else{arrow='\u2192';color='#a5b4fc';sign='';}
+  var arrow,color,sign,headlineVal;
+  if(!traj.comparable){
+    arrow='';color='#a5b4fc';sign='';headlineVal='Not comparable';
+  } else if(delta>0){arrow='\u2197';color='#4ade80';sign='+';headlineVal=sign+delta;}
+  else if(delta<0){arrow='\u2198';color='#E05C3A';sign='';headlineVal=sign+delta;}
+  else{arrow='\u2192';color='#a5b4fc';sign='';headlineVal=sign+delta;}
+  var prevScoreDisplay=traj.previousScore==null?'\u2014':traj.previousScore;
+  var prevAdjDisplay=traj.previousHciAdj==null?'\u2014':traj.previousHciAdj;
   var prevDate=traj.previousTimestamp?new Date(traj.previousTimestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'previous check-in';
   var pillarNames={l1:'L1 \u2014 Value Ledger',l2:'L2 \u2014 Talent Premium',l3:'L3 \u2014 Org Vitals',l4:'L4 \u2014 Human P&L',l5:'L5 \u2014 Balance Sheet'};
+  /* FIX: an excluded pillar (either this period or last) gets a plain,
+     neutral "not comparable" row stating which side was missing data —
+     never a colored up/down arrow implying a real change happened. */
   var pillarRows=Object.keys(traj.pillarDeltas).map(function(key){
-    var d=traj.pillarDeltas[key],a,c,s;
+    var pd=traj.pillarDeltas[key];
+    if(!pd.comparable){
+      var reason=pd.currExcluded&&pd.prevExcluded?'excluded both times':pd.currExcluded?'excluded this check-in':'excluded last time';
+      return '<div class="traj-pillar-row"><span class="traj-pillar-name">'+pillarNames[key]+'</span><span class="traj-pillar-delta" style="color:#a5b4fc;font-style:italic;font-size:.78rem">Not comparable \u2014 '+reason+'</span></div>';
+    }
+    var d=pd.value,a,c,s;
     if(d>0){a='\u2197';c='#4ade80';s='+';}else if(d<0){a='\u2198';c='#E05C3A';s='';}else{a='\u2192';c='#a5b4fc';s='';}
     return '<div class="traj-pillar-row"><span class="traj-pillar-name">'+pillarNames[key]+'</span><span class="traj-pillar-delta" style="color:'+c+'">'+a+' '+s+d+'</span></div>';
   }).join('');
@@ -614,18 +655,24 @@ function buildTrajectoryHTML(traj){
   if(traj.signalMomentum>0){smColor='#4ade80';smText='\u2197 '+traj.posFlips+' org signal'+(traj.posFlips>1?'s':'')+' improved'+(traj.negFlips>0?' \xb7 '+traj.negFlips+' weakened':'');}
   else if(traj.signalMomentum<0){smColor='#E05C3A';smText='\u2198 '+traj.negFlips+' org signal'+(traj.negFlips>1?'s':'')+' weakened'+(traj.posFlips>0?' \xb7 '+traj.posFlips+' improved':'');}
   else{smColor='#a5b4fc';smText='\u2192 Org signals stable (no change)';}
+  /* FIX: when the overall score itself isn't comparable (rare — only
+     if one of the two check-ins had zero valid pillars), say so in
+     plain language instead of showing "vs. your baseline of —". */
+  var vsLine=traj.comparable
+    ? 'vs. your baseline of '+prevScoreDisplay+' from '+prevDate
+    : 'Overall score not comparable to '+prevDate+' \u2014 too few pillars had data in one of the two check-ins.';
   return '<div class="trajectory-section">'+
     '<div class="traj-top">'+
       '<div>'+
         '<div class="traj-label">Trajectory Index \xb7 Check-in #'+traj.checkInNumber+'</div>'+
-        '<div class="traj-headline"><span class="traj-arrow" style="color:'+color+'">'+arrow+'</span><span class="traj-delta" style="color:'+color+'">'+sign+delta+'</span></div>'+
-        '<div class="traj-vs">vs. your baseline of '+traj.previousScore+' from '+prevDate+'</div>'+
+        '<div class="traj-headline"><span class="traj-arrow" style="color:'+color+'">'+arrow+'</span><span class="traj-delta" style="color:'+color+(traj.comparable?'':';font-size:1.3rem')+'">'+headlineVal+'</span></div>'+
+        '<div class="traj-vs">'+vsLine+'</div>'+
       '</div>'+
       '<div class="traj-right">'+
         '<div class="traj-prev-label">Previous</div>'+
         '<div class="traj-prev-scores">'+
-          '<div class="traj-prev-col"><div class="traj-prev-num">'+traj.previousScore+'</div><div class="traj-prev-sub">Humac</div></div>'+
-          '<div class="traj-prev-col"><div class="traj-prev-num">'+traj.previousHciAdj+'</div><div class="traj-prev-sub">HCI-adj</div></div>'+
+          '<div class="traj-prev-col"><div class="traj-prev-num">'+prevScoreDisplay+'</div><div class="traj-prev-sub">Humac</div></div>'+
+          '<div class="traj-prev-col"><div class="traj-prev-num">'+prevAdjDisplay+'</div><div class="traj-prev-sub">HCI-adj</div></div>'+
         '</div>'+
       '</div>'+
     '</div>'+
@@ -893,7 +940,7 @@ function renderScoreReveal(){
   var band=getBand(humac==null?0:humac);if(humac==null)band={name:'Incomplete',color:'#E05C3A',desc:'Not enough measured pillars to score. Missing inputs were excluded, not filled in as average.'};
   var confLevel=getConfidenceLevel();
 
-  var trajectory=humac==null?null:computeTrajectory(l1||0,l2||0,l3||0,l4||0,l5||0,humac,hciAdj||0);
+  var trajectory=humac==null?null:computeTrajectory(l1,l2,l3,l4,l5,humac,hciAdj);
 
   var scoreData={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5,hci:hci,humac:humac,hciAdj:hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers,trajectory:trajectory,l1Mode:(confidence.A==='computed')?'computed':'estimate',l2Mode:(confidence.B==='computed')?'computed':'estimate',l4Mode:(confidence.D==='computed')?'computed':'estimate',l5Mode:(confidence.E==='computed')?'computed':'estimate',l3Scope:answers.q_scope||'',l3Eligible:l3!=null,l3Answered:l3Answered,excluded:parts.length<5,weightsRenormalized:wsum>0&&wsum<0.999};
 
