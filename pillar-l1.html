@@ -207,7 +207,7 @@ body{
   <a href="debrief.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg></span> The Debrief</a>
   <div class="nav-section">Account</div>
   <a href="pricing.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/></svg></span> Pricing</a>
-  <a href="data-dashboard.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span> Data & Privacy</a>
+  <a href="data-dashboard.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span> Data &amp; Privacy</a>
   <div class="nav-section">Legal</div>
   <a href="terms.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span> Terms of Service</a>
   <a href="privacy.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span> Privacy Policy</a>
@@ -216,7 +216,7 @@ body{
 </div>
 <div class="wrap" id="main-wrap"></div>
 <script>
-(function(){var raw=sessionStorage.getItem('sr_meridian');if(raw){try{var m=JSON.parse(raw);document.getElementById('meridian-summary').innerText=(m.state||'')+' \xb7 '+(m.industry||'');var b=document.getElementById('meridian-badge');b.innerText='Active';b.className='m-badge complete';}catch(e){}}})();
+(function(){var raw=sessionStorage.getItem('sr_meridian');if(raw){try{var m=JSON.parse(raw);document.getElementById('meridian-summary').innerText=(m.state||'')+' · '+(m.industry||'');var b=document.getElementById('meridian-badge');b.innerText='Active';b.className='m-badge complete';}catch(e){}}})();
 var hd=null,md=null;
 try{hd=JSON.parse(sessionStorage.getItem('vantage_humac')||'null');}catch(e){}
 try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
@@ -236,6 +236,15 @@ var ASSUMPTIONS={
   risk:{low:0.15,base:0.30,high:0.50,cost:0.02,label:'Risk contained',note:'0.15–0.50× pay, base 0.30×. Not 0.60× of salary booked as contained.'}
 };
 function m(key){return ASSUMPTIONS[key][scenario];}
+/* Dynamic, scenario-correct display of each assumption's current
+   multiplier — used so action text can cite a real, live number
+   (the way the original version did) without ever hardcoding a
+   figure that the Low/High scenario buttons would then contradict. */
+function fmtMultiplier(key){
+  var val=m(key);
+  if(key==='engage'||key==='risk') return (val*100).toFixed(0)+'%';
+  return val.toFixed(2)+'\u00d7';
+}
 function fmtINR(n){
   var abs=Math.abs(n),sign=n<0?'-':'';
   if(abs>=10000000)return sign+'\u20b9'+(abs/10000000).toFixed(2)+'Cr';
@@ -274,27 +283,95 @@ function estimateComponents(){
   var totalIdx=q1Pct;
   var scale=m('retention')/ASSUMPTIONS.retention.base;
   return [
-    {id:'E001',action:'Retention Savings',note:'Allocated from the self-reported ratio. Not an independent measurement.',pill:'Cost-Saving',pillCls:'p-cost',cost:Math.round(totalIdx*0.03),ret:Math.round(totalIdx*0.45*scale),formula:'Share of self-reported ratio \xd7 retention assumption',working:ASSUMPTIONS.retention.note},
-    {id:'E002',action:'Quality of Hire',note:'Allocated from the self-reported ratio. Not observed hire value.',pill:'Revenue-Generating',pillCls:'p-rev',cost:Math.round(totalIdx*0.05),ret:Math.round(totalIdx*0.30*(m('hire')/ASSUMPTIONS.hire.base)),formula:'Share of self-reported ratio \xd7 hire assumption',working:ASSUMPTIONS.hire.note},
-    {id:'E003',action:'Development Return',note:'Allocated from the self-reported ratio.',pill:'Development',pillCls:'p-dev',cost:Math.round(totalIdx*0.05),ret:Math.round(totalIdx*0.15*(m('dri')/ASSUMPTIONS.dri.base)),formula:'Share of self-reported ratio \xd7 DRI assumption',working:ASSUMPTIONS.dri.note},
-    {id:'E004',action:'Engagement Premium',note:'Allocated from the self-reported ratio.',pill:'Culture & Engagement',pillCls:'p-culture',cost:Math.round(totalIdx*0.02),ret:Math.round(totalIdx*0.07*(m('engage')/ASSUMPTIONS.engage.base)),formula:'Share of self-reported ratio \xd7 tenure premium',working:ASSUMPTIONS.engage.note},
-    {id:'E005',action:'Risk Management Value',note:'Allocated from the self-reported ratio.',pill:'Risk & Compliance',pillCls:'p-risk',cost:Math.round(totalIdx*0.01),ret:Math.round(totalIdx*0.03*(m('risk')/ASSUMPTIONS.risk.base)),formula:'Share of self-reported ratio \xd7 risk assumption',working:ASSUMPTIONS.risk.note}
+    {id:'E001',key:'retention',action:'Retention Savings',note:'Allocated from the self-reported ratio. Not an independent measurement.',pill:'Cost-Saving',pillCls:'p-cost',cost:Math.round(totalIdx*0.03),ret:Math.round(totalIdx*0.45*scale),formula:'Share of self-reported ratio \xd7 retention assumption',working:ASSUMPTIONS.retention.note},
+    {id:'E002',key:'hire',action:'Quality of Hire',note:'Allocated from the self-reported ratio. Not observed hire value.',pill:'Revenue-Generating',pillCls:'p-rev',cost:Math.round(totalIdx*0.05),ret:Math.round(totalIdx*0.30*(m('hire')/ASSUMPTIONS.hire.base)),formula:'Share of self-reported ratio \xd7 hire assumption',working:ASSUMPTIONS.hire.note},
+    {id:'E003',key:'dri',action:'Development Return',note:'Allocated from the self-reported ratio.',pill:'Development',pillCls:'p-dev',cost:Math.round(totalIdx*0.05),ret:Math.round(totalIdx*0.15*(m('dri')/ASSUMPTIONS.dri.base)),formula:'Share of self-reported ratio \xd7 DRI assumption',working:ASSUMPTIONS.dri.note},
+    {id:'E004',key:'engage',action:'Engagement Premium',note:'Allocated from the self-reported ratio.',pill:'Culture & Engagement',pillCls:'p-culture',cost:Math.round(totalIdx*0.02),ret:Math.round(totalIdx*0.07*(m('engage')/ASSUMPTIONS.engage.base)),formula:'Share of self-reported ratio \xd7 tenure premium',working:ASSUMPTIONS.engage.note},
+    {id:'E005',key:'risk',action:'Risk Management Value',note:'Allocated from the self-reported ratio.',pill:'Risk & Compliance',pillCls:'p-risk',cost:Math.round(totalIdx*0.01),ret:Math.round(totalIdx*0.03*(m('risk')/ASSUMPTIONS.risk.base)),formula:'Share of self-reported ratio \xd7 risk assumption',working:ASSUMPTIONS.risk.note}
   ];
 }
+
+// ── Real per-metric explanations — restored from the earlier version,
+// generalized away from fixed multiples (which the new scenario system
+// makes variable) so they explain the MECHANISM. fmtMultiplier() then
+// injects the current, scenario-correct number at render time.
+var WORKING_TEXT={
+  retention:function(){return 'Retention Savings is usually the single largest value line here. A strong performer the org did not have to replace this cycle returns '+fmtMultiplier('retention')+' of their salary in avoided search, onboarding, and ramp cost \u2014 cost avoided, not revenue earned.';},
+  hire:function(){return 'Quality of Hire credits a hire in a revenue-facing role who is meeting or exceeding expectations, at '+fmtMultiplier('hire')+' of salary under the current scenario \u2014 a planning value attributed to getting that hiring decision right, not an observed revenue figure tied to any one person.';},
+  dri:function(){return 'Development Return applies a '+fmtMultiplier('dri')+' Development Return Index to the slice of pay actually spent on structured development \u2014 the planning return on that spend, not a guarantee every rupee invested comes back at this multiple.';},
+  engage:function(){return 'Engagement Premium credits long-tenured employees with a '+fmtMultiplier('engage')+' productivity premium from institutional knowledge and role mastery \u2014 a planning assumption about tenure, not a measured output comparison.';},
+  risk:function(){return 'Risk Management Value credits '+fmtMultiplier('risk')+' of exposure as assumed contained by managing a below-expectation performer proactively rather than letting the situation run unmanaged \u2014 assumed contained, not a confirmed avoided loss.';}
+};
+
 function swHTML(id,c){
   var net=c.ret-c.cost;
+  var explain=(c.key&&WORKING_TEXT[c.key])?WORKING_TEXT[c.key]():c.working;
   return '<button class="sw-trigger" onclick="toggleSW(\''+id+'\')" id="'+id+'-btn">'+
     '<svg viewBox="0 0 10 10"><polyline points="2,3 5,7 8,3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
     'Show Workings</button>'+
     '<div class="sw-panel" id="'+id+'">'+
       '<div class="sw-row"><div class="sw-key">Formula</div><div class="sw-val"><span class="sw-formula">'+c.formula+'</span></div></div>'+
-      '<div class="sw-row"><div class="sw-key">Assumption</div><div class="sw-val">'+c.working+' Range is a planning band, not a confidence interval.</div></div>'+
+      '<div class="sw-row"><div class="sw-key">What this measures</div><div class="sw-val">'+explain+'</div></div>'+
+      '<div class="sw-row"><div class="sw-key">Assumption range</div><div class="sw-val">'+c.working+' Range is a planning band, not a confidence interval.</div></div>'+
       '<div class="sw-row"><div class="sw-key">This result</div><div class="sw-val"><span class="sw-result">Return: '+c.ret+' \xb7 Cost: '+c.cost+' \xb7 Net: '+(net>=0?'+':'')+net+'</span></div></div>'+
     '</div>';
 }
 function persistBook(book){
   try{sessionStorage.setItem('vantage_l1_book', JSON.stringify(book));}catch(e){}
 }
+
+// ── Band-specific actions — restored from the earlier version, with
+// every cited multiplier now pulled live via fmtMultiplier() so the
+// text is always correct for whichever scenario is selected, instead
+// of either going generic or quoting a now-retired fixed number.
+function buildActions(insufficient, q1Display, q1Ratio, ratioNum){
+  if(insufficient){
+    return [
+      {title:'Track your next 3 exits',body:'For each departure: avg salary \xd7 '+fmtMultiplier('retention')+' = replacement cost avoided. Three exits \xd7 this formula is your first real Retention Savings figure \u2014 usually the largest single component of L1.'},
+      {title:'Identify your revenue-bearing roles',body:'List every sales, BD, account management, and client-facing role. For hires in the last 12 months, salary \xd7 '+fmtMultiplier('hire')+' turns that list into a number \u2014 often the largest untapped L1 line.'},
+      {title:'Build an HR Initiative Tracker',body:'Every HR programme from the last 12 months gets one row: what it cost, and which value component above it maps to. Categories first, numbers second. Start this week.'},
+      {title:'Set a 90-day target',body:'Return with computed figures for at least one cohort. A computed L1, even a modest one, is far more defensible in a board conversation than an estimate.'}
+    ];
+  }
+  if(l1<=25)return [
+    {title:'Track your next 3 exits',body:'For each departure: avg salary \xd7 '+fmtMultiplier('retention')+' = replacement cost avoided. That is your first real Retention Savings figure.'},
+    {title:'Identify your revenue-bearing roles',body:'List every sales, BD, account management, and client-facing role, then apply salary \xd7 '+fmtMultiplier('hire')+' to recent hires in them.'},
+    {title:'Build an HR Initiative Tracker',body:'Every HR programme from the last 12 months gets one row: cost, and which value component it maps to.'},
+    {title:'Set a 90-day target',body:'Return with computed figures for at least one cohort \u2014 a computed L1 is 10\xd7 more defensible than an estimate.'}
+  ];
+  if(l1<=50)return [
+    {title:'Convert your largest estimate to computed',body:'Pull HRIS exit data from the last 12 months and apply avg salary \xd7 '+fmtMultiplier('retention')+'. Add the real figure to your next check-in.'},
+    {title:'Apply the Development Return Index to real spend',body:'Whatever you actually spent on structured development \xd7 '+fmtMultiplier('dri')+' DRI, and add it to your next L1 calculation.'},
+    {title:'Quantify your real engagement premium',body:'Employees at '+tenureLabel+' tenure \xd7 avg salary \xd7 '+fmtMultiplier('engage')+'. The most underreported component of L1.'},
+    {title:'Run this calculation twice this year',body:'The first calculation gives you a number. The second gives you a trend \u2014 a trend is what leadership actually acts on.'}
+  ];
+  if(l1<=72)return [
+    {title:'Articulate your HR Return Ratio to leadership',body:'\u201cFor every \u20b9100 in salaries, our HR function generates '+q1Display+' in measurable value.\u201d That is your boardroom line.'},
+    {title:'Apply HCI before presenting',body:'"Our unadjusted ratio is '+q1Ratio+'. With a '+hci.toFixed(2)+'x HCI coefficient applied, the adjusted figure is '+(ratioNum!=null?(ratioNum*hci).toFixed(2):'\u2014')+'x." State this before the CFO asks.'},
+    {title:'Document your top 3 value-generating initiatives',body:'What it cost. What it returned. In rupees. This is your evidence base for the next budget conversation, not slides.'},
+    {title:'Build a biannual HR P&L report',body:'A standing 6-month deliverable alongside the business P&L. Two data points, same time each year \u2014 that is a managed metric.'}
+  ];
+  return [
+    {title:'Present this ratio as a board metric',body:'Your '+q1Ratio+' HR Return Ratio is a return-on-investment statement, not an HR metric. Present it as a financial ratio in your next QBR.'},
+    {title:'Establish a quarterly Humac review cycle',body:'Declining L1 scores appear here before they show up in attrition data. A 90-day review cycle is non-negotiable at this level.'},
+    {title:'Publish the ratio internally',body:'"For every rupee invested in compensation, our HR function is protecting and generating this much financial value." Changes the conversation permanently.'},
+    {title:'Make this your market differentiator',body:'A ratio this strong is exceptional. Document it and deploy it in senior hiring conversations as a proof point.'}
+  ];
+}
+
+// ── Band-specific Intelligence Statement — restored, generalized to
+// handle the insufficient-data case the old version didn't have.
+function buildIntelText(insufficient, q1Display, q1Ratio, benchPos){
+  var ctx=industry?' in the '+industry+' sector':'';
+  if(insufficient){
+    return 'An L1 score of <b>'+l1+'</b>'+ctx+' is currently a planning figure only \u2014 there isn\u2019t enough cohort or compensation data entered yet for the ledger below to compute a real return. The formulas are ready; they just need headcount, comp base, and at least one cohort count to run against.';
+  }
+  if(l1<=25)return'An L1 score of <b>'+l1+'</b>'+ctx+' signals HR value is likely being generated but not yet captured. The Retention Savings, Quality of Hire, and Development Return rows below show exactly what to compute first. Start with one exit, one calculation \u2014 the ledger builds from there.';
+  if(l1<=50)return'An L1 score of <b>'+l1+'</b>'+ctx+' confirms a real HR return, '+benchPos+' the '+bench.label+' benchmark. The gap to the next band is precision, not performance \u2014 moving one ledger line from estimated to computed closes it faster than any new initiative.';
+  if(l1<=72)return'An L1 score of <b>'+l1+'</b>'+ctx+' puts your HR function in the top tier of value generators under the '+scenario+' case. For every \u20b9100 in salaries, HR is generating '+q1Display+'. The ledger below is your evidence base \u2014 present it.';
+  return'An L1 score of <b>'+l1+'</b>'+ctx+' is exceptional under the '+scenario+' case. The ledger below is board-ready. Present the '+q1Ratio+' HR Return Ratio to your next quarterly review as a financial metric, not an HR slide.';
+}
+
 function render(){
   var realLedger=(l1Mode==='computed')?computeRealLedger(ra):null;
   var components=estimateComponents();
@@ -304,13 +381,15 @@ function render(){
   var realRatioPct=realLedger&&realLedger.compBase>0?(realLedger.totalRet/realLedger.compBase)*100:null;
   var shownPct=realLedger?realRatioPct:q1Pct;
   var q1Display=shownPct==null?'Not measured':'\u20b9'+Number(shownPct).toFixed(0);
-  var q1Ratio=shownPct==null?'not measured':(shownPct/100).toFixed(2)+'x';
+  var ratioNum=shownPct==null?null:(shownPct/100);
+  var q1Ratio=ratioNum==null?'not measured':ratioNum.toFixed(2)+'x';
+  var isInsufficient=!!(realLedger&&realLedger.insufficient)||(l1Mode!=='computed'&&q1Pct==null);
   persistBook({
     canonical:true,
     consumer:'L4 must use this book. Do not reprice stars, emerging, tenured, revenue hires, or at-risk cohorts.',
     mode:l1Mode,
     scenario:scenario,
-    insufficient:!!(realLedger&&realLedger.insufficient)||(l1Mode!=='computed'&&q1Pct==null),
+    insufficient:isInsufficient,
     totalCost:realLedger?realLedger.totalCost:(components?components.reduce(function(s,c){return s+c.cost;},0):null),
     totalRet:realLedger?realLedger.totalRet:(components?components.reduce(function(s,c){return s+c.ret;},0):null),
     compBase:realLedger?realLedger.compBase:null,
@@ -345,11 +424,7 @@ function render(){
     }).join('');
     return '<div class="ledger"><div class="ledger-hd"><span>When</span><span>Allocated component</span><span>Cost idx</span><span>Return idx</span><span>Net idx</span></div>'+rows+'<div class="ledger-total"><div class="total-lbl">TOTAL \xb7 '+scoreDate+' \xb7 estimate allocation, not five measurements</div><div class="total-cost">'+totalCost+'</div><div class="total-ret">+'+totalRet+'</div><div class="total-net '+(totalNet>=0?'pos':'neg')+'">'+(totalNet>=0?'+':'')+totalNet+'</div></div></div>';
   }
-  var acts=[
-    {title:'Use this ledger as the only book',body:'Human P&L should divide this return by HR investment. It should not reprice stars, hires, tenure, or development. The same person cannot be a value line twice.'},
-    {title:'Show the range before the board line',body:'The base case is '+q1Display+' per \u20b9100. Low and high change the multiples, not the cohorts. Say which case you are presenting.'},
-    {title:'Replace one assumption with a count',body:'The first computed exit, hire, or development cohort is worth more than another estimated split of the same ratio.'}
-  ];
+  var acts=buildActions(isInsufficient, q1Display, q1Ratio, ratioNum);
   var w=document.getElementById('main-wrap');
   var pdots=[{label:'L1',score:l1,href:'pillar-l1.html',active:true},{label:'L2',score:l2,href:'pillar-l2.html'},{label:'L3',score:l3,href:'pillar-l3.html'},{label:'L4',score:l4,href:'pillar-l4.html'},{label:'L5',score:l5,href:'pillar-l5.html'}];
   w.innerHTML=
@@ -358,11 +433,11 @@ function render(){
     '<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L1 Score</div><div class="ratio-num">'+l1+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+q1Display+' generated for every \u20b9100 of salary bill</div><div class="context"><b style="color:'+benchColor+'">'+(benchPos==='above'?'Above':benchPos==='at'?'At':'Below')+'</b> the '+bench.label+' benchmark (L1 '+bench.weak+'\u2013'+bench.strong+') \xb7 HCI '+hci.toFixed(2)+'x \xb7 '+conf+' confidence \xb7 '+scenario+' case</div></div></div></div>'+
     '<div class="stats"><div class="stat"><div class="sv sv-teal">'+l1+'/100</div><div class="sl">L1 Score</div></div><div class="stat"><div class="sv sv-gold">'+q1Display+'</div><div class="sl">per \u20b9100 salary</div></div><div class="stat"><div class="sv sv-cobalt">'+(benchPos==='above'?'\u2197':benchPos==='at'?'\u2192':'\u2198')+' '+benchPos+'</div><div class="sl">vs '+bench.label+'</div></div><div class="stat"><div class="sv sv-dim">'+hci.toFixed(2)+'x</div><div class="sl">HCI coefficient</div></div></div>'+
     '<div class="assumption-bar"><div class="assumption-note"><b>'+scenario+' case.</b> Multiples are planning assumptions. L4 must consume this book and must not reprice these cohorts. Ratio shown: '+q1Ratio+'.</div><div class="scenario-btns"><button class="sc-btn'+(scenario==='low'?' active':'')+'" onclick="setScenario(\'low\')">Low</button><button class="sc-btn'+(scenario==='base'?' active':'')+'" onclick="setScenario(\'base\')">Base</button><button class="sc-btn'+(scenario==='high'?' active':'')+'" onclick="setScenario(\'high\')">High</button></div></div>'+
-    '<div class="intro-panel"><div class="intro-toggle" onclick="toggleIntro()"><div class="intro-tl"><div class="intro-icon">?</div><div><div class="intro-title">What is the Value Ledger?</div><div class="intro-sub">Canonical book of HR value lines \xb7 L1 \xb7 25% of Humac Score</div></div></div><div class="intro-chevron" id="intro-chev">\u25bc</div></div><div class="intro-body" id="intro-body"><div class="intro-sec"><div class="intro-sec-lbl">What it is</div><div class="intro-sec-txt">The only place retention, hire quality, development, tenure premium, and managed performance risk are priced. <b>Human P&L is the ratio of this book, not a second ledger.</b></div></div><div class="intro-sec"><div class="intro-sec-lbl">Assumptions \xb7 reviewed 3 Oct 2026</div><table class="assumptions"><tr><th>Line</th><th>Low</th><th>Base</th><th>High</th><th>Status</th></tr>'+assumptionRows+'</table></div><div class="intro-sec"><div class="intro-sec-lbl">What would falsify it</div><div class="intro-sec-txt">If regretted attrition, replacement cost, or quality incidents do not move with these lines over 90 days, the multiple is wrong. Missing inputs stay missing. They are not scored as average.</div></div></div></div>'+
+    '<div class="intro-panel"><div class="intro-toggle" onclick="toggleIntro()"><div class="intro-tl"><div class="intro-icon">?</div><div><div class="intro-title">What is the Value Ledger?</div><div class="intro-sub">Canonical book of HR value lines \xb7 L1 \xb7 25% of Humac Score</div></div></div><div class="intro-chevron" id="intro-chev">\u25bc</div></div><div class="intro-body" id="intro-body"><div class="intro-sec"><div class="intro-sec-lbl">What it is</div><div class="intro-sec-txt">The only place retention, hire quality, development, tenure premium, and managed performance risk are priced. <b>Human P&L is the ratio of this book, not a second ledger.</b></div></div><div class="intro-sec"><div class="intro-sec-lbl">Why 25% of Humac Score</div><div class="intro-sec-txt">Value generation is the foundational signal in the Humac formula. An HR function that cannot demonstrate financial value loses the budget argument before it starts \u2014 L1 is treated as the prerequisite the other four pillars build on.</div></div><div class="intro-sec"><div class="intro-sec-lbl">Assumptions \xb7 reviewed 3 Oct 2026</div><table class="assumptions"><tr><th>Line</th><th>Low</th><th>Base</th><th>High</th><th>Status</th></tr>'+assumptionRows+'</table></div><div class="intro-sec"><div class="intro-sec-lbl">What would falsify it</div><div class="intro-sec-txt">If regretted attrition, replacement cost, or quality incidents do not move with these lines over 90 days, the multiple is wrong. Missing inputs stay missing. They are not scored as average.</div></div></div></div>'+
     '<div class="sec-head"><h2><span class="step">1</span>The Ledger \xb7 '+scoreDate+'</h2><div class="sec-sub">'+(l1Mode==='computed'?'Computed cohorts \xb7 '+scenario+' multiples':'Estimate mode allocates one self-reported ratio')+'</div></div>'+
     '<div class="legend"><div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div>Revenue-Generating</div><div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div>Cost-Saving</div><div class="leg-item"><div class="leg-dot" style="background:#a5b4fc"></div>Development</div><div class="leg-item"><div class="leg-dot" style="background:#c4b5fd"></div>Culture</div><div class="leg-item"><div class="leg-dot" style="background:#F07060"></div>Risk</div></div>'+
     ledgerHTML()+
-    '<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L1 Value Ledger</div><div class="stmt-txt">An L1 score of <b>'+l1+'</b>'+(industry?' in the '+industry+' sector':'')+' is a planning figure under the '+scenario+' case. It is not a measured return until the cohorts are computed and the multiples are reviewed against outcomes.</div></div>'+
+    '<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L1 Value Ledger</div><div class="stmt-txt">'+buildIntelText(isInsufficient, q1Display, q1Ratio, benchPos)+'</div></div>'+
     '<div class="section-eyebrow">What to do next</div><div class="section-title">Moving your Value Ledger forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('')+
     '<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><a href="pillar-l2.html" class="btn-next">L2 Talent Premium \u2192</a></div>';
 }
