@@ -746,9 +746,10 @@
       }).slice(0, 3);
 
       var maleVoices = voices.filter(function(v) {
-        return maleNames.some(function(n) { return v.name.includes(n); }) ||
-               v.name.toLowerCase().includes('male');
-      }).slice(0, 3);
+     var n = v.name.toLowerCase();
+     return maleNames.some(function(nm) { return v.name.includes(nm); }) ||
+         (n.includes('male') && !n.includes('female'));
+    }).slice(0, 3);
 
       if (femaleVoices.length === 0 && maleVoices.length === 0) {
         var enVoices = voices.filter(function(v) { return v.lang.startsWith('en'); });
