@@ -1658,6 +1658,73 @@
   .vd-hub-node-t2 { display: none; }
 }
 
+/* Hero copy — one consistent typeface (Cormorant Garamond) across every
+   line in the hero stack, but a real size hierarchy instead of flat
+   tiers: small intro lines, a medium build line, a quiet aside, a big
+   climax (the accent lines), a medium CTA line, and a small closing
+   paragraph. This is the arc a premium SaaS hero actually reads in —
+   not everything the same size. */
+.hero-tagline {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: .01em !important;
+  font-size: clamp(19px,2vw,26px) !important;
+  color: rgba(196,181,253,.72) !important;
+}
+.hero-tagline em {
+  font-style: normal !important;
+  font-weight: 600 !important;
+  color: rgba(244,243,255,.92) !important;
+}
+.hero-kicker {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: normal !important; /* SR26: user explicitly does not want this italicized */
+  font-weight: 400 !important;
+  letter-spacing: .01em !important;
+  /* font-size unified in SR24 master block — see end of inline CSS */
+  color: rgba(255,255,255,.5) !important;
+}
+.hero-deck {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: normal !important;
+  color: #c4b5fd !important;
+}
+/* "Every HR professional has had that 9 pm moment." — the build line.
+   Bigger than the intro lines, purple gradient, but well short of the
+   climax size below it. */
+.hero-title .line.dim:not(.hero-context) {
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+/* "You are HR for everyone." / "Who is HR for you?" — the climax.
+   The biggest text on the page; everything before it has been
+   building to this. */
+/* .hero-title .line.accent — size now inherits base; colour + weight differentiate */
+/* "Enter VANTAGE." — now part of the unified hero type scale (SR25).
+   font-size defined in the master block at the end of inline CSS. */
+/* Gradient has to go on the individual typed spans (heText/heVantage/
+   heDot), not the #heroEnter wrapper itself — the wrapper holds no
+   direct text of its own (it's all in these children), so a
+   background-clip:text on the parent alone would clip to nothing. */
+/* SR27: the 3-stop gradient was being independently re-clipped by each
+   of these three short spans (Enter / VANTAGE / .), so each one cycled
+   through the FULL purple->indigo->pink range on its own — the visual
+   result was every letter looking individually gradient-saturated, busy
+   and overdone. A single flat colour (matching the lavender already used
+   for climax accents elsewhere) reads as calm and intentional instead,
+   while the existing .hero-enter text-shadow glow still gives it the
+   CTA-weight presence it needs. */
+#heText, #heVantage, #heDot {
+  background: none !important;
+  color: #c4b5fd !important;
+  -webkit-text-fill-color: #c4b5fd !important;
+}
+
 /* Humac Score — enriched 3-metric panel */
 .hsp-trio {
   display: flex;
@@ -1781,11 +1848,14 @@
    headline — that's what made it wrap awkwardly and look oversized. */
 .hero-context {
   font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-size: clamp(18px,1.9vw,24px) !important;
+  font-weight: 400 !important;
   opacity: 1 !important;
   margin: 0 !important; /* SR30: old 40px/36px removed — SR29's margin-top:32px is the single source of truth for hero-title spacing now */
   background: none !important;
-  -webkit-text-fill-color: rgba(244,243,255,.9) !important;
-  color: rgba(244,243,255,.9) !important;
+  -webkit-text-fill-color: rgba(196,181,253,0.90) !important;
+  color: rgba(196,181,253,0.90) !important;
 }
 
 /* "Enter Vantage." — typewriter + blink system */
@@ -2208,7 +2278,7 @@
 .hero-title .line.dim,
 .hero-title .line.accent {
   font-family: 'Cormorant Garamond', serif !important;
-  font-weight: 500 !important;
+  font-weight: 700 !important;
   font-style: normal !important;
 }
 
@@ -2969,19 +3039,39 @@
    TIER C — CTA ("Enter VANTAGE.") — its own modest step, between B and A
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* SR34: single uniform size/weight/style across every hero line. The
-   only thing that distinguishes one line from another now is whether
-   it carries the gradient treatment or not — no separate tiers. */
-#top .hero-title,
-#top .hero-title .line,
-#top .hero-title .hero-kicker,
-#top .hero-tagline,
-#top .hero-deck,
-#top #heroEnter {
-  font-size: clamp(21px, 2.2vw, 29px) !important;
-  font-weight: 500 !important;
-  font-style: normal !important;
+#top .hero-title {
+  font-size: clamp(26px, 3vw, 36px) !important;
+  line-height: 1.25 !important;
+}
+
+/* TIER A: headline line + the two climax accent lines */
+#top .hero-title .line.dim:not(.hero-context),
+#top .hero-title .line.accent {
+  font-size: clamp(26px, 3vw, 36px) !important;
+  line-height: 1.25 !important;
+}
+
+/* TIER B: the supporting aside line + kicker — tagline-matched, quiet */
+#top .hero-title .line.dim.hero-context,
+#top .hero-title .hero-kicker {
+  font-size: clamp(19px, 2vw, 26px) !important;
   line-height: 1.3 !important;
+}
+
+/* TIER C: the CTA line — a deliberate step between B and A, never equal
+   to either, so it reads as its own moment rather than competing */
+#top #heroEnter {
+  font-size: clamp(20px, 2.2vw, 28px) !important;
+  line-height: 1.3 !important;
+}
+
+/* Kicker: roman (not italic — explicit user request) */
+#top .hero-title .hero-kicker {
+  display: block !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  margin: 0 !important; /* SR30: bottom-margin removed — SR29's margin-top is now the single source of truth for spacing, nothing left to collapse against or add to it */
 }
 
 /* SR30: the 0.3em/0.4em accent margins below were REMOVED — their
@@ -3079,6 +3169,43 @@
     margin-top: 32px !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HERO CONSISTENCY FIX — single override, placed last on purpose.
+   Everything above this stays untouched. This block alone makes every
+   hero line share one font, one size, one weight, one plain color —
+   except the two climax lines, which keep their purple gradient.
+   That's the only thing that differs from line to line now.
+   ═══════════════════════════════════════════════════════════════════════ */
+#top .hero-title,
+#top .hero-title .line,
+#top .hero-title .hero-kicker,
+#top .hero-title .hero-kicker *,
+#top .hero-tagline,
+#top .hero-tagline *,
+#top .hero-deck,
+#top .hero-deck *,
+#top #heroEnter,
+#top #heroEnter * {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: clamp(21px, 2.2vw, 29px) !important;
+  font-weight: 500 !important;
+  font-style: normal !important;
+  text-transform: none !important;
+  line-height: 1.3 !important;
+  color: rgba(244,243,255,.9) !important;
+  background: none !important;
+  -webkit-text-fill-color: rgba(244,243,255,.9) !important;
+}
+/* The two gradient lines — the ONLY exception to the plain rule above. */
+#top .hero-title .line.dim:not(.hero-context),
+#top .hero-title .line.accent {
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
 </style>
 <style id="prologue-startup-guard">
 /* Startup guard: later inline typography overrides must not expose the
@@ -3143,56 +3270,6 @@
   #prologueCanvas {
     display: none !important;
   }
-}
-</style>
-<style>
-</style>
-<style>
-/* SR38 — REVERTED. The uppercase/bold/shrink additions from SR36 made
-   the hero read as heavy and mismatched instead of calm and even, so
-   they're removed here. What remains is just the plain consolidation:
-   one font, one size, one weight, one color for every hero line,
-   except the two gradient lines, which keep their gradient. Nothing
-   else is different line to line. */
-html body #top .hero-title,
-html body #top .hero-title .line,
-html body #top .hero-title .hero-kicker,
-html body #top .hero-title .hero-kicker *,
-html body #top .hero-tagline,
-html body #top .hero-tagline *,
-html body #top .hero-deck,
-html body #top .hero-deck *,
-html body #top #heroEnter,
-html body #top #heroEnter * {
-  font-family: 'Cormorant Garamond', serif !important;
-  font-size: clamp(21px, 2.2vw, 29px) !important;
-  font-weight: 500 !important;
-  font-style: normal !important;
-  text-transform: none !important;
-  line-height: 1.3 !important;
-  color: rgba(244,243,255,.9) !important;
-  background: none !important;
-  -webkit-text-fill-color: rgba(244,243,255,.9) !important;
-  margin-top: 32px !important;
-}
-html body #top .hero-title .line:first-child {
-  margin-top: 0 !important;
-}
-/* The two gradient lines — the ONLY exception to the plain rule above. */
-html body #top .hero-title .line.dim:not(.hero-context),
-html body #top .hero-title .line.accent {
-  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
-}
-@media (max-width: 700px) {
-  html body #top .hero-title .line.dim.hero-context { margin-top: 24px !important; }
-  html body #top .hero-title .hero-kicker { margin-top: 64px !important; }
-  html body #top .hero-title .line.accent { margin-top: 64px !important; }
-  html body #top .hero-title .line.accent + .line.accent { margin-top: 36px !important; }
-  html body #top #heroEnter { margin-top: 32px !important; }
 }
 </style>
 </head>
