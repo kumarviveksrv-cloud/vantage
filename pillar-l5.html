@@ -65,6 +65,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .stat .sv{font-family:var(--mono);font-size:1.05rem;font-weight:500;margin-bottom:3px}
 .stat .sl{font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,243,255,.45)}
 .sv-teal{color:#6366f1}.sv-gold{color:#c4b5fd}.sv-cobalt{color:#a5b4fc}.sv-dim{color:rgba(244,243,255,.45)}.sv-green{color:#4ade80}.sv-red{color:#E05C3A}
+/* FINDINGS — three-card synthesis between the stats bar and the
+   balance sheet, same purpose as on L1/L4. */
+.findings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+.finding-card{background:var(--bg2);border:1px solid rgba(99,102,241,.16);border-radius:14px;padding:20px}
+.finding-eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px}
+.finding-headline{font-size:.94rem;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.3}
+.finding-body{font-size:.81rem;color:var(--text-dim);line-height:1.7}
+.finding-body b{color:#c4b5fd;font-weight:500}
+@media(max-width:768px){.findings-grid{grid-template-columns:1fr}}
 /* BALANCE SHEET — restored: the two-column Assets/Liabilities
    statement this page's own JS referenced but did not define. */
 .bs-wrap{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:16px;overflow:hidden;margin-bottom:28px;animation:hero-pulse 3s ease-in-out infinite;position:relative}
@@ -216,6 +225,19 @@ function intelText(per,nhw){
   return'An L5 score of <b>'+l5+'</b>'+ctx+' with a Net Human Worth of <b>+\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll means your human capital base is accumulating, not depleting. Present this alongside your financial balance sheet \u2014 \u201cour human balance sheet is net-positive\u201d is a statement almost no CFO has ever heard from HR.';
 }
 
+// ── Findings — three-card synthesis: the pillar's weight, the single
+// largest line on the sheet (asset or liability, whichever it is),
+// and the explicit boundary that only two asset lines exist here.
+function buildFindings(know,rel,largestLiab){
+  var allItems=[{name:'Institutional Knowledge',val:know,side:'asset'},{name:'Relationship Capital',val:rel,side:'asset'},{name:largestLiab.name,val:largestLiab.val,side:'liability'}];
+  var largestOverall=allItems.reduce(function(a,b){return b.val>a.val?b:a;});
+  return '<div class="findings-grid">'+
+    '<div class="finding-card"><div class="finding-eyebrow">L5 Weight</div><div class="finding-headline">10% of Humac Score</div><div class="finding-body">The <b>smallest pillar weight</b> of the five \u2014 deliberately, since this sheet only prices what can be attributed to real cohorts without duplicating L1.</div></div>'+
+    '<div class="finding-card"><div class="finding-eyebrow">Largest Single Line</div><div class="finding-headline">'+largestOverall.name+' ('+(largestOverall.side==='asset'?'asset':'liability')+')</div><div class="finding-body">The single biggest line on the sheet right now is a <b>'+largestOverall.side+'</b>. That\u2019s the line most worth checking first if the Net Human Worth figure looks off.</div></div>'+
+    '<div class="finding-card"><div class="finding-eyebrow">What This Sheet Prices</div><div class="finding-headline">Two assets, four liabilities</div><div class="finding-body">Only Institutional Knowledge and Relationship Capital are priced as assets. <b>This is not a full measure of culture</b> \u2014 it\u2019s the two things this sheet can attribute to real cohorts without duplicating what L1 already prices.</div></div>'+
+  '</div>';
+}
+
 function render(){
   var book=null;
   try{book=JSON.parse(sessionStorage.getItem('vantage_l1_book')||'null');}catch(e){}
@@ -261,6 +283,7 @@ function render(){
     {name:'Culture Liability',val:cliab,desc:(m('cliab')*100).toFixed(1)+'% of total comp base \xb7 '+scenario+' case'}
   ];
   var largestLiab=liabItems.reduce(function(a,b){return b.val>a.val?b:a;});
+  var findingsHtml=buildFindings(know,rel,largestLiab);
 
   var bsWrap='<div class="bs-wrap">'+
     '<div class="bs-header"><div class="bs-header-title">Human Balance Sheet</div><div class="bs-header-sub">'+scoreDate+' baseline \xb7 '+scenario+' case</div></div>'+
@@ -296,7 +319,7 @@ function render(){
 
   var bottomNav='<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><a href="dashboard.html" class="btn-next">Dashboard \u2192</a></div>';
 
-  w.innerHTML=nav+header+shared+hero+stats+assumptionBar+bsWrap+assumptionsTable+stmt+actions+complete+bottomNav;
+  w.innerHTML=nav+header+shared+hero+stats+findingsHtml+assumptionBar+bsWrap+assumptionsTable+stmt+actions+complete+bottomNav;
 }
 function setScenario(s){scenario=s;render();}
 render();
