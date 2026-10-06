@@ -1059,6 +1059,19 @@
   margin-bottom: 72px;
 }
 .vd-copy .eyebrow { margin-bottom: 18px; }
+/* "What Vantage is" — bumped size/weight so it reads as a real section
+   label next to the much larger headline below it, with proper
+   breathing room instead of the cramped 18px shared by every eyebrow
+   on the page. The gradient is already set inline in the HTML; making
+   the text bigger is what actually makes that gradient visible across
+   more than a couple of characters. */
+#what .vd-copy .eyebrow {
+  font-size: clamp(16px, 1.7vw, 21px) !important;
+  font-weight: 700 !important;
+  letter-spacing: .05em !important;
+  margin-bottom: 32px !important;
+  filter: drop-shadow(0 0 12px rgba(139,92,246,.4));
+}
 .vd-copy h2 {
   font: 700 clamp(28px,3.6vw,48px)/1.1 'Cormorant Garamond',serif;
   letter-spacing: -.01em;
