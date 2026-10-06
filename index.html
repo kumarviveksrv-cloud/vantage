@@ -3146,11 +3146,14 @@
 }
 </style>
 <style>
-/* SR37 — THE ONLY HERO TYPOGRAPHY RULE LEFT. Everything that used to
-   style .hero-title .line, .hero-kicker, .hero-tagline, .hero-deck, or
-   #heroEnter elsewhere in this document has been deleted (SR18/23/24/
-   25/26/27/28/29/30/31/32/33/34/35 are gone). This is the single source
-   of truth, placed last in <head> so nothing after it can contest it. */
+</style>
+<style>
+/* SR38 — REVERTED. The uppercase/bold/shrink additions from SR36 made
+   the hero read as heavy and mismatched instead of calm and even, so
+   they're removed here. What remains is just the plain consolidation:
+   one font, one size, one weight, one color for every hero line,
+   except the two gradient lines, which keep their gradient. Nothing
+   else is different line to line. */
 html body #top .hero-title,
 html body #top .hero-title .line,
 html body #top .hero-title .hero-kicker,
@@ -3165,6 +3168,7 @@ html body #top #heroEnter * {
   font-size: clamp(21px, 2.2vw, 29px) !important;
   font-weight: 500 !important;
   font-style: normal !important;
+  text-transform: none !important;
   line-height: 1.3 !important;
   color: rgba(244,243,255,.9) !important;
   background: none !important;
@@ -3174,9 +3178,7 @@ html body #top #heroEnter * {
 html body #top .hero-title .line:first-child {
   margin-top: 0 !important;
 }
-/* The two gradient lines — the ONLY exception to the plain rule above.
-   Comes after it in source order, so its gradient wins over the plain
-   color set a moment ago, on these two selectors only. */
+/* The two gradient lines — the ONLY exception to the plain rule above. */
 html body #top .hero-title .line.dim:not(.hero-context),
 html body #top .hero-title .line.accent {
   background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
@@ -3184,18 +3186,6 @@ html body #top .hero-title .line.accent {
   background-clip: text !important;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
-}
-/* Explicit per-line requests, layered on top of the plain/gradient base */
-html body #top .hero-title .line.dim:not(.hero-context) {
-  text-transform: uppercase !important;
-  font-weight: 800 !important;
-}
-html body #top .hero-tagline {
-  font-weight: 700 !important;
-}
-html body #top .hero-deck,
-html body #top .hero-deck * {
-  font-size: clamp(18px, 1.9vw, 25px) !important;
 }
 @media (max-width: 700px) {
   html body #top .hero-title .line.dim.hero-context { margin-top: 24px !important; }
