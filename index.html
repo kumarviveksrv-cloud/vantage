@@ -1666,29 +1666,20 @@
    not everything the same size. */
 .hero-tagline {
   font-family: 'Cormorant Garamond', serif !important;
-  font-style: italic !important;
-  font-weight: 500 !important;
   text-transform: none !important;
   letter-spacing: .01em !important;
-  font-size: clamp(19px,2vw,26px) !important;
-  color: rgba(196,181,253,.88) !important;
+  color: rgba(244,243,255,.9) !important;
 }
 .hero-tagline em {
   font-style: normal !important;
-  font-weight: 600 !important;
-  color: rgba(244,243,255,.92) !important;
+  color: rgba(244,243,255,.9) !important;
 }
 .hero-kicker {
   font-family: 'Cormorant Garamond', serif !important;
-  font-style: normal !important; /* SR26: user explicitly does not want this italicized */
-  font-weight: 400 !important;
-  /* font-size unified in SR24 master block — see end of inline CSS */
-  color: rgba(255,255,255,.88) !important;
-}
-.hero-deck {
+  color: rgba(244,243,255,.9) !important;
+}.hero-deck {
   font-family: 'Cormorant Garamond', serif !important;
-  font-style: normal !important;
-  color: #c4b5fd !important;
+  color: rgba(244,243,255,.9) !important;
 }
 /* "Every HR professional has had that 9 pm moment." — the build line.
    Bigger than the intro lines, purple gradient, but well short of the
@@ -1720,8 +1711,8 @@
    CTA-weight presence it needs. */
 #heText, #heVantage, #heDot {
   background: none !important;
-  color: #c4b5fd !important;
-  -webkit-text-fill-color: #c4b5fd !important;
+  color: rgba(244,243,255,.9) !important;
+  -webkit-text-fill-color: rgba(244,243,255,.9) !important;
 }
 
 /* Humac Score — enriched 3-metric panel */
@@ -1847,14 +1838,11 @@
    headline — that's what made it wrap awkwardly and look oversized. */
 .hero-context {
   font-family: 'Cormorant Garamond', serif !important;
-  font-style: italic !important;
-  font-size: clamp(18px,1.9vw,24px) !important;
-  font-weight: 400 !important;
   opacity: 1 !important;
   margin: 0 !important; /* SR30: old 40px/36px removed — SR29's margin-top:32px is the single source of truth for hero-title spacing now */
   background: none !important;
-  -webkit-text-fill-color: rgba(196,181,253,0.90) !important;
-  color: rgba(196,181,253,0.90) !important;
+  -webkit-text-fill-color: rgba(244,243,255,.9) !important;
+  color: rgba(244,243,255,.9) !important;
 }
 
 /* "Enter Vantage." — typewriter + blink system */
@@ -3038,29 +3026,18 @@
    TIER C — CTA ("Enter VANTAGE.") — its own modest step, between B and A
    ═══════════════════════════════════════════════════════════════════════ */
 
-#top .hero-title {
-  font-size: clamp(26px, 3vw, 36px) !important;
-  line-height: 1.25 !important;
-}
-
-/* TIER A: headline line + the two climax accent lines */
-#top .hero-title .line.dim:not(.hero-context),
-#top .hero-title .line.accent {
-  font-size: clamp(26px, 3vw, 36px) !important;
-  line-height: 1.25 !important;
-}
-
-/* TIER B: the supporting aside line + kicker — tagline-matched, quiet */
-#top .hero-title .line.dim.hero-context,
-#top .hero-title .hero-kicker {
-  font-size: clamp(19px, 2vw, 26px) !important;
-  line-height: 1.3 !important;
-}
-
-/* TIER C: the CTA line — a deliberate step between B and A, never equal
-   to either, so it reads as its own moment rather than competing */
+/* SR34: single uniform size/weight/style across every hero line. The
+   only thing that distinguishes one line from another now is whether
+   it carries the gradient treatment or not — no separate tiers. */
+#top .hero-title,
+#top .hero-title .line,
+#top .hero-title .hero-kicker,
+#top .hero-tagline,
+#top .hero-deck,
 #top #heroEnter {
-  font-size: clamp(20px, 2.2vw, 28px) !important;
+  font-size: clamp(21px, 2.2vw, 29px) !important;
+  font-weight: 500 !important;
+  font-style: normal !important;
   line-height: 1.3 !important;
 }
 
