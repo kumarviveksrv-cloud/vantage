@@ -1614,7 +1614,7 @@
          text:'This is your decision to own, not legal\u2019s to defend. A COO who sees HR defer entirely to legal in the room starts routing future people-decisions elsewhere: a much larger, longer-term cost than this single case.',
          aria:'If you\u2019re not answering for this decision, who does the COO believe actually made it?'},
         OC:{verdict:'MODELLED AS PREPARED',vclass:'ok',num:'3/3',
-         text:'3 objections anticipated. Counter-arguments prepared. This is the kind of preparation ARIA is built to run: rehearsing the questions before they're asked, not reacting to them cold.',
+         text:'3 objections anticipated. Counter-arguments prepared. This is the kind of preparation ARIA is built to run: rehearsing the questions before they\u2019re asked, not reacting to them cold.',
          aria:'In the full platform, I run you through every objection you will face in this conversation and prepare a response for each one before you walk in.'},
        OD:{verdict:'SIGNALS UNREADINESS',vclass:'warn',num:'-1 day',
          text:'Delaying a scheduled decision-maker call reads as a lack of control over the situation, not diligence. The COO now wonders if HR is managing this case, or being managed by it.',
