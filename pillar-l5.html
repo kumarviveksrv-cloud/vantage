@@ -105,6 +105,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .bs-nhw-val{font-family:var(--hero);font-size:5rem;line-height:1;text-align:right}
 .bs-nhw-val.pos{background:linear-gradient(135deg,#60E8A0 0%,#6366f1 40%,#20A870 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .bs-nhw-val.neg{background:linear-gradient(135deg,#F08070 0%,#E05C3A 50%,#C04020 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.bs-nhw-secondary{font-family:var(--mono);font-size:.72rem;color:rgba(244,243,255,.4);margin-top:8px}
 /* STATEMENT + ACTIONS + COMPLETE */
 .statement{padding:26px 30px;background:rgba(13,11,30,.5);border:1px solid var(--cobalt-border);border-radius:14px;border-left:3px solid var(--cobalt);position:relative;overflow:hidden;animation:hero-pulse 3s ease-in-out infinite;margin-bottom:32px}
 .statement::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--cobalt),#a5b4fc)}
@@ -151,8 +152,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
   <a href="humac-onboarding.html" class="nav-item" id="nav-humac"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></span> Humac Score</a>
   <div class="nav-section">Your Active Tools</div>
   <a href="employee-case-advisor.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h8L10 22l10-12h-8L13 2z"/></svg></span> Employee Case Advisor</a>
-  <a href="people-roi-brief.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></span> People ROI Brief</a>
-  <a href="leadership-communicator.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-5.6-8-12a8 8 0 0116 0c0 6.4-8 12-8 12z"/><circle cx="12" cy="10" r="3"/></svg></span> Stakeholder Influence</a>
+  <a href="people-roi-brief.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg></span> The Business Case</a>
   <a href="difficult-conversations.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span> Difficult Conversations</a>
   <a href="policy-advisor.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span> Policy Advisor</a>
   <a href="retention-advisor.html" class="nav-item"><span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><path d="M7 3h10"/><path d="M3.5 9l3.5 7H0l3.5-7zM16.5 9l3.5 7H13l3.5-7z"/></svg></span> Retention Advisor</a>
@@ -207,22 +207,22 @@ function buildActions(per,largestLiabName){
     {title:'Enter a compensation base first',body:'Net Human Worth needs a total comp base to compute a per-\u20b9100 figure against. Everything else on this page is ready to run once that\u2019s in.'},
     {title:'Complete the Value Ledger (L1)',body:'This page reads the L1 book to show what\u2019s already priced for stars, emerging talent, tenure, and at-risk people, so it isn\u2019t repriced here. Complete L1 first for the full picture.'},
     {title:'Capture senior tenure and revenue-facing relationships',body:'Institutional Knowledge and Relationship Capital \u2014 the two asset lines this page can price \u2014 need senior headcount, average senior tenure, and revenue-facing employee count from your Humac inputs.'},
-    {title:'Return once the inputs are in',body:'With a comp base and at least one asset-side cohort entered, this page produces a real Net Human Worth figure, not a placeholder.'}
+    {title:'Return once the inputs are in',body:'With a comp base and at least one asset-side cohort entered, this page produces a modelled Net Human Worth ratio to work with.'}
   ];
   return [
     {title:'Address your largest liability first',body:'Of HiPo Concentration, Skill Debt, Growth-Readiness Gap, and Culture Liability, '+largestLiabName+' is currently the largest line on the liabilities side. That\u2019s the highest-leverage place to act.'},
     {title:'Build institutional knowledge documentation',body:'Institutional knowledge walks out with every senior exit. Before your next departure: run a knowledge-transfer session and document the top 10 things that person knows that no one else does. Three sessions a year is your institutional knowledge programme.'},
     {title:'Run a relationship-capital check',body:'For your most revenue-critical accounts or relationships, confirm there is more than one person at the org who holds that relationship. A single point of failure there is exactly what the Relationship Capital line is trying to surface.'},
-    {title:'Present your NHW to leadership',body:'Net Human Worth is a concept, not an IFRS line item \u2014 but the conversation it creates is real. \u201c'+(per>=0?'Our human balance sheet shows a positive Net Human Worth \u2014 our people assets are exceeding our talent liabilities.':'Our human balance sheet is currently negative \u2014 here is what that means and what we are going to do about it.')+'\u201d That conversation has almost never happened in most organisations. Have it.'}
+    {title:'Take the ratio into your next review, rates named',body:'Net Human Worth per \u20b9100 of payroll is modelled at '+(per>=0?'+':'')+'\u20b9'+per.toFixed(1)+' under the '+scenario+' case. Take it into the room with the planning rates behind it named \u2014 institutional knowledge, relationship capital, and the three liability assumptions \u2014 not as a finding on its own.'}
   ];
 }
 
 function intelText(per,nhw){
   var ctx=industry?' in the '+industry+' sector':'';
   if(per==null)return'An L5 score of <b>'+l5+'</b>'+ctx+' has no Net Human Worth to report yet \u2014 a compensation base is needed before the ratio can be computed.';
-  if(per<0)return'An L5 score of <b>'+l5+'</b>'+ctx+' with a Net Human Worth of <b>\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll means liabilities currently exceed assets. HiPo concentration, skill debt, or the growth-readiness gap \u2014 or some mix of the three \u2014 are outweighing the institutional knowledge and relationship capital this page can currently price. The actions below address the largest of these first.';
-  if(per<20)return'An L5 score of <b>'+l5+'</b>'+ctx+' with a Net Human Worth of <b>+\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll is positive but modest. Assets narrowly exceed liabilities \u2014 deepening senior tenure or revenue-facing relationships is the fastest way to widen that margin.';
-  return'An L5 score of <b>'+l5+'</b>'+ctx+' with a Net Human Worth of <b>+\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll means your human capital base is accumulating, not depleting. Present this alongside your financial balance sheet \u2014 \u201cour human balance sheet is net-positive\u201d is a statement almost no CFO has ever heard from HR.';
+  if(per<0)return'An L5 score of <b>'+l5+'</b>'+ctx+' is modelled at <b>\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll, under the '+scenario+' case \u2014 liabilities currently exceed assets in this model. HiPo concentration, skill debt, or the growth-readiness gap \u2014 or some mix of the three \u2014 are outweighing institutional knowledge and relationship capital. The actions below address the largest of these first.';
+  if(per<20)return'An L5 score of <b>'+l5+'</b>'+ctx+' is modelled at <b>+\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll, under the '+scenario+' case \u2014 positive but modest. Assets narrowly exceed liabilities in this model \u2014 deepening senior tenure or revenue-facing relationships is the fastest way to widen that margin.';
+  return'An L5 score of <b>'+l5+'</b>'+ctx+' is modelled at <b>+\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll, under the '+scenario+' case. Take the ratio, with the four planning rates behind it named, into your next review \u2014 it is a modelled read, not an audited balance sheet.';
 }
 
 // ── Findings — three-card synthesis: the pillar's weight, the single
@@ -270,7 +270,7 @@ function render(){
 
   var shared=blocked?'<div class="gate"><b style="color:#f4f3ff">Shared cohorts are not repriced here.</b> Complete the Value Ledger to see the return already booked for stars, emerging talent, tenure, and at-risk people. Those lines are excluded from Net Human Worth.</div>':'<div class="assumption-note" style="margin-bottom:12px">L1 already books <b>'+fmtINR(book.totalRet||0)+'</b> for the shared cohorts. That figure is not added again here.</div>';
 
-  var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L5 Score</div><div class="ratio-num">'+l5+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div class="ratio-lbl">Net Human Worth per \u20b9100 payroll</div><div class="nhw-num '+(nhwPos?'pos':'neg')+'">'+(nhwPos?'+':'')+'\u20b9'+per.toFixed(1)+'</div><div class="context">Rupee stock, secondary: <b>'+(nhw>=0?'+':'')+fmtINR(nhw)+'</b>.<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' confidence \xb7 '+scenario+' case \xb7 L5 carries 10% of Humac Score</div></div></div></div>';
+  var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L5 Score</div><div class="ratio-num">'+l5+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">Provisional band: '+sb.name+'</div></div><div class="hero-divider"></div><div><div class="ratio-lbl">Net Human Worth per \u20b9100 payroll</div><div class="nhw-num '+(nhwPos?'pos':'neg')+'">'+(nhwPos?'+':'')+'\u20b9'+per.toFixed(1)+'</div><div class="context">Rupee stock, secondary: <b>'+(nhw>=0?'+':'')+fmtINR(nhw)+'</b>.<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' input coverage \xb7 '+scenario+' case \xb7 L5 carries 10% of Humac Score</div></div></div></div>';
 
   var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l5+'/100</div><div class="sl">L5 Score</div></div><div class="stat"><div class="sv '+(nhwPos?'sv-green':'sv-red')+'">'+(nhwPos?'+':'')+'\u20b9'+per.toFixed(1)+'</div><div class="sl">NHW per \u20b9100 payroll</div></div><div class="stat"><div class="sv sv-cobalt">'+fmtINR(book?book.totalRet||0:0)+'</div><div class="sl">Shared L1 return (not repriced)</div></div><div class="stat"><div class="sv sv-dim">'+hci.toFixed(2)+'x</div><div class="sl">HCI coefficient</div></div></div>';
 
@@ -302,13 +302,21 @@ function render(){
       '</div>'+
     '</div>'+
     '<div class="bs-nhw">'+
-      '<div class="bs-nhw-left"><div class="bs-nhw-label">Net Human Worth (NHW)</div><div class="bs-nhw-desc">'+(nhwPos?'Assets exceed liabilities. The priceable portion of your human capital base is net-positive.':'Liabilities exceed assets. The priceable portion of your human capital base is depleting faster than it is accumulating.')+'</div></div>'+
-      '<div class="bs-nhw-val '+(nhwPos?'pos':'neg')+'">'+(nhwPos?'+':'')+fmtINR(nhw)+'</div>'+
+      '<div class="bs-nhw-left"><div class="bs-nhw-label">Net Human Worth per \u20b9100 payroll</div><div class="bs-nhw-desc">'+(nhwPos?'Modelled assets exceed modelled liabilities under the '+scenario+' case.':'Modelled liabilities exceed modelled assets under the '+scenario+' case.')+'</div><div class="bs-nhw-secondary">Rupee stock, secondary: '+(nhw>=0?'+':'')+fmtINR(nhw)+'</div></div>'+
+      '<div class="bs-nhw-val '+(nhwPos?'pos':'neg')+'">'+(nhwPos?'+':'')+'\u20b9'+per.toFixed(1)+'</div>'+
     '</div>'+
   '</div>';
 
   var assumptionRows=['rel','skill','growth','cliab'].map(function(k){var a=ASSUMPTIONS[k];return '<tr><td>'+a.label+'</td><td>'+(a.low*100).toFixed(1)+'%</td><td>'+(a.base*100).toFixed(1)+'%</td><td>'+(a.high*100).toFixed(1)+'%</td><td>'+a.note+'</td></tr>';}).join('');
-  var assumptionsTable='<table class="assumptions"><tr><th>Line</th><th>Low</th><th>Base</th><th>High</th><th>Status</th></tr>'+assumptionRows+'</table>';
+  /* The two rates below drive real asset/liability lines on the sheet
+     (Institutional Knowledge, HiPo Concentration) but, unlike the four
+     above, don't move with the scenario toggle — without a row here
+     they're invisible planning rates, which makes the sheet look more
+     certain than the lines that do carry a Low/Base/High range. */
+  var fixedRows=
+    '<tr><td>Institutional knowledge premium</td><td>8.0%/yr (cap 60%)</td><td>8.0%/yr (cap 60%)</td><td>8.0%/yr (cap 60%)</td><td>Fixed rate, not scenario-adjustable. Planning rate, not already in the L1 book.</td></tr>'+
+    '<tr><td>HiPo concentration risk</td><td>25.0%</td><td>25.0%</td><td>25.0%</td><td>Fixed rate, not scenario-adjustable. Planning rate.</td></tr>';
+  var assumptionsTable='<table class="assumptions"><tr><th>Line</th><th>Low</th><th>Base</th><th>High</th><th>Status</th></tr>'+assumptionRows+fixedRows+'</table>';
 
   var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L5 Human Balance Sheet</div><div class="stmt-txt">'+intelText(per,nhw)+'</div></div>';
 
