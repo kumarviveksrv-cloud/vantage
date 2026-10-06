@@ -91,6 +91,16 @@ body{
 .stat .sv{font-family:var(--mono);font-size:1.05rem;font-weight:500;margin-bottom:3px}
 .stat .sl{font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(244,243,255,.45)}
 .sv-teal{color:var(--teal)}.sv-gold{color:var(--gold)}.sv-cobalt{color:#a5b4fc}.sv-dim{color:rgba(244,243,255,.45)}
+/* FINDINGS — three-card synthesis, sits between the stats bar and the
+   detailed ledger so the reader gets the "what this actually means"
+   framing before the line-by-line table. */
+.findings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+.finding-card{background:var(--bg2);border:1px solid rgba(99,102,241,.16);border-radius:14px;padding:20px}
+.finding-eyebrow{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px}
+.finding-headline{font-size:.94rem;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.3}
+.finding-body{font-size:.81rem;color:var(--text-dim);line-height:1.7}
+.finding-body b{color:#c4b5fd;font-weight:500}
+@media(max-width:768px){.findings-grid{grid-template-columns:1fr}}
 @keyframes cobalt-pulse{
   0%,100%{box-shadow:0 0 1px rgba(99,102,241,.3),0 0 8px rgba(99,102,241,.15),0 0 20px rgba(99,102,241,.06)}
   50%{box-shadow:0 0 0 1px rgba(99,102,241,.6),0 0 20px rgba(99,102,241,.4),0 0 40px rgba(99,102,241,.18)}
@@ -372,6 +382,24 @@ function buildIntelText(insufficient, q1Display, q1Ratio, benchPos){
   return'An L1 score of <b>'+l1+'</b>'+ctx+' is exceptional under the '+scenario+' case. The ledger below is board-ready. Present the '+q1Ratio+' HR Return Ratio to your next quarterly review as a financial metric, not an HR slide.';
 }
 
+// ── Findings — three-card synthesis shown before the detailed ledger:
+// the pillar's weight in the formula, which value line is actually
+// carrying the number right now, and what this ledger deliberately
+// does not price. All three are computed from real state, not boilerplate.
+function buildFindings(realLedger,components){
+  var rows=realLedger?(realLedger.insufficient?null:realLedger.rows):components;
+  var strongest=(rows&&rows.length)?rows.reduce(function(a,b){return b.ret>a.ret?b:a;}):null;
+  var strongestHeadline=strongest?strongest.action:'Not yet determined';
+  var strongestBody=strongest
+    ?'Of the five value lines, <b>'+strongest.action+'</b> is currently contributing the most to your return. The other four are real, but this is where the ledger\u2019s weight actually sits right now.'
+    :'No cohort has enough data yet to be the largest contributor \u2014 complete at least one cohort count to see which line is actually carrying this score.';
+  return '<div class="findings-grid">'+
+    '<div class="finding-card"><div class="finding-eyebrow">L1 Weight</div><div class="finding-headline">25% of Humac Score</div><div class="finding-body">The <b>single largest pillar weight</b> of the five. A shift here moves your overall Humac Score more than any other pillar \u2014 part of why this ledger excludes missing cohorts rather than guessing at them.</div></div>'+
+    '<div class="finding-card"><div class="finding-eyebrow">Strongest Value Line</div><div class="finding-headline">'+strongestHeadline+'</div><div class="finding-body">'+strongestBody+'</div></div>'+
+    '<div class="finding-card"><div class="finding-eyebrow">What This Ledger Doesn\u2019t Price</div><div class="finding-headline">Five cohorts, nothing else</div><div class="finding-body">Only Stars, revenue-role hires, Emerging Talent, 5+ year tenure, and at-risk performers are priced here. Compensation fairness, intangible culture, and anything outside these five cohorts are <b>not reflected</b> in this number.</div></div>'+
+  '</div>';
+}
+
 function render(){
   var realLedger=(l1Mode==='computed')?computeRealLedger(ra):null;
   var components=estimateComponents();
@@ -425,6 +453,7 @@ function render(){
     return '<div class="ledger"><div class="ledger-hd"><span>When</span><span>Allocated component</span><span>Cost idx</span><span>Return idx</span><span>Net idx</span></div>'+rows+'<div class="ledger-total"><div class="total-lbl">TOTAL \xb7 '+scoreDate+' \xb7 estimate allocation, not five measurements</div><div class="total-cost">'+totalCost+'</div><div class="total-ret">+'+totalRet+'</div><div class="total-net '+(totalNet>=0?'pos':'neg')+'">'+(totalNet>=0?'+':'')+totalNet+'</div></div></div>';
   }
   var acts=buildActions(isInsufficient, q1Display, q1Ratio, ratioNum);
+  var findingsHtml=buildFindings(realLedger,components);
   var w=document.getElementById('main-wrap');
   var pdots=[{label:'L1',score:l1,href:'pillar-l1.html',active:true},{label:'L2',score:l2,href:'pillar-l2.html'},{label:'L3',score:l3,href:'pillar-l3.html'},{label:'L4',score:l4,href:'pillar-l4.html'},{label:'L5',score:l5,href:'pillar-l5.html'}];
   w.innerHTML=
@@ -432,6 +461,7 @@ function render(){
     '<div class="eyebrow">Vantage \xb7 Humac Score \xb7 L1 \xb7 25% weight \xb7 canonical book</div><h1 class="page-title">The Value Ledger</h1><p class="page-sub">'+(industry?industry+' \xb7 ':'')+(state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate+' \xb7 ':'')+'Planning model, not a measured return</p>'+
     '<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L1 Score</div><div class="ratio-num">'+l1+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">'+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+q1Display+' generated for every \u20b9100 of salary bill</div><div class="context"><b style="color:'+benchColor+'">'+(benchPos==='above'?'Above':benchPos==='at'?'At':'Below')+'</b> the '+bench.label+' benchmark (L1 '+bench.weak+'\u2013'+bench.strong+') \xb7 HCI '+hci.toFixed(2)+'x \xb7 '+conf+' confidence \xb7 '+scenario+' case</div></div></div></div>'+
     '<div class="stats"><div class="stat"><div class="sv sv-teal">'+l1+'/100</div><div class="sl">L1 Score</div></div><div class="stat"><div class="sv sv-gold">'+q1Display+'</div><div class="sl">per \u20b9100 salary</div></div><div class="stat"><div class="sv sv-cobalt">'+(benchPos==='above'?'\u2197':benchPos==='at'?'\u2192':'\u2198')+' '+benchPos+'</div><div class="sl">vs '+bench.label+'</div></div><div class="stat"><div class="sv sv-dim">'+hci.toFixed(2)+'x</div><div class="sl">HCI coefficient</div></div></div>'+
+    findingsHtml+
     '<div class="assumption-bar"><div class="assumption-note"><b>'+scenario+' case.</b> Multiples are planning assumptions. L4 must consume this book and must not reprice these cohorts. Ratio shown: '+q1Ratio+'.</div><div class="scenario-btns"><button class="sc-btn'+(scenario==='low'?' active':'')+'" onclick="setScenario(\'low\')">Low</button><button class="sc-btn'+(scenario==='base'?' active':'')+'" onclick="setScenario(\'base\')">Base</button><button class="sc-btn'+(scenario==='high'?' active':'')+'" onclick="setScenario(\'high\')">High</button></div></div>'+
     '<div class="intro-panel"><div class="intro-toggle" onclick="toggleIntro()"><div class="intro-tl"><div class="intro-icon">?</div><div><div class="intro-title">What is the Value Ledger?</div><div class="intro-sub">Canonical book of HR value lines \xb7 L1 \xb7 25% of Humac Score</div></div></div><div class="intro-chevron" id="intro-chev">\u25bc</div></div><div class="intro-body" id="intro-body"><div class="intro-sec"><div class="intro-sec-lbl">What it is</div><div class="intro-sec-txt">The only place retention, hire quality, development, tenure premium, and managed performance risk are priced. <b>Human P&L is the ratio of this book, not a second ledger.</b></div></div><div class="intro-sec"><div class="intro-sec-lbl">Why 25% of Humac Score</div><div class="intro-sec-txt">Value generation is the foundational signal in the Humac formula. An HR function that cannot demonstrate financial value loses the budget argument before it starts \u2014 L1 is treated as the prerequisite the other four pillars build on.</div></div><div class="intro-sec"><div class="intro-sec-lbl">Assumptions \xb7 reviewed 3 Oct 2026</div><table class="assumptions"><tr><th>Line</th><th>Low</th><th>Base</th><th>High</th><th>Status</th></tr>'+assumptionRows+'</table></div><div class="intro-sec"><div class="intro-sec-lbl">What would falsify it</div><div class="intro-sec-txt">If regretted attrition, replacement cost, or quality incidents do not move with these lines over 90 days, the multiple is wrong. Missing inputs stay missing. They are not scored as average.</div></div></div></div>'+
     '<div class="sec-head"><h2><span class="step">1</span>The Ledger \xb7 '+scoreDate+'</h2><div class="sec-sub">'+(l1Mode==='computed'?'Computed cohorts \xb7 '+scenario+' multiples':'Estimate mode allocates one self-reported ratio')+'</div></div>'+
