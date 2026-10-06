@@ -1658,65 +1658,6 @@
   .vd-hub-node-t2 { display: none; }
 }
 
-/* Hero copy — one consistent typeface (Cormorant Garamond) across every
-   line in the hero stack, but a real size hierarchy instead of flat
-   tiers: small intro lines, a medium build line, a quiet aside, a big
-   climax (the accent lines), a medium CTA line, and a small closing
-   paragraph. This is the arc a premium SaaS hero actually reads in —
-   not everything the same size. */
-.hero-tagline {
-  font-family: 'Cormorant Garamond', serif !important;
-  text-transform: none !important;
-  letter-spacing: .01em !important;
-  color: rgba(244,243,255,.9) !important;
-}
-.hero-tagline em {
-  font-style: normal !important;
-  color: rgba(244,243,255,.9) !important;
-}
-.hero-kicker,
-.hero-kicker * {
-  font-family: 'Cormorant Garamond', serif !important;
-  color: rgba(244,243,255,.9) !important;
-}
-}.hero-deck {
-  font-family: 'Cormorant Garamond', serif !important;
-  color: rgba(244,243,255,.9) !important;
-}
-/* "Every HR professional has had that 9 pm moment." — the build line.
-   Bigger than the intro lines, purple gradient, but well short of the
-   climax size below it. */
-.hero-title .line.dim:not(.hero-context) {
-  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  color: transparent !important;
-  -webkit-text-fill-color: transparent !important;
-}
-/* "You are HR for everyone." / "Who is HR for you?" — the climax.
-   The biggest text on the page; everything before it has been
-   building to this. */
-/* .hero-title .line.accent — size now inherits base; colour + weight differentiate */
-/* "Enter VANTAGE." — now part of the unified hero type scale (SR25).
-   font-size defined in the master block at the end of inline CSS. */
-/* Gradient has to go on the individual typed spans (heText/heVantage/
-   heDot), not the #heroEnter wrapper itself — the wrapper holds no
-   direct text of its own (it's all in these children), so a
-   background-clip:text on the parent alone would clip to nothing. */
-/* SR27: the 3-stop gradient was being independently re-clipped by each
-   of these three short spans (Enter / VANTAGE / .), so each one cycled
-   through the FULL purple->indigo->pink range on its own — the visual
-   result was every letter looking individually gradient-saturated, busy
-   and overdone. A single flat colour (matching the lavender already used
-   for climax accents elsewhere) reads as calm and intentional instead,
-   while the existing .hero-enter text-shadow glow still gives it the
-   CTA-weight presence it needs. */
-#heText, #heVantage, #heDot {
-  background: none !important;
-  color: rgba(244,243,255,.9) !important;
-  -webkit-text-fill-color: rgba(244,243,255,.9) !important;
-}
-
 /* Humac Score — enriched 3-metric panel */
 .hsp-trio {
   display: flex;
@@ -3043,15 +2984,6 @@
   line-height: 1.3 !important;
 }
 
-/* Kicker: roman (not italic — explicit user request) */
-#top .hero-title .hero-kicker {
-  display: block !important;
-  font-family: 'Cormorant Garamond', serif !important;
-  font-style: normal !important;
-  font-weight: 400 !important;
-  margin: 0 !important; /* SR30: bottom-margin removed — SR29's margin-top is now the single source of truth for spacing, nothing left to collapse against or add to it */
-}
-
 /* SR30: the 0.3em/0.4em accent margins below were REMOVED — their
    selector (.line.accent, 3 matched classes) has higher CSS specificity
    than SR29's catch-all (.line, 2 matched classes), so they silently
@@ -3214,14 +3146,21 @@
 }
 </style>
 <style>
-/* SR35 — LAST IN CASCADE, ON PURPOSE. Forces hero-kicker and hero-deck
-   (and any child span either one's animation script generates) to match
-   every other hero line, overriding whatever vantage-cinematic.css or
-   vantage-prologue.css currently does to them. */
+/* SR37 — THE ONLY HERO TYPOGRAPHY RULE LEFT. Everything that used to
+   style .hero-title .line, .hero-kicker, .hero-tagline, .hero-deck, or
+   #heroEnter elsewhere in this document has been deleted (SR18/23/24/
+   25/26/27/28/29/30/31/32/33/34/35 are gone). This is the single source
+   of truth, placed last in <head> so nothing after it can contest it. */
+html body #top .hero-title,
+html body #top .hero-title .line,
 html body #top .hero-title .hero-kicker,
 html body #top .hero-title .hero-kicker *,
+html body #top .hero-tagline,
+html body #top .hero-tagline *,
 html body #top .hero-deck,
-html body #top .hero-deck * {
+html body #top .hero-deck *,
+html body #top #heroEnter,
+html body #top #heroEnter * {
   font-family: 'Cormorant Garamond', serif !important;
   font-size: clamp(21px, 2.2vw, 29px) !important;
   font-weight: 500 !important;
@@ -3230,6 +3169,40 @@ html body #top .hero-deck * {
   color: rgba(244,243,255,.9) !important;
   background: none !important;
   -webkit-text-fill-color: rgba(244,243,255,.9) !important;
+  margin-top: 32px !important;
+}
+html body #top .hero-title .line:first-child {
+  margin-top: 0 !important;
+}
+/* The two gradient lines — the ONLY exception to the plain rule above.
+   Comes after it in source order, so its gradient wins over the plain
+   color set a moment ago, on these two selectors only. */
+html body #top .hero-title .line.dim:not(.hero-context),
+html body #top .hero-title .line.accent {
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+/* Explicit per-line requests, layered on top of the plain/gradient base */
+html body #top .hero-title .line.dim:not(.hero-context) {
+  text-transform: uppercase !important;
+  font-weight: 800 !important;
+}
+html body #top .hero-tagline {
+  font-weight: 700 !important;
+}
+html body #top .hero-deck,
+html body #top .hero-deck * {
+  font-size: clamp(18px, 1.9vw, 25px) !important;
+}
+@media (max-width: 700px) {
+  html body #top .hero-title .line.dim.hero-context { margin-top: 24px !important; }
+  html body #top .hero-title .hero-kicker { margin-top: 64px !important; }
+  html body #top .hero-title .line.accent { margin-top: 64px !important; }
+  html body #top .hero-title .line.accent + .line.accent { margin-top: 36px !important; }
+  html body #top #heroEnter { margin-top: 32px !important; }
 }
 </style>
 </head>
