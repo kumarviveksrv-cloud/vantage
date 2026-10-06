@@ -96,28 +96,28 @@ $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const target=$(a.ge
  if(stage&&!reduce){stage.addEventListener('pointermove',e=>{const r=stage.getBoundingClientRect(),x=e.clientX/r.width-.5,y=e.clientY/r.height-.5;stage.style.setProperty('--field-x',x);stage.style.setProperty('--field-y',y);$('.decision-core',stage).style.transform=`translate(calc(-50% + ${x*8}px),calc(-50% + ${y*8}px))`},{passive:true});stage.addEventListener('pointerleave',()=>{$('.decision-core',stage).style.transform='translate(-50%,-50%)'})}
  // Case choices propagate through the entire intelligence environment.
  const outcomes={
-  A:{state:'risk',risk:'HIGH',signal:'EXPOSURE RISING',process:'WEAK',impact:'HIGH',def:'LOW',exposure:'₹18L–₹24L',
-    expNum:'₹21L',
-    pact:'No documented warnings precede this termination. Without a paper trail, tribunal challenge is near-certain. This path cannot be legally defended in Maharashtra under the Industrial Disputes Act.',
+  A:{state:'risk',risk:'HIGH',signal:'EXPOSURE RISING',process:'WEAK',impact:'HIGH',def:'LOW',exposure:'₹18L–₹24L (illustrative)',
+    expNum:'₹21L (illustrative)',
+    pact:'No documented warnings precede this termination. Without a paper trail, tribunal challenge is highly likely. This path would be difficult to defend in Maharashtra under the Industrial Relations Code 2020.',
     aria:'Before this goes further: are the two verbal warnings logged anywhere, even informally? That single detail changes everything here.',
     verdict:'HIGH EXPOSURE · Do not proceed tonight.'
   },
-  B:{state:'partial',risk:'MATERIAL',signal:'PROCESS OPEN',process:'PARTIAL',impact:'MODERATE',def:'MEDIUM',exposure:'₹4L–₹8L',
-    expNum:'₹6L',
+  B:{state:'partial',risk:'MATERIAL',signal:'PROCESS OPEN',process:'PARTIAL',impact:'MODERATE',def:'MEDIUM',exposure:'₹4L–₹8L (illustrative)',
+    expNum:'₹6L (illustrative)',
     pact:'The written warning creates a paper trail forward, but the prior verbal warnings are undocumented. Partial protection only. The case remains open and must be followed up within 30 days or exposure increases.',
-    aria:'Has the employee formally acknowledged receipt of verbal warnings in any form: WhatsApp, email, even informally? That changes the defensibility score significantly.',
+    aria:'Has the employee formally acknowledged receipt of verbal warnings in any form: WhatsApp, email, even informally? That could materially change the assessment here.',
     verdict:'PARTIAL PROTECTION · Case still open.'
   },
-  C:{state:'defensible',risk:'LOW',signal:'FIELD RESOLVED',process:'STRONG',impact:'LOW',def:'HIGH',exposure:'₹1L–₹3L',
-    expNum:'₹2L',
-    pact:'Domestic enquiry creates the strongest procedural record possible. It satisfies natural justice requirements, gives the employee a formal hearing, and produces an outcome that survives tribunal scrutiny. PACT recommends this path for this context.',
-    aria:'Shall I draft the enquiry notice for tonight? I have the precedent cases for Maharashtra IT-sector pulled and ready.',
-    verdict:'RECOMMENDED · Fully defensible. PACT approved.'
+  C:{state:'defensible',risk:'LOW',signal:'FIELD RESOLVED',process:'STRONG',impact:'LOW',def:'HIGH',exposure:'₹1L–₹3L (illustrative)',
+    expNum:'₹2L (illustrative)',
+    pact:'Domestic enquiry creates a strong procedural record. It satisfies natural justice requirements, gives the employee a formal hearing, and tends to hold up better under tribunal scrutiny than an undocumented process. PACT would typically favour this path for this context.',
+    aria:'Shall I draft the enquiry notice for tonight? I can help you think through what it should cover.',
+    verdict:'MODELLED AS LOWEST RISK · Strongest procedural path in this illustration.'
   },
-  D:{state:'risk',risk:'HIGH',signal:'PROCEDURAL RISK',process:'WEAK',impact:'HIGH',def:'LOW',exposure:'₹15L–₹20L',
-    expNum:'₹17L',
-    pact:'Voluntary abandonment requires documented evidence of the employee\'s intent to abandon employment. Verbal absence alone does not qualify. Without that evidence, any tribunal will treat this as wrongful termination.',
-    aria:'Is there any written or recorded communication from the employee during the 7-day absence period? Without it, this argument will not hold under cross-examination.',
+  D:{state:'risk',risk:'HIGH',signal:'PROCEDURAL RISK',process:'WEAK',impact:'HIGH',def:'LOW',exposure:'₹15L–₹20L (illustrative)',
+    expNum:'₹17L (illustrative)',
+    pact:'Voluntary abandonment requires documented evidence of the employee\u2019s intent to abandon employment. Verbal absence alone does not qualify. Without that evidence, a tribunal would very likely treat this as wrongful termination.',
+    aria:'Is there any written or recorded communication from the employee during the 7-day absence period? Without it, this argument is unlikely to hold under cross-examination.',
     verdict:'HIGH RISK · Conditions for abandonment not met.'
   }
  };
