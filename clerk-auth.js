@@ -146,8 +146,14 @@
     localStorage.setItem('vantage_clerk_signed_in', '1');
     localStorage.setItem('sr_user_email',            email);
     localStorage.setItem('sr_user_name',             name);
-    /* Permanent prologue bypass — set once, never cleared by sign-out.
-       Returning paying users skip the prologue forever on this device. */
+       /* Permanent prologue bypass — set once, never cleared by sign-out.
+       Any returning signed-in user skips the prologue forever on this
+       device. Despite the key name, this does NOT mean the account is
+       paying — there is no billing check here. Razorpay isn't wired up
+       yet, so every successful sign-in sets this flag the same way.
+       Do not read this flag anywhere as a signal of paid status; it
+       only controls the prologue skip. Rename pending alongside the
+       Razorpay integration work. */
     localStorage.setItem('vantage_paid_user', '1');
 
     // Restore MERIDIAN
