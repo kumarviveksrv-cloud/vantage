@@ -211,7 +211,34 @@ input[type=number]{-moz-appearance:textfield}
 .action-primary:hover{background:#5254d4;transform:translateY(-1px)}
 .action-secondary{background:transparent;border:1px solid rgba(99,102,241,.25);color:var(--muted);padding:12px 24px;border-radius:9px;font-family:'Bricolage Grotesque',sans-serif;font-size:.72rem;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center}
 .action-secondary:hover{border-color:rgba(99,102,241,.4);color:var(--text)}
-@media(max-width:768px){.wrap{margin-left:0;padding:24px 20px 60px}.sidebar{display:none}.humac-hero{padding:24px 20px}.score-num{font-size:4rem}.score-num.adj{font-size:3rem}.traj-top{flex-direction:column}}
+/* SCORE GUIDE — band legend + HCI explainer, collapsible like the
+   per-block formula-toggle pattern already used above. */
+.score-guide{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:14px;padding:22px 26px;margin-bottom:24px}
+.score-guide-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:12px}
+.score-guide-title{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)}
+.score-guide-chevron{font-size:.7rem;color:rgba(165,180,252,.4);transition:transform .2s;flex-shrink:0}
+.score-guide-chevron.open{transform:rotate(180deg)}
+.score-guide-body{display:none;margin-top:18px}
+.score-guide-body.open{display:block}
+.band-legend{display:flex;flex-direction:column;gap:0;margin-bottom:20px}
+.band-legend-row{display:grid;grid-template-columns:150px 70px 1fr;gap:14px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(99,102,241,.06)}
+.band-legend-row:last-child{border-bottom:none}
+.band-legend-row.current{background:rgba(99,102,241,.07);border-radius:8px;padding:10px;margin:0 -10px}
+.band-legend-name{display:flex;align-items:center;gap:7px;font-family:'Bricolage Grotesque',sans-serif;font-size:.84rem;font-weight:600;flex-wrap:wrap}
+.band-legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.band-legend-range{font-family:var(--mono);font-size:.76rem;color:var(--text-dim)}
+.band-legend-desc{font-size:.8rem;color:var(--text-dim);line-height:1.6}
+.band-legend-tag{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:#a5b4fc;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:4px;padding:2px 6px}
+.score-guide-note{font-size:.78rem;color:var(--text-dim);line-height:1.65;padding:12px 14px;background:rgba(99,102,241,.05);border-radius:8px;border-left:2px solid rgba(99,102,241,.25);margin-bottom:20px}
+.score-guide-note b{color:var(--text-mid);font-weight:500}
+.hci-explain{border-top:1px solid rgba(99,102,241,.1);padding-top:18px}
+.hci-explain-title{font-family:'Bricolage Grotesque',sans-serif;font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:8px}
+.hci-explain-title:not(:first-child){margin-top:16px}
+.hci-explain-text{font-size:.82rem;color:var(--text-dim);line-height:1.7;margin-bottom:10px}
+.hci-explain-text b{color:var(--text-mid);font-weight:500}
+.hci-explain-example{font-family:var(--mono);font-size:.78rem;color:#a5b4fc;background:rgba(99,102,241,.06);padding:10px 14px;border-radius:8px;line-height:1.7}
+.hci-explain-example b{color:#c4b5fd}
+@media(max-width:768px){.wrap{margin-left:0;padding:24px 20px 60px}.sidebar{display:none}.humac-hero{padding:24px 20px}.score-num{font-size:4rem}.score-num.adj{font-size:3rem}.traj-top{flex-direction:column}.band-legend-row{grid-template-columns:1fr;gap:4px}}
 </style>
 </head>
 <body>
@@ -293,6 +320,7 @@ input[type=number]{-moz-appearance:textfield}
       <button type="button" id="rv-hci-toggle" style="margin-top:8px;margin-left:8px;background:transparent;border:1px solid rgba(165,180,252,.2);color:rgba(244,243,255,.55);border-radius:7px;padding:7px 12px;font-family:inherit;font-size:.72rem;cursor:pointer">Show HCI adjustment</button>
       <div class="hci-note">Human Confidence Index: <span id="rv-hci"></span>&nbsp;<span class="conf-badge" id="rv-conf-badge"></span></div>
     </div>
+    <div id="score-guide-placeholder"></div>
     <div class="pillars">
       <div class="pillars-title">Pillar breakdown</div>
       <div id="rv-pillars"></div>
@@ -573,6 +601,38 @@ function calcHCI(n){return Math.round((0.70+n*0.15)*100)/100;}
 function countYes(ids){return ids.filter(function(id){return answers[id]==='yes';}).length;}
 function getBand(s){if(s<=30)return{name:'Value Destruction',color:'#6366f1',desc:'The planning model attributes little return to the cohorts entered. This is not a finding that people cost more than they return.'};if(s<=50)return{name:'Value Neutral',color:'#a5b4fc',desc:'Attributed return is modest against payroll. Read the range, not the band name.'};if(s<=70)return{name:'Value Generating',color:'#6366f1',desc:'Attributed return is material under the base case. The high case is still an assumption.'};if(s<=85)return{name:'Value Compounding',color:'#7c3aed',desc:'Base case is strong on this scale. A score this high should be checked against the cohort counts.'};return{name:'Value Exceptional',color:'#c4b5fd',desc:'At the top of a provisional scale. Treat as a planning ceiling, not a ranking.'};}
 function getConfidenceLevel(){var e=Object.values(confidence).filter(function(v){return v==='estimated';}).length;if(e===0)return 'high';if(e<=2)return 'medium';return 'low';}
+
+/* ── Score guide — band legend + HCI explainer. Pure presentation,
+   computed from the same getBand()/calcHCI() this page already uses,
+   so the numbers here can never drift from what's actually scored. */
+function buildScoreGuideHTML(humac,hci,hciAdj,currentBandName){
+  var bands=[
+    {name:'Value Destruction',range:'0\u201330',color:'#6366f1',desc:'The planning model attributes little return to the cohorts entered, relative to payroll. This is not a finding that people cost more than they return \u2014 it means the inputs captured so far don\u2019t yet show a measurable offset.'},
+    {name:'Value Neutral',range:'31\u201350',color:'#a5b4fc',desc:'Attributed return is modest against payroll \u2014 roughly breaking even under the base case. A 49 sits near the top of this band, close to Value Generating; a 32 sits near the bottom, close to Value Destruction. Read the number itself, not just the label.'},
+    {name:'Value Generating',range:'51\u201370',color:'#6366f1',desc:'Attributed return is material under the base case. The high case shown on each pillar page is still an assumption, not a confirmed outcome.'},
+    {name:'Value Compounding',range:'71\u201385',color:'#7c3aed',desc:'Base case is strong on this provisional scale. A score this high is worth checking against the underlying cohort counts before presenting it externally.'},
+    {name:'Value Exceptional',range:'86\u2013100',color:'#c4b5fd',desc:'At the top of a provisional scale. Treat it as a planning ceiling for this model, not a ranking against other organisations.'}
+  ];
+  var rows=bands.map(function(b){
+    var isCurrent=b.name===currentBandName;
+    return '<div class="band-legend-row'+(isCurrent?' current':'')+'"><div class="band-legend-name"><span class="band-legend-dot" style="background:'+b.color+'"></span>'+b.name+(isCurrent?'<span class="band-legend-tag">Your score</span>':'')+'</div><div class="band-legend-range">'+b.range+'</div><div class="band-legend-desc">'+b.desc+'</div></div>';
+  }).join('');
+  var hciExample=(humac!=null&&hci!=null&&hciAdj!=null)
+    ?'In your case: raw score <b>'+humac+'</b> \xd7 HCI <b>'+hci.toFixed(2)+'x</b> = <b>'+hciAdj+'</b> HCI-adjusted.'
+    :'Once your score is generated, this line will show your own numbers worked through.';
+  return '<div class="score-guide" id="score-guide"><div class="score-guide-head" onclick="toggleScoreGuide()"><div class="score-guide-title">What do these numbers mean? \xb7 Band definitions &amp; HCI explained</div><div class="score-guide-chevron" id="score-guide-chev">\u25BC</div></div><div class="score-guide-body" id="score-guide-body">'+
+    '<div class="band-legend">'+rows+'</div>'+
+    '<div class="score-guide-note">Pillar pages (L1, L2, L4, L5) show their own band label \u2014 Minimum, Emerging, Value Active, Value Engine \u2014 on a <b>separate four-tier scale</b> specific to that one pillar\u2019s score. A pillar reading \u201c68 \xb7 Value Active\u201d and this page\u2019s overall \u201c68 \xb7 Value Generating\u201d are not the same classification, even when the numbers happen to match.</div>'+
+    '<div class="hci-explain">'+
+      '<div class="hci-explain-title">What is HCI?</div>'+
+      '<div class="hci-explain-text">The <b>Human Confidence Index</b> is a confidence multiplier, not a performance score. It reflects how stable the organisation was when you answered \u2014 drawn from four specific Org Vitals signals: whether leadership is stable, whether the org is free of major restructuring, whether a culture or morale crisis is underway, and whether strategic priorities are broadly on track. Each \u201cYes\u201d raises confidence; each \u201cNo\u201d lowers it. The coefficient runs from <b>0.70x</b> (all four unstable) to <b>1.30x</b> (all four stable). If the Talent Premium pillar was answered with fewer than its full set of measured signals, the coefficient is scaled down further, since partial data carries less confidence.</div>'+
+      '<div class="hci-explain-title">What is the HCI-adjusted score?</div>'+
+      '<div class="hci-explain-text">Your raw Humac Score reflects the five pillars alone. The HCI-adjusted score multiplies that raw score by the confidence coefficient above: <code>Score \xd7 HCI = HCI-adjusted score</code>. It is not a penalty for poor performance \u2014 it is a statement about how much confidence to place in the reading, given how stable the organisation was at the time.</div>'+
+      '<div class="hci-explain-example">'+hciExample+'</div>'+
+    '</div>'+
+  '</div></div>';
+}
+function toggleScoreGuide(){var b=document.getElementById('score-guide-body');var c=document.getElementById('score-guide-chev');if(b)b.classList.toggle('open');if(c)c.classList.toggle('open');}
 
 function computeTrajectory(l1,l2,l3,l4,l5,humac,hciAdj){
   if(!isCheckin||!previousScore)return null;
@@ -1014,6 +1074,9 @@ function renderScoreReveal(){
   document.getElementById('rv-dot').style.background=band.color;
   document.getElementById('rv-hci').textContent=hci.toFixed(2)+'x';
   var badge=document.getElementById('rv-conf-badge');badge.className='conf-badge '+confLevel;badge.textContent=confLevel.charAt(0).toUpperCase()+confLevel.slice(1)+' input coverage';
+
+  var guideEl=document.getElementById('score-guide-placeholder');
+  if(guideEl)guideEl.innerHTML=buildScoreGuideHTML(humac,hci,hciAdj,band.name);
 
   var scopeLabels={'the whole organisation':'Whole org view','a specific business unit, region, or division':'Business unit view','my direct team':'Direct team view'};
   var l3ScopeLabel=scopeLabels[(answers.q_scope||'').toLowerCase()]||'';
