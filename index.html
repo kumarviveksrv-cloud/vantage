@@ -3197,14 +3197,25 @@
   background: none !important;
   -webkit-text-fill-color: rgba(244,243,255,.9) !important;
 }
-/* The two gradient lines — the ONLY exception to the plain rule above. */
+/* The three gradient lines — the ONLY exception to the plain rule above.
+   "Every HR professional..." and "Enter VANTAGE." are bold + gradient.
+   "Your Personal HR Business Partner..." is gradient, not bold. */
 #top .hero-title .line.dim:not(.hero-context),
-#top .hero-title .line.accent {
+#top .hero-title .line.accent,
+#top #heroEnter,
+#top #heroEnter *,
+#top .hero-tagline,
+#top .hero-tagline * {
   background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
+}
+#top .hero-title .line.dim:not(.hero-context),
+#top #heroEnter,
+#top #heroEnter * {
+  font-weight: 700 !important;
 }
 </style>
 <style id="prologue-startup-guard">
