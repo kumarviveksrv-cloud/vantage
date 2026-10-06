@@ -3171,22 +3171,25 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   HERO CONSISTENCY FIX — single override, placed last on purpose.
-   Everything above this stays untouched. This block alone makes every
-   hero line share one font, one size, one weight, one plain color —
-   except the two climax lines, which keep their purple gradient.
-   That's the only thing that differs from line to line now.
+   HERO CONSISTENCY FIX — final pass. TIER B above (kicker + context
+   line) is deliberately left untouched — user said no change there;
+   its font bug was JavaScript (vantage-curtain.js applyGradients()
+   forcing DM Sans), fixed at that source, not here.
+
+   Gradient goes on the PARENT only, never repeated on child spans —
+   putting it on every span re-clips the same gradient separately per
+   segment, which is what made "Enter VANTAGE." and the tagline look
+   like every word was its own saturated block instead of one smooth
+   diagonal sweep across the whole phrase.
    ═══════════════════════════════════════════════════════════════════════ */
 #top .hero-title,
 #top .hero-title .line,
 #top .hero-title .hero-kicker,
 #top .hero-title .hero-kicker *,
 #top .hero-tagline,
-#top .hero-tagline *,
 #top .hero-deck,
 #top .hero-deck *,
-#top #heroEnter,
-#top #heroEnter * {
+#top #heroEnter {
   font-family: 'Cormorant Garamond', serif !important;
   font-size: clamp(21px, 2.2vw, 29px) !important;
   font-weight: 500 !important;
@@ -3197,29 +3200,43 @@
   background: none !important;
   -webkit-text-fill-color: rgba(244,243,255,.9) !important;
 }
-/* The three gradient lines — the ONLY exception to the plain rule above.
-   "Every HR professional..." and "Enter VANTAGE." are bold + gradient.
-   "Your Personal HR Business Partner..." is gradient, not bold. */
+/* Deck matched to the context line's actual size (TIER B above,
+   clamp(19px,2vw,26px)) — higher specificity than anything else
+   touching the deck, so this wins and the two sizes now match. */
+#top .hero-deck,
+#top .hero-deck * {
+  font-size: clamp(19px, 2vw, 26px) !important;
+}
+/* Gradient — parent box only, for the climax lines, "Enter VANTAGE.",
+   and the tagline. */
 #top .hero-title .line.dim:not(.hero-context),
 #top .hero-title .line.accent,
-#top #heroEnter,
-#top #heroEnter *,
 #top .hero-tagline,
-#top .hero-tagline * {
+#top #heroEnter {
   background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
 }
-#top .hero-title .line.dim:not(.hero-context),
-#top #heroEnter,
+/* Child spans of the two multi-segment lines go transparent with NO
+   background of their own, so the parent's single gradient shows
+   through continuously instead of restarting per span. */
+#top .hero-tagline *,
 #top #heroEnter * {
+  background: none !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+#top .hero-title .line.dim:not(.hero-context) {
   font-weight: 700 !important;
 }
+/* Typing cursor after "Enter VANTAGE." — removed per request. */
+#top .he-cursor {
+  display: none !important;
+}
 </style>
-<style id="prologue-startup-guard">
-/* Startup guard: later inline typography overrides must not expose the
+<style id="prologue-startup-guard">/* Startup guard: later inline typography overrides must not expose the
    final subtitle before the prologue reaches its reveal phase. */
 #prologue:not(.phase-pressure) .prologue-kicker,
 #prologue:not(.phase-pressure) .prologue-message,
