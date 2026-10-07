@@ -60,7 +60,7 @@ var MODALS = {
     icon: '⬡',
     name: 'Humac Score',
     tagline: 'One number that speaks the CFO\'s language.',
-    what: 'The Humac Score synthesises five forces (Value Ledger, Talent Premium, Org Vitals, Human P&L, and Net Human Worth) into a single provisional index modelling HR\'s financial contribution to the organisation.',
+    what: 'The Humac Score synthesises five forces (Value Ledger, Talent Premium, Org Vitals, Human P&L, and Human Balance Sheet) into a single provisional index modelling HR\'s financial contribution to the organisation.',
     does: 'Gives leadership a number they can read, track, and benchmark against. Not a feeling. Not a survey. A modelled estimate, not a verified or audited figure.',
     start: 'Complete the onboarding below to build your baseline score. It takes about 10 minutes and unlocks your full Humacity profile.',
     next: null,
