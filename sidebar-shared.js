@@ -160,7 +160,7 @@
     var sidebar = document.querySelector('.sidebar, #sidebar, .sb');
     if (!sidebar) return;
 
-    var currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
+    var currentPage = window.location.pathname.replace(/\/+$/, '').split('/').pop() || 'dashboard.html';     if (currentPage.indexOf('.') === -1) currentPage += '.html';
 
     function isActivePage(href) {
       if (!href || href.indexOf('http') === 0) return false;
@@ -1334,7 +1334,10 @@ pricingEl.style.overflow = 'hidden';
     'vantage-record.html':           'case-library'
   };
 
-  var path = window.location.pathname.split('/').pop();
+  var path = window.location.pathname.replace(/\/+$/, '').split('/').pop();
+  // Cloudflare serves clean URLs (/policy-advisor with no .html), so add
+  // the extension before the lookup or no page ever matches.
+  if (path && path.indexOf('.') === -1) path = path + '.html';
   var key  = PAGE_MODALS[path];
   if(!key) return;
 
