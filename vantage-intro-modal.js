@@ -32,7 +32,7 @@ var MODALS = {
     tagline: 'Your private HR intelligence, on call at 9pm.',
     what: 'ARIA is a context-aware intelligence layer calibrated to your organisation\'s context: your state, your policies, your case history. Not a chatbot. Not a generic AI trained on someone else\'s problems.',
     does: 'She reads your situation, asks the right questions back, and gives you guidance calibrated to your context — built to hold up well if challenged, not guaranteed to.',
-    start: 'Tell ARIA what\'s happening right now. The more specific you are (role, stakes, what\'s been tried), the more precise the guidance.',
+    start: 'Tell ARIA what is happening right now. The more specific you are (role, stakes, what has been tried), the more precise the guidance. ARIA is part of the paid plan, so she is not available during the 2-day trial.',
     next: 'case-library',
     nextLabel: 'Vantage Record'
   },
@@ -79,10 +79,10 @@ var MODALS = {
   'policy-compass': {
     icon: '🧭',
     name: 'Policy Advisor',
-    tagline: 'A policy draft calibrated to your situation, not a template.',
-    what: 'Policy Advisor generates policy frameworks calibrated to your state, industry, and organisation type. Built on India\'s actual legal framework (BNS, BNSS, BSA), not generic HR boilerplate.',
-    does: 'Drafts policy frameworks grounded in the regulations relevant to you. Jurisdiction-specific and role-aware, a starting draft to review and adapt, not a tested or finalised policy.',
-    start: 'Describe the policy gap you\'re trying to fill: what\'s unclear, what\'s missing, what situation triggered this. Policy Advisor builds from there.',
+    tagline: 'Can you do this? Get the legal position before you answer.',
+    what: 'Policy Advisor answers a policy or compliance question the way a sharp colleague would: what the question is really asking, what the law says, and one recommended path. It cites BNS, BNSS and BSA where a question is criminal, and the labour codes and state rules where it is not.',
+    does: 'Calibrated to your state, industry and organisation type. You can also ground the answer in your own policy document. It is guidance from the cited provisions, not a legal opinion, so confirm with counsel before acting on anything high stakes.',
+    start: 'Write your situation the way you would say it out loud, including what you are considering doing. The flags above the question are optional.',
     next: 'aria',
     nextLabel: 'ARIA'
   },
@@ -91,7 +91,7 @@ var MODALS = {
     name: 'The Business Case',
     tagline: 'Numbers for the room, or an argument for one specific person.',
     what: 'The Business Case has two modes. The general flow builds a board-ready SIGNAL narrative from your HR metrics — revenue at risk, financial anchors, an argument that\'s harder to wave away than an opinion. The stakeholder flow maps how one specific leader receives information and frames your recommendation to land with them.',
-    does: 'Same facts. Right framing. Whether you\'re presenting to a room or walking into a one-on-one that matters, The Business Case builds the argument from your own modelled Humac Score figures — not sector benchmarks — to give the room something harder to wave away than an opinion.',
+    does: 'Same facts. Right framing. Whether you\'re presenting to a room or walking into a one-on-one that matters, The Business Case builds the argument from your own modelled Humac Score figures — alongside your sector benchmark — to give the room something harder to wave away than an opinion.',
     start: 'Choose your mode: the general business case for a room, or a specific person to convince. Describe what you\'re trying to move and who needs to move it.',
     next: 'conversation-simulator',
     nextLabel: 'Difficult Conversations'
@@ -110,8 +110,8 @@ var MODALS = {
     icon: '🎭',
     name: 'Difficult Conversations',
     tagline: 'Rehearse before the conversation that matters.',
-    what: 'Difficult Conversations is a real-time simulation environment for the conversations HR professionals dread most: performance discussions, terminations, disciplinary hearings, leadership alignment calls. ARIA plays the other person.',
-    does: 'A safe space to test your approach, anticipate pushback, and walk into the real conversation having already rehearsed it, not knowing exactly what will happen. ARIA holds nothing back.',
+    what: 'Difficult Conversations is a real-time simulation environment for the conversations HR professionals dread most: performance discussions, terminations, disciplinary hearings, leadership alignment calls. The simulator plays the other person.',
+    does: 'A safe space to test your approach, anticipate pushback, and walk into the real conversation having already rehearsed it, not knowing exactly what will happen. The character pushes back realistically.',
     start: 'Choose the conversation type, set the context (role, stakes, what you\'re trying to achieve), and start. Treat it like the real thing.',
     next: 'policy-compass',
     nextLabel: 'Policy Advisor'
