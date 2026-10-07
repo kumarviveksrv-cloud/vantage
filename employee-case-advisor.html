@@ -570,9 +570,10 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       showView('loading-view');
       var loadInterval = animateLoading();
       try {
+      var _clerkToken = window.Clerk && window.Clerk.session ? await window.Clerk.session.getToken() : '';
         var res = await fetch(WORKER, {
           method: 'POST',
-          headers: {'Content-Type':'application/json'},
+          headers: {'Content-Type':'application/json','Authorization':'Bearer ' + _clerkToken},
           body: JSON.stringify({
             tool: 'pact',
             narrative: narrativeVal,
@@ -583,6 +584,10 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         });
         var data = await res.json();
         clearInterval(loadInterval);
+        if (!data.success && data.error === 'TRIAL_GATE') {
+          window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
+          return;
+        }
         if (data.success && data.data && data.data.wrongTool) {
           showWrongTool(data.data.reason, data.data.suggestedTool);
         } else if (data.success) {
