@@ -128,7 +128,7 @@ var MODALS = {
   }
 };
 
-var PREFIX = 'vip_seen_';
+// "Try something like this" text for each modal. A modal with no entry here // simply shows no example block. Edit the wording here, nowhere else. var EXAMPLES = {   'case-navigator': 'A senior engineer has been absent for 4 days with two verbal warnings on record. His manager wants to terminate, but no enquiry has been held. What is my exposure, and what must I do before I call him in tomorrow?',   'policy-compass': 'Can I terminate an employee who has been absent for 7 days without information? He has two verbal warnings and no written one. We are a manufacturing unit in Maharashtra with certified standing orders.',   'business-case': 'Engineering attrition rose from 14% to 22% in one quarter. Leadership calls it a market issue. I present to the CFO next week and need approval for a Rs.22L retention programme.',   'offer-intelligence': 'Current CTC Rs.22L, competing offer Rs.29L, 4 years tenure, performance band A, high-criticality role. The offer expires on Friday.',   'conversation-simulator': 'My direct report has underperformed for 3 months. Two informal chats changed nothing, and his manager wants a PIP. I have to hold that conversation tomorrow and I expect him to be defensive.',   'aria': 'Leadership just overruled my recommendation on a termination. I am not sure whether to push back or let it go.' }; Object.keys(EXAMPLES).forEach(function(k){ if (MODALS[k]) MODALS[k].example = EXAMPLES[k]; });  var PREFIX = 'vip_seen_';
 
 function injectCSS(){
   if(document.getElementById('vip-css'))return;
@@ -180,7 +180,7 @@ function build(key){
     '<div class="vip-sections">'+
       '<div class="vip-section"><span class="vip-section-label">What this is</span><p class="vip-section-text">'+d.what+'</p></div>'+
       '<div class="vip-section"><span class="vip-section-label">What it does for you</span><p class="vip-section-text">'+d.does+'</p></div>'+
-      '<div class="vip-section vip-start"><span class="vip-section-label">Where to start</span><p class="vip-section-text">'+d.start+'</p></div>'+
+      '<div class="vip-section vip-start"><span class="vip-section-label">Where to start</span><p class="vip-section-text">'+d.start+'</p></div>'+       (d.example ? '<div class="vip-section"><span class="vip-section-label">Try something like this</span><p class="vip-section-text" style="font-style:italic">'+d.example+'</p></div>' : '')+
     '</div>'+
     btnRow+
   '</div>';
