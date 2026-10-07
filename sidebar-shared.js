@@ -661,7 +661,7 @@ pricingEl.style.overflow = 'hidden';
       '    flex-shrink: 0;',
       '    color: rgba(244,243,255,0.5);',
       '  }',
-      '  .vbn-drawer-item.active .vbn-drawer-icon { color: #a5b4fc; }',,
+      '  .vbn-drawer-item.active .vbn-drawer-icon { color: #a5b4fc; }',
       '  .vbn-drawer-label { flex: 1; }',
       '  .vbn-drawer-sub {',
       '    font-size: 11px;',
