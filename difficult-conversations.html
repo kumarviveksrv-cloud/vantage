@@ -682,9 +682,10 @@
       document.getElementById('loading-text').innerText = 'SETTING THE SCENE...';
 
       try {
+        var _clerkToken = window.Clerk && window.Clerk.session ? await window.Clerk.session.getToken() : '';
         var res = await fetch(WORKER, {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
+          headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _clerkToken},
           body: JSON.stringify({
             tool: 'practice',
             scenario: currentScenario,
@@ -696,6 +697,10 @@
           })
         });
         var data = await res.json();
+        if (!data.success && data.error === 'TRIAL_GATE') {
+          window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
+          return;
+        }
         if (data.success) {
           var response = data.data.response;
           var parsed = parseFirstResponse(response);
@@ -741,9 +746,10 @@
       addMessage('them', '', true);
 
       try {
+        var _clerkToken = window.Clerk && window.Clerk.session ? await window.Clerk.session.getToken() : '';
         var res = await fetch(WORKER, {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
+          headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _clerkToken},
           body: JSON.stringify({
             tool: 'practice',
             scenario: currentScenario,
@@ -756,6 +762,10 @@
         });
         var data = await res.json();
         removeTyping();
+        if (!data.success && data.error === 'TRIAL_GATE') {
+          window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
+          return;
+        }
         if (data.success) {
           var response = data.data.response;
           conversationHistory.push({ role: 'assistant', content: response });
@@ -789,9 +799,10 @@
       showView('loading-view');
       document.getElementById('loading-text').innerText = 'GENERATING YOUR DEBRIEF...';
       try {
+        var _clerkToken = window.Clerk && window.Clerk.session ? await window.Clerk.session.getToken() : '';
         var res = await fetch(WORKER, {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
+          headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _clerkToken},
           body: JSON.stringify({
             tool: 'practice',
             scenario: currentScenario,
@@ -804,6 +815,10 @@
           })
         });
         var data = await res.json();
+        if (!data.success && data.error === 'TRIAL_GATE') {
+          window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
+          return;
+        }
         if (data.success) renderDebrief(data.data);
         else { showError('Debrief generation failed. ' + (data.error || 'Please try again.'), 'chat-view'); }
       } catch(err) {
