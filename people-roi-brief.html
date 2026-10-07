@@ -812,6 +812,10 @@
         });
         var data = await res.json();
         clearInterval(loadInterval);
+        if (!data.success && data.error === 'TRIAL_GATE') {
+          window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
+          return;
+        }
         if (data.success && data.data && data.data.wrongTool) {
           showWrongTool(data.data.reason, data.data.suggestedTool, 'general');
         } else if (data.success) {
@@ -1094,6 +1098,10 @@
         });
         var data = await res.json();
         clearInterval(loadInterval);
+        if (!data.success && data.error === 'TRIAL_GATE') {
+          window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
+          return;
+        }
         if (data.success && data.data && data.data.wrongTool) {
           showWrongTool(data.data.reason, data.data.suggestedTool, 'stakeholder');
         } else if (data.success) {
