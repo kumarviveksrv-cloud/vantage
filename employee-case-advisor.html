@@ -649,7 +649,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       renderPACTCard('trust', ps.trust);
 
       // Protocol: Assessment
-      document.getElementById('proto-assessment').innerText = pr.assessment || '';
+      setProse('proto-assessment', pr.assessment);
 
       // Protocol: Legal + Context
       function setProse(id, text) {
