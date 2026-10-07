@@ -567,7 +567,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       var narrativeVal = document.getElementById('narrative').value.trim();
       var stakeholders = document.getElementById('stakeholders').value.trim();
       if (!selectedCaseType || !narrativeVal) return;
-      // Soft nudge: first click with an empty "Who's involved" box asks for roles,       // second click runs anyway. Nobody is blocked.       if (!stakeholders && !window._stakeholderNudged) {         window._stakeholderNudged = true;         var _nudge = document.getElementById('stakeholder-nudge');         if (_nudge) _nudge.style.display = 'block';         var _sh = document.getElementById('stakeholders');         if (_sh) { _sh.scrollIntoView({behavior:'smooth',block:'center'}); _sh.focus(); }         return;       }       currentNarrative = narrativeVal;
+      /* Soft nudge: first click with an empty Who's involved box asks for roles; second click runs anyway. */       if (!stakeholders && !window._stakeholderNudged) {         window._stakeholderNudged = true;         var _nudge = document.getElementById('stakeholder-nudge');         if (_nudge) _nudge.style.display = 'block';         var _sh = document.getElementById('stakeholders');         if (_sh) { _sh.scrollIntoView({behavior:'smooth',block:'center'}); _sh.focus(); }         return;       }       currentNarrative = narrativeVal;
       showView('loading-view');
       var loadInterval = animateLoading();
       try {
