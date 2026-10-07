@@ -323,7 +323,7 @@ function render(){
   var acts=buildActions(per,largestLiab.name);
   var actions='<div class="section-eyebrow">What to do next</div><div class="section-title">Strengthening your Human Balance Sheet</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('');
 
-  var complete='<div class="complete-card"><div class="complete-title">All Five Pillars Complete.</div><div class="complete-sub">L1 Value Ledger \xb7 L2 Talent Premium \xb7 L3 Org Vitals \xb7 L4 Human P&amp;L \xb7 L5 Balance Sheet<br>Return to your Humac Score. Start with the pillar at the lowest score \u2014 that is where the highest-leverage action lives.</div><a href="humac-onboarding.html" class="complete-cta">Return to Humac Score \u2192</a></div>';
+  var complete='<div class="complete-card"><div class="complete-title">All Five Pillars Complete.</div><div class="complete-sub">L1 Value Ledger \xb7 L2 Talent Premium \xb7 L3 Org Vitals \xb7 L4 Human P&amp;L \xb7 L5 Human Balance Sheet<br>Return to your Humac Score. Start with the pillar at the lowest score \u2014 that is where the highest-leverage action lives.</div><a href="humac-onboarding.html" class="complete-cta">Return to Humac Score \u2192</a></div>';
 
   var bottomNav='<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><a href="dashboard.html" class="btn-next">Dashboard \u2192</a></div>';
 
