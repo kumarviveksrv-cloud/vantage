@@ -82,6 +82,7 @@
     var CLERK_PORTAL    = 'https://accounts.vantage.virorah.com';
     var WORKER_URL      = 'https://situation-room-api.kumarvivek-srv.workers.dev';
     var DASHBOARD_URL   = 'https://vantage.virorah.com/dashboard.html';
+    var PROFILE_URL     = 'https://vantage.virorah.com/profile-setup.html';
     var CLERK_SIGNIN    = CLERK_PORTAL + '/sign-in';
 
     function getRedirectUrl() {
@@ -139,6 +140,21 @@
       } catch(e) { console.warn('[Vantage] Data restore error:', e); }
     }
 
+        // Asks the Worker whether this person still needs profile-setup.html.
+    // Any failure falls back to the normal destination, so nobody gets stuck.
+    async function checkProfileDestination(token, fallbackUrl) {
+      try {
+        var res = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ tool: 'get_profile' })
+        });
+        if (!res.ok) return fallbackUrl;
+        var d = await res.json();
+        if (d.success && d.data && d.data.profileComplete === false) return PROFILE_URL;
+      } catch(e) { console.warn('[Vantage] Profile check error:', e); }
+      return fallbackUrl;
+    }
     function setStatus(text, sub) {
       document.querySelector('.status-text').textContent = text;
       if (sub) document.querySelector('.status-sub').textContent = sub;
@@ -176,10 +192,12 @@
           setStatus('Welcome back!', 'Restoring your workspace\u2026');
           syncUser(window.Clerk.user);
           var redirectTo = getRedirectUrl();
-          window.Clerk.session.getToken().then(function(token) {
-            return restoreUserData(token);
-          }).then(function() {
-            window.location.replace(redirectTo);
+            window.Clerk.session.getToken().then(function(token) {
+            return restoreUserData(token).then(function() {
+              return checkProfileDestination(token, redirectTo);
+            });
+          }).then(function(dest) {
+            window.location.replace(dest);
           }).catch(function() {
             window.location.replace(redirectTo);
           });
