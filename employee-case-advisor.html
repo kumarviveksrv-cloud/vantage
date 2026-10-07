@@ -622,11 +622,8 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         return '<div class="pact-point"><div class="pact-dot"></div><div>' + p + '</div></div>';
       }).join('');
     }
-
-    function setProse(id, text) {       var el = document.getElementById(id);       if (!el) return;       el.textContent = '';       var t = (text || '').trim();       if (!t) return;       var blocks = t.split(/
-\s*
-/);       if (blocks.length < 2) {         var sentences = t.replace(/([.!?])\s+(?=[A-Z])/g, '$1\u0001').split('\u0001');         blocks = [];         var cur = '';         sentences.forEach(function (s) {           cur = cur ? cur + ' ' + s : s;           if (cur.length > 260) { blocks.push(cur); cur = ''; }         });         if (cur) blocks.push(cur);       }       blocks.forEach(function (b, i) {         var p = document.createElement('p');         p.textContent = b.trim();         p.style.margin = (i === blocks.length - 1) ? '0' : '0 0 12px';         el.appendChild(p);       });     }      function renderOutput() {
-      var r = currentResult;
+    function renderOutput() {
+    var r = currentResult;
       if (!r) return;
 
       var ps = r.pact_scores || {};
