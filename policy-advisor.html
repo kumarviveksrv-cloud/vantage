@@ -499,11 +499,12 @@
       try {
         var questionWithFlags = currentQuery + (activeFlags.length > 0 ? '\n\nActive flags: ' + activeFlags.join(', ') : '');
         var res;
+        var _clerkToken = window.Clerk && window.Clerk.session ? await window.Clerk.session.getToken() : '';
 
         if (usingDocument) {
           res = await fetch(WORKER, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _clerkToken},
             body: JSON.stringify({
               tool: 'policy_document',
               documentText: attachedDocumentText,
@@ -515,7 +516,7 @@
           var context = activeFlags.length > 0 ? 'Active flags: ' + activeFlags.join(', ') : '';
           res = await fetch(WORKER, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _clerkToken},
             body: JSON.stringify({
               tool: 'policy',
               question: currentQuery,
@@ -527,6 +528,10 @@
 
         var data = await res.json();
         clearInterval(loadInterval);
+               if (!data.success && data.error === 'TRIAL_GATE') {
+          window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
+          return;
+        }
         if (data.success) {
           currentResult = data.data;
           renderOutput();
