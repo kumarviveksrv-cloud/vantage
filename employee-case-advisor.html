@@ -651,8 +651,50 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       document.getElementById('proto-assessment').innerText = pr.assessment || '';
 
       // Protocol: Legal + Context
-      document.getElementById('proto-legal').innerText = pr.legal || '';
-      document.getElementById('proto-context').innerText = pr.context || '';
+      function setProse(id, text) {
+        var el = document.getElementById(id);
+        if (!el) { return; }
+        el.textContent = '';
+        var t = String(text || '').trim();
+        if (!t) { return; }
+        var NL = String.fromCharCode(10);
+        var blocks = [];
+        var byBlank = t.split(NL + NL);
+        var byLine = t.split(NL);
+        if (byBlank.length > 1) {
+          blocks = byBlank;
+        } else if (byLine.length > 1) {
+          blocks = byLine;
+        } else {
+          var cur = '';
+          var start = 0;
+          for (var i = 0; i < t.length - 2; i++) {
+            var ch = t.charAt(i);
+            var cap = t.charAt(i + 2);
+            var endsSentence = (ch === '.' || ch === '!' || ch === '?') && t.charAt(i + 1) === ' ';
+            var capital = cap === cap.toUpperCase() && cap !== cap.toLowerCase();
+            if (endsSentence && capital) {
+              var sentence = t.substring(start, i + 1);
+              cur = cur ? cur + ' ' + sentence : sentence;
+              start = i + 2;
+              if (cur.length > 260) { blocks.push(cur); cur = ''; }
+            }
+          }
+          var tail = t.substring(start);
+          cur = cur ? cur + ' ' + tail : tail;
+          if (cur) { blocks.push(cur); }
+        }
+        for (var j = 0; j < blocks.length; j++) {
+          var b = blocks[j].trim();
+          if (!b) { continue; }
+          var p = document.createElement('p');
+          p.textContent = b;
+          p.style.margin = (j === blocks.length - 1) ? '0' : '0 0 12px';
+          el.appendChild(p);
+        }
+      }
+      setProse('proto-legal', pr.legal);
+      setProse('proto-context', pr.context);
 
       // Protocol: Financial
       document.getElementById('fin-green-cat').innerHTML = renderGreenCat(r.greenCategory);
