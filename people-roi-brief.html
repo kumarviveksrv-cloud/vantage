@@ -983,10 +983,13 @@
         if (headline) {
           document.getElementById('data-point').value = headline;
         }
-        if (selectedAudience) {
+                if (selectedAudience) {
+          var tileFor = { 'CEO / Founder': 'CEO / Founder', 'CFO / Finance': 'CFO / Finance head', 'CHRO / HR Head': 'CHRO / HR Head', 'Board / Investors': 'Board / Investors', 'Business Unit Head': 'Business Unit Head', 'General Leadership Team': 'Leadership Team' };
+          var wanted = tileFor[selectedAudience];
           document.querySelectorAll('.stakeholder-btn').forEach(function(b) {
-            if (b.innerText.trim().toLowerCase().indexOf(selectedAudience.split('/')[0].trim().toLowerCase()) > -1) {
-              selectStakeholder(b, selectedAudience);
+            var label = (b.getAttribute('onclick') || '');
+            if (wanted && label.indexOf("'" + wanted + "'") > -1) {
+              selectStakeholder(b, wanted);
             }
           });
         }
