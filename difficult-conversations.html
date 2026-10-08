@@ -275,6 +275,16 @@
             <textarea id="scenario" style="padding-right:48px" placeholder='e.g. "My direct report has been underperforming for 3 months. Two informal chats, nothing changed. His manager wants a PIP — I need to have that conversation tomorrow and he&apos;s going to be defensive about it." Just write it the way it&apos;s sitting in your head.' rows="4"></textarea>
             <button class="voice-btn" id="scenario-mic" onclick="toggleVoiceInput('scenario', this)" title="Tap to speak">&#127908;</button>
             </div>
+            <div style="margin-top:14px;padding:14px 16px;background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:10px">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(165,180,252,0.7);margin-bottom:8px">For a sharper rehearsal, include what you can</div>
+              <ul style="margin:0;padding-left:18px;font-size:12px;line-height:1.75;color:rgba(244,243,255,0.6)">
+                <li><strong style="color:rgba(244,243,255,0.8)">Who they are:</strong> their role, how long you have worked together, how they usually react</li>
+                <li><strong style="color:rgba(244,243,255,0.8)">What happened:</strong> the key events leading up to this conversation, in order</li>
+                <li><strong style="color:rgba(244,243,255,0.8)">What must land:</strong> the one message you need them to hear</li>
+                <li><strong style="color:rgba(244,243,255,0.8)">The pushback:</strong> what you expect them to say or feel</li>
+                <li><strong style="color:rgba(244,243,255,0.8)">What is at stake:</strong> the decision, the deadline or the consequence</li>
+              </ul>
+            </div>
           </div>
           <div class="form-section">
             <label class="form-label">What does success look like for you?</label>
@@ -296,6 +306,7 @@
             </div>
           </div>
           <button class="submit-btn" id="start-btn" onclick="startSimulation()" disabled>Begin Practice &#x2192;</button>
+          <div id="submit-hint" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#c4b5fd;text-align:center;font-weight:600"></div>
         </div>
       </div>
     </div>
@@ -448,6 +459,9 @@
     var MAX_EXCHANGES = 8;
     var currentScenario = '';
     var currentObjective = '';
+    // Signed ticket the Worker issues on the first (charged) turn of a rehearsal.
+    // Sent back with every later turn and the debrief so they are not charged again.
+    var practiceSession = '';
     var voiceMode = false;
     var isListening = false;
     var isSpeaking = false;
@@ -464,10 +478,16 @@
       (meridian.state || 'Not set') + ' \xb7 ' + (meridian.industry || 'Not set');
 
     var practiceCtx = sessionStorage.getItem('sr_practice_context');
+    var practicePrefilled = false;
+    var practicePrefillRole = '';
     if (practiceCtx) {
       try {
         var ctx = JSON.parse(practiceCtx);
-        if (ctx.narrative) document.getElementById('scenario').value = 'Context from ER case: ' + ctx.narrative;
+        if (ctx.narrative) {
+          document.getElementById('scenario').value = 'Context from ER case: ' + ctx.narrative;
+          practicePrefilled = true;
+        }
+        if (ctx.role) practicePrefillRole = ctx.role;
         sessionStorage.removeItem('sr_practice_context');
       } catch(e) {}
     }
@@ -476,6 +496,19 @@
     document.getElementById('objective').addEventListener('input', checkStart);
     window.speechSynthesis.onvoiceschanged = function() { voices = window.speechSynthesis.getVoices(); };
     setTimeout(function(){ voices = window.speechSynthesis.getVoices(); }, 500);
+
+    // A handoff from another tool fills the scenario without firing an input event,
+    // so the button used to stay disabled. Pre-select the role when it matches a tile.
+    if (practicePrefilled) {
+      if (practicePrefillRole) {
+        document.querySelectorAll('.role-btn').forEach(function(b) {
+          if ((b.getAttribute('onclick') || '').indexOf("'" + practicePrefillRole + "'") > -1) {
+            selectRole(b, practicePrefillRole);
+          }
+        });
+      }
+      checkStart();
+    }
 
     function selectRole(el, role) {
       document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('selected'); });
@@ -493,7 +526,18 @@
     function checkStart() {
       var s = document.getElementById('scenario').value.trim();
       var o = document.getElementById('objective').value.trim();
-      document.getElementById('start-btn').disabled = !(selectedRole && s.length > 20 && o.length > 10);
+      var hasRole = !!selectedRole;
+      var hasScn = s.length > 20;
+      var hasObj = o.length > 10;
+      document.getElementById('start-btn').disabled = !(hasRole && hasScn && hasObj);
+      var hint = document.getElementById('submit-hint');
+      if (hint) {
+        if (hasRole && hasScn && hasObj) { hint.textContent = ''; }
+        else if (!hasRole && !hasScn && !hasObj) { hint.textContent = 'Pick who you are speaking with, describe the conversation and say what success looks like to continue.'; }
+        else if (!hasRole) { hint.textContent = 'Choose who you are speaking with above to continue.'; }
+        else if (!hasScn) { hint.textContent = 'Describe what the conversation is about to continue.'; }
+        else { hint.textContent = 'Say what success looks like to continue.'; }
+      }
     }
 
     function showView(view) {
@@ -676,6 +720,7 @@
       document.getElementById('chat-role-name').innerText = selectedRole;
       conversationHistory = [];
       exchangeCount = 0;
+      practiceSession = '';
       document.getElementById('messages-container').innerHTML = '';
       document.getElementById('stakes-panel').style.display = 'none';
       showView('loading-view');
@@ -703,6 +748,7 @@
         }
         if (data.success) {
           var response = data.data.response;
+          practiceSession = data.data.practiceSession || '';
           var parsed = parseFirstResponse(response);
           if (parsed.briefing) showStakesBriefing(parsed.briefing);
           var dialogue = parsed.dialogue || response;
@@ -757,6 +803,7 @@
             stakeholderRole: selectedRole,
             difficulty: selectedDiff,
             history: conversationHistory,
+            practiceSession: practiceSession,
             meridian: meridian
           })
         });
@@ -810,6 +857,7 @@
             stakeholderRole: selectedRole,
             difficulty: selectedDiff,
             history: conversationHistory,
+            practiceSession: practiceSession,
             meridian: meridian,
             requestDebrief: true
           })
@@ -820,7 +868,7 @@
           return;
         }
         if (data.success) renderDebrief(data.data);
-        else { showError('Debrief generation failed. ' + (data.error || 'Please try again.'), 'chat-view'); }
+        else { showError(data.error || 'Debrief generation failed. Please try again.', 'chat-view'); }
       } catch(err) {
         showError('Connection error. Please check your network and try again.', 'chat-view');
       }
@@ -865,6 +913,7 @@
     function practiceAgain() {
       conversationHistory = [];
       exchangeCount = 0;
+      practiceSession = '';
       document.getElementById('messages-container').innerHTML = '';
       document.getElementById('stakes-panel').style.display = 'none';
       startSimulation();
@@ -878,7 +927,10 @@
       document.querySelectorAll('.role-btn').forEach(function(b){ b.classList.remove('selected'); });
       selectedRole = '';
       conversationHistory = [];
+      practiceSession = '';
       document.getElementById('start-btn').disabled = true;
+      var hintEl = document.getElementById('submit-hint');
+      if (hintEl) { hintEl.textContent = ''; }
       showView('setup-view');
     }
   </script>
