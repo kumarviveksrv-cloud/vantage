@@ -283,6 +283,14 @@ pricingEl.style.overflow = 'hidden';
     f.appendChild(pricingEl);
     f.appendChild(ni('data-dashboard.html', '\uD83D\uDD12', 'My Data & Privacy'));
 
+    // Send Feedback
+    var fbDesktop = document.createElement('a');
+    fbDesktop.href = '#';
+    fbDesktop.className = 'nav-item';
+    fbDesktop.setAttribute('onclick', 'openVantageFeedback(); return false;');
+    fbDesktop.innerHTML = '<span style="font-size:16px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;text-align:center">\uD83D\uDCAC</span> Send Feedback';
+    f.appendChild(fbDesktop);
+
     // LEGAL
     f.appendChild(ns('Legal'));
     f.appendChild(ni('terms.html',   '\uD83D\uDCC4', 'Terms of Service'));
@@ -754,6 +762,7 @@ pricingEl.style.overflow = 'hidden';
         items: [
           { icon: IC.tag, label: 'Pricing', sub: '', href: 'pricing.html', page: 'pricing' },
           { icon: IC.shield, label: 'My Data & Privacy', sub: 'Your data settings', href: 'data-dashboard.html', page: 'data-dashboard' },
+          { icon: IC.chat, label: 'Send Feedback', sub: 'Share what you think', href: '#', page: 'feedback', feedbackTrigger: true },
           { icon: IC.logout, label: 'Sign Out', sub: '', href: 'access.html', page: 'signout', signout: true },
         ]
       },
@@ -831,6 +840,16 @@ pricingEl.style.overflow = 'hidden';
             }
             return false;
           };
+        }
+        if (item.feedbackTrigger) {
+          (function(el) {
+            el.onclick = function(e) {
+              e.preventDefault();
+              closeDrawer();
+              setTimeout(function() { if (typeof openVantageFeedback === 'function') openVantageFeedback(); }, 220);
+              return false;
+            };
+          })(a);
         }
         a.innerHTML = [
           '<span class="vbn-drawer-icon">' + item.icon + '</span>',
@@ -1358,3 +1377,106 @@ pricingEl.style.overflow = 'hidden';
     launchModal();
   }
 })();
+
+// ── Feedback modal ────────────────────────────────────────────────────────
+function openVantageFeedback() {
+  if (document.getElementById('vf-overlay')) { document.getElementById('vf-overlay').style.display = 'flex'; return; }
+  var ov = document.createElement('div');
+  ov.id = 'vf-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(5,4,16,0.88);backdrop-filter:blur(6px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.innerHTML = [
+    '<div id="vf-modal" style="background:#0d0b1e;border:1px solid rgba(99,102,241,0.25);border-radius:16px;padding:28px 28px 24px;max-width:420px;width:100%;position:relative">',
+      '<button onclick="document.getElementById(\'vf-overlay\').style.display=\'none\'" style="position:absolute;top:14px;right:14px;background:none;border:none;color:rgba(255,255,255,0.35);font-size:18px;cursor:pointer;line-height:1">&#x2715;</button>',
+      '<div style="font-family:\'Cormorant Garamond\',serif;font-size:22px;font-weight:600;color:#fff;margin-bottom:4px">Share your feedback</div>',
+      '<div style="font-size:12px;color:rgba(255,255,255,0.4);font-family:\'JetBrains Mono\',monospace;margin-bottom:20px">Help us make Vantage better</div>',
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.75);margin-bottom:8px">How are you feeling?</div>',
+      '<div id="vf-mood" style="display:flex;gap:8px;margin-bottom:18px">',
+        '<button class="vf-mood-btn" data-val="delighted" onclick="vfPickMood(this)" style="flex:1;padding:10px 6px;border-radius:8px;border:1px solid rgba(99,102,241,0.2);background:rgba(99,102,241,0.05);cursor:pointer;color:rgba(255,255,255,0.7);font-size:13px;transition:all .15s">&#x1F929; Delighted</button>',
+        '<button class="vf-mood-btn" data-val="okay"      onclick="vfPickMood(this)" style="flex:1;padding:10px 6px;border-radius:8px;border:1px solid rgba(99,102,241,0.2);background:rgba(99,102,241,0.05);cursor:pointer;color:rgba(255,255,255,0.7);font-size:13px;transition:all .15s">&#x1F610; Okay</button>',
+        '<button class="vf-mood-btn" data-val="frustrated" onclick="vfPickMood(this)" style="flex:1;padding:10px 6px;border-radius:8px;border:1px solid rgba(99,102,241,0.2);background:rgba(99,102,241,0.05);cursor:pointer;color:rgba(255,255,255,0.7);font-size:13px;transition:all .15s">&#x1F621; Frustrated</button>',
+      '</div>',
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.75);margin-bottom:8px">Category</div>',
+      '<select id="vf-cat" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(99,102,241,0.18);border-radius:8px;color:#fff;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:13px;margin-bottom:18px;-webkit-appearance:none">',
+        '<option value="">Choose a category&hellip;</option>',
+        '<option value="something_broke">Something broke</option>',
+        '<option value="loved_it">Loved something</option>',
+        '<option value="idea">I have an idea</option>',
+        '<option value="other">Other</option>',
+      '</select>',
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.75);margin-bottom:8px">Tell us more <span style="opacity:.45">(optional)</span></div>',
+      '<textarea id="vf-comment" placeholder="What\'s on your mind?" rows="3" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(99,102,241,0.18);border-radius:8px;color:#fff;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:13px;resize:vertical;margin-bottom:14px;box-sizing:border-box"></textarea>',
+      '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:18px">',
+        '<input type="checkbox" id="vf-anon" style="width:14px;height:14px;cursor:pointer;accent-color:#6366f1">',
+        'Send without linking to my account',
+      '</label>',
+      '<button id="vf-submit" onclick="vfSubmit()" style="width:100%;padding:12px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;border:none;border-radius:8px;font-family:\'Bricolage Grotesque\',sans-serif;font-weight:600;font-size:14px;cursor:pointer;transition:opacity .2s">Send Feedback</button>',
+      '<div id="vf-msg" style="display:none;margin-top:10px;font-family:\'JetBrains Mono\',monospace;font-size:11px;text-align:center;padding:8px 12px;border-radius:6px"></div>',
+    '</div>',
+  ].join('');
+  document.body.appendChild(ov);
+}
+
+function vfPickMood(btn) {
+  document.querySelectorAll('.vf-mood-btn').forEach(function(b) {
+    b.style.borderColor = 'rgba(99,102,241,0.2)';
+    b.style.background  = 'rgba(99,102,241,0.05)';
+    b.style.color       = 'rgba(255,255,255,0.7)';
+  });
+  btn.style.borderColor = 'rgba(99,102,241,0.55)';
+  btn.style.background  = 'rgba(99,102,241,0.15)';
+  btn.style.color       = '#c4b5fd';
+}
+
+async function vfSubmit() {
+  var mood = document.querySelector('.vf-mood-btn[style*="0.55"]');
+  var sentiment = mood ? mood.dataset.val : '';
+  var category  = (document.getElementById('vf-cat') || {}).value || '';
+  var comment   = ((document.getElementById('vf-comment') || {}).value || '').trim();
+  var anon      = !!(document.getElementById('vf-anon') || {}).checked;
+  var btn       = document.getElementById('vf-submit');
+  var msg       = document.getElementById('vf-msg');
+
+  if (!sentiment) { vfShowMsg('Please pick a mood first.', 'err'); return; }
+  if (!category)  { vfShowMsg('Please pick a category.', 'err'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  try {
+    var page = window.location.pathname.split('/').pop() || 'unknown';
+    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+    var headers = { 'Content-Type': 'application/json' };
+    if (!anon && window.Clerk && window.Clerk.session) {
+      var tok = await window.Clerk.session.getToken();
+      if (tok) headers['Authorization'] = 'Bearer ' + tok;
+    }
+    var res = await fetch(WORKER, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ tool: 'submit_feedback', sentiment: sentiment, category: category, comment: comment, anonymous: anon, page: page, source: 'button' })
+    });
+    var data = await res.json();
+    if (data.success) {
+      vfShowMsg('✓ Thank you—noted!', 'ok');
+      btn.style.display = 'none';
+      setTimeout(function() { document.getElementById('vf-overlay').style.display = 'none'; }, 1800);
+    } else {
+      vfShowMsg(data.error || 'Something went wrong. Try again.', 'err');
+      btn.disabled = false; btn.textContent = 'Send Feedback';
+    }
+  } catch(e) {
+    vfShowMsg('Connection error. Try again.', 'err');
+    btn.disabled = false; btn.textContent = 'Send Feedback';
+  }
+}
+
+function vfShowMsg(text, type) {
+  var el = document.getElementById('vf-msg');
+  if (!el) return;
+  el.textContent = text;
+  el.style.display = 'block';
+  el.style.background = type === 'ok' ? 'rgba(99,102,241,0.08)' : 'rgba(255,77,109,0.08)';
+  el.style.color      = type === 'ok' ? '#6366f1' : '#FF4D6D';
+  el.style.border     = '1px solid ' + (type === 'ok' ? 'rgba(99,102,241,0.2)' : 'rgba(255,77,109,0.2)');
+}
+

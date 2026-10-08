@@ -193,7 +193,7 @@
       <div class="trust-icon">&#x1F6E1;&#xFE0F;</div>
       <div>
         <div class="trust-title">Your data stays yours, not ours to keep.</div>
-        <div class="trust-text">Every AI-powered tool on the Platform — the Employee Case Advisor, The Business Case, Policy Advisor, Retention Advisor, Difficult Conversations, and ARIA — anonymises names, companies, and locations before any AI sees your data. Your professional record is stored under your own account. You can export or request deletion of everything at any time.</div>
+        <div class="trust-text">Every AI-powered tool on the Platform — the Employee Case Advisor, The Business Case, Policy Advisor, Retention Advisor, Difficult Conversations, and ARIA — runs anonymisation as a two-step process: your original text first reaches Anthropic’s Claude Haiku model, which replaces names, companies, and locations with placeholders; only the anonymised version then reaches Claude for analysis. Your professional record is stored under your own account. You can export or request deletion of everything at any time.</div>
       </div>
     </div>
 
@@ -219,12 +219,14 @@
       <div class="section-header">
         <div class="section-title"><span class="section-title-icon">&#x1F510;</span> How Your Data Is Protected</div>
       </div>
-      <div class="section-text">Every time you write a case narrative, situation, or question into any AI-powered tool, this is what happens before any AI processing:</div>
+      <div class="section-text">Every time you write a case narrative, situation, or question into any AI-powered tool, anonymisation runs as a two-step process before analysis begins:</div>
       <div class="anon-log">
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Person names replaced with role-consistent placeholders (Manager A, Employee B)</div>
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Company names replaced with Company X</div>
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Specific locations replaced with Location A, Location B</div>
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> This step fails closed — if it can't complete safely, the request is blocked, never sent unredacted</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Step 1: original text sent to Claude Haiku, which identifies and replaces names, companies, locations with placeholders</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Step 2: only the anonymised placeholder text is sent to Claude for analysis</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Fails closed — if anonymisation cannot complete safely, the request is blocked, never sent unredacted</div>
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Original text stored only in your own account record</div>
         <div class="anon-item"><span class="anon-check">&#x2713;</span> No data shared with third parties beyond what's in our Privacy Policy</div>
       </div>

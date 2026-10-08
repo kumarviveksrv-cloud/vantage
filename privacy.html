@@ -205,6 +205,12 @@
           <td>Via Razorpay, once payment processing is live</td>
           <td>To manage your subscription</td>
         </tr>
+        <tr>
+          <td><strong>Feedback</strong></td>
+          <td>Mood (delighted / okay / frustrated), category, optional free-text comment, and the page you submitted from. If you tick "send without linking to my account", no account identifier is stored and the timestamp is recorded as a date only.</td>
+          <td>Submitted voluntarily via the Send Feedback button in the sidebar</td>
+          <td>To improve the Platform. Anonymous feedback is retained for product improvement and is not included in account export or purge requests.</td>
+        </tr>
       </tbody>
     </table>
 
@@ -225,13 +231,13 @@
     <p>We do not use your data for advertising. We do not sell your data to any third party. We do not use your individual case narratives or outputs to train AI models.</p>
 
     <h2 id="anonymisation">4. Anonymisation Before AI Processing</h2>
-    <p>Before any text you write is sent to our AI processing layer (Anthropic's Claude API), the Platform automatically identifies person names, company names, and specific locations, and replaces them with role-consistent placeholders: for example, "Manager A" and "Employee B" rather than real names, inferred from context so the underlying diagnostic still makes sense. This applies across every AI-powered tool on the Platform: the Employee Case Advisor, The Business Case, Policy Advisor, Retention Advisor, Difficult Conversations, and ARIA. It also applies to the case notes used to generate your monthly Debrief.</p>
+    <p>Anonymisation is a two-step process. The Platform first sends your text to Anthropic's Claude Haiku model, which identifies person names, company names, and specific locations and replaces them with role-consistent placeholders — for example, "Manager A" and "Employee B" rather than real names, inferred from context so the underlying diagnostic still makes sense. Only the anonymised output of that step is then sent to Anthropic's Claude model for the actual analysis. This means your original text reaches Anthropic once — solely for the purpose of anonymisation by Claude Haiku — before the placeholder version reaches Claude for analysis. This applies across every AI-powered tool on the Platform: the Employee Case Advisor, The Business Case, Policy Advisor, Retention Advisor, Difficult Conversations, and ARIA. It also applies to the case notes used to generate your monthly Debrief.</p>
     <div class="highlight">
       <strong style="display:block;margin-bottom:6px;color:#6366f1;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase">What happens if anonymisation cannot be completed</strong>
       This step fails closed: if the anonymisation process cannot produce a safe result after a brief automatic retry, the Platform blocks that request entirely rather than sending your original text unredacted. You will see an error asking you to try again, not a silent fallback.
     </div>
     <p>For ARIA and Difficult Conversations specifically (both ongoing conversations rather than single submissions), the Platform anonymises each new message as it is sent. Earlier turns in the same conversation are not re-processed on every new message, since they were already anonymised when originally sent.</p>
-    <p>Separately: your original text, exactly as you typed it, is stored in your own Airtable record and is not shared with any third party beyond what is described in Section 7. Only the anonymised version is sent to Anthropic.</p>
+    <p>Separately: your original text, exactly as you typed it, is stored in your own Airtable record and is not shared with any third party beyond what is described in Section 7. As described above, the original text reaches Anthropic's Claude Haiku model once, for the anonymisation step only. The anonymised version then reaches Anthropic's Claude model for analysis. Neither step uses your data to train AI models.</p>
     <div class="highlight">
       <strong style="display:block;margin-bottom:6px;color:#6366f1;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase">Voice input is different</strong>
       If you use a microphone button, your audio is sent to OpenAI to be turned into text. Anonymisation can only work on text, so it cannot happen before that step: any name you say aloud is heard by the transcription service. Please do not speak real names. The transcribed text is then anonymised before AI processing, like anything you type. Virorah does not store your audio. Voice mode in Difficult Conversations uses your browser's own speech recognition, which in some browsers (Chrome, for example) is processed by the browser's maker under its own terms, outside Virorah's control.
@@ -250,7 +256,7 @@
     <ul>
       <li><strong>Airtable (US servers):</strong> Your MERIDIAN profile, case records, and debrief data are stored in Airtable, a cloud database service. Airtable's servers are located in the United States (AWS us-east-1). By using the Platform, you explicitly consent to this cross-border transfer of your personal data to the United States.</li>
       <li><strong>Browser Storage:</strong> Your session data (access status, current-session MERIDIAN profile) is stored in your browser's sessionStorage and localStorage. This data never leaves your device except as described above.</li>
-      <li><strong>Anthropic (US servers):</strong> Anonymised text: with person names, company names, and locations replaced with role-consistent placeholders as described in Section 4, is processed by Anthropic's Claude API, with servers in the United States. Under Anthropic's API terms, this data is not used to train their models.</li>
+      <li><strong>Anthropic (US servers):</strong> As described in Section 4, your original text first reaches Anthropic's Claude Haiku model (US servers) for the anonymisation step, and only the anonymised text then reaches Anthropic's Claude model for analysis. Neither use is for model training under Anthropic's API terms.</li>
       <li><strong>OpenAI (US servers):</strong> If you use a microphone button, your audio is processed by OpenAI's transcription service, with servers in the United States, under OpenAI's own terms. Virorah does not store the audio.</li>
       <li><strong>Cloudflare:</strong> The Platform's pages and the service that processes your requests run on Cloudflare's global network. Your requests pass through it in transit.</li>
     </ul>
@@ -270,7 +276,7 @@
       <tbody>
         <tr>
           <td><strong>Anthropic, Inc.</strong></td>
-          <td>Anonymised text (person names, company names, and locations replaced with role-consistent placeholders, see Section 4), MERIDIAN parameters (state, industry, organisation type and size, seniority, union status, HR function, and any policy guardrails you set), and summary figures such as your Humac Score and case counts, used to personalise ARIA and your Debrief</td>
+          <td>Two-step (see Section 4): your original text first reaches Claude Haiku for anonymisation; the anonymised text (names, companies, and locations replaced with placeholders) then reaches Claude for analysis. Also sent: MERIDIAN parameters (state, industry, organisation type and size, seniority, union status, HR function, and any policy guardrails you set), and summary figures such as your Humac Score and case counts, used to personalise ARIA and your Debrief. No data is used to train models.</td>
           <td>AI processing and output generation</td>
           <td>United States</td>
         </tr>
@@ -321,6 +327,7 @@
       <li><strong>Case Records:</strong> Retained until you delete individual cases or delete your account</li>
       <li><strong>Debrief Records:</strong> Retained until you delete your account</li>
       <li><strong>Voice Recordings:</strong> Not stored by Virorah. Audio is sent to OpenAI for transcription as described in Sections 4 and 7, and is retained by OpenAI only as its own terms provide.</li>
+      <li><strong>Feedback:</strong> Anonymous feedback (submitted without linking to an account) is retained for product improvement indefinitely and is not included in account export or purge requests. Non-anonymous feedback is retained until you delete your account.</li>
       <li><strong>Post-deletion:</strong> After you delete your account or all data, records are permanently deleted from Airtable within 30 days. Browser localStorage and sessionStorage data is deleted immediately upon your request or when you clear your browser data.</li>
       <li><strong>Legal Hold:</strong> Where Virorah is required by law to retain certain data, it will be retained for the legally required period and then deleted.</li>
     </ul>
@@ -360,7 +367,7 @@
     <ul>
       <li>All data in transit is encrypted using HTTPS/TLS</li>
       <li>Access to Airtable data is restricted via API key authentication</li>
-      <li>Text is anonymised: person names, company names, and specific locations replaced with role-consistent placeholders, before it reaches Anthropic's Claude API, across every AI-powered tool on the Platform (Section 4)</li>
+      <li>Text is anonymised via a two-step process (Section 4): your original text first reaches Anthropic's Claude Haiku model for anonymisation, then only the anonymised placeholder text reaches Claude for analysis, across every AI-powered tool on the Platform</li>
       <li>This step fails closed: if anonymisation cannot be completed safely, the request is blocked rather than sent unredacted</li>
       <li>Browser sessionStorage is cleared on sign-out</li>
     </ul>
