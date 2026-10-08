@@ -712,12 +712,15 @@
           }
         })
         .catch(function(){ /* silent — humac context is a nice-to-have, never blocks the tool */ });
-      };
-      if (window.Clerk && window.Clerk.session) {
-        window.Clerk.session.getToken().then(function(t){ token = t; doFetch(); }).catch(doFetch);
-      } else {
-        doFetch();
-      }
+      };      var humacTries = 0;
+      (function waitForClerkHumac() {
+        if (window.Clerk && window.Clerk.session) {
+          window.Clerk.session.getToken().then(function(t){ token = t; doFetch(); }).catch(function(){});
+        } else if (humacTries < 40) {
+          humacTries++;
+          setTimeout(waitForClerkHumac, 150);
+        }
+      })();
     })();
     document.getElementById('meridian-chip-val').innerText =
       (meridian.state || 'Not set') + ' · ' + (meridian.industry || 'Not set');
