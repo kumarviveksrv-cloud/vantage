@@ -1,0 +1,4535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050410"> 
+<title>Virorah Vantage</title>
+<meta name="description" content="Private HR intelligence for Indian practice. Modelled estimates, calibrated to your context. Not a verified result.">
+<link rel="icon" href="favicon.png">
+
+<!-- ── CANONICAL + PWA ─────────────────────────────────────────────────── -->
+<link rel="canonical" href="https://vantage.virorah.com">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<!-- ── OPEN GRAPH — LinkedIn, WhatsApp, Facebook previews ─────────────── -->
+<meta property="og:type"         content="website">
+<meta property="og:url"          content="https://vantage.virorah.com">
+<meta property="og:site_name"    content="Virorah Vantage">
+<meta property="og:title"        content="Virorah Vantage">
+<meta property="og:description"  content="Private HR intelligence for Indian practice. Modelled estimates, calibrated to your context. Not a verified result.">
+<meta property="og:image"        content="https://vantage.virorah.com/virorah-vantage-logo.png">
+<meta property="og:image:alt"    content="Virorah Vantage: Private HR Intelligence">
+<meta property="og:locale"       content="en_IN">
+
+<!-- ── TWITTER / X CARD ───────────────────────────────────────────────── -->
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="Virorah Vantage">
+<meta name="twitter:description" content="Private HR intelligence for Indian practice. Modelled estimates, calibrated to your context. Not a verified result.">
+<meta name="twitter:image"       content="https://vantage.virorah.com/virorah-vantage-logo.png">
+
+<!-- ── GOOGLE SEARCH CONSOLE — uncomment and fill in after adding property ─
+<meta name="google-site-verification" content="PASTE_YOUR_GSC_CONTENT_VALUE_HERE">
+── -->
+
+<!-- ── GOOGLE ANALYTICS 4 ────────────────────────────────────────────────── -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5JZR3EMJ5Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5JZR3EMJ5Q');
+</script>
+<link href="/fonts/fonts.css" rel="stylesheet"/>
+<link rel="stylesheet" href="vantage-cinematic.css">
+<link rel="stylesheet" href="vantage-cinematic-v4.css">
+<link rel="stylesheet" href="vantage-prologue.css">
+<link rel="stylesheet" href="aria-volumetric.css">
+<style>
+/* SR18 — visual enhancement batch */
+
+/* Item 5: ARIA identity text — make readable and prominent */
+.aria-eyebrow {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: clamp(12px,1.15vw,16px) !important;
+  letter-spacing: .05em !important;
+  color: rgba(196,181,253,.85) !important;
+  opacity: 1 !important;
+  text-transform: none !important;
+  font-weight: 400 !important;
+}
+.aria-ally {
+  font-size: clamp(18px,1.8vw,26px) !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,.92) !important;
+  letter-spacing: .02em !important;
+  opacity: 1 !important;
+  line-height: 1.2 !important;
+}
+
+/* Item 7+9: Record section text prominence */
+.record-head .eyebrow {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: clamp(13px,1.3vw,18px) !important;
+  color: rgba(196,181,253,.9) !important;
+  letter-spacing: .04em !important;
+  opacity: 1 !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  align-self: start !important;
+  margin-top: 0 !important;
+}
+.record-example-label {
+  font-size: clamp(16px,1.6vw,22px) !important;
+  color: rgba(196,181,253,.78) !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  opacity: 1 !important;
+  text-align: center;
+  margin: 36px auto 52px;
+  display: block;
+}
+
+/* SR-fix: cta-moment had no dedicated rule at all, only inheriting
+   .cinematic-panel, so there was a visible divider before pricing-block
+   (its own border-top below) but none before cta-moment itself, leaving
+   the transition after Vantage Record's "And it's yours to keep." with
+   no equivalent break. Same line, same color, same weight, so the two
+   dividers now read as one consistent pattern between all three sections. */
+.cta-moment {
+  border-top: 1px solid rgba(196,181,253,.07);
+}
+
+/* Item 11: Pricing section */
+.pricing-block {
+  padding: clamp(80px,10vw,140px) clamp(24px,6vw,100px);
+  border-top: 1px solid rgba(196,181,253,.07);
+  position: relative;
+  z-index: 1;
+}
+.pricing-head {
+  text-align: center;
+  margin-bottom: clamp(48px,6vw,80px);
+}
+.pricing-head .lede {
+  max-width: 500px;
+  margin: 20px auto 0;
+  opacity: .7;
+}
+.pricing-grid {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+  max-width: 880px;
+  margin: 0 auto 40px;
+}
+.pricing-card {
+  background: rgba(196,181,253,.04);
+  border: 1px solid rgba(196,181,253,.1);
+  border-radius: 20px;
+  padding: 40px 32px;
+  flex: 1;
+  min-width: 280px;
+  max-width: 400px;
+  text-align: left;
+  position: relative;
+  transition: border-color .3s, background .3s;
+}
+.pricing-card:hover { border-color: rgba(196,181,253,.24); }
+.pricing-card--featured {
+  border-color: rgba(124,58,237,.38);
+  background: rgba(99,102,241,.055);
+}
+.plan-badge {
+  position: absolute;
+  top: -13px;
+  left: 32px;
+  background: linear-gradient(135deg,#c4b5fd,#6366f1);
+  color: #050410;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+.plan-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .22em;
+  color: rgba(196,181,253,.55);
+  margin-bottom: 14px;
+}
+.plan-price { margin-bottom: 14px; line-height: 1; }
+.price-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(34px,3.8vw,50px);
+  font-weight: 700;
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 50%,#e879f9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.price-period {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  color: rgba(255,255,255,.35);
+  margin-left: 4px;
+}
+.plan-desc {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  color: rgba(255,255,255,.5);
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px;
+}
+.plan-features li {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  color: rgba(255,255,255,.68);
+  padding: 7px 0 7px 18px;
+  border-bottom: 1px solid rgba(196,181,253,.06);
+  position: relative;
+}
+.plan-features li::before {
+  content: '◆';
+  font-size: 6px;
+  color: rgba(196,181,253,.45);
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.pricing-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: rgba(255,255,255,.28);
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* ═══ SR18 BATCH 2 — Type scale enforcement + 6-item visual fixes ═══ */
+
+/* TIER 1: System/HUD labels — already correct, no override needed */
+
+/* TIER 2: Section eyebrows — enforce consistently */
+.eyebrow {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: clamp(13px,1.3vw,18px) !important;
+  color: rgba(196,181,253,.85) !important;
+  letter-spacing: .04em !important;
+  text-transform: none !important;
+  opacity: 1 !important;
+  font-weight: 500 !important;
+}
+
+/* SR23 hero reorder: the kicker now lives INSIDE the h1 as a span (valid HTML, keeps the
+   heading in one piece). A span has none of the block/line-height a <p> had, so restore it. */
+.hero-title .hero-kicker{display:block;line-height:1.12;margin:0 0 24px}
+/* tagline now sits between "Enter VANTAGE." and the deck: give it air above, tuck the deck under it */
+.hero-enter + .hero-tagline{margin:20px 0 0} /* SR31: was 38px, on top of heroEnter's own margin — read as excess space before the tagline; reduced to sit closer to the established rhythm */
+/* keep "Not the org's. Yours." together on narrow screens instead of splitting after "Not" */
+.hero-tagline em{white-space:nowrap}
+.hero-tagline + .hero-deck{margin:26px auto 72px;text-wrap:balance;line-height:2 !important}
+
+/* TIER 4: Body copy — enforce across all sections */
+.lede, .body-copy, .hero-deck, .plan-desc, p:not(.eyebrow):not(.aria-eyebrow):not(.aria-ally):not(.aria-tagline):not(.aria-actions-label):not(.aria-cta-note):not(.pricing-note):not(.sim-pre):not(.sim-sub) {
+  font-size: clamp(15px,1.55vw,20px);
+  line-height: 1.8;
+}
+
+/* Item 1: Prologue kicker + sub — italic, readable, title case */
+.prologue-kicker {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-size: clamp(20px,2.4vw,32px) !important;
+  text-transform: capitalize !important;
+  letter-spacing: .04em !important;
+  color: rgba(196,181,253,.92) !important;
+  opacity: 1 !important;
+  font-weight: 400 !important;
+  margin-bottom: 24px !important;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.9), 0 0 50px rgba(0,0,0,0.7) !important;
+}
+.prologue-sub {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-size: clamp(15px,1.8vw,24px) !important;
+  text-transform: capitalize !important;
+  letter-spacing: .03em !important;
+  color: rgba(196,181,253,.78) !important;
+  opacity: 1 !important;
+  font-weight: 400 !important;
+  margin-top: 24px !important;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.9), 0 0 50px rgba(0,0,0,0.7) !important;
+}
+
+/* SR20: prologue-message text-shadow for readability against busy background */
+/* SR-fix: line-height was only ever set inside the two mobile media queries
+   below (1.35 at <=480px, 1.3 at <=700px height) — the base desktop rule had
+   none, so it silently inherited whatever line-height cascaded in from
+   elsewhere, producing uneven vertical spacing between the three <br>-
+   separated lines (most visible as "Alone." sitting too close to the line
+   above it). Declared explicitly here, matching the mobile value, so all
+   three lines get the same deliberate rhythm at every viewport width. */
+.prologue-message {
+  font-size: clamp(26px,3.4vw,46px) !important;
+  line-height: 1.35 !important;
+  text-shadow: 0 2px 24px rgba(0,0,0,0.92), 0 0 60px rgba(0,0,0,0.75) !important;
+}
+
+/* Item 2: Prologue note — scene-stamp + whispered narration */
+.prologue-note {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-size: clamp(13px,1.35vw,17px) !important;
+  color: rgba(255,255,255,.78) !important;
+  line-height: 1.68 !important;
+  letter-spacing: .02em !important;
+  text-align: center !important;
+  max-width: 210px !important;
+  opacity: 1 !important;
+}
+
+/* Mobile: the prologue's Cormorant Garamond text (especially
+   .prologue-message, which is sized entirely by external CSS and ran
+   large enough to clip off small phone screens) needs to shrink and
+   tighten considerably, not just reposition. */
+@media (max-width: 480px) {
+  .prologue-kicker {
+    font-size: 17px !important;
+    margin-bottom: 14px !important;
+  }
+  .prologue-message {
+    font-size: 19px !important;
+    line-height: 1.35 !important;
+  }
+  .prologue-sub {
+    font-size: 13px !important;
+    margin-top: 14px !important;
+  }
+  .prologue-note {
+    font-size: 11px !important;
+    max-width: 180px !important;
+  }
+}
+@media (max-height: 700px) {
+  .prologue-kicker { margin-bottom: 10px !important; }
+  .prologue-message { line-height: 1.3 !important; }
+  .prologue-sub { margin-top: 10px !important; }
+}
+
+/* Bulletproof horizontal-wrap guarantee for all prologue text — added
+   after screenshots showed lines cut off mid-sentence on mobile even
+   after the vertical-fit fixes. Whatever the exact cause (an external
+   stylesheet rule not visible here, or a text-align/positioning
+   interaction), this forces every prologue text line to genuinely
+   wrap within its own box rather than ever extending past it. */
+.prologue-kicker,
+.prologue-message,
+.prologue-sub {
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+  text-align: inherit !important;  /* inherits right on desktop, center on mobile */
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+@media (max-width: 700px) {
+  .prologue-kicker,
+  .prologue-message,
+  .prologue-sub {
+    text-align: center !important;
+  }
+}
+/* .prologue-note is position:absolute right:32px — must NOT get
+   text-align:center or width:100% (shifts it to center of screen). */
+.prologue-note {
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+  box-sizing: border-box !important;
+}
+.prologue-note strong {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  color: rgba(196,181,253,.88) !important;
+  display: block !important;
+  margin-bottom: 10px !important;
+  letter-spacing: .22em !important;
+  text-align: center !important;
+}
+
+/* Item 3: Hero CTAs — vibrant purple; hero-foot readable */
+.hero .btn-primary, .hero a.btn-primary {
+  background: linear-gradient(135deg,#7c3aed 0%,#6366f1 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 36px rgba(99,102,241,.45), 0 2px 12px rgba(0,0,0,.3) !important;
+}
+.hero .btn-ghost, .hero a.btn-ghost {
+  border-color: rgba(196,181,253,.55) !important;
+  color: rgba(196,181,253,.92) !important;
+  opacity: 1 !important;
+}
+#prologue-back {
+  color: rgba(196,181,253,.8) !important;
+  font-size: clamp(13px,1.25vw,16px) !important;
+  opacity: 1 !important;
+  display: inline-block !important;
+}
+.hero-foot { opacity: 1 !important; }
+.hero-foot span {
+  color: rgba(196,181,253,.75) !important;
+  font-size: clamp(12px,1.15vw,15px) !important;
+  opacity: 1 !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 400 !important;
+}
+
+/* Item 4: Humacity — breathing room + body copy size */
+.humacity-concept {
+  margin-top: clamp(24px,2.8vw,40px) !important;
+  margin-bottom: clamp(24px,2.8vw,36px) !important;
+}
+.humacity-copy .body-copy {
+  font-size: clamp(15px,1.55vw,20px) !important;
+  line-height: 1.82 !important;
+  color: rgba(255,255,255,.78) !important;
+  opacity: 1 !important;
+}
+
+/* Item 5: Record — lede + record-sub bigger */
+.record-head .lede {
+  font-size: clamp(15px,1.55vw,20px) !important;
+  line-height: 1.82 !important;
+  color: rgba(255,255,255,.78) !important;
+  opacity: 1 !important;
+}
+.record-sub {
+  font-size: clamp(16px,1.65vw,21px) !important; /* SR19: +1pt from clamp(15,1.55vw,20) */
+  line-height: 1.8 !important;
+  color: rgba(255,255,255,.78) !important;
+  opacity: 1 !important;
+  margin-top: 20px !important;
+}
+.record-sub .accent {
+  font-weight: 700 !important;
+  font-size: clamp(20px, 2.4vw, 28px) !important;
+  line-height: 1.2 !important;
+}
+
+/* Item 6: ARIA dims — force all labels to ALL CAPS for consistency */
+.aria-dim strong {
+  text-transform: uppercase !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 10px !important;
+  letter-spacing: .18em !important;
+}
+
+/* ═══ SR18 BATCH 3 ═══ */
+
+/* Item 1: humacity-concept — bigger, proper breathing room */
+.humacity-concept {
+  font-size: clamp(22px,2.4vw,32px) !important;
+  margin-top: clamp(24px,2.8vw,40px) !important;
+  margin-bottom: clamp(20px,2.2vw,28px) !important;
+}
+
+/* Item 2: humacity terms line — gradient block after body-copy */
+.humacity-terms {
+  font-size: clamp(18px,1.85vw,24px) !important;
+  font-weight: 700 !important;
+  margin-top: clamp(20px,2.2vw,28px) !important;
+  display: block !important;
+}
+
+/* Item 5: More vivid gradient — 90deg left-to-right shows full spectrum */
+/* CSS fallback (applyGradients inline styles are the primary path) */
+.accent {
+  background: linear-gradient(90deg,#c084fc 0%,#8b5cf6 50%,#6366f1 100%) !important;
+}
+
+/* ARIA ambient particle canvas — z:0, face canvas z:2, content z:3 */
+#ariaAmbient {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 1;
+}
+.aria-room {
+  position: relative;
+  isolation: isolate; /* creates stacking context so z-indexes work within */
+}
+.aria-figure {
+  z-index: 2 !important;
+}
+/* Canvas must stay absolute+inset to fill .aria-figure — position:relative
+   collapsed it to intrinsic size, which is why the face disappeared */
+#ariaVolumetricCanvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 2 !important;
+}
+.aria-reaction, .aria-grid, .aria-light {
+  position: relative;
+  z-index: 3;
+}
+
+/* ═══ VANTAGE RECORD — Intelligence Dossier (SR18) ═══ */
+.record-dossier-wrap {
+  position: relative;
+  max-width: 720px;
+  margin: clamp(48px,6vw,80px) auto;
+}
+.record-dossier {
+  background: rgba(8,7,24,.88);
+  border: 1px solid rgba(124,58,237,.28);
+  border-radius: 20px;
+  padding: clamp(28px,4vw,48px);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 0 100px rgba(99,102,241,.1), 0 0 0 1px rgba(196,181,253,.04), 0 32px 64px rgba(0,0,0,.5);
+  position: relative;
+  overflow: hidden;
+}
+.record-dossier::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: -60px; right: -60px;
+  height: 180px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Header */
+.dos-header { margin-bottom: 32px; }
+.dos-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.dos-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .28em;
+  color: rgba(196,181,253,.45);
+}
+.dos-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .16em;
+  color: rgba(168,85,247,.8);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dos-pulse {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #a855f7;
+  box-shadow: 0 0 8px #a855f7;
+  display: inline-block;
+  animation: dosPulse 2s ease-in-out infinite;
+}
+@keyframes dosPulse {
+  0%,100% { opacity: 1; box-shadow: 0 0 8px #a855f7; }
+  50% { opacity: .4; box-shadow: 0 0 2px #a855f7; }
+}
+.dos-meta-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.dos-meta-row span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.28);
+}
+.dos-meta-row em { color: rgba(196,181,253,.4); font-style: normal; }
+.dos-progress-track {
+  height: 2px;
+  background: rgba(196,181,253,.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.dos-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#7c3aed,#a855f7);
+  border-radius: 2px;
+  transition: width 2.2s cubic-bezier(.25,.46,.45,.94);
+}
+.dos-progress-label {
+  display: flex;
+  justify-content: space-between;
+}
+.dos-progress-label span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.25);
+}
+#dosPercent { color: rgba(168,85,247,.7) !important; }
+
+/* Entries */
+.dos-entries { display: flex; flex-direction: column; gap: 0; }
+.dos-entry {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .55s ease, transform .55s ease;
+  border-left: 2px solid rgba(124,58,237,.2);
+  padding: 20px 0 20px 22px;
+  position: relative;
+}
+.dos-entry + .dos-entry { border-top: 1px solid rgba(196,181,253,.05); }
+.dos-entry::before {
+  content: '';
+  position: absolute;
+  left: -5px; top: 24px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(124,58,237,.4);
+  border: 1px solid rgba(124,58,237,.6);
+  transition: background .3s, box-shadow .3s;
+}
+.dos-entry.dos-visible { opacity: 1; transform: translateY(0); }
+.dos-entry.dos-visible::before {
+  background: #7c3aed;
+  box-shadow: 0 0 12px rgba(124,58,237,.7);
+}
+.dos-entry--final { border-left-color: rgba(168,85,247,.45) !important; }
+.dos-entry--final.dos-visible::before {
+  background: #a855f7;
+  box-shadow: 0 0 16px rgba(168,85,247,.8);
+}
+.dos-entry-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.dos-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .18em;
+  color: rgba(196,181,253,.4);
+}
+.dos-type {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .14em;
+  color: rgba(168,85,247,.75);
+}
+.dos-entry-title {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: clamp(14px,1.45vw,18px) !important;
+  color: rgba(255,255,255,.88) !important;
+  line-height: 1.6 !important;
+  margin: 0 0 10px !important;
+  font-weight: 400 !important;
+}
+.dos-entry-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.dos-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .15em;
+  color: rgba(196,181,253,.75);
+  background: rgba(124,58,237,.15);
+  border: 1px solid rgba(124,58,237,.3);
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+.dos-outcome {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  color: rgba(255,255,255,.42);
+}
+.dos-impact {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  color: rgba(196,181,253,.65);
+  margin-top: 8px;
+}
+.dos-impact strong { color: #a855f7; font-weight: 700; }
+
+/* Footer */
+.dos-footer {
+  border-top: 1px solid rgba(196,181,253,.08);
+  margin-top: 28px;
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dos-total-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .2em;
+  color: rgba(196,181,253,.38);
+  display: block;
+  margin-bottom: 6px;
+}
+.dos-total-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(32px,3.5vw,48px);
+  font-weight: 700;
+  background: linear-gradient(90deg,#c084fc 0%,#8b5cf6 50%,#6366f1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  display: block;
+}
+.dos-stamp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .22em;
+  color: rgba(124,58,237,.22);
+  border: 1px solid rgba(124,58,237,.14);
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-align: center;
+  line-height: 1.6;
+}
+.dos-glow {
+  position: absolute;
+  inset: -80px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,.07) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ═══ HUMAC SCORE SYNTHESIS PANEL (SR18) ═══ */
+.humac-synthesis {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: rgba(7,6,22,.82);
+  border: 1px solid rgba(124,58,237,.22);
+  border-radius: 20px;
+  padding: clamp(20px,2.8vw,36px);
+  backdrop-filter: blur(18px);
+  position: relative;
+  overflow: hidden;
+  align-self: start;
+}
+.humac-synthesis::before {
+  content:'';position:absolute;
+  top:-50px;left:-50px;right:-50px;height:140px;
+  background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.13) 0%,transparent 65%);
+  pointer-events:none;
+}
+.hs-intro { border-bottom:1px solid rgba(196,181,253,.08);padding-bottom:14px; }
+.hs-eyebrow {
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  letter-spacing:.24em;color:rgba(196,181,253,.4);display:block;margin-bottom:5px;
+}
+.hs-subtitle {
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.2vw,15px);
+  color:rgba(255,255,255,.65);line-height:1.5;
+}
+.hs-subtitle em { font-style:italic;color:rgba(196,181,253,.82); }
+
+/* 2-column force grid */
+.hs-forces-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+.hs-force {
+  background:rgba(124,58,237,.06);
+  border:1px solid rgba(124,58,237,.12);
+  border-radius:11px;padding:14px;
+  opacity:0;transform:translateY(10px);
+  transition:opacity .45s ease,transform .45s ease,border-color .4s,background .4s;
+}
+.hs-force.hf-visible {
+  opacity:1;transform:translateY(0);
+  border-color:rgba(124,58,237,.28);
+  background:rgba(124,58,237,.09);
+}
+.hs-force--wide { grid-column:1/-1; }
+.hsf-top { display:flex;justify-content:space-between;align-items:center;margin-bottom:7px; }
+.hsf-id {
+  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.18em;
+  color:rgba(168,85,247,.85);background:rgba(124,58,237,.18);
+  padding:2px 7px;border-radius:4px;
+}
+.hsf-pts { font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;color:rgba(196,181,253,.45); }
+.hsf-name {
+  font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.16em;
+  color:rgba(255,255,255,.45);margin-bottom:6px;
+}
+.hsf-metric {
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(18px,2vw,24px);font-weight:700;
+  background:linear-gradient(90deg,#c084fc,#8b5cf6);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;
+  line-height:1;margin-bottom:5px;
+}
+.hsf-desc { font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:rgba(255,255,255,.35);line-height:1.4;margin-bottom:9px; }
+.hsf-bar { height:2px;background:rgba(196,181,253,.08);border-radius:2px;overflow:hidden; }
+.hsf-fill { height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#c084fc);border-radius:2px;transition:width 1.1s cubic-bezier(.25,.46,.45,.94); }
+
+/* Score panel */
+.hs-score-panel {
+  background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.28);
+  border-radius:14px;padding:18px 20px;
+  display:flex;gap:18px;align-items:center;
+  opacity:0;transition:opacity .6s ease;
+}
+.hs-score-panel.hsp-visible { opacity:1; }
+.hsp-left { flex-shrink:0; }
+.hsp-label {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.22em;color:rgba(196,181,253,.4);display:block;margin-bottom:3px;
+}
+.hsp-display { display:flex;align-items:baseline;gap:2px;margin-bottom:5px; }
+.hsp-num {
+  font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,3vw,40px);font-weight:700;
+  background:linear-gradient(90deg,#c084fc,#8b5cf6,#6366f1);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;line-height:1;
+}
+.hsp-denom { font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(196,181,253,.4);align-self:flex-end;padding-bottom:2px; }
+.hsp-status { font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.14em;color:rgba(168,85,247,.65);display:block; }
+.hsp-right { flex:1;min-width:0; }
+.hsp-track { height:5px;background:rgba(196,181,253,.08);border-radius:5px;overflow:hidden;margin-bottom:6px; }
+.hsp-fill { height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#8b5cf6,#c084fc);border-radius:5px;transition:width 2s cubic-bezier(.25,.46,.45,.94); }
+.hsp-legend { display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.08em;color:rgba(255,255,255,.18);margin-bottom:7px; }
+.hsp-verdict { font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;color:rgba(196,181,253,.75);font-style:italic;min-height:15px; }
+
+/* ═══ MERIDIAN ENGINE STACK (SR18) ═══ */
+.meridian-stack { display:flex;flex-direction:column;gap:0;position:relative; }
+
+/* Input surface pill row */
+.ms-input {
+  background:rgba(196,181,253,.05);
+  border:1px solid rgba(196,181,253,.14);
+  border-radius:12px 12px 0 0;
+  padding:16px 20px;
+}
+.ms-input-label {
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;
+  letter-spacing:.2em;color:rgba(196,181,253,.55);
+  margin-bottom:10px;display:flex;align-items:center;gap:10px;
+}
+.ms-itag {
+  background:rgba(196,181,253,.08);border:1px solid rgba(196,181,253,.15);
+  padding:2px 8px;border-radius:4px;font-size:7px;letter-spacing:.12em;
+  color:rgba(196,181,253,.45);
+}
+.ms-params { display:flex;flex-wrap:wrap;gap:7px; }
+.ms-params span {
+  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;
+  color:rgba(255,255,255,.6);background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);padding:4px 10px;border-radius:5px;
+}
+
+/* Depth divider */
+.ms-divider {
+  border-left:1px solid rgba(124,58,237,.3);
+  border-right:1px solid rgba(124,58,237,.3);
+  background:rgba(124,58,237,.1);
+  padding:10px 20px;display:flex;align-items:center;gap:10px;
+}
+.ms-divider::before,.ms-divider::after {
+  content:'';flex:1;height:1px;background:rgba(124,58,237,.4);
+}
+.ms-divider-label {
+  font-family:'JetBrains Mono',monospace;font-size:7.5px;
+  letter-spacing:.18em;color:rgba(168,85,247,.75);white-space:nowrap;
+}
+
+/* Deep layers */
+.ms-layer {
+  border-left:1px solid rgba(124,58,237,.18);
+  border-right:1px solid rgba(124,58,237,.18);
+  border-bottom:1px solid rgba(124,58,237,.1);
+  padding:15px 20px;display:flex;gap:14px;align-items:flex-start;
+  opacity:0;transform:translateY(-8px);
+  transition:opacity .5s ease,transform .5s ease,background .4s,border-color .4s;
+}
+.ms-layer.msl-active {
+  opacity:1;transform:translateY(0);
+  background:rgba(124,58,237,.06);
+  border-left-color:rgba(124,58,237,.3);
+  border-right-color:rgba(124,58,237,.3);
+}
+.ms-layer--core.msl-active {
+  background:rgba(124,58,237,.11);
+  border-left-color:rgba(168,85,247,.45);
+  border-right-color:rgba(168,85,247,.45);
+}
+.msl-left { flex-shrink:0;padding-top:1px; }
+.msl-num {
+  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.18em;
+  color:rgba(168,85,247,.85);background:rgba(124,58,237,.18);
+  padding:3px 8px;border-radius:4px;display:block;
+}
+.msl-right { flex:1;min-width:0; }
+.msl-name {
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;
+  color:rgba(255,255,255,.78);margin-bottom:5px;
+}
+.msl-desc {
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;
+  color:rgba(255,255,255,.4);line-height:1.5;margin-bottom:9px;
+}
+.msl-bar { height:2px;background:rgba(196,181,253,.08);border-radius:2px;overflow:hidden; }
+.msl-fill {
+  height:100%;width:0%;
+  background:linear-gradient(90deg,#7c3aed,#c084fc);
+  border-radius:2px;transition:width 1.1s cubic-bezier(.25,.46,.45,.94);
+}
+.msl-active .msl-fill { width:100%; }
+.ms-layer--core .msl-fill { background:linear-gradient(90deg,#6366f1,#8b5cf6,#c084fc); }
+
+/* Output synthesis */
+.ms-output {
+  background:rgba(124,58,237,.1);
+  border:1px solid rgba(124,58,237,.28);
+  border-top:none;border-radius:0 0 12px 12px;
+  padding:18px 20px;text-align:center;
+  opacity:0;transition:opacity .6s ease,background .4s;
+}
+.ms-output.mso-active { opacity:1;background:rgba(124,58,237,.16); }
+.ms-output-arrow { font-size:13px;color:rgba(168,85,247,.55);margin-bottom:5px; }
+.ms-output-label {
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  letter-spacing:.22em;color:rgba(196,181,253,.42);margin-bottom:4px;
+}
+.ms-output-value {
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(17px,1.9vw,22px);font-weight:700;
+  background:linear-gradient(90deg,#c084fc,#8b5cf6,#6366f1);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;
+  margin-bottom:5px;display:block;
+}
+.ms-output-sub {
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;
+  color:rgba(255,255,255,.38);font-style:italic;
+}
+
+/* SR20: MERIDIAN dashboard enrichment — active context + layer signals */
+.ms-calibrate {
+  border-left:1px solid rgba(124,58,237,.3);
+  border-right:1px solid rgba(124,58,237,.3);
+  background:linear-gradient(135deg,rgba(99,102,241,.07),rgba(124,58,237,.04));
+  padding:14px 20px;border-bottom:1px solid rgba(124,58,237,.12);
+}
+.ms-cal-header {
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+.ms-cal-dot {
+  width:6px;height:6px;border-radius:50%;
+  background:#4ade80;box-shadow:0 0 8px rgba(74,222,128,.6);
+  animation:msDotPulse 2s ease-in-out infinite;flex-shrink:0;
+}
+@keyframes msDotPulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ms-cal-label {
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  letter-spacing:.2em;color:#4ade80;
+}
+.ms-cal-context {
+  display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;
+}
+.ms-cal-tag {
+  font-family:'JetBrains Mono',monospace;font-size:7.5px;
+  letter-spacing:.08em;color:rgba(196,181,253,.8);
+  background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);
+  padding:3px 8px;border-radius:4px;
+}
+.ms-cal-bar {
+  height:2px;background:rgba(99,102,241,.1);border-radius:2px;overflow:hidden;
+  position:relative;
+}
+.ms-cal-fill {
+  height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#4ade80);
+  border-radius:2px;transition:width 1.8s cubic-bezier(.25,.46,.45,.94);
+}
+.ms-cal-active .ms-cal-fill { width:88%; }
+.ms-cal-status {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.12em;color:rgba(196,181,253,.45);
+  margin-top:6px;
+}
+.msl-signals {
+  margin-top:10px;border-top:1px solid rgba(124,58,237,.1);
+  padding-top:10px;display:flex;flex-direction:column;gap:8px;
+}
+.msl-signal {
+  display:flex;align-items:flex-start;gap:8px;
+}
+.msl-signal-icon {
+  font-size:7px;color:rgba(168,85,247,.6);margin-top:2px;flex-shrink:0;
+}
+.msl-signal-body { flex:1;min-width:0; }
+.msl-signal-tag {
+  font-family:'JetBrains Mono',monospace;font-size:7.5px;
+  letter-spacing:.12em;color:rgba(196,181,253,.5);margin-bottom:2px;
+}
+.msl-signal-val {
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:11.5px;
+  color:rgba(255,255,255,.78);line-height:1.45;
+}
+.msl-signal-val em {
+  font-style:normal;color:rgba(196,181,253,.65);font-size:10.5px;
+}
+.msl-badge {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.1em;padding:2px 7px;border-radius:3px;
+  flex-shrink:0;margin-top:2px;
+}
+.msl-badge--critical { background:rgba(255,77,109,.12);color:#FF4D6D;border:1px solid rgba(255,77,109,.25); }
+.msl-badge--high    { background:rgba(255,181,71,.1);color:#FFB547;border:1px solid rgba(255,181,71,.2); }
+.msl-badge--ok      { background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.18); }
+.msl-badge--info    { background:rgba(99,102,241,.1);color:#a5b4fc;border:1px solid rgba(99,102,241,.2); }
+.ms-output-snippet {
+  margin-top:14px;padding:12px 14px;
+  background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.18);
+  border-radius:8px;border-left:3px solid #6366f1;
+}
+.ms-output-snippet-label {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.16em;color:rgba(196,181,253,.4);margin-bottom:7px;
+}
+.ms-output-snippet-text {
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:11.5px;
+  color:rgba(255,255,255,.72);line-height:1.6;font-style:italic;
+}
+.ms-output-meta {
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;
+}
+.ms-output-meta-tag {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.1em;color:rgba(165,180,252,.5);
+  background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.14);
+  padding:3px 8px;border-radius:3px;
+}
+
+/* ═══ VANTAGE DEFINITION INTERSTITIAL (SR20) ═══ */
+.vantage-def {
+  padding: 80px 6vw 90px;
+  border-top: 1px solid rgba(196,181,253,.08);
+  border-bottom: 1px solid rgba(196,181,253,.08);
+  background: linear-gradient(180deg,rgba(99,102,241,.03),rgba(5,4,16,0) 60%);
+  position: relative;
+  overflow: hidden;
+}
+.vantage-def::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(196,181,253,.25),transparent);
+}
+.vd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7vw;
+  align-items: center;
+  margin-bottom: 72px;
+}
+.vd-copy .eyebrow { margin-bottom: 18px; }
+/* "What Vantage is" — bumped size/weight so it reads as a real section
+   label next to the much larger headline below it, with proper
+   breathing room instead of the cramped 18px shared by every eyebrow
+   on the page. The gradient is already set inline in the HTML; making
+   the text bigger is what actually makes that gradient visible across
+   more than a couple of characters. */
+#what .vd-copy .eyebrow {
+  font-size: clamp(16px, 1.7vw, 21px) !important;
+  font-weight: 700 !important;
+  letter-spacing: .1em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 32px !important;
+  filter: drop-shadow(0 0 12px rgba(139,92,246,.4));
+}
+.vd-copy h2 {
+  font: 700 clamp(28px,3.6vw,48px)/1.1 'Cormorant Garamond',serif;
+  letter-spacing: -.01em;
+  margin: 0 0 28px;
+  color: #f4f3ff;
+}
+.vd-copy h2 em {
+  font-style: italic;
+  color: #c4b5fd;
+}
+.vd-body p {
+  font-size: 14px;
+  color: rgba(244,243,255,.62);
+  line-height: 1.85;
+  margin: 0 0 16px;
+}
+.vd-body p:last-child { margin-bottom: 0; }
+.vd-body p strong {
+  color: rgba(244,243,255,.88);
+  font-weight: 600;
+}
+.vd-about-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  font: 700 12px 'Bricolage Grotesque',sans-serif;
+  letter-spacing: .08em;
+  text-decoration: none;
+  padding: 11px 22px;
+  border-radius: 8px;
+  background: linear-gradient(135deg,#6366f1,#7c3aed);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(99,102,241,.4);
+  transition: opacity .2s, transform .2s;
+}
+.vd-about-cta:hover { opacity: .85; transform: translateY(-1px); }
+
+/* Scope diagram */
+.vd-visual {
+  position: relative;
+}
+.vd-scope {
+  width: 100%;
+  border: 1px solid rgba(196,181,253,.1);
+  border-radius: 16px;
+  background: rgba(13,11,30,.72);
+  padding: 28px 24px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.vd-scope::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(99,102,241,.4),transparent);
+}
+.vd-scope-label {
+  font: 8.5px 'JetBrains Mono',monospace;
+  letter-spacing: .2em;
+  color: rgba(196,181,253,.45);
+  margin-bottom: 20px;
+}
+.vd-scope-svg { width: 100%; display: block; }
+.vd-scope-caps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 18px;
+}
+.vd-scope-cap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(99,102,241,.18);
+  border-radius: 7px;
+  background: rgba(99,102,241,.06);
+}
+.vd-scope-cap-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #6366f1;
+  box-shadow: 0 0 8px rgba(99,102,241,.5);
+  flex-shrink: 0;
+}
+.vd-scope-cap span {
+  font: 10px 'JetBrains Mono',monospace;
+  letter-spacing: .08em;
+  color: rgba(196,181,253,.72);
+}
+.vd-scope-outside {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.vd-scope-out-label {
+  font: 8px 'JetBrains Mono',monospace;
+  letter-spacing: .14em;
+  color: rgba(255,255,255,.22);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.vd-scope-out-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.vd-scope-out-tag {
+  font: 8px 'JetBrains Mono',monospace;
+  letter-spacing: .1em;
+  color: rgba(255,255,255,.2);
+  border: 1px solid rgba(255,255,255,.07);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+/* ── Coverage-scope animation — gated behind vd-scope-in (added on
+   scroll-in) and vd-scope-live (added ~1.4s later, once settled) ── */
+.vd-scope-zone { opacity: 0; transition: opacity .8s ease; }
+.vd-scope-in .vd-scope-zone { opacity: 1; }
+.vd-scope-live .vd-scope-zone[fill="none"] { animation: vdScopeZonePulse 2.6s ease-in-out infinite; }
+@keyframes vdScopeZonePulse { 0%,100% { stroke-opacity: .35; } 50% { stroke-opacity: .8; } }
+.vd-scope-dot { opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(.3); transition: opacity .5s ease, transform .5s ease; }
+.vd-scope-in .vd-scope-dot { opacity: .85; transform: scale(1); }
+.vd-scope-end { opacity: 0; transition: opacity .6s ease .7s; }
+.vd-scope-in .vd-scope-end { opacity: 1; }
+.vd-scope-signal { fill: #fff; opacity: 0; filter: drop-shadow(0 0 5px #c4b5fd) drop-shadow(0 0 10px #6366f1); }
+.vd-scope-live .vd-scope-signal { opacity: .95; animation: vdScopeTravel 3.2s linear infinite; }
+@keyframes vdScopeTravel { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+.vd-scope-cap, .vd-scope-out-tag {
+  opacity: 0; transform: translateY(6px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.vd-scope-in .vd-scope-cap, .vd-scope-in .vd-scope-out-tag { opacity: 1; transform: none; }
+.vd-scope-caps .vd-scope-cap:nth-child(1) { transition-delay: .1s; }
+.vd-scope-caps .vd-scope-cap:nth-child(2) { transition-delay: .18s; }
+.vd-scope-caps .vd-scope-cap:nth-child(3) { transition-delay: .26s; }
+.vd-scope-caps .vd-scope-cap:nth-child(4) { transition-delay: .34s; }
+.vd-scope-caps .vd-scope-cap:nth-child(5) { transition-delay: .42s; }
+.vd-scope-caps .vd-scope-cap:nth-child(6) { transition-delay: .5s; }
+.vd-scope-out-tags .vd-scope-out-tag:nth-child(1) { transition-delay: .6s; }
+.vd-scope-out-tags .vd-scope-out-tag:nth-child(2) { transition-delay: .66s; }
+.vd-scope-out-tags .vd-scope-out-tag:nth-child(3) { transition-delay: .72s; }
+.vd-scope-out-tags .vd-scope-out-tag:nth-child(4) { transition-delay: .78s; }
+.vd-scope-out-tags .vd-scope-out-tag:nth-child(5) { transition-delay: .84s; }
+
+/* ── VANTAGE coverage radar — replaces the old linear timeline entirely.
+   VANTAGE sits at the core. Six covered capabilities orbit inside a
+   coverage boundary, connected to the core by spokes. Five excluded
+   things (hiring, L&D, payroll, HRIS, comp benchmarking) sit OUTSIDE
+   that boundary, disconnected, each marked with an X. A radar beam
+   sweeps continuously through the whole thing. Gated behind vd-radar-in,
+   added on scroll-in. ── */
+.vd-radar { text-align: center; }
+.vd-radar-svg { width: 100%; max-width: 440px; display: block; margin: 0 auto; }
+
+.vd-radar-outerring { transform-origin: 230px 230px; animation: vdRadarSlowSpin 70s linear infinite; }
+@keyframes vdRadarSlowSpin { to { transform: rotate(360deg); } }
+
+.vd-radar-boundary, .vd-radar-boundary-fill { opacity: 0; transition: opacity 1.1s ease; }
+.vd-radar-in .vd-radar-boundary, .vd-radar-in .vd-radar-boundary-fill { opacity: 1; }
+
+.vd-radar-sweep-group { opacity: 0; transform-origin: 230px 230px; }
+.vd-radar-in .vd-radar-sweep-group { opacity: 1; animation: vdRadarSpin 5s linear infinite; }
+@keyframes vdRadarSpin { to { transform: rotate(360deg); } }
+.vd-radar-beam { stroke: #c4b5fd; stroke-width: 1.6; filter: drop-shadow(0 0 6px #8b5cf6) drop-shadow(0 0 14px #6366f1); }
+.vd-radar-trail { stroke: #6366f1; stroke-width: 12; opacity: .1; }
+.vd-radar-trail-2 { stroke-width: 7; opacity: .16; }
+
+.vd-radar-spoke { stroke: rgba(196,181,253,.16); stroke-width: 1; opacity: 0; transition: opacity 1s ease .3s; }
+.vd-radar-in .vd-radar-spoke { opacity: 1; }
+
+.vd-radar-hub-pulse { fill: none; stroke: #c4b5fd; stroke-width: 1.2; opacity: 0; }
+.vd-radar-in .vd-radar-hub-pulse { animation: vdRadarHubPulse 2.4s ease-out infinite; }
+@keyframes vdRadarHubPulse { 0% { r: 40; opacity: .5; } 100% { r: 72; opacity: 0; } }
+.vd-radar-hub {
+  fill: url(#vdRadarCore); stroke: #c4b5fd; stroke-width: 1.4;
+  opacity: 0; transform-origin: 230px 230px; transform: scale(.6);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.vd-radar-in .vd-radar-hub { opacity: 1; transform: scale(1); }
+.vd-radar-hub-t { font: 700 13px 'Space Grotesk',sans-serif; fill: #fff; text-anchor: middle; letter-spacing: .02em; }
+.vd-radar-hub-sub { font: 7px 'JetBrains Mono',monospace; fill: rgba(255,255,255,.7); text-anchor: middle; letter-spacing: .12em; }
+
+.vd-radar-node circle {
+  fill: rgba(99,102,241,.1); stroke: rgba(196,181,253,.4); stroke-width: 1.2;
+  opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(.3);
+  transition: opacity .55s ease, transform .55s ease;
+}
+.vd-radar-in .vd-radar-node circle { opacity: 1; transform: scale(1); animation: vdRadarNodeGlow 3s ease-in-out infinite; }
+@keyframes vdRadarNodeGlow { 0%,100% { filter: drop-shadow(0 0 0 rgba(99,102,241,0)); } 50% { filter: drop-shadow(0 0 8px rgba(99,102,241,.6)); } }
+.vd-radar-node-t { font: 700 8.5px 'JetBrains Mono',monospace; fill: #c4b5fd; text-anchor: middle; letter-spacing: .03em; opacity: 0; transition: opacity .55s ease; }
+.vd-radar-in .vd-radar-node-t { opacity: 1; }
+
+.vd-radar-out circle {
+  fill: rgba(255,255,255,.02); stroke: rgba(255,255,255,.12); stroke-width: 1;
+  opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(.5);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.vd-radar-in .vd-radar-out circle { opacity: 1; transform: scale(1); }
+.vd-radar-out-x { stroke: rgba(255,255,255,.25); stroke-width: 1; opacity: 0; transition: opacity .5s ease .1s; }
+.vd-radar-in .vd-radar-out-x { opacity: 1; }
+.vd-radar-out-t { font: 7px 'JetBrains Mono',monospace; fill: rgba(255,255,255,.28); text-anchor: middle; letter-spacing: .05em; opacity: 0; transition: opacity .5s ease; }
+.vd-radar-in .vd-radar-out-t { opacity: 1; }
+
+.vd-radar-legend {
+  max-width: 520px;
+  margin: 32px auto 0;
+  text-align: center;
+}
+.vd-radar-legend-main {
+  font: 500 clamp(17px,1.78vw,23px)/1.5 'Cormorant Garamond',serif;
+  font-size: clamp(17px,1.78vw,23px) !important; /* overrides the global p rule which caps both lines at 20px */
+  font-style: italic;
+  letter-spacing: -.005em;
+  margin: 0;
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.vd-radar-legend-sub {
+  margin: 10px 0 0;
+  font: 500 clamp(17px,2vw,22px)/1.5 'Plus Jakarta Sans',sans-serif;
+  letter-spacing: .01em;
+  color: rgba(244,243,255,.42);
+}
+
+/* Four pillars */
+.vd-pillars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 52px;
+}
+.vd-pillar {
+  padding: 24px;
+  border: 1px solid rgba(196,181,253,.1);
+  border-radius: 14px;
+  background: rgba(13,11,30,.6);
+  position: relative;
+  overflow: hidden;
+  transition: border-color .3s, background .3s;
+}
+.vd-pillar:hover {
+  border-color: rgba(99,102,241,.3);
+  background: rgba(13,11,30,.85);
+}
+.vd-pillar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  border-radius: 14px 14px 0 0;
+}
+.vd-pillar:nth-child(1)::before { background: linear-gradient(90deg,#6366f1,#818cf8); }
+.vd-pillar:nth-child(2)::before { background: linear-gradient(90deg,#7c3aed,#a78bfa); }
+.vd-pillar:nth-child(3)::before { background: linear-gradient(90deg,#0ea5e9,#38bdf8); }
+.vd-pillar:nth-child(4)::before { background: linear-gradient(90deg,#10b981,#34d399); }
+.vd-pillar-num {
+  font: 8px 'JetBrains Mono',monospace;
+  letter-spacing: .18em;
+  color: rgba(196,181,253,.4);
+  margin-bottom: 10px;
+}
+.vd-pillar-h {
+  font: 600 15px 'Bricolage Grotesque',sans-serif;
+  color: rgba(244,243,255,.88);
+  margin: 0 0 12px;
+  line-height: 1.35;
+}
+.vd-pillar-p {
+  font: 13px 'Plus Jakarta Sans',sans-serif;
+  color: rgba(244,243,255,.5);
+  line-height: 1.75;
+  margin: 0;
+}
+
+/* ── Four Pillars — mini visualizations, animated on scroll-in ──────────
+   Each reuses its card's own accent color (indigo/violet/cyan/green,
+   already set via .vd-pillar:nth-child(n)::before above). The class
+   vd-viz-in is added by JS once the card scrolls into view; every
+   animated piece below is gated behind that class so nothing moves
+   until the visitor actually reaches it. */
+.vd-viz {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(196,181,253,.1);
+}
+
+/* 01 / LAW — 29 laws consolidating into 4 Codes */
+.vd-law-bar { display: flex; align-items: center; gap: 14px; }
+.vd-law-old, .vd-law-new {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 10px 18px; border-radius: 10px;
+  border: 1px solid rgba(196,181,253,.14);
+  background: rgba(255,255,255,.02);
+  opacity: 0; transform: translateX(-14px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.vd-law-new { transform: translateX(14px); transition-delay: .3s; border-color: rgba(99,102,241,.3); background: rgba(99,102,241,.07); }
+.vd-viz-in .vd-law-old, .vd-viz-in .vd-law-new { opacity: 1; transform: none; }
+.vd-law-num { font: 700 26px 'Space Grotesk',sans-serif; color: rgba(244,243,255,.55); }
+.vd-law-new .vd-law-num { color: #818cf8; }
+.vd-law-lbl { font: 8px 'JetBrains Mono',monospace; letter-spacing: .1em; color: rgba(196,181,253,.45); }
+.vd-law-arrow { font-size: 18px; color: rgba(196,181,253,.35); opacity: 0; transition: opacity .5s ease .55s; }
+.vd-viz-in .vd-law-arrow { opacity: 1; }
+.vd-law-date { margin-top: 12px; font: 8px 'JetBrains Mono',monospace; letter-spacing: .1em; color: rgba(196,181,253,.4); }
+
+/* 02 / FINANCIAL — three animated exposure bars */
+.vd-fin-row { display: grid; grid-template-columns: 128px 1fr 56px; align-items: center; gap: 10px; margin-bottom: 11px; }
+.vd-fin-row:last-child { margin-bottom: 0; }
+.vd-fin-lbl { font: 10px 'JetBrains Mono',monospace; letter-spacing: .03em; color: rgba(196,181,253,.5); }
+.vd-fin-track { height: 5px; background: rgba(255,255,255,.06); border-radius: 3px; overflow: hidden; }
+.vd-fin-fill { height: 100%; width: 0; background: linear-gradient(90deg,#7c3aed,#a78bfa); border-radius: 3px; transition: width 1.1s cubic-bezier(.16,1,.3,1); }
+.vd-fin-val { font: 700 12px 'Space Grotesk',sans-serif; color: #a78bfa; text-align: right; }
+
+/* 03 / INFLUENCE — stakeholder radial diagram */
+.vd-inf-svg { width: 100%; max-width: 260px; display: block; margin: 4px auto 0; }
+.vd-inf-line { stroke: rgba(56,189,248,.35); stroke-width: 1.4; stroke-dasharray: 150; stroke-dashoffset: 150; fill: none; transition: stroke-dashoffset 1s ease; }
+.vd-viz-in .vd-inf-line { stroke-dashoffset: 0; }
+.vd-inf-center { fill: rgba(56,189,248,.16); stroke: #38bdf8; stroke-width: 1.4; opacity: 0; transform: scale(.5); transform-origin: 130px 80px; transition: opacity .5s ease .35s, transform .5s ease .35s; }
+.vd-viz-in .vd-inf-center { opacity: 1; transform: scale(1); }
+.vd-inf-center-t { font: 7px 'JetBrains Mono',monospace; fill: #f4f3ff; text-anchor: middle; letter-spacing: .04em; }
+.vd-inf-node { fill: #050410; stroke: rgba(56,189,248,.5); stroke-width: 1.4; opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(.4); transition: opacity .5s ease .55s, transform .5s ease .55s; }
+.vd-viz-in .vd-inf-node { opacity: 1; transform: scale(1); }
+.vd-inf-node-t { font: 6px 'JetBrains Mono',monospace; fill: rgba(196,181,253,.55); text-anchor: middle; letter-spacing: .03em; }
+
+/* 04 / RECORD — a growing ledger of documented decisions */
+.vd-rec-track { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 12px; }
+.vd-rec-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(196,181,253,.14); opacity: 0; transform: scale(.3); transition: opacity .4s ease, transform .4s ease, background .4s ease; }
+.vd-viz-in .vd-rec-dot { opacity: 1; transform: scale(1); background: linear-gradient(135deg,#10b981,#34d399); }
+.vd-rec-counter { font: 9px 'JetBrains Mono',monospace; letter-spacing: .08em; color: rgba(196,181,253,.5); }
+.vd-rec-counter b { color: #34d399; font: 700 13px 'Space Grotesk',sans-serif; }
+
+/* ── Ambient "alive" motion — kicks in via vd-viz-live, added ~1.3s
+   after vd-viz-in once the entrance transition has settled, so nothing
+   loops before the card has actually finished revealing itself. ── */
+
+/* 01 / LAW — particles flowing old→new, winner glow pulse, scanline sweep */
+.vd-law-bar { position: relative; overflow: visible; }
+.vd-law-particle {
+  position: absolute; top: 50%; width: 4px; height: 4px; border-radius: 50%;
+  background: #a5b4fc; box-shadow: 0 0 10px #6366f1; opacity: 0;
+  transform: translateY(-50%);
+}
+.vd-viz-live .vd-law-particle { animation: vdLawFlow 2.6s linear infinite; }
+.vd-law-particle:nth-child(2) { animation-delay: .9s; }
+.vd-law-particle:nth-child(3) { animation-delay: 1.8s; }
+@keyframes vdLawFlow {
+  0%   { left: 18%; opacity: 0; transform: translateY(-50%) scale(.6); }
+  12%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { left: 78%; opacity: 0; transform: translateY(-50%) scale(1.3); }
+}
+.vd-viz-live .vd-law-new { animation: vdLawGlow 2.4s ease-in-out infinite; }
+@keyframes vdLawGlow { 0%,100% { box-shadow: none; } 50% { box-shadow: 0 0 28px rgba(99,102,241,.5); } }
+.vd-law-scan {
+  position: absolute; inset: 0; border-radius: 10px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(196,181,253,.16), transparent);
+  transform: translateX(-120%); opacity: 0;
+}
+.vd-viz-live .vd-law-scan { animation: vdScanSweep 3.4s ease-in-out infinite 1s; }
+@keyframes vdScanSweep {
+  0%   { transform: translateX(-120%); opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { transform: translateX(120%); opacity: 0; }
+  100% { transform: translateX(120%); opacity: 0; }
+}
+
+/* 02 / FINANCIAL — traveling spark per bar + shimmer on the fill */
+.vd-fin-track { position: relative; overflow: visible; }
+.vd-fin-spark {
+  position: absolute; top: 50%; width: 6px; height: 6px; border-radius: 50%;
+  background: #fff; box-shadow: 0 0 10px #a78bfa, 0 0 20px #7c3aed;
+  transform: translateY(-50%); opacity: 0; left: 0;
+}
+.vd-viz-live .vd-fin-spark { animation: vdFinSpark 2.2s ease-in-out infinite; }
+.vd-fin-row:nth-child(2) .vd-fin-spark { animation-delay: .5s; }
+.vd-fin-row:nth-child(3) .vd-fin-spark { animation-delay: 1s; }
+@keyframes vdFinSpark {
+  0%   { left: 0%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { left: var(--fin-w,60%); opacity: 0; }
+}
+.vd-viz-live .vd-fin-fill { animation: vdFinShimmer 2.6s ease-in-out infinite 1.2s; }
+@keyframes vdFinShimmer { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.4); } }
+
+/* 03 / INFLUENCE — packets traveling the connector lines, center pulse rings */
+.vd-inf-packet { fill: #7dd3fc; opacity: 0; }
+.vd-viz-live .vd-inf-packet { opacity: .9; animation: vdInfTravel 2s linear infinite; }
+@keyframes vdInfTravel { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+.vd-inf-pulse { fill: none; stroke: #38bdf8; stroke-width: 1.4; opacity: 0; }
+.vd-viz-live .vd-inf-pulse { animation: vdInfPulse 2.4s ease-out infinite; }
+@keyframes vdInfPulse { 0% { r: 17; opacity: .6; } 100% { r: 42; opacity: 0; } }
+
+/* 04 / RECORD — live pulsing dot, periodic re-flash on a random dot, scanline */
+.vd-rec-live {
+  display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+  background: #34d399; margin-right: 6px; vertical-align: middle;
+  opacity: 0;
+}
+.vd-viz-live .vd-rec-live { opacity: 1; animation: vdRecLivePulse 1.8s ease-in-out infinite; }
+@keyframes vdRecLivePulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.6); } }
+.vd-rec-dot.vd-rec-flash { animation: vdRecFlash .9s ease; }
+@keyframes vdRecFlash {
+  0%   { transform: scale(1); box-shadow: none; }
+  40%  { transform: scale(1.7); box-shadow: 0 0 14px #34d399; }
+  100% { transform: scale(1); box-shadow: none; }
+}
+.vd-rec-track { position: relative; }
+.vd-rec-scan {
+  position: absolute; inset: -4px -8px; pointer-events: none; border-radius: 6px;
+  background: linear-gradient(90deg, transparent, rgba(52,211,153,.14), transparent);
+  transform: translateX(-120%); opacity: 0;
+}
+.vd-viz-live .vd-rec-scan { animation: vdScanSweep 4s ease-in-out infinite 1.5s; }
+
+/* Closing line */
+.vd-close {
+  text-align: center;
+  font: 500 clamp(24px,3vw,40px)/1.35 'Cormorant Garamond',serif;
+  color: rgba(244,243,255,.75);
+  max-width: 820px;
+  margin: 0 auto;
+  font-style: italic;
+  letter-spacing: -.01em;
+}
+.vd-close em { color: #c4b5fd; font-style: italic; }
+
+@media(max-width:900px){
+  .vd-grid { grid-template-columns: 1fr; gap: 40px; }
+  .vd-pillars { grid-template-columns: 1fr; }
+}
+
+/* Hero about-cta button glow variant */
+.hero-about-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 20px 0;
+  font: 600 11px 'JetBrains Mono',monospace;
+  letter-spacing: .12em;
+  color: rgba(196,181,253,.65);
+  text-decoration: none;
+  border: 1px solid rgba(196,181,253,.18);
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: color .2s, border-color .2s;
+}
+.hero-about-link:hover { color: #c4b5fd; border-color: rgba(196,181,253,.4); }
+
+/* Vertical breathing room for the crowded bottom-of-hero cluster —
+   CTA buttons → prologue/about links → foot tags. These were all
+   sitting nearly flush against each other. */
+.hero-actions { margin: 0 0 40px !important; }
+#prologue-back { margin: 32px 16px 32px 0 !important; }
+.hero-foot { margin-top: 40px !important; }
+
+/* Vantage definition → sections bridge */
+.vd-bridge {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin: 64px auto 0;
+  max-width: 860px;
+  padding: 0 2vw;
+}
+.vd-bridge-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,.3), transparent);
+}
+.vd-bridge-center {
+  text-align: center;
+  flex-shrink: 0;
+}
+.vd-bridge-label {
+  display: block;
+  font: 600 8.5px 'JetBrains Mono',monospace;
+  letter-spacing: .22em;
+  color: rgba(196,181,253,.4);
+  margin-bottom: 7px;
+}
+.vd-bridge-desc {
+  font: 13px 'Plus Jakarta Sans',sans-serif;
+  color: rgba(244,243,255,.38);
+  letter-spacing: .01em;
+  white-space: nowrap;
+}
+.vd-bridge-desc em {
+  font-style: normal;
+  color: rgba(196,181,253,.5);
+}
+
+/* ── The VANTAGE hub — four layers converging on one brand ───────────────
+   Replaces the old plain-text "WHAT FOLLOWS" list. The point this makes
+   visually: MERIDIAN/ARIA/Humacity/Vantage Record aren't four things to
+   learn in sequence — they're four things happening at once, all
+   feeding into one system. VANTAGE is the biggest, brightest element
+   in the diagram on purpose; everything else is a satellite of it. */
+.vd-hub {
+  text-align: center;
+  margin: 60px auto 0;
+  padding: 44px 20px 8px;
+  max-width: 720px;
+  border-top: 1px solid rgba(196,181,253,.1);
+}
+.vd-hub-label {
+  font: 600 9px 'JetBrains Mono',monospace;
+  letter-spacing: .22em;
+  color: rgba(196,181,253,.45);
+  margin-bottom: 26px;
+}
+.vd-hub-svg { width: 100%; max-width: 620px; display: block; margin: 0 auto; }
+
+/* Per-layer color identity — cyan (understand), violet-pink (think),
+   emerald (quantify), amber (remember) — so the diagram reads as four
+   distinct signals converging, not one flat monochrome shape. */
+.vd-hub-node[data-n="1"] circle, .vd-hub-line[data-n="1"], .vd-hub-packet[data-n="1"] { --hc: #38bdf8; }
+.vd-hub-node[data-n="2"] circle, .vd-hub-line[data-n="2"], .vd-hub-packet[data-n="2"] { --hc: #e879f9; }
+.vd-hub-node[data-n="3"] circle, .vd-hub-line[data-n="3"], .vd-hub-packet[data-n="3"] { --hc: #34d399; }
+.vd-hub-node[data-n="4"] circle, .vd-hub-line[data-n="4"], .vd-hub-packet[data-n="4"] { --hc: #fbbf24; }
+
+.vd-hub-outerring { transform-origin: 300px 160px; opacity: 0; transition: opacity 1.2s ease; }
+.vd-hub-in .vd-hub-outerring { opacity: 1; }
+.vd-hub-live .vd-hub-outerring { animation: vdHubSlowSpin 50s linear infinite; }
+@keyframes vdHubSlowSpin { to { transform: rotate(360deg); } }
+
+/* Curved flowing connectors — a bezier bow instead of a straight
+   spoke, all curving the same rotational way for a pinwheel feel
+   rather than a flat rigid diagram. */
+.vd-hub-line { stroke: var(--hc, rgba(196,181,253,.3)); stroke-width: 1.3; opacity: 0; stroke-linecap: round; transition: opacity 1s ease; filter: drop-shadow(0 0 3px var(--hc, transparent)); }
+.vd-hub-in .vd-hub-line { opacity: .55; }
+.vd-hub-line[data-n="2"] { transition-delay: .1s; }
+.vd-hub-line[data-n="3"] { transition-delay: .2s; }
+.vd-hub-line[data-n="4"] { transition-delay: .3s; }
+
+.vd-hub-ring {
+  fill: none; stroke: rgba(196,181,253,.32); stroke-width: 1;
+  opacity: 0; transform-origin: 300px 160px; transform: scale(.7);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.vd-hub-in .vd-hub-ring { opacity: 1; transform: scale(1); }
+.vd-hub-core {
+  fill: url(#vdHubGrad); stroke: #c4b5fd; stroke-width: 1.3;
+  opacity: 0; transform-origin: 300px 160px; transform: scale(.6);
+  transition: opacity .7s ease .15s, transform .7s ease .15s;
+}
+.vd-hub-in .vd-hub-core { opacity: 1; transform: scale(1); }
+.vd-hub-core-t { font: 700 16px 'Space Grotesk',sans-serif; fill: #fff; text-anchor: middle; letter-spacing: .02em; }
+.vd-hub-core-sub { font: 7px 'JetBrains Mono',monospace; fill: rgba(255,255,255,.7); text-anchor: middle; letter-spacing: .12em; }
+
+.vd-hub-node circle {
+  fill: #0d0b1e; stroke: var(--hc, rgba(196,181,253,.4)); stroke-width: 1.3;
+  opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(.4);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.vd-hub-in .vd-hub-node circle { opacity: 1; transform: scale(1); }
+.vd-hub-live .vd-hub-node circle { animation: vdHubNodeGlow 3.2s ease-in-out infinite; }
+@keyframes vdHubNodeGlow { 0%,100% { filter: drop-shadow(0 0 0 transparent); } 50% { filter: drop-shadow(0 0 9px var(--hc, #6366f1)); } }
+.vd-hub-node[data-n="2"] circle { transition-delay: .15s; }
+.vd-hub-node[data-n="3"] circle { transition-delay: .3s; }
+.vd-hub-node[data-n="4"] circle { transition-delay: .45s; }
+/* Continuous gentle drift once settled — nothing on this diagram sits
+   perfectly still, which is what read as a static, dated org-chart. */
+.vd-hub-live .vd-hub-node { animation: vdHubFloat 4.4s ease-in-out infinite; }
+.vd-hub-node[data-n="2"] { animation-delay: .6s !important; animation-duration: 5s !important; }
+.vd-hub-node[data-n="3"] { animation-delay: 1.2s !important; animation-duration: 4.7s !important; }
+.vd-hub-node[data-n="4"] { animation-delay: 1.8s !important; animation-duration: 5.3s !important; }
+@keyframes vdHubFloat { 0%,100% { transform: translate(0,0); } 50% { transform: translate(4px,-5px); } }
+.vd-hub-node-t1 { font: 700 9px 'JetBrains Mono',monospace; fill: #f4f3ff; text-anchor: middle; letter-spacing: .07em; }
+.vd-hub-node-t2 { font: 7px 'JetBrains Mono',monospace; fill: rgba(244,243,255,.45); text-anchor: middle; letter-spacing: .04em; }
+.vd-hub-packet { fill: var(--hc, #a78bfa); opacity: 0; filter: drop-shadow(0 0 4px var(--hc, #a78bfa)); }
+.vd-hub-live .vd-hub-packet { opacity: .95; animation: vdHubTravel 2.2s linear infinite; }
+@keyframes vdHubTravel { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+.vd-hub-pulse { fill: none; stroke: #c4b5fd; stroke-width: 1.2; opacity: 0; }
+.vd-hub-live .vd-hub-pulse-a { animation: vdHubPulse 2.8s ease-out infinite; }
+.vd-hub-live .vd-hub-pulse-b { animation: vdHubPulse 2.8s ease-out infinite 1.4s; }
+@keyframes vdHubPulse { 0% { r: 46; opacity: .5; } 100% { r: 90; opacity: 0; } }
+.vd-hub-copy {
+  margin-top: 30px;
+  font: 14px 'Plus Jakarta Sans',sans-serif;
+  color: rgba(244,243,255,.5);
+  line-height: 1.8;
+  max-width: 560px;
+  margin-left: auto; margin-right: auto;
+}
+.vd-hub-copy strong { color: #c4b5fd; font-weight: 600; }
+@media (max-width: 640px) {
+  .vd-hub-node-t2 { display: none; }
+}
+
+/* Hero copy — one consistent typeface (Cormorant Garamond) across every
+   line in the hero stack, but a real size hierarchy instead of flat
+   tiers: small intro lines, a medium build line, a quiet aside, a big
+   climax (the accent lines), a medium CTA line, and a small closing
+   paragraph. This is the arc a premium SaaS hero actually reads in —
+   not everything the same size. */
+.hero-tagline {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: .01em !important;
+  font-size: clamp(19px,2vw,26px) !important;
+  color: rgba(196,181,253,.72) !important;
+}
+.hero-tagline em {
+  font-style: normal !important;
+  font-weight: 600 !important;
+  color: rgba(244,243,255,.92) !important;
+}
+.hero-kicker {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: normal !important; /* SR26: user explicitly does not want this italicized */
+  font-weight: 400 !important;
+  letter-spacing: .01em !important;
+  /* font-size unified in SR24 master block — see end of inline CSS */
+  color: rgba(255,255,255,.5) !important;
+}
+.hero-deck {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: normal !important;
+  color: #c4b5fd !important;
+}
+/* "Every HR professional has had that 9 pm moment." — the build line.
+   Bigger than the intro lines, purple gradient, but well short of the
+   climax size below it. */
+.hero-title .line.dim:not(.hero-context) {
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+/* "You are HR for everyone." / "Who is HR for you?" — the climax.
+   The biggest text on the page; everything before it has been
+   building to this. */
+/* .hero-title .line.accent — size now inherits base; colour + weight differentiate */
+/* "Enter VANTAGE." — now part of the unified hero type scale (SR25).
+   font-size defined in the master block at the end of inline CSS. */
+/* Gradient has to go on the individual typed spans (heText/heVantage/
+   heDot), not the #heroEnter wrapper itself — the wrapper holds no
+   direct text of its own (it's all in these children), so a
+   background-clip:text on the parent alone would clip to nothing. */
+/* SR27: the 3-stop gradient was being independently re-clipped by each
+   of these three short spans (Enter / VANTAGE / .), so each one cycled
+   through the FULL purple->indigo->pink range on its own — the visual
+   result was every letter looking individually gradient-saturated, busy
+   and overdone. A single flat colour (matching the lavender already used
+   for climax accents elsewhere) reads as calm and intentional instead,
+   while the existing .hero-enter text-shadow glow still gives it the
+   CTA-weight presence it needs. */
+#heText, #heVantage, #heDot {
+  background: none !important;
+  color: #c4b5fd !important;
+  -webkit-text-fill-color: #c4b5fd !important;
+}
+
+/* Humac Score — enriched 3-metric panel */
+.hsp-trio {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+.hsp-metric {
+  flex: 1;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hsp-metric--primary { flex: 1.4; }
+.hsp-divider-v {
+  width: 1px;
+  background: rgba(196,181,253,.1);
+  flex-shrink: 0;
+  margin: 10px 0;
+}
+.hsp-mlabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .14em;
+  color: rgba(196,181,253,.4);
+  display: block;
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+.hsp-mval { display: flex; align-items: flex-end; gap: 4px; }
+.hsp-num--adj {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(28px,3vw,40px);
+  font-weight: 700;
+  background: linear-gradient(90deg,#a78bfa,#6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+.hsp-traj { align-items: baseline; gap: 3px; }
+.hsp-traj-arrow {
+  font-size: 18px;
+  color: #34d399;
+  line-height: 1;
+}
+.hsp-num--traj {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(26px,2.8vw,38px);
+  font-weight: 700;
+  color: #34d399;
+  -webkit-text-fill-color: #34d399 !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  line-height: 1;
+}
+.hsp-traj-unit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(52,211,153,.6);
+}
+.hsp-mdesc {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11px;
+  color: rgba(255,255,255,.38);
+  line-height: 1.4;
+}
+.hsp-mfooter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .12em;
+  color: rgba(196,181,253,.4);
+  margin-top: 2px;
+}
+.hsp-tagline {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,.42);
+  font-style: italic;
+  text-align: center;
+  padding: 12px 20px 16px;
+  border-top: 1px solid rgba(196,181,253,.07);
+  margin: 0;
+  min-height: 18px;
+}
+/* Fix 3: mobile score panel — stack trio + tagline vertically.
+   On desktop, hs-score-panel is a flex ROW (trio left, tagline right).
+   On mobile the trio fills all horizontal space and the tagline is
+   squeezed to zero width — completely invisible. Column layout fixes it. */
+@media (max-width: 900px) {
+  .hs-score-panel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+  .hsp-tagline {
+    border-top: 1px solid rgba(196,181,253,.07);
+    border-left: none;
+    padding: 12px 16px 14px;
+    font-size: 11px;
+  }
+}
+@media (max-width: 560px) {
+  .hsp-metric { padding: 12px 10px; }
+  .hsp-mlabel { font-size: 6.5px; letter-spacing: .1em; }
+  .hsp-trio { gap: 0; }
+}
+
+/* Fix: h1 oldstyle numerals → lining (9 sits on baseline, not descending) */
+.hero-title, .hero-title span {
+  font-variant-numeric: lining-nums !important;
+  font-feature-settings: "lnum" 1 !important;
+}
+
+
+/* Hero urgency interlude — the quiet aside between the build line and
+   the climax (see the hierarchy comment in the consolidated hero-copy
+   sizing block above). Deliberately small and quiet, not a second
+   headline — that's what made it wrap awkwardly and look oversized. */
+.hero-context {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-size: clamp(18px,1.9vw,24px) !important;
+  font-weight: 400 !important;
+  opacity: 1 !important;
+  margin: 0 !important; /* SR30: old 40px/36px removed — SR29's margin-top:32px is the single source of truth for hero-title spacing now */
+  background: none !important;
+  -webkit-text-fill-color: rgba(196,181,253,0.90) !important;
+  color: rgba(196,181,253,0.90) !important;
+}
+
+/* "Enter Vantage." — typewriter + blink system */
+.hero-enter {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-size: clamp(20px,2.2vw,28px) !important;
+  font-weight: 700 !important;
+  color: rgba(196,181,253,.92) !important;
+  letter-spacing: .04em !important;
+  margin: 16px 0 8px !important;
+  opacity: 1 !important;
+  text-shadow: 0 0 18px rgba(196,181,253,.65),0 0 40px rgba(124,58,237,.4),0 0 70px rgba(124,58,237,.2) !important;
+}
+.he-cursor {
+  display: inline-block;
+  font-weight: 300;
+  font-style: normal;
+  color: rgba(196,181,253,.75);
+  margin-left: 1px;
+  animation: heCursorBlink .65s step-end infinite;
+}
+@keyframes heCursorBlink {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+#heDot.he-blink {
+  animation: vantageGlowBlink .9s ease-in-out infinite;
+  display: inline;
+}
+@keyframes vantageGlowBlink {
+  0%,100% { opacity: 1; text-shadow: 0 0 24px rgba(196,181,253,.9),0 0 50px rgba(124,58,237,.7); }
+  50% { opacity: 0; text-shadow: none; }
+}
+
+/* Curtain raiser question h2 — lining numerals so "9" sits on baseline,
+   plus the purple gradient treatment. All five question cards (the
+   four section curtain raisers and the Demo button intercept) render
+   through this one shared #q-question element, so a single rule here
+   covers all of them. */
+#q-question {
+  font-variant-numeric: lining-nums !important;
+  font-feature-settings: "lnum" 1 !important;
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* ═══ SIM-ROOM REBUILD (SR18) ═══ */
+
+/* Heading: two-tier — plain pre-line + gradient accent */
+.sim-heading-pre {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: clamp(18px,2vw,26px) !important;
+  font-weight: 400 !important;
+  color: rgba(255,255,255,.55) !important;
+  font-style: normal !important;
+  display: block !important;
+  margin-bottom: 6px !important;
+  -webkit-text-fill-color: rgba(255,255,255,.55) !important;
+  background: none !important;
+}
+
+/* Classified briefing panel */
+.sim-brief {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 36px;
+  border: 1px solid rgba(124,58,237,.2);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  background: rgba(8,7,24,.75);
+}
+.sb-line {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(124,58,237,.1);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity .45s ease, transform .45s ease;
+}
+.sb-line:last-child { border-bottom: none; }
+.sb-line.sb-visible { opacity: 1; transform: translateX(0); }
+.sb-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: .2em;
+  color: rgba(196,181,253,.45);
+  min-width: 88px;
+  flex-shrink: 0;
+}
+.sb-val {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,.65);
+  flex: 1;
+  line-height: 1.4;
+}
+.sb-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .18em;
+  padding: 3px 9px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.sb-live {
+  background: rgba(239,68,68,.14);
+  border: 1px solid rgba(239,68,68,.28);
+  color: rgba(252,165,165,.9);
+}
+.sb-ok {
+  background: rgba(52,211,153,.1);
+  border: 1px solid rgba(52,211,153,.22);
+  color: rgba(110,231,183,.9);
+}
+.sb-warn {
+  background: rgba(251,191,36,.1);
+  border: 1px solid rgba(251,191,36,.22);
+  color: rgba(252,211,77,.9);
+}
+
+/* Intelligence result panel */
+.result-intelligence {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(196,181,253,.1);
+}
+.result-intelligence.ri-active { display: flex; }
+.ri-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .2em;
+  color: rgba(196,181,253,.42);
+  display: block;
+  margin-bottom: 5px;
+}
+.ri-label--aria { color: rgba(168,85,247,.55); }
+.ri-expnum {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(24px,2.8vw,36px);
+  font-weight: 700;
+  background: linear-gradient(90deg,#c084fc,#8b5cf6,#6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  display: block;
+}
+.ri-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  color: rgba(255,255,255,.68);
+  line-height: 1.65;
+  margin: 0;
+}
+.ri-text--aria {
+  font-style: italic;
+  color: rgba(196,181,253,.78);
+  border-left: 2px solid rgba(124,58,237,.35);
+  padding-left: 12px;
+}
+
+/* Remove hero-core orb — user confirmed annoying */
+.hero-core { display: none !important; }
+
+/* "Initiating Vantage..." interstitial between prologue and landing */
+#init-overlay {
+  position: fixed;
+  inset: 0;
+  background: #050410;
+  z-index: 8900;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+#init-overlay.init-active { display: flex; }
+#init-overlay { z-index: 8800 !important; } /* must be below #tada-overlay */
+#init-text {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: clamp(13px,1.4vw,18px) !important;
+  letter-spacing: .18em !important;
+  color: rgba(196,181,253,.72) !important;
+  position: relative !important;
+  white-space: nowrap;
+}
+#init-text::after {
+  content: '|';
+  animation: initCursor .55s step-end infinite;
+  color: rgba(196,181,253,.5);
+  margin-left: 2px;
+}
+@keyframes initCursor { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* Prologue kicker typewriter handled by JS in curtain.js */
+
+/* Prologue copy — SR19: desktop moved to right side (dark city skyline area)
+   so text is readable against the background, not competing with the glowing
+   laptop screen at center. Mobile stays centered (left:50%+translateX fix). */
+.prologue-copy {
+  top: auto !important;
+  bottom: 108px !important;
+  left: 48px !important;
+  right: auto !important;
+  transform: none !important;
+  width: min(540px, 44vw) !important;
+  text-align: left !important;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+@media (max-width: 700px) {
+  .prologue-copy {
+    /* Transform-free centering: left:3% + width:94% = 3% margin each side.
+       No transform, no GPU compositing layer. Same visual result as the
+       original transform:none working state. */
+    left: 3% !important;
+    right: auto !important;
+    transform: none !important;
+    width: 94% !important;
+    text-align: center !important;
+    bottom: 108px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+/* During countdown, .prologue-copy is opacity:0 — remove transform to
+   eliminate GPU composite layer that was amplifying the tick glitch on mobile */
+#prologue.countdown .prologue-copy {
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* ── PROLOGUE PHOTO BACKGROUND ──────────────────────────────────────────────── */
+.prologue-photo {
+  position: absolute; inset: 0;
+  background: url('prologue-bg.png') center center / cover no-repeat;
+  z-index: 0; opacity: 0; transition: opacity 2s ease;
+}
+#prologue.active .prologue-photo { opacity: 1; }
+@media (max-width: 700px) and (orientation: portrait) {
+  .prologue-photo { background-image: url('prologue-bg-mobile.png'); }
+}
+/* Hide Three.js canvas — photo is the visual */
+#prologueCanvas { opacity: 0 !important; pointer-events: none; }
+
+
+/* Ensure text overlays sit above photo/rain (z:0-1). NO position override —
+   prologue-css already sets absolute/fixed on these elements. */
+.prologue-top, .prologue-note,
+.prologue-copy, .prologue-countdown { z-index: 5 !important; }
+.prologue-signal { z-index: 5 !important; }
+.prologue-skip   { z-index: 10 !important; }
+.prologue-fade   { z-index: 8 !important; }
+.prologue-grid, .prologue-vignette { z-index: 2 !important; }
+
+/* SR19 COUNTDOWN GLITCH FIX: the original prologueCountTick animation started
+   at opacity:0 — every number change caused a visible flash (element goes
+   opacity:1 → instant opacity:0 as new animation starts → fades back in).
+   Override here overrides vantage-prologue.css definition (later stylesheet wins).
+   Pure scale, no opacity change = no flash. */
+@keyframes prologueCountTick {
+  0%   { transform: scale(1.3); }
+  55%  { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+/* Fixed character cell prevents layout reflow when 3→2→1 text changes width */
+#prologueCountNum {
+  display: block;
+  min-width: 1ch;
+  font-variant-numeric: tabular-nums;
+}
+/* Mobile: remove scale animation entirely — scale(1.3) jump at animation start
+   is the second flicker per countdown tick (text change is the first).
+   Number appears cleanly with no GPU-intensive scale transition. */
+@media (max-width: 900px) {
+  .prologue-countdown strong.tick {
+    animation: none !important;
+  }
+}
+
+/* Reflect modal scrollbar — purple gradient, matches platform palette */
+.reflect-body::-webkit-scrollbar {
+  width: 6px !important;
+}
+.reflect-body::-webkit-scrollbar-track {
+  background: rgba(10,9,30,.6) !important;
+  border-radius: 3px !important;
+}
+.reflect-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg,#c084fc,#8b5cf6,#6366f1) !important;
+  border-radius: 3px !important;
+}
+.reflect-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg,#d8b4fe,#a78bfa,#818cf8) !important;
+}
+.reflect-body {
+  scrollbar-color: #8b5cf6 rgba(10,9,30,.6) !important;
+  scrollbar-width: thin !important;
+}
+
+/* ═══ SPECTACULAR DASHBOARD ANIMATIONS (SR18.2) ═══ */
+
+/* Scan-line flash on card activation */
+@keyframes cardBootFlash {
+  0%   { background: rgba(196,181,253,.22); box-shadow: 0 0 0 1px rgba(196,181,253,.6), 0 0 20px rgba(196,181,253,.3); }
+  40%  { background: rgba(196,181,253,.08); box-shadow: 0 0 0 1px rgba(196,181,253,.3), 0 0 8px rgba(196,181,253,.15); }
+  100% { background: transparent; box-shadow: none; }
+}
+.card-boot-flash { animation: cardBootFlash .55s ease-out forwards !important; }
+
+/* Badge materialise pop */
+@keyframes badgePop {
+  0%   { transform: scale(.5) translateY(4px); opacity: 0; }
+  65%  { transform: scale(1.12) translateY(-1px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+.badge-pop { animation: badgePop .38s cubic-bezier(.34,1.56,.64,1) forwards !important; }
+
+/* MERIDIAN data packet travelling dot */
+.ms-packet {
+  position: absolute;
+  left: 50%; top: 0;
+  width: 8px; height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #c4b5fd;
+  box-shadow: 0 0 10px #c4b5fd, 0 0 24px rgba(196,181,253,.6);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 5;
+  transition: top .45s cubic-bezier(.4,0,.2,1), opacity .15s;
+}
+
+/* Layer scan flash */
+@keyframes layerScan {
+  0%   { opacity: 0; width: 0; }
+  20%  { opacity: 1; }
+  100% { opacity: 0; width: 100%; }
+}
+.msl-scanline {
+  position: absolute; left: 0; top: 50%;
+  height: 1px; width: 0;
+  background: linear-gradient(90deg, transparent, rgba(196,181,253,.9), rgba(255,255,255,.8), rgba(196,181,253,.9), transparent);
+  box-shadow: 0 0 6px rgba(196,181,253,.7);
+  pointer-events: none;
+  animation: layerScan .6s ease-out forwards;
+}
+
+/* PRECISION ADVICE burst */
+@keyframes adviceBurst {
+  0%   { letter-spacing: .6em; opacity: 0; text-shadow: 0 0 60px rgba(196,181,253,1); }
+  40%  { opacity: 1; text-shadow: 0 0 30px rgba(196,181,253,.8); }
+  100% { letter-spacing: .12em; text-shadow: 0 0 12px rgba(196,181,253,.35); }
+}
+.advice-burst { animation: adviceBurst .95s cubic-bezier(.16,1,.3,1) forwards !important; }
+
+/* Dossier entry flash-in */
+@keyframes dosFlash {
+  0%   { border-left-color: rgba(196,181,253,.9); background: rgba(196,181,253,.12); }
+  60%  { border-left-color: rgba(196,181,253,.4); background: rgba(196,181,253,.04); }
+  100% { border-left-color: rgba(196,181,253,.18); background: transparent; }
+}
+.dos-flash { animation: dosFlash .5s ease-out forwards !important; }
+
+/* Hero CTA — bright gradient matching Reflect button (SR18) */
+.hero-actions .btn-primary,
+.hero-actions a.btn-primary {
+  background: linear-gradient(135deg, #9333ea, #7c3aed, #6366f1) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  border: none !important;
+  box-shadow: 0 0 24px rgba(147,51,234,.5), 0 4px 18px rgba(99,102,241,.35) !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+}
+.hero-actions .btn-primary:hover,
+.hero-actions a.btn-primary:hover {
+  background: linear-gradient(135deg, #a855f7, #8b5cf6, #818cf8) !important;
+  box-shadow: 0 0 32px rgba(168,85,247,.65), 0 6px 22px rgba(99,102,241,.45) !important;
+  transform: translateY(-1px) !important;
+}
+.hero-actions .btn-primary span { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+
+/* Fix descender clipping on hero h1 — g, f, p getting cut off (SR18) */
+.hero-title,
+.hero-title .line,
+.hero-title .line.dim,
+.hero-title .line.accent {
+  overflow: visible !important;
+  clip-path: none !important;
+}
+.hero-title {
+  padding-bottom: 0.18em !important;
+}
+/* Extra breathing room for descenders on lines using gradient text-clip
+   (g, f, y, p tails get visually cut by a tight line box otherwise) —
+   covers both the accent lines and the dim line, which now also
+   carries a gradient. */
+.hero-title .line.accent,
+.hero-title .line.dim:not(.hero-context) {
+  padding-bottom: 0.16em;
+}
+
+/* Ensure "Every HR..." (dim) and "A case..."/"Who does HR..." (accent)
+   render in the exact same typeface — accent lines were picking up
+   italic styling from elsewhere, reading as a different font entirely
+   next to the upright dim line. */
+.hero-title .line.dim,
+.hero-title .line.accent {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-weight: 700 !important;
+  font-style: normal !important;
+}
+
+/* Rain region now handled by ctx.clip() in curtain.js */
+
+
+/* ═══ SIM-ROOM RADICAL REDESIGN (SR18.3) ═══ */
+
+/* Force case-grid to single column, centered */
+.sim-room .case-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0 !important;
+  max-width: 100% !important;
+}
+
+/* Case intro — centered film title card */
+.sim-room .case-intro {
+  text-align: center !important;
+  max-width: 680px !important;
+  margin: 0 auto 32px !important;
+  padding: 32px 0 !important;
+  border-bottom: 1px solid rgba(124,58,237,.15) !important;
+}
+.sim-room .case-intro .eyebrow { text-align: center !important; }
+.sim-room .case-intro h2 {
+  text-align: center !important;
+  font-size: clamp(32px,4vw,56px) !important;
+}
+.sim-room .case-intro p { text-align: center !important; max-width: 520px !important; margin: 16px auto !important; }
+.sim-room .case-meta {
+  justify-content: center !important;
+  gap: 24px !important;
+  margin-top: 20px !important;
+}
+
+/* Case machine — full width, centered */
+.sim-room .case-machine {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Decision field — horizontal row of 4 cards */
+.sim-room .case-options {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 14px !important;
+  margin: 24px 0 !important;
+}
+.sim-room .case-option {
+  flex-direction: column !important;
+  text-align: center !important;
+  padding: 20px 14px !important;
+  min-height: 110px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 10px !important;
+  cursor: pointer !important;
+  transition: all .3s ease !important;
+}
+.sim-room .case-option:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 0 20px rgba(124,58,237,.3) !important;
+}
+.sim-room .case-option .opt-letter {
+  margin: 0 auto 6px !important;
+}
+.sim-room .case-option .opt-label {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+.sim-room .case-option .opt-tag {
+  font-size: 9px !important;
+  opacity: .5 !important;
+  display: block !important;
+  margin-top: 4px !important;
+}
+
+/* Hide the old instructional text inside case-machine */
+.sim-room .case-machine > .case-head .case-hint { display: none !important; }
+
+/* Result section — full width dramatic reveal */
+.sim-room .case-result {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 28px !important;
+  margin-top: 20px !important;
+}
+
+/* Intelligence panel — horizontal layout */
+.result-intelligence.ri-active {
+  display: grid !important;
+  grid-template-columns: 200px 1fr 1fr !important;
+  gap: 24px !important;
+  align-items: start !important;
+}
+.ri-exposure {
+  text-align: center !important;
+  padding: 16px !important;
+  border-right: 1px solid rgba(196,181,253,.12) !important;
+}
+
+/* Sim-threshold heading — tighter spacing */
+.sim-heading {
+  margin-bottom: 4px !important;
+}
+.sim-threshold {
+  margin-bottom: 16px !important;
+}
+
+/* Case machine header — centered */
+.sim-room .case-head {
+  text-align: center !important;
+}
+.sim-room .case-head h3 {
+  text-align: center !important;
+}
+
+@media (max-width: 800px) {
+  .sim-room .case-options {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .result-intelligence.ri-active {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ═══ INTELLIGENCE CORRIDOR — 5 DOORS (SR18.3) ═══ */
+
+.corridor {
+  position: relative;
+  min-height: 100vh;
+  padding: 40px 0;
+  perspective: 1200px;
+}
+
+/* Progress pips */
+.cor-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 32px;
+}
+.cor-pip {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(124,58,237,.25);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(196,181,253,.35);
+  transition: all .5s ease;
+}
+.cor-pip.active {
+  border-color: #8b5cf6;
+  color: #fff;
+  background: rgba(124,58,237,.3);
+  box-shadow: 0 0 16px rgba(139,92,246,.5);
+}
+.cor-pip.done {
+  border-color: #34d399;
+  color: #34d399;
+  background: rgba(52,211,153,.12);
+}
+.cor-line {
+  width: 48px; height: 2px;
+  background: rgba(124,58,237,.15);
+  transition: background .5s;
+}
+.cor-line.done { background: rgba(52,211,153,.3); }
+
+.cor-eyebrow {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* Room viewport */
+.cor-viewport {
+  position: relative;
+  max-width: 820px;
+  margin: 0 auto;
+  min-height: 480px;
+}
+
+/* Each room */
+.cor-room {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  animation: roomFadeIn .7s ease both;
+}
+.cor-room.active { display: flex; }
+@keyframes roomFadeIn {
+  from { opacity: 0; transform: translateY(20px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── THE DOOR ── */
+.cor-door {
+  position: relative;
+  width: 320px;
+  height: 380px;
+  margin: 0 auto 0;
+  perspective: 900px;
+  cursor: pointer;
+}
+.cor-door-frame {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  border: 2px solid rgba(124,58,237,.3);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(124,58,237,.15), inset 0 0 60px rgba(5,4,16,.8);
+  background: linear-gradient(180deg, rgba(15,12,35,.95) 0%, rgba(8,6,22,.98) 100%);
+}
+.cor-door-panel {
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(20,16,45,.9), rgba(10,8,28,.95));
+  border: 1px solid rgba(124,58,237,.15);
+  transition: transform .9s cubic-bezier(.4,0,.2,1);
+  transform-origin: left center;
+  position: relative;
+}
+.cor-door-l { transform-origin: left center; border-right: 1px solid rgba(124,58,237,.2); }
+.cor-door-r { transform-origin: right center; border-left: 1px solid rgba(124,58,237,.2); }
+
+/* Door decorative lines */
+.cor-door-panel::before {
+  content: '';
+  position: absolute;
+  inset: 16px;
+  border: 1px solid rgba(124,58,237,.1);
+  border-radius: 4px;
+  pointer-events: none;
+}
+.cor-door-panel::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 24px; height: 24px;
+  transform: translate(-50%,-50%) rotate(45deg);
+  border: 1px solid rgba(196,181,253,.12);
+}
+
+/* Door open state */
+.cor-door.open .cor-door-l { transform: rotateY(-110deg); }
+.cor-door.open .cor-door-r { transform: rotateY(110deg); }
+.cor-door.open .cor-lock { opacity: 0; transform: translate(-50%,-50%) scale(.5); }
+.cor-door.open .cor-door-frame {
+  box-shadow: 0 0 80px rgba(124,58,237,.4), inset 0 0 100px rgba(124,58,237,.1);
+}
+
+/* Lock */
+.cor-lock {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  text-align: center;
+  z-index: 5;
+  transition: all .5s ease;
+  cursor: pointer;
+}
+.cor-lock-icon {
+  font-size: 42px;
+  display: block;
+  filter: drop-shadow(0 0 12px rgba(196,181,253,.7));
+  animation: lockPulse 2.5s ease-in-out infinite;
+}
+@keyframes lockPulse {
+  0%,100% { filter: drop-shadow(0 0 12px rgba(196,181,253,.5)); transform: scale(1); }
+  50%     { filter: drop-shadow(0 0 28px rgba(196,181,253,.9)); transform: scale(1.08); }
+}
+.cor-lock-label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .2em;
+  color: rgba(196,181,253,.55);
+  margin-top: 10px;
+}
+
+.cor-door-tag {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .22em;
+  color: rgba(196,181,253,.35);
+  margin-top: 14px;
+}
+
+/* ── ROOM CONTENT (behind the door) ── */
+.cor-inside {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  animation: insideReveal .8s ease .2s both;
+}
+.cor-room.entered .cor-inside { display: flex; }
+.cor-room.entered .cor-door { display: none; }
+@keyframes insideReveal {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Scenario */
+.cor-scenario {
+  text-align: center;
+  margin-bottom: 36px;
+  padding: 28px 0;
+}
+.cor-case-id {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9px !important;
+  letter-spacing: .22em !important;
+  color: rgba(196,181,253,.45) !important;
+  margin-bottom: 16px !important;
+}
+.cor-scenario h3 {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: clamp(22px,2.8vw,34px) !important;
+  font-weight: 400 !important;
+  color: rgba(255,255,255,.88) !important;
+  line-height: 1.45 !important;
+  font-style: italic !important;
+}
+
+/* Binary choice cards */
+.cor-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 28px;
+}
+@media (max-width: 700px) {
+  .cor-choices { grid-template-columns: 1fr; grid-template-rows: none; }
+}
+.cor-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 18px;
+  border: 1px solid rgba(124,58,237,.2);
+  border-radius: 10px;
+  background: rgba(12,10,32,.6);
+  cursor: pointer;
+  transition: all .35s ease;
+  gap: 8px;
+}
+.cor-choice:hover {
+  border-color: rgba(124,58,237,.5);
+  background: rgba(124,58,237,.08);
+  transform: translateY(-3px);
+  box-shadow: 0 0 28px rgba(124,58,237,.25);
+}
+.cor-choice.picked {
+  border-color: #8b5cf6;
+  background: rgba(124,58,237,.15);
+  box-shadow: 0 0 32px rgba(139,92,246,.4);
+}
+.cor-choice.dimmed {
+  opacity: .3;
+  pointer-events: none;
+  transform: scale(.97);
+}
+.cor-choice-letter {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 2px solid rgba(124,58,237,.35);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(196,181,253,.85);
+}
+.cor-choice-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14.5px;
+  color: rgba(255,255,255,.88);
+  font-weight: 500;
+  line-height: 1.35;
+}
+.cor-choice-risk {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  color: rgba(196,181,253,.62);
+  line-height: 1.4;
+}
+
+/* Result panel */
+.cor-result {
+  width: 100%;
+  overflow: hidden;
+  transition: max-height .6s ease, opacity .5s ease;
+  max-height: 0;
+  opacity: 0;
+}
+.cor-result.cor-result-open {
+  max-height: 600px;
+  opacity: 1;
+  margin-bottom: 20px;
+}
+.cor-result-inner {
+  padding: 24px;
+  border: 1px solid rgba(124,58,237,.18);
+  border-radius: 10px;
+  background: rgba(8,6,22,.7);
+}
+.cor-ri-verdict {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .2em;
+  padding: 4px 12px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 14px;
+}
+.cor-ri-verdict.risk   { background: rgba(239,68,68,.14); border: 1px solid rgba(239,68,68,.3); color: #fca5a5; }
+.cor-ri-verdict.ok     { background: rgba(52,211,153,.1); border: 1px solid rgba(52,211,153,.22); color: #6ee7b7; }
+.cor-ri-verdict.warn   { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.22); color: #fcd34d; }
+.cor-ri-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(26px,3vw,38px);
+  font-weight: 700;
+  background: linear-gradient(90deg,#c084fc,#8b5cf6,#6366f1);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; -webkit-text-fill-color: transparent;
+  display: block;
+  margin-bottom: 10px;
+}
+.cor-ri-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13.5px;
+  color: rgba(255,255,255,.68);
+  line-height: 1.65;
+  margin: 0;
+}
+.cor-ri-aria {
+  font-style: italic;
+  color: rgba(196,181,253,.75);
+  border-left: 2px solid rgba(124,58,237,.3);
+  padding-left: 14px;
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Next door button */
+.cor-next {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .15em;
+  color: rgba(196,181,253,.75);
+  border: 1px solid rgba(124,58,237,.3);
+  border-radius: 6px;
+  padding: 12px 28px;
+  cursor: pointer;
+  transition: all .3s;
+  text-align: center;
+  margin-top: 8px;
+}
+.cor-next:hover {
+  background: rgba(124,58,237,.15);
+  border-color: #8b5cf6;
+  color: #fff;
+  box-shadow: 0 0 18px rgba(139,92,246,.3);
+}
+
+/* Final room CTA */
+.cor-final {
+  text-align: center;
+  margin-top: 24px;
+}
+.cor-final-line {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: italic !important;
+  font-size: clamp(16px,1.8vw,22px) !important;
+  color: rgba(196,181,253,.8) !important;
+  margin-bottom: 24px !important;
+}
+
+@media (max-width: 600px) {
+  .cor-door { width: 240px; height: 300px; }
+  .cor-choices { grid-template-columns: 1fr; }
+}
+
+/* ── BIGGER DOORS + CASE SELECTOR (SR18.4) ── */
+.cor-door {
+  width: min(520px, 80vw) !important;
+  height: min(560px, 75vh) !important;
+}
+.cor-lock-icon { font-size: 56px !important; }
+.cor-lock-label { font-size: 10px !important; margin-top: 14px !important; }
+.cor-door-tag { font-size: 10px !important; margin-top: 18px !important; }
+.cor-door-panel::after {
+  width: 36px !important; height: 36px !important;
+}
+
+/* Wormhole full-screen canvas */
+#wormholeCanvas {
+  position: fixed; inset: 0;
+  width: 100vw; height: 100vh;
+  z-index: 9990;
+  pointer-events: none;
+  display: none;
+}
+
+/* Case selector */
+.cor-case-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 32px;
+}
+.cor-case-select h3 {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: clamp(18px,2vw,24px) !important;
+  color: rgba(255,255,255,.75) !important;
+  font-weight: 400 !important;
+  font-style: italic !important;
+}
+.cor-case-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.cor-case-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: rgba(196,181,253,.6);
+  border: 1px solid rgba(124,58,237,.22);
+  border-radius: 20px;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: all .3s;
+  background: rgba(12,10,32,.5);
+}
+.cor-case-pill:hover {
+  border-color: rgba(124,58,237,.5);
+  color: #fff;
+  background: rgba(124,58,237,.12);
+}
+.cor-case-pill.active {
+  border-color: #8b5cf6;
+  color: #fff;
+  background: rgba(124,58,237,.2);
+  box-shadow: 0 0 16px rgba(139,92,246,.35);
+}
+
+/* Restart button */
+.cor-restart {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .15em;
+  color: rgba(196,181,253,.6);
+  border: 1px solid rgba(124,58,237,.22);
+  border-radius: 6px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all .3s;
+  background: transparent;
+  margin-top: 12px;
+}
+.cor-restart:hover {
+  border-color: #8b5cf6;
+  color: #fff;
+  background: rgba(124,58,237,.12);
+}
+
+/* Fullscreen hint for Intelligence Corridor */
+.cor-fullscreen-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.cor-fs-desktop {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  color: rgba(196,181,253,.45);
+  letter-spacing: .03em;
+}
+.cor-fs-desktop kbd {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(196,181,253,.75);
+  background: rgba(124,58,237,.12);
+  border: 1px solid rgba(124,58,237,.25);
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin: 0 2px;
+}
+.cor-fs-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: rgba(196,181,253,.6);
+  background: rgba(124,58,237,.08);
+  border: 1px solid rgba(124,58,237,.22);
+  border-radius: 20px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all .3s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cor-fs-btn:hover {
+  background: rgba(124,58,237,.18);
+  border-color: #8b5cf6;
+  color: #fff;
+}
+
+/* Persistent floating exit-fullscreen control — visible from anywhere
+   on the page while in fullscreen, not just at the top of the
+   corridor section. On mobile especially, scrolling past the original
+   button (or the browser hiding its own chrome in fullscreen) left no
+   way back to normal view. */
+#corFsFloating {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9500;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: #fff;
+  background: rgba(124,58,237,.85);
+  border: 1px solid rgba(196,181,253,.4);
+  border-radius: 24px;
+  padding: 10px 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  backdrop-filter: blur(8px);
+}
+#corFsFloating.show { display: flex; }
+#corFsFloating span { font-size: 14px; }
+@media (max-width: 600px) {
+  #corFsFloating { bottom: 16px; left: 16px; padding: 12px 16px; font-size: 12px; }
+}
+.cor-fs-icon { font-size: 14px; }
+/* On desktop, show both hint and button. On mobile, hide F11 hint */
+@media (max-width: 768px) {
+  .cor-fs-desktop { display: none; }
+}
+/* Once fullscreen is active, hide the hint entirely */
+.cor-fullscreen-hint.fs-active { display: none; }
+
+/* Corridor cinematic heading */
+.cor-heading {
+  text-align: center;
+  margin-bottom: 28px;
+  padding: 0 20px;
+}
+.cor-h2 {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: clamp(28px, 3.5vw, 48px) !important;
+  font-weight: 400 !important;
+  line-height: 1.3 !important;
+  margin-bottom: 14px !important;
+}
+.cor-h2-pre {
+  color: rgba(255,255,255,.78) !important;
+  -webkit-text-fill-color: rgba(255,255,255,.78) !important;
+  background: none !important;
+  display: block !important;
+  margin-bottom: 4px !important;
+}
+.cor-h2-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: clamp(13px, 1.3vw, 16px) !important;
+  color: rgba(255,255,255,.45) !important;
+  max-width: 520px !important;
+  margin: 0 auto !important;
+  line-height: 1.6 !important;
+}
+
+/* Two-step selection: 'selected' = highlighted but not locked, 'picked' = confirmed/locked */
+.cor-choice.selected {
+  border-color: rgba(139,92,246,.55);
+  background: rgba(124,58,237,.1);
+  box-shadow: 0 0 16px rgba(139,92,246,.25);
+}
+.cor-choice.selected .cor-choice-letter {
+  border-color: #8b5cf6;
+  background: rgba(139,92,246,.2);
+}
+
+/* Confirm button */
+.cor-confirm {
+  display: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .15em;
+  color: #fff;
+  background: linear-gradient(135deg,#9333ea,#7c3aed,#6366f1);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 32px;
+  cursor: pointer;
+  margin: 4px auto 24px;
+  box-shadow: 0 0 20px rgba(139,92,246,.4);
+  transition: all .3s;
+}
+.cor-confirm.show { display: block; animation: roomFadeIn .4s ease both; }
+.cor-confirm:hover {
+  box-shadow: 0 0 28px rgba(139,92,246,.6);
+  transform: translateY(-1px);
+}
+
+/* CTA moment — center aligned text (SR18) */
+.cta-copy {
+  text-align: center !important;
+}
+.cta-copy .eyebrow { text-align: center !important; }
+.cta-copy h2 { text-align: center !important; }
+.cta-sub {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-bottom: 32px !important;
+}
+.cta-actions {
+  justify-content: center !important;
+  display: flex !important;
+  margin-bottom: 32px !important;
+}
+.cta-note {
+  text-align: center !important;
+  margin-top: 0 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HERO TYPE HIERARCHY (SR27)
+   SR26 made every hero line the SAME size — fixed the "obscenely big"
+   problem but deleted the hero's narrative shape in the process. The
+   copy is written as an arc: open > aside > climax > CTA. A flat single
+   size reads as a stacked paragraph, not a cinematic reveal. Reinstating
+   THREE tiers (not the old chaotic SIX-tier SR18 system) so the eye has
+   somewhere to land, while keeping sizes modest — no tier goes back to
+   SR25's "screaming" 52-68px range.
+
+   TIER A — headline + climax (opening line, and the two accent lines
+            that are the emotional payoff of the whole sequence)
+   TIER B — supporting/aside copy (the context line, the kicker) — this
+            is exactly the .hero-tagline size the user confirmed looks
+            elegant
+   TIER C — CTA ("Enter VANTAGE.") — its own modest step, between B and A
+   ═══════════════════════════════════════════════════════════════════════ */
+
+#top .hero-title {
+  font-size: clamp(26px, 3vw, 36px) !important;
+  line-height: 1.25 !important;
+}
+
+/* TIER A: headline line + the two climax accent lines */
+#top .hero-title .line.dim:not(.hero-context),
+#top .hero-title .line.accent {
+  font-size: clamp(26px, 3vw, 36px) !important;
+  line-height: 1.25 !important;
+}
+
+/* TIER B: the supporting aside line + kicker — tagline-matched, quiet */
+#top .hero-title .line.dim.hero-context,
+#top .hero-title .hero-kicker {
+  font-size: clamp(19px, 2vw, 26px) !important;
+  line-height: 1.3 !important;
+}
+
+/* TIER C: the CTA line — a deliberate step between B and A, never equal
+   to either, so it reads as its own moment rather than competing */
+#top #heroEnter {
+  font-size: clamp(20px, 2.2vw, 28px) !important;
+  line-height: 1.3 !important;
+}
+
+/* Kicker: roman (not italic — explicit user request) */
+#top .hero-title .hero-kicker {
+  display: block !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  margin: 0 !important; /* SR30: bottom-margin removed — SR29's margin-top is now the single source of truth for spacing, nothing left to collapse against or add to it */
+}
+
+/* SR30: the 0.3em/0.4em accent margins below were REMOVED — their
+   selector (.line.accent, 3 matched classes) has higher CSS specificity
+   than SR29's catch-all (.line, 2 matched classes), so they silently
+   overrode SR29's uniform 32px rhythm regardless of source order,
+   collapsing to 10.8px and 14.4px (0.3em/0.4em of a 36px font) instead.
+   That's exactly the two broken gaps confirmed by direct measurement.
+   Deleting them lets SR29's single 32px rule apply to every hero line,
+   accent included, with nothing left to contest it. */
+
+/* Prevent any nested animation span (from fadeInWords etc) from
+   shrinking the typography — spans must inherit their OWN parent's
+   tier, not a single global size */
+#top .hero-title .line span,
+#top .hero-title .hero-kicker span,
+#top #heroEnter span {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+/* SR29 — desktop vertical rhythm fix. The previous margins mixed units
+   across tiers: hero-context used fixed 40px/36px, kicker used a fixed
+   20px, but the two accent lines used em-based margins (0.3em/0.4em) —
+   and since em scales with THAT element's own font-size, and the accent
+   lines sit in the larger 26-36px tier, their margins computed to a
+   DIFFERENT absolute pixel value than the fixed-px gaps elsewhere. The
+   net result: every gap between hero statements was a different number
+   of actual pixels (roughly 95/79/67/72/78/99px across the six gaps in
+   this section), which reads as uneven rhythm even though each value
+   looked reasonable on its own. Standardizing every gap to the SAME
+   fixed 32px margin-top, regardless of tier or font-size, so desktop
+   spacing reads as one even, intentional rhythm. */
+#top .hero-title .line,
+#top .hero-title .hero-kicker,
+#top #heroEnter {
+  margin-top: 32px !important;
+}
+#top .hero-title .line:first-child {
+  margin-top: 0 !important;
+}
+
+/* SR28 — mobile congestion fix. Desktop confirmed correct by user; this
+   is scoped to narrow viewports only. On mobile, every hero statement
+   wraps to 2-3 lines instead of 1, so each paragraph block is much
+   taller — but the margins between blocks (kicker's 20px bottom margin
+   colliding/collapsing with accent1's 0.3em top margin, per standard
+   CSS adjacent-sibling margin collapsing, nets out to just ~20px) stayed
+   fixed at desktop-appropriate values. Against much taller wrapped
+   blocks, that reads as "Alone." sitting almost on top of "You are HR
+   for everyone." — the exact congestion in the screenshot. Desktop
+   rules above are untouched; only mobile spacing is widened here. */
+@media (max-width: 700px) {
+  /* SR31: the context->kicker->accent1 region on mobile was still
+     cramped after SR29/SR30, because the accent lines' mobile override
+     below was still EM-based (0.6em/0.7em). em scales with the
+     element's OWN font-size, and on narrow mobile the vw component of
+     the clamp() contributes almost nothing, so the accent lines sit at
+     their CLAMP FLOOR (26px) — making 0.6em/0.7em compute to just
+     ~15.6px/18.2px. That's smaller than the 32px rhythm everywhere
+     else, which is backwards: mobile wraps every line to 2-3 rows and
+     needs MORE separation between statements, not less. Every value
+     below is now a flat px number (no em), so nothing shrinks just
+     because a line's own font got smaller on a narrow screen. The
+     "Every HR..." → context gap (24px, confirmed "absolutely perfect"
+     by the user) is untouched; every subsequent gap now explicitly
+     carries its own margin-top so nothing relies on collapsing with a
+     neighbour's bottom-margin, which is what made the actual rendered
+     gaps hard to reason about in the first place. */
+  #top .hero-title .line.dim.hero-context {
+    margin: 24px 0 0 !important;
+  }
+  /* SR32: console-measured proof that SR31's 32px gaps WERE correctly
+     applying (gap: 32.0px confirmed for both transitions below) — this
+     wasn't a broken rule. It's a perception issue: the headline is
+     large, bold, bright purple, so a modest 24px gap after it reads as
+     spacious. Context and kicker are both small, quiet, similarly-muted
+     italic lines sitting next to each other with no visual contrast to
+     signal "new statement" — the SAME 32px gap that looks fine next to
+     a bold headline doesn't register as separation between two quiet
+     lines. Deliberately over-compensating with more raw space for
+     these two low-contrast transitions specifically. Headline->context
+     (24px, confirmed "absolutely perfect") and accent1->accent2 (36px,
+     never flagged) are untouched. */
+  #top .hero-title .hero-kicker {
+    margin: 64px 0 0 !important; /* SR33: 48px was close, user asked for more of the same direction */
+  }
+  #top .hero-title .line.accent {
+    margin-top: 64px !important; /* SR33 */
+  }
+  #top .hero-title .line.accent + .line.accent {
+    margin-top: 36px !important;
+  }
+  #top #heroEnter {
+    margin-top: 32px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HERO CONSISTENCY FIX — final pass. TIER B above (kicker + context
+   line) is deliberately left untouched — user said no change there;
+   its font bug was JavaScript (vantage-curtain.js applyGradients()
+   forcing DM Sans), fixed at that source, not here.
+
+   Gradient goes on the PARENT only, never repeated on child spans —
+   putting it on every span re-clips the same gradient separately per
+   segment, which is what made "Enter VANTAGE." and the tagline look
+   like every word was its own saturated block instead of one smooth
+   diagonal sweep across the whole phrase.
+   ═══════════════════════════════════════════════════════════════════════ */
+#top .hero-title,
+#top .hero-title .line,
+#top .hero-title .hero-kicker,
+#top .hero-title .hero-kicker *,
+#top .hero-tagline,
+#top .hero-deck,
+#top .hero-deck *,
+#top #heroEnter {
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: clamp(21px, 2.2vw, 29px) !important;
+  font-weight: 500 !important;
+  font-style: normal !important;
+  text-transform: none !important;
+  line-height: 1.3 !important;
+  color: rgba(244,243,255,.9) !important;
+  background: none !important;
+  -webkit-text-fill-color: rgba(244,243,255,.9) !important;
+}
+/* Deck matched to the context line's actual size (TIER B above,
+   clamp(19px,2vw,26px)) — higher specificity than anything else
+   touching the deck, so this wins and the two sizes now match. */
+#top .hero-deck,
+#top .hero-deck * {
+  font-size: clamp(19px, 2vw, 26px) !important;
+}
+/* Gradient — parent box only, for the climax lines, "Enter VANTAGE.",
+   and the tagline. */
+#top .hero-title .line.dim:not(.hero-context),
+#top .hero-title .line.accent,
+#top .hero-tagline,
+#top #heroEnter {
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+/* Child spans of the two multi-segment lines go transparent with NO
+   background of their own, so the parent's single gradient shows
+   through continuously instead of restarting per span. */
+#top .hero-tagline *,
+#top #heroEnter * {
+  background: none !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+#top .hero-title .line.dim:not(.hero-context),
+#top #heroEnter,
+#top .hero-tagline,
+#top .hero-tagline * {
+  font-weight: 700 !important;
+}
+/* Typing cursor after "Enter VANTAGE." — removed per request. */
+#top .he-cursor {
+  display: none !important;
+}
+</style>
+<style id="prologue-startup-guard">/* Startup guard: later inline typography overrides must not expose the
+   final subtitle before the prologue reaches its reveal phase. */
+#prologue:not(.phase-pressure) .prologue-kicker,
+#prologue:not(.phase-pressure) .prologue-message,
+#prologue:not(.phase-pressure) .prologue-sub {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+#prologue.phase-pressure .prologue-kicker,
+#prologue.phase-pressure .prologue-message,
+#prologue.phase-pressure .prologue-sub {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+#prologue.countdown .prologue-copy {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+/* Fix 1: prologue-note flashes briefly on refresh — hide until phase-pressure */
+#prologue:not(.phase-pressure) .prologue-note {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+#prologue.phase-pressure .prologue-note {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+/* Fix 2: prologue layout — keep copy left-of-centre, note owns right zone */
+.prologue-copy {
+  left: 24px !important;
+  right: 280px !important;
+  width: auto !important;
+  transform: none !important;
+}
+/* Fix 2: note — push down 10px from signal to create breathing room */
+.prologue-note {
+  top: 120px !important;
+}
+@media (max-width: 900px) {
+  .prologue-copy { right: 210px !important; }
+  .prologue-note { top: 90px !important; }
+}
+@media (max-width: 560px) {
+  .prologue-copy { left: 16px !important; right: 16px !important; }
+}
+
+/* Fix 1: hero accent lines flash as purple blocks before JS runs —
+   visibility:hidden prevents GPU compositing entirely (no layer created)
+   so there is no intermediate state where background shows as a rectangle
+   before background-clip:text applies. opacity:0 alone still composites
+   the element and can flash. Both properties set for maximum suppression.
+   !important ensures this beats any rule in vantage-cinematic.css. */
+.hero-title .line {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+/* The current visual is the decoded photo layer. Avoid an unnecessary
+   mobile WebGL context and compositor competition. */
+@media (max-width: 700px) {
+  #prologueCanvas {
+    display: none !important;
+  }
+}
+</style>
+</head>
+<body>
+<div id="page-fade-overlay" style="position:fixed;inset:0;background:#050410;z-index:99999;opacity:1;transition:opacity .5s ease;pointer-events:none"></div>
+<script src="vantage-page-fade.js"></script>
+<canvas id="world" aria-hidden="true"></canvas>
+<canvas id="cinemaCanvas" aria-hidden="true"></canvas>
+<div class="cinema-hud" aria-hidden="true"><span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span><span class="hud-readout left">VANTAGE // YOUR PERSONAL
+HR BUSINESS PARTNER</span><span class="hud-readout right">SIGNAL 07.4
+CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</span><span class="hud-meter"><i id="hudMeter"></i></span></div><div class="scene-tag" id="sceneTag">01 / THE DECISION</div>
+
+<div class="intel-rail" id="intelRail" aria-hidden="true">
+  <div class="intel-rail-head"><i></i><span>INTELLIGENCE / LIVE</span></div>
+  <div class="intel-row"><span>CONTEXT</span><b id="intelContext">07.4</b><i><em></em></i></div>
+  <div class="intel-row"><span>SIGNAL</span><b id="intelSignal">LISTENING</b><i><em></em></i></div>
+  <div class="intel-row"><span>RISK</span><b id="intelRisk">UNRESOLVED</b><i><em></em></i></div>
+  <div class="intel-row"><span>MEMORY</span><b id="intelMemory">ACTIVE</b><i><em></em></i></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="cursor-orb" aria-hidden="true"></div>
+
+<div class="boot" id="boot">
+  <div class="boot-inner">
+    <div class="boot-top"><span>VANTAGE</span><span>Private intelligence system</span></div>
+    <div class="boot-time" id="bootTime">21:07</div>
+    <div class="boot-log" id="bootLog"></div>
+    <div class="boot-progress"><span></span></div>
+  </div>
+</div>
+
+<div id="prologue" aria-label="Vantage 21:00 prologue">
+  <div class="prologue-photo" aria-hidden="true"></div>
+  <canvas id="prologueCanvas" aria-hidden="true"></canvas>
+  <div class="prologue-grid"></div><div class="prologue-vignette"></div>
+  <div class="prologue-top"><span>VANTAGE / 21:00</span><span class="prologue-time"><i></i><strong>PRIVATE HR DECISION / LIVE</strong></span></div>
+  <div class="prologue-signal"><span>INCOMING <b>HIGH PRIORITY</b></span><span>Employee relations <b>CASE 2841</b></span><span>MANAGER <b>NEEDS CLOSURE</b></span><span>DOCUMENTATION <b>INCOMPLETE</b></span></div>
+  <div class="prologue-note"><strong>09:18 PM</strong>The office is mostly empty.<br>The decision is still open.</div>
+  <div class="prologue-copy"><div class="prologue-kicker">The Building Has Gone Quiet</div><div class="prologue-message">Somewhere in it, a decision<br>is still being made.<br><em>Alone.</em></div><div class="prologue-sub">No Escalation Path. No Second Opinion. Just The Clock.</div></div>
+  <button class="prologue-skip" id="prologueSkip">SKIP PROLOGUE ↗</button>
+  <div class="prologue-countdown" id="prologueCountdown"><span>ENTERING VANTAGE</span><strong id="prologueCountNum">3</strong></div>
+  <div class="prologue-fade"></div>
+</div>
+
+<div id="init-overlay" aria-hidden="true">
+  <p id="init-text"></p>
+</div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html" aria-label="Virorah Vantage home">
+    <img src="virorah-vantage-logo.png" alt="Virorah Vantage">
+  </a>
+  <div class="nav-status"><i></i><span>VANTAGE / ONLINE</span></div>
+  <nav>
+    <a href="#system">MERIDIAN</a><a href="#aria">ARIA</a><a href="#humacity">Humacity</a><a href="#record">Vantage Record</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
+  </nav>
+  <div class="nav-actions"><a class="nav-sign vantage-auth-link" href="access.html" data-signed-in-text="Dashboard" data-signed-in-href="dashboard.html">Sign in</a><a class="nav-cta" href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}" style="white-space:nowrap">Try the Demo <b>↗</b></a><button id="pwa-nav-btn" onclick="triggerPwaInstall()" style="display:none;padding:6px 12px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:7px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;cursor:pointer;transition:all .2s;white-space:nowrap" title="Install Vantage as an app">&#x2B07; Install</button></div>
+</header>
+
+<div id="tada-overlay" aria-hidden="true">
+  <canvas id="tada-canvas"></canvas>
+  <div id="tada-logo">
+    <img src="virorah-vantage-logo.png" alt="Virorah Vantage" id="tada-logoimg">
+  </div>
+</div>
+<main><main>
+<section class="hero cinematic-panel is-live" id="top">
+  <div class="hero-field" aria-hidden="true">
+    <div class="hero-ring r1"></div><div class="hero-ring r2"></div>
+    <div class="hero-ring r3"></div><div class="hero-core"></div>
+  </div>
+  <div class="hero-copy">
+    <div class="sysline">
+      <span>INDIA / HR</span><span>CASE RECORDING ACTIVE</span>
+      <span id="liveClock">21:07:00</span>
+    </div>
+    <h1 class="hero-title">
+      <span class="line dim" style="opacity:0">Every HR professional has had that 9 pm moment.</span>
+      <span class="line dim hero-context" style="opacity:0">The one that can&rsquo;t wait for morning: a termination, a boardroom fight, a call with no second opinion.</span>
+      <span class="hero-kicker split-reveal" style="opacity:0">You carry everyone's hardest moments. Alone.</span>
+      <span class="line accent" style="opacity:0">You are HR for everyone.</span>
+      <span class="line accent" style="opacity:0">Who is HR for you?</span>
+    </h1>
+    <p class="hero-enter" id="heroEnter" style="opacity:0"></p>
+    <p class="hero-tagline" style="opacity:0">Your Personal HR Business Partner. <em>Not the org's. Yours.</em></p>
+    <p class="hero-deck" style="opacity:0">The intelligence ally you take with you, built for the profession that carries everyone else.</p>
+    <div class="hero-actions">
+      <a href="demo.html" class="btn btn-primary magnetic" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">Try the Demo: it's live <span>→</span></a>
+      <a href="access.html" class="btn btn-ghost magnetic vantage-auth-link" data-signed-in-text="Dashboard" data-signed-in-href="dashboard.html">Sign In <span>↗</span></a>
+    </div>
+    <a href="#" id="prologue-back" onclick="sessionStorage.removeItem('vantage_prologue_seen');sessionStorage.removeItem('vantage_boot_seen');sessionStorage.removeItem('vantage_hero_animated');sessionStorage.removeItem('vantage_demo_curtain_seen');sessionStorage.removeItem('vantage_dash_animated');localStorage.removeItem('vantage_paid_user');localStorage.removeItem('vantage_clerk_signed_in');location.reload();return false;">← Watch the opening sequence</a>
+    <a href="about.html" class="hero-about-link" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">About Vantage: what it is and what it does &#8594;</a>
+    <div class="hero-foot">
+      <span>Private by default</span>
+      <span>Built for Indian HR</span>
+      <span>Your record, not your company's</span>
+    </div>
+  </div>
+  <div class="hero-scroll"><span>SCROLL TO ENTER</span><i></i></div>
+</section>
+<section class="signal-strip"><div class="signal-track">
+<span>Employee Relations</span><b>◆</b><span>Policy</span><b>◆</b>
+<span>Business Impact</span><b>◆</b><span>Financial Exposure</span><b>◆</b>
+<span>Stakeholder Influence</span><b>◆</b><span>Career Record</span><b>◆</b>
+<span>Employee Relations</span><b>◆</b><span>Policy</span><b>◆</b>
+<span>Business Impact</span><b>◆</b><span>Financial Exposure</span></div></section>
+<section class="vantage-def reveal-section" id="what">
+  <div class="vd-grid">
+    <div class="vd-copy">
+      <p class="eyebrow" style="background:linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent">What Vantage is</p>
+      <h2>Where difficult HR decisions stop being <em>lonely.</em></h2>
+      <div class="vd-body">
+        <p>When a manager wants to fire someone and has no documentation on file. When an employee raises a complaint and the legal exposure is unclear. When a resignation might cost the company &#x20B9;34L in replacement costs nobody has calculated. When a business case needs to land with a CFO who responds to numbers, not HR narratives.</p>
+        <p>These are the moments where HR professionals earn everything they&rsquo;re paid. And where most have nowhere to turn but their own judgment and a WhatsApp group.</p>
+        <p><strong>Vantage is what you turn to instead.</strong></p>
+        
+      </div>
+      <a href="about.html" class="vd-about-cta" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">Read the full story &rarr;</a>
+    </div>
+
+    <div class="vd-visual">
+      <div class="vd-radar" id="vdRadar">
+        <div class="vd-scope-label">VANTAGE COVERAGE SCOPE &middot; THE EMPLOYMENT RELATIONSHIP</div>
+        <svg class="vd-radar-svg" viewBox="0 0 460 460" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="vdRadarCore" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#e9e0ff"/>
+              <stop offset="45%" stop-color="#8b5cf6"/>
+              <stop offset="100%" stop-color="#4338ca"/>
+            </radialGradient>
+          </defs>
+
+          <circle class="vd-radar-outerring" cx="230" cy="230" r="165" fill="none" stroke="rgba(196,181,253,0.08)" stroke-width="1" stroke-dasharray="2 6"/>
+          <circle class="vd-radar-boundary" cx="230" cy="230" r="140" fill="none" stroke="rgba(99,102,241,0.28)" stroke-width="1" stroke-dasharray="4 4"/>
+          <circle class="vd-radar-boundary-fill" cx="230" cy="230" r="140" fill="url(#vdRadarCore)" opacity="0.045"/>
+
+          <g class="vd-radar-sweep-group">
+            <line class="vd-radar-trail" x1="230" y1="230" x2="230" y2="35" transform="rotate(-16 230 230)"/>
+            <line class="vd-radar-trail vd-radar-trail-2" x1="230" y1="230" x2="230" y2="35" transform="rotate(-8 230 230)"/>
+            <line class="vd-radar-beam" x1="230" y1="230" x2="230" y2="35"/>
+          </g>
+
+          <line class="vd-radar-spoke" x1="230" y1="230" x2="230" y2="122"/>
+          <line class="vd-radar-spoke" x1="230" y1="230" x2="323.5" y2="176"/>
+          <line class="vd-radar-spoke" x1="230" y1="230" x2="323.5" y2="284"/>
+          <line class="vd-radar-spoke" x1="230" y1="230" x2="230" y2="338"/>
+          <line class="vd-radar-spoke" x1="230" y1="230" x2="136.5" y2="284"/>
+          <line class="vd-radar-spoke" x1="230" y1="230" x2="136.5" y2="176"/>
+
+          <circle class="vd-radar-hub-pulse" cx="230" cy="230" r="40"/>
+          <circle class="vd-radar-hub" cx="230" cy="230" r="40"/>
+          <text x="230" y="227" class="vd-radar-hub-t">VANTAGE</text>
+          <text x="230" y="240" class="vd-radar-hub-sub">THE SCOPE</text>
+
+          <g class="vd-radar-node" style="transition-delay:.1s">
+            <circle cx="230" cy="122" r="20"/>
+            <text x="230" y="126" class="vd-radar-node-t">CASES</text>
+          </g>
+          <g class="vd-radar-node" style="transition-delay:.2s">
+            <circle cx="323.5" cy="176" r="20"/>
+            <text x="323.5" y="180" class="vd-radar-node-t">ECONOMICS</text>
+          </g>
+          <g class="vd-radar-node" style="transition-delay:.3s">
+            <circle cx="323.5" cy="284" r="20"/>
+            <text x="323.5" y="288" class="vd-radar-node-t">INFLUENCE</text>
+          </g>
+          <g class="vd-radar-node" style="transition-delay:.4s">
+            <circle cx="230" cy="338" r="20"/>
+            <text x="230" y="342" class="vd-radar-node-t">POLICY</text>
+          </g>
+          <g class="vd-radar-node" style="transition-delay:.5s">
+            <circle cx="136.5" cy="284" r="20"/>
+            <text x="136.5" y="288" class="vd-radar-node-t">ORG HEALTH</text>
+          </g>
+          <g class="vd-radar-node" style="transition-delay:.6s">
+            <circle cx="136.5" cy="176" r="20"/>
+            <text x="136.5" y="180" class="vd-radar-node-t">RECORD</text>
+          </g>
+
+        </svg>
+        <div class="vd-radar-legend">
+          <p class="vd-radar-legend-main">Where Vantage focuses: the decisions that need judgment, not the systems that need data entry.</p>
+          <p class="vd-radar-legend-sub">The systems already exist everywhere. The judgment is what&rsquo;s been missing.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vd-pillars">
+    <div class="vd-pillar" id="vdPillar1">
+      <div class="vd-pillar-num">01 / LAW</div>
+      <h3 class="vd-pillar-h">The law: current, cited, and calibrated to you.</h3>
+      <p class="vd-pillar-p">India&rsquo;s 29 central employment laws became 4 Labour Codes on 21 November 2025. The Industrial Disputes Act is gone. The Industrial Relations Code replaced it. The gap between the old laws and the new Codes is where most legal exposure now sits. Vantage runs on what is actually in force today: the specific Code, the specific section, and the threshold from the Act text that's loaded for your case, with a flag where your state's own rule hasn't been loaded yet.</p>
+      <div class="vd-viz">
+        <div class="vd-law-bar">
+          <div class="vd-law-old"><span class="vd-law-num">29</span><span class="vd-law-lbl">OLD LAWS</span></div>
+          <div class="vd-law-arrow">&rarr;</div>
+          <div class="vd-law-new"><span class="vd-law-num">4</span><span class="vd-law-lbl">LABOUR CODES</span></div>
+          <div class="vd-law-particle"></div>
+          <div class="vd-law-particle"></div>
+          <div class="vd-law-particle"></div>
+          <div class="vd-law-scan"></div>
+        </div>
+        <div class="vd-law-date">IN FORCE SINCE 21 NOV 2025</div>
+      </div>
+    </div>
+    <div class="vd-pillar" id="vdPillar2">
+      <div class="vd-pillar-num">02 / FINANCIAL</div>
+      <h3 class="vd-pillar-h">The financial exposure, in rupees, with a confidence level.</h3>
+      <p class="vd-pillar-p">Every case can carry a modelled figure. Wrongful termination risk. Replacement cost. Flight risk liability. Vantage turns the situation into an INR range, broken down by line item, so you walk in with the assumption attached, not a verified result.</p>
+      <div class="vd-viz">
+        <div class="vd-fin-row"><span class="vd-fin-lbl">Termination Risk</span><div class="vd-fin-track" style="--fin-w:78%"><div class="vd-fin-fill" data-w="78"></div><div class="vd-fin-spark"></div></div><span class="vd-fin-val" data-val="21" data-pre="&#8377;" data-suf="L">&#8377;0L</span></div>
+        <div class="vd-fin-row"><span class="vd-fin-lbl">Replacement Cost</span><div class="vd-fin-track" style="--fin-w:52%"><div class="vd-fin-fill" data-w="52"></div><div class="vd-fin-spark"></div></div><span class="vd-fin-val" data-val="8" data-pre="&#8377;" data-suf="L">&#8377;0L</span></div>
+        <div class="vd-fin-row"><span class="vd-fin-lbl">Flight Risk Liability</span><div class="vd-fin-track" style="--fin-w:38%"><div class="vd-fin-fill" data-w="38"></div><div class="vd-fin-spark"></div></div><span class="vd-fin-val" data-val="6" data-pre="&#8377;" data-suf="L">&#8377;0L</span></div>
+      </div>
+    </div>
+    <div class="vd-pillar" id="vdPillar3">
+      <div class="vd-pillar-num">03 / INFLUENCE</div>
+      <h3 class="vd-pillar-h">The stakeholder strategy: not just what&rsquo;s right, but how to get it through.</h3>
+      <p class="vd-pillar-p">Knowing the right answer is half the job. Getting a busy manager, a skeptical department head, or a resistant business partner to act on it is the other half. Vantage builds the argument, the language, and the communication approach, calibrated to the person you need to move. And when the conversation feels high-stakes, ARIA will play the other person so you can practice it before it&rsquo;s real.</p>
+      <div class="vd-viz">
+        <svg class="vd-inf-svg" viewBox="0 0 260 160">
+          <line class="vd-inf-line" x1="130" y1="80" x2="45" y2="28"/>
+          <line class="vd-inf-line" x1="130" y1="80" x2="215" y2="28"/>
+          <line class="vd-inf-line" x1="130" y1="80" x2="130" y2="140"/>
+          <circle class="vd-inf-pulse" cx="130" cy="80" r="17"/>
+          <circle class="vd-inf-center" cx="130" cy="80" r="17"/>
+          <text x="130" y="84" class="vd-inf-center-t">ASK</text>
+          <circle class="vd-inf-packet" r="3" style="offset-path:path('M130,80 L45,28')"></circle>
+          <circle class="vd-inf-packet" r="3" style="offset-path:path('M130,80 L215,28');animation-delay:.6s"></circle>
+          <circle class="vd-inf-packet" r="3" style="offset-path:path('M130,80 L130,140');animation-delay:1.2s"></circle>
+          <circle class="vd-inf-node" cx="45" cy="28" r="10"/>
+          <text x="45" y="14" class="vd-inf-node-t">MANAGER</text>
+          <circle class="vd-inf-node" cx="215" cy="28" r="10"/>
+          <text x="215" y="14" class="vd-inf-node-t">DEPT HEAD</text>
+          <circle class="vd-inf-node" cx="130" cy="140" r="10"/>
+          <text x="130" y="158" class="vd-inf-node-t">PARTNER</text>
+        </svg>
+      </div>
+    </div>
+    <div class="vd-pillar" id="vdPillar4">
+      <div class="vd-pillar-num">04 / RECORD</div>
+      <h3 class="vd-pillar-h">The career record: every decision documented and financially quantified.</h3>
+      <p class="vd-pillar-p">Every case you handle on Vantage is documented: the situation, the legal position, the financial exposure, and what you recommended. Before outcomes are known, not after. So when a decision goes well, you have a record that shows your thinking. When it goes badly, you have a record of what you recommended and why, before anyone knew how it would turn out. Over months and years, this becomes a professional record that most HR careers never produce, because most HR decisions leave no trace at all.</p>
+      <div class="vd-viz">
+        <div class="vd-rec-track" id="vdRecTrack"><div class="vd-rec-scan"></div></div>
+        <div class="vd-rec-counter"><span class="vd-rec-live"></span><b id="vdRecCounter">0</b> decisions documented &middot; illustrative</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="vd-close">Most HR professionals spend a decade making consequential decisions that leave no trace. Vantage is the place those decisions get written down: <em>every decision documented, with the modelled exposure written down.</em></p>
+
+  <p class="record-sub" style="text-align:center;max-width:600px;margin:24px auto 0">Your company has an HRIS. <span class="line accent" style="display:inline">You have Vantage.</span></p>
+
+  <div class="vd-hub" id="vdHub">
+    <div class="vd-hub-label">ONE SYSTEM &middot; FOUR DIMENSIONS OF EVERY DECISION</div>
+    <svg class="vd-hub-svg" viewBox="0 0 600 320">
+      <defs>
+        <linearGradient id="vdHubGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#e9e0ff"/>
+          <stop offset="45%" stop-color="#8b5cf6"/>
+          <stop offset="100%" stop-color="#4338ca"/>
+        </linearGradient>
+      </defs>
+
+      <circle class="vd-hub-outerring" cx="300" cy="160" r="118" fill="none" stroke="rgba(196,181,253,0.07)" stroke-width="1" stroke-dasharray="1 5"/>
+
+      <path class="vd-hub-line" data-n="1" fill="none" d="M120,70 Q223,88 300,160"/>
+      <path class="vd-hub-line" data-n="2" fill="none" d="M480,70 Q403,142 300,160"/>
+      <path class="vd-hub-line" data-n="3" fill="none" d="M120,250 Q197,178 300,160"/>
+      <path class="vd-hub-line" data-n="4" fill="none" d="M480,250 Q377,232 300,160"/>
+
+      <circle class="vd-hub-pulse vd-hub-pulse-a" cx="300" cy="160" r="46"/>
+      <circle class="vd-hub-pulse vd-hub-pulse-b" cx="300" cy="160" r="46"/>
+      <circle class="vd-hub-ring" cx="300" cy="160" r="58"/>
+      <circle class="vd-hub-core" cx="300" cy="160" r="46"/>
+      <text x="300" y="156" class="vd-hub-core-t">VANTAGE</text>
+      <text x="300" y="171" class="vd-hub-core-sub">THE SYSTEM</text>
+
+      <circle class="vd-hub-packet" data-n="1" r="3.2" style="offset-path:path('M120,70 Q223,88 300,160')"></circle>
+      <circle class="vd-hub-packet" data-n="2" r="3.2" style="offset-path:path('M480,70 Q403,142 300,160');animation-delay:.55s"></circle>
+      <circle class="vd-hub-packet" data-n="3" r="3.2" style="offset-path:path('M120,250 Q197,178 300,160');animation-delay:1.1s"></circle>
+      <circle class="vd-hub-packet" data-n="4" r="3.2" style="offset-path:path('M480,250 Q377,232 300,160');animation-delay:1.65s"></circle>
+
+      <g class="vd-hub-node" data-n="1">
+        <circle cx="120" cy="70" r="35"/>
+        <text x="120" y="67" class="vd-hub-node-t1">UNDERSTAND</text>
+        <text x="120" y="80" class="vd-hub-node-t2">MERIDIAN</text>
+      </g>
+      <g class="vd-hub-node" data-n="2">
+        <circle cx="480" cy="70" r="35"/>
+        <text x="480" y="67" class="vd-hub-node-t1">THINK</text>
+        <text x="480" y="80" class="vd-hub-node-t2">ARIA</text>
+      </g>
+      <g class="vd-hub-node" data-n="3">
+        <circle cx="120" cy="250" r="35"/>
+        <text x="120" y="247" class="vd-hub-node-t1">QUANTIFY</text>
+        <text x="120" y="260" class="vd-hub-node-t2">HUMACITY</text>
+      </g>
+      <g class="vd-hub-node" data-n="4">
+        <circle cx="480" cy="250" r="35"/>
+        <text x="480" y="247" class="vd-hub-node-t1">REMEMBER</text>
+        <text x="480" y="260" class="vd-hub-node-t2">VANTAGE RECORD</text>
+      </g>
+    </svg>
+    <p class="vd-hub-copy">Understand. Think. Quantify. Remember. Four layers, working together, whenever a decision needs them. That&rsquo;s <strong>Vantage.</strong></p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     BRING IT — "What can I bring Vantage?" bridge section
+     Sits between the emotional hook (vantage-def) and the
+     architecture sections (MERIDIAN → ARIA → Humacity → Record).
+     Answers the first question a new visitor actually has:
+     "Can I bring my specific problem to this?"
+     ═══════════════════════════════════════════════════════════════ -->
+<style>
+.bring-it{padding:80px 6vw 72px;border-top:1px solid rgba(99,102,241,.1);text-align:center}
+.bring-head{max-width:560px;margin:0 auto 52px}
+.bring-head .eyebrow{font:600 10px 'JetBrains Mono',monospace;letter-spacing:.2em;color:rgba(196,181,253,.45);text-transform:uppercase;display:block;margin-bottom:14px} /* "What to bring" — same bump as "What Vantage is": bigger, bolder,    proper breathing room, and an actual visible gradient instead of    flat dim lavender. */ #bring .bring-head .eyebrow {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: clamp(16px, 1.7vw, 21px) !important;
+  font-weight: 700 !important;
+  letter-spacing: .18em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 32px !important;
+  background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 0 12px rgba(139,92,246,.4));
+}
+.bring-head h2{font:700 clamp(28px,3.2vw,44px)/1.1 'Space Grotesk',sans-serif;letter-spacing:-.01em;color:#f4f3ff;margin-bottom:16px}
+.bring-head h2 em{font-style:italic;color:#a5b4fc}
+.bring-head p{font-size:15px;color:rgba(244,243,255,.5);line-height:1.75;max-width:420px;margin:0 auto}
+.bring-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:960px;margin:0 auto 52px;text-align:left}
+.bring-card{border:1px solid rgba(99,102,241,.18);border-radius:10px;padding:22px 18px;background:rgba(99,102,241,.04);transition:border-color .25s,background .25s}
+.bring-card:hover{border-color:rgba(99,102,241,.38);background:rgba(99,102,241,.08)}
+.bring-card-num{font:700 10px 'JetBrains Mono',monospace;letter-spacing:.15em;color:rgba(99,102,241,.7);margin-bottom:12px}
+.bring-card-label{font:700 14px 'Space Grotesk',sans-serif;color:#f4f3ff;margin-bottom:8px;line-height:1.3}
+.bring-card-desc{font-size:12.5px;color:rgba(244,243,255,.45);line-height:1.7}
+.bring-arc{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 22px;padding:0 6vw;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:10px;line-height:1.6;letter-spacing:.18em;text-transform:uppercase}
+.bring-arc-lead{color:rgba(196,181,253,.3)}
+.bring-arc-flow{color:rgba(196,181,253,.42);white-space:nowrap}
+@media(max-width:480px){.bring-arc-flow{white-space:normal;text-align:center}}
+@media(max-width:768px){.bring-cards{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.bring-cards{grid-template-columns:1fr}
+  /* SR23: record-links + record-payoff mobile fix.
+     Desktop: two links side by side (existing flex row, no change).
+     Mobile ≤480px: stack links vertically, center everything, add breathing room. */
+  .record-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 32px 24px 0;
+    text-align: center;
+  }
+  .record-links .text-link {
+    font: 600 14px 'JetBrains Mono', monospace;
+    letter-spacing: .06em;
+    color: #a5b4fc;
+    text-decoration: none;
+  }
+  .record-payoff {
+    text-align: center;
+  }
+}
+</style>
+<section class="bring-it reveal-section" id="bring">
+  <div class="bring-head">
+    <span class="eyebrow">What to bring</span>
+    <h2>Start with what&rsquo;s <em>on your desk.</em></h2>
+    <p>No frameworks to learn first. No setup required. Bring the real problem. Vantage figures out the rest.</p>
+  </div>
+  <div class="bring-cards">
+    <div class="bring-card">
+      <div class="bring-card-num">01 / CASE</div>
+      <div class="bring-card-label">A difficult case</div>
+      <div class="bring-card-desc">Termination. Misconduct. Grievance. Performance. Any decision with legal exposure or financial stakes attached.</div>
+    </div>
+    <div class="bring-card">
+      <div class="bring-card-num">02 / POLICY</div>
+      <div class="bring-card-label">A policy question</div>
+      <div class="bring-card-desc">What does the law say? What does your company policy require? What is the compliance exposure if you get it wrong?</div>
+    </div>
+    <div class="bring-card">
+      <div class="bring-card-num">03 / STAKEHOLDER</div>
+      <div class="bring-card-label">A stakeholder problem</div>
+      <div class="bring-card-desc">A CFO who needs a rupee argument. A manager making a risky call. A conversation you need to walk into prepared.</div>
+    </div>
+    <div class="bring-card">
+      <div class="bring-card-num">04 / BUSINESS CASE</div>
+      <div class="bring-card-label">A business case</div>
+      <div class="bring-card-desc">A retention programme. An attrition problem. An HR investment that needs approval and a number the room will believe.</div>
+    </div>
+  </div>
+  <div class="bring-arc"><span class="bring-arc-lead">Vantage takes every problem through the same arc</span><span class="bring-arc-flow">Context &rarr; Judgment &rarr; Business impact &rarr; Memory</span></div>
+</section>
+
+<section class="meridian cinematic-panel reveal-section" id="system">
+  <div class="section-index">01 / UNDERSTAND <span style="opacity:.5;font-weight:400">&middot; powered by MERIDIAN&trade;</span></div>
+  <div class="meridian-grid">
+    <div class="meridian-copy"><p class="eyebrow">Understand your context</p><h2>Generic HR intelligence<br><span class="line accent">stops here.</span></h2><p class="lede">Eight fields is what you fill. What they unlock took time and experience to build.<br><br>Beneath those inputs runs India's current labour law: the IR Code 2020, in force since November 2025, which replaced the Industrial Disputes Act that most tools still cite. Tribunal escalation models calibrated to your union environment. Sector attrition benchmarks drawn from converging 2025–26 survey data (Aon, CIEL HR, Business Today, WSNE Consulting, Venturesathi) where sources agree, honest sector-logic estimates where they don’t, labeled either way. Financial quantification that converts your HR situation into a rupee figure, broken down by line item, with a confidence level attached.<br><br>Every tool in Vantage pulls from this engine. Every answer is calibrated, not to a generic “HR professional,” but to a VP HR at a 400-person BFSI firm in Maharashtra, or an HR Manager at a 200-person startup in Bengaluru. The specificity is the point. Generic intelligence is already free everywhere. Vantage exists because precision is what the profession actually needs, and precision requires an engine, not a prompt.</p><div class="context-readout"><span>EXAMPLE CONTEXT</span><b id="meridianStatus">CALIBRATING...</b><div class="readout-line"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>
+    <div class="meridian-stack" id="meridianStack">
+
+  <div class="ms-input">
+    <div class="ms-input-label">INPUT SURFACE <span class="ms-itag">WHAT YOU PROVIDE</span></div>
+    <div class="ms-params">
+      <span>STATE</span><span>INDUSTRY</span><span>ORG TYPE</span>
+      <span>ORG SIZE</span><span>SENIORITY</span><span>UNION STATUS</span><span>FUNCTION</span><span>POLICY</span>
+    </div>
+  </div>
+
+  <div class="ms-calibrate" id="msCalibrate">
+    <div class="ms-cal-header">
+      <div class="ms-cal-dot"></div>
+      <div class="ms-cal-label">ILLUSTRATIVE EXAMPLE &middot; YOUR OWN PRECISION AND RISK FIGURES ARE CALCULATED FROM YOUR ACTUAL CASE</div>
+    </div>
+    <div class="ms-cal-context">
+      <span class="ms-cal-tag">Maharashtra</span>
+      <span class="ms-cal-tag">IT / SaaS</span>
+      <span class="ms-cal-tag">251&ndash;1,000 employees</span>
+      <span class="ms-cal-tag">HR Manager</span>
+      <span class="ms-cal-tag">Non-unionised</span>
+      <span class="ms-cal-tag">Employee Relations</span>
+    </div>
+    <div class="ms-cal-bar"><div class="ms-cal-fill"></div></div>
+    <div class="ms-cal-status">88% PRECISION CONFIDENCE &middot; ALL 8 PARAMETERS SET</div>
+    <div class="ms-cal-status" style="margin-top:5px;opacity:.65">Legal basis: IR Code 2020, in force 21 Nov 2025 &middot; Central &amp; State rules still in draft as of early 2026</div>
+  </div>
+
+  <div class="ms-divider">
+    <span class="ms-divider-label">WHAT MERIDIAN ACTUALLY RUNS ON</span>
+  </div>
+
+  <div class="ms-layer" data-d="3">
+    <div class="msl-left"><span class="msl-num">L4</span></div>
+    <div class="msl-right">
+      <div class="msl-name">SIGNAL FRAMEWORK</div>
+      <div class="msl-desc">Situational reading &middot; Case pattern recognition &middot; Escalation mapping</div>
+      <div class="msl-bar"><div class="msl-fill"></div></div>
+      <div class="msl-signals">
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">CASE CLASSIFICATION</div>
+            <div class="msl-signal-val">Termination risk: documentation gap <em>No written warning on record</em></div>
+          </div>
+          <div class="msl-badge msl-badge--critical">CRITICAL</div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">ESCALATION SIGNAL</div>
+            <div class="msl-signal-val">Tribunal filing probability 45&ndash;55% <em>Adjusted for non-unionised status</em></div>
+          </div>
+          <div class="msl-badge msl-badge--high">HIGH</div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">PATTERN DETECTED</div>
+            <div class="msl-signal-val">3 of 5 recent IT/SaaS case types share same process failure <em>Premature closure without domestic enquiry</em></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ms-layer" data-d="2">
+    <div class="msl-left"><span class="msl-num">L3</span></div>
+    <div class="msl-right">
+      <div class="msl-name">EMPLOYEE CASE ADVISOR + INFLUENCE STACK</div>
+      <div class="msl-desc">ER case frameworks &middot; Stakeholder dynamics &middot; Consequence modelling</div>
+      <div class="msl-bar"><div class="msl-fill"></div></div>
+      <div class="msl-signals">
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">PROCESS DIAGNOSIS</div>
+            <div class="msl-signal-val">No show-cause notice on record <em>High procedural vulnerability before any action</em></div>
+          </div>
+          <div class="msl-badge msl-badge--critical">GAP</div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">FINANCIAL EXPOSURE</div>
+            <div class="msl-signal-val">&#x20B9;8L&ndash;&#x20B9;14L <em>5-year tenure &middot; Maharashtra &middot; BFSI/IT sector</em></div>
+          </div>
+          <div class="msl-badge msl-badge--high">MEDIUM CONF</div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">RECOMMENDED PATH</div>
+            <div class="msl-signal-val">Domestic enquiry route <em>Legally defensible &middot; Issue show-cause notice first</em></div>
+          </div>
+          <div class="msl-badge msl-badge--ok">DEFENSIBLE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ms-layer" data-d="1">
+    <div class="msl-left"><span class="msl-num">L2</span></div>
+    <div class="msl-right">
+      <div class="msl-name">INDIA LEGAL LAYER</div>
+      <div class="msl-desc">Jurisdiction &middot; Labour law &middot; Regulatory precedent &middot; State compliance</div>
+      <div class="msl-bar"><div class="msl-fill"></div></div>
+      <div class="msl-signals">
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">ACTIVE LAW</div>
+            <div class="msl-signal-val">IR Code 2020: effective 21 Nov 2025 <em>Replaced the Industrial Disputes Act 1947</em></div>
+          </div>
+          <div class="msl-badge msl-badge--info">CURRENT</div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">YOUR THRESHOLD</div>
+            <div class="msl-signal-val">Below 300-worker retrenchment cap <em>251&ndash;1,000 employees &middot; prior permission not required</em></div>
+          </div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">KEY CITATION</div>
+            <div class="msl-signal-val">IR Code 2020 &middot; Maharashtra S&amp;E Act <em>BNS replaces IPC (effective Jul 2024) &middot; not IPC</em></div>
+          </div>
+          <div class="msl-badge msl-badge--info">VERIFIED 21 NOV 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ms-layer ms-layer--core" data-d="0">
+    <div class="msl-left"><span class="msl-num">L1</span></div>
+    <div class="msl-right">
+      <div class="msl-name">HUMACITY CORE</div>
+      <div class="msl-desc">People Financial Intelligence &middot; The Human P&amp;L &middot; Humac Score v0.9, provisional</div>
+      <div class="msl-bar"><div class="msl-fill"></div></div>
+      <div class="msl-signals">
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">SECTOR ATTRITION BENCHMARK</div>
+            <div class="msl-signal-val">IT / SaaS: 12&ndash;15% typical <em>Sourced &middot; Aon 32nd Annual Survey 2025&ndash;26</em></div>
+          </div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">REPLACEMENT COST MODEL</div>
+            <div class="msl-signal-val">&#x20B9;34L modelled exposure on current flight risk <em>0.5–2.0× salary, base 1.0×, plus ramp and knowledge transfer</em></div>
+          </div>
+          <div class="msl-badge msl-badge--high">L1 SIGNAL</div>
+        </div>
+        <div class="msl-signal">
+          <div class="msl-signal-icon">&#x25B6;</div>
+          <div class="msl-signal-body">
+            <div class="msl-signal-tag">HUMAC TRAJECTORY &middot; FIXED EXAMPLE</div>
+<div class="msl-signal-val">Value Ledger under pressure <em>Modelled HR return: &#x20B9;0.82 per &#x20B9;100 invested</em></div>
+          </div>
+          <div class="msl-badge msl-badge--high">WATCH</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ms-output" id="msOutput">
+    <div class="ms-output-arrow">&#8595;</div>
+    <div class="ms-output-label">OUTPUT</div>
+    <div class="ms-output-value">PRECISION ADVICE</div>
+    <div class="ms-output-sub">Calibrated to the reality you are actually operating in</div>
+    <div class="ms-output-snippet">
+      <div class="ms-output-snippet-label">SAMPLE OUTPUT &middot; MAHARASHTRA &middot; IT/SAAS &middot; HR MANAGER</div>
+      <div class="ms-output-snippet-text">&ldquo;Issue a written show-cause notice today. Five years of tenure with zero documentation on file means your tribunal exposure starts at &#x20B9;8L and rises with every day you act without this step on record. Do not proceed to termination without it.&rdquo;</div>
+    </div>
+    <div class="ms-output-meta">
+      <span class="ms-output-meta-tag">LEGAL CONF: HIGH</span>
+      <span class="ms-output-meta-tag">PROCESS RISK: HIGH</span>
+      <span class="ms-output-meta-tag">HUMAC: L1</span>
+      <span class="ms-output-meta-tag">GREEN: RISK MITIGATION</span>
+    </div>
+  </div>
+
+</div>
+  </div>
+</section>
+
+<section class="aria cinematic-panel reveal-section" id="aria">
+  <div class="section-index">02 / THINK <span style="opacity:.5;font-weight:400">&middot; powered by ARIA</span></div>
+  <div class="aria-stage-v2">
+
+    <!-- LEFT: ARIA identity + 7 dimensions -->
+    <div class="aria-identity">
+      <p class="aria-eyebrow">Your HR intelligence partner</p>
+      <div class="aria-name-block">
+        <span class="aria-im">I'm</span>
+        <h2 class="aria-name-large">ARIA</h2>
+      </div>
+      <p class="aria-ally"><span class="line accent">Your HR intelligence ally</span></p>
+      <p class="aria-tagline">I see the full picture.<br>So you can make the right decision.</p>
+      <div class="aria-dims">
+        <div class="aria-dim"><div class="dim-dot"></div><div><strong>PEOPLE</strong><span>Human context, always</span></div></div>
+        <div class="aria-dim"><div class="dim-dot"></div><div><strong>CONTEXT</strong><span>Jurisdiction, industry, scale</span></div></div>
+        <div class="aria-dim"><div class="dim-dot"></div><div><strong>RECORD</strong><span>Your case history, at a glance</span></div></div>
+        <div class="aria-dim"><div class="dim-dot"></div><div><strong>TRAJECTORY</strong><span>Your Humac Score, tracked</span></div></div>
+        <div class="aria-dim"><div class="dim-dot"></div><div><strong>REFLECTION</strong><span>Your last Debrief, recalled</span></div></div>
+        <div class="aria-dim"><div class="dim-dot"></div><div><strong>GUIDANCE</strong><span>The right tool, at the right moment</span></div></div>
+        <div class="aria-dim"><div class="dim-dot"></div><div><strong>HONESTY</strong><span>No answer she can't back up</span></div></div>
+      </div>
+      <div class="aria-listen">
+        <div class="soundwave"><i></i><i></i><i></i><i></i><i></i></div>
+        <span>LISTENING...</span>
+      </div>
+    </div>
+
+    <!-- CENTER: Particle face — untouched from SR17 -->
+    <div class="aria-room"><canvas id="ariaAmbient" aria-hidden="true"></canvas><div class="aria-grid"></div><div class="aria-light a1"></div><div class="aria-light a2"></div><div class="aria-figure"><canvas id="ariaVolumetricCanvas" aria-hidden="true"></canvas></div><div class="aria-reaction" id="ariaReaction"><b id="ariaReactionBadge"></b><span id="ariaReactionText"></span></div></div>
+
+    <!-- RIGHT: Action prompts -->
+    <div class="aria-actions">
+      <p class="aria-actions-label">What would you like to<br><span class="line accent">explore today?</span></p>
+      <div class="aria-prompts">
+        <a href="aria.html" class="aria-prompt"><span>Talk through what's on your desk</span><i>→</i></a>
+        <a href="aria.html" class="aria-prompt"><span>See your Vantage Record</span><i>→</i></a>
+        <a href="aria.html" class="aria-prompt"><span>Check your Humac Score</span><i>→</i></a>
+        <a href="aria.html" class="aria-prompt"><span>Reflect on your month</span><i>→</i></a>
+        <a href="aria.html" class="aria-prompt"><span>Figure out which tool fits</span><i>→</i></a>
+        <a href="aria.html" class="aria-prompt"><span>Just talk it through</span><i>→</i></a>
+      </div>
+      <div class="aria-cta-block">
+        <a href="aria.html" class="btn btn-primary magnetic">Meet ARIA <span>→</span></a>
+        <p class="aria-cta-note">CLARITY · CONFIDENCE · A BRIGHTER TOMORROW</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="humacity cinematic-panel reveal-section" id="humacity">
+  <div class="section-index">03 / QUANTIFY <span style="opacity:.5;font-weight:400">&middot; powered by Humacity&trade;</span></div>
+  <div class="humacity-grid">
+    <div class="humacity-copy">
+      <p class="eyebrow">See the business value</p>
+      <h2 class="humacity-headline">You don't just protect the business.<br>
+      <span class="line accent">You fund it.</span></h2>
+      <p class="humacity-concept"><span class="line accent">Now you can put a range on it.</span></p>
+      <p class="body-copy">HR decisions have a financial side. The P&L does not show it unless someone builds the ledger.<br><br>
+      Humacity is the point of view. The Humac Score is its provisional index, version 0.9. For every ₹100 of salary, it gives a base case, a range, and it leaves missing pillars out. <a href="https://humacity.com/humacity-method.html" style="color:#a5b4fc">Read the method</a> before you take the number into a room.</p>
+      <span class="line accent humacity-terms">The Human P&amp;L. The Human Balance Sheet. The Humac Score.</span>
+      <div class="h-metrics">
+        <div><small>Replacement cost</small><b>₹ 8.2L</b></div>
+        <div><small>Ramp time</small><b>4.6 mo</b></div>
+        <div><small>Manager load</small><b>182 hrs</b></div>
+      </div>
+    </div>
+    <div class="humac-synthesis" id="humacSynthesis">
+      <div class="hs-intro">
+        <span class="hs-eyebrow">HOW THE HUMAC SCORE IS BUILT</span>
+        <p class="hs-subtitle">Five forces. One number. <em>The language the boardroom already trusts.</em></p>
+        <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:rgba(196,181,253,.4);margin:10px 0 0">ILLUSTRATIVE EXAMPLE &middot; YOUR OWN HUMAC SCORE IS CALCULATED FROM YOUR ACTUAL CASES</p>
+      </div>
+      <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;color:rgba(196,181,253,.6);margin:0 0 12px;font-weight:600">EXAMPLE ORGANISATION &middot; NOT YOUR SCORE</p>       <div class="hs-forces-grid">
+        <div class="hs-force" data-index="0">
+          <div class="hsf-top"><span class="hsf-id">L1</span><span class="hsf-pts">+18 pts</span></div>
+          <div class="hsf-name">VALUE LEDGER</div>
+          <div class="hsf-metric">&#8377;3.8x</div>
+          <div class="hsf-desc">Return per &#8377; invested in people</div>
+          <div class="hsf-bar"><div class="hsf-fill" data-w="76"></div></div>
+        </div>
+        <div class="hs-force" data-index="1">
+          <div class="hsf-top"><span class="hsf-id">L2</span><span class="hsf-pts">+18 pts</span></div>
+          <div class="hsf-name">TALENT PREMIUM</div>
+          <div class="hsf-metric">+22%</div>
+          <div class="hsf-desc">Above-market performance premium</div>
+          <div class="hsf-bar"><div class="hsf-fill" data-w="80"></div></div>
+        </div>
+        <div class="hs-force" data-index="2">
+          <div class="hsf-top"><span class="hsf-id">L3</span><span class="hsf-pts">+18 pts</span></div>
+          <div class="hsf-name">ORG VITALS</div>
+          <div class="hsf-metric">7.4 / 10</div>
+          <div class="hsf-desc">Organisational health index</div>
+          <div class="hsf-bar"><div class="hsf-fill" data-w="74"></div></div>
+        </div>
+        <div class="hs-force" data-index="3">
+          <div class="hsf-top"><span class="hsf-id">L4</span><span class="hsf-pts">+16 pts</span></div>
+          <div class="hsf-name">HUMAN P&amp;L</div>
+          <div class="hsf-metric">&#8377;18.4L</div>
+          <div class="hsf-desc">Modelled margin, example</div>
+          <div class="hsf-bar"><div class="hsf-fill" data-w="72"></div></div>
+        </div>
+        <div class="hs-force hs-force--wide" data-index="4">
+          <div class="hsf-top"><span class="hsf-id">L5</span><span class="hsf-pts">+14 pts</span></div>
+          <div class="hsf-name">HUMAN BALANCE SHEET</div>
+          <div class="hsf-metric">&#8377;81.7L</div>
+          <div class="hsf-desc">Total human capital position</div>
+          <div class="hsf-bar"><div class="hsf-fill" data-w="68"></div></div>
+        </div>
+      </div>
+      <div class="hs-score-panel" id="humacScorePanel">
+        <div class="hsp-trio">
+
+          <div class="hsp-metric hsp-metric--primary">
+            <span class="hsp-mlabel">HUMAC SCORE</span>
+            <div class="hsp-mval">
+              <span class="hsp-num" id="humacNum">0</span>
+              <span class="hsp-denom">&thinsp;/ 100</span>
+            </div>
+            <span class="hsp-mdesc">Across 5 pillars</span>
+            <div class="hsp-track"><div class="hsp-fill" id="humacFill"></div></div>
+            <span class="hsp-verdict" id="humacVerdict"></span>
+          </div>
+
+          <div class="hsp-divider-v"></div>
+
+          <div class="hsp-metric">
+            <span class="hsp-mlabel">HCI-ADJUSTED</span>
+            <div class="hsp-mval">
+              <span class="hsp-num hsp-num--adj" id="humacHCI">0</span>
+            </div>
+            <span class="hsp-mdesc">Human Confidence Index: <span id="humacHCIx">0.00x</span></span>
+            <span class="hsp-mfooter">3 of 5 pillars computed</span>
+          </div>
+
+          <div class="hsp-divider-v"></div>
+
+          <div class="hsp-metric">
+            <span class="hsp-mlabel">TRAJECTORY</span>
+            <div class="hsp-mval hsp-traj" id="humacTraj">
+              <span class="hsp-traj-arrow">&#8593;</span>
+              <span class="hsp-num hsp-num--traj" id="humacTrajNum">+0</span>
+              <span class="hsp-traj-unit">pts</span>
+            </div>
+            <span class="hsp-mdesc">vs. Q2 baseline of 78</span>
+            <span class="hsp-mfooter" id="humacTrajStatus">Establishing...</span>
+          </div>
+
+        </div>
+        <p class="hsp-tagline" id="humacTagline"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="record cinematic-panel reveal-section" id="record">
+  <div class="section-index">04 / REMEMBER <span style="opacity:.5;font-weight:400">&middot; powered by Vantage Record</span></div>
+  <div class="record-head"><p class="eyebrow">Your career lives here, not in the HRIS</p><h2>The record the org never built <span class="line accent">for you.</span></h2><p class="lede">Every decision you made. Every difficult conversation you navigated. Every rupee you protected. Vantage quietly turns the work you already do into a career record that is yours, across every org, every role, every year you've given to this profession.</p><p class="record-sub">The company owns the HRIS. <span class="line accent">Your Vantage Record belongs to you.</span></p></div>
+  <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:rgba(196,181,253,.4);margin-bottom:14px">ILLUSTRATIVE EXAMPLE &middot; YOUR OWN VANTAGE RECORD BUILDS FROM YOUR FIRST CASE</p>
+  <div class="record-dossier-wrap">
+    <div class="record-dossier" id="recordDossier">
+      <div class="dos-header">
+        <div class="dos-title-row">
+          <span class="dos-label">VANTAGE RECORD</span>
+          <span class="dos-status"><i class="dos-pulse"></i>ACTIVE · BUILDING</span>
+        </div>
+        <div class="dos-meta-row">
+          <span>PROFESSIONAL / <em>CONFIDENTIAL</em></span>
+          <span>ID: VR-2025-0847</span>
+        </div>
+        <div class="dos-progress-track"><div class="dos-progress-fill" id="dosProgress"></div></div>
+        <div class="dos-progress-label"><span>Career capital documented</span><span id="dosPercent">0%</span></div>
+      </div>
+
+      <div class="dos-entries" id="dosEntries">
+        <div class="dos-entry" data-index="0">
+          <div class="dos-entry-head">
+            <span class="dos-date">14 JAN 2025</span>
+            <span class="dos-type">ER CASE FILED</span>
+          </div>
+          <p class="dos-entry-title">Employee absent 7 days. Manager in crisis. You held the room.</p>
+          <div class="dos-entry-foot">
+            <span class="dos-tag">CASE LIBRARY</span>
+            <span class="dos-outcome">Written warning issued, process documented</span>
+          </div>
+          <div class="dos-impact">Modelled financial exposure <strong>₹4.2L</strong></div>
+        </div>
+
+        <div class="dos-entry" data-index="1">
+          <div class="dos-entry-head">
+            <span class="dos-date">08 MAR 2025</span>
+            <span class="dos-type">CONVERSATION REHEARSED · #17</span>
+          </div>
+          <p class="dos-entry-title">Stakeholder alignment call. CFO convinced. Policy passed boardroom review.</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.08em;color:rgba(196,181,253,.4);margin:2px 0 0">Sample record entry &middot; illustrative outcome text</p>
+          <div class="dos-entry-foot">
+           <span class="dos-tag">SIMULATOR</span>
+           <span class="dos-outcome">17 conversations logged this quarter</span>
+          </div>
+        </div>
+
+        <div class="dos-entry" data-index="2">
+          <div class="dos-entry-head">
+            <span class="dos-date">APR 2025</span>
+            <span class="dos-type">MONTHLY DEBRIEF #09</span>
+          </div>
+          <p class="dos-entry-title">9 months on Vantage. 47 decisions on record. 12 policy calls. Every one defensible.</p>
+          <div class="dos-entry-foot">
+            <span class="dos-tag">DEBRIEF</span>
+            <span class="dos-outcome">Intelligence summary compiled and filed</span>
+          </div>
+        </div>
+
+        <div class="dos-entry dos-entry--final" data-index="3">
+          <div class="dos-entry-head">
+            <span class="dos-date">YEAR 1 COMPLETE</span>
+            <span class="dos-type">RECORD CERTIFIED</span>
+          </div>
+          <p class="dos-entry-title">Six stakeholder wins. Nine debriefs. Forty-seven cases. A career, documented.</p>
+          <div class="dos-entry-foot">
+            <span class="dos-tag">HUMACITY</span>
+            <span class="dos-outcome">Modelled exposure, not verified impact</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dos-footer">
+        <div class="dos-total-block">
+          <span class="dos-total-label">TOTAL HR DECISION CAPITAL</span>
+          <span class="dos-total-value" id="dosTotal">₹0L</span>
+        </div>
+        <div class="dos-stamp">VANTAGE<br>PRIVATE</div>
+      </div>
+    </div>
+    <div class="dos-glow"></div>
+  </div>
+  <div class="record-links"><a href="vantage-record.html" class="text-link">Open your Vantage Record →</a><a href="debrief.html" class="text-link">Read your monthly Debrief →</a></div>
+  <div class="record-payoff"><p>You've built careers. Navigated crises. Protected organisations.</p><strong>Now you have the record.<br><span class="line accent">And it's yours to keep.</span></strong></div>
+</section>
+
+<div style="text-align:center;padding:64px 24px 56px;position:relative">
+  <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.8vw,36px);font-weight:400;font-style:italic;color:rgba(196,181,253,.88);line-height:1.25;letter-spacing:-.01em;max-width:640px;margin:0 auto">Your cases, with the modelled exposure written down. Not a verified impact.</p>
+</div>
+
+<section class="cta-moment cinematic-panel">
+  <div class="cta-field" aria-hidden="true">
+    <div class="cta-radial"></div>
+  </div>
+  <div class="cta-copy">
+    <p class="eyebrow">The system is ready for you</p>
+    <h2>You've read about it.<br><span class="line accent">Now step inside.</span></h2>
+    <p class="cta-sub">Bring it the decision you're carrying. That's what Vantage is for.</p>
+    <div class="cta-actions">
+      <a href="demo.html" class="btn btn-primary btn-cta magnetic" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">
+        Try the Demo: it's live <span>→</span>
+      </a>
+      <a href="access.html" class="btn btn-ghost magnetic vantage-auth-link" data-signed-in-text="Dashboard" data-signed-in-href="dashboard.html">Sign In <span>↗</span></a>
+    </div>
+    <p class="cta-note">No enterprise procurement. No annual lock-in. Your account is yours.</p>
+  </div>
+</section>
+
+<section class="pricing-block cinematic-panel reveal-section" id="pricing">
+  <div class="pricing-head">
+    <p class="eyebrow">Simple, honest pricing</p>
+    <h2>Your private intelligence<br><span class="line accent">system, activated.</span></h2>
+    <p class="lede">No enterprise procurement. No IT approvals.<br>Your account belongs to you, not your organisation.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card pricing-card--featured">
+      <div class="plan-label">CORE</div>
+      <div class="plan-price"><span class="price-num">&#8377;799</span><span class="price-period">/month</span></div>
+      <p class="plan-desc">For HR professionals who want their own private intelligence layer.</p>
+      <ul class="plan-features">
+        <li>Employee Case Advisor</li>
+        <li>The Business Case</li>
+        <li>Retention Advisor</li>
+        <li>Policy Advisor</li>
+        <li>Difficult Conversations</li>
+        <li>MERIDIAN profile (8 parameters)</li>
+        <li>Humac Score + Vantage Record</li>
+        <li>ARIA + Standpoint</li>
+        <li>The Debrief</li>
+      </ul>
+      <a href="access.html" class="btn btn-primary magnetic">Get started <span>&#8594;</span></a>
+    </div>
+
+  </div>
+  <p class="pricing-note">Cancel anytime &nbsp;&#183;&nbsp; No annual lock-in &nbsp;&#183;&nbsp; Your record stays yours</p>
+</section>
+
+
+<section class="faq-section reveal-section" id="faq">
+  <div class="faq-header">
+    <p class="eyebrow" style="text-align:center">Questions</p>
+    <h2>Before you start.</h2>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>Is this another tool my company has to buy and roll out?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>No. Vantage isn&rsquo;t an organisational system at all, and it isn&rsquo;t an HRIS, ATS, or payroll tool either. Those manage the company&rsquo;s people data. Vantage is built for you, the individual HR professional, the way a personal business partner would be: somewhere to think through a hard call, quantify what it actually costs, and keep a record of the decisions you made and why. Nobody asks IT for approval. Nobody else inside the organisation needs to adopt it for you to use it. It&rsquo;s a genuinely new kind of tool for the profession: private, personal, and yours, in a field that has never had anything like it before.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>Does my company see what I do on Vantage?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>No. Vantage is built for you personally, not licensed to your employer. What you research, the cases you document, the conversations you rehearse with ARIA: none of it is visible to your organisation. Your Vantage Record moves with you if you change jobs; your HRIS never does.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>How is this different from just using a general AI chatbot?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>A general-purpose large language model, whichever one you use, answers the question you typed, starting from zero every conversation. Vantage is a different kind of thing: a contextual decision system. MERIDIAN calibrates every response to India&rsquo;s current labour codes, your state, your industry, your org size, and your seniority before you type a word. The tools build a case history, quantify financial exposure in INR, and compound in value the longer you use them. Vantage starts from your context, your record, and your professional reality, not a blank page.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>Is the legal information current and accurate?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Vantage runs on India&rsquo;s current labour codes, with the verification date shown alongside each legal reference on the page. Labour law changes over time and varies by state. Vantage is a decision aid, not a substitute for your own legal counsel on a specific case.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>Where do the financial numbers on this page come from?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>The numbers you see in the product previews on this page are illustrative examples, built to show you how the calculation works, not live data. Once you&rsquo;re inside Vantage, every number is calculated from the actual details of your own case, with a confidence level attached.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>Can I use Vantage without my organisation finding out?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Yes. Vantage is a personal subscription, not something your company procures or administers. You sign up and use it the same way you&rsquo;d use any personal professional tool.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>What happens to my Vantage Record if I leave my job?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>It stays with you. That&rsquo;s the entire point. Your company owns your HRIS access; you own your Vantage Record. It travels with you to your next role, your next company, your next title.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>Is Vantage only for HR professionals in India?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Right now, yes. Vantage is built specifically for Indian employment law and the Indian HR context. That precision is deliberate: generic, multi-country HR intelligence is already free everywhere. Vantage exists because precision requires an engine calibrated to one legal system, not a dozen. Global expansion is planned. The GCC and Singapore are next in the pipeline, each with their own calibrated legal and regulatory context built in before launch.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>Is Vantage built for desktop or mobile?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Both, by design. Vantage was built for the HR professional who needs to consult it on the spot: a conversation happening right now, a decision that can&rsquo;t wait until you&rsquo;re back at your desk, a quick policy check between two meetings. That experience is fully mobile. At the same time, many Vantage outputs are detailed: a financial model, a legal position, a full Employee Case Advisor diagnostic across four dimensions. When you need to read through an analysis carefully, review a case you saved, or work through a structured output end to end, the larger screen gives you the space to do that properly. Vantage is built to travel with you and to be waiting at your desk when you get back.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>How is my data secured?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Vantage is built on infrastructure that carries enterprise-grade security certifications, even though Virorah as a company does not yet hold SOC 2 or ISO 27001 in its own name.</p><p><strong>Authentication:</strong> Every sign-in goes through Clerk, which is SOC 2 Type II certified. Your credentials are never stored by Vantage directly.</p><p><strong>Data storage:</strong> Your case records, MERIDIAN profile, and Humac Score are stored in Airtable, which is SOC 2 Type II certified and GDPR compliant. Data is hosted on servers in the United States.</p><p><strong>API and traffic layer:</strong> All traffic between your browser and Vantage&rsquo;s backend runs through Cloudflare Workers. Cloudflare is SOC 2 Type II and ISO 27001 certified.</p><p><strong>AI processing:</strong> Anthropic, the AI provider powering Vantage&rsquo;s tools, does not use API data to train its models by default. This is documented in their usage policy.</p><p><strong>Anonymisation before AI:</strong> Before anything you write reaches the AI layer, person names, company names, and specific locations are automatically replaced with role-consistent placeholders. The AI never sees who or where a case actually involves. This step fails closed: if anonymisation cannot complete safely, the request is blocked rather than sent unredacted.</p><p><strong>Encryption:</strong> All data is encrypted in transit over TLS. Your case content is never shared with advertisers or used for any purpose outside your account.</p><p><strong>Your control:</strong> You can export all your data or delete it permanently at any time from within your account.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>Where is my data actually stored?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Your case records and profile are stored with Airtable, on servers based in the United States. Your original, unredacted text stays there. Only the anonymised version is ever sent to Vantage&rsquo;s AI provider. You can export everything or delete it permanently, at any time, from within your account.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>What does Vantage cost?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>&#8377;799 per month, one plan, billed monthly. No annual contracts, no enterprise procurement, no lock-in. Cancel anytime and you keep access until the end of your current billing period.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>Can I get a refund if I cancel?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Subscriptions aren&rsquo;t refunded once a billing period has started, but there&rsquo;s nothing locking you in either. Cancel anytime and you simply won&rsquo;t be charged again.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>Does Vantage give me legal advice?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>No. Vantage is a decision-intelligence tool, not a law firm, and nothing it generates should be treated as legal advice. For any decision with real legal consequences (a termination, a POSH investigation, anything that could end up in front of a tribunal), consult a qualified legal practitioner before acting.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>Is my case data ever used to train AI models?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>No. Your individual case narratives and outputs are never used to train AI models, by Vantage or by its AI provider.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)"><span>Who can sign up for Vantage?</span><span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Anyone in the HR profession, at any level of the pyramid. At the top: CHROs, VPs of HR, HR Directors and HR Heads who need the financial language and legal precision to hold their own in boardrooms and leadership tables. In the middle: HR Managers, HRBPs, Employee Relations Specialists, HR Generalists and HR Specialists who carry the bulk of the day-to-day decisions, the ones that rarely come with a second opinion. At the entry end: HR Executives, HR Associates and HR Trainees who are building their instincts and want a thinking partner that doesn&rsquo;t judge the question. And across every kind of engagement: independent HR Consultants and fractional HR professionals who work across multiple organisations and need a calibrated intelligence layer that travels with them. Vantage was built for the entire profession, not a tier of it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="final cinematic-panel"><div class="final-field"><div class="final-radial"></div></div><div class="final-copy"><p class="eyebrow">VANTAGE / Private intelligence system</p><h2>Do the work.<br>Keep the record.<br><span class="line accent">Build the career.</span></h2><p>Walk into the next room with more than an answer.</p><div style="display:flex;flex-direction:column;align-items:center;gap:12px"><a href="access.html" class="btn btn-primary magnetic">Enter Vantage <span>↗</span></a><button id="pwa-cta-btn" onclick="triggerPwaInstall()" style="display:none;padding:11px 24px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:10px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap">&#x2B07;&nbsp; Install Vantage App</button><p id="pwa-device-msg" style="display:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:rgba(196,181,253,.45);max-width:340px;text-align:center;line-height:1.6;margin:0"></p></div></div></section>
+
+<div class="vantage-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <p class="footer-tagline">Your Personal HR Business Partner</p>
+      <p class="footer-desc">Private decision intelligence for Indian HR professionals: context-aware guidance, modelled financial estimates, and a career record that&rsquo;s yours, not your company&rsquo;s.</p>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-h">PRODUCT</span>
+      <a href="#what">What Vantage is</a>
+      <a href="#system">MERIDIAN</a>
+      <a href="#aria">ARIA</a>
+      <a href="#humacity">Humacity</a>
+      <a href="#record">Vantage Record</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-h">COMPANY</span>
+      <a href="about.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">About Vantage</a>
+      <a href="#faq">FAQ</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-h">START</span>
+      <a href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">Try the Demo</a>
+      <a href="access.html" class="vantage-auth-link" data-signed-in-text="Dashboard" data-signed-in-href="dashboard.html">Sign In</a>
+      <a href="https://virorah.com">Virorah Universe</a>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <div class="footer-bar-text"><strong>No enterprise procurement. No annual lock-in.</strong> Your account is yours.</div>
+    <a href="access.html" class="btn btn-primary magnetic">Enter Vantage <span>↗</span></a>
+  </div>
+  <div class="footer-bottom">
+    <span>VIRORAH VANTAGE</span>
+    <span>INDIA / HR</span>
+    <span>© 2026 Virorah Private Limited. All rights reserved.</span>
+  </div>
+</div>
+</main></main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="vantage-cinematic.js?v=2"></script>
+<script src="vantage-cinematic-v4.js?v=6"></script>
+<script src="vantage-star-globe.js"></script>
+<script src="vantage-prologue.js"></script>
+<script src="aria-volumetric.js?v=2"></script>
+<script src="vantage-meridian-globe.js"></script>
+<script src="vantage-autoselect.js"></script>
+<script src="vantage-curtain.js?v=14"></script>
+<canvas id="wormholeCanvas" aria-hidden="true"></canvas>
+<button id="corFsFloating" aria-label="Exit fullscreen" style="display:none;">
+  <span>&#x26F6;</span> Exit fullscreen
+</button>
+
+<!-- ── PWA INSTALL TOAST ──────────────────────────────────────────────── -->
+<style>
+#pwa-toast{
+  position:fixed;bottom:-100px;left:50%;transform:translateX(-50%);
+  width:min(420px,calc(100vw - 32px));
+  background:rgba(12,11,29,.96);border:1px solid rgba(99,102,241,.35);
+  border-radius:16px;padding:14px 18px;
+  display:flex;align-items:center;gap:14px;
+  z-index:9100;backdrop-filter:blur(16px);
+  box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 0 1px rgba(99,102,241,.08) inset;
+  transition:bottom .4s cubic-bezier(.34,1.56,.64,1);
+}
+#pwa-toast.pwa-show{bottom:24px}
+.pwa-icon{font-size:26px;flex-shrink:0;line-height:1}
+.pwa-text{flex:1;min-width:0}
+.pwa-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#a5b4fc;display:block;margin-bottom:2px;text-transform:uppercase}
+.pwa-sub{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:rgba(244,243,255,.58);line-height:1.4}
+.pwa-actions{display:flex;gap:8px;flex-shrink:0}
+#pwa-install-btn{padding:8px 14px;background:linear-gradient(135deg,#6366f1,#7c3aed);border:none;border-radius:8px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;cursor:pointer;white-space:nowrap;transition:opacity .2s}
+#pwa-install-btn:hover{opacity:.88}
+#pwa-toast-close{background:none;border:none;color:rgba(196,181,253,.35);font-size:18px;cursor:pointer;padding:2px 6px;line-height:1;transition:color .15s}
+#pwa-toast-close:hover{color:rgba(196,181,253,.65)}
+
+/* ── FAQ section ────────────────────────────────────────────────────── */
+.faq-section { max-width: 760px; margin: 0 auto; padding: 100px 24px 40px; }
+.faq-header { text-align: center; margin-bottom: 48px; }
+.faq-header h2 { font: 600 clamp(28px,3.4vw,42px)/1.25 'Bricolage Grotesque',sans-serif; color: rgba(244,243,255,.92); margin: 10px 0 0; }
+.faq-list { display: flex; flex-direction: column; gap: 10px; }
+.faq-item { border: 1px solid rgba(196,181,253,.12); border-radius: 12px; background: rgba(13,11,30,.5); overflow: hidden; transition: border-color .25s; }
+.faq-item.faq-open { border-color: rgba(99,102,241,.35); }
+.faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 22px; background: none; border: none; cursor: pointer; text-align: left; font: 600 15px 'Plus Jakarta Sans',sans-serif; color: rgba(244,243,255,.9); }
+.faq-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(196,181,253,.3); display: flex; align-items: center; justify-content: center; font-size: 15px; color: rgba(196,181,253,.7); transition: transform .3s ease, background .25s ease; }
+.faq-item.faq-open .faq-icon { transform: rotate(45deg); background: rgba(99,102,241,.18); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
+.faq-item.faq-open .faq-a { max-height: 2000px; }
+.faq-a p { margin: 0; padding: 0 22px 20px; font: 14px/1.75 'Plus Jakarta Sans',sans-serif; color: rgba(244,243,255,.55); }
+
+/* ── Footer ─────────────────────────────────────────────────────────── */
+.vantage-footer { position: static !important; display: block !important; max-width: 1180px; margin: 60px auto 0; padding: 60px 24px 0; border-top: 1px solid rgba(196,181,253,.1); }
+.footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+.footer-brand img { height: 30px; margin-bottom: 14px; }
+.footer-tagline { font: 600 13px 'JetBrains Mono',monospace; letter-spacing: .05em; margin: 0 0 12px; background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.footer-desc { font: 13px/1.75 'Plus Jakarta Sans',sans-serif; color: rgba(244,243,255,.42); max-width: 320px; margin: 0; }
+.footer-col-h { display: block; font: 700 10px 'JetBrains Mono',monospace; letter-spacing: .16em; color: rgba(196,181,253,.45); margin-bottom: 16px; }
+.footer-col a { display: block; font: 13px 'Plus Jakarta Sans',sans-serif; color: rgba(244,243,255,.55); text-decoration: none; margin-bottom: 11px; transition: color .2s; }
+.footer-col a:hover { color: #c4b5fd; }
+.footer-bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 22px 26px; border: 1px solid rgba(99,102,241,.25); border-radius: 14px; background: rgba(99,102,241,.06); margin-bottom: 32px; }
+.footer-bar-text { font: 13px 'Plus Jakarta Sans',sans-serif; color: rgba(244,243,255,.7); }
+.footer-bar-text strong { color: #f4f3ff; }
+.footer-bottom { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; padding: 22px 0; border-top: 1px solid rgba(196,181,253,.08); font: 10px 'JetBrains Mono',monospace; letter-spacing: .1em; color: rgba(196,181,253,.35); }
+@media (max-width: 800px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-bar { flex-direction: column; align-items: flex-start; }
+}
+</style>
+
+<div id="pwa-toast" aria-live="polite">
+  <div class="pwa-icon">&#x2B07;&#xFE0F;</div>
+  <div class="pwa-text">
+    <span class="pwa-title">Install Vantage</span>
+    <span class="pwa-sub">Add to your home screen for quick access</span>
+  </div>
+  <div class="pwa-actions">
+    <button id="pwa-install-btn">Install</button>
+  </div>
+  <button id="pwa-toast-close" aria-label="Dismiss">&times;</button>
+</div>
+
+<script>
+/* ── SERVICE WORKER + PWA INSTALL TOAST ──────────────────────────────── */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('/sw.js').then(function(reg){
+      console.log('[SW] Registered:',reg.scope);
+    }).catch(function(err){
+      console.warn('[SW] Registration failed:',err);
+    });
+  });
+}
+var _pwaPrompt=null,_toastTimer=null;
+
+/* Device-aware messaging */
+var _isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+var _deviceMsg=_isMobile
+  ? 'Install on your phone for quick access anytime: check cases, talk to ARIA, and track decisions on the go.'
+  : 'Install as a desktop app for the full immersive experience: dashboards, profiles, and your complete Vantage Record in one view.';
+
+function showAllInstallUI(){
+  /* Show nav button */
+  var nb=document.getElementById('pwa-nav-btn');
+  if(nb)nb.style.display='inline-flex';
+  /* Show CTA button + device message */
+  var cb=document.getElementById('pwa-cta-btn');
+  if(cb)cb.style.display='inline-block';
+  var dm=document.getElementById('pwa-device-msg');
+  if(dm){dm.textContent=_deviceMsg;dm.style.display='block';}
+  /* Show toast */
+  showPwaToast();
+  /* GA4: track install prompt shown */
+  if(window.gtag)gtag('event','pwa_prompt_shown',{event_category:'pwa',event_label:_isMobile?'mobile':'desktop'});
+}
+function hideAllInstallUI(){
+  ['pwa-nav-btn','pwa-cta-btn'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  var dm=document.getElementById('pwa-device-msg');
+  if(dm)dm.style.display='none';
+  hidePwaToast();
+}
+
+var _toastScrollHandler=null;
+/* True once the hero's bottom edge has scrolled up far enough that a bottom-anchored
+   toast can no longer sit on top of any hero text. */
+function _heroIsClear(){
+  var h=document.querySelector('.hero');
+  if(!h)return true;
+  return h.getBoundingClientRect().bottom < window.innerHeight-140;
+}
+function showPwaToast(){
+  var t=document.getElementById('pwa-toast');
+  if(!t)return;
+  function reveal(){
+    setTimeout(function(){t.classList.add('pwa-show');},800);
+    _toastTimer=setTimeout(function(){hidePwaToast();},12000);
+  }
+  /* SR23: never cover the hero. It now ends with the tagline and deck at the bottom of
+     the screen, exactly where this toast sits, so wait until the visitor has scrolled
+     past it. The nav Install button is already visible in the meantime. */
+  if(_heroIsClear()){reveal();return;}
+  _toastScrollHandler=function(){
+    if(_heroIsClear()){
+      window.removeEventListener('scroll',_toastScrollHandler);
+      _toastScrollHandler=null;
+      reveal();
+    }
+  };
+  window.addEventListener('scroll',_toastScrollHandler,{passive:true});
+}
+function hidePwaToast(){
+  var t=document.getElementById('pwa-toast');
+  if(t)t.classList.remove('pwa-show');
+  if(_toastTimer){clearTimeout(_toastTimer);_toastTimer=null;}
+  if(_toastScrollHandler){window.removeEventListener('scroll',_toastScrollHandler);_toastScrollHandler=null;}
+}
+
+function triggerPwaInstall(){
+  if(!_pwaPrompt)return;
+  hidePwaToast();
+  _pwaPrompt.prompt();
+  _pwaPrompt.userChoice.then(function(c){
+    if(c.outcome==='accepted'){
+      hideAllInstallUI();
+      if(window.gtag)gtag('event','pwa_install_accepted',{event_category:'pwa',event_label:_isMobile?'mobile':'desktop'});
+    }else{
+      if(window.gtag)gtag('event','pwa_install_dismissed',{event_category:'pwa',event_label:_isMobile?'mobile':'desktop'});
+    }
+    _pwaPrompt=null;
+  });
+}
+window.triggerPwaInstall=triggerPwaInstall;
+
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();
+  _pwaPrompt=e;
+  /* Store the prompt: do NOT show any UI yet.
+     The install nudge shows only when 'vantage-hero-ready' fires,
+     meaning the full hero animation is complete and the user is
+     genuinely on the landing page. This prevents the toast from
+     appearing during the prologue, ta-da, or Scene 2 typewriter. */
+});
+
+/* Show install UI only after hero animation completes */
+window.addEventListener('vantage-hero-ready',function(){
+  if(_pwaPrompt) setTimeout(showAllInstallUI, 1200);
+});
+document.addEventListener('DOMContentLoaded',function(){
+  var toast_ib=document.getElementById('pwa-install-btn');
+  var toast_cb=document.getElementById('pwa-toast-close');
+  if(toast_ib){toast_ib.addEventListener('click',triggerPwaInstall);}
+  if(toast_cb){toast_cb.addEventListener('click',hidePwaToast);}
+});
+window.addEventListener('appinstalled',function(){
+  hideAllInstallUI();_pwaPrompt=null;
+  if(window.gtag)gtag('event','pwa_installed',{event_category:'pwa',event_label:_isMobile?'mobile':'desktop'});
+  console.log('[PWA] Installed');
+});
+</script>
+</body>
+</html>
