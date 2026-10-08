@@ -539,8 +539,17 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     document.getElementById('narrative').addEventListener('input', checkSubmit);
 
     function checkSubmit() {
-      document.getElementById('submit-btn').disabled =
-        !(selectedCaseType && document.getElementById('narrative').value.trim().length > 20);
+      var _len = document.getElementById('narrative').value.trim().length;
+      var _hasType = !!selectedCaseType;
+      var _hasText = _len > 20;
+      document.getElementById('submit-btn').disabled = !(_hasType && _hasText);
+      var _hint = document.getElementById('submit-hint');
+      if (_hint) {
+        if (_hasType && _hasText) { _hint.textContent = ''; }
+        else if (!_hasType && !_hasText) { _hint.textContent = 'Pick a case type above and describe what is happening to continue.'; }
+        else if (!_hasType) { _hint.textContent = 'Choose a case type above to continue.'; }
+        else { _hint.textContent = 'Add a few more words about what is happening to continue.'; }
+      }
     }
 
     function showView(view) {
