@@ -531,9 +531,9 @@
 
         <!-- Action row -->
         <div class="action-row">
-          <button class="btn-primary" onclick="switchToStakeholderFlow()">Now Make It Personal &#x2192;</button>
+          <button class="btn-primary" onclick="switchToStakeholderFlow()">Build the case for one person &#x2192;</button>
           <button class="btn-ghost" id="save-record-btn" onclick="saveToRecord()">Save to Vantage Record &#x2192;</button>
-          <button class="btn-ghost" onclick="fileToLedgerGeneral()">File to Ledger &rarr;</button>
+          <button class="btn-ghost" onclick="fileToLedgerGeneral()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
           <button class="btn-ghost" onclick="startNewGeneral()">New Story</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
         </div>
@@ -610,7 +610,7 @@
         <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="practiceConversation()">Simulate the Conversation &rarr;</button>
-          <button class="btn-ghost" onclick="fileToLedgerStakeholder()">File to Ledger &rarr;</button>
+          <button class="btn-ghost" onclick="fileToLedgerStakeholder()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
           <button class="btn-ghost" onclick="startNewStakeholder()">New Stack</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
         </div>
