@@ -679,15 +679,22 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     }
     renderSetupCard();
 
-    // Onboarding modals - each fires only once via localStorage flags
+    /* Onboarding modals: each fires once, and only if its element exists. */
+    function openObOverlay(id) {
+      var el = document.getElementById(id);
+      if (el) { el.style.display = 'flex'; return true; }
+      return false;
+    }
     if (!hasMeridian && !localStorage.getItem('vantage_meridian_modal_shown')) {
       setTimeout(function(){
-        document.getElementById('meridian-overlay').style.display='flex';
-        localStorage.setItem('vantage_meridian_modal_shown','1');
+        if (openObOverlay('meridian-overlay')) { localStorage.setItem('vantage_meridian_modal_shown','1'); }
       },1000);
     }
     if (hasMeridian && !hasHumac && !localStorage.getItem('vantage_ob_humac_offered')) {
-      setTimeout(function(){ document.getElementById('ob-step2-overlay').style.display='flex'; },800);
+      setTimeout(function(){ openObOverlay('ob-step2-overlay'); },800);
+    }
+    if (hasMeridian && localStorage.getItem('vantage_ob_humac_offered')==='1' && !localStorage.getItem('vantage_ob_case_offered')) {
+      setTimeout(function(){ openObOverlay('ob-step3-overlay'); },800);
     }
     if (hasMeridian && localStorage.getItem('vantage_ob_humac_offered')==='1' && !localStorage.getItem('vantage_ob_case_offered')) {
       setTimeout(function(){ document.getElementById('ob-step3-overlay').style.display='flex'; },800);
