@@ -125,7 +125,7 @@
     .signal-card.s-card{border-color:rgba(99,102,241,0.2);background:rgba(99,102,241,0.04)}
     .signal-card.i-card{border-color:rgba(255,181,71,0.2);background:rgba(255,181,71,0.03)}
     .signal-card.g-card{border-color:rgba(255,77,109,0.2);background:rgba(255,77,109,0.03)}
-    .signal-card.a-card{border-color:rgba(165,180,252,0.2);background:rgba(165,180,252,0.04)}
+    .signal-card.a-card{border-color:rgba(165,180,252,0.2);background:rgba(165,180,252,0.04);grid-column:span 2}
     .signal-card.l-card{border-color:rgba(196,181,253,0.2);background:rgba(196,181,253,0.04)}
     .dim-s{color:var(--muted)}
     .dim-i{color:#FFB547}
@@ -168,7 +168,7 @@
 
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
-    @media(max-width:768px){.sidebar{display:none}.main{padding:20px 16px}.audience-grid{grid-template-columns:repeat(2,1fr)}.metrics-grid{grid-template-columns:1fr}.signal-grid{grid-template-columns:1fr}.top-two-col{grid-template-columns:1fr}.aria-offer-card{flex-direction:column;align-items:flex-start}}
+    @media(max-width:768px){.sidebar{display:none}.main{padding:20px 16px}.audience-grid{grid-template-columns:repeat(2,1fr)}.stakeholder-grid{grid-template-columns:repeat(2,1fr)}.metrics-grid{grid-template-columns:1fr}.signal-grid{grid-template-columns:1fr}.signal-card.a-card{grid-column:auto}.top-two-col{grid-template-columns:1fr}.aria-offer-card{flex-direction:column;align-items:flex-start}}
   
     /* ── VOICE INPUT WRAPPER ── */
     .voice-wrap{position:relative}
@@ -246,8 +246,12 @@
 .prob-low{color:var(--muted);background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2)}
 .prob-medium{color:#FFB547;background:rgba(255,181,71,0.1);border:1px solid rgba(255,181,71,0.25)}
 .stakeholder-btn{background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;color:var(--grey);font-size:12px;font-family:'Plus Jakarta Sans',sans-serif}
+.stakeholder-btn:hover{border-color:rgba(99,102,241,0.3);color:#f4f3ff;background:rgba(99,102,241,0.08)}
+.stakeholder-btn.selected{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.45);color:#c4b5fd;font-weight:500}
 .stakeholder-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .stakeholder-icon{font-size:18px;display:block;margin-bottom:4px}
+/* Lining figures so headline digits sit on the baseline (Cormorant defaults to old-style figures) */
+.headline-text,.rar-figure,.humac-signal-range,.signal-figure,.anchor-number,.l-figure{font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
   </style>
 </head>
 <body>
@@ -359,12 +363,23 @@
           <textarea id="context" placeholder='e.g. "Q2 attrition in engineering has gone up from 14% to 22% in 3 months. Leadership doesn&apos;t see it as an HR problem. They think it&apos;s a market issue. I need to present next week and change that narrative. The CFO specifically wants to know what it&apos;s costing us."' rows="4" style="padding-right:48px"></textarea>
           <button class="voice-btn" id="context-mic" onclick="toggleVoiceInput('context', this)" title="Tap to speak">&#127908;</button>
           </div>
+          <div style="margin-top:14px;padding:14px 16px;background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:10px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(165,180,252,0.7);margin-bottom:8px">For a sharper case, include what you can</div>
+            <ul style="margin:0;padding-left:18px;font-size:12px;line-height:1.75;color:rgba(244,243,255,0.6)">
+              <li><strong style="color:rgba(244,243,255,0.8)">The audience:</strong> who decides, and what they care about most (cost, risk, delivery)</li>
+              <li><strong style="color:rgba(244,243,255,0.8)">The numbers:</strong> fill the metric fields above, even rough ones</li>
+              <li><strong style="color:rgba(244,243,255,0.8)">The trend:</strong> how each number has moved, and over what period</li>
+              <li><strong style="color:rgba(244,243,255,0.8)">The decision:</strong> what you want approved, and by when</li>
+              <li><strong style="color:rgba(244,243,255,0.8)">The pushback:</strong> what the room is likely to say</li>
+            </ul>
+          </div>
         </div>
         <div class="form-section">
           <label class="form-label">What action or budget are you seeking? (optional)</label>
           <input type="text" id="ask" placeholder='e.g. "&#8377;18L retention investment for the engineering cohort" or "approval to run exit interview overhaul"' />
         </div>
         <button class="submit-btn" id="submit-btn-general" onclick="runSIGNAL()" disabled>Generate SIGNAL Narrative &#x2192;</button>
+        <div id="submit-hint-general" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#FBB724;text-align:center;font-weight:600"></div>
       </div>
     </div>
 
@@ -411,6 +426,7 @@
           <input type="text" id="data-point" placeholder='e.g. "22% attrition in engineering this quarter, up from 14% last quarter" or "&#8377;2.4 crore estimated replacement cost for 8 senior exits"' />
         </div>
         <button class="submit-btn" id="submit-btn-stakeholder" onclick="runInfluence()" disabled>Build INFLUENCE Stack &rarr;</button>
+        <div id="submit-hint-stakeholder" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#FBB724;text-align:center;font-weight:600"></div>
       </div>
     </div>
 
@@ -496,7 +512,7 @@
             </div>
           </div>
 
-          <div class="signal-card a-card" style="grid-column:span 2">
+          <div class="signal-card a-card">
             <div class="signal-dim dim-a">A &mdash; Action</div>
             <div class="action-timeline" id="sig-a-timeline"></div>
           </div>
@@ -712,7 +728,8 @@
           }
         })
         .catch(function(){ /* silent — humac context is a nice-to-have, never blocks the tool */ });
-      };      var humacTries = 0;
+      };
+      var humacTries = 0;
       (function waitForClerkHumac() {
         if (window.Clerk && window.Clerk.session) {
           window.Clerk.session.getToken().then(function(t){ token = t; doFetch(); }).catch(function(){});
@@ -764,7 +781,16 @@
 
     function checkSubmitGeneral() {
       var ctx = document.getElementById('context').value.trim();
-      document.getElementById('submit-btn-general').disabled = !(selectedAudience && ctx.length > 20);
+      var hasAud = !!selectedAudience;
+      var hasCtx = ctx.length > 20;
+      document.getElementById('submit-btn-general').disabled = !(hasAud && hasCtx);
+      var hint = document.getElementById('submit-hint-general');
+      if (hint) {
+        if (hasAud && hasCtx) { hint.textContent = ''; }
+        else if (!hasAud && !hasCtx) { hint.textContent = 'Pick who you are presenting to and describe the business context to continue.'; }
+        else if (!hasAud) { hint.textContent = 'Choose who you are presenting to above to continue.'; }
+        else { hint.textContent = 'Add a few more words about the business context to continue.'; }
+      }
     }
 
     function showView(view) {
@@ -831,6 +857,48 @@
       } catch(err) {
         clearInterval(loadInterval);
         showError('Connection error. Please check your network and try again.');
+      }
+    }
+
+    // Splits long model text into short paragraphs. Uses blank lines when the
+    // text has them, otherwise breaks at sentence ends roughly every 260 characters.
+    function setProseBC(id, text) {
+      var el = document.getElementById(id);
+      if (!el) { return; }
+      el.textContent = '';
+      var t = String(text || '').trim();
+      if (!t) { return; }
+      var NL = String.fromCharCode(10);
+      var blocks = [];
+      var byBlank = t.split(NL + NL);
+      if (byBlank.length > 1) {
+        blocks = byBlank;
+      } else {
+        var cur = '';
+        var start = 0;
+        for (var i = 0; i < t.length - 2; i++) {
+          var ch = t.charAt(i);
+          var cap = t.charAt(i + 2);
+          var endsSentence = (ch === '.' || ch === '!' || ch === '?') && t.charAt(i + 1) === ' ';
+          var capital = cap === cap.toUpperCase() && cap !== cap.toLowerCase();
+          if (endsSentence && capital) {
+            var sentence = t.substring(start, i + 1);
+            cur = cur ? cur + ' ' + sentence : sentence;
+            start = i + 2;
+            if (cur.length > 260) { blocks.push(cur); cur = ''; }
+          }
+        }
+        var tail = t.substring(start);
+        cur = cur ? cur + ' ' + tail : tail;
+        if (cur) { blocks.push(cur); }
+      }
+      for (var j = 0; j < blocks.length; j++) {
+        var b = blocks[j].trim();
+        if (!b) { continue; }
+        var p = document.createElement('p');
+        p.textContent = b;
+        p.style.margin = (j === blocks.length - 1) ? '0' : '0 0 12px';
+        el.appendChild(p);
       }
     }
 
@@ -926,7 +994,7 @@
         cfo: narr.cfoVersion || '',
         ceo: narr.ceoVersion || ''
       };
-      document.getElementById('narrative-content').innerText = narrativeVersions.boardroom;
+      setProseBC('narrative-content', narrativeVersions.boardroom);
 
       // ARIA
       if (r.aria) {
@@ -945,7 +1013,7 @@
     function switchNarrative(version, el) {
       document.querySelectorAll('.ntab').forEach(function(t){ t.classList.remove('active'); });
       el.classList.add('active');
-      document.getElementById('narrative-content').innerText = narrativeVersions[version] || '';
+      setProseBC('narrative-content', narrativeVersions[version] || '');
       document.getElementById('ntab-note').innerText = ntabNotes[version] || '';
     }
 
@@ -983,7 +1051,7 @@
         if (headline) {
           document.getElementById('data-point').value = headline;
         }
-                if (selectedAudience) {
+        if (selectedAudience) {
           var tileFor = { 'CEO / Founder': 'CEO / Founder', 'CFO / Finance': 'CFO / Finance head', 'CHRO / HR Head': 'CHRO / HR Head', 'Board / Investors': 'Board / Investors', 'Business Unit Head': 'Business Unit Head', 'General Leadership Team': 'Leadership Team' };
           var wanted = tileFor[selectedAudience];
           document.querySelectorAll('.stakeholder-btn').forEach(function(b) {
@@ -1062,6 +1130,8 @@
       });
       document.querySelectorAll('.audience-btn').forEach(function(b){ b.classList.remove('selected'); });
       document.getElementById('submit-btn-general').disabled = true;
+      var hintG = document.getElementById('submit-hint-general');
+      if (hintG) { hintG.textContent = ''; }
       showView('intake-view-general');
     }
 
@@ -1076,7 +1146,17 @@
     function checkSubmitStakeholder() {
       var ask = document.getElementById('stakeholder-ask').value.trim();
       var sit = document.getElementById('situation').value.trim();
-      document.getElementById('submit-btn-stakeholder').disabled = !(selectedStakeholder && ask.length > 10 && sit.length > 20);
+      var hasSt = !!selectedStakeholder;
+      var hasAsk = ask.length > 10;
+      var hasSit = sit.length > 20;
+      document.getElementById('submit-btn-stakeholder').disabled = !(hasSt && hasAsk && hasSit);
+      var hint = document.getElementById('submit-hint-stakeholder');
+      if (hint) {
+        if (hasSt && hasAsk && hasSit) { hint.textContent = ''; }
+        else if (!hasSt) { hint.textContent = 'Choose who you are influencing above to continue.'; }
+        else if (!hasAsk) { hint.textContent = 'Say what you want them to do to continue.'; }
+        else { hint.textContent = 'Add a few more words about the situation to continue.'; }
+      }
     }
 
     async function runInfluence() {
@@ -1267,6 +1347,8 @@
       document.getElementById('data-point').value = '';
       document.querySelectorAll('.stakeholder-btn').forEach(function(b){ b.classList.remove('selected'); });
       document.getElementById('submit-btn-stakeholder').disabled = true;
+      var hintS = document.getElementById('submit-hint-stakeholder');
+      if (hintS) { hintS.textContent = ''; }
       showView('intake-view-stakeholder');
     }
 
