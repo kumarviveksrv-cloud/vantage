@@ -142,17 +142,17 @@ function injectCSS(){
 #vip-close:hover{color:rgba(196,181,253,.65)}
 .vip-icon{font-size:20px;color:#a78bfa;margin-bottom:8px;display:block;font-family:'JetBrains Mono',monospace}
 .vip-feature-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(167,139,250,.5);margin-bottom:5px;display:block}
-.vip-tagline{font-family:'Bricolage Grotesque','Space Grotesk',sans-serif;font-size:clamp(17px,2.4vw,22px);font-weight:700;color:#f4f3ff;line-height:1.22;margin-bottom:22px}
+.vip-tagline{font-family:'Space Grotesk',sans-serif;font-size:clamp(17px,2.4vw,22px);font-weight:700;color:#f4f3ff;line-height:1.22;margin-bottom:22px}
 .vip-sections{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
 .vip-section{background:rgba(99,102,241,.045);border:1px solid rgba(99,102,241,.1);border-radius:10px;padding:13px 15px}
 .vip-section-label{font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(167,139,250,.42);margin-bottom:5px;display:block}
-.vip-section-text{font-size:12.5px;color:rgba(244,243,255,.68);line-height:1.68;font-family:'Plus Jakarta Sans','DM Sans',sans-serif}
+.vip-section-text{font-size:12.5px;color:rgba(244,243,255,.68);line-height:1.68;font-family:'DM Sans',sans-serif;overflow-wrap:break-word}
 .vip-start{border-color:rgba(99,102,241,.2);background:rgba(99,102,241,.08)}
 .vip-start .vip-section-text{color:rgba(244,243,255,.82)}
 .vip-btns{display:flex;gap:10px}
-.vip-cta{flex:1;padding:13px 24px;background:linear-gradient(135deg,#6366f1,#7c3aed);border:none;border-radius:10px;cursor:pointer;font-family:'Plus Jakarta Sans','DM Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;letter-spacing:.01em;transition:opacity .18s;white-space:nowrap}
+.vip-cta{flex:1;padding:13px 24px;background:linear-gradient(135deg,#6366f1,#7c3aed);border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;letter-spacing:.01em;transition:opacity .18s;white-space:nowrap}
 .vip-cta:hover{opacity:.88}
-.vip-cta-ghost{flex:0 0 auto;padding:13px 18px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;cursor:pointer;font-family:'Plus Jakarta Sans','DM Sans',sans-serif;font-size:13px;font-weight:600;color:rgba(196,181,253,.7);letter-spacing:.01em;transition:all .18s;white-space:nowrap}
+.vip-cta-ghost{flex:0 0 auto;padding:13px 18px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:rgba(196,181,253,.7);letter-spacing:.01em;transition:all .18s;white-space:nowrap}
 .vip-cta-ghost:hover{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.4);color:#c4b5fd}
 #vip-trigger{position:fixed;bottom:26px;right:26px;width:34px;height:34px;border-radius:50%;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.22);color:rgba(167,139,250,.55);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:9000;font-family:'JetBrains Mono',monospace;line-height:1}
 #vip-trigger:hover{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.48);color:#c4b5fd}
