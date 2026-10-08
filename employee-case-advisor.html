@@ -557,6 +557,8 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         document.getElementById(v).style.display = 'none';
       });
       document.getElementById(view).style.display = 'block';
+      var m = document.querySelector('.main');
+      if (m) m.scrollTop = 0;
     }
 
     function animateLoading() {
@@ -564,12 +566,10 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       var texts = ['RUNNING PACT DIAGNOSTIC...','APPLYING MERIDIAN CONTEXT...','MAPPING FINANCIAL EXPOSURE...','BUILDING DECISION PROTOCOL...'];
       var i = 0;
       return setInterval(function(){
+        i = (i + 1) % steps.length;
         steps.forEach(function(s){ document.getElementById(s).classList.remove('active'); });
-        if (i < steps.length) {
-          document.getElementById(steps[i]).classList.add('active');
-          document.getElementById('loading-text').innerText = texts[i];
-        }
-        i++;
+        document.getElementById(steps[i]).classList.add('active');
+        document.getElementById('loading-text').innerText = texts[i];
       }, 1800);
     }
 

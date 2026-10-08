@@ -177,7 +177,7 @@ var hd=null,md=null;
 try{hd=JSON.parse(sessionStorage.getItem('vantage_humac')||'null');}catch(e){}
 try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
 if(!hd){window.location.href='humac-onboarding.html';}
-var l1=hd.l1||0,l2=hd.l2||0,l3=hd.l3||0,l4=hd.l4||0,l5=hd.l5||0;
+var l1=hd.l1??null,l2=hd.l2??null,l3=hd.l3??null,l4=hd.l4??null,l5=hd.l5??null;
 var ra=hd.rawAnswers||{};
 var hci=hd.hci||1,conf=hd.confidence||'medium';
 var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
@@ -248,7 +248,7 @@ function render(){
 
   var w=document.getElementById('main-wrap');
   var pdots=[{label:'L1',score:l1,href:'pillar-l1.html'},{label:'L2',score:l2,href:'pillar-l2.html'},{label:'L3',score:l3,href:'pillar-l3.html'},{label:'L4',score:l4,href:'pillar-l4.html'},{label:'L5',score:l5,href:'pillar-l5.html',active:true}];
-  var nav='<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+p.score+'</span></a>';}).join('')+'</div><a href="dashboard.html" class="pillar-forward">Dashboard \u2192</a></div>';
+  var nav='<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+(p.score!=null?p.score:'—')+'</span></a>';}).join('')+'</div><a href="dashboard.html" class="pillar-forward">Dashboard \u2192</a></div>';
   var header='<div class="eyebrow">Vantage \xb7 Humac Score \xb7 L5 \xb7 10% weight</div><h1 class="page-title">The Human Balance Sheet</h1><p class="page-sub">'+(industry?industry+' \xb7 ':'')+(state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate+' \xb7 ':'')+'Stars, emerging talent, tenure, and at-risk exposure stay in the Value Ledger. This sheet prices senior tenure and revenue-facing relationships only.</p>';
 
   if(insufficient){

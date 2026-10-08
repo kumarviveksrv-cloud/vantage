@@ -798,6 +798,8 @@
         document.getElementById(v).style.display = 'none';
       });
       document.getElementById(view).style.display = 'block';
+      var m = document.querySelector('.main');
+      if (m) m.scrollTop = 0;
     }
 
     // Build a human-readable metrics string instead of sending a JS object

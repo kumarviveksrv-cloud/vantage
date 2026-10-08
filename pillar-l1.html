@@ -231,7 +231,7 @@ var hd=null,md=null;
 try{hd=JSON.parse(sessionStorage.getItem('vantage_humac')||'null');}catch(e){}
 try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
 if(!hd){window.location.href='humac-onboarding.html';}
-var l1=hd.l1||0,l2=hd.l2||0,l3=hd.l3||0,l4=hd.l4||0,l5=hd.l5||0;
+var l1=hd.l1??null,l2=hd.l2??null,l3=hd.l3??null,l4=hd.l4??null,l5=hd.l5??null;
 var ra=hd.rawAnswers||{};
 var l1Mode=hd.l1Mode||'estimate';
 var q1Pct=(ra.q1!=null&&ra.q1!=='')?Number(ra.q1):null;
@@ -457,7 +457,7 @@ function render(){
   var w=document.getElementById('main-wrap');
   var pdots=[{label:'L1',score:l1,href:'pillar-l1.html',active:true},{label:'L2',score:l2,href:'pillar-l2.html'},{label:'L3',score:l3,href:'pillar-l3.html'},{label:'L4',score:l4,href:'pillar-l4.html'},{label:'L5',score:l5,href:'pillar-l5.html'}];
   w.innerHTML=
-    '<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+p.score+'</span></a>';}).join('')+'</div><a href="pillar-l2.html" class="pillar-forward">L2 Talent Premium \u2192</a></div>'+
+    '<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+(p.score!=null?p.score:'—')+'</span></a>';}).join('')+'</div><a href="pillar-l2.html" class="pillar-forward">L2 Talent Premium \u2192</a></div>'+
     '<div class="eyebrow">Vantage \xb7 Humac Score \xb7 L1 \xb7 25% weight \xb7 canonical book</div><h1 class="page-title">The Value Ledger</h1><p class="page-sub">'+(industry?industry+' \xb7 ':'')+(state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate+' \xb7 ':'')+'Planning model, not a measured return</p>'+
     '<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L1 Score</div><div class="ratio-num">'+l1+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">Provisional band: '+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+q1Display+' modelled for every \u20b9100 of salary bill, under the '+scenario+' case</div><div class="context"><b style="color:'+benchColor+'">'+(benchPos==='above'?'Above':benchPos==='at'?'At':'Below')+'</b> the provisional comparison band for '+bench.label+' organisations ('+bench.weak+'\u2013'+bench.strong+', not a published benchmark) \xb7 HCI '+hci.toFixed(2)+'x \xb7 '+conf+' input coverage \xb7 '+scenario+' case</div></div></div></div>'+
     '<div class="stats"><div class="stat"><div class="sv sv-teal">'+l1+'/100</div><div class="sl">L1 Score</div></div><div class="stat"><div class="sv sv-gold">'+q1Display+'</div><div class="sl">per \u20b9100 salary</div></div><div class="stat"><div class="sv sv-cobalt">'+(benchPos==='above'?'\u2197':benchPos==='at'?'\u2192':'\u2198')+' '+benchPos+'</div><div class="sl">vs '+bench.label+'</div></div><div class="stat"><div class="sv sv-dim">'+hci.toFixed(2)+'x</div><div class="sl">HCI coefficient</div></div></div>'+
