@@ -503,7 +503,7 @@ pricingEl.style.overflow = 'hidden';
     if (document.querySelector('.vantage-bottom-nav')) return;
 
     var path = window.location.pathname;
-    function isActive(page) { return path.includes(page); }
+    var curSlug = path.split('/').filter(function(s) { return s; }).pop() || 'dashboard';     curSlug = curSlug.replace('.html', '');     var SLUG = { 'er-case-navigator': 'employee-case-advisor', 'business-case': 'people-roi-brief', 'policy-compass': 'policy-advisor', 'offer-intelligence': 'retention-advisor', 'conversation-simulator': 'difficult-conversations', 'ledger': 'standpoint', 'case-library': 'vantage-record' };     var TAB_MATCH = { 'er-case-navigator': ['employee-case-advisor', 'people-roi-brief', 'policy-advisor', 'retention-advisor', 'difficult-conversations'], 'case-library': ['vantage-record', 'standpoint', 'debrief'] };     function slugOf(key) { return SLUG[key] || key; }     function isActive(page) { var list = TAB_MATCH[page] || [slugOf(page)]; return list.indexOf(curSlug) !== -1; }     function onMainTab() { return isActive('dashboard') || isActive('aria') || isActive('er-case-navigator') || isActive('case-library'); }
 
     var style = document.createElement('style');
     style.id = 'vantage-bottom-nav-style';
@@ -767,7 +767,7 @@ pricingEl.style.overflow = 'hidden';
     ];
 
     var drawerActive = drawerSections.some(function(sec) {
-      return sec.items.some(function(d) { return d.page !== 'signout' && path.includes(d.page); });
+      return sec.items.some(function(d) { return d.page !== 'signout' && curSlug === slugOf(d.page) && !onMainTab(); });
     });
 
     var nav = document.createElement('div');
@@ -814,7 +814,7 @@ pricingEl.style.overflow = 'hidden';
       drawer.appendChild(titleEl);
 
       section.items.forEach(function(item) {
-        var active = item.page !== 'signout' && path.includes(item.page);
+        var active = item.page !== 'signout' && curSlug === slugOf(item.page);
         var a = document.createElement('a');
         a.className = 'vbn-drawer-item' + (active ? ' active' : '');
         a.href = item.href;
