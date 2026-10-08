@@ -667,10 +667,11 @@ pricingEl.style.overflow = 'hidden';
       '    justify-content: center;',
       '    width: 28px;',
       '    flex-shrink: 0;',
+      '    align-self: center;',
       '    color: rgba(244,243,255,0.5);',
       '  }',
       '  .vbn-drawer-item.active .vbn-drawer-icon { color: #a5b4fc; }',
-      '  .vbn-drawer-label { flex: 1; }',
+      '  .vbn-drawer-label { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2px; }',
       '  .vbn-drawer-sub {',
       '    font-size: 11px;',
       '    color: rgba(244,243,255,0.28);',
@@ -853,7 +854,7 @@ pricingEl.style.overflow = 'hidden';
         }
         a.innerHTML = [
           '<span class="vbn-drawer-icon">' + item.icon + '</span>',
-          '<span class="vbn-drawer-label">' + item.label + (item.sub ? '<br><span class="vbn-drawer-sub">' + item.sub + '</span>' : '') + '</span>',
+          '<span class="vbn-drawer-label"><span>' + item.label + '</span>' + (item.sub ? '<span class="vbn-drawer-sub">' + item.sub + '</span>' : '') + '</span>',
         ].join('');
         drawer.appendChild(a);
       });
