@@ -92,7 +92,7 @@
 
     /* OUTPUT */
     .output-section{animation:fadeIn .35s ease;margin-bottom:20px}
-    .output-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:gap}
+    .output-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap}
     .output-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,0.6);margin-bottom:6px}
     .output-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;color:#f4f3ff}
 
@@ -291,7 +291,8 @@
             <input type="hidden" id="co-crit" />
           </div>
 
-          <button class="analyze-btn" onclick="analyzeOffer('counter_offer')">Run Retention Advisor →</button>
+          <button class="analyze-btn" id="analyze-btn-counter" onclick="analyzeOffer('counter_offer')" disabled>Run Retention Advisor →</button>
+          <div id="submit-hint-counter" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#c4b5fd;text-align:center;font-weight:600"></div>
           <div class="privacy-note">🔒 Anonymised before processing. The original stays in your record.</div>
         </div>
       </div>
@@ -340,9 +341,20 @@
           <div class="form-group" style="margin-bottom:22px">
             <label class="form-label">What signals are you seeing? <span class="hint">describe behaviour, conversations, context</span></label>
             <textarea id="pr-signals" class="form-input signals-input" placeholder="e.g. Arrived late to two consecutive 1:1s. Was unusually quiet in the last team meeting. Updated their LinkedIn headline last week. Got a call from a headhunter they mentioned casually..."></textarea>
+            <div style="margin-top:8px;padding:14px 16px;background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:10px">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(165,180,252,0.7);margin-bottom:8px">For a sharper read, include what you can</div>
+              <ul style="margin:0;padding-left:18px;font-size:12px;line-height:1.75;color:rgba(244,243,255,0.6)">
+                <li><strong style="color:rgba(244,243,255,0.8)">What you have seen:</strong> specific behaviours, with dates where you can</li>
+                <li><strong style="color:rgba(244,243,255,0.8)">What has changed:</strong> how this differs from how they normally are</li>
+                <li><strong style="color:rgba(244,243,255,0.8)">Outside signals:</strong> recruiter contact, profile updates, requests for references</li>
+                <li><strong style="color:rgba(244,243,255,0.8)">What they care about:</strong> pay, growth, their manager, flexibility</li>
+                <li><strong style="color:rgba(244,243,255,0.8)">What has already happened:</strong> raises, promotions or promises made or missed</li>
+              </ul>
+            </div>
           </div>
 
-          <button class="analyze-btn" onclick="analyzeOffer('proactive')">Run Flight Risk Assessment →</button>
+          <button class="analyze-btn" id="analyze-btn-proactive" onclick="analyzeOffer('proactive')" disabled>Run Flight Risk Assessment →</button>
+          <div id="submit-hint-proactive" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#c4b5fd;text-align:center;font-weight:600"></div>
           <div class="privacy-note">🔒 Anonymised before processing. The original stays in your record.</div>
         </div>
       </div>
@@ -360,8 +372,8 @@
     <div id="output-view" style="display:none">
       <div class="output-section" id="output-content"></div>
       <div class="action-row">
-        <button class="action-btn primary" onclick="saveToLibrary()">Save to Vantage Record &#x2192;</button>
-        <button class="action-btn" onclick="fileToLedger()">File to Ledger &rarr;</button>
+        <button class="action-btn primary" id="save-btn" onclick="saveToLibrary()">Save to Vantage Record &#x2192;</button>
+        <button class="action-btn" onclick="fileToLedger()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
         <button class="action-btn" onclick="showView('intake-view');currentResult=null;">New Analysis</button>
       </div>
     </div>
@@ -398,6 +410,12 @@
     var currentResult = null;
     var meridianData = null;
     var loadInterval = null;
+
+    // Use the cached MERIDIAN profile straight away, so a quick submit is not sent without it.
+    try {
+      var _smEarly = sessionStorage.getItem('sr_meridian');
+      if (_smEarly) meridianData = JSON.parse(_smEarly);
+    } catch(e) {}
 
     function renderGreenCat(gc) {
       if (!gc || !gc.primary) return '';
@@ -463,6 +481,7 @@
       if (card) card.classList.add('selected');
       document.getElementById('form-counter').style.display = (flow === 'counter_offer') ? 'block' : 'none';
       document.getElementById('form-proactive').style.display = (flow === 'proactive') ? 'block' : 'none';
+      checkSubmitOffer(flow, true);
       showView('form-view');
     }
 
@@ -470,12 +489,59 @@
       el.closest('.band-grid').querySelectorAll('.band-btn').forEach(function(b){ b.classList.remove('selected'); });
       el.classList.add('selected');
       document.getElementById(hiddenId).value = band;
+      checkSubmitOffer(hiddenId.indexOf('co-') === 0 ? 'counter_offer' : 'proactive');
     }
 
     function selectCrit(el, crit, hiddenId) {
       el.closest('.criticality-grid').querySelectorAll('.crit-btn').forEach(function(b){ b.classList.remove('selected'); });
       el.classList.add('selected');
       document.getElementById(hiddenId).value = crit;
+      checkSubmitOffer(hiddenId.indexOf('co-') === 0 ? 'counter_offer' : 'proactive');
+    }
+
+    // Enables the run button only when the required inputs are present, and says what is missing.
+    // quiet = true updates the button only and leaves the hint text alone (used when a flow is first opened).
+    function checkSubmitOffer(flow, quiet) {
+      var btn, hint, ok, msg = '';
+      if (flow === 'counter_offer') {
+        var cur = parseFloat(document.getElementById('co-current-ctc').value);
+        var off = parseFloat(document.getElementById('co-offer-ctc').value);
+        var hasFig = cur > 0 && off > 0;
+        var hasBand = !!document.getElementById('co-band').value;
+        var hasCrit = !!document.getElementById('co-crit').value;
+        ok = hasFig && hasBand && hasCrit;
+        btn = document.getElementById('analyze-btn-counter');
+        hint = document.getElementById('submit-hint-counter');
+        if (!ok) {
+          if (!hasFig && !hasBand && !hasCrit) { msg = 'Enter both CTC figures and choose a performance band and role criticality to continue.'; }
+          else if (!hasFig) { msg = 'Enter the current CTC and the competing offer to continue.'; }
+          else if (!hasBand) { msg = 'Choose a performance band to continue.'; }
+          else { msg = 'Choose the role criticality to continue.'; }
+        }
+      } else {
+        var cur2 = parseFloat(document.getElementById('pr-current-ctc').value);
+        var hasCtc = cur2 > 0;
+        var hasBand2 = !!document.getElementById('pr-band').value;
+        var hasCrit2 = !!document.getElementById('pr-crit').value;
+        ok = hasCtc && hasBand2 && hasCrit2;
+        btn = document.getElementById('analyze-btn-proactive');
+        hint = document.getElementById('submit-hint-proactive');
+        if (!ok) {
+          if (!hasCtc && !hasBand2 && !hasCrit2) { msg = 'Enter the current CTC and choose a performance band and role criticality to continue.'; }
+          else if (!hasCtc) { msg = 'Enter the current CTC to continue.'; }
+          else if (!hasBand2) { msg = 'Choose a performance band to continue.'; }
+          else { msg = 'Choose the role criticality to continue.'; }
+        }
+      }
+      if (btn) btn.disabled = !ok;
+      if (hint && (ok || !quiet)) hint.textContent = ok ? '' : msg;
+    }
+
+    // Figures come back as "Rs.17L, one sentence of explanation". Show only the leading figure.
+    function leadFigure(str) {
+      if (!str) return 'N/A';
+      var head = String(str).split(/\u2014|,\s/)[0].trim();
+      return head || String(str);
     }
 
     function formatINR(n) {
@@ -532,7 +598,11 @@
         });
         var data = await res.json();
         clearInterval(loadInterval);
-        if (!data.success && data.error === 'TRIAL_GATE') {           window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');           return;         }         if (!data.success && data.error === 'TRIAL_GATE') {           window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');           return;         }         if (data.success && data.data && data.data.wrongTool) {
+        if (!data.success && data.error === 'TRIAL_GATE') {
+          window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
+          return;
+        }
+        if (data.success && data.data && data.data.wrongTool) {
           showWrongTool(data.data.reason, data.data.suggestedTool);
         } else if (data.success) {
           currentResult = data.data;
@@ -541,7 +611,7 @@
         } else {
           showError(data.error === 'USAGE_LIMIT'
             ? (data.message || 'You\u2019ve reached your daily limit for Retention Advisor. Resets tomorrow.')
-            : 'Analysis failed. ' + (data.error || 'Please try again.'));
+            : (data.error || 'Analysis failed. Please try again.'));
         }
       } catch(err) {
         clearInterval(loadInterval);
@@ -550,6 +620,10 @@
     }
 
     function renderOutput(d) {
+      // A previous save disables this button; a new analysis must start with it ready again.
+      var _sb = document.getElementById('save-btn');
+      if (_sb) { _sb.textContent = 'Save to Vantage Record \u2192'; _sb.disabled = false; }
+
       var html = '';
       if (d.flow === 'counter_offer') {
         var ep = d.employeeProfile || {};
@@ -576,7 +650,7 @@
         var retCost = fm.retentionCost || {};
         html += '<div class="fin-grid">';
         html += '<div class="fin-cell"><div class="fin-cell-label">Replacement Cost</div><div class="fin-cell-amount">' + (repCost.total || 'N/A') + '</div><ul class="breakdown-list">' + ((repCost.breakdown || []).map(function(b){ return '<li>' + b + '</li>'; }).join('')) + '</ul></div>';
-        html += '<div class="fin-cell"><div class="fin-cell-label">Break-even Ceiling</div><div class="fin-cell-amount">' + (fm.breakEvenCeiling ? fm.breakEvenCeiling.split('\u2014')[0].trim() : 'N/A') + '</div><div class="fin-cell-sub">' + (fm.breakEvenCeiling || '') + '</div></div>';
+        html += '<div class="fin-cell"><div class="fin-cell-label">Break-even Ceiling</div><div class="fin-cell-amount">' + (fm.breakEvenCeiling ? leadFigure(fm.breakEvenCeiling) : 'N/A') + '</div><div class="fin-cell-sub">' + (fm.breakEvenCeiling || '') + '</div></div>';
         html += '<div class="fin-cell highlight"><div class="fin-cell-label">Recommended Match</div><div class="fin-cell-amount">' + (rec.figure || '\u2014') + '</div></div>';
         html += '</div>';
 
@@ -754,13 +828,19 @@
         });
         var data = await res.json();
         if (data.success) {
-          var btn = document.querySelector('.action-btn.primary');
+          var btn = document.getElementById('save-btn');
           if (btn) { btn.textContent = 'Saved to Vantage Record ✓'; btn.disabled = true; }
           // Signal dashboard setup card that a case exists
           try { localStorage.setItem('sr_last_case_id', (data.data && data.data.airtableId) || 'saved'); } catch(e) {}
         }
       } catch(e) { /* silent fail */ }
     }
+
+    // Keep the run buttons in step with the form fields.
+    ['co-current-ctc','co-offer-ctc'].forEach(function(id) {
+      document.getElementById(id).addEventListener('input', function() { checkSubmitOffer('counter_offer'); });
+    });
+    document.getElementById('pr-current-ctc').addEventListener('input', function() { checkSubmitOffer('proactive'); });
 
     // Load MERIDIAN on page init
     (function waitForClerk() {
