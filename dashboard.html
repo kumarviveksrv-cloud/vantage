@@ -17,7 +17,7 @@
        need the font-family change, not a separate font <link> here. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
+html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--font),sans-serif;overflow:hidden}
     body{display:flex}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
     @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
@@ -28,11 +28,11 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     .sidebar{width:var(--sidebar);flex-shrink:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto}
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px}
     .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
-    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:var(--white)}
+    .logo-name{font-family:var(--font),sans-serif;font-size:15px;font-weight:700;color:var(--white)}
     .logo-name span{color:var(--muted)}
     .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.6);margin-top:2px}
     .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.75);padding:4px 10px;margin:16px 0 6px}
-    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.70);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;margin-bottom:2px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.70);font-size:13px;font-family:var(--font),sans-serif;font-weight:400;margin-bottom:2px}
     .nav-item:hover{background:rgba(99,102,241,0.08);color:var(--white);border-color:rgba(99,102,241,0.15)}
     .nav-item.active{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.30);color:#c4b5fd;font-weight:500}
     .nav-item--aria{color:rgba(165,180,252,0.75)}
@@ -60,7 +60,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     .meridian-modal-params{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:28px}
     .meridian-param{background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.12);border-radius:8px;padding:10px 12px;font-size:11px;color:rgba(165,180,252,0.65);font-family:'JetBrains Mono',monospace;letter-spacing:.04em}
     .meridian-modal-btns{display:flex;gap:10px}
-    .meridian-btn-primary{flex:1;padding:13px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;border:none;border-radius:10px;font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
+    .meridian-btn-primary{flex:1;padding:13px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;border:none;border-radius:10px;font-family:var(--font),sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
     .meridian-btn-primary:hover{opacity:.85}
     .meridian-btn-later{padding:13px 18px;background:transparent;color:rgba(165,180,252,0.5);border:1px solid rgba(99,102,241,0.15);border-radius:10px;font-size:13px;cursor:pointer;transition:all .2s;white-space:nowrap}
     .meridian-btn-later:hover{border-color:rgba(99,102,241,0.3);color:rgba(165,180,252,0.8)}
@@ -108,7 +108,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     .welcome-sub{font-size:13px;color:var(--grey);margin-top:4px}
     .header-aria{display:flex;align-items:center;gap:10px;cursor:pointer}
     .aria-label{text-align:right}
-    .aria-label .name{font-family:'Bricolage Grotesque',sans-serif;font-size:12px;font-weight:600;color:var(--muted)}
+    .aria-label .name{font-family:var(--font),sans-serif;font-size:12px;font-weight:600;color:var(--muted)}
     .aria-label .status{font-size:11px;color:var(--grey)}
 
     /* HUMAC WIDGET */
@@ -134,7 +134,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
 
     /* CASES */
     .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-    .section-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:600;color:var(--white)}
+    .section-title{font-family:var(--font),sans-serif;font-size:14px;font-weight:600;color:var(--white)}
     .see-all{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;text-decoration:none}
     .case-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:8px;cursor:pointer;transition:all .2s}
     .case-card:hover{background:var(--card2);border-color:rgba(99,102,241,0.3)}
@@ -168,7 +168,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     .tc-aria:hover{border-color:rgba(99,102,241,0.4);box-shadow:0 4px 20px rgba(99,102,241,0.12)}
     .tool-card .tool-tag{position:absolute;top:10px;right:10px;font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted);background:var(--teal-dim);border:1px solid rgba(99,102,241,0.25);padding:2px 6px;border-radius:4px;letter-spacing:.06em}
     .tool-icon{font-size:24px;margin-bottom:10px}
-    .tool-name{font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--white)}
+    .tool-name{font-family:var(--font),sans-serif;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--white)}
     .tool-desc{font-size:11px;color:var(--grey);line-height:1.5}
 
     /* ARIA QUICK */
@@ -177,12 +177,12 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     .aria-quick-text .label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
     .aria-quick-text .title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:4px;color:var(--white)}
     .aria-quick-text .sub{font-size:12px;color:var(--grey)}
-    .aria-btn{padding:10px 20px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 20px rgba(99,102,241,0.4)}
+    .aria-btn{padding:10px 20px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:var(--font),sans-serif;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 20px rgba(99,102,241,0.4)}
 
     /* DEBRIEF */
     .debrief-tease{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;animation:fadeIn .4s ease .3s both}
     .debrief-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
-    .debrief-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:600;margin-bottom:4px;color:var(--white)}
+    .debrief-title{font-family:var(--font),sans-serif;font-size:15px;font-weight:600;margin-bottom:4px;color:var(--white)}
     .debrief-sub{font-size:12px;color:var(--grey)}
     .debrief-chip{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted);background:var(--teal-dim);border:1px solid rgba(99,102,241,0.25);padding:8px 16px;border-radius:8px;cursor:pointer;white-space:nowrap;flex-shrink:0}
 
