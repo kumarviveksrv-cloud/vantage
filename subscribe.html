@@ -503,7 +503,11 @@
       }
       await Clerk.load();
       if (!Clerk.user) {
-        window.location.href = 'index.html';
+        // Send to access.html so user can sign in and come back to subscribe.
+        window.location.replace(
+          'https://vantage.virorah.com/access.html?redirect_url=' +
+          encodeURIComponent('https://vantage.virorah.com/subscribe.html')
+        );
         return;
       }
 
