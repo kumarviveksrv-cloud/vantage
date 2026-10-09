@@ -595,6 +595,46 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Plus 
     }
 
     // ─────────────────────────────────────
+    // PROFILE COMPLETION GATE (SR27)
+    // Catches any user who reaches the dashboard without having
+    // completed profile-setup.html (direct URL, bookmark, or a Clerk
+    // signup redirect that bypassed access.html's checkProfileDestination).
+    // Skipped once per session after the check passes, so returning users
+    // who completed their profile don't incur an extra round-trip.
+    // ─────────────────────────────────────
+    (function checkProfileCompletion() {
+      if (sessionStorage.getItem('vantage_profile_ok') === '1') return;
+      var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+      (function pollClerk() {
+        if (window.Clerk && window.Clerk.session) {
+          window.Clerk.session.getToken().then(function(token) {
+            fetch(WORKER, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+              body: JSON.stringify({ tool: 'get_profile' })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+              if (d.success && d.data && d.data.profileComplete === false) {
+                window.location.replace(BASE + 'profile-setup.html');
+              } else {
+                sessionStorage.setItem('vantage_profile_ok', '1');
+              }
+            })
+            .catch(function() {
+              // Network failure: don't block the user — grant session pass
+              sessionStorage.setItem('vantage_profile_ok', '1');
+            });
+          }).catch(function() {
+            sessionStorage.setItem('vantage_profile_ok', '1');
+          });
+        } else {
+          setTimeout(pollClerk, 150);
+        }
+      })();
+    })();
+
+    // ─────────────────────────────────────
     // PROCESSES I'M BUILDING WIDGET
     // SR16: single canonical implementation
     // ─────────────────────────────────────

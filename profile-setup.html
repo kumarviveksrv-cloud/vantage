@@ -475,6 +475,8 @@
             return;
           }
 
+          // Mark profile complete for this session so dashboard skips its get_profile check.
+          try { sessionStorage.setItem('vantage_profile_ok', '1'); } catch(e) {}
           window.location.href = 'dashboard.html';
 
         } catch (err) {
