@@ -223,7 +223,7 @@
     // Platform Tour
     var tourBtn = document.createElement('a');
     tourBtn.href = 'platform-tour.html';
-    tourBtn.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid rgba(99,102,241,0.18);text-decoration:none;color:rgba(255,255,255,0.6);font-size:13px;font-family:Plus Jakarta Sans,sans-serif;background:rgba(99,102,241,0.06);margin-bottom:10px';
+    tourBtn.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid rgba(99,102,241,0.18);text-decoration:none;color:rgba(255,255,255,0.6);font-size:13px;font-family:var(--font), sans-serif;background:rgba(99,102,241,0.06);margin-bottom:10px';
     tourBtn.innerHTML = '<span style="display:flex;align-items:center;gap:10px"><span style="font-size:15px">\uD83D\uDDFA</span>Platform Tour</span><span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.08em;background:#6366f1;color:#fff;padding:2px 7px;border-radius:4px;font-weight:600">START</span>';
     f.appendChild(tourBtn);
 
@@ -403,7 +403,7 @@ pricingEl.style.overflow = 'hidden';
           'max-width:340px',
           'width:calc(100vw - 48px)',
           'box-shadow:0 8px 32px rgba(0,0,0,0.5)',
-          'font-family:Plus Jakarta Sans,sans-serif',
+          'font-family:var(--font), sans-serif',
         ].join(';');
         banner.innerHTML = [
           '<div style="flex:1">',
@@ -447,10 +447,10 @@ pricingEl.style.overflow = 'hidden';
     banner.id = 'pwa-banner';
     banner.style.cssText = 'position:fixed;bottom:' + bottomOffset + ';left:50%;transform:translateX(-50%);background:#0d0b1e;border:1px solid rgba(99,102,241,0.3);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.4);max-width:380px;width:calc(100% - 48px)';
     banner.innerHTML = '<div style="font-size:28px;flex-shrink:0">📱</div>' +
-      '<div style="flex:1"><div style="font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:14px;color:#fff;margin-bottom:3px">Install Vantage</div>' +
+      '<div style="flex:1"><div style="font-family:var(--font), sans-serif;font-weight:700;font-size:14px;color:#fff;margin-bottom:3px">Install Vantage</div>' +
       '<div style="font-size:12px;color:rgba(255,255,255,0.70);line-height:1.4">Add to home screen for instant access. Works offline too.</div></div>' +
       '<div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">' +
-      '<button onclick="installPWA()" style="padding:8px 14px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:12px;border:none;border-radius:7px;cursor:pointer">Install</button>' +
+      '<button onclick="installPWA()" style="padding:8px 14px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:var(--font), sans-serif;font-weight:700;font-size:12px;border:none;border-radius:7px;cursor:pointer">Install</button>' +
       '<button onclick="dismissPWA()" style="padding:6px 14px;background:transparent;color:rgba(255,255,255,0.65);font-size:12px;border:none;cursor:pointer">Not now</button>' +
       '</div>';
     document.body.appendChild(banner);
@@ -649,7 +649,7 @@ pricingEl.style.overflow = 'hidden';
       '    padding: 11px 18px;',
       '    text-decoration: none;',
       '    color: rgba(244,243,255,0.65);',
-      '    font-family: "Plus Jakarta Sans", sans-serif;',
+      '    font-family: var(--font), sans-serif;',
       '    font-size: 14px;',
       '    transition: background 0.15s ease, color 0.15s ease;',
       '    -webkit-tap-highlight-color: transparent;',
@@ -1025,16 +1025,16 @@ pricingEl.style.overflow = 'hidden';
           '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:3px">',
             '<div>',
               '<div style="width:36px;height:4px;background:rgba(255,255,255,0.12);border-radius:2px;margin:0 auto 14px"></div>',
-              '<div style="font-family:Bricolage Grotesque,sans-serif;font-weight:700;font-size:15px;color:#fff">Set your location</div>',
+              '<div style="font-family:var(--font), sans-serif;font-weight:700;font-size:15px;color:#fff">Set your location</div>',
             '</div>',
             '<button id="vclock-close-btn" style="background:transparent;border:none;cursor:pointer;color:rgba(165,180,252,0.5);font-size:18px;line-height:1;padding:0;margin-top:-4px;flex-shrink:0" aria-label="Close">&times;</button>',
           '</div>',
-          '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5;margin-top:6px">Date and time display only. No location tracking. Nothing leaves your device.</div>',
+          '<div style="font-family:var(--font), sans-serif;font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5;margin-top:6px">Date and time display only. No location tracking. Nothing leaves your device.</div>',
         '</div>',
         '<div style="padding:12px 20px 8px;flex-shrink:0">',
           '<input id="vclock-search" type="text" placeholder="Search city or state\u2026" autocomplete="off"',
             ' style="width:100%;box-sizing:border-box;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.2);border-radius:8px;padding:10px 14px;',
-            'font-family:Plus Jakarta Sans,sans-serif;font-size:13px;color:#e8e6ff;outline:none;caret-color:#a5b4fc"',
+            'font-family:var(--font), sans-serif;font-size:13px;color:#e8e6ff;outline:none;caret-color:#a5b4fc"',
           '/>',
         '</div>',
         '<div id="vclock-list" style="overflow-y:auto;padding:4px 12px 20px;flex:1;min-height:0"></div>',
@@ -1069,7 +1069,7 @@ pricingEl.style.overflow = 'hidden';
       });
 
       if (!filtered.length) {
-        list.innerHTML = '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;color:rgba(255,255,255,0.60);text-align:center;padding:28px 0">No cities found</div>';
+        list.innerHTML = '<div style="font-family:var(--font), sans-serif;font-size:13px;color:rgba(255,255,255,0.60);text-align:center;padding:28px 0">No cities found</div>';
         return;
       }
 
@@ -1079,7 +1079,7 @@ pricingEl.style.overflow = 'hidden';
         row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:11px 10px;border-radius:8px;cursor:pointer;transition:background 0.12s;margin-bottom:1px';
         row.innerHTML = [
           '<div>',
-            '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:13px;font-weight:500;color:rgba(232,230,255,0.9)">' + r[0] + '</div>',
+            '<div style="font-family:var(--font), sans-serif;font-size:13px;font-weight:500;color:rgba(232,230,255,0.9)">' + r[0] + '</div>',
             '<div style="font-family:JetBrains Mono,monospace;font-size:10px;color:rgba(165,180,252,0.55);letter-spacing:0.04em;margin-top:2px">' + r[1] + ' &middot; ' + r[2] + '</div>',
           '</div>',
           '<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.08em">IST</div>',
@@ -1146,7 +1146,7 @@ pricingEl.style.overflow = 'hidden';
             (loc ? fmtDate(loc.timezone) : ''),
           '</div>',
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:7px;padding-top:7px;border-top:1px solid rgba(99,102,241,0.1)">',
-            '<div class="vclock-location" style="font-family:Plus Jakarta Sans,sans-serif;font-size:12px;color:rgba(255,255,255,0.60);line-height:1.3;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">',
+            '<div class="vclock-location" style="font-family:var(--font), sans-serif;font-size:12px;color:rgba(255,255,255,0.60);line-height:1.3;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">',
               (loc ? loc.city + ', ' + loc.state + ', ' + loc.country : ''),
             '</div>',
             '<button id="vclock-edit-btn" style="background:transparent;border:none;cursor:pointer;color:rgba(99,102,241,0.4);font-size:11px;padding:0 0 0 8px;flex-shrink:0;line-height:1;transition:color 0.15s" title="Change location">&#9998;</button>',
@@ -1155,7 +1155,7 @@ pricingEl.style.overflow = 'hidden';
         '<div class="vclock-noloc" style="display:' + (loc ? 'none' : 'flex') + ';align-items:center;gap:10px;cursor:pointer" id="vclock-noloc-btn">',
           '<span style="font-size:15px;flex-shrink:0;opacity:0.5">&#128336;</span>',
           '<div>',
-            '<div style="font-family:Plus Jakarta Sans,sans-serif;font-size:12px;color:rgba(232,230,255,0.5);font-weight:500">Set your location</div>',
+            '<div style="font-family:var(--font), sans-serif;font-size:12px;color:rgba(232,230,255,0.5);font-weight:500">Set your location</div>',
             '<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(99,102,241,0.45);letter-spacing:0.06em;margin-top:3px">Date &middot; Time &middot; City</div>',
           '</div>',
         '</div>',
@@ -1397,7 +1397,7 @@ function openVantageFeedback() {
         '<button class="vf-mood-btn" data-val="frustrated" onclick="vfPickMood(this)" style="flex:1;padding:10px 6px;border-radius:8px;border:1px solid rgba(99,102,241,0.2);background:rgba(99,102,241,0.05);cursor:pointer;color:rgba(255,255,255,0.7);font-size:13px;transition:all .15s">&#x1F621; Frustrated</button>',
       '</div>',
       '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.75);margin-bottom:8px">Category</div>',
-      '<select id="vf-cat" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(99,102,241,0.18);border-radius:8px;color:#fff;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:13px;margin-bottom:18px;-webkit-appearance:none">',
+      '<select id="vf-cat" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(99,102,241,0.18);border-radius:8px;color:#fff;font-family:\'DM Sans\',sans-serif;font-size:13px;margin-bottom:18px;-webkit-appearance:none">',
         '<option value="" style="background:#0d0b1e;color:#fff">Choose a category&hellip;</option>',
         '<option value="something_broke" style="background:#0d0b1e;color:#fff">Something broke</option>',
         '<option value="loved_it" style="background:#0d0b1e;color:#fff">Loved something</option>',
@@ -1405,12 +1405,12 @@ function openVantageFeedback() {
         '<option value="other" style="background:#0d0b1e;color:#fff">Other</option>',
       '</select>',
       '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.75);margin-bottom:8px">Tell us more <span style="opacity:.45">(optional)</span></div>',
-      '<textarea id="vf-comment" placeholder="What\'s on your mind?" rows="3" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(99,102,241,0.18);border-radius:8px;color:#fff;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:13px;resize:vertical;margin-bottom:14px;box-sizing:border-box"></textarea>',
+      '<textarea id="vf-comment" placeholder="What\'s on your mind?" rows="3" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(99,102,241,0.18);border-radius:8px;color:#fff;font-family:\'DM Sans\',sans-serif;font-size:13px;resize:vertical;margin-bottom:14px;box-sizing:border-box"></textarea>',
       '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:18px">',
         '<input type="checkbox" id="vf-anon" style="width:14px;height:14px;cursor:pointer;accent-color:#6366f1">',
         'Send without linking to my account',
       '</label>',
-      '<button id="vf-submit" onclick="vfSubmit()" style="width:100%;padding:12px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;border:none;border-radius:8px;font-family:\'Bricolage Grotesque\',sans-serif;font-weight:600;font-size:14px;cursor:pointer;transition:opacity .2s">Send Feedback</button>',
+      '<button id="vf-submit" onclick="vfSubmit()" style="width:100%;padding:12px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;border:none;border-radius:8px;font-family:\'DM Sans\',sans-serif;font-weight:600;font-size:14px;cursor:pointer;transition:opacity .2s">Send Feedback</button>',
       '<div id="vf-msg" style="display:none;margin-top:10px;font-family:\'JetBrains Mono\',monospace;font-size:11px;text-align:center;padding:8px 12px;border-radius:6px"></div>',
     '</div>',
   ].join('');

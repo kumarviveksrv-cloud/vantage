@@ -51,7 +51,7 @@
 
 /* Item 5: ARIA identity text — make readable and prominent */
 .aria-eyebrow {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-family: var(--font), sans-serif !important;
   font-size: clamp(12px,1.15vw,16px) !important;
   letter-spacing: .05em !important;
   color: rgba(196,181,253,.85) !important;
@@ -72,7 +72,7 @@
 
 /* Item 7+9: Record section text prominence */
 .record-head .eyebrow {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-family: var(--font), sans-serif !important;
   font-size: clamp(13px,1.3vw,18px) !important;
   color: rgba(196,181,253,.9) !important;
   letter-spacing: .04em !important;
@@ -177,13 +177,13 @@
   -webkit-text-fill-color: transparent;
 }
 .price-period {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font), sans-serif;
   font-size: 15px;
   color: rgba(255,255,255,.35);
   margin-left: 4px;
 }
 .plan-desc {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font), sans-serif;
   font-size: 14px;
   color: rgba(255,255,255,.5);
   line-height: 1.65;
@@ -195,7 +195,7 @@
   margin: 0 0 32px;
 }
 .plan-features li {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font), sans-serif;
   font-size: 13px;
   color: rgba(255,255,255,.68);
   padding: 7px 0 7px 18px;
@@ -226,7 +226,7 @@
 
 /* TIER 2: Section eyebrows — enforce consistently */
 .eyebrow {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-family: var(--font), sans-serif !important;
   font-size: clamp(13px,1.3vw,18px) !important;
   color: rgba(196,181,253,.85) !important;
   letter-spacing: .04em !important;
@@ -398,7 +398,7 @@
   color: rgba(196,181,253,.75) !important;
   font-size: clamp(12px,1.15vw,15px) !important;
   opacity: 1 !important;
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-family: var(--font), sans-serif !important;
   font-weight: 400 !important;
 }
 
@@ -644,7 +644,7 @@
   color: rgba(168,85,247,.75);
 }
 .dos-entry-title {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-family: var(--font), sans-serif !important;
   font-size: clamp(14px,1.45vw,18px) !important;
   color: rgba(255,255,255,.88) !important;
   line-height: 1.6 !important;
@@ -668,12 +668,12 @@
   border-radius: 4px;
 }
 .dos-outcome {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font), sans-serif;
   font-size: 13px;
   color: rgba(255,255,255,.42);
 }
 .dos-impact {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font), sans-serif;
   font-size: 13px;
   color: rgba(196,181,253,.65);
   margin-top: 8px;
@@ -753,7 +753,7 @@
   letter-spacing:.24em;color:rgba(196,181,253,.4);display:block;margin-bottom:5px;
 }
 .hs-subtitle {
-  font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.2vw,15px);
+  font-family:var(--font), sans-serif;font-size:clamp(12px,1.2vw,15px);
   color:rgba(255,255,255,.65);line-height:1.5;
 }
 .hs-subtitle em { font-style:italic;color:rgba(196,181,253,.82); }
@@ -791,7 +791,7 @@
   color:transparent;-webkit-text-fill-color:transparent;
   line-height:1;margin-bottom:5px;
 }
-.hsf-desc { font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:rgba(255,255,255,.35);line-height:1.4;margin-bottom:9px; }
+.hsf-desc { font-family:var(--font), sans-serif;font-size:10px;color:rgba(255,255,255,.35);line-height:1.4;margin-bottom:9px; }
 .hsf-bar { height:2px;background:rgba(196,181,253,.08);border-radius:2px;overflow:hidden; }
 .hsf-fill { height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#c084fc);border-radius:2px;transition:width 1.1s cubic-bezier(.25,.46,.45,.94); }
 
@@ -821,7 +821,7 @@
 .hsp-track { height:5px;background:rgba(196,181,253,.08);border-radius:5px;overflow:hidden;margin-bottom:6px; }
 .hsp-fill { height:100%;width:0%;background:linear-gradient(90deg,#7c3aed,#8b5cf6,#c084fc);border-radius:5px;transition:width 2s cubic-bezier(.25,.46,.45,.94); }
 .hsp-legend { display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:6.5px;letter-spacing:.08em;color:rgba(255,255,255,.18);margin-bottom:7px; }
-.hsp-verdict { font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;color:rgba(196,181,253,.75);font-style:italic;min-height:15px; }
+.hsp-verdict { font-family:var(--font), sans-serif;font-size:11px;color:rgba(196,181,253,.75);font-style:italic;min-height:15px; }
 
 /* ═══ MERIDIAN ENGINE STACK (SR18) ═══ */
 .meridian-stack { display:flex;flex-direction:column;gap:0;position:relative; }
@@ -897,7 +897,7 @@
   color:rgba(255,255,255,.78);margin-bottom:5px;
 }
 .msl-desc {
-  font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;
+  font-family:var(--font), sans-serif;font-size:12px;
   color:rgba(255,255,255,.4);line-height:1.5;margin-bottom:9px;
 }
 .msl-bar { height:2px;background:rgba(196,181,253,.08);border-radius:2px;overflow:hidden; }
@@ -932,7 +932,7 @@
   margin-bottom:5px;display:block;
 }
 .ms-output-sub {
-  font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;
+  font-family:var(--font), sans-serif;font-size:11px;
   color:rgba(255,255,255,.38);font-style:italic;
 }
 
@@ -995,7 +995,7 @@
   letter-spacing:.12em;color:rgba(196,181,253,.5);margin-bottom:2px;
 }
 .msl-signal-val {
-  font-family:'Plus Jakarta Sans',sans-serif;font-size:11.5px;
+  font-family:var(--font), sans-serif;font-size:11.5px;
   color:rgba(255,255,255,.78);line-height:1.45;
 }
 .msl-signal-val em {
@@ -1020,7 +1020,7 @@
   letter-spacing:.16em;color:rgba(196,181,253,.4);margin-bottom:7px;
 }
 .ms-output-snippet-text {
-  font-family:'Plus Jakarta Sans',sans-serif;font-size:11.5px;
+  font-family:var(--font), sans-serif;font-size:11.5px;
   color:rgba(255,255,255,.72);line-height:1.6;font-style:italic;
 }
 .ms-output-meta {
@@ -1097,7 +1097,7 @@
   align-items: center;
   gap: 10px;
   margin-top: 28px;
-  font: 700 12px 'Bricolage Grotesque',sans-serif;
+  font: 700 12px var(--font), sans-serif;
   letter-spacing: .08em;
   text-decoration: none;
   padding: 11px 22px;
@@ -1299,7 +1299,7 @@
 }
 .vd-radar-legend-sub {
   margin: 10px 0 0;
-  font: 500 clamp(17px,2vw,22px)/1.5 'Plus Jakarta Sans',sans-serif;
+  font: 500 clamp(17px,2vw,22px)/1.5 var(--font), sans-serif;
   letter-spacing: .01em;
   color: rgba(244,243,255,.42);
 }
@@ -1342,13 +1342,13 @@
   margin-bottom: 10px;
 }
 .vd-pillar-h {
-  font: 600 15px 'Bricolage Grotesque',sans-serif;
+  font: 600 15px var(--font), sans-serif;
   color: rgba(244,243,255,.88);
   margin: 0 0 12px;
   line-height: 1.35;
 }
 .vd-pillar-p {
-  font: 13px 'Plus Jakarta Sans',sans-serif;
+  font: 13px var(--font), sans-serif;
   color: rgba(244,243,255,.5);
   line-height: 1.75;
   margin: 0;
@@ -1562,7 +1562,7 @@
   margin-bottom: 7px;
 }
 .vd-bridge-desc {
-  font: 13px 'Plus Jakarta Sans',sans-serif;
+  font: 13px var(--font), sans-serif;
   color: rgba(244,243,255,.38);
   letter-spacing: .01em;
   white-space: nowrap;
@@ -1659,7 +1659,7 @@
 @keyframes vdHubPulse { 0% { r: 46; opacity: .5; } 100% { r: 90; opacity: 0; } }
 .vd-hub-copy {
   margin-top: 30px;
-  font: 14px 'Plus Jakarta Sans',sans-serif;
+  font: 14px var(--font), sans-serif;
   color: rgba(244,243,255,.5);
   line-height: 1.8;
   max-width: 560px;
@@ -1801,7 +1801,7 @@
   color: rgba(52,211,153,.6);
 }
 .hsp-mdesc {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font), sans-serif;
   font-size: 11px;
   color: rgba(255,255,255,.38);
   line-height: 1.4;
@@ -1814,7 +1814,7 @@
   margin-top: 2px;
 }
 .hsp-tagline {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font), sans-serif;
   font-size: 12px;
   color: rgba(255,255,255,.42);
   font-style: italic;
@@ -1966,7 +1966,7 @@
   flex-shrink: 0;
 }
 .sb-val {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font), sans-serif;
   font-size: 12px;
   color: rgba(255,255,255,.65);
   flex: 1;
@@ -2028,7 +2028,7 @@
   display: block;
 }
 .ri-text {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font), sans-serif;
   font-size: 13px;
   color: rgba(255,255,255,.68);
   line-height: 1.65;
@@ -2676,7 +2676,7 @@
   color: rgba(196,181,253,.85);
 }
 .cor-choice-text {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font), sans-serif;
   font-size: 14.5px;
   color: rgba(255,255,255,.88);
   font-weight: 500;
@@ -2732,7 +2732,7 @@
   margin-bottom: 10px;
 }
 .cor-ri-text {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font), sans-serif;
   font-size: 13.5px;
   color: rgba(255,255,255,.68);
   line-height: 1.65;
@@ -2883,7 +2883,7 @@
   flex-wrap: wrap;
 }
 .cor-fs-desktop {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font), sans-serif;
   font-size: 12px;
   color: rgba(196,181,253,.45);
   letter-spacing: .03em;
@@ -2979,7 +2979,7 @@
   margin-bottom: 4px !important;
 }
 .cor-h2-sub {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-family: var(--font), sans-serif !important;
   font-size: clamp(13px, 1.3vw, 16px) !important;
   color: rgba(255,255,255,.45) !important;
   max-width: 520px !important;
@@ -4284,7 +4284,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
   </div>
 </section>
 
-<section class="final cinematic-panel"><div class="final-field"><div class="final-radial"></div></div><div class="final-copy"><p class="eyebrow">VANTAGE / Private intelligence system</p><h2>Do the work.<br>Keep the record.<br><span class="line accent">Build the career.</span></h2><p>Walk into the next room with more than an answer.</p><div style="display:flex;flex-direction:column;align-items:center;gap:12px"><a href="access.html" class="btn btn-primary magnetic">Enter Vantage <span>↗</span></a><button id="pwa-cta-btn" onclick="triggerPwaInstall()" style="display:none;padding:11px 24px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:10px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap">&#x2B07;&nbsp; Install Vantage App</button><p id="pwa-device-msg" style="display:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:rgba(196,181,253,.45);max-width:340px;text-align:center;line-height:1.6;margin:0"></p></div></div></section>
+<section class="final cinematic-panel"><div class="final-field"><div class="final-radial"></div></div><div class="final-copy"><p class="eyebrow">VANTAGE / Private intelligence system</p><h2>Do the work.<br>Keep the record.<br><span class="line accent">Build the career.</span></h2><p>Walk into the next room with more than an answer.</p><div style="display:flex;flex-direction:column;align-items:center;gap:12px"><a href="access.html" class="btn btn-primary magnetic">Enter Vantage <span>↗</span></a><button id="pwa-cta-btn" onclick="triggerPwaInstall()" style="display:none;padding:11px 24px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);border-radius:10px;color:#a5b4fc;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;cursor:pointer;transition:all .2s;white-space:nowrap">&#x2B07;&nbsp; Install Vantage App</button><p id="pwa-device-msg" style="display:none;font-family:var(--font), sans-serif;font-size:12px;color:rgba(196,181,253,.45);max-width:340px;text-align:center;line-height:1.6;margin:0"></p></div></div></section>
 
 <div class="vantage-footer">
   <div class="footer-grid">
@@ -4360,7 +4360,7 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 .pwa-icon{font-size:26px;flex-shrink:0;line-height:1}
 .pwa-text{flex:1;min-width:0}
 .pwa-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:#a5b4fc;display:block;margin-bottom:2px;text-transform:uppercase}
-.pwa-sub{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:rgba(244,243,255,.58);line-height:1.4}
+.pwa-sub{font-family:var(--font), sans-serif;font-size:12px;color:rgba(244,243,255,.58);line-height:1.4}
 .pwa-actions{display:flex;gap:8px;flex-shrink:0}
 #pwa-install-btn{padding:8px 14px;background:linear-gradient(135deg,#6366f1,#7c3aed);border:none;border-radius:8px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;cursor:pointer;white-space:nowrap;transition:opacity .2s}
 #pwa-install-btn:hover{opacity:.88}
@@ -4370,28 +4370,28 @@ CONTEXT RESOLVED</span><span class="hud-readout bottom">SYSTEM MEMORY / ACTIVE</
 /* ── FAQ section ────────────────────────────────────────────────────── */
 .faq-section { max-width: 760px; margin: 0 auto; padding: 100px 24px 40px; }
 .faq-header { text-align: center; margin-bottom: 48px; }
-.faq-header h2 { font: 600 clamp(28px,3.4vw,42px)/1.25 'Bricolage Grotesque',sans-serif; color: rgba(244,243,255,.92); margin: 10px 0 0; }
+.faq-header h2 { font: 600 clamp(28px,3.4vw,42px)/1.25 var(--font), sans-serif; color: rgba(244,243,255,.92); margin: 10px 0 0; }
 .faq-list { display: flex; flex-direction: column; gap: 10px; }
 .faq-item { border: 1px solid rgba(196,181,253,.12); border-radius: 12px; background: rgba(13,11,30,.5); overflow: hidden; transition: border-color .25s; }
 .faq-item.faq-open { border-color: rgba(99,102,241,.35); }
-.faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 22px; background: none; border: none; cursor: pointer; text-align: left; font: 600 15px 'Plus Jakarta Sans',sans-serif; color: rgba(244,243,255,.9); }
+.faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 22px; background: none; border: none; cursor: pointer; text-align: left; font: 600 15px var(--font), sans-serif; color: rgba(244,243,255,.9); }
 .faq-icon { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(196,181,253,.3); display: flex; align-items: center; justify-content: center; font-size: 15px; color: rgba(196,181,253,.7); transition: transform .3s ease, background .25s ease; }
 .faq-item.faq-open .faq-icon { transform: rotate(45deg); background: rgba(99,102,241,.18); }
 .faq-a { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
 .faq-item.faq-open .faq-a { max-height: 2000px; }
-.faq-a p { margin: 0; padding: 0 22px 20px; font: 14px/1.75 'Plus Jakarta Sans',sans-serif; color: rgba(244,243,255,.55); }
+.faq-a p { margin: 0; padding: 0 22px 20px; font: 14px/1.75 var(--font), sans-serif; color: rgba(244,243,255,.55); }
 
 /* ── Footer ─────────────────────────────────────────────────────────── */
 .vantage-footer { position: static !important; display: block !important; max-width: 1180px; margin: 60px auto 0; padding: 60px 24px 0; border-top: 1px solid rgba(196,181,253,.1); }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
 .footer-brand img { height: 30px; margin-bottom: 14px; }
 .footer-tagline { font: 600 13px 'JetBrains Mono',monospace; letter-spacing: .05em; margin: 0 0 12px; background: linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
-.footer-desc { font: 13px/1.75 'Plus Jakarta Sans',sans-serif; color: rgba(244,243,255,.42); max-width: 320px; margin: 0; }
+.footer-desc { font: 13px/1.75 var(--font), sans-serif; color: rgba(244,243,255,.42); max-width: 320px; margin: 0; }
 .footer-col-h { display: block; font: 700 10px 'JetBrains Mono',monospace; letter-spacing: .16em; color: rgba(196,181,253,.45); margin-bottom: 16px; }
-.footer-col a { display: block; font: 13px 'Plus Jakarta Sans',sans-serif; color: rgba(244,243,255,.55); text-decoration: none; margin-bottom: 11px; transition: color .2s; }
+.footer-col a { display: block; font: 13px var(--font), sans-serif; color: rgba(244,243,255,.55); text-decoration: none; margin-bottom: 11px; transition: color .2s; }
 .footer-col a:hover { color: #c4b5fd; }
 .footer-bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 22px 26px; border: 1px solid rgba(99,102,241,.25); border-radius: 14px; background: rgba(99,102,241,.06); margin-bottom: 32px; }
-.footer-bar-text { font: 13px 'Plus Jakarta Sans',sans-serif; color: rgba(244,243,255,.7); }
+.footer-bar-text { font: 13px var(--font), sans-serif; color: rgba(244,243,255,.7); }
 .footer-bar-text strong { color: #f4f3ff; }
 .footer-bottom { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; padding: 22px 0; border-top: 1px solid rgba(196,181,253,.08); font: 10px 'JetBrains Mono',monospace; letter-spacing: .1em; color: rgba(196,181,253,.35); }
 @media (max-width: 800px) {

@@ -17,7 +17,7 @@
        vantage.virorah.com. -->
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:var(--font), sans-serif}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
     @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
     @keyframes spin{to{transform:rotate(360deg)}}
@@ -29,7 +29,7 @@
     .wrap{width:100%;max-width:420px;text-align:center;animation:fadeIn .4s ease}
     .logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:40px}
     .logo-dot{width:10px;height:10px;border-radius:50%;background:#6366f1;box-shadow:0 0 14px rgba(99,102,241,.7);animation:pulse 2s ease-in-out infinite}
-    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;color:#f4f3ff}
+    .logo-name{font-family:var(--font), sans-serif;font-size:22px;font-weight:700;color:#f4f3ff}
     .logo-sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(165,180,252,.5);margin-top:2px}
     .card{background:#0d0b1e;border:1px solid rgba(99,102,241,.18);border-radius:16px;padding:40px 32px}
     .spinner{width:32px;height:32px;border:2px solid rgba(99,102,241,.2);border-top-color:#6366f1;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
@@ -38,7 +38,7 @@
     .error-state{display:none}
     .error-title{font-size:15px;font-weight:600;color:#f4f3ff;margin-bottom:8px}
     .error-sub{font-size:13px;color:rgba(244,243,255,.45);line-height:1.6;margin-bottom:20px}
-    .retry-btn{padding:11px 24px;background:linear-gradient(135deg,#6366f1,#7c3aed);border:none;color:#fff;border-radius:8px;font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
+    .retry-btn{padding:11px 24px;background:linear-gradient(135deg,#6366f1,#7c3aed);border:none;color:#fff;border-radius:8px;font-family:var(--font), sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
     .retry-btn:hover{opacity:.85}
     .meridian-chip{margin-top:20px;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.14);border-radius:10px;padding:14px 18px}
     .meridian-chip-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}

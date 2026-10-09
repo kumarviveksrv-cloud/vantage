@@ -10,7 +10,7 @@
   <link href="/fonts/fonts.css" rel="stylesheet"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:var(--font), sans-serif}
     body{display:flex}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
 
@@ -18,7 +18,7 @@
     .sidebar{width:220px;flex-shrink:0;background:rgba(13,11,30,.98);border-right:1px solid rgba(99,102,241,.08);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto;position:fixed;top:0;left:0;z-index:20}
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
     .logo-dot{width:8px;height:8px;border-radius:50%;background:#6366f1;box-shadow:0 0 10px #6366f1;animation:pulse 2s ease-in-out infinite;flex-shrink:0}
-    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700}
+    .logo-name{font-family:var(--font), sans-serif;font-size:15px;font-weight:700}
     .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:2px}
     .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:4px 10px;margin:16px 0 6px}
     .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(255,255,255,.45);font-size:13px;margin-bottom:2px}
@@ -37,7 +37,7 @@
     /* HERO */
     .hero{text-align:center;margin-bottom:64px}
     .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(99,102,241,.65);margin-bottom:16px}
-    .hero-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;color:#f4f3ff;line-height:1.15;margin-bottom:16px}
+    .hero-title{font-family:var(--font), sans-serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;color:#f4f3ff;line-height:1.15;margin-bottom:16px}
     .hero-title span{background:linear-gradient(135deg,#a5b4fc,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
     .hero-sub{font-size:.95rem;color:rgba(244,243,255,.42);line-height:1.75;max-width:520px;margin:0 auto 32px}
 
@@ -46,7 +46,7 @@
     .hbtn{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:18px 22px;border-radius:14px;cursor:pointer;min-width:220px;max-width:280px;text-align:left;border:none;font-family:inherit;text-decoration:none;transition:transform .2s,box-shadow .2s}
     .hbtn:hover{transform:translateY(-3px)}
     .hbtn-icon{font-size:20px}
-    .hbtn-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:700;color:#f4f3ff}
+    .hbtn-title{font-family:var(--font), sans-serif;font-size:14px;font-weight:700;color:#f4f3ff}
     .hbtn-desc{font-size:11px;line-height:1.5;color:rgba(244,243,255,.6)}
     .hbtn-primary{background:linear-gradient(135deg,#6366f1,#7c3aed);box-shadow:0 4px 24px rgba(99,102,241,.35)}
     .hbtn-primary:hover{box-shadow:0 10px 36px rgba(99,102,241,.5)}
@@ -60,7 +60,7 @@
     .section{margin-bottom:56px;scroll-margin-top:80px}
     .section-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(99,102,241,.55);margin-bottom:10px;display:flex;align-items:center;gap:10px}
     .section-label::before{content:'';width:24px;height:1.5px;background:#6366f1;flex-shrink:0}
-    .section-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(1.3rem,2.5vw,1.7rem);font-weight:700;color:#f4f3ff;margin-bottom:6px;line-height:1.25}
+    .section-title{font-family:var(--font), sans-serif;font-size:clamp(1.3rem,2.5vw,1.7rem);font-weight:700;color:#f4f3ff;margin-bottom:6px;line-height:1.25}
     .section-sub{font-size:.88rem;color:rgba(244,243,255,.38);margin-bottom:28px;line-height:1.7}
 
     /* LOOKUP */
@@ -80,7 +80,7 @@
     .tc-num{position:absolute;top:14px;right:16px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:rgba(99,102,241,.35)}
     .tc-icon{font-size:22px}
     .tc-tag{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;background:rgba(99,102,241,.12);color:#a5b4fc;padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:2px}
-    .tc-name{font-family:'Bricolage Grotesque',sans-serif;font-size:.95rem;font-weight:700;color:#f4f3ff}
+    .tc-name{font-family:var(--font), sans-serif;font-size:.95rem;font-weight:700;color:#f4f3ff}
     .tc-desc{font-size:.78rem;color:rgba(244,243,255,.38);line-height:1.55}
 
     /* PHILOSOPHY */
@@ -97,7 +97,7 @@
     .pillars{display:flex;flex-direction:column;gap:10px;margin-top:20px}
     .pillar{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:rgba(13,11,30,.8);border:1px solid rgba(99,102,241,.1);border-radius:10px}
     .pillar-code{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#a5b4fc;flex-shrink:0;width:28px;padding-top:1px}
-    .pillar-name{font-family:'Bricolage Grotesque',sans-serif;font-size:.88rem;font-weight:700;color:#f4f3ff;margin-bottom:3px}
+    .pillar-name{font-family:var(--font), sans-serif;font-size:.88rem;font-weight:700;color:#f4f3ff;margin-bottom:3px}
     .pillar-desc{font-size:.78rem;color:rgba(244,243,255,.38);line-height:1.5}
 
     /* INDIA BADGE */
@@ -105,7 +105,7 @@
 
     /* VISION BLOCK */
     .vision-block{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(124,58,237,.05));border:1px solid rgba(99,102,241,.2);border-radius:16px;padding:32px 32px;margin-top:20px}
-    .vision-text{font-family:'Bricolage Grotesque',sans-serif;font-size:1.15rem;font-weight:600;color:#f4f3ff;line-height:1.6}
+    .vision-text{font-family:var(--font), sans-serif;font-size:1.15rem;font-weight:600;color:#f4f3ff;line-height:1.6}
 
     /* FAQ */
     .faq-item{border-bottom:1px solid rgba(99,102,241,.08)}

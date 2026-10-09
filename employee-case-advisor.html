@@ -20,7 +20,7 @@
        uses (dense UI chrome stays sans-serif). -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:var(--font), sans-serif;overflow:hidden}
     body{display:flex}
     :root{
   --accent:#6366f1;
@@ -35,10 +35,10 @@
     .sidebar{width:220px;flex-shrink:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto}
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px}
     .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
-    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
+    .logo-name{font-family:var(--font), sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
     .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.5);margin-top:2px}
     .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.6);padding:4px 10px;margin:16px 0 6px}
-    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.65);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.65);font-size:13px;font-family:var(--font), sans-serif;margin-bottom:2px}
     .nav-item:hover{background:rgba(99,102,241,0.08);color:#f4f3ff;border-color:rgba(99,102,241,0.15)}
     .nav-item.active{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.30);color:#c4b5fd;font-weight:500}
     .nav-item--aria{color:rgba(165,180,252,0.75)}
@@ -61,18 +61,18 @@
     .form-section{margin-bottom:24px}
     .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:block}
     .case-types{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-    .case-type-btn{background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;color:var(--grey);font-size:12px;font-family:'Plus Jakarta Sans',sans-serif}
+    .case-type-btn{background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;color:var(--grey);font-size:12px;font-family:var(--font), sans-serif}
     .case-type-btn:hover{border-color:rgba(99,102,241,0.35);color:#f4f3ff;background:rgba(99,102,241,0.08)}
     .case-type-btn.selected{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.45);color:#c4b5fd;font-weight:500}
     .case-type-icon{font-size:18px;display:block;margin-bottom:4px}
-    textarea{width:100%;padding:16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:12px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:1.6;resize:vertical;min-height:140px;outline:none;transition:border .2s}
+    textarea{width:100%;padding:16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:12px;color:#f4f3ff;font-family:var(--font), sans-serif;font-size:13px;line-height:1.6;resize:vertical;min-height:140px;outline:none;transition:border .2s}
     textarea:focus{border-color:rgba(99,102,241,0.35);box-shadow:0 0 0 3px rgba(99,102,241,0.05)}
     textarea::placeholder{color:rgba(165,180,252,0.25);font-size:13px}
-    input[type=text]{width:100%;padding:14px 16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:12px;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;outline:none;transition:border .2s}
+    input[type=text]{width:100%;padding:14px 16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:12px;color:#f4f3ff;font-family:var(--font), sans-serif;font-size:13px;outline:none;transition:border .2s}
     input[type=text]:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
     input[type=text]::placeholder{color:rgba(165,180,252,0.25)}
     .privacy-note{font-size:11px;color:var(--dim);margin-top:8px;display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace}
-    .submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.35)}
+    .submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:var(--font), sans-serif;font-weight:800;font-size:15px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.35)}
     .submit-btn:hover{opacity:.88}
     .submit-btn:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
 
@@ -149,7 +149,7 @@
     .recommendation-card{background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.32);border-radius:14px;padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
     .recommendation-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.7),transparent)}
     .rec-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
-    .rec-text{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:600;color:#f4f3ff;line-height:1.7}
+    .rec-text{font-family:var(--font), sans-serif;font-size:16px;font-weight:600;color:#f4f3ff;line-height:1.7}
 
     /* OUTPUT: COMMUNICATION */
     .communication-card{background:var(--card);border:1px solid rgba(244,243,255,0.07);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:20px 24px;margin-bottom:16px}
@@ -161,15 +161,15 @@
     .aria-offer-inner{flex:1}
     .aria-offer-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#c4b5fd;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
     .aria-offer-text{font-size:13px;color:var(--grey);line-height:1.5}
-    .aria-offer-btn{padding:10px 20px;background:linear-gradient(135deg,var(--violet),var(--accent));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:12px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;text-decoration:none;white-space:nowrap;box-shadow:0 4px 14px rgba(99,102,241,0.3)}
+    .aria-offer-btn{padding:10px 20px;background:linear-gradient(135deg,var(--violet),var(--accent));color:#fff;font-family:var(--font), sans-serif;font-weight:700;font-size:12px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;text-decoration:none;white-space:nowrap;box-shadow:0 4px 14px rgba(99,102,241,0.3)}
 
     /* ACTION ROW */
     .action-row{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap}
-    .btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
+    .btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:var(--font), sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
     .btn-primary:hover{opacity:.88}
-    .btn-secondary{padding:14px 28px;background:transparent;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;font-size:14px;border:1px solid rgba(99,102,241,0.35);border-radius:10px;cursor:pointer;transition:all .2s}
+    .btn-secondary{padding:14px 28px;background:transparent;color:var(--muted);font-family:var(--font), sans-serif;font-weight:500;font-size:14px;border:1px solid rgba(99,102,241,0.35);border-radius:10px;cursor:pointer;transition:all .2s}
     .btn-secondary:hover{background:rgba(99,102,241,0.08)}
-    .btn-ghost{padding:14px 28px;background:transparent;color:var(--grey);font-family:'Plus Jakarta Sans',sans-serif;font-weight:400;font-size:14px;border:1px solid rgba(244,243,255,0.08);border-radius:10px;cursor:pointer;transition:all .2s}
+    .btn-ghost{padding:14px 28px;background:transparent;color:var(--grey);font-family:var(--font), sans-serif;font-weight:400;font-size:14px;border:1px solid rgba(244,243,255,0.08);border-radius:10px;cursor:pointer;transition:all .2s}
     .btn-ghost:hover{border-color:rgba(244,243,255,0.15);color:#f4f3ff}
 
     /* TOAST */
@@ -961,7 +961,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     <div style="display:flex;align-items:flex-start;gap:12px">
       <span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x1F9ED;</span>
       <div style="flex:1">
-        <div id="vantage-wrongtool-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:rgba(244,243,255,.85);line-height:1.55"></div>
+        <div id="vantage-wrongtool-msg" style="font-family:var(--font), sans-serif;font-size:13px;color:rgba(244,243,255,.85);line-height:1.55"></div>
         <a id="vantage-wrongtool-link" href="#" style="display:inline-block;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:#c4b5fd;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.35);border-radius:6px;padding:5px 12px;cursor:pointer;text-decoration:none;transition:all .2s" onmouseover="this.style.borderColor='rgba(99,102,241,.65)'" onmouseout="this.style.borderColor='rgba(99,102,241,.35)'"></a>
       </div>
       <button onclick="document.getElementById('vantage-wrongtool').style.display='none'" style="background:none;border:none;color:rgba(244,243,255,.3);cursor:pointer;font-size:16px;padding:0;line-height:1;flex-shrink:0">&#x2715;</button>
@@ -971,7 +971,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     <div style="display:flex;align-items:flex-start;gap:12px">
       <span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x26A0;&#xFE0F;</span>
       <div style="flex:1">
-        <div id="vantage-error-msg" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:rgba(244,243,255,.85);line-height:1.55"></div>
+        <div id="vantage-error-msg" style="font-family:var(--font), sans-serif;font-size:13px;color:rgba(244,243,255,.85);line-height:1.55"></div>
         <button onclick="document.getElementById('vantage-error').style.display='none';showView('intake-view')" style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:#a5b4fc;background:transparent;border:1px solid rgba(99,102,241,.3);border-radius:6px;padding:5px 12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(99,102,241,.6)'" onmouseout="this.style.borderColor='rgba(99,102,241,.3)'">&#x2190; Try again</button>
       </div>
       <button onclick="document.getElementById('vantage-error').style.display='none'" style="background:none;border:none;color:rgba(244,243,255,.3);cursor:pointer;font-size:16px;padding:0;line-height:1;flex-shrink:0">&#x2715;</button>

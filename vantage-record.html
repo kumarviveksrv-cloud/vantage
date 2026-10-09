@@ -12,7 +12,7 @@
        (genuine headline moments); everything else stays sans-serif. -->
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden} 
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:var(--font), sans-serif;overflow:hidden} 
     body{display:flex}
     :root{--accent:#6366f1;--border-accent:rgba(99,102,241,0.25);--dim:rgba(244,243,255,0.25)}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.55}}
@@ -22,10 +22,10 @@
     .sidebar{width:220px;flex-shrink:0;background:rgba(5,4,16,0.98);border-right:1px solid rgba(99,102,241,0.18);display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto}
     .logo{display:flex;align-items:center;gap:10px;padding:6px 4px;margin-bottom:28px;cursor:pointer}
     .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(99,102,241,0.6);animation:pulse 2s ease-in-out infinite;flex-shrink:0}
-    .logo-name{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
+    .logo-name{font-family:var(--font), sans-serif;font-size:15px;font-weight:700;color:#f4f3ff}
     .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.5);margin-top:2px}
     .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,0.6);padding:4px 10px;margin:16px 0 6px}
-    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.65);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:2px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,0.65);font-size:13px;font-family:var(--font), sans-serif;margin-bottom:2px}
     .nav-item:hover{background:rgba(99,102,241,0.08);color:#f4f3ff;border-color:rgba(99,102,241,0.15)}
     .nav-item.active{background:rgba(99,102,241,0.12);border-color:rgba(99,102,241,0.30);color:#c4b5fd;font-weight:500}
     .nav-item--aria{color:rgba(165,180,252,0.75)}
@@ -40,11 +40,11 @@
     .breadcrumb a{color:var(--dim);text-decoration:none}.breadcrumb a:hover{color:var(--muted)}
     .page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;margin-bottom:4px;color:#f4f3ff}
     .page-sub{font-size:13px;color:var(--grey)}
-    .new-case-btn{padding:12px 22px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:13px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35);flex-shrink:0;text-decoration:none;display:inline-flex;align-items:center}
+    .new-case-btn{padding:12px 22px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:var(--font), sans-serif;font-weight:700;font-size:13px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35);flex-shrink:0;text-decoration:none;display:inline-flex;align-items:center}
     .new-case-btn:hover{opacity:.88}
 
     .filter-bar{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
-    .filter-btn{padding:7px 16px;border-radius:20px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .2s;border:1px solid var(--border);background:rgba(99,102,241,0.04);color:var(--grey)}
+    .filter-btn{padding:7px 16px;border-radius:20px;font-size:12px;font-family:var(--font), sans-serif;cursor:pointer;transition:all .2s;border:1px solid var(--border);background:rgba(99,102,241,0.04);color:var(--grey)}
     .filter-btn:hover{border-color:rgba(99,102,241,0.3);color:#f4f3ff}
     .filter-btn.active{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.4);color:#c4b5fd;font-weight:500}
 
@@ -95,7 +95,7 @@
 
     .empty-state{text-align:center;padding:72px 20px;animation:fadeIn .4s ease}
     .empty-icon{font-size:42px;margin-bottom:16px}
-    .empty-title{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px;color:#f4f3ff}
+    .empty-title{font-family:var(--font), sans-serif;font-size:20px;font-weight:700;margin-bottom:8px;color:#f4f3ff}
     .empty-sub{font-size:13px;color:var(--grey);margin-bottom:28px;line-height:1.6;max-width:380px;margin-left:auto;margin-right:auto}
 
     .loading-state{text-align:center;padding:60px 20px}

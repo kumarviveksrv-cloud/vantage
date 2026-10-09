@@ -15,20 +15,15 @@
    All 16 Vantage pages now link this file. The migration is done.
    No further per-page migration is required.
 
-   Typography decision (SR17/SR18): headline font is Cormorant
-   Garamond, matching Virorah PMS's editorial/premium identity.
-   Applied to page-level .page-title, hero headlines, and
-   empty-state titles only. Dense UI chrome (nav items, card
-   headers, badge text, buttons) stays Bricolage Grotesque or
-   Plus Jakarta Sans. The .logo-name brand mark specifically
-   stays Bricolage — see Fix note below.
+   Typography decision (SR27): Four permitted fonts only.
+   - DM Sans (--font / --font-body): all UI chrome — nav, buttons, forms, cards
+   - Cormorant Garamond (--display / --font-display): editorial headlines only
+   - JetBrains Mono (--mono / --font-mono): label caps, monospace
+   - Space Grotesk (--stat / --font-stat): numeric stat displays
 
-   Fix (SR18 audit): .logo-name below is deliberately set to
-   Bricolage Grotesque, NOT var(--font-display). The "Virorah"
-   sidebar brand mark must never render in Cormorant Garamond.
-   Every page declares .logo-name locally in Bricolage, which
-   overrides this — but the canonical file should tell the truth
-   so new pages don't have to rediscover this by accident.
+   FORBIDDEN (permanent, SR27): Plus Jakarta Sans and Bricolage Grotesque
+   must NEVER appear anywhere in Vantage, including .logo-name.
+   The body token --font / --font-body is DM Sans.
    ═══════════════════════════════════════════════════════════ */
 
 @import url('fonts/fonts.css');
@@ -68,8 +63,8 @@
   --sidebar: 220px;
 
   /* ── TYPOGRAPHY ───────────────────────────────────────── */
-  --font: 'Plus Jakarta Sans', sans-serif;
-  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font: 'DM Sans', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
   --mono: 'JetBrains Mono', monospace;
   --font-mono: 'JetBrains Mono', monospace;
   --display: 'Cormorant Garamond', serif;
@@ -116,10 +111,9 @@
 }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
 .logo-name {
-  /* Deliberately Bricolage Grotesque — NOT var(--font-display).
-     The "Virorah" brand mark must stay sans-serif. Cormorant
-     Garamond is for editorial page headlines only. */
-  font-family: 'Bricolage Grotesque', sans-serif;
+  /* DM Sans — the permitted body/UI sans-serif (SR27).
+     Bricolage Grotesque is permanently forbidden on all Vantage pages. */
+  font-family: var(--font);
   font-size: 15px;
   font-weight: 700;
   color: var(--white);
