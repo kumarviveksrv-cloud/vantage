@@ -203,18 +203,49 @@
       return a;
     }
 
-    // Billing status for Pricing badge (will be replaced by Razorpay data)
-      function getBillingStatus() {
+    // Billing status \u2014 drives sidebar nav label, destination href, and badge.
+    // vantage_plan is set by subscribe.html on payment capture and cleared on
+    // subscription lapse (past_due / cancelled) via a future webhook handler.
+    function getBillingStatus() {
       try {
         var plan = JSON.parse(localStorage.getItem('vantage_plan') || 'null');
-        if (!plan) return { label: 'Billing not connected', color: 'rgba(165,180,252,.65)', bg: 'rgba(99,102,241,.08)' };
+        if (!plan) {
+          // No plan key = free-trial state. Point to upgrade flow.
+          return {
+            label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
+            badge: 'Trial',
+            badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
+          };
+        }
         if (plan.status === 'active') {
           var tier = plan.tier === 'consultant' ? 'Consultant' : 'Core';
-          return { label: 'Active \u00b7 ' + tier, color: 'rgba(74,222,128,.85)', bg: 'rgba(74,222,128,.1)' };
+          return {
+            label: 'Billing', href: 'pricing.html', page: 'pricing',
+            badge: 'Active \u00b7 ' + tier,
+            badgeColor: 'rgba(74,222,128,.85)', badgeBg: 'rgba(74,222,128,.12)'
+          };
         }
-        return { label: 'Inactive', color: 'rgba(248,113,113,.85)', bg: 'rgba(248,113,113,.1)' };
+        if (plan.status === 'past_due' || plan.status === 'cancelled') {
+          var reason = plan.status === 'past_due' ? 'past_due' : 'cancelled';
+          var badgeLabel = plan.status === 'past_due' ? 'Past Due' : 'Cancelled';
+          return {
+            label: 'Resubscribe', href: 'subscribe.html?reason=' + reason, page: 'subscribe',
+            badge: badgeLabel,
+            badgeColor: 'rgba(248,113,113,.85)', badgeBg: 'rgba(248,113,113,.1)'
+          };
+        }
+        // Catch-all: unknown status \u2014 send to upgrade
+        return {
+          label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
+          badge: 'Trial',
+          badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
+        };
       } catch(e) {
-        return { label: 'Billing not connected', color: 'rgba(165,180,252,.65)', bg: 'rgba(99,102,241,.08)' };
+        return {
+          label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
+          badge: 'Trial',
+          badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
+        };
       }
     }
 
@@ -266,21 +297,21 @@
     // ACCOUNT
     f.appendChild(ns('Account'));
     var billing = getBillingStatus();
-    var pricingEl = document.createElement('a');
-    pricingEl.href = 'pricing.html';
-    pricingEl.className = 'nav-item' + (isActivePage('pricing.html') ? ' active' : '');
-    pricingEl.innerHTML =
-  '<span style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;overflow:hidden">' +
-    '<span style="font-size:16px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;text-align:center">\uD83E\uDE99</span>' +
-    '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">Pricing</span>' +
-  '</span>' +
-  '<span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.04em;' +
-    'background:' + billing.bg + ';color:' + billing.color + ';' +
-    'padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;max-width:120px">' +
-    billing.label +
-  '</span>';
-pricingEl.style.overflow = 'hidden';
-    f.appendChild(pricingEl);
+    var billingEl = document.createElement('a');
+    billingEl.href = billing.href;
+    billingEl.className = 'nav-item' + (isActivePage(billing.href.split('?')[0]) ? ' active' : '');
+    billingEl.innerHTML =
+      '<span style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;overflow:hidden">' +
+        '<span style="font-size:16px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;text-align:center">\uD83E\uDE99</span>' +
+        '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">' + billing.label + '</span>' +
+      '</span>' +
+      '<span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.04em;' +
+        'background:' + billing.badgeBg + ';color:' + billing.badgeColor + ';' +
+        'padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;max-width:120px">' +
+        billing.badge +
+      '</span>';
+    billingEl.style.overflow = 'hidden';
+    f.appendChild(billingEl);
     f.appendChild(ni('data-dashboard.html', '\uD83D\uDD12', 'My Data & Privacy'));
 
     // Send Feedback
@@ -719,6 +750,9 @@ pricingEl.style.overflow = 'hidden';
     // (Humac Score vs People ROI Brief both use 📊 on desktop; About
     // Vantage's ✦ collides with the ARIA bottom-tab icon above) — noted
     // here so a future edit doesn't "fix" these back into a collision.
+    // Compute billing state once — used by both desktop (above) and mobile drawer.
+    var _mobileBilling = getBillingStatus();
+
     var drawerSections = [
       {
         title: 'Overview',
@@ -761,7 +795,7 @@ pricingEl.style.overflow = 'hidden';
       {
         title: 'Account',
         items: [
-          { icon: IC.tag, label: 'Pricing', sub: '', href: 'pricing.html', page: 'pricing' },
+          { icon: IC.tag, label: _mobileBilling.label, sub: '', href: _mobileBilling.href, page: _mobileBilling.page },
           { icon: IC.shield, label: 'My Data & Privacy', sub: 'Your data settings', href: 'data-dashboard.html', page: 'data-dashboard' },
           { icon: IC.chat, label: 'Send Feedback', sub: 'Share what you think', href: '#', page: 'feedback', feedbackTrigger: true },
           { icon: IC.logout, label: 'Sign Out', sub: '', href: 'access.html', page: 'signout', signout: true },

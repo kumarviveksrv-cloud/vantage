@@ -564,8 +564,11 @@
               },
             },
             handler: function(response) {
-              // Payment successful — webhook will update subscription_status
-              // Redirect to dashboard where tools will now be unblocked
+              // Payment captured — optimistically unlock UI while webhook propagates.
+              // vantage_plan drives the sidebar billing label and tool-gate check.
+              // vantage_paid_user is the durable paid-status signal (never set elsewhere).
+              localStorage.setItem('vantage_plan', JSON.stringify({ status: 'active', tier: 'core' }));
+              localStorage.setItem('vantage_paid_user', '1');
               window.location.href = 'dashboard.html?subscribed=1';
             },
           });

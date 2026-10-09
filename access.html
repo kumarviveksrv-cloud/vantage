@@ -116,6 +116,19 @@
       }
     }
 
+    // Fire-and-forget: ensures the Airtable Users row exists on day zero,
+    // not only on the first TRIAL_GATED tool call. Non-blocking — never
+    // gates the redirect. Errors are silently swallowed.
+    function pingProfile(token) {
+      try {
+        fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ tool: 'ping_profile' })
+        }).catch(function() { /* intentionally ignored */ });
+      } catch(e) { /* intentionally ignored */ }
+    }
+
     async function restoreUserData(token) {
       try {
         var h = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
@@ -195,6 +208,7 @@
           syncUser(window.Clerk.user);
           var redirectTo = getRedirectUrl();
             window.Clerk.session.getToken().then(function(token) {
+            pingProfile(token); // day-zero Airtable capture — fire and forget
             return restoreUserData(token).then(function() {
               return checkProfileDestination(token, redirectTo);
             });
