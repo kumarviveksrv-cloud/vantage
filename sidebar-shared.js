@@ -60,28 +60,28 @@
     '  color: #c4b5fd !important;',
     '}',
     '.nav-section {',
-    '  color: rgba(165,180,252,0.65) !important;',
+    '  color: rgba(165,180,252,0.78) !important;',
     '}',
     '.nav-section, .ns {',
-    '  color: rgba(165,180,252,0.65) !important;',
+    '  color: rgba(165,180,252,0.78) !important;',
     '}',
     '.stat-label, .cal-month, .debrief-label, .welcome-label {',
-    '  color: rgba(165,180,252,0.65) !important;',
+    '  color: rgba(165,180,252,0.78) !important;',
     '}',
     '.tool-tag, .tc-tag, .tc-tier, .pc-tier, .tc-label {',
-    '  color: rgba(165,180,252,0.65) !important;',
+    '  color: rgba(165,180,252,0.78) !important;',
     '}',
     '.section-label, .hero-eyebrow, .lookup-group-title {',
-    '  color: rgba(165,180,252,0.65) !important;',
+    '  color: rgba(165,180,252,0.78) !important;',
     '}',
     '.aria-quick-text .label, .billing-notice, .mc-label,',
     '.imc-name, .hist-mode, .tc-month, .cc-month, .cs-label,',
     '.panel-sub, .faq-label, .review-label, .debrief-label {',
-    '  color: rgba(165,180,252,0.60) !important;',
+    '  color: rgba(165,180,252,0.72) !important;',
     '}',
     '.meridian-chip .ml, .meridian-chip .label,',
     '.m-header .label, .nav-badge-label {',
-    '  color: rgba(165,180,252,0.70) !important;',
+    '  color: rgba(165,180,252,0.80) !important;',
     '}',
     '[style*="00E5C3"], [style*="0,229,195"] {',
     '  --teal-replace: #6366f1;',
@@ -260,10 +260,10 @@
 
     var replayLink = document.createElement('a');
     replayLink.href = 'dashboard.html?welcome=1';
-    replayLink.style.cssText = 'display:block;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,.45);text-decoration:none;padding:0 12px;margin:-4px 0 12px;transition:color .15s';
+    replayLink.style.cssText = 'display:block;font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,.65);text-decoration:none;padding:0 12px;margin:-4px 0 12px;transition:color .15s';
     replayLink.textContent = 'Replay welcome tour \u2192';
     replayLink.onmouseover = function(){ this.style.color = '#a5b4fc'; };
-    replayLink.onmouseout  = function(){ this.style.color = 'rgba(165,180,252,.45)'; };
+    replayLink.onmouseout  = function(){ this.style.color = 'rgba(165,180,252,.65)'; };
     f.appendChild(replayLink);
 
     // OVERVIEW
@@ -1189,8 +1189,8 @@
         '<div class="vclock-noloc" style="display:' + (loc ? 'none' : 'flex') + ';align-items:center;gap:10px;cursor:pointer" id="vclock-noloc-btn">',
           '<span style="font-size:15px;flex-shrink:0;opacity:0.5">&#128336;</span>',
           '<div>',
-            '<div style="font-family:var(--font), sans-serif;font-size:12px;color:rgba(232,230,255,0.5);font-weight:500">Set your location</div>',
-            '<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(99,102,241,0.45);letter-spacing:0.06em;margin-top:3px">Date &middot; Time &middot; City</div>',
+            '<div style="font-family:var(--font), sans-serif;font-size:12px;color:rgba(232,230,255,0.72);font-weight:500">Set your location</div>',
+            '<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(99,102,241,0.62);letter-spacing:0.06em;margin-top:3px">Date &middot; Time &middot; City</div>',
           '</div>',
         '</div>',
       ].join('');
