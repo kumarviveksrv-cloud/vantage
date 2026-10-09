@@ -14,7 +14,7 @@ const logs=['INITIALISING PRIVATE INTELLIGENCE LAYER','LOADING INDIA / HR CONTEX
 function bootSeenRecently(){
   /* Only check localStorage TTL for paying users — non-paying users
      should see the boot on every new tab/session. */
-  if(!localStorage.getItem('vantage_paid_user')) return false;
+  if(!localStorage.getItem('vantage_returning_user')) return false;
   try{var ts=localStorage.getItem('vantage_boot_ts');return !!(ts&&(Date.now()-parseInt(ts,10))<2*3600000);}catch(e){return false;}
 }
 function markBootSeen(){
@@ -22,7 +22,7 @@ function markBootSeen(){
     sessionStorage.setItem('vantage_boot_seen','1');
     /* Only persist the 2-hour skip in localStorage for paying users.
        Non-paying users get sessionStorage only — boot replays every close/reopen. */
-    if(localStorage.getItem('vantage_paid_user')){
+    if(localStorage.getItem('vantage_returning_user')){
       localStorage.setItem('vantage_boot_ts',Date.now().toString());
     }
   }catch(e){}

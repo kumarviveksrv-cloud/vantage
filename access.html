@@ -106,8 +106,10 @@
       localStorage.setItem('vantage_clerk_signed_in', '1');
       localStorage.setItem('sr_user_email', email);
       localStorage.setItem('sr_user_name',  name);
-      /* Permanent prologue bypass — survives sign-out, never cleared */
-      localStorage.setItem('vantage_paid_user', '1');
+      /* Permanent prologue bypass — survives sign-out, never cleared.
+         Renamed from vantage_paid_user (SR27); old key removed on migration. */
+      localStorage.removeItem('vantage_paid_user');
+      localStorage.setItem('vantage_returning_user', '1');
       if (email) {
         var m = localStorage.getItem('sr_meridian_' + email);
         if (m) sessionStorage.setItem('sr_meridian', m);

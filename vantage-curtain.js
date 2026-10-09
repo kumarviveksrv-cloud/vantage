@@ -2696,7 +2696,7 @@
        - Returning visitor without prologue path: 800ms — brief breathing room. */
     var firstEverVisit=!localStorage.getItem('vantage_seen_ever');
     localStorage.setItem('vantage_seen_ever','1');
-    var isPayingUser=!!localStorage.getItem('vantage_paid_user');
+    var isPayingUser=!!localStorage.getItem('vantage_returning_user');
     /* SR20: isPostSkip = user pressed Skip Intro — landing already revealed,
        use fast hero delay. Otherwise waitForLandingReveal resolved after ta-da,
        so 600ms breathing room is all that's needed before hero starts. */
@@ -2772,7 +2772,7 @@
          For full-prologue users, prologue-complete is added later
          (after 12+ seconds) — not present when we start watching.
          Check once at call time; no MutationObserver needed. */
-      const isKnownUser=!!(localStorage.getItem('vantage_seen_ever')||localStorage.getItem('vantage_paid_user'));
+      const isKnownUser=!!(localStorage.getItem('vantage_seen_ever')||localStorage.getItem('vantage_returning_user'));
 
       /* SR20: resolve as soon as ta-da ends or skip fires — for non-paying
          users who now see the full sequence on every load. Paying users are
@@ -2827,7 +2827,7 @@
        so 80ms is fine. Non-paying users go through the full prologue + ta-da
        sequence — ta-da takes 3-5 seconds, so 600ms breathing room is needed
        before run() starts its own delay. */
-    var _isPayingForDelay = !!localStorage.getItem('vantage_paid_user');
+    var _isPayingForDelay = !!localStorage.getItem('vantage_returning_user');
     var postPrologueDelay = _isPayingForDelay ? 80 : 600;
     setTimeout(run, postPrologueDelay);
   });

@@ -71,11 +71,11 @@
      Two signals — either is enough to skip the prologue permanently:
      1. vantage_clerk_signed_in — Clerk session active (set by clerk-auth.js
         syncUser, cleared on sign-out via clerkSignOut)
-     2. vantage_paid_user — permanent flag, set once on first sign-in by
+     2. vantage_returning_user — permanent flag, set once on first sign-in by
         syncUser(), never cleared. Returning paying users skip the prologue
         even after signing out — they know the product. */
   const isPayingUser = localStorage.getItem('vantage_clerk_signed_in') === '1' ||
-                       localStorage.getItem('vantage_paid_user') === '1';
+                       localStorage.getItem('vantage_returning_user') === '1';
 
   /* SR20: non-paying visitors see the full intro on every page load.
      Clear all session-level flags so prologue, boot, hero, and ta-da
@@ -95,7 +95,7 @@
     pro.style.display = 'none';
     document.body.classList.add('prologue-complete');
     // Only swap auth links to "Dashboard" when the user has an ACTIVE Clerk
-    // session — not just because vantage_paid_user is set. vantage_paid_user
+    // session — not just because vantage_returning_user is set. vantage_returning_user
     // is permanent and survives signout; using it here caused "Dashboard" to
     // appear on the landing page for signed-out returning users.
     if (localStorage.getItem('vantage_clerk_signed_in') === '1') swapAuthLinksForSignedIn();
