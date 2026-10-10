@@ -152,6 +152,56 @@
   ].join('\n');
   document.head.insertBefore(styleOverride, document.head.firstChild);
 
+  // ── BILLING STATUS ────────────────────────────────────────
+  // Hoisted to outer-IIFE scope so both rebuildSidebar() (desktop sidebar)
+  // and injectMobileNav() (bottom nav + drawer) can call it. Previously
+  // defined only inside rebuildSidebar(), which caused a ReferenceError in
+  // injectMobileNav() at line 754, crashing the function after the style tag
+  // was already injected — producing the empty black space at the bottom of
+  // the mobile dashboard with no nav visible.
+  // vantage_plan is set by subscribe.html on payment capture and cleared on
+  // subscription lapse (past_due / cancelled) via a future webhook handler.
+  function getBillingStatus() {
+    try {
+      var plan = JSON.parse(localStorage.getItem('vantage_plan') || 'null');
+      if (!plan) {
+        return {
+          label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
+          badge: 'Trial',
+          badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
+        };
+      }
+      if (plan.status === 'active') {
+        var tier = plan.tier === 'consultant' ? 'Consultant' : 'Core';
+        return {
+          label: 'Billing', href: 'pricing.html', page: 'pricing',
+          badge: 'Active · ' + tier,
+          badgeColor: 'rgba(74,222,128,.85)', badgeBg: 'rgba(74,222,128,.12)'
+        };
+      }
+      if (plan.status === 'past_due' || plan.status === 'cancelled') {
+        var reason = plan.status === 'past_due' ? 'past_due' : 'cancelled';
+        var badgeLabel = plan.status === 'past_due' ? 'Past Due' : 'Cancelled';
+        return {
+          label: 'Resubscribe', href: 'subscribe.html?reason=' + reason, page: 'subscribe',
+          badge: badgeLabel,
+          badgeColor: 'rgba(248,113,113,.85)', badgeBg: 'rgba(248,113,113,.1)'
+        };
+      }
+      return {
+        label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
+        badge: 'Trial',
+        badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
+      };
+    } catch(e) {
+      return {
+        label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
+        badge: 'Trial',
+        badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
+      };
+    }
+  }
+
   // ── SIDEBAR REBUILD ──────────────────────────────────────
   // Single canonical function replaces all piecemeal injections.
   // Preserves: .logo, #meridian-chip (page JS holds references to its children),
@@ -201,52 +251,6 @@
       a.className = cls;
       a.innerHTML = '<span style="font-size:16px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;text-align:center">' + icon + '</span> ' + label;
       return a;
-    }
-
-    // Billing status \u2014 drives sidebar nav label, destination href, and badge.
-    // vantage_plan is set by subscribe.html on payment capture and cleared on
-    // subscription lapse (past_due / cancelled) via a future webhook handler.
-    function getBillingStatus() {
-      try {
-        var plan = JSON.parse(localStorage.getItem('vantage_plan') || 'null');
-        if (!plan) {
-          // No plan key = free-trial state. Point to upgrade flow.
-          return {
-            label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
-            badge: 'Trial',
-            badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
-          };
-        }
-        if (plan.status === 'active') {
-          var tier = plan.tier === 'consultant' ? 'Consultant' : 'Core';
-          return {
-            label: 'Billing', href: 'pricing.html', page: 'pricing',
-            badge: 'Active \u00b7 ' + tier,
-            badgeColor: 'rgba(74,222,128,.85)', badgeBg: 'rgba(74,222,128,.12)'
-          };
-        }
-        if (plan.status === 'past_due' || plan.status === 'cancelled') {
-          var reason = plan.status === 'past_due' ? 'past_due' : 'cancelled';
-          var badgeLabel = plan.status === 'past_due' ? 'Past Due' : 'Cancelled';
-          return {
-            label: 'Resubscribe', href: 'subscribe.html?reason=' + reason, page: 'subscribe',
-            badge: badgeLabel,
-            badgeColor: 'rgba(248,113,113,.85)', badgeBg: 'rgba(248,113,113,.1)'
-          };
-        }
-        // Catch-all: unknown status \u2014 send to upgrade
-        return {
-          label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
-          badge: 'Trial',
-          badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
-        };
-      } catch(e) {
-        return {
-          label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
-          badge: 'Trial',
-          badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
-        };
-      }
     }
 
     var f = document.createDocumentFragment();
