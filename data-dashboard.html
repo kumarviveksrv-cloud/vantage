@@ -193,7 +193,7 @@
       <div class="trust-icon">&#x1F6E1;&#xFE0F;</div>
       <div>
         <div class="trust-title">Your data stays yours, not ours to keep.</div>
-        <div class="trust-text">Every AI-powered tool on the Platform — the Employee Case Advisor, The Business Case, Policy Advisor, Retention Advisor, Difficult Conversations, and ARIA — runs anonymisation as a two-step process: your original text first reaches Anthropic’s Claude Haiku model, which replaces names, companies, and locations with placeholders; only the anonymised version then reaches Claude for analysis. Your professional record is stored under your own account. You can export or request deletion of everything at any time.</div>
+        <div class="trust-text">Every AI-powered tool on the Platform (the Employee Case Advisor, The Business Case, Policy Advisor, Retention Advisor, Difficult Conversations, and ARIA) runs anonymisation as a two-step process: your original text first reaches Anthropic’s Claude Haiku model, which replaces names, companies, and locations with placeholders; only the anonymised version then reaches Claude for analysis. Your professional record is stored under your own account. You can export or request deletion of everything at any time.</div>
       </div>
     </div>
 
@@ -226,7 +226,7 @@
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Specific locations replaced with Location A, Location B</div>
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Step 1: original text sent to Claude Haiku, which identifies and replaces names, companies, locations with placeholders</div>
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Step 2: only the anonymised placeholder text is sent to Claude for analysis</div>
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> Fails closed — if anonymisation cannot complete safely, the request is blocked, never sent unredacted</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Fails closed: if anonymisation cannot complete safely, the request is blocked, never sent unredacted</div>
         <div class="anon-item"><span class="anon-check">&#x2713;</span> Original text stored only in your own account record</div>
         <div class="anon-item"><span class="anon-check">&#x2713;</span> No data shared with third parties beyond what's in our Privacy Policy</div>
       </div>
@@ -252,7 +252,7 @@
       <div class="section-header">
         <div class="section-title"><span class="section-title-icon">&#x1F4E6;</span> Export Your Data</div>
       </div>
-      <div class="section-text">Download everything Vantage holds about you — your MERIDIAN profile, all cases, all Debriefs, your Ledger. Your professional record, stored in Airtable until you delete it, exportable any time you want a copy. No lock-in.</div>
+      <div class="section-text">Download everything Vantage holds about you: your MERIDIAN profile, all cases, all Debriefs, your Ledger. Your professional record, stored in Airtable until you delete it, exportable any time you want a copy. No lock-in.</div>
       <div class="btn-row">
         <button class="action-btn btn-teal" id="export-btn" onclick="exportData()">
           <span>&#x2193;</span> Export All My Data
@@ -265,7 +265,7 @@
       <div class="section-header">
         <div class="section-title"><span class="section-title-icon">&#x1F5D1;&#xFE0F;</span> Delete Everything Permanently</div>
       </div>
-      <div class="section-text">Requests permanent deletion of your cases, MERIDIAN profile, Debriefs, Ledger, and your login account itself. There is a 30-day grace period — logging in here before then cancels it. After 30 days, this cannot be undone.</div>
+      <div class="section-text">Requests permanent deletion of your cases, MERIDIAN profile, Debriefs, Ledger, and your login account itself. There is a 30-day grace period. Logging in here before then cancels it. After 30 days, this cannot be undone.</div>
       <div class="btn-row">
         <button class="action-btn btn-danger" id="delete-btn" onclick="confirmDelete()">
           Delete Everything Permanently
@@ -278,14 +278,14 @@
       <div class="section-header">
         <div class="section-title"><span class="section-title-icon">&#x2696;&#xFE0F;</span> Legal &amp; Compliance</div>
       </div>
-      <div class="section-text">Virorah Vantage is built to support India's Digital Personal Data Protection Act 2023 (DPDP Act) — the rights it gives you, and the duties it places on us:</div>
+      <div class="section-text">Virorah Vantage is built to support India's Digital Personal Data Protection Act 2023 (DPDP Act, covering the rights it gives you and the duties it places on us:</div>
       <div class="anon-log">
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to access your data — view all data held about you on this page</div>
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to correction — update your MERIDIAN profile anytime via Edit Profile</div>
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to erasure — request permanent deletion using the button above</div>
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to grievance redressal — contact us using the email below</div>
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> Data minimisation — only what you explicitly provide is stored</div>
-        <div class="anon-item"><span class="anon-check">&#x2713;</span> Not a DPDP right, offered anyway — export all your data in JSON format anytime</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to access your data: view all data held about you on this page</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to correction: update your MERIDIAN profile anytime via Edit Profile</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to erasure: request permanent deletion using the button above</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Right to grievance redressal: contact us using the email below</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Data minimisation: only what you explicitly provide is stored</div>
+        <div class="anon-item"><span class="anon-check">&#x2713;</span> Not a DPDP right, offered anyway: export all your data in JSON format anytime</div>
       </div>
     </div>
 
@@ -300,7 +300,7 @@
     <div class="modal">
       <div class="modal-icon">&#x26A0;&#xFE0F;</div>
       <div class="modal-title">Delete everything permanently?</div>
-      <div class="modal-text">This schedules permanent deletion of all your cases, MERIDIAN profile, Debriefs, Ledger entries, and your login account — in 30 days. Logging in here before then cancels it. Type <strong>DELETE</strong> below to confirm.</div>
+      <div class="modal-text">This schedules permanent deletion of all your cases, MERIDIAN profile, Debriefs, Ledger entries, and your login account, in 30 days. Logging in here before then cancels it. Type <strong>DELETE</strong> below to confirm.</div>
       <input type="text" class="modal-confirm-input" id="delete-confirm-input" placeholder="Type DELETE to confirm" oninput="checkDeleteConfirmInput()" autocomplete="off">
       <div class="modal-btns">
         <button class="modal-cancel" onclick="closeModal()">Cancel</button>

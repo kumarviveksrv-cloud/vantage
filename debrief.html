@@ -260,24 +260,24 @@
           <div style="border:1px solid rgba(99,102,241,.18);border-radius:14px;overflow:hidden">
             <!-- Header -->
             <div style="padding:20px 24px 16px;border-bottom:1px solid rgba(99,102,241,.08);background:linear-gradient(90deg,rgba(99,102,241,.06),transparent)">
-              <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#a5b4fc;margin-bottom:6px">Humac Score — Monthly Refresh</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#a5b4fc;margin-bottom:6px">Humac Score: Monthly Refresh</div>
               <div style="font-family:var(--font), sans-serif;font-size:16px;font-weight:700;color:#f4f3ff;margin-bottom:4px">Three questions. Under 90 seconds.</div>
-              <div style="font-size:13px;color:rgba(244,243,255,.65);line-height:1.6">Your score updates instantly. Only answer what changed since last month — leave blank to keep the current value.</div>
+              <div style="font-size:13px;color:rgba(244,243,255,.65);line-height:1.6">Your score updates instantly. Only answer what changed since last month. Leave blank to keep the current value.</div>
             </div>
 
             <!-- Q1: L1 return -->
             <div style="padding:18px 24px;border-bottom:1px solid rgba(99,102,241,.06)">
-              <div style="font-size:13px;color:rgba(244,243,255,.8);margin-bottom:12px;line-height:1.5">Has your HR function's attributed return changed this month?<br><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,.65)">A planning estimate, not a measured percent &mdash; roughly, what's the attributed return per &#8377;100 of payroll under your base case?</span></div>
+              <div style="font-size:13px;color:rgba(244,243,255,.8);margin-bottom:12px;line-height:1.5">Has your HR function's attributed return changed this month?<br><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,.65)">A planning estimate, not a measured percent. Roughly, what's the attributed return per &#8377;100 of payroll under your base case?</span></div>
               <div id="dr-q1-wrap" style="display:flex;align-items:center;gap:10px">
                 <input type="number" id="dr-q1" min="0" max="500" placeholder="Leave blank = no change" style="background:rgba(5,4,16,.4);border:1px solid rgba(99,102,241,.18);color:#f4f3ff;border-radius:8px;padding:10px 14px;font-size:13px;width:200px;outline:none;font-family:var(--font), sans-serif"/>
                 <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(244,243,255,.60)">&#8377; per &#8377;100 of payroll</span>
               </div>
-              <div id="dr-q1-computed-note" style="display:none;font-size:12px;color:rgba(165,180,252,.55);line-height:1.6;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.15);border-radius:8px;padding:10px 14px">Your L1 baseline was built from actual cohort data, not a single estimate. A quick percentage here can't update it accurately &mdash; <a href="pillar-l1.html" style="color:#a5b4fc">update it on the Value Ledger page</a> instead. L1 stays unchanged in this refresh.</div>
+              <div id="dr-q1-computed-note" style="display:none;font-size:12px;color:rgba(165,180,252,.55);line-height:1.6;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.15);border-radius:8px;padding:10px 14px">Your L1 baseline was built from actual cohort data, not a single estimate. A quick percentage here can't update it accurately, so <a href="pillar-l1.html" style="color:#a5b4fc">update it on the Value Ledger page</a> instead. L1 stays unchanged in this refresh.</div>
             </div>
 
             <!-- Q2: HCI check -->
             <div style="padding:18px 24px;border-bottom:1px solid rgba(99,102,241,.06)">
-              <div style="font-size:13px;color:rgba(244,243,255,.8);margin-bottom:14px">Current conditions — are all four still true?</div>
+              <div style="font-size:13px;color:rgba(244,243,255,.8);margin-bottom:14px">Current conditions: are all four still true?</div>
               <div style="display:flex;flex-direction:column;gap:10px" id="dr-hci-wrap">
                 <!-- injected by JS -->
               </div>
@@ -288,9 +288,9 @@
               <div style="font-size:13px;color:rgba(244,243,255,.8);margin-bottom:10px">Has your organisation's flight risk level changed?</div>
               <select id="dr-q18" style="background:rgba(5,4,16,.4);border:1px solid rgba(99,102,241,.18);color:#f4f3ff;border-radius:8px;padding:10px 14px;font-size:13px;outline:none;font-family:var(--font), sans-serif;min-width:180px">
                 <option value="">No change</option>
-                <option value="low">Low — minimal risk</option>
-                <option value="medium">Medium — some risk</option>
-                <option value="high">High — significant risk</option>
+                <option value="low">Low (minimal risk)</option>
+                <option value="medium">Medium (some risk)</option>
+                <option value="high">High (significant risk)</option>
               </select>
             </div>
 
