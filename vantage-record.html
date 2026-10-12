@@ -343,16 +343,23 @@
     // ─────────────────────────────────────────────────────────────
     function parseExposureLakhs(str) {
       if (!str) return 0;
+      // Detect whether the string already uses L/lakh notation.
+      // If not and the parsed value is ≥ 1000, assume raw rupees and convert (÷1,00,000).
+      var hasLakhUnit = /[Ll]|lakh/i.test(str);
       // Strip ₹, commas, whitespace, "lakhs"/"lakh", "cr"/"crore" (not expected but safe)
       var s = str.replace(/[₹,\s]/g, '').replace(/lakhs?/gi, '').replace(/[–—]/g, '-');
       // Range pattern: "8L-14L" or "8-14L" or "8-14" or "8.5L-12L"
       var range = s.match(/(\d+(?:\.\d+)?)[Ll]?-(\d+(?:\.\d+)?)[Ll]?/);
       if (range) {
-        return (parseFloat(range[1]) + parseFloat(range[2])) / 2;
+        var mid = (parseFloat(range[1]) + parseFloat(range[2])) / 2;
+        return (!hasLakhUnit && mid >= 1000) ? mid / 100000 : mid;
       }
       // Single value: "11.2L" or "11L" or "11.2"
       var single = s.match(/(\d+(?:\.\d+)?)[Ll]?/);
-      if (single) return parseFloat(single[1]);
+      if (single) {
+        var n = parseFloat(single[1]);
+        return (!hasLakhUnit && n >= 1000) ? n / 100000 : n;
+      }
       return 0;
     }
 

@@ -945,13 +945,21 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
     // ═══════════════════════════════════════════════════════════
 
     // Re-used from vantage-record.html: parses "₹8L–₹14L" etc. → lakhs midpoint
+    // If no L/lakh marker and value ≥ 1000, treats as raw rupees and converts (÷1,00,000).
     function parseExposureLakhsDash(str) {
       if (!str) return 0;
+      var hasLakhUnit = /[Ll]|lakh/i.test(str);
       var s = str.replace(/[₹,\s]/g, '').replace(/lakhs?/gi, '').replace(/[–—]/g, '-');
       var range = s.match(/(\d+(?:\.\d+)?)[Ll]?-(\d+(?:\.\d+)?)[Ll]?/);
-      if (range) return (parseFloat(range[1]) + parseFloat(range[2])) / 2;
+      if (range) {
+        var mid = (parseFloat(range[1]) + parseFloat(range[2])) / 2;
+        return (!hasLakhUnit && mid >= 1000) ? mid / 100000 : mid;
+      }
       var single = s.match(/(\d+(?:\.\d+)?)[Ll]?/);
-      if (single) return parseFloat(single[1]);
+      if (single) {
+        var n = parseFloat(single[1]);
+        return (!hasLakhUnit && n >= 1000) ? n / 100000 : n;
+      }
       return 0;
     }
 
