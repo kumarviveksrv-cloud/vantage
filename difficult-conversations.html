@@ -760,6 +760,7 @@
         });
         var data = await res.json();
         if (!data.success && data.error === 'TRIAL_GATE') {
+          try { if (data.reason === 'trial_cap_reached' || data.reason === 'trial_expired') { localStorage.setItem('vantage_trial_cap_hit', '1'); } } catch(e) {}
           window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
           return;
         }
@@ -831,6 +832,7 @@
         var data = await res.json();
         removeTyping();
         if (!data.success && data.error === 'TRIAL_GATE') {
+          try { if (data.reason === 'trial_cap_reached' || data.reason === 'trial_expired') { localStorage.setItem('vantage_trial_cap_hit', '1'); } } catch(e) {}
           window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
           return;
         }
@@ -885,6 +887,7 @@
         });
         var data = await res.json();
         if (!data.success && data.error === 'TRIAL_GATE') {
+          try { if (data.reason === 'trial_cap_reached' || data.reason === 'trial_expired') { localStorage.setItem('vantage_trial_cap_hit', '1'); } } catch(e) {}
           window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
           return;
         }

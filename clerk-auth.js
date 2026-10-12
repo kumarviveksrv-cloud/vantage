@@ -159,6 +159,11 @@
     }
     localStorage.setItem('vantage_returning_user', '1');
 
+    // Store account creation time for trial timer (written once; epoch ms)
+    if (user.createdAt && !localStorage.getItem('vantage_trial_start')) {
+      try { localStorage.setItem('vantage_trial_start', String(new Date(user.createdAt).getTime())); } catch(e) {}
+    }
+
     // Restore MERIDIAN
     if (email) {
       var m = localStorage.getItem('sr_meridian_' + email);

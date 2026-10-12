@@ -162,16 +162,12 @@
   // vantage_plan is set by subscribe.html on payment capture and cleared on
   // subscription lapse (past_due / cancelled) via a future webhook handler.
   function getBillingStatus() {
+    var TRIAL_DAYS = 7;
     try {
       var plan = JSON.parse(localStorage.getItem('vantage_plan') || 'null');
-      if (!plan) {
-        return {
-          label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
-          badge: 'Trial',
-          badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
-        };
-      }
-      if (plan.status === 'active') {
+
+      // ── ACTIVE PAID PLAN ──────────────────────────────────────────────────
+      if (plan && plan.status === 'active') {
         var tier = plan.tier === 'consultant' ? 'Consultant' : 'Core';
         return {
           label: 'Billing', href: 'pricing.html', page: 'pricing',
@@ -179,7 +175,9 @@
           badgeColor: 'rgba(74,222,128,.85)', badgeBg: 'rgba(74,222,128,.12)'
         };
       }
-      if (plan.status === 'past_due' || plan.status === 'cancelled') {
+
+      // ── LAPSED PAID PLAN ─────────────────────────────────────────────────
+      if (plan && (plan.status === 'past_due' || plan.status === 'cancelled')) {
         var reason = plan.status === 'past_due' ? 'past_due' : 'cancelled';
         var badgeLabel = plan.status === 'past_due' ? 'Past Due' : 'Cancelled';
         return {
@@ -188,11 +186,45 @@
           badgeColor: 'rgba(248,113,113,.85)', badgeBg: 'rgba(248,113,113,.1)'
         };
       }
+
+      // ── TRIAL STATE ───────────────────────────────────────────────────────
+      var trialStartMs = parseInt(localStorage.getItem('vantage_trial_start') || '0', 10);
+      var capHit = localStorage.getItem('vantage_trial_cap_hit') === '1';
+
+      if (trialStartMs) {
+        var trialEndMs = trialStartMs + (TRIAL_DAYS * 86400000);
+        var now = Date.now();
+
+        // Trial ended: cap hit (10 calls) or time expired
+        if (capHit || now >= trialEndMs) {
+          return {
+            label: 'Subscribe', href: 'subscribe.html?reason=trial_expired', page: 'subscribe',
+            badge: 'Trial Ended',
+            badgeColor: 'rgba(248,113,113,.85)', badgeBg: 'rgba(248,113,113,.1)'
+          };
+        }
+
+        // Trial active: show countdown
+        var msLeft = trialEndMs - now;
+        var hoursLeft = Math.ceil(msLeft / 3600000);
+        var daysLeft = Math.ceil(msLeft / 86400000);
+        // Switch to hourly display when <= 36 hours remain
+        var badgeStr = hoursLeft <= 36 ? (hoursLeft + 'h left') : (daysLeft + 'd left');
+
+        return {
+          label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
+          badge: 'Trial · ' + badgeStr,
+          badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
+        };
+      }
+
+      // ── FALLBACK: no trial_start yet (very first page load before syncUser) ──
       return {
         label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
         badge: 'Trial',
         badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
       };
+
     } catch(e) {
       return {
         label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
