@@ -337,16 +337,13 @@
     billingEl.href = billing.href;
     billingEl.className = 'nav-item' + (isActivePage(billing.href.split('?')[0]) ? ' active' : '');
     billingEl.innerHTML =
-      '<span style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;overflow:hidden">' +
-        '<span style="font-size:16px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;text-align:center">\uD83E\uDE99</span>' +
-        '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">' + billing.label + '</span>' +
-      '</span>' +
+      '<span style="font-size:16px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:22px;text-align:center">\uD83E\uDE99</span>' +
+      '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">' + billing.label + '</span>' +
       '<span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.04em;' +
         'background:' + billing.badgeBg + ';color:' + billing.badgeColor + ';' +
-        'padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;max-width:120px">' +
+        'padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0">' +
         billing.badge +
       '</span>';
-    billingEl.style.overflow = 'hidden';
     f.appendChild(billingEl);
     f.appendChild(ni('data-dashboard.html', '\uD83D\uDD12', 'My Data & Privacy'));
 
