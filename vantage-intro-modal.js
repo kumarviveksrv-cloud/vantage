@@ -5,8 +5,8 @@
    Manual: VantageIntro.show('aria');
 
    v3: Merged hr-storyteller + stakeholder-influence into business-case.
-   Sequence: Employee Case Advisor → Retention Advisor → The Business Case
-   → Difficult Conversations → Policy Advisor → ARIA → Vantage Record
+   Sequence: Employee Case Advisor → The Business Case → Policy Advisor
+   → Retention Advisor → Difficult Conversations → ARIA → Vantage Record
    → Standpoint → The Debrief
 */
 (function(){
@@ -73,8 +73,8 @@ var MODALS = {
     what: 'Employee Case Advisor takes your real situation — a termination, a POSH complaint, a disciplinary issue, a PIP, an absenteeism case — and gives you guidance on what to consider, what process to follow, and what the financial exposure could look like if it\'s mishandled.',
     does: 'Calibrated to your state, your industry, and your org type. Recommendations are grounded in the law relevant to your situation, not generic HR advice, but this is guidance, not a decision on the case.',
     start: 'Describe the situation as it is right now. The more specific you are (what happened, who\'s involved, what\'s been done), the more precise the guidance.',
-    next: 'offer-intelligence',
-    nextLabel: 'Retention Advisor'
+    next: 'business-case',
+    nextLabel: 'The Business Case'
   },
   'policy-compass': {
     icon: '🧭',
@@ -83,8 +83,8 @@ var MODALS = {
     what: 'Policy Advisor answers a policy or compliance question the way a sharp colleague would: what the question is really asking, what the law says, and one recommended path. It cites BNS, BNSS and BSA where a question is criminal, and the labour codes and state rules where it is not.',
     does: 'Calibrated to your state, industry and organisation type. You can also ground the answer in your own policy document. It is guidance from the cited provisions, not a legal opinion, so confirm with counsel before acting on anything high stakes.',
     start: 'Write your situation the way you would say it out loud, including what you are considering doing. The flags above the question are optional.',
-    next: 'aria',
-    nextLabel: 'ARIA'
+    next: 'offer-intelligence',
+    nextLabel: 'Retention Advisor'
   },
   'business-case': {
     icon: '💼',
@@ -93,8 +93,8 @@ var MODALS = {
     what: 'The Business Case has two modes. The general flow builds a board-ready SIGNAL narrative from your HR metrics — revenue at risk, financial anchors, an argument that\'s harder to wave away than an opinion. The stakeholder flow maps how one specific leader receives information and frames your recommendation to land with them.',
     does: 'Same facts. Right framing. Whether you\'re presenting to a room or walking into a one-on-one that matters, The Business Case builds the argument from your own modelled Humac Score figures — alongside your sector benchmark — to give the room something harder to wave away than an opinion.',
     start: 'Choose your mode: the general business case for a room, or a specific person to convince. Describe what you\'re trying to move and who needs to move it.',
-    next: 'conversation-simulator',
-    nextLabel: 'Difficult Conversations'
+    next: 'policy-compass',
+    nextLabel: 'Policy Advisor'
   },
   'offer-intelligence': {
     icon: '⚖️',
@@ -103,8 +103,8 @@ var MODALS = {
     what: 'Retention Advisor models the full financial picture of a retention decision: what it costs to keep someone, what it costs to lose them, replacement cost, ramp time, flight risk, and the counter-offer position.',
     does: 'Gives you a modelled number before any retention conversation. Not a gut feel — a calculated position, grounded in assumptions you can walk through and defend in the room.',
     start: 'Enter the person\'s current CTC, their role, and the situation. Retention Advisor models both paths (retain and lose), so you walk in prepared.',
-    next: 'business-case',
-    nextLabel: 'The Business Case'
+    next: 'conversation-simulator',
+    nextLabel: 'Difficult Conversations'
   },
   'conversation-simulator': {
     icon: '🎭',
@@ -113,8 +113,8 @@ var MODALS = {
     what: 'Difficult Conversations is a real-time simulation environment for the conversations HR professionals dread most: performance discussions, terminations, disciplinary hearings, leadership alignment calls. The simulator plays the other person.',
     does: 'A safe space to test your approach, anticipate pushback, and walk into the real conversation having already rehearsed it, not knowing exactly what will happen. The character pushes back realistically.',
     start: 'Choose the conversation type, set the context (role, stakes, what you\'re trying to achieve), and start. Treat it like the real thing.',
-    next: 'policy-compass',
-    nextLabel: 'Policy Advisor'
+    next: 'aria',
+    nextLabel: 'ARIA'
   },
   'case-library': {
     icon: '🗄️',
