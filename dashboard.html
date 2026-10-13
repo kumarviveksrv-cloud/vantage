@@ -419,45 +419,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       </div>
     </div>
 
-    <!-- PROCESSES I'M BUILDING WIDGET -->
-    <!-- SR16 fix: single canonical block (previously duplicated, causing orphaned markup) -->
-    <div id="gaps-widget" style="display:none;background:var(--card);border:1px solid rgba(99,102,241,.18);border-radius:16px;padding:22px 26px;margin-bottom:24px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,.4),transparent)"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,158,11,.6);margin-bottom:4px">Humac Gaps</div>
-          <div style="font-size:.92rem;font-weight:700;color:#f4f3ff;line-height:1.2">Processes I'm building</div>
-        </div>
-        <a href="humac-checkin.html" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.06em;color:rgba(165,180,252,.72);text-decoration:none;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.18);padding:6px 12px;border-radius:6px;transition:all .2s" onmouseover="this.style.color='#a5b4fc'" onmouseout="this.style.color='rgba(165,180,252,.72)'">Run check-in &#x2192;</a>
-      </div>
-      <div id="gaps-list" style="display:flex;flex-direction:column;gap:8px"></div>
-    </div>
-
-    <!-- HUMAC SCORE WIDGET -->
-    <div id="humac-widget"></div>
-
-    <!-- ═══════════════════════════════════════════════════════════
-         HR DECISION CAPITAL CARD (Phase 4)
-         Primary path: live get_cases Worker call on page load.
-         Fast path: sessionStorage (set by vantage-record.html).
-         Shows as soon as either path has data; live path wins.
-         ═══════════════════════════════════════════════════════════ -->
-    <div id="hdc-dash-card" style="display:none;background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(124,58,237,.04));border:1px solid rgba(99,102,241,.22);border-radius:12px;padding:16px 22px;margin-bottom:24px;animation:fadeIn .4s ease .12s both;position:relative;overflow:hidden">
-      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(196,181,253,.28),transparent)"></div>
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
-        <div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:rgba(244,243,255,.78);letter-spacing:-.01em;margin-bottom:6px">Your HR Business Impact</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,181,253,.4);margin-bottom:4px">HR Decision Capital &middot; Cases &middot; Retention &middot; ROI</div>
-          <div id="hdc-dash-number" style="font-family:'Space Grotesk',sans-serif;font-size:1.85rem;font-weight:700;letter-spacing:-.03em;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1">&mdash;</div>
-          <div id="hdc-dash-count" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(244,243,255,.28);margin-top:4px"></div>
-        </div>
-        <div style="text-align:right;max-width:240px">
-          <div style="font-size:.76rem;color:rgba(244,243,255,.38);line-height:1.65;margin-bottom:10px">The documented financial impact of your HR practice: financial exposure navigated, retention value protected, and ROI arguments built across all active tools.</div>
-          <a href="vantage-record.html" style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.08em;color:rgba(165,180,252,.65);text-decoration:none;transition:color .2s" onmouseover="this.style.color='rgba(165,180,252,.90)'" onmouseout="this.style.color='rgba(165,180,252,.65)'">View full Vantage Record &rarr;</a>
-        </div>
-      </div>
-    </div>
-
+    <!-- ── SITUATION: what's happening in your HR world right now ── -->
     <div class="cal-banner">
       <div class="cal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
       <div>
@@ -467,6 +429,33 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       </div>
     </div>
 
+    <!-- ── ACTION: what's on your desk right now ── -->
+    <!-- Active Cases -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">Active Cases</div>
+        <a href="vantage-record.html" class="see-all">Vantage Record &#x2192;</a>
+      </div>
+      <div id="cases-container">
+        <div class="empty-cases">
+          <div class="emoji"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h8L10 22l10-12h-8L13 2z"/></svg></div>
+          <div>No active cases yet.</div>
+          <div style="margin-top:6px;font-size:12px">Open the Employee Case Advisor when something lands on your desk.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARIA Quick Access -->
+    <div class="aria-quick" onclick="window.location.href='aria.html'">
+      <div class="aria-quick-text">
+        <div class="label">ARIA &middot; Voice Intelligence</div>
+        <div class="title">What's happening today?</div>
+        <div class="sub">Talk through a live case, practice a difficult conversation, or just think out loud.</div>
+      </div>
+      <button class="aria-btn">Talk to ARIA &#x2192;</button>
+    </div>
+
+    <!-- ── STANDING: how you're performing ── -->
     <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card">
@@ -491,27 +480,41 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       </div>
     </div>
 
-    <!-- ARIA Quick Access -->
-    <div class="aria-quick" onclick="window.location.href='aria.html'">
-      <div class="aria-quick-text">
-        <div class="label">ARIA &middot; Voice Intelligence</div>
-        <div class="title">What's happening today?</div>
-        <div class="sub">Talk through a live case, practice a difficult conversation, or just think out loud.</div>
+    <!-- HUMAC SCORE WIDGET -->
+    <div id="humac-widget"></div>
+
+    <!-- PROCESSES I'M BUILDING WIDGET -->
+    <!-- SR16 fix: single canonical block (previously duplicated, causing orphaned markup) -->
+    <div id="gaps-widget" style="display:none;background:var(--card);border:1px solid rgba(99,102,241,.18);border-radius:16px;padding:22px 26px;margin-bottom:24px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,158,11,.4),transparent)"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,158,11,.6);margin-bottom:4px">Humac Gaps</div>
+          <div style="font-size:.92rem;font-weight:700;color:#f4f3ff;line-height:1.2">Processes I'm building</div>
+        </div>
+        <a href="humac-checkin.html" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.06em;color:rgba(165,180,252,.72);text-decoration:none;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.18);padding:6px 12px;border-radius:6px;transition:all .2s" onmouseover="this.style.color='#a5b4fc'" onmouseout="this.style.color='rgba(165,180,252,.72)'">Run check-in &#x2192;</a>
       </div>
-      <button class="aria-btn">Talk to ARIA &#x2192;</button>
+      <div id="gaps-list" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
 
-    <!-- Active Cases -->
-    <div>
-      <div class="section-header">
-        <div class="section-title">Active Cases</div>
-        <a href="vantage-record.html" class="see-all">Vantage Record &#x2192;</a>
-      </div>
-      <div id="cases-container">
-        <div class="empty-cases">
-          <div class="emoji"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h8L10 22l10-12h-8L13 2z"/></svg></div>
-          <div>No active cases yet.</div>
-          <div style="margin-top:6px;font-size:12px">Open the Employee Case Advisor when something lands on your desk.</div>
+    <!-- ═══════════════════════════════════════════════════════════
+         HR DECISION CAPITAL CARD (Phase 4)
+         Primary path: live get_cases Worker call on page load.
+         Fast path: sessionStorage (set by vantage-record.html).
+         Shows as soon as either path has data; live path wins.
+         ═══════════════════════════════════════════════════════════ -->
+    <div id="hdc-dash-card" style="display:none;background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(124,58,237,.04));border:1px solid rgba(99,102,241,.22);border-radius:12px;padding:16px 22px;margin-bottom:24px;animation:fadeIn .4s ease .12s both;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(196,181,253,.28),transparent)"></div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:rgba(244,243,255,.78);letter-spacing:-.01em;margin-bottom:6px">Your HR Business Impact</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,181,253,.4);margin-bottom:4px">HR Decision Capital &middot; Cases &middot; Retention &middot; ROI</div>
+          <div id="hdc-dash-number" style="font-family:'Space Grotesk',sans-serif;font-size:1.85rem;font-weight:700;letter-spacing:-.03em;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1">&mdash;</div>
+          <div id="hdc-dash-count" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(244,243,255,.28);margin-top:4px"></div>
+        </div>
+        <div style="text-align:right;max-width:240px">
+          <div style="font-size:.76rem;color:rgba(244,243,255,.38);line-height:1.65;margin-bottom:10px">The documented financial impact of your HR practice: financial exposure navigated, retention value protected, and ROI arguments built across all active tools.</div>
+          <a href="vantage-record.html" style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.08em;color:rgba(165,180,252,.65);text-decoration:none;transition:color .2s" onmouseover="this.style.color='rgba(165,180,252,.90)'" onmouseout="this.style.color='rgba(165,180,252,.65)'">View full Vantage Record &rarr;</a>
         </div>
       </div>
     </div>
