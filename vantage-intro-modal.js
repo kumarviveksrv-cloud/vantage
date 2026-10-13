@@ -221,6 +221,10 @@ function show(key,force){
   injectCSS();
   var modal=build(key);
   document.body.appendChild(modal);
+  // Mark as seen the moment the modal appears — so navigating away without
+  // clicking "Got it" / X doesn't cause it to fire again on the next visit.
+  // The "?" trigger re-opens it with force=true regardless of this flag.
+  try{localStorage.setItem(PREFIX+key,'1');}catch(e){}
   var d=MODALS[key];
   function close(){dismiss(key);}
   document.getElementById('vip-close').addEventListener('click',close);
