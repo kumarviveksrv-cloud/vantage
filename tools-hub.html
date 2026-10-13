@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="vantage-theme.css"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:var(--font),sans-serif}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:var(--font),sans-serif;overflow:hidden}
     body{display:flex}
 
     :root{
@@ -21,7 +21,7 @@
 
     /* ── LAYOUT ── */
     .sidebar{width:240px;flex-shrink:0;height:100vh;overflow-y:auto;border-right:1px solid rgba(99,102,241,0.12);background:rgba(5,4,16,0.95);padding:28px 16px;display:flex;flex-direction:column;gap:2px;position:sticky;top:0}
-    .main{flex:1;overflow-y:auto;padding:40px 40px 100px;max-width:960px}
+    .main{flex:1;overflow-y:auto;height:100vh;padding:40px 40px 100px;max-width:960px}
     @media(max-width:768px){
       .sidebar{display:none}
       .main{padding:28px 16px 140px}
@@ -139,8 +139,6 @@
   </style>
 </head>
 <body>
-  <canvas id="vantage-stars"></canvas>
-
   <!-- SIDEBAR (desktop) — content injected by sidebar-shared.js -->
   <div class="sidebar" id="vantage-sidebar">
     <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">
