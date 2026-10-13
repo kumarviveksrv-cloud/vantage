@@ -163,6 +163,16 @@
     .aria-offer-text{font-size:13px;color:var(--grey);line-height:1.5}
     .aria-offer-btn{padding:10px 20px;background:linear-gradient(135deg,var(--violet),var(--accent));color:#fff;font-family:var(--font), sans-serif;font-weight:700;font-size:12px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;text-decoration:none;white-space:nowrap;box-shadow:0 4px 14px rgba(99,102,241,0.3)}
 
+    /* QUICK TAKE SUMMARY CARD */
+    .quick-take-card{background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.32);border-radius:14px;padding:22px 24px;margin-bottom:20px;position:relative;overflow:hidden}
+    .quick-take-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.65),transparent)}
+    .qt-header{font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+    .qt-text{font-size:15px;color:rgba(244,243,255,0.88);line-height:1.75;font-weight:500;margin-bottom:18px}
+    .qt-action-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.65);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+    .qt-actions{display:flex;flex-direction:column;gap:9px}
+    .qt-action-item{display:flex;gap:10px;font-size:13px;color:rgba(244,243,255,0.72);line-height:1.6;align-items:flex-start}
+    .qt-action-bullet{color:#818cf8;font-size:12px;flex-shrink:0;margin-top:3px}
+
     /* ACTION ROW */
     .action-row{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap}
     .btn-primary{padding:14px 28px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:var(--font), sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 16px rgba(99,102,241,0.35)}
@@ -340,6 +350,14 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       </div>
 
       <div class="output-section">
+
+        <!-- Quick Take + Immediate Actions summary -->
+        <div class="quick-take-card" id="quick-take-card" style="display:none">
+          <div class="qt-header">&#x26A1; Quick Take</div>
+          <div class="qt-text" id="qt-text"></div>
+          <div class="qt-action-label">&#x1F3AF; What to do right now</div>
+          <div class="qt-actions" id="qt-actions"></div>
+        </div>
 
         <!-- Risk banner -->
         <div class="risk-banner" id="risk-banner">
@@ -641,6 +659,22 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       var pr = r.protocol || {};
       var fin = pr.financial || {};        /* Case type check: if the facts point to a different type than the tile, show a note and use the detected type. */       var _validTypes = ['Disciplinary', 'Grievance', 'PIP', 'Termination', 'Redundancy', 'POSH Complaint', 'Absence Management', 'Retrenchment'];       var _noteEl = document.getElementById('case-type-note');       if (!_noteEl) {         _noteEl = document.createElement('div');         _noteEl.id = 'case-type-note';         _noteEl.style.cssText = 'margin-top:10px;max-width:760px;padding:10px 14px;background:rgba(124,58,237,0.10);border:1px solid rgba(167,139,250,0.30);border-radius:8px;font-size:12px;line-height:1.6;color:#c4b5fd;display:none';         var _anchorEl = document.getElementById('output-case-type');         if (_anchorEl && _anchorEl.parentNode) { _anchorEl.parentNode.appendChild(_noteEl); }       }       _noteEl.style.display = 'none';       if (r.detectedCaseType && _validTypes.indexOf(r.detectedCaseType) !== -1 && r.detectedCaseType !== selectedCaseType) {         _noteEl.textContent = 'You selected ' + selectedCaseType + '. The facts read as ' + r.detectedCaseType + ', so this was analysed as ' + r.detectedCaseType + '.';         _noteEl.style.display = 'block';         selectedCaseType = r.detectedCaseType;       }
 
+      // Quick Take summary card
+      var qtCard = document.getElementById('quick-take-card');
+      var qtTextEl = document.getElementById('qt-text');
+      var qtActionsEl = document.getElementById('qt-actions');
+      if (qtCard && qtTextEl && pr.quick_take) {
+        qtTextEl.textContent = pr.quick_take;
+        if (qtActionsEl && Array.isArray(pr.immediate_actions) && pr.immediate_actions.length) {
+          qtActionsEl.innerHTML = pr.immediate_actions.map(function(action) {
+            return '<div class="qt-action-item"><span class="qt-action-bullet">&#x25B8;</span><span>' + action + '</span></div>';
+          }).join('');
+        }
+        qtCard.style.display = '';
+      } else if (qtCard) {
+        qtCard.style.display = 'none';
+      }
+
       // Risk banner
       var riskClass = getRiskClass(ps.overallRisk);
       document.getElementById('risk-banner').className = 'risk-banner risk-' + riskClass;
@@ -818,6 +852,8 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       document.getElementById('stakeholders').value = '';
       document.querySelectorAll('.case-type-btn').forEach(function(b){ b.classList.remove('selected'); });
       document.getElementById('submit-btn').disabled = true;
+      var qtCard = document.getElementById('quick-take-card');
+      if (qtCard) qtCard.style.display = 'none';
       showView('intake-view');
     }
   </script>
