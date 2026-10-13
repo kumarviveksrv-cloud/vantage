@@ -622,6 +622,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           showWrongTool(data.data.reason, data.data.suggestedTool);
         } else if (data.success) {
           currentResult = data.data;
+          localStorage.setItem('sr_last_case_id', (data.data && data.data.airtableId) || 'navigated');
           renderOutput();
         } else {
           showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You’ve reached your daily limit for Employee Case Advisor. Resets tomorrow.') : 'Assessment failed. ' + (data.error || 'Please try again.'));
@@ -794,7 +795,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         t.className = 'toast';
         if (data.success) {
           t.innerHTML = '<span class="toast-icon">&#x2713;</span> Case saved to your Vantage Record.';
-          if (data.data && data.data.airtableId) localStorage.setItem('sr_last_case_id', data.data.airtableId);
+          localStorage.setItem('sr_last_case_id', (data.data && data.data.airtableId) || 'saved');
         } else {
           t.innerHTML = '<span class="toast-icon">&#x26A0;&#xFE0F;</span> Save failed: ' + (data.error || 'Unknown error');
         }
