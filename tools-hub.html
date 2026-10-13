@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="apple-touch-icon" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="shortcut icon" href="favicon.png"/>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Tools | Virorah Vantage</title>
+  <link rel="stylesheet" href="vantage-theme.css"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:#050410;color:#f4f3ff;font-family:var(--font),sans-serif}
+    body{display:flex}
+
+    :root{
+      --accent:#6366f1;
+      --border-accent:rgba(99,102,241,0.25);
+      --dim:rgba(244,243,255,0.25);
+    }
+
+    /* ── LAYOUT ── */
+    .sidebar{width:240px;flex-shrink:0;height:100vh;overflow-y:auto;border-right:1px solid rgba(99,102,241,0.12);background:rgba(5,4,16,0.95);padding:28px 16px;display:flex;flex-direction:column;gap:2px;position:sticky;top:0}
+    .main{flex:1;overflow-y:auto;padding:40px 40px 100px;max-width:960px}
+    @media(max-width:768px){
+      .sidebar{display:none}
+      .main{padding:28px 16px 140px}
+    }
+
+    /* ── PAGE HEADER ── */
+    .hub-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(99,102,241,.6);margin-bottom:10px}
+    .hub-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,42px);font-weight:400;font-style:italic;color:rgba(255,255,255,.93);line-height:1.2;margin-bottom:8px}
+    .hub-sub{font-size:14px;color:rgba(196,181,253,.55);line-height:1.65;margin-bottom:40px;max-width:480px}
+
+    /* ── TOOL CARDS ── */
+    .tools-list{display:flex;flex-direction:column;gap:14px}
+
+    .tool-card{
+      display:flex;
+      align-items:center;
+      gap:22px;
+      padding:22px 26px;
+      background:rgba(13,11,30,0.7);
+      border:1px solid rgba(99,102,241,0.14);
+      border-radius:14px;
+      text-decoration:none;
+      cursor:pointer;
+      transition:border-color .2s,background .2s,transform .18s,box-shadow .2s;
+      position:relative;
+      overflow:hidden;
+    }
+    .tool-card::before{
+      content:'';
+      position:absolute;
+      top:0;left:0;right:0;
+      height:1.5px;
+      background:linear-gradient(90deg,transparent,rgba(99,102,241,0.6),transparent);
+      opacity:0;
+      transition:opacity .2s;
+    }
+    .tool-card:hover{
+      border-color:rgba(99,102,241,0.35);
+      background:rgba(13,11,30,0.92);
+      transform:translateY(-2px);
+      box-shadow:0 8px 32px rgba(99,102,241,0.12);
+    }
+    .tool-card:hover::before{opacity:1}
+    .tool-card:active{transform:translateY(0);box-shadow:none}
+
+    /* accent variants */
+    .tc-er{border-color:rgba(99,102,241,0.18)}
+    .tc-er:hover{border-color:rgba(99,102,241,0.42);box-shadow:0 8px 32px rgba(99,102,241,0.16)}
+    .tc-policy{border-color:rgba(124,58,237,0.15)}
+    .tc-policy:hover{border-color:rgba(124,58,237,0.38);box-shadow:0 8px 32px rgba(124,58,237,0.14)}
+    .tc-sim{border-color:rgba(139,92,246,0.15)}
+    .tc-sim:hover{border-color:rgba(139,92,246,0.38);box-shadow:0 8px 32px rgba(139,92,246,0.14)}
+
+    .tool-icon-wrap{
+      width:48px;height:48px;
+      border-radius:12px;
+      background:rgba(99,102,241,0.1);
+      border:1px solid rgba(99,102,241,0.2);
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;
+      color:#a5b4fc;
+      transition:background .2s,border-color .2s;
+    }
+    .tool-card:hover .tool-icon-wrap{background:rgba(99,102,241,0.18);border-color:rgba(99,102,241,0.35)}
+
+    .tool-body{flex:1;min-width:0}
+    .tool-name{
+      font-family:var(--font),sans-serif;
+      font-size:15px;font-weight:600;
+      color:rgba(244,243,255,0.93);
+      margin-bottom:4px;
+      letter-spacing:-.01em;
+    }
+    .tool-desc{
+      font-size:13px;
+      color:rgba(196,181,253,.5);
+      line-height:1.55;
+    }
+    .tool-arrow{
+      flex-shrink:0;
+      color:rgba(99,102,241,0.4);
+      transition:color .2s,transform .18s;
+    }
+    .tool-card:hover .tool-arrow{color:rgba(165,180,252,0.8);transform:translateX(3px)}
+
+    /* ── DIVIDER LABEL ── */
+    .section-label{
+      font-family:'JetBrains Mono',monospace;
+      font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+      color:rgba(99,102,241,.45);
+      margin:28px 0 12px;
+    }
+
+    /* ── FADE IN ── */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .hub-header{animation:fadeUp .35s ease both}
+    .tools-list > *{animation:fadeUp .35s ease both}
+    .tools-list > *:nth-child(1){animation-delay:.04s}
+    .tools-list > *:nth-child(2){animation-delay:.09s}
+    .tools-list > *:nth-child(3){animation-delay:.14s}
+    .tools-list > *:nth-child(4){animation-delay:.19s}
+    .tools-list > *:nth-child(5){animation-delay:.24s}
+
+    /* ── SIDEBAR STYLES (mirrors dashboard) ── */
+    .logo{display:flex;align-items:center;gap:10px;margin-bottom:24px;padding:4px 0}
+    .logo-dot{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);flex-shrink:0}
+    .logo-name{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#f4f3ff}
+    .logo-sub{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,.6);margin-top:2px}
+    .nav-section{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(99,102,241,.75);padding:4px 10px;margin:16px 0 6px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;text-decoration:none;color:rgba(244,243,255,.70);font-size:13px;font-family:var(--font),sans-serif;font-weight:400;margin-bottom:2px}
+    .nav-item:hover{background:rgba(99,102,241,.08);color:#f4f3ff;border-color:rgba(99,102,241,.15)}
+    .nav-item.active{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.30);color:#c4b5fd;font-weight:500}
+    .nav-item--aria{color:rgba(165,180,252,.75)}
+    .nav-item .icon{font-size:16px;flex-shrink:0}
+  </style>
+</head>
+<body>
+  <canvas id="vantage-stars"></canvas>
+
+  <!-- SIDEBAR (desktop) — content injected by sidebar-shared.js -->
+  <div class="sidebar" id="vantage-sidebar">
+    <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer">
+      <div class="logo-dot"></div>
+      <div>
+        <div class="logo-name">Virorah</div>
+        <div class="logo-sub">Vantage</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="hub-header">
+      <div class="hub-eyebrow">Your Active Tools</div>
+      <div class="hub-title">Where would you like to work today?</div>
+      <div class="hub-sub">Five tools. Each built for a specific moment in your role as an HR professional.</div>
+    </div>
+
+    <div class="tools-list">
+
+      <!-- 1. Employee Case Advisor -->
+      <a href="employee-case-advisor.html" class="tool-card tc-er">
+        <div class="tool-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2L4 14h8L10 22l10-12h-8L13 2z"/>
+          </svg>
+        </div>
+        <div class="tool-body">
+          <div class="tool-name">Employee Case Advisor</div>
+          <div class="tool-desc">An employee situation with legal stakes. Get process risk, financial exposure, and exact next steps — calibrated to your context.</div>
+        </div>
+        <div class="tool-arrow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </div>
+      </a>
+
+      <!-- 2. The Business Case -->
+      <a href="people-roi-brief.html" class="tool-card">
+        <div class="tool-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2"/>
+            <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
+          </svg>
+        </div>
+        <div class="tool-body">
+          <div class="tool-name">The Business Case</div>
+          <div class="tool-desc">Numbers for the room, or an argument for one specific person. Translate people decisions into financial language the business actually hears.</div>
+        </div>
+        <div class="tool-arrow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </div>
+      </a>
+
+      <!-- 3. Policy Advisor -->
+      <a href="policy-advisor.html" class="tool-card tc-policy">
+        <div class="tool-icon-wrap" style="background:rgba(124,58,237,0.1);border-color:rgba(124,58,237,0.2);color:#c4b5fd">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+          </svg>
+        </div>
+        <div class="tool-body">
+          <div class="tool-name">Policy Advisor</div>
+          <div class="tool-desc">Describe a policy gap and get the applicable legal framework — the Acts, the rules, and the specific compliance requirements that apply in your state.</div>
+        </div>
+        <div class="tool-arrow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </div>
+      </a>
+
+      <!-- 4. Retention Advisor -->
+      <a href="retention-advisor.html" class="tool-card">
+        <div class="tool-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="3" x2="12" y2="21"/>
+            <path d="M7 3h10"/>
+            <path d="M3.5 9l3.5 7H0l3.5-7zM16.5 9l3.5 7H13l3.5-7z"/>
+          </svg>
+        </div>
+        <div class="tool-body">
+          <div class="tool-name">Retention Advisor</div>
+          <div class="tool-desc">Model the real cost of keeping or losing this person. Replacement cost, productivity loss, and the financial case for a counter-offer — built from your numbers.</div>
+        </div>
+        <div class="tool-arrow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </div>
+      </a>
+
+      <!-- 5. Difficult Conversations -->
+      <a href="difficult-conversations.html" class="tool-card tc-sim">
+        <div class="tool-icon-wrap" style="background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.2);color:#c4b5fd">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+          </svg>
+        </div>
+        <div class="tool-body">
+          <div class="tool-name">Difficult Conversations</div>
+          <div class="tool-desc">Rehearse before the conversation that matters. Practice the message, the pushback, and the recovery — before you walk into the room.</div>
+        </div>
+        <div class="tool-arrow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <script>
+    var BASE = 'https://vantage.virorah.com/';
+    if (sessionStorage.getItem('sr_access') !== 'true') {
+      window.location.href = BASE + 'access.html';
+    }
+  </script>
+  <script src="clerk-auth.js"></script>
+  <script src="sidebar-shared.js"></script>
+</body>
+</html>

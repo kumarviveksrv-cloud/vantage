@@ -575,7 +575,7 @@
     if (document.querySelector('.vantage-bottom-nav')) return;
 
     var path = window.location.pathname;
-    var curSlug = path.split('/').filter(function(s) { return s; }).pop() || 'dashboard';     curSlug = curSlug.replace('.html', '');     var SLUG = { 'er-case-navigator': 'employee-case-advisor', 'business-case': 'people-roi-brief', 'policy-compass': 'policy-advisor', 'offer-intelligence': 'retention-advisor', 'conversation-simulator': 'difficult-conversations', 'ledger': 'standpoint', 'case-library': 'vantage-record' };     var TAB_MATCH = { 'er-case-navigator': ['employee-case-advisor', 'people-roi-brief', 'policy-advisor', 'retention-advisor', 'difficult-conversations'], 'case-library': ['vantage-record', 'standpoint', 'debrief'] };     function slugOf(key) { return SLUG[key] || key; }     function isActive(page) { var list = TAB_MATCH[page] || [slugOf(page)]; return list.indexOf(curSlug) !== -1; }     function onMainTab() { return isActive('dashboard') || isActive('aria') || isActive('er-case-navigator') || isActive('case-library'); }
+    var curSlug = path.split('/').filter(function(s) { return s; }).pop() || 'dashboard';     curSlug = curSlug.replace('.html', '');     var SLUG = { 'er-case-navigator': 'employee-case-advisor', 'business-case': 'people-roi-brief', 'policy-compass': 'policy-advisor', 'offer-intelligence': 'retention-advisor', 'conversation-simulator': 'difficult-conversations', 'ledger': 'standpoint', 'case-library': 'vantage-record' };     var TAB_MATCH = { 'er-case-navigator': ['employee-case-advisor', 'people-roi-brief', 'policy-advisor', 'retention-advisor', 'difficult-conversations'], 'tools-hub': ['tools-hub', 'employee-case-advisor', 'people-roi-brief', 'policy-advisor', 'retention-advisor', 'difficult-conversations'], 'case-library': ['vantage-record', 'standpoint', 'debrief'] };     function slugOf(key) { return SLUG[key] || key; }     function isActive(page) { var list = TAB_MATCH[page] || [slugOf(page)]; return list.indexOf(curSlug) !== -1; }     function onMainTab() { return isActive('dashboard') || isActive('aria') || isActive('tools-hub') || isActive('er-case-navigator') || isActive('case-library'); }
 
     var style = document.createElement('style');
     style.id = 'vantage-bottom-nav-style';
@@ -765,7 +765,7 @@
 
     var navItems = [
       { icon: IC.home,       label: 'Home',   href: 'dashboard.html',              page: 'dashboard' },
-      { icon: IC.tools,      label: 'Tools',  href: 'employee-case-advisor.html',  page: 'er-case-navigator' },
+      { icon: IC.tools,      label: 'Tools',  href: 'tools-hub.html',              page: 'tools-hub' },
       { icon: IC.aria_tab,   label: 'ARIA',   href: 'aria.html',                   page: 'aria' },
       { icon: IC.record_tab, label: 'Record', href: 'vantage-record.html',         page: 'case-library' },
       { icon: IC.more,       label: 'More',   href: null,                          page: 'more' },
