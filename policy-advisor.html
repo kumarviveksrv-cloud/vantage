@@ -158,6 +158,40 @@
     .consent-row.checked .consent-checkbox{background:var(--accent);border-color:var(--accent);color:#fff}
     .consent-text{font-size:12px;color:rgba(244,243,255,0.65);line-height:1.65}
     .consent-text strong{color:rgba(244,243,255,0.9)}
+
+    /* PRINT HEADER — hidden on screen, visible in @media print */
+    .print-header{display:none;justify-content:space-between;align-items:flex-start;padding-bottom:14px;margin-bottom:20px;border-bottom:2px solid #6366f1;font-family:var(--font),sans-serif}
+    .print-brand{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6366f1}
+    .print-tool{font-size:17px;font-weight:700;color:#f4f3ff;margin-top:3px}
+    .print-meta{font-size:12px;color:rgba(244,243,255,0.5);margin-top:4px;font-family:'JetBrains Mono',monospace}
+    .print-date{font-size:11px;color:rgba(244,243,255,0.5);text-align:right;font-family:'JetBrains Mono',monospace;padding-top:2px}
+
+    /* PRINT STYLES */
+    @media print{
+      *{background:transparent !important;color:#111 !important;box-shadow:none !important;text-shadow:none !important;animation:none !important}
+      html,body{background:#fff !important;overflow:visible !important;height:auto !important}
+      body{display:block !important}
+      .sidebar{display:none !important}
+      #intake-view{display:none !important}
+      #loading-view{display:none !important}
+      .action-row{display:none !important}
+      .aria-offer-card{display:none !important}
+      .page-header{display:none !important}
+      #vantage-wrongtool{display:none !important}
+      #vantage-error{display:none !important}
+      .main{overflow:visible !important;height:auto !important;width:100% !important;padding:16px 20px !important;background:none !important;background-image:none !important}
+      .output-section{padding-top:0 !important}
+      .print-header{display:flex !important}
+      .print-brand{color:#4f46e5 !important}
+      .print-tool{color:#111 !important}
+      .print-meta{color:#555 !important}
+      .print-date{color:#555 !important}
+      .question-echo,.policy-section,.recommended-card{background:#f4f4f8 !important;border-color:#ddd !important}
+      .question-echo-label,.policy-section-label,.rec-label{color:#4f46e5 !important}
+      .policy-section{page-break-inside:avoid}
+      .recommended-card{page-break-inside:avoid}
+      @page{margin:14mm 12mm}
+    }
   </style>
 </head>
 <body>
@@ -286,6 +320,16 @@
       </div>
       <div class="output-section">
 
+        <!-- Print header: shown only in @media print -->
+        <div class="print-header">
+          <div>
+            <div class="print-brand">Virorah Vantage</div>
+            <div class="print-tool">Policy Advisor</div>
+            <div class="print-meta" id="print-query-label"></div>
+          </div>
+          <div class="print-date" id="print-date"></div>
+        </div>
+
         <!-- Question echo -->
         <div class="question-echo">
           <div>
@@ -329,6 +373,7 @@
         <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="openInCaseNavigator()">Open in Employee Case Advisor &rarr;</button>
+          <button class="btn-ghost" onclick="printReport()">&#x2913; Download Report</button>
           <button class="btn-ghost" onclick="startNew()">New Question</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
         </div>
@@ -352,6 +397,20 @@
     var currentResult = null;
     var currentQuery = '';
     var parsedSections = {};
+
+    function printReport() {
+      var d = new Date();
+      var dateStr = d.toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'});
+      var el = document.getElementById('print-date');
+      if (el) el.textContent = 'Generated: ' + dateStr;
+      var ql = document.getElementById('print-query-label');
+      var shortQ = currentQuery ? (currentQuery.length > 60 ? currentQuery.substring(0, 57) + '...' : currentQuery) : '';
+      if (ql) ql.textContent = shortQ;
+      var orig = document.title;
+      document.title = 'Vantage — Policy Guidance — ' + dateStr;
+      window.print();
+      document.title = orig;
+    }
 
     // ── DOCUMENT UPLOAD STATE (NEW) ──────────────────────────────────────────
     // Extracted text lives only in this variable for the current page load:

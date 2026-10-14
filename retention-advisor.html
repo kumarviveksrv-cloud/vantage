@@ -170,6 +170,36 @@
       .form-grid{grid-template-columns:1fr}
       .band-grid{grid-template-columns:repeat(2,1fr)}
     }
+
+    /* PRINT HEADER — hidden on screen, visible in @media print */
+    .print-header{display:none;justify-content:space-between;align-items:flex-start;padding-bottom:14px;margin-bottom:20px;border-bottom:2px solid #6366f1;font-family:var(--font),sans-serif}
+    .print-brand{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6366f1}
+    .print-tool{font-size:17px;font-weight:700;color:#f4f3ff;margin-top:3px}
+    .print-meta{font-size:12px;color:rgba(244,243,255,0.5);margin-top:4px;font-family:'JetBrains Mono',monospace}
+    .print-date{font-size:11px;color:rgba(244,243,255,0.5);text-align:right;font-family:'JetBrains Mono',monospace;padding-top:2px}
+
+    /* PRINT STYLES */
+    @media print{
+      *{background:transparent !important;color:#111 !important;box-shadow:none !important;text-shadow:none !important;animation:none !important}
+      html,body{background:#fff !important;overflow:visible !important;height:auto !important}
+      body{display:block !important}
+      .sidebar{display:none !important}
+      #intake-view{display:none !important}
+      #form-view{display:none !important}
+      #loading-view{display:none !important}
+      .action-row{display:none !important}
+      .page-header{display:none !important}
+      #vantage-wrongtool{display:none !important}
+      #vantage-error{display:none !important}
+      .main{overflow:visible !important;height:auto !important;width:100% !important;padding:16px 20px !important;background:none !important;background-image:none !important}
+      .output-section{padding-top:0 !important}
+      .print-header{display:flex !important}
+      .print-brand{color:#4f46e5 !important}
+      .print-tool{color:#111 !important}
+      .print-meta{color:#555 !important}
+      .print-date{color:#555 !important}
+      @page{margin:14mm 12mm}
+    }
   </style>
 </head>
 <body>
@@ -370,9 +400,19 @@
 
     <!-- OUTPUT VIEW -->
     <div id="output-view" style="display:none">
+      <!-- Print header: shown only in @media print -->
+      <div class="print-header">
+        <div>
+          <div class="print-brand">Virorah Vantage</div>
+          <div class="print-tool">Retention Advisor</div>
+          <div class="print-meta" id="print-flow-label"></div>
+        </div>
+        <div class="print-date" id="print-date"></div>
+      </div>
       <div class="output-section" id="output-content"></div>
       <div class="action-row">
         <button class="action-btn primary" id="save-btn" onclick="saveToLibrary()">Save to Vantage Record &#x2192;</button>
+        <button class="action-btn" onclick="printReport()">&#x2913; Download Report</button>
         <button class="action-btn" onclick="fileToLedger()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
         <button class="action-btn" onclick="showView('intake-view');currentResult=null;">New Analysis</button>
       </div>
@@ -410,6 +450,20 @@
     var currentResult = null;
     var meridianData = null;
     var loadInterval = null;
+
+    function printReport() {
+      var d = new Date();
+      var dateStr = d.toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'});
+      var el = document.getElementById('print-date');
+      if (el) el.textContent = 'Generated: ' + dateStr;
+      var fl = document.getElementById('print-flow-label');
+      var flowLabel = currentFlow === 'counter_offer' ? 'Counter-Offer Analysis' : currentFlow === 'proactive' ? 'Proactive Retention' : '';
+      if (fl) fl.textContent = flowLabel;
+      var orig = document.title;
+      document.title = 'Vantage — Retention Advisor' + (flowLabel ? ' — ' + flowLabel : '') + ' — ' + dateStr;
+      window.print();
+      document.title = orig;
+    }
 
     // Use the cached MERIDIAN profile straight away, so a quick submit is not sent without it.
     try {
