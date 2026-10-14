@@ -225,6 +225,44 @@
       70%{box-shadow:0 0 0 10px rgba(124,58,237,0)}
       100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}
     }
+
+    /* PRINT HEADER — hidden on screen, visible in @media print */
+    .print-header{display:none;justify-content:space-between;align-items:flex-start;padding-bottom:14px;margin-bottom:20px;border-bottom:2px solid #6366f1;font-family:var(--font),sans-serif}
+    .print-brand{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6366f1}
+    .print-tool{font-size:17px;font-weight:700;color:#f4f3ff;margin-top:3px}
+    .print-meta{font-size:12px;color:rgba(244,243,255,0.5);margin-top:4px;font-family:'JetBrains Mono',monospace}
+    .print-date{font-size:11px;color:rgba(244,243,255,0.5);text-align:right;font-family:'JetBrains Mono',monospace;padding-top:2px}
+
+    /* PRINT STYLES */
+    @media print{
+      *{background:transparent !important;color:#111 !important;box-shadow:none !important;text-shadow:none !important;animation:none !important}
+      html,body{background:#fff !important;overflow:visible !important;height:auto !important}
+      body{display:block !important}
+      .sidebar{display:none !important}
+      #intake-view{display:none !important}
+      #loading-view{display:none !important}
+      .action-row{display:none !important}
+      .aria-offer-card{display:none !important}
+      .page-header{display:none !important}
+      #vantage-wrongtool{display:none !important}
+      #vantage-error{display:none !important}
+      .btn-print{display:none !important}
+      .main{overflow:visible !important;height:auto !important;width:100% !important;padding:16px 20px !important;background:none !important;background-image:none !important}
+      .output-section{padding-top:0 !important}
+      .print-header{display:flex !important}
+      .print-brand{color:#4f46e5 !important}
+      .print-tool{color:#111 !important}
+      .print-meta{color:#555 !important}
+      .print-date{color:#555 !important}
+      .quick-take-card,.risk-banner,.pact-card,.proto-section,.financial-card,.recommendation-card,.communication-card{background:#f4f4f8 !important;border-color:#ddd !important}
+      .pact-label,.proto-label,.card-label,.fin-label,.comm-label,.qt-action-label,.risk-label{color:#4f46e5 !important}
+      .pact-grid{page-break-inside:avoid}
+      .proto-section{page-break-inside:avoid}
+      .financial-card{page-break-inside:avoid}
+      .recommendation-card{page-break-inside:avoid}
+      .communication-card{page-break-inside:avoid}
+      @page{margin:14mm 12mm}
+    }
   </style>
 </head>
 <body>
@@ -351,6 +389,16 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
 
       <div class="output-section">
 
+        <!-- Print header: shown only in @media print -->
+        <div class="print-header">
+          <div>
+            <div class="print-brand">Virorah Vantage</div>
+            <div class="print-tool">Employee Case Advisor</div>
+            <div class="print-meta" id="print-case-type"></div>
+          </div>
+          <div class="print-date" id="print-date"></div>
+        </div>
+
         <!-- Quick Take + Immediate Actions summary -->
         <div class="quick-take-card" id="quick-take-card" style="display:none">
           <div class="qt-header">&#x26A1; Quick Take</div>
@@ -466,6 +514,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="saveCase()">Save to Vantage Record</button>
+          <button class="btn-secondary" onclick="printReport()">&#x2913; Download Report</button>
           <button class="btn-secondary" onclick="practiceConversation()">Simulate the Conversation &rarr;</button>
           <button class="btn-ghost" onclick="fileToLedger()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
           <button class="btn-ghost" onclick="startNew()">New Case</button>
@@ -519,6 +568,19 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     var currentResult = null;
     var currentNarrative = '';
     var currentARIAScenario = '';
+
+    function printReport() {
+      var d = new Date();
+      var dateStr = d.toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'});
+      var el = document.getElementById('print-date');
+      if (el) el.textContent = 'Generated: ' + dateStr;
+      var ct = document.getElementById('print-case-type');
+      if (ct) ct.textContent = selectedCaseType ? 'Case Type: ' + selectedCaseType : '';
+      var orig = document.title;
+      document.title = 'Vantage — Employee Case' + (selectedCaseType ? ' — ' + selectedCaseType : '') + ' — ' + dateStr;
+      window.print();
+      document.title = orig;
+    }
 
     if (sessionStorage.getItem('sr_access') !== 'true') {
       window.location.href = BASE + 'access.html';

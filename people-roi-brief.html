@@ -252,6 +252,45 @@
 .stakeholder-icon{font-size:18px;display:block;margin-bottom:4px}
 /* Lining figures so headline digits sit on the baseline (Cormorant defaults to old-style figures) */
 .headline-text,.rar-figure,.humac-signal-range,.signal-figure,.anchor-number,.l-figure{font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1}
+
+    /* PRINT HEADER — hidden on screen, visible in @media print */
+    .print-header{display:none;justify-content:space-between;align-items:flex-start;padding-bottom:14px;margin-bottom:20px;border-bottom:2px solid #6366f1;font-family:var(--font),sans-serif}
+    .print-brand{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6366f1}
+    .print-tool{font-size:17px;font-weight:700;color:#f4f3ff;margin-top:3px}
+    .print-meta{font-size:12px;color:rgba(244,243,255,0.5);margin-top:4px;font-family:'JetBrains Mono',monospace}
+    .print-date{font-size:11px;color:rgba(244,243,255,0.5);text-align:right;font-family:'JetBrains Mono',monospace;padding-top:2px}
+
+    /* PRINT STYLES */
+    @media print{
+      *{background:transparent !important;color:#111 !important;box-shadow:none !important;text-shadow:none !important;animation:none !important}
+      html,body{background:#fff !important;overflow:visible !important;height:auto !important}
+      body{display:block !important}
+      .sidebar{display:none !important}
+      #intake-view-general{display:none !important}
+      #intake-view-stakeholder{display:none !important}
+      .action-row{display:none !important}
+      .aria-offer-card{display:none !important}
+      .page-header{display:none !important}
+      #vantage-wrongtool{display:none !important}
+      #vantage-error{display:none !important}
+      .btn-print{display:none !important}
+      .main{overflow:visible !important;height:auto !important;width:100% !important;padding:16px 20px !important;background:none !important;background-image:none !important}
+      .output-section{padding-top:0 !important}
+      .print-header{display:flex !important}
+      .print-brand{color:#4f46e5 !important}
+      .print-tool{color:#111 !important}
+      .print-meta{color:#555 !important}
+      .print-date{color:#555 !important}
+      .headline-card,.rar-card,.humac-signal-card,.signal-card,.narrative-card,.humac-influence-card,.influence-header,.line-card,.closing-card{background:#f4f4f8 !important;border-color:#ddd !important}
+      .headline-label,.rar-label,.humac-signal-label,.signal-label,.line-card-label,.humac-influence-label,.ih-label,.anchor-label,.narrative-tab-label{color:#4f46e5 !important}
+      .top-two-col{page-break-inside:avoid}
+      .signal-card{page-break-inside:avoid}
+      .narrative-card{page-break-inside:avoid}
+      .influence-header{page-break-inside:avoid}
+      .humac-influence-card{page-break-inside:avoid}
+      .line-card{page-break-inside:avoid}
+      @page{margin:14mm 12mm}
+    }
   </style>
 </head>
 <body>
@@ -454,6 +493,16 @@
       </div>
       <div class="output-section">
 
+        <!-- Print header: shown only in @media print -->
+        <div class="print-header">
+          <div>
+            <div class="print-brand">Virorah Vantage</div>
+            <div class="print-tool">People ROI Brief — SIGNAL Narrative</div>
+            <div class="print-meta" id="print-audience-label"></div>
+          </div>
+          <div class="print-date" id="print-date-general"></div>
+        </div>
+
         <!-- Headline -->
         <div class="headline-card">
           <div class="headline-label">The number that opens the room</div>
@@ -548,6 +597,7 @@
         <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="switchToStakeholderFlow()">Build the case for one person &#x2192;</button>
+          <button class="btn-secondary" onclick="printReport()">&#x2913; Download Report</button>
           <button class="btn-ghost" id="save-record-btn" onclick="saveToRecord()">Save to Vantage Record &#x2192;</button>
           <button class="btn-ghost" onclick="fileToLedgerGeneral()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
           <button class="btn-ghost" onclick="startNewGeneral()">New Story</button>
@@ -564,6 +614,16 @@
         <div class="page-sub" id="output-stakeholder-label">Ready to present</div>
       </div>
       <div class="output-section">
+
+        <!-- Print header: shown only in @media print -->
+        <div class="print-header">
+          <div>
+            <div class="print-brand">Virorah Vantage</div>
+            <div class="print-tool">People ROI Brief — INFLUENCE Stack</div>
+            <div class="print-meta" id="print-stakeholder-label"></div>
+          </div>
+          <div class="print-date" id="print-date-stakeholder"></div>
+        </div>
 
         <!-- Opening line -->
         <div class="line-card">
@@ -626,6 +686,7 @@
         <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="practiceConversation()">Simulate the Conversation &rarr;</button>
+          <button class="btn-secondary" onclick="printReport()">&#x2913; Download Report</button>
           <button class="btn-ghost" onclick="fileToLedgerStakeholder()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
           <button class="btn-ghost" onclick="startNewStakeholder()">New Stack</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
@@ -688,6 +749,27 @@
     var currentResult = null;
     var narrativeVersions = {};
     var activeFlow = 'general';
+
+    function printReport() {
+      var d = new Date();
+      var dateStr = d.toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'});
+      if (activeFlow === 'stakeholder') {
+        var el = document.getElementById('print-date-stakeholder');
+        if (el) el.textContent = 'Generated: ' + dateStr;
+        var sl = document.getElementById('print-stakeholder-label');
+        if (sl) sl.textContent = selectedStakeholder ? 'Stakeholder: ' + selectedStakeholder : '';
+      } else {
+        var el2 = document.getElementById('print-date-general');
+        if (el2) el2.textContent = 'Generated: ' + dateStr;
+        var al = document.getElementById('print-audience-label');
+        if (al) al.textContent = selectedAudience ? 'Audience: ' + selectedAudience : '';
+      }
+      var orig = document.title;
+      var subtitle = activeFlow === 'stakeholder' ? (selectedStakeholder || 'INFLUENCE Stack') : (selectedAudience || 'SIGNAL Narrative');
+      document.title = 'Vantage — People ROI Brief — ' + subtitle + ' — ' + dateStr;
+      window.print();
+      document.title = orig;
+    }
 
     if (sessionStorage.getItem('sr_access') !== 'true') {
       window.location.href = BASE + 'access.html';
