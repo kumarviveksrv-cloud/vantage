@@ -124,6 +124,17 @@
   .score-num{font-size:2.8rem}
   .score-num.adj{font-size:2rem}
 }
+.print-header{display:none}
+@media print{
+  *{background:transparent!important;color:#111!important;border-color:#ccc!important;box-shadow:none!important}
+  .sidebar,.top-nav{display:none!important}
+  .print-header{display:flex!important;justify-content:space-between;align-items:center;padding:10px 0 12px;border-bottom:2px solid #6366f1;margin-bottom:18px}
+  .ph-brand{font-size:.72rem;color:#6366f1!important;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .ph-meta{font-size:.72rem;color:#555!important}
+  .loading-state,#no-score-state,.expect-card,.cta-area{display:none!important}
+  .score-num,.score-num.adj{-webkit-text-fill-color:#111!important}
+  .score-card,.traj-card{page-break-inside:avoid;break-inside:avoid}
+}
 </style>
 </head>
 <body>
@@ -140,6 +151,7 @@
   <nav id="sidebar-nav"></nav>
 </div>
 
+<div class="print-header"><span class="ph-brand">Vantage \xb7 Virorah</span><span class="ph-meta">Humac Score Check-in</span></div>
 <div class="wrap">
 
   <!-- BREADCRUMB -->
@@ -221,6 +233,7 @@
         Start check-in →
       </button>
       <a href="dashboard.html" class="btn-ghost">Back to Dashboard</a>
+      <button onclick="printReport()" class="btn-ghost" style="cursor:pointer">&#x2b07; Download PDF</button>
     </div>
 
   </div><!-- /main-content -->
@@ -253,6 +266,8 @@
     document.getElementById('meridian-chip-val').innerText =
       (m.state || 'Not set') + ' · ' + (m.industry || 'Not set');
   } catch(e) {}
+
+  function printReport(){var prev=document.title;document.title='Humac Score \xb7 Vantage';window.print();document.title=prev;}
 
   function getBandStyle(band) {
     var map = {

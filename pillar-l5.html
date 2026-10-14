@@ -139,6 +139,17 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .assumptions th,.assumptions td{text-align:left;padding:7px 8px;border-bottom:1px solid rgba(99,102,241,.08);color:var(--text-dim);vertical-align:top}
 .assumptions th{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:#a5b4fc}
 .gate{padding:18px 20px;border:1px solid rgba(224,92,58,.28);background:rgba(224,92,58,.08);border-radius:12px;margin-bottom:18px;color:var(--text-dim);font-size:.86rem;line-height:1.6}
+.print-header{display:none}
+@media print{
+  *{background:transparent!important;color:#111!important;border-color:#ccc!important;box-shadow:none!important}
+  .sidebar,.top-nav{display:none!important}
+  .pillar-nav-strip,.bottom-nav{display:none!important}
+  .print-header{display:flex!important;justify-content:space-between;align-items:center;padding:10px 0 12px;border-bottom:2px solid #6366f1;margin-bottom:18px}
+  .ph-brand{font-size:.72rem;color:#6366f1!important;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .ph-meta{font-size:.72rem;color:#555!important}
+  .finding-card,.action-item{page-break-inside:avoid;break-inside:avoid}
+  .assumption-bar,.assumptions,.sc-btn,.gate{display:none!important}
+}
 
 </style>
 </head>
@@ -325,10 +336,11 @@ function render(){
 
   var complete='<div class="complete-card"><div class="complete-title">All Five Pillars Complete.</div><div class="complete-sub">L1 Value Ledger \xb7 L2 Talent Premium \xb7 L3 Org Vitals \xb7 L4 Human P&amp;L \xb7 L5 Human Balance Sheet<br>Return to your Humac Score. Start with the pillar at the lowest score \u2014 that is where the highest-leverage action lives.</div><a href="humac-onboarding.html" class="complete-cta">Return to Humac Score \u2192</a></div>';
 
-  var bottomNav='<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><a href="dashboard.html" class="btn-next">Dashboard \u2192</a></div>';
+  var bottomNav='<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><button onclick="printReport()" class="btn-back" style="cursor:pointer">\u2b07 Download PDF</button><a href="dashboard.html" class="btn-next">Dashboard \u2192</a></div>';
 
-  w.innerHTML=nav+header+shared+hero+stats+findingsHtml+assumptionBar+bsWrap+assumptionsTable+stmt+actions+complete+bottomNav;
+  w.innerHTML='<div class="print-header"><span class="ph-brand">Vantage \xb7 Virorah</span><span class="ph-meta">L5 Human Balance Sheet \xb7 '+(industry?industry+' \xb7 ':'')+scoreDate+'</span></div>'+nav+header+shared+hero+stats+findingsHtml+assumptionBar+bsWrap+assumptionsTable+stmt+actions+complete+bottomNav;
 }
+function printReport(){var prev=document.title;document.title='L5 Human Balance Sheet \xb7 Vantage';window.print();document.title=prev;}
 function setScenario(s){scenario=s;render();}
 render();
 </script>

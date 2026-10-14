@@ -121,6 +121,17 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .assumptions th,.assumptions td{text-align:left;padding:7px 8px;border-bottom:1px solid rgba(99,102,241,.08);color:var(--text-dim);vertical-align:top}
 .assumptions th{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:#a5b4fc}
 .gate{padding:18px 20px;border:1px solid rgba(224,92,58,.28);background:rgba(224,92,58,.08);border-radius:12px;margin-bottom:18px;color:var(--text-dim);font-size:.86rem;line-height:1.6}
+.print-header{display:none}
+@media print{
+  *{background:transparent!important;color:#111!important;border-color:#ccc!important;box-shadow:none!important}
+  .sidebar,.top-nav{display:none!important}
+  .pillar-nav-strip,.bottom-nav{display:none!important}
+  .print-header{display:flex!important;justify-content:space-between;align-items:center;padding:10px 0 12px;border-bottom:2px solid #6366f1;margin-bottom:18px}
+  .ph-brand{font-size:.72rem;color:#6366f1!important;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .ph-meta{font-size:.72rem;color:#555!important}
+  .finding-card,.action-item,.verdict-card{page-break-inside:avoid;break-inside:avoid}
+  .assumption-note,.assumption-bar,.sc-btn,.gate{display:none!important}
+}
 
 </style>
 </head>
@@ -164,6 +175,7 @@ var ra=hd.rawAnswers||{};
 var l2Mode=hd.l2Mode||'estimate';
 var stored=hd.l2||0;
 var MIN=3;
+function printReport(){var prev=document.title;document.title='L2 Talent Premium \xb7 Vantage';window.print();document.title=prev;}
 function metric(name, num, den){
   if(!(den>0)) return {name:name, status:'missing', score:null, detail:'No denominator. Unmeasured, not average.'};
   var score=Math.round((num/den)*100);
@@ -324,6 +336,7 @@ var acts=(result.score!=null && result.score>60)?highActs:baseActs;
 var actionsHtml='<div class="section-eyebrow">What to do next</div><div class="section-title">Moving your Talent Premium forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('');
 
 document.getElementById('main-wrap').innerHTML=
+'<div class="print-header"><span class="ph-brand">Vantage \xb7 Virorah</span><span class="ph-meta">L2 Talent Premium'+((md&&md.industry)?' \xb7 '+md.industry:'')+'</span></div>'+
 '<div class="pillar-nav-strip"><a href="pillar-l1.html" class="pillar-back">← L1</a><div class="pillar-dots"><a class="pd" href="pillar-l1.html"><span class="pd-label">L1</span></a><a class="pd active" href="pillar-l2.html"><span class="pd-label">L2</span><span class="pd-score">'+(result.score==null?'—':result.score)+'</span></a><a class="pd" href="pillar-l3.html"><span class="pd-label">L3</span></a><a class="pd" href="pillar-l4.html"><span class="pd-label">L4</span></a><a class="pd" href="pillar-l5.html"><span class="pd-label">L5</span></a></div><a href="pillar-l3.html" class="pillar-forward">L3 →</a></div>'+
 '<div class="eyebrow">Vantage · Humac Score · L2 · 15% weight</div><h1 class="page-title">The Talent Premium</h1><p class="page-sub">Are the people you have performing above what their role and cost would predict? Five signals, averaged \u2014 not a rupee value. '+l2Mode+' mode.</p>'+
 '<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L2 from measured signals</div><div class="ratio-num">'+(result.score==null?'—':result.score)+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">Provisional band: '+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+(result.insufficient?'Not enough measured signals to score talent quality.':'Average of measured signals only.')+'</div><div class="context">'+result.measured+' of 5 measured. HCI for this pillar <b>'+hci.toFixed(2)+'x</b> ('+Math.round(result.hciFactor*100)+'% of profile HCI, because partial data is less trustworthy).</div></div></div></div>'+
@@ -332,7 +345,7 @@ findingsHtml+
 gate+(l2Mode!=='computed'?'<div class="assumption-note" style="margin-bottom:16px;padding:12px 14px;background:rgba(99,102,241,.05);border-radius:8px;border-left:2px solid rgba(99,102,241,.25)">These five scores come from yes/no answers mapped onto a 0\u2013100 scale (yes = 100, no = 0) \u2014 not measured rates. Switch to computed mode once you have real ratios to enter.</div>':'')+'<div class="verdicts-section"><div class="sec-head"><h2><span class="step">1</span>Five Verdict Areas · Talent Quality Signals</h2></div>'+cards+'</div>'+
 '<div class="statement"><div class="stmt-lbl">Intelligence Statement · L2</div><div class="stmt-txt">'+intelText()+'</div></div>'+
 actionsHtml+
-'<div class="bottom-nav"><a href="pillar-l1.html" class="btn-back">← L1</a><a href="pillar-l3.html" class="btn-next">L3 Org Vitals →</a></div>';
+'<div class="bottom-nav"><a href="pillar-l1.html" class="btn-back">← L1</a><button onclick="printReport()" class="btn-back" style="cursor:pointer">⬇ Download PDF</button><a href="pillar-l3.html" class="btn-next">L3 Org Vitals →</a></div>';
 </script>
 <script src="clerk-auth.js"></script>
 <script src="sidebar-shared.js"></script>

@@ -131,6 +131,17 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .btn-next{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;background:var(--cobalt);border:none;color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;transition:all .15s}
 .btn-next:hover{background:#5254d4;transform:translateY(-1px)}
 @media(max-width:768px){.wrap{margin-left:0;padding:24px 20px 60px}.sidebar{display:none}.hero-grid{grid-template-columns:1fr;gap:20px}.hero-divider{display:none}.vitals-grid{grid-template-columns:1fr}.findings-grid{grid-template-columns:1fr}.dna-grid{grid-template-columns:1fr}.score-number{font-size:5rem}}
+.print-header{display:none}
+@media print{
+  *{background:transparent!important;color:#111!important;border-color:#ccc!important;box-shadow:none!important}
+  .sidebar,.top-nav{display:none!important}
+  .pillar-nav-strip,.bottom-nav{display:none!important}
+  .print-header{display:flex!important;justify-content:space-between;align-items:center;padding:10px 0 12px;border-bottom:2px solid #6366f1;margin-bottom:18px}
+  .ph-brand{font-size:.72rem;color:#6366f1!important;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+  .ph-meta{font-size:.72rem;color:#555!important}
+  .finding-card,.action-item,.intel-card{page-break-inside:avoid;break-inside:avoid}
+  .vitals-grid,.diag-intro,.delta-bar,.peer-vital-card{display:none!important}
+}
 </style>
 </head>
 <body>
@@ -467,11 +478,12 @@ function renderPage(){
   })();
 
   var intel='<div class="intel-card"><div class="intel-eyebrow">Intelligence Statement \xb7 L3 Org Vitals</div><div class="intel-text">'+intelText+'</div></div>';
-  var bottomNav='<div class="bottom-nav"><a href="pillar-l2.html" class="btn-back">\u2190 L2 Talent Premium</a><a href="pillar-l4.html" class="btn-next">L4 Human P&L \u2192</a></div>';
+  var bottomNav='<div class="bottom-nav"><a href="pillar-l2.html" class="btn-back">\u2190 L2 Talent Premium</a><button onclick="printReport()" class="btn-back" style="cursor:pointer">\u2b07 Download PDF</button><a href="pillar-l4.html" class="btn-next">L4 Human P&L \u2192</a></div>';
 
-  w.innerHTML=nav+header+hero+deltaBar+diagIntro+vitalsHTML+dnaSection+peerHTML+findings+'<div class="section-eyebrow" style="margin-bottom:6px">What to do next</div><div class="section-title" style="margin-bottom:20px">Moving your Org Vitals forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('')+intel+bottomNav;
+  w.innerHTML='<div class="print-header"><span class="ph-brand">Vantage \xb7 Virorah</span><span class="ph-meta">L3 Org Vitals \xb7 '+(industry?industry+' \xb7 ':'')+(scoreDate||'')+'</span></div>'+nav+header+hero+deltaBar+diagIntro+vitalsHTML+dnaSection+peerHTML+findings+'<div class="section-eyebrow" style="margin-bottom:6px">What to do next</div><div class="section-title" style="margin-bottom:20px">Moving your Org Vitals forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('')+intel+bottomNav;
 }
 
+function printReport(){var prev=document.title;document.title='L3 Org Vitals \xb7 Vantage';window.print();document.title=prev;}
 function setSignal(id,val,btn){
   interMap[id]=val;
   try{sessionStorage.setItem('vantage_l3_draft',JSON.stringify(interMap));}catch(e){}
