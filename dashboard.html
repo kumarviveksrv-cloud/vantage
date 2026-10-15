@@ -507,7 +507,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
           <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,158,11,.6);margin-bottom:4px">Humac Gaps</div>
           <div style="font-size:.92rem;font-weight:700;color:#f4f3ff;line-height:1.2">Processes I'm building</div>
         </div>
-        <a href="humac-checkin.html" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.06em;color:rgba(165,180,252,.72);text-decoration:none;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.18);padding:6px 12px;border-radius:6px;transition:all .2s" onmouseover="this.style.color='#a5b4fc'" onmouseout="this.style.color='rgba(165,180,252,.72)'">Run check-in &#x2192;</a>
+        <a href="humac-checkin.html" style="font-family:'JetBrains Mono',monospace;font-size:.78rem;letter-spacing:.05em;color:rgba(165,180,252,.92);text-decoration:none;background:rgba(99,102,241,.10);border:1px solid rgba(99,102,241,.28);padding:6px 13px;border-radius:7px;transition:all .2s;white-space:nowrap" onmouseover="this.style.borderColor='rgba(99,102,241,.55)';this.style.background='rgba(99,102,241,.18)'" onmouseout="this.style.borderColor='rgba(99,102,241,.28)';this.style.background='rgba(99,102,241,.10)'">Run check-in &#x2192;</a>
       </div>
       <div id="gaps-list" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
@@ -923,7 +923,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
         trajRow =
           '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(99,102,241,.06);margin-bottom:4px">' +
             '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.72rem;color:rgba(244,243,255,.60)">Trajectory</div>' +
-            '<a href="humac-checkin.html" style="font-family:\'JetBrains Mono\',monospace;font-size:.52rem;color:rgba(165,180,252,.65);text-decoration:none;transition:color .15s" onmouseover="this.style.color=\'rgba(165,180,252,.90)\'" onmouseout="this.style.color=\'rgba(165,180,252,.65)\'">\u2014 Run check-in to establish</a>' +
+            '<a href="humac-checkin.html" style="font-family:\'JetBrains Mono\',monospace;font-size:.78rem;letter-spacing:.05em;color:rgba(165,180,252,.92);text-decoration:none;background:rgba(165,180,252,.08);border:1px solid rgba(165,180,252,.25);padding:6px 13px;border-radius:7px;transition:all .2s;white-space:nowrap" onmouseover="this.style.borderColor=\'rgba(165,180,252,.50)\';this.style.background=\'rgba(165,180,252,.15)\'" onmouseout="this.style.borderColor=\'rgba(165,180,252,.25)\';this.style.background=\'rgba(165,180,252,.08)\'">Run check-in \u2192</a>' +
           '</div>';
       }
 
@@ -968,7 +968,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
             (confDots[data.confidence] || '\u25cb') + ' ' + (confLabels[data.confidence] || 'Estimated') +
             ' \xb7 HCI ' + ((data.hci || 1).toFixed(2)) + 'x' +
           '</div>' +
-          '<a href="humac-onboarding.html" style="font-family:\'JetBrains Mono\',monospace;font-size:.58rem;color:rgba(99,102,241,.80);text-decoration:none" onmouseover="this.style.color=\'#6366f1\'" onmouseout="this.style.color=\'rgba(99,102,241,.80)\'">Update score \u2192</a>' +
+          '<a href="humac-onboarding.html" style="font-family:\'JetBrains Mono\',monospace;font-size:.78rem;letter-spacing:.05em;color:rgba(165,180,252,.92);text-decoration:none;background:rgba(99,102,241,.10);border:1px solid rgba(99,102,241,.28);padding:6px 13px;border-radius:7px;transition:all .2s;white-space:nowrap" onmouseover="this.style.borderColor=\'rgba(99,102,241,.55)\';this.style.background=\'rgba(99,102,241,.18)\'" onmouseout="this.style.borderColor=\'rgba(99,102,241,.28)\';this.style.background=\'rgba(99,102,241,.10)\'">Update score \u2192</a>' +
         '</div>';
     }
 
