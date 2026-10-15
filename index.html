@@ -1863,7 +1863,7 @@
 .hero-context {
   font-family: 'Cormorant Garamond', serif !important;
   font-style: italic !important;
-  font-size: clamp(18px,1.9vw,24px) !important;
+  font-size: clamp(21px,2.15vw,28px) !important; /* SR35: optical match to roman kicker — see Tier B block */
   font-weight: 400 !important;
   opacity: 1 !important;
   margin: 0 !important; /* SR30: old 40px/36px removed — SR29's margin-top:32px is the single source of truth for hero-title spacing now */
@@ -3075,7 +3075,13 @@
 }
 
 /* TIER B: the supporting aside line + kicker — tagline-matched, quiet */
-#top .hero-title .line.dim.hero-context,
+/* SR35: hero-context is italic Cormorant Garamond, which reads optically
+   lighter/smaller than the roman hero-kicker at the same pixel size.
+   Bumped to clamp(21px,2.15vw,28px) to visually match the kicker's weight. */
+#top .hero-title .line.dim.hero-context {
+  font-size: clamp(21px, 2.15vw, 28px) !important;
+  line-height: 1.3 !important;
+}
 #top .hero-title .hero-kicker {
   font-size: clamp(19px, 2vw, 26px) !important;
   line-height: 1.3 !important;
