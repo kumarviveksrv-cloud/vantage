@@ -419,6 +419,13 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       </div>
     </div>
 
+    <!-- MERIDIAN STATUS BAR (SR-mob-meridian)
+         Permanent system-state indicator. Never dismissable.
+         Decoupled from #setup-card — survives its dismissal.
+         Mobile: primary Meridian signal (no sidebar fallback).
+         Desktop: secondary trust signal alongside sidebar chip. -->
+    <div id="meridian-status-bar"></div>
+
     <!-- ── SITUATION: what's happening in your HR world right now ── -->
     <div class="cal-banner">
       <div class="cal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
@@ -721,6 +728,57 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       var c=document.getElementById('setup-card'); if(c) c.style.display='none';
     }
     renderSetupCard();
+
+    // ─────────────────────────────────────
+    // MERIDIAN STATUS BAR (SR-mob-meridian)
+    // Permanent, non-dismissable system-state element.
+    // Decoupled from #setup-card — never hidden by dismissSetupCard().
+    // Warning state: amber banner → links to onboarding.html
+    // Active state: green trust-signal chip with context summary
+    // ─────────────────────────────────────
+    (function renderMeridianStatusBar() {
+      var bar = document.getElementById('meridian-status-bar');
+      if (!bar) return;
+      if (hasMeridian) {
+        var m = {};
+        try { m = JSON.parse(sessionStorage.getItem('sr_meridian') || '{}'); } catch(e) {}
+        var ctxLabel = (m.state && m.industry) ? m.state + ' \xb7 ' + m.industry : 'Context loaded';
+        bar.innerHTML =
+          '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;' +
+          'background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.20);' +
+          'border-radius:10px;margin-bottom:16px;animation:fadeIn .4s ease both">' +
+            '<span style="width:7px;height:7px;border-radius:50%;background:rgba(34,197,94,0.75);' +
+            'box-shadow:0 0 6px rgba(34,197,94,0.45);flex-shrink:0"></span>' +
+            '<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.08em;' +
+            'text-transform:uppercase;color:rgba(34,197,94,0.80)">MERIDIAN Active</span>' +
+            '<span style="font-size:11px;color:rgba(244,243,255,0.38);margin-left:2px">&middot; ' + ctxLabel + '</span>' +
+          '</div>';
+      } else {
+        bar.innerHTML =
+          '<a href="onboarding.html" style="display:flex;align-items:center;gap:12px;padding:13px 16px;' +
+          'background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.28);' +
+          'border-radius:10px;margin-bottom:16px;text-decoration:none;animation:fadeIn .4s ease both;' +
+          'transition:border-color .2s,background .2s" ' +
+          'onmouseover="this.style.borderColor=\'rgba(245,158,11,0.52)\';this.style.background=\'rgba(245,158,11,0.12)\'" ' +
+          'onmouseout="this.style.borderColor=\'rgba(245,158,11,0.28)\';this.style.background=\'rgba(245,158,11,0.08)\'">' +
+            '<span style="flex-shrink:0;color:rgba(245,158,11,0.80)">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>' +
+                '<line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>' +
+              '</svg>' +
+            '</span>' +
+            '<span style="flex:1;min-width:0">' +
+              '<span style="display:block;font-family:\'JetBrains Mono\',monospace;font-size:10px;' +
+              'letter-spacing:.08em;text-transform:uppercase;color:rgba(245,158,11,0.85);margin-bottom:3px">' +
+              'MERIDIAN not set up</span>' +
+              '<span style="font-size:12px;color:rgba(244,243,255,0.52);line-height:1.45">' +
+              'Your tools are running without your professional context. Answers will be generic until MERIDIAN is complete.</span>' +
+            '</span>' +
+            '<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.06em;' +
+            'color:rgba(245,158,11,0.72);white-space:nowrap;flex-shrink:0">Set up &rarr;</span>' +
+          '</a>';
+      }
+    })();
 
     /* Onboarding modals: each fires once, and only if its element exists. */
     function openObOverlay(id) {
