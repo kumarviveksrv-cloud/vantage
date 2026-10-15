@@ -331,6 +331,10 @@ input[type=number]{-moz-appearance:textfield}
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
         Go to dashboard
       </a>
+      <button class="action-secondary" onclick="generateReport()" style="gap:7px">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2h7l3 3v9a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z"/><polyline points="10,2 10,5 13,5"/><line x1="5" y1="8" x2="11" y2="8"/><line x1="5" y1="11" x2="9" y2="11"/></svg>
+        Generate Report
+      </button>
       <button class="action-secondary" onclick="restartOnboarding()">Refine answers</button>
     </div>
   </div>
@@ -1133,6 +1137,161 @@ function renderGapSection(confidenceObj){
 
 function toggleGapBody(blockId){var body=document.getElementById('gap-body-'+blockId);var chev=document.getElementById('gap-chev-'+blockId);if(!body)return;body.classList.toggle('open');if(chev)chev.classList.toggle('open');}
 function toggleBuilding(blockId){var key='vantage_gaps_building';var building={};try{building=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}var isNow=building[blockId]!=='1';if(isNow)building[blockId]='1';else delete building[blockId];localStorage.setItem(key,JSON.stringify(building));var card=document.getElementById('gap-card-'+blockId);var pill=document.getElementById('gap-pill-'+blockId);var btn=document.getElementById('gap-btn-'+blockId);if(card)card.classList.toggle('building',isNow);if(pill){pill.textContent=isNow?'\u2713 Building':'Gap';pill.classList.toggle('building',isNow);}if(btn){btn.textContent=isNow?'\u2713 I\u2019m building this':'Mark as building';btn.classList.toggle('active',isNow);}}
+
+function generateReport(){
+  var saved=null,book=null;
+  try{saved=JSON.parse(sessionStorage.getItem('vantage_humac')||'null');book=JSON.parse(sessionStorage.getItem('vantage_l1_book')||'null');}catch(e){}
+  if(!saved||saved.humac==null){alert('No score data found. Please complete the onboarding first.');return;}
+
+  var humac=saved.humac,hciAdj=saved.hciAdj,hci=saved.hci,confLevel=saved.confidence||'low';
+  var ts=saved.timestamp?new Date(saved.timestamp):new Date();
+  var dateStr=ts.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  var bandObj=getBand(humac);
+
+  var scopeLabels={'the whole organisation':'Whole org view','a specific business unit, region, or division':'Business unit view','my direct team':'Direct team view'};
+  var l3ScopeLabel=scopeLabels[(saved.l3Scope||'').toLowerCase()]||'';
+  var pillars=[
+    {label:'L1',name:'Value Ledger',score:saved.l1,weight:saved.l1==null?null:'25%',mode:saved.l1Mode||'estimate'},
+    {label:'L2',name:'Talent Premium',score:saved.l2,weight:saved.l2==null?null:'15%',mode:saved.l2Mode||'estimate'},
+    {label:'L3',name:'Org Vitals',score:saved.l3,weight:saved.l3==null?null:'30%',mode:'questions',scopeTag:l3ScopeLabel},
+    {label:'L4',name:'Human P&L',score:saved.l4,weight:saved.l4==null?null:'20%',mode:saved.l4Mode||'estimate'},
+    {label:'L5',name:'Human Balance Sheet',score:saved.l5,weight:saved.l5==null?null:'10%',mode:saved.l5Mode||'estimate'}
+  ];
+  var excludedCount=pillars.filter(function(p){return p.score==null;}).length;
+
+  var boardText;
+  if(book&&!book.insufficient&&book.compBase>0){
+    var per=Math.round((book.totalRet/book.compBase)*1000)/10;
+    var lo=Math.round((book.lowRet/book.compBase)*1000)/10;
+    var hi=Math.round((book.highRet/book.compBase)*1000)/10;
+    boardText='For every \u20b9100 of salary, the planning range is \u20b9'+lo+' to \u20b9'+hi+', base \u20b9'+per+'. The 0\u2013100 score places the base case on a provisional scale. '+excludedCount+' pillar'+(excludedCount===1?' is':'s are')+' excluded.';
+  } else {
+    boardText='Rupee return range was not computed in this run \u2014 insufficient L1 data for a cohort book. '+excludedCount+' pillar'+(excludedCount===1?' is':'s are')+' excluded. The score is a provisional index, v0.9.';
+  }
+
+  var confColors={'high':'#22c55e','medium':'#f59e0b','low':'#f97316'};
+  var confColor=confColors[confLevel]||'#94a3b8';
+
+  var pillarRowsHTML=pillars.map(function(p){
+    var pb=p.score==null?{name:'Not computed',color:'#6b7280'}:getBand(p.score);
+    var scopeSpan=p.scopeTag?'<span style="font-size:9px;color:#64748b;margin-left:6px;font-family:monospace;letter-spacing:.04em;text-transform:uppercase">'+p.scopeTag+'</span>':'';
+    var modeLabel=p.score==null?'Excluded':p.mode==='computed'?'Computed':'Estimated';
+    var modeColor=p.score==null?'#4b5563':p.mode==='computed'?'#6366f1':'#94a3b8';
+    return '<tr style="border-bottom:1px solid rgba(255,255,255,.04)'+(p.score==null?';opacity:.55':'')+'">' +
+      '<td style="font-family:monospace;font-weight:700;font-size:13px;color:#a5b4fc;padding:10px 14px;white-space:nowrap">'+p.label+'</td>'+
+      '<td style="padding:10px 14px;color:#e2e8f0;font-size:13px">'+p.name+scopeSpan+'</td>'+
+      '<td style="padding:10px 14px;font-family:monospace;font-size:16px;font-weight:700;color:'+(p.score==null?'#4b5563':'#f4f3ff')+';text-align:right">'+(p.score==null?'\u2014':p.score)+'</td>'+
+      '<td style="padding:10px 14px;font-family:monospace;font-size:12px;color:#64748b;text-align:center">'+(p.weight||'\u2014')+'</td>'+
+      '<td style="padding:10px 14px;font-size:12px;color:'+pb.color+'">'+pb.name+'</td>'+
+      '<td style="padding:10px 14px;font-size:11px;font-family:monospace;color:'+modeColor+';letter-spacing:.03em">'+modeLabel+'</td>'+
+      '</tr>';
+  }).join('');
+
+  var bandBgColor=bandObj.color+'18';
+  var reportHTML='<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Humac Score Report \u2014 Vantage</title><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">' +
+    '<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,sans-serif;background:#0b0b1a;color:#e2e8f0;min-height:100vh;padding:48px 0}' +
+    '.page{max-width:780px;margin:0 auto;padding:0 32px}' +
+    '.rpt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.08)}' +
+    '.rpt-brand{font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#6366f1}' +
+    '.rpt-brand-sub{font-size:11px;color:#475569;margin-top:3px;font-family:monospace;letter-spacing:.04em}' +
+    '.rpt-meta{text-align:right;font-size:12px;color:#475569;line-height:1.7}' +
+    '.rpt-meta strong{color:#94a3b8;display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}' +
+    '.hero{background:linear-gradient(135deg,rgba(99,102,241,.08) 0%,rgba(124,58,237,.06) 100%);border:1px solid rgba(99,102,241,.2);border-top:3px solid '+bandObj.color+';border-radius:14px;padding:32px 36px;margin-bottom:28px;display:flex;align-items:center;gap:40px}' +
+    '.hero-score-num{font-family:"JetBrains Mono",monospace;font-size:72px;font-weight:700;line-height:1;color:'+bandObj.color+';flex-shrink:0}' +
+    '.hero-score-label{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.08em;font-family:monospace;margin-top:4px}' +
+    '.hero-right{flex:1}' +
+    '.hero-band{font-size:22px;font-weight:600;color:'+bandObj.color+';margin-bottom:8px}' +
+    '.hero-adj{font-size:13px;color:#94a3b8;margin-bottom:6px}' +
+    '.hero-conf{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:monospace;letter-spacing:.04em;text-transform:uppercase;padding:4px 10px;border-radius:5px;border:1px solid '+confColor+'40;color:'+confColor+';background:'+confColor+'10}' +
+    '.section{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:24px 28px;margin-bottom:20px}' +
+    '.section-title{font-size:11px;font-family:"JetBrains Mono",monospace;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6366f1;margin-bottom:14px}' +
+    '.formula-text{font-size:14px;line-height:1.7;color:#c8d0e0}' +
+    '.hci-grid{display:flex;gap:24px}' +
+    '.hci-cell{flex:1;background:rgba(255,255,255,.03);border-radius:8px;padding:14px 16px}' +
+    '.hci-cell-label{font-size:10px;font-family:monospace;text-transform:uppercase;letter-spacing:.06em;color:#475569;margin-bottom:6px}' +
+    '.hci-cell-val{font-family:"JetBrains Mono",monospace;font-size:22px;font-weight:600;color:#e2e8f0}' +
+    '.hci-cell-sub{font-size:11px;color:#64748b;margin-top:4px}' +
+    'table{width:100%;border-collapse:collapse}' +
+    'thead tr{border-bottom:1px solid rgba(255,255,255,.12)}' +
+    'th{font-size:10px;font-family:"JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.07em;color:#475569;padding:8px 14px;text-align:left;font-weight:500}' +
+    'th:nth-child(3){text-align:right}th:nth-child(4){text-align:center}' +
+    '.caveat{background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.15);border-radius:10px;padding:20px 24px;margin-bottom:20px}' +
+    '.caveat-title{font-size:11px;font-family:monospace;text-transform:uppercase;letter-spacing:.06em;color:#f59e0b;margin-bottom:10px}' +
+    '.caveat-text{font-size:12px;line-height:1.75;color:#94a3b8}' +
+    '.caveat-text p{margin-bottom:8px}.caveat-text p:last-child{margin-bottom:0}' +
+    '.rpt-footer{margin-top:48px;padding-top:20px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#334155;font-family:monospace;letter-spacing:.04em}' +
+    '@media print{body{background:#fff;color:#111;padding:0}' +
+    '.page{padding:0 24px}' +
+    '.rpt-header{border-bottom-color:#e2e8f0}' +
+    '.rpt-brand{color:#4f46e5}.rpt-meta{color:#6b7280}.rpt-meta strong{color:#374151}' +
+    '.hero{background:#f8f8ff;border:1px solid #c7d2fe;border-top:3px solid '+bandObj.color+'}' +
+    '.hero-score-num{color:'+bandObj.color+'}.hero-band{color:'+bandObj.color+'}' +
+    '.hero-adj{color:#4b5563}.hero-right .hero-conf{background:#fff}' +
+    '.section{background:#f9fafb;border-color:#e5e7eb}' +
+    '.section-title{color:#4f46e5}' +
+    '.formula-text{color:#374151}' +
+    '.hci-cell{background:#f1f5f9}.hci-cell-val{color:#111}' +
+    'table{border-collapse:collapse}th{color:#6b7280}' +
+    'tr td{color:#111 !important}' +
+    '.caveat{background:#fffbeb;border-color:#fcd34d}' +
+    '.caveat-title{color:#d97706}.caveat-text{color:#4b5563}' +
+    '.rpt-footer{color:#9ca3af;border-top-color:#e5e7eb}' +
+    '@page{margin:20mm}}' +
+    '</style></head><body><div class="page">' +
+
+    '<div class="rpt-header">' +
+    '<div><div class="rpt-brand">Vantage</div><div class="rpt-brand-sub">Humac Score \xb7 v0.9 Provisional</div></div>' +
+    '<div class="rpt-meta"><strong>Report Date</strong>'+dateStr+'<br><span style="font-size:10px;color:#334155">For internal stakeholder use only</span></div>' +
+    '</div>' +
+
+    '<div class="hero">' +
+    '<div><div class="hero-score-num">'+humac+'</div><div class="hero-score-label">Humac Score</div></div>' +
+    '<div class="hero-right">' +
+    '<div class="hero-band">'+bandObj.name+'</div>' +
+    '<div class="hero-adj">HCI-adjusted score: <strong style="color:#e2e8f0;font-family:monospace">'+(hciAdj!=null?hciAdj:'\u2014')+'</strong> &nbsp;\xb7&nbsp; HCI multiplier: <strong style="color:#e2e8f0;font-family:monospace">'+(hci!=null?hci.toFixed(2)+'x':'\u2014')+'</strong></div>' +
+    '<div class="hero-conf"><span style="width:6px;height:6px;border-radius:50%;background:'+confColor+';display:inline-block;flex-shrink:0"></span>'+confLevel.charAt(0).toUpperCase()+confLevel.slice(1)+' input coverage</div>' +
+    '</div></div>' +
+
+    '<div class="section">' +
+    '<div class="section-title">Return on Human Capital \xb7 Planning Formula</div>' +
+    '<div class="formula-text">'+boardText+'</div>' +
+    '</div>' +
+
+    '<div class="section">' +
+    '<div class="section-title">Pillar Breakdown</div>' +
+    '<table><thead><tr><th>Pillar</th><th>Name</th><th>Score</th><th>Weight</th><th>Band</th><th>Input Mode</th></tr></thead>' +
+    '<tbody>'+pillarRowsHTML+'</tbody></table>' +
+    (excludedCount>0?'<div style="margin-top:14px;font-size:12px;color:#475569;font-family:monospace">'+excludedCount+' pillar'+(excludedCount===1?' was':'s were')+' excluded. Weights were renormalized across the remaining pillars.</div>':'') +
+    '</div>' +
+
+    '<div class="section">' +
+    '<div class="section-title">Human Confidence Index</div>' +
+    '<div class="hci-grid">' +
+    '<div class="hci-cell"><div class="hci-cell-label">HCI Multiplier</div><div class="hci-cell-val">'+(hci!=null?hci.toFixed(2)+'x':'\u2014')+'</div><div class="hci-cell-sub">Coefficient: 0.70\u20131.30\xd7</div></div>' +
+    '<div class="hci-cell"><div class="hci-cell-label">Input Coverage</div><div class="hci-cell-val" style="color:'+confColor+'">'+confLevel.charAt(0).toUpperCase()+confLevel.slice(1)+'</div><div class="hci-cell-sub">Based on measured vs estimated pillars</div></div>' +
+    '<div class="hci-cell"><div class="hci-cell-label">HCI-adjusted Score</div><div class="hci-cell-val">'+(hciAdj!=null?hciAdj:'\u2014')+'</div><div class="hci-cell-sub">Raw \xd7 HCI</div></div>' +
+    '</div>' +
+    '<div style="margin-top:14px;font-size:12px;color:#475569;line-height:1.65">The Human Confidence Index reflects how stable the organisation was at time of scoring: leadership stability, absence of major restructuring, culture/morale health, and strategic alignment. Each \'Yes\' raises confidence; each \'No\' lowers it.</div>' +
+    '</div>' +
+
+    '<div class="caveat">' +
+    '<div class="caveat-title">Methodology Note</div>' +
+    '<div class="caveat-text">' +
+    '<p>This report is generated by <strong>Humac Score v0.9</strong>, a provisional planning tool. Scores are computed from inputs entered by the practitioner and are not independently verified.</p>' +
+    '<p>Computed scores are normalised against a provisional range, not a published or peer-reviewed benchmark. That scale will be recalibrated once at least 30 organisations have recorded computed scores. This document is not a validated measure and should not be cited as one.</p>' +
+    '<p>Pillars answered in Estimate mode reflect professional judgment rather than measured data. The confidence badge on this report reflects the ratio of measured to estimated inputs. A Low coverage score should be read as directional, not definitive.</p>' +
+    '</div></div>' +
+
+    '<div class="rpt-footer"><span>Vantage \xb7 Humac Score v0.9</span><span>humacity.com</span></div>' +
+    '</div>' +
+    '<script>window.onload=function(){window.print();};<\/script>' +
+    '</body></html>';
+
+  var w=window.open('','_blank','width=900,height=750');
+  if(w){w.document.write(reportHTML);w.document.close();}
+  else{alert('Pop-up blocked. Please allow pop-ups for this site and try again.');}
+}
 
 (function(){
   var saved=null;
