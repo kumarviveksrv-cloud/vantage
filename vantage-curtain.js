@@ -322,7 +322,6 @@
         tadaOverlay.style.opacity = '1';
         tadaOverlay.style.transition = '';
         tadaOverlay.style.display = 'flex';
-        console.log('[TaDa] Logo overlay shown at', performance.now().toFixed(0)+'ms');
 
         /* Logo glow applies almost immediately, while its own entrance
            animation is still settling in. */
@@ -333,9 +332,7 @@
            same tick as display:flex above. Shader is prewarmed during
            the prologue (see prewarmParticleShader above) so this call
            shouldn't stall on first-time GPU shader compilation either. */
-        console.log('[TaDa] Calling runParticles at', performance.now().toFixed(0)+'ms');
         runParticles(document.getElementById('tada-canvas'), ()=>{
-            console.log('[TaDa] Particles finished at', performance.now().toFixed(0)+'ms');
             /* Particles have finished — now hold the logo alone for a
                beat so the reveal still gets room to breathe, before
                dissolving into the landing page. */
@@ -545,7 +542,6 @@
     if(!canvas||typeof THREE==='undefined'){done&&done();return;}
     const W=innerWidth,H=innerHeight;
     canvas.width=W;canvas.height=H;canvas.style.opacity='1';
-    console.log('[runParticles] Setup starting at', performance.now().toFixed(0)+'ms');
     const rdr=new THREE.WebGLRenderer({canvas,antialias:false,alpha:true});
     rdr.setSize(W,H);rdr.setClearColor(0,0);
     const scene=new THREE.Scene();
@@ -568,13 +564,11 @@
        already compiled this same shader during the prologue, this
        should be near-instant; if not (prewarm failed/was skipped),
        whatever compile stall exists happens here, timed below. */
-    console.log('[runParticles] Calling rdr.compile at', performance.now().toFixed(0)+'ms');
     rdr.compile(scene,cam);
-    console.log('[runParticles] rdr.compile returned at', performance.now().toFixed(0)+'ms');
     let f=0,T=60,loggedFirstFrame=false;
     (function go(){
       f++;const t=f/T,e=t*t;
-      if(!loggedFirstFrame){ loggedFirstFrame=true; console.log('[runParticles] First animation frame at', performance.now().toFixed(0)+'ms'); }
+      if(!loggedFirstFrame){ loggedFirstFrame=true; }
       for(let i=0;i<COUNT;i++){pos[i*3]+=vel[i].vx*(1+e*4);pos[i*3+1]+=vel[i].vy*(1+e*4);}
       geo.attributes.position.needsUpdate=true;
       mat.opacity=Math.max(0,1-e*1.2);
@@ -1400,7 +1394,6 @@
     cv.height=window.innerHeight||900;
     const ctx=cv.getContext('2d');
     if(!ctx){cv.style.display='none';cb();return;}
-    console.log('Wormhole started:',cv.width,'x',cv.height);
 
     const W=cv.width, H=cv.height, cx=W/2, cy=H/2;
     const FL=W*0.45; /* focal length — controls perspective strength */
@@ -1434,7 +1427,7 @@
     function frame(now){
       const elapsed=now-t0;
       const p=Math.min(1,elapsed/duration);
-      if(p>=1){clearTimeout(safety);console.log('Wormhole complete');cv.style.display='none';cb();return;}
+      if(p>=1){clearTimeout(safety);cv.style.display='none';cb();return;}
 
       /* Trail fade — longer trails as speed increases */
       ctx.fillStyle='rgba(5,4,16,'+(0.12+p*0.08)+')';
@@ -2294,7 +2287,6 @@
   const kicker  = document.querySelector('.hero-kicker');
   const h1      = document.querySelector('.hero-title');
   if(!tagline || !kicker || !h1){
-    console.log('[HeroSeq] Missing element(s), aborting:', {tagline:!!tagline, kicker:!!kicker, h1:!!h1});
     return;
   }
 
@@ -2304,7 +2296,6 @@
   const heroDeck    = document.querySelector('.hero-deck');
   const heroEnterEl = document.getElementById('heroEnter');
   if(!lineDim || !lineAccents.length){
-    console.log('[HeroSeq] Missing h1 lines, aborting');
     return;
   }
 
@@ -2485,19 +2476,15 @@
   lineAccents.forEach(hideKeepText);
   if(heroContext) hideKeepText(heroContext);
   if(heroDeck) hideKeepText(heroDeck);
-  console.log('[HeroSeq] Initial hide applied. tagline.textContent =', JSON.stringify(tagline.textContent));
-  console.log('[HeroSeq] Accent lines text preserved:', lineAccents.map(el=>el.textContent));
 
   async function typeMixedLine(el, plainText, emText, speed, label){
     /* Defensive re-clear immediately before typing — in case something
        external restored the content between initial hide and now. */
     if(el.textContent.trim() !== ''){
-      console.log('['+label+'] Content was restored before typing started:', JSON.stringify(el.textContent));
     }
     el.textContent = '';
     el.style.setProperty('opacity','1','important');
     el.style.setProperty('visibility','visible','important');
-    console.log('['+label+'] Cleared and starting type. Current textContent =', JSON.stringify(el.textContent));
 
     const plainSpan = document.createElement('span');
     el.appendChild(plainSpan);
@@ -2505,7 +2492,6 @@
       /* Guard: if el's children were wiped out from under us mid-loop
          (e.g. by an external script resetting innerHTML), re-attach. */
       if(!plainSpan.isConnected){
-        console.log('['+label+'] plainSpan was detached mid-type! Re-attaching.');
         el.appendChild(plainSpan);
       }
       plainSpan.textContent = plainText.slice(0,i);
@@ -2516,14 +2502,12 @@
       el.appendChild(emSpan);
       for(let i=0;i<=emText.length;i++){
         if(!emSpan.isConnected){
-          console.log('['+label+'] emSpan was detached mid-type! Re-attaching.');
           el.appendChild(emSpan);
         }
         emSpan.textContent = emText.slice(0,i);
         await delay(speed);
       }
     }
-    console.log('['+label+'] Typing complete. Final textContent =', JSON.stringify(el.textContent));
   }
 
   async function typeSimpleLine(el, text, speed, label){
@@ -2534,7 +2518,6 @@
       el.textContent = text.slice(0,i);
       await delay(speed);
     }
-    console.log('['+label+'] done');
   }
 
   function fadeIn(el, duration){
@@ -2687,7 +2670,6 @@
   }
 
   async function run(){
-    console.log('[HeroSeq] run() started');
 
     /* Fix 3 + 5: Context-aware delay before hero typewriter starts.
        - After prologue completes (natural or skip): 400ms — user is already
@@ -2733,7 +2715,6 @@
 
     /* 5. "Enter Vantage." typewriter sequence (existing logic), AWAITED so
        the tagline only starts once it has finished. */
-    console.log('[HeroSeq] Handing off to heroEnter');
     if(window._heroEnterRun) await window._heroEnterRun();
 
     /* 6. Tagline types out (mixed em), 58ms/char (~3.3s). */
@@ -2752,7 +2733,6 @@
       await fadeInWordsMixed(heroDeck, emText, plainText, 85, 380);
     }
 
-    console.log('[HeroSeq] run() complete');
     sessionStorage.setItem('vantage_hero_animated','1');
     /* Signal that hero animation is fully done — gates PWA install prompt */
     window.dispatchEvent(new CustomEvent('vantage-hero-ready'));
@@ -2821,8 +2801,6 @@
     lineAccents.forEach(hideKeepText);
     if(heroContext) hideKeepText(heroContext);
     if(heroDeck) hideKeepText(heroDeck);
-    console.log('[HeroSeq] Re-hidden right before run(). tagline.textContent =', JSON.stringify(tagline.textContent));
-    console.log('[HeroSeq] Accent lines text still intact:', lineAccents.map(el=>el.textContent));
     /* postPrologueDelay: paying users skip the prologue entirely (no ta-da),
        so 80ms is fine. Non-paying users go through the full prologue + ta-da
        sequence — ta-da takes 3-5 seconds, so 600ms breathing room is needed

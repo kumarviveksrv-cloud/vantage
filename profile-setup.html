@@ -365,7 +365,7 @@
     // Setting it now prevents any redirect loop if clerk-auth.js enforces it.
     try { sessionStorage.setItem('sr_access', 'true'); } catch(e) {}
 
-    const WORKER_URL = 'https://situation-room-api.kumarvivek-srv.workers.dev/';
+    const WORKER_URL = 'https://situation-room-api.kumarvivek-srv.workers.dev';
 
     function showError(msg) {
       const bar = document.getElementById('status-bar');

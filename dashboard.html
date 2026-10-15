@@ -989,7 +989,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       (function waitForClerkRestore() {
         if (window.Clerk && window.Clerk.session) {
           window.Clerk.session.getToken().then(function(token) {
-            fetch('https://situation-room-api.kumarvivek-srv.workers.dev', {
+            fetch(WORKER, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
               body: JSON.stringify({ tool: 'get_humac' })
@@ -1119,12 +1119,10 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
     // Live path: call get_cases on page load. Updates stats + HDC with fresh Airtable data.
     // Runs in parallel with the Humac restore; each updates its own part of the dashboard.
     (function loadDashboardCases() {
-      var WORKER_URL = 'https://situation-room-api.kumarvivek-srv.workers.dev';
-
       function attemptLoad() {
         if (window.Clerk && window.Clerk.session) {
           window.Clerk.session.getToken().then(function(token) {
-            fetch(WORKER_URL, {
+            fetch(WORKER, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
               body: JSON.stringify({ tool: 'get_cases' })

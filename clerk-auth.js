@@ -153,10 +153,6 @@
        vantage_paid_user key as part of Razorpay integration — SR27.
        vantage_paid_user is now reserved for the real paid-status flag,
        to be set by the Razorpay webhook via the Worker.) */
-    // Migrate any existing users from the old key name
-    if (localStorage.getItem('vantage_paid_user') === '1') {
-      localStorage.removeItem('vantage_paid_user');
-    }
     localStorage.setItem('vantage_returning_user', '1');
 
     // Store account creation time for trial timer (written once; epoch ms)

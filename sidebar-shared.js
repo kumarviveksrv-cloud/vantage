@@ -425,7 +425,7 @@
   addMeta('apple-mobile-web-app-capable', 'yes');
   addMeta('apple-mobile-web-app-status-bar-style', 'black-translucent');
   addMeta('apple-mobile-web-app-title', 'Vantage');
-  addLink('apple-touch-icon', '/vantage/icon-192.png');
+  addLink('apple-touch-icon', '/icon-192.png');
   addMeta('mobile-web-app-capable', 'yes');
   addMeta('application-name', 'Vantage');
 
@@ -433,8 +433,8 @@
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
       navigator.serviceWorker.register('/sw.js')
-        .then(function(reg) { console.log('SW registered:', reg.scope); })
-        .catch(function(err) { console.log('SW failed:', err); });
+        .then(function() {})
+        .catch(function() {});
     });
   }
 

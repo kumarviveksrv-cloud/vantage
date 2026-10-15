@@ -187,6 +187,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 var hd=null,md=null;
 try{hd=JSON.parse(sessionStorage.getItem('vantage_humac')||'null');}catch(e){}
 try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
+if(sessionStorage.getItem('sr_access')!=='true'){window.location.href='access.html';}
 if(!hd){window.location.href='humac-onboarding.html';}
 var l1=hd.l1??null,l2=hd.l2??null,l3=hd.l3??null,l4=hd.l4??null,l5=hd.l5??null;
 var ra=hd.rawAnswers||{};
