@@ -113,10 +113,21 @@
     .intro-block{margin-bottom:20px}
     .intro-heading{font-family:var(--font), sans-serif;font-size:14px;font-weight:700;color:#fff;margin-bottom:6px}
     .intro-text{font-size:12px;color:rgba(255,255,255,.5);line-height:1.7}
-    .intro-mode-card{background:rgba(99,102,241,.05);border:1px solid rgba(99,102,241,.12);border-radius:10px;padding:12px 14px;margin-bottom:10px}
-    .imc-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:#a5b4fc;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
-    .imc-desc{font-size:12px;color:rgba(255,255,255,.55);line-height:1.6}
-    .imc-when{font-size:12px;color:rgba(255,255,255,.60);margin-top:5px;font-style:italic}
+    .intro-mode-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-top-width:2px;border-radius:10px;padding:14px 16px;margin-bottom:12px}
+    .imc-explore{border-top-color:#06b6d4}
+    .imc-reflect{border-top-color:#a78bfa}
+    .imc-label{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+    .imc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+    .imc-explore .imc-dot{background:#06b6d4}
+    .imc-reflect .imc-dot{background:#a78bfa}
+    .imc-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    .imc-explore .imc-name{color:#67e8f9}
+    .imc-reflect .imc-name{color:#c4b5fd}
+    .imc-desc{font-size:12px;color:rgba(255,255,255,.62);line-height:1.65}
+    .imc-when{font-size:11px;color:rgba(255,255,255,.55);margin-top:10px;padding:7px 10px;background:rgba(255,255,255,.04);border-left:2px solid;border-radius:0 5px 5px 0}
+    .imc-explore .imc-when{border-left-color:#06b6d4}
+    .imc-reflect .imc-when{border-left-color:#a78bfa}
+    .new-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#f97316;vertical-align:middle;margin-left:4px;flex-shrink:0}
 
     /* CHAT TAB */
     .chat-tab{flex:1;display:flex;flex-direction:column;overflow:hidden}
@@ -291,7 +302,7 @@
       </div>
       <div class="panel-tabs">
         <button class="ptab active" onclick="showTab(this,'chat')">Chat</button>
-        <button class="ptab" onclick="showTab(this,'intro')">About ARIA</button>
+        <button class="ptab" id="tab-btn-intro" onclick="showTab(this,'intro')">About ARIA <span class="new-dot" id="about-new-dot"></span></button>
         <button class="ptab" onclick="showTab(this,'history')">History</button>
       </div>
       <div class="panel-body">
@@ -332,13 +343,13 @@
           </div>
           <div class="intro-block">
             <div class="intro-heading">The two modes</div>
-            <div class="intro-mode-card">
-              <div class="imc-name">Explore</div>
+            <div class="intro-mode-card imc-explore">
+              <div class="imc-label"><span class="imc-dot"></span><span class="imc-name">Explore</span></div>
               <div class="imc-desc">Something has landed on your desk and you're not yet sure what kind of problem it is. Talk it through with ARIA. She knows your Humac Score, your case count, and your exposure total, so she isn't starting from zero. She'll help you see the shape of it, and point you to Employee Case Advisor, Difficult Conversations, or whichever tool actually fits once that's clear.</div>
               <div class="imc-when">Use this when: something just happened and you need to think it through fast, before you know which tool you need.</div>
             </div>
-            <div class="intro-mode-card">
-              <div class="imc-name">Reflection</div>
+            <div class="intro-mode-card imc-reflect">
+              <div class="imc-label"><span class="imc-dot"></span><span class="imc-name">Reflection</span></div>
               <div class="imc-desc">Think out loud about your month: the cases you navigated, the decisions that still sit with you, the patterns you're noticing, the things you'd do differently. ARIA knows your actual case count, your Humac Score trend, and your most recent Debrief, so this isn't generic reflection prompting, it's grounded in what you've actually built on Vantage. She listens, asks one question at a time, and surfaces what's actually underneath what you're saying. It's a structured professional retrospective, not a therapy session.</div>
               <div class="imc-when">Use this when: you feel like you've been on autopilot and want to step back and understand what's actually been happening.</div>
             </div>
@@ -449,6 +460,11 @@
       document.getElementById('tab-intro').style.display=tab==='intro'?'block':'none';
       document.getElementById('tab-history').style.display=tab==='history'?'block':'none';
       if(tab==='history')renderHistory();
+      if(tab==='intro'){
+        try{localStorage.setItem('aria_seen_about','1');}catch(e){}
+        var dot=document.getElementById('about-new-dot');
+        if(dot)dot.style.display='none';
+      }
     }
 
     window.setMode=function(el,mode) {
@@ -826,6 +842,20 @@
     window.speechSynthesis.onvoiceschanged = function() { populateVoices(); };
     setTimeout(populateVoices, 600);
     setTimeout(populateVoices, 2000);
+
+    // First-visit: open About ARIA by default so new users understand the two modes
+    // before they try to start talking. On return visits, dot is hidden and Chat is default.
+    (function(){
+      try{
+        if(!localStorage.getItem('aria_seen_about')){
+          var introBtn=document.getElementById('tab-btn-intro');
+          if(introBtn)showTab(introBtn,'intro');
+        } else {
+          var dot=document.getElementById('about-new-dot');
+          if(dot)dot.style.display='none';
+        }
+      }catch(e){}
+    })();
 
     // End session
     window.endSession=function(){
