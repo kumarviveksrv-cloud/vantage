@@ -1,7 +1,8 @@
 /**
  * Geo-restriction middleware — Vantage / Virorah
  * Allows only India (IN) traffic to reach the app.
- * Static assets are always served (needed for OG crawlers, CDN, etc.)
+ * Static assets and known social/search crawlers are always served
+ * (needed for OG previews on LinkedIn, WhatsApp, Twitter, etc.)
  */
 
 const STATIC_EXTENSIONS = [
@@ -11,8 +12,31 @@ const STATIC_EXTENSIONS = [
   '.manifest', '.map',
 ];
 
+// Social media and search crawlers that must see the real HTML for OG tags.
+// These bots are US/EU-based and would otherwise hit the geo-block.
+const CRAWLER_AGENTS = [
+  'LinkedInBot',
+  'facebookexternalhit',
+  'Facebot',
+  'Twitterbot',
+  'WhatsApp',
+  'Slackbot',
+  'TelegramBot',
+  'Discordbot',
+  'Googlebot',
+  'bingbot',
+  'Applebot',
+  'ia_archiver',
+  'Iframely',
+];
+
 function isStaticAsset(pathname) {
   return STATIC_EXTENSIONS.some((ext) => pathname.toLowerCase().endsWith(ext));
+}
+
+function isCrawler(userAgent) {
+  if (!userAgent) return false;
+  return CRAWLER_AGENTS.some((bot) => userAgent.includes(bot));
 }
 
 function geoBlockedPage() {
@@ -125,8 +149,15 @@ export async function onRequest(context) {
   const { request, next } = context;
   const url = new URL(request.url);
 
-  // Always serve static assets — needed for OG crawlers, CDN, bots
+  // Always serve static assets — images, fonts, scripts, etc.
   if (isStaticAsset(url.pathname)) {
+    return next();
+  }
+
+  // Always serve known social/search crawlers so OG tags are readable.
+  // LinkedIn, WhatsApp, Twitter bots are US-based and need the real HTML.
+  const ua = request.headers.get('User-Agent') || '';
+  if (isCrawler(ua)) {
     return next();
   }
 
