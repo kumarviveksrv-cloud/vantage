@@ -164,6 +164,14 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
     .tc-sim:hover{border-color:rgba(168,85,247,0.4);box-shadow:0 4px 20px rgba(168,85,247,0.12)}
     .tc-policy::before{background:linear-gradient(90deg,#10b981,#34d399)}
     .tc-policy:hover{border-color:rgba(16,185,129,0.4);box-shadow:0 4px 20px rgba(16,185,129,0.12)}
+    .tc-ret::before{background:linear-gradient(90deg,#06b6d4,#22d3ee)}
+    .tc-ret:hover{border-color:rgba(6,182,212,0.4);box-shadow:0 4px 20px rgba(6,182,212,0.12)}
+    .tc-record::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+    .tc-record:hover{border-color:rgba(59,130,246,0.4);box-shadow:0 4px 20px rgba(59,130,246,0.12)}
+    .tc-stand::before{background:linear-gradient(90deg,#6366f1,#818cf8)}
+    .tc-stand:hover{border-color:rgba(99,102,241,0.4);box-shadow:0 4px 20px rgba(99,102,241,0.12)}
+    .tc-debrief::before{background:linear-gradient(90deg,#f97316,#fb923c)}
+    .tc-debrief:hover{border-color:rgba(249,115,22,0.4);box-shadow:0 4px 20px rgba(249,115,22,0.12)}
     .tc-aria::before{background:linear-gradient(90deg,#6366f1,#818cf8)}
     .tc-aria:hover{border-color:rgba(99,102,241,0.4);box-shadow:0 4px 20px rgba(99,102,241,0.12)}
     .tool-card .tool-tag{position:absolute;top:10px;right:10px;font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--muted);background:var(--teal-dim);border:1px solid rgba(99,102,241,0.25);padding:2px 6px;border-radius:4px;letter-spacing:.06em}
@@ -552,7 +560,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
           <div class="tool-name">Policy Advisor</div>
           <div class="tool-desc">Describe a policy gap, get the applicable legal framework.</div>
         </a>
-        <a href="retention-advisor.html" class="tool-card">
+        <a href="retention-advisor.html" class="tool-card tc-ret">
           <div class="tool-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><path d="M7 3h10"/><path d="M3.5 9l3.5 7H0l3.5-7zM16.5 9l3.5 7H13l3.5-7z"/></svg></div>
           <div class="tool-name">Retention Advisor</div>
           <div class="tool-desc">Model the real cost of keeping or losing this person.</div>
@@ -566,17 +574,17 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
         <div class="section-title" style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(99,102,241,.88);font-family:'DM Sans',sans-serif;font-weight:600">Your Record</div>
       </div>
       <div class="tools-grid" style="grid-template-columns:1fr 1fr 1fr">
-        <a href="vantage-record.html" class="tool-card">
+        <a href="vantage-record.html" class="tool-card tc-record">
           <div class="tool-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1"/><line x1="10" y1="12" x2="14" y2="12"/></svg></div>
           <div class="tool-name">Vantage Record</div>
           <div class="tool-desc">Every case you've navigated, auto-saved and searchable.</div>
         </a>
-        <a href="standpoint.html" class="tool-card">
+        <a href="standpoint.html" class="tool-card tc-stand">
           <div class="tool-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
           <div class="tool-name">Standpoint</div>
           <div class="tool-desc">File your professional position before the outcome is known.</div>
         </a>
-        <a href="debrief.html" class="tool-card">
+        <a href="debrief.html" class="tool-card tc-debrief">
           <div class="tool-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg></div>
           <div class="tool-name">The Debrief</div>
           <div class="tool-desc">Your month in numbers, auto-generated at month end.</div>
