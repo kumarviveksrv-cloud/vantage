@@ -3338,10 +3338,11 @@
     font-size: clamp(13px, 3.6vw, 16px) !important;
     line-height: 1.65 !important;
     font-weight: 400 !important;
-    margin-bottom: 20px !important;
   }
-  .hero-title .line:not(.hero-context) {
-    margin-bottom: 10px !important;
+  /* Uniform gap after every .line stanza — same rhythm as the kicker (24px)
+     so the whole stack breathes consistently on mobile. */
+  .hero-title .line {
+    margin-bottom: 20px !important;
   }
 }
 </style>
