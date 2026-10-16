@@ -166,6 +166,12 @@
     .print-meta{font-size:12px;color:rgba(244,243,255,0.5);margin-top:4px;font-family:'JetBrains Mono',monospace}
     .print-date{font-size:11px;color:rgba(244,243,255,0.5);text-align:right;font-family:'JetBrains Mono',monospace;padding-top:2px}
 
+    /* COMPLIANCE EXPOSURE CHIP */
+    .compliance-exposure-chip{background:rgba(74,222,128,0.05);border:1px solid rgba(74,222,128,0.22);border-radius:12px;padding:18px 22px;margin-bottom:16px}
+    .comp-exp-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(134,239,172,0.7);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+    .comp-exp-value{font-size:20px;font-weight:700;color:#86efac;margin-bottom:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.03em}
+    .comp-exp-sub{font-size:11px;color:rgba(134,239,172,0.5);font-family:'JetBrains Mono',monospace;letter-spacing:.02em}
+
     /* PRINT STYLES */
     @media print{
       *{background:transparent !important;color:#111 !important;box-shadow:none !important;text-shadow:none !important;animation:none !important}
@@ -361,6 +367,13 @@
           </div>
         </div>
 
+        <!-- Compliance Exposure -->
+        <div class="compliance-exposure-chip" id="compliance-exposure-chip" style="display:none">
+          <div class="comp-exp-label">&#x1F4B0; Compliance Exposure</div>
+          <div class="comp-exp-value" id="compliance-exposure-value"></div>
+          <div class="comp-exp-sub">Estimated financial liability &middot; Calibrated to your MERIDIAN context</div>
+        </div>
+
         <!-- ARIA offer -->
         <div class="aria-offer-card">
           <div class="aria-offer-inner">
@@ -373,6 +386,7 @@
         <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="openInCaseNavigator()">Open in Employee Case Advisor &rarr;</button>
+          <button class="btn-ghost" id="save-record-btn" onclick="saveToRecord()" style="display:none">&#x2713; Save to Vantage Record</button>
           <button class="btn-ghost" onclick="printReport()">&#x2913; Download Report</button>
           <button class="btn-ghost" onclick="startNew()">New Question</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
@@ -410,6 +424,43 @@
       document.title = 'Vantage — Policy Guidance — ' + dateStr;
       window.print();
       document.title = orig;
+    }
+
+    function saveToRecord() {
+      var btn = document.getElementById('save-record-btn');
+      if (!currentResult || !parsedSections.complianceExposure) return;
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+      var userId = '';
+      try { userId = window.Clerk && window.Clerk.user ? window.Clerk.user.id : ''; } catch(e) {}
+      var _clerkToken = window.Clerk && window.Clerk.session ? '' : '';
+      fetch(WORKER, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          tool: 'save_case',
+          userId: userId,
+          caseType: 'Policy Advisor: ' + currentQuery.substring(0, 60),
+          narrative: currentQuery.substring(0, 900),
+          result: currentResult,
+          financial_exposure: parsedSections.complianceExposure,
+          status: 'Open'
+        })
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          btn.textContent = 'Saved to Vantage Record ✓';
+          btn.disabled = true;
+        } else {
+          btn.disabled = false;
+          btn.textContent = '⚠ Save failed — try again';
+        }
+      })
+      .catch(function() {
+        btn.disabled = false;
+        btn.textContent = '⚠ Connection error — try again';
+      });
     }
 
     // ── DOCUMENT UPLOAD STATE (NEW) ──────────────────────────────────────────
@@ -605,16 +656,18 @@
     }
 
     function parsePolicyResponse(text) {
-      var sections = { assessment: '', legal: '', recommended: '', meridianNote: '', ariaOffer: '' };
+      var sections = { assessment: '', legal: '', recommended: '', meridianNote: '', ariaOffer: '', complianceExposure: '' };
       if (!text) return sections;
 
-      var assessMatch = text.match(/🧠\s*VANTAGE ASSESSMENT\s*([\s\S]*?)(?=⚖️|🎯|$)/i);
-      var legalMatch  = text.match(/⚖️\s*LEGAL POSITION\s*([\s\S]*?)(?=🧠|🎯|$)/i);
-      var recMatch    = text.match(/🎯\s*RECOMMENDED PATH\s*([\s\S]*?)$/i);
+      var assessMatch = text.match(/🧠\s*VANTAGE ASSESSMENT\s*([\s\S]*?)(?=⚖️|🎯|💰|$)/i);
+      var legalMatch  = text.match(/⚖️\s*LEGAL POSITION\s*([\s\S]*?)(?=🧠|🎯|💰|$)/i);
+      var recMatch    = text.match(/🎯\s*RECOMMENDED PATH\s*([\s\S]*?)(?=💰|$)/i);
+      var compMatch   = text.match(/💰\s*COMPLIANCE\s+EXPOSURE:\s*([^\n\r]+)/i);
 
       if (assessMatch) sections.assessment = assessMatch[1].trim();
       if (legalMatch)  sections.legal      = legalMatch[1].trim();
       if (recMatch)    sections.recommended = recMatch[1].trim();
+      if (compMatch)   sections.complianceExposure = compMatch[1].trim();
 
       if (!sections.assessment && !sections.legal && !sections.recommended) {
         sections.assessment = text.trim();
@@ -651,6 +704,20 @@
 
       if (parsedSections.ariaOffer) {
         document.getElementById('aria-offer-text').innerText = parsedSections.ariaOffer;
+      }
+
+      // Compliance exposure chip
+      var compChip = document.getElementById('compliance-exposure-chip');
+      var compValEl = document.getElementById('compliance-exposure-value');
+      var saveBtn = document.getElementById('save-record-btn');
+      var compVal = parsedSections.complianceExposure || '';
+      if (compVal && compVal.toLowerCase() !== 'not quantifiable' && compVal.toLowerCase() !== 'nil') {
+        compValEl.textContent = compVal;
+        compChip.style.display = 'block';
+        if (saveBtn) saveBtn.style.display = '';
+      } else {
+        compChip.style.display = 'none';
+        if (saveBtn) saveBtn.style.display = 'none';
       }
 
       showView('output-view');

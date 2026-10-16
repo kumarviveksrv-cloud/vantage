@@ -597,7 +597,7 @@
         <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="switchToStakeholderFlow()">Build the case for one person &#x2192;</button>
-          <button class="btn-secondary" onclick="printReport()">&#x2913; Download Report</button>
+          <button class="btn-ghost" onclick="printReport()">&#x2193; Download Report</button>
           <button class="btn-ghost" id="save-record-btn" onclick="saveToRecord()">Save to Vantage Record &#x2192;</button>
           <button class="btn-ghost" onclick="fileToLedgerGeneral()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
           <button class="btn-ghost" onclick="startNewGeneral()">New Story</button>
@@ -638,9 +638,9 @@
             <div class="ih-profile" id="ih-profile">&#8212;</div>
           </div>
           <div class="anchor-wrap">
+            <div class="anchor-label">Data Anchor</div>
             <div class="anchor-number" id="anchor-number">&#8212;</div>
             <div class="anchor-headline" id="anchor-headline"></div>
-            <div class="anchor-label">Data Anchor</div>
           </div>
         </div>
 
@@ -686,7 +686,8 @@
         <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="practiceConversation()">Simulate the Conversation &rarr;</button>
-          <button class="btn-secondary" onclick="printReport()">&#x2913; Download Report</button>
+          <button class="btn-ghost" onclick="printReport()">&#x2193; Download Report</button>
+          <button class="btn-ghost" id="save-record-btn-stakeholder" onclick="saveToRecordStakeholder()">&#x2713; Save to Vantage Record</button>
           <button class="btn-ghost" onclick="fileToLedgerStakeholder()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
           <button class="btn-ghost" onclick="startNewStakeholder()">New Stack</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
@@ -1179,12 +1180,62 @@
           })
         });
         var data = await res.json();
+        var btn = document.getElementById('save-record-btn');
         if (data.success) {
-          var btn = document.getElementById('save-record-btn');
           if (btn) { btn.textContent = 'Saved ✓'; btn.disabled = true; }
           try { localStorage.setItem('sr_last_case_id', (data.data && data.data.airtableId) || 'saved'); } catch(e) {}
+        } else {
+          if (btn) { btn.textContent = '⚠ Save failed — try again'; btn.disabled = false; }
         }
-      } catch(e) { /* silent fail */ }
+      } catch(e) {
+        var btn = document.getElementById('save-record-btn');
+        if (btn) { btn.textContent = '⚠ Connection error — try again'; btn.disabled = false; }
+      }
+    }
+
+    // Save stakeholder flow (INFLUENCE Stack) output to Vantage Record
+    // business_case_value = Revenue at Risk from Risk Mirror layer
+    async function saveToRecordStakeholder() {
+      var btn = document.getElementById('save-record-btn-stakeholder');
+      if (!currentResult) return;
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+
+      var s = currentResult.stack || {};
+      var rm = s.riskMirror || {};
+      var da = s.dataAnchor || {};
+      var businessCaseValue = rm.revenueAtRisk || da.figure || '';
+      var narrative = 'The Business Case: Stakeholder Brief. Audience: ' + (selectedStakeholder || 'Unknown') + '. Revenue at Risk: ' + (rm.revenueAtRisk || 'N/A') + '. Headline: ' + ((currentResult.openingLine || '').substring(0, 200));
+
+      try {
+        var token = null;
+        if (window.Clerk && window.Clerk.session) {
+          try { token = await window.Clerk.session.getToken(); } catch(e) {}
+        }
+        var headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
+
+        var res = await fetch(WORKER, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({
+            tool: 'save_case',
+            caseType: 'The Business Case: ' + (selectedStakeholder || 'Unknown'),
+            narrative: narrative,
+            result: currentResult,
+            business_case_value: businessCaseValue,
+            status: 'Open'
+          })
+        });
+        var data = await res.json();
+        if (data.success) {
+          if (btn) { btn.textContent = 'Saved to Vantage Record ✓'; btn.disabled = true; }
+          try { localStorage.setItem('sr_last_case_id', (data.data && data.data.airtableId) || 'saved'); } catch(e) {}
+        } else {
+          if (btn) { btn.textContent = '⚠ Save failed — try again'; btn.disabled = false; }
+        }
+      } catch(e) {
+        if (btn) { btn.textContent = '⚠ Connection error — try again'; btn.disabled = false; }
+      }
     }
 
     function fileToLedgerGeneral() {
