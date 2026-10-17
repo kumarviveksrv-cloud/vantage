@@ -861,6 +861,9 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         if (data.success) {
           t.innerHTML = '<span class="toast-icon">&#x2713;</span> Case saved to your Vantage Record.';
           localStorage.setItem('sr_last_case_id', (data.data && data.data.airtableId) || 'saved');
+          if (currentResult && currentResult.policy_gap && currentResult.policy_gap.detected) {
+            try { sessionStorage.setItem('vantage_policy_gap', JSON.stringify(currentResult.policy_gap)); } catch(e) {}
+          }
         } else {
           t.innerHTML = '<span class="toast-icon">&#x26A0;&#xFE0F;</span> Save failed: ' + (data.error || 'Unknown error');
         }

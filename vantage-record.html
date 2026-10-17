@@ -106,6 +106,21 @@
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
     @media(max-width:768px){.sidebar{display:none}.main{padding:20px 16px}.stats-row{grid-template-columns:1fr 1fr}.page-header{flex-direction:column;gap:14px}}
+
+    /* POLICY GAP CALLOUT */
+    .pgc-banner{background:linear-gradient(135deg,rgba(99,102,241,.09),rgba(124,58,237,.06));border:1px solid rgba(99,102,241,.32);border-radius:14px;padding:20px 24px;margin-bottom:20px;position:relative;overflow:hidden;animation:fadeIn .4s ease .05s both}
+    .pgc-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(196,181,253,.5),transparent)}
+    .pgc-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    .pgc-left{flex:1;min-width:0}
+    .pgc-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,181,253,.5);margin-bottom:4px}
+    .pgc-headline{font-size:.9rem;font-weight:600;color:#f4f3ff;margin-bottom:8px;line-height:1.4}
+    .pgc-area-chip{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:4px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.28);color:rgba(196,181,253,.8);margin-bottom:8px}
+    .pgc-gap{font-size:.78rem;color:rgba(244,243,255,.55);line-height:1.65}
+    .pgc-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex-shrink:0}
+    .pgc-cta{padding:10px 20px;background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;font-family:var(--font), sans-serif;font-weight:700;font-size:.78rem;border:none;border-radius:8px;cursor:pointer;text-decoration:none;transition:opacity .2s;box-shadow:0 4px 14px rgba(99,102,241,.3);white-space:nowrap;display:inline-block}
+    .pgc-cta:hover{opacity:.88}
+    .pgc-dismiss{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.06em;color:rgba(165,180,252,.4);background:transparent;border:none;cursor:pointer;transition:color .2s;text-transform:uppercase}
+    .pgc-dismiss:hover{color:rgba(165,180,252,.7)}
   </style>
 </head>
 <body>
@@ -186,6 +201,25 @@
     </div>
 
     <div id="main-content" style="display:none">
+
+      <!-- POLICY GAP CALLOUT: surfaced when ECA detected a gap on the last case save -->
+      <div id="policy-gap-callout" style="display:none">
+        <div class="pgc-banner">
+          <div class="pgc-inner">
+            <div class="pgc-left">
+              <div class="pgc-eyebrow">Legal Intelligence</div>
+              <div class="pgc-headline">Your last case exposed a policy gap</div>
+              <div class="pgc-area-chip" id="pgc-area"></div>
+              <div class="pgc-gap" id="pgc-gap"></div>
+            </div>
+            <div class="pgc-right">
+              <a href="policy-advisor.html" class="pgc-cta">Build the framework &rarr;</a>
+              <button class="pgc-dismiss" onclick="dismissPolicyGap()">Dismiss</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="stats-row">
         <div class="stat-mini"><div class="stat-mini-val" id="stat-total">0</div><div class="stat-mini-label">Total cases</div></div>
         <div class="stat-mini"><div class="stat-mini-val" id="stat-open" style="color:#22c55e">0</div><div class="stat-mini-label">Open</div></div>
@@ -253,6 +287,33 @@
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
     var BASE = '';  // relative paths — works on any domain (was stale GitHub Pages URL)
     var allCases = [];
+
+    // ─────────────────────────────────────────────────────────────
+    // POLICY GAP CALLOUT
+    // Reads vantage_policy_gap from sessionStorage (set by ECA on
+    // case save when Worker detected a genuine policy gap).
+    // Surfaces a Legal Intelligence callout card if gap.detected.
+    // Dismissed by the user (clears sessionStorage + hides card).
+    // ─────────────────────────────────────────────────────────────
+    function checkPolicyGap() {
+      try {
+        var raw = sessionStorage.getItem('vantage_policy_gap');
+        if (!raw) return;
+        var gap = JSON.parse(raw);
+        if (!gap || !gap.detected) return;
+        var el = document.getElementById('policy-gap-callout');
+        if (!el) return;
+        document.getElementById('pgc-area').textContent = gap.area || 'Policy area';
+        document.getElementById('pgc-gap').textContent = gap.gap || '';
+        el.style.display = 'block';
+      } catch(e) {}
+    }
+
+    function dismissPolicyGap() {
+      try { sessionStorage.removeItem('vantage_policy_gap'); } catch(e) {}
+      var el = document.getElementById('policy-gap-callout');
+      if (el) el.style.display = 'none';
+    }
     var currentFilter = 'all';
 
     // MERIDIAN chip: loaded from sessionStorage, set by onboarding.html
@@ -463,6 +524,7 @@
         var data = await res.json();
         document.getElementById('loading-view').style.display = 'none';
         document.getElementById('main-content').style.display = 'block';
+        checkPolicyGap();
         if (data.success && data.data) {
           // Worker returns an array of field objects (r.fields): wrap for internal consistency
           allCases = data.data.map(function(f) { return { fields: f }; });
@@ -484,6 +546,7 @@
       } catch(err) {
         document.getElementById('loading-view').style.display = 'none';
         document.getElementById('main-content').style.display = 'block';
+        checkPolicyGap();
         renderCases([]);
       }
     }

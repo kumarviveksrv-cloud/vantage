@@ -489,6 +489,24 @@
 
     document.getElementById('query').addEventListener('input', updateSubmitState);
 
+    // Pre-populate query from ECA policy gap signal (written to sessionStorage on case save)
+    // Consumed immediately so a page refresh doesn't re-inject it.
+    (function() {
+      try {
+        var raw = sessionStorage.getItem('vantage_policy_gap');
+        if (!raw) return;
+        var gap = JSON.parse(raw);
+        sessionStorage.removeItem('vantage_policy_gap');
+        if (!gap || !gap.detected || !gap.area) return;
+        var ta = document.getElementById('query');
+        if (!ta) return;
+        ta.value = 'My last Employee Case Advisor analysis flagged a gap in our ' + gap.area + ' policy. ' +
+          (gap.gap ? gap.gap + ' ' : '') +
+          'What should a policy framework covering this area include, and what are the key provisions to ensure we are compliant and protected?';
+        ta.dispatchEvent(new Event('input'));
+      } catch(e) {}
+    })();
+
     function toggleFlag(el, label) {
       el.classList.toggle('checked');
       var idx = activeFlags.indexOf(label);
