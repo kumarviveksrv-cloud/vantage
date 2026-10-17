@@ -344,11 +344,14 @@
     f.appendChild(ni('aria.html', '\u2736', 'ARIA', { cls: 'nav-item--aria' }));
 
     // YOUR CORE TOOLS
-    f.appendChild(ns('Your Core Tools'));
+    f.appendChild(ns('Revenue Fluency'));
     f.appendChild(ni('employee-case-advisor.html', '\u26A1', 'Employee Case Advisor'));
     f.appendChild(ni('people-roi-brief.html',       '\uD83D\uDCBC', 'The Business Case'));
-    f.appendChild(ni('policy-advisor.html',          '\uD83E\uDDED', 'Policy Advisor'));
     f.appendChild(ni('retention-advisor.html',       '\u2696\uFE0F', 'Retention Advisor'));
+    // LEGAL INTELLIGENCE
+    f.appendChild(ns('Legal Intelligence'));
+    f.appendChild(ni('policy-advisor.html', '\uD83D\uDCDA', 'Policy Advisor'));
+
 
     // YOUR RECORD
     f.appendChild(ns('Your Record'));
