@@ -169,9 +169,24 @@
       // ── ACTIVE PAID PLAN ──────────────────────────────────────────────────
       if (plan && plan.status === 'active') {
         var tier = plan.tier === 'consultant' ? 'Consultant' : 'Core';
+
+        // Subscription countdown: show "X days left in subscription" when
+        // next_billing_date is stored (Unix ms or ISO string). Falls back to
+        // "Active · Tier" when the field is absent or in the past.
+        var activeBadge = 'Active · ' + tier;
+        if (plan.next_billing_date) {
+          var billingMs = typeof plan.next_billing_date === 'number'
+            ? plan.next_billing_date
+            : new Date(plan.next_billing_date).getTime();
+          var daysToRenewal = Math.ceil((billingMs - Date.now()) / 86400000);
+          if (daysToRenewal > 0) {
+            activeBadge = daysToRenewal + (daysToRenewal === 1 ? ' day' : ' days') + ' left in subscription';
+          }
+        }
+
         return {
           label: 'Billing', href: 'pricing.html', page: 'pricing',
-          badge: 'Active · ' + tier,
+          badge: activeBadge,
           badgeColor: 'rgba(74,222,128,.85)', badgeBg: 'rgba(74,222,128,.12)'
         };
       }
@@ -204,16 +219,19 @@
           };
         }
 
-        // Trial active: show countdown
+        // Trial active: positive framing countdown.
+        // > 36 hours left: "X days remaining" (calm, not urgent)
+        // <= 36 hours left (Day 2 after 12-hour mark): switch to hourly "Xh remaining"
         var msLeft = trialEndMs - now;
         var hoursLeft = Math.ceil(msLeft / 3600000);
         var daysLeft = Math.ceil(msLeft / 86400000);
-        // Switch to hourly display when <= 36 hours remain
-        var badgeStr = hoursLeft <= 36 ? (hoursLeft + 'h left') : (daysLeft + 'd left');
+        var badgeStr = hoursLeft <= 36
+          ? (hoursLeft + 'h remaining')
+          : (daysLeft + (daysLeft === 1 ? ' day' : ' days') + ' remaining');
 
         return {
           label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
-          badge: 'Trial · ' + badgeStr,
+          badge: badgeStr,
           badgeColor: 'rgba(251,191,36,.85)', badgeBg: 'rgba(251,191,36,.1)'
         };
       }
