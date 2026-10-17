@@ -210,7 +210,17 @@
       .text-wrap{padding:8px 10px}
       .bb{font-size:12px;padding:7px 10px}
       .ti{font-size:12px;padding:8px 10px}
+      #rh-roles{grid-template-columns:repeat(2,1fr)!important}
+      .rh-debrief-grid-inner{grid-template-columns:1fr!important}
     }
+    @keyframes rhSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    .rh-role{background:rgba(99,102,241,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;color:rgba(255,255,255,.6);font-size:12px;font-family:var(--font),sans-serif}
+    .rh-role:hover{border-color:rgba(99,102,241,.3);color:#fff}
+    .rh-role.selected{background:rgba(99,102,241,.14);border-color:rgba(99,102,241,.45);color:#c4b5fd;font-weight:500}
+    .imc-rehearse{border-top-color:#FF4D6D}
+    .imc-rehearse .imc-dot{background:#FF4D6D}
+    .imc-rehearse .imc-name{color:#FF4D6D}
+    .imc-rehearse .imc-when{border-left-color:#FF4D6D}
   </style>
 </head>
 <body>
@@ -342,16 +352,21 @@
             <div class="intro-text">Every response ARIA generates knows your state, your industry, your org type, your seniority, and your company's policy guardrails, because your MERIDIAN profile is injected into every prompt. You are not getting a generic HR answer. You are getting an answer calibrated to your professional reality.</div>
           </div>
           <div class="intro-block">
-            <div class="intro-heading">The two modes</div>
+            <div class="intro-heading">The three modes</div>
             <div class="intro-mode-card imc-explore">
               <div class="imc-label"><span class="imc-dot"></span><span class="imc-name">Explore</span></div>
-              <div class="imc-desc">Something has landed on your desk and you're not yet sure what kind of problem it is. Talk it through with ARIA. She knows your Humac Score, your case count, and your exposure total, so she isn't starting from zero. She'll help you see the shape of it, and point you to Employee Case Advisor, Difficult Conversations, or whichever tool actually fits once that's clear.</div>
+              <div class="imc-desc">Something has landed on your desk and you're not yet sure what kind of problem it is. Talk it through with ARIA. She knows your Humac Score, your case count, and your exposure total, so she isn't starting from zero. She'll help you see the shape of it, and point you to Employee Case Advisor, Retention Advisor, or whichever tool actually fits once that's clear.</div>
               <div class="imc-when">Use this when: something just happened and you need to think it through fast, before you know which tool you need.</div>
             </div>
             <div class="intro-mode-card imc-reflect">
               <div class="imc-label"><span class="imc-dot"></span><span class="imc-name">Reflection</span></div>
               <div class="imc-desc">Think out loud about your month: the cases you navigated, the decisions that still sit with you, the patterns you're noticing, the things you'd do differently. ARIA knows your actual case count, your Humac Score trend, and your most recent Debrief, so this isn't generic reflection prompting, it's grounded in what you've actually built on Vantage. She listens, asks one question at a time, and surfaces what's actually underneath what you're saying. It's a structured professional retrospective, not a therapy session.</div>
               <div class="imc-when">Use this when: you feel like you've been on autopilot and want to step back and understand what's actually been happening.</div>
+            </div>
+            <div class="intro-mode-card imc-rehearse">
+              <div class="imc-label"><span class="imc-dot"></span><span class="imc-name">Rehearse</span></div>
+              <div class="imc-desc">You need to have a real conversation and you know it. Pick who you're facing — a direct report, your manager, a skip-level leader — describe what's at stake, and run the conversation before it counts. ARIA plays the other party, calibrated to your MERIDIAN context. After the session, you get a coaching debrief: what landed, what didn't, and one technique to try differently in the real conversation.</div>
+              <div class="imc-when">Use this when: you have a specific conversation coming up and you want to go in having already said the hard part once.</div>
             </div>
           </div>
           <div class="intro-block">
@@ -372,6 +387,151 @@
       </div>
     </div>
   </div>
+
+  <!-- ═══ ENTRY POINT OVERLAY ═══ -->
+  <div id="aria-entry" style="display:none;position:fixed;inset:0;z-index:100;background:#050410;flex-direction:column;align-items:center;justify-content:center;padding:24px;animation:fadeIn .4s ease">
+    <div style="text-align:center;margin-bottom:40px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:#fff;margin-bottom:10px">✦ ARIA</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.5);line-height:1.6">What would you like to do today?</div>
+    </div>
+    <div style="display:flex;gap:20px;max-width:660px;width:100%;flex-wrap:wrap">
+      <div onclick="window.chooseARIA('counsel')" style="flex:1;min-width:240px;padding:28px 24px;border-radius:16px;background:rgba(13,11,30,.8);border:1px solid rgba(6,182,212,.25);border-top:3px solid #06b6d4;cursor:pointer;transition:all .25s" onmouseover="this.style.borderLeftColor='rgba(6,182,212,.5)';this.style.borderRightColor='rgba(6,182,212,.5)';this.style.borderBottomColor='rgba(6,182,212,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderLeftColor='rgba(6,182,212,.25)';this.style.borderRightColor='rgba(6,182,212,.25)';this.style.borderBottomColor='rgba(6,182,212,.25)';this.style.transform='none'">
+        <div style="font-size:28px;margin-bottom:14px">🧠</div>
+        <div style="font-family:var(--font),sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:8px">I need counsel</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.65">Something's landed on your desk. Talk it through with ARIA, or do a structured professional reflection. She knows your MERIDIAN context and your Vantage history.</div>
+        <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid rgba(6,182,212,.3);color:#67e8f9;display:inline-block">Explore · Reflection</div>
+      </div>
+      <div onclick="window.chooseARIA('rehearse')" style="flex:1;min-width:240px;padding:28px 24px;border-radius:16px;background:rgba(13,11,30,.8);border:1px solid rgba(167,139,250,.25);border-top:3px solid #a78bfa;cursor:pointer;transition:all .25s" onmouseover="this.style.borderLeftColor='rgba(167,139,250,.5)';this.style.borderRightColor='rgba(167,139,250,.5)';this.style.borderBottomColor='rgba(167,139,250,.5)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderLeftColor='rgba(167,139,250,.25)';this.style.borderRightColor='rgba(167,139,250,.25)';this.style.borderBottomColor='rgba(167,139,250,.25)';this.style.transform='none'">
+        <div style="font-size:28px;margin-bottom:14px">🎭</div>
+        <div style="font-family:var(--font),sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:8px">I want to rehearse a conversation</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.65">Pick who you need to face. Describe what's at stake. Then practice the conversation — no consequences for getting it wrong.</div>
+        <div style="margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:20px;border:1px solid rgba(167,139,250,.3);color:#c4b5fd;display:inline-block">Rehearse</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ REHEARSAL OVERLAY ═══ -->
+  <div id="rehearsal-overlay" style="display:none;position:fixed;inset:0;z-index:99;background:#050410;flex-direction:column">
+
+    <!-- Shared header -->
+    <div style="padding:14px 24px;border-bottom:1px solid rgba(99,102,241,.1);display:flex;align-items:center;gap:16px;flex-shrink:0">
+      <button onclick="window.backToARIA()" style="background:transparent;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:13px;font-family:'JetBrains Mono',monospace;letter-spacing:.04em;padding:0;transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.5)'">&#8592; Back to ARIA</button>
+      <div id="rh-title" style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a5b4fc">Rehearse a Conversation</div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+        <span id="rh-exchange-ctr" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.35)"></span>
+        <button id="rh-end-btn" onclick="window.rhEndPractice()" style="display:none;padding:8px 14px;background:rgba(124,58,237,.1);color:#c4b5fd;border:1px solid rgba(124,58,237,.25);border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--font),sans-serif;transition:all .2s" onmouseover="this.style.background='rgba(124,58,237,.2)'" onmouseout="this.style.background='rgba(124,58,237,.1)'">End Practice &amp; Get Debrief</button>
+      </div>
+    </div>
+
+    <!-- SETUP VIEW -->
+    <div id="rh-setup" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+      <div style="flex:1;overflow-y:auto;padding:24px 32px">
+        <div style="background:rgba(99,102,241,.05);border:1px solid rgba(99,102,241,.14);border-radius:14px;padding:20px 24px;margin-bottom:16px">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f4f3ff;margin-bottom:10px">The real conversation is coming.</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.75">Pick who you need to face. Describe what's at stake. Then practice — in a space where there are <strong style="color:rgba(255,255,255,.85)">no consequences for getting it wrong</strong>. You'll get a coaching debrief when you're done.</div>
+        </div>
+        <div style="background:rgba(13,11,30,.6);border:1px solid rgba(99,102,241,.12);border-radius:14px;padding:24px;margin-bottom:16px">
+          <div style="margin-bottom:22px">
+            <label style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,.7);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:block">Who are you speaking with?</label>
+            <div id="rh-roles" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+              <div class="rh-role" onclick="rhSelectRole(this,'Direct report')"><span style="font-size:18px;display:block;margin-bottom:4px">&#128100;</span>Direct report</div>
+              <div class="rh-role" onclick="rhSelectRole(this,'Your manager')"><span style="font-size:18px;display:block;margin-bottom:4px">&#128070;</span>Your manager</div>
+              <div class="rh-role" onclick="rhSelectRole(this,'Skip-level leader')"><span style="font-size:18px;display:block;margin-bottom:4px">&#127970;</span>Skip-level leader</div>
+              <div class="rh-role" onclick="rhSelectRole(this,'Peer / colleague')"><span style="font-size:18px;display:block;margin-bottom:4px">&#129309;</span>Peer / colleague</div>
+              <div class="rh-role" onclick="rhSelectRole(this,'CHRO / HR Head')"><span style="font-size:18px;display:block;margin-bottom:4px">&#128081;</span>CHRO / HR Head</div>
+              <div class="rh-role" onclick="rhSelectRole(this,'CFO / Finance head')"><span style="font-size:18px;display:block;margin-bottom:4px">&#128176;</span>CFO / Finance head</div>
+              <div class="rh-role" onclick="rhSelectRole(this,'CEO / Founder')"><span style="font-size:18px;display:block;margin-bottom:4px">&#9889;</span>CEO / Founder</div>
+              <div class="rh-role" onclick="rhSelectRole(this,'Employee on PIP')"><span style="font-size:18px;display:block;margin-bottom:4px">&#128203;</span>Employee on PIP</div>
+              <div class="rh-role" onclick="rhSelectRole(this,'Legal counsel')"><span style="font-size:18px;display:block;margin-bottom:4px">&#9878;</span>Legal counsel</div>
+            </div>
+          </div>
+          <div style="margin-bottom:18px">
+            <label style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,.7);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:block">What's the conversation about?</label>
+            <textarea id="rh-scenario" rows="4" style="width:100%;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:#fff;font-family:var(--font),sans-serif;font-size:13px;line-height:1.6;resize:vertical;outline:none;transition:border .2s;box-sizing:border-box" placeholder="Describe what's happening and what's at stake. The more detail you give, the sharper the rehearsal." oninput="rhCheckStart()" onfocus="this.style.borderColor='rgba(99,102,241,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.08)'"></textarea>
+          </div>
+          <div style="margin-bottom:18px">
+            <label style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,.7);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:block">What does success look like?</label>
+            <textarea id="rh-objective" rows="2" style="width:100%;padding:12px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:#fff;font-family:var(--font),sans-serif;font-size:13px;line-height:1.6;resize:vertical;outline:none;transition:border .2s;box-sizing:border-box" placeholder='e.g. "They understand the decision and agree to a next step without escalating."' oninput="rhCheckStart()" onfocus="this.style.borderColor='rgba(99,102,241,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.08)'"></textarea>
+          </div>
+          <div style="margin-bottom:22px">
+            <label style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,.7);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:block">Difficulty level</label>
+            <div style="display:flex;gap:10px">
+              <div id="rh-diff-std" onclick="rhSelectDiff(this,'standard')" style="flex:1;padding:14px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.4);border-radius:10px;cursor:pointer;text-align:center;font-family:var(--font),sans-serif;color:#c4b5fd;transition:all .2s">
+                <div style="font-size:20px;margin-bottom:5px">&#128528;</div>
+                <div style="font-weight:600;font-size:13px">Realistic</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:3px">Pushes back but stays professional</div>
+              </div>
+              <div id="rh-diff-hard" onclick="rhSelectDiff(this,'challenging')" style="flex:1;padding:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;cursor:pointer;text-align:center;font-family:var(--font),sans-serif;color:rgba(255,255,255,.55);transition:all .2s">
+                <div style="font-size:20px;margin-bottom:5px">&#128545;</div>
+                <div style="font-weight:600;font-size:13px">Challenging</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:3px">Defensive, emotional, resistant</div>
+              </div>
+            </div>
+          </div>
+          <button id="rh-start-btn" onclick="rhStartSim()" disabled style="width:100%;padding:15px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:var(--font),sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:not-allowed;opacity:.35;transition:opacity .2s">Begin Practice &#8594;</button>
+          <div id="rh-start-hint" style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#c4b5fd;text-align:center">Choose who you are speaking with to continue.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOADING VIEW -->
+    <div id="rh-loading" style="display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+      <svg width="64" height="64" viewBox="0 0 64 64" style="animation:rhSpin 2s linear infinite">
+        <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(99,102,241,.15)" stroke-width="2"/>
+        <circle cx="32" cy="32" r="28" fill="none" stroke="#6366f1" stroke-width="2" stroke-dasharray="44 132" stroke-linecap="round"/>
+      </svg>
+      <div id="rh-load-text" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#a5b4fc;letter-spacing:.08em">SETTING THE SCENE...</div>
+    </div>
+
+    <!-- CHAT VIEW -->
+    <div id="rh-chat" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+      <div id="rh-stakes-strip" style="display:none;background:linear-gradient(135deg,rgba(99,102,241,.07),rgba(124,58,237,.03));border-bottom:1px solid rgba(99,102,241,.15);padding:12px 24px;flex-shrink:0">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,.6);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">&#128176; Stakes Briefing</div>
+        <div id="rh-stakes-grid" style="display:flex;gap:20px;flex-wrap:wrap"></div>
+      </div>
+      <div id="rh-msgs" style="flex:1;overflow-y:auto;padding:20px 32px;display:flex;flex-direction:column;gap:14px"></div>
+      <div style="padding:14px 24px;border-top:1px solid rgba(99,102,241,.1);display:flex;gap:10px;flex-shrink:0">
+        <textarea id="rh-chat-input" rows="1" style="flex:1;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:#fff;font-family:var(--font),sans-serif;font-size:13px;outline:none;resize:none;max-height:100px;transition:border .2s;box-sizing:border-box" placeholder="Type your response..." onkeydown="if(event.key==='Enter'&amp;&amp;!event.shiftKey){event.preventDefault();rhSendMsg()}" onfocus="this.style.borderColor='rgba(99,102,241,.35)'" onblur="this.style.borderColor='rgba(255,255,255,.08)'"></textarea>
+        <button id="rh-send-btn" onclick="rhSendMsg()" style="padding:10px 18px;background:#6366f1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:var(--font),sans-serif;font-weight:700;font-size:13px;flex-shrink:0;transition:opacity .2s">&#8594;</button>
+      </div>
+    </div>
+
+    <!-- DEBRIEF VIEW -->
+    <div id="rh-debrief" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+      <div style="flex:1;overflow-y:auto;padding:24px 32px">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:#fff;margin-bottom:4px">Coaching Debrief</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px">Here's what happened in that practice session.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px" class="rh-debrief-grid-inner">
+          <div style="background:rgba(13,11,30,.6);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px">
+            <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:12px">&#10003; What worked</div>
+            <div id="rh-db-worked"></div>
+          </div>
+          <div style="background:rgba(13,11,30,.6);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px">
+            <div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:12px">&#127919; What to improve</div>
+            <div id="rh-db-improve"></div>
+          </div>
+        </div>
+        <div style="background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);border-radius:12px;padding:18px;margin-bottom:14px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#a5b4fc;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">The moment most worth replaying</div>
+          <div id="rh-db-inflect" style="font-size:13px;color:rgba(255,255,255,.7);line-height:1.6">&mdash;</div>
+        </div>
+        <div style="background:rgba(255,181,71,.07);border:1px solid rgba(255,181,71,.2);border-radius:12px;padding:18px;margin-bottom:14px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#FFB547;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">One technique to try in the real conversation</div>
+          <div id="rh-db-technique" style="font-size:13px;color:rgba(255,255,255,.7);line-height:1.6">&mdash;</div>
+        </div>
+        <div style="background:rgba(13,11,30,.6);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px;margin-bottom:20px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,.6);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Preparation Brief &mdash; read this before the real conversation</div>
+          <div id="rh-db-prep" style="font-size:13px;color:rgba(255,255,255,.65);line-height:1.8;white-space:pre-wrap">&mdash;</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button onclick="rhPracticeAgain()" style="padding:12px 22px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:var(--font),sans-serif;font-weight:700;font-size:14px;border:none;border-radius:10px;cursor:pointer">Practice Again</button>
+          <button onclick="rhNewScenario()" style="padding:12px 22px;background:transparent;color:rgba(255,255,255,.6);font-size:14px;border:1px solid rgba(255,255,255,.1);border-radius:10px;cursor:pointer;font-family:var(--font),sans-serif;transition:all .2s" onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,.2)'" onmouseout="this.style.color='rgba(255,255,255,.6)';this.style.borderColor='rgba(255,255,255,.1)'">New Scenario</button>
+          <button onclick="window.backToARIA()" style="padding:12px 22px;background:transparent;color:rgba(255,255,255,.6);font-size:14px;border:1px solid rgba(255,255,255,.1);border-radius:10px;cursor:pointer;font-family:var(--font),sans-serif;transition:all .2s" onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,.2)'" onmouseout="this.style.color='rgba(255,255,255,.6)';this.style.borderColor='rgba(255,255,255,.1)'">Back to ARIA</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /rehearsal-overlay -->
 
   <script>
   (function(){
@@ -881,6 +1041,308 @@
 
   })();
   </script>
+
+  <!-- ═══ REHEARSAL MODE JS ═══ -->
+  <script>
+  (function(){
+    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+    var rhRole = '', rhDiff = 'standard', rhHistory = [], rhExchangeCount = 0, rhMax = 8;
+    var rhScenario = '', rhObjective = '', rhPracticeSession = '';
+
+    // Show entry point on every visit
+    document.getElementById('aria-entry').style.display = 'flex';
+
+    window.chooseARIA = function(mode) {
+      document.getElementById('aria-entry').style.display = 'none';
+      if (mode === 'rehearse') {
+        var ov = document.getElementById('rehearsal-overlay');
+        ov.style.display = 'flex';
+        rhShowView('setup');
+      }
+      // counsel: ARIA chat is already rendered underneath, just revealed
+    };
+
+    window.backToARIA = function() {
+      document.getElementById('rehearsal-overlay').style.display = 'none';
+      document.getElementById('aria-entry').style.display = 'none';
+      var chatTab = document.getElementById('tab-chat');
+      if (chatTab) chatTab.style.display = 'flex';
+    };
+
+    function rhShowView(view) {
+      ['setup','loading','chat','debrief'].forEach(function(v) {
+        var el = document.getElementById('rh-' + v);
+        if (el) el.style.display = 'none';
+      });
+      var target = document.getElementById('rh-' + view);
+      if (target) target.style.display = 'flex';
+      var titles = { setup:'Rehearse a Conversation', loading:'Rehearse a Conversation', chat:'Practice Session', debrief:'Coaching Debrief' };
+      var titleEl = document.getElementById('rh-title');
+      if (titleEl) titleEl.textContent = titles[view] || 'Rehearse';
+      var ctr = document.getElementById('rh-exchange-ctr');
+      if (ctr) ctr.textContent = (view === 'chat') ? (rhExchangeCount + ' / ' + rhMax + ' exchanges') : '';
+      var endBtn = document.getElementById('rh-end-btn');
+      if (endBtn) endBtn.style.display = (view === 'chat') ? 'block' : 'none';
+    }
+
+    window.rhSelectRole = function(el, role) {
+      document.querySelectorAll('.rh-role').forEach(function(b){ b.classList.remove('selected'); });
+      el.classList.add('selected');
+      rhRole = role;
+      rhCheckStart();
+    };
+    window.rhSelectRole = window.rhSelectRole;
+
+    window.rhSelectDiff = function(el, diff) {
+      rhDiff = diff;
+      var std = document.getElementById('rh-diff-std');
+      var hard = document.getElementById('rh-diff-hard');
+      if (diff === 'standard') {
+        std.style.background = 'rgba(99,102,241,.12)'; std.style.borderColor = 'rgba(99,102,241,.4)'; std.style.color = '#c4b5fd';
+        hard.style.background = 'rgba(255,255,255,.03)'; hard.style.borderColor = 'rgba(255,255,255,.08)'; hard.style.color = 'rgba(255,255,255,.55)';
+      } else {
+        hard.style.background = 'rgba(255,77,109,.08)'; hard.style.borderColor = 'rgba(255,77,109,.3)'; hard.style.color = '#FF4D6D';
+        std.style.background = 'rgba(255,255,255,.03)'; std.style.borderColor = 'rgba(255,255,255,.08)'; std.style.color = 'rgba(255,255,255,.55)';
+      }
+    };
+
+    function rhCheckStart() {
+      var s = document.getElementById('rh-scenario');
+      var o = document.getElementById('rh-objective');
+      var btn = document.getElementById('rh-start-btn');
+      var hint = document.getElementById('rh-start-hint');
+      var scn = s ? s.value.trim() : '';
+      var obj = o ? o.value.trim() : '';
+      var ok = rhRole && scn.length > 20 && obj.length > 10;
+      if (btn) { btn.disabled = !ok; btn.style.opacity = ok ? '1' : '.35'; btn.style.cursor = ok ? 'pointer' : 'not-allowed'; }
+      if (hint) {
+        if (ok) hint.textContent = '';
+        else if (!rhRole) hint.textContent = 'Choose who you are speaking with to continue.';
+        else if (scn.length <= 20) hint.textContent = 'Describe the conversation in more detail to continue.';
+        else hint.textContent = 'Say what success looks like to continue.';
+      }
+    }
+    window.rhCheckStart = rhCheckStart;
+
+    function rhEscape(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function rhAddMsg(role, text, isTyping) {
+      var container = document.getElementById('rh-msgs');
+      if (!container) return;
+      var div = document.createElement('div');
+      div.style.cssText = 'display:flex;gap:12px;animation:msgIn .25s ease' + (role==='you' ? ';justify-content:flex-end' : '');
+      if (isTyping) {
+        div.id = 'rh-typing';
+        div.innerHTML = '<div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(255,77,109,.15);border:1px solid rgba(255,77,109,.25)">&#127917;</div>' +
+          '<div><div style="font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px">' + rhEscape(rhRole) + '</div>' +
+          '<div style="max-width:68%;padding:12px 14px;border-radius:4px 12px 12px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07)">' +
+          '<div style="display:flex;gap:5px;align-items:center">' +
+          '<span style="width:6px;height:6px;border-radius:50%;background:#6366f1;animation:pulse .8s ease-in-out infinite;display:inline-block"></span>' +
+          '<span style="width:6px;height:6px;border-radius:50%;background:#6366f1;animation:pulse .8s ease-in-out .15s infinite;display:inline-block"></span>' +
+          '<span style="width:6px;height:6px;border-radius:50%;background:#6366f1;animation:pulse .8s ease-in-out .3s infinite;display:inline-block"></span>' +
+          '</div></div></div>';
+      } else {
+        var isYou = role === 'you';
+        var av = isYou
+          ? '<div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.25)">&#129489;</div>'
+          : '<div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(255,77,109,.15);border:1px solid rgba(255,77,109,.25)">&#127917;</div>';
+        var bubbleStyle = isYou
+          ? 'max-width:68%;padding:12px 14px;border-radius:12px 4px 12px 12px;font-size:13px;line-height:1.6;background:rgba(99,102,241,.14);border:1px solid rgba(99,102,241,.25);color:#fff'
+          : 'max-width:68%;padding:12px 14px;border-radius:4px 12px 12px 12px;font-size:13px;line-height:1.6;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.82)';
+        var labelStyle = 'font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px';
+        if (isYou) {
+          div.innerHTML = '<div><div style="text-align:right;' + labelStyle + '">You</div><div style="' + bubbleStyle + '">' + rhEscape(text) + '</div></div>' + av;
+        } else {
+          div.innerHTML = av + '<div><div style="' + labelStyle + '">' + rhEscape(rhRole) + '</div><div style="' + bubbleStyle + '">' + rhEscape(text) + '</div></div>';
+        }
+      }
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function rhRemoveTyping() { var t = document.getElementById('rh-typing'); if (t) t.remove(); }
+
+    function rhParseFirstResponse(text) {
+      if (!text) return { briefing: null, dialogue: text };
+      var m1 = text.match(/^-{3,}\s*\n([\s\S]*?)\n-{3,}\s*\n([\s\S]*)$/);
+      if (m1 && m1[1].toUpperCase().indexOf('STAKES') > -1) return { briefing: m1[1].trim(), dialogue: m1[2].trim() };
+      var m2 = text.match(/([\s\S]*?The simulation begins now\.?)\s*\n?-*\s*\n([\s\S]*)/i);
+      if (m2) return { briefing: m2[1].trim(), dialogue: m2[2].trim() };
+      var m3 = text.match(/STAKES BRIEFING\s*\n([\s\S]*?)\n-{3,}\s*\n([\s\S]*)/i);
+      if (m3) return { briefing: 'STAKES BRIEFING\n\n' + m3[1].trim(), dialogue: m3[2].trim() };
+      return { briefing: null, dialogue: text };
+    }
+
+    function rhShowStakes(briefingText) {
+      var panel = document.getElementById('rh-stakes-strip');
+      var grid = document.getElementById('rh-stakes-grid');
+      if (!panel || !grid) return;
+      var expM = briefingText.match(/Financial exposure:\s*([^\n]+)/i);
+      var pilM = briefingText.match(/Humac pillar:\s*([^\n]+)/i);
+      var atkM = briefingText.match(/What is at stake:\s*([^\n]+)/i);
+      var pracM = briefingText.match(/You are practising with:\s*([^\n]+)/i);
+      var items = [];
+      if (expM) items.push({ k:'Modelled financial exposure', v:expM[1].trim(), fin:true });
+      if (pilM) items.push({ k:'Humac pillar', v:pilM[1].trim() });
+      if (atkM) items.push({ k:'Modelled stakes', v:atkM[1].trim() });
+      if (pracM) items.push({ k:'Practising with', v:pracM[1].trim() });
+      if (!items.length) {
+        grid.innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,.6)">' + rhEscape(briefingText.replace(/STAKES BRIEFING\n?/i,'').trim()) + '</div>';
+      } else {
+        grid.innerHTML = items.map(function(item) {
+          return '<div style="display:flex;flex-direction:column;gap:2px"><div style="font-family:JetBrains Mono,monospace;font-size:9px;color:rgba(165,180,252,.4);letter-spacing:.06em;text-transform:uppercase">' + rhEscape(item.k) + '</div><div style="font-size:' + (item.fin?'13px':'12px') + ';color:' + (item.fin?'#c4b5fd':'rgba(255,255,255,.75)') + (item.fin?';font-weight:600':'') + '">' + rhEscape(item.v) + '</div></div>';
+        }).join('');
+      }
+      panel.style.display = 'block';
+    }
+
+    async function rhGetToken() {
+      try { return window.Clerk && window.Clerk.session ? await window.Clerk.session.getToken() : ''; }
+      catch(e) { return ''; }
+    }
+
+    function rhGetMeridian() {
+      try { var mr = sessionStorage.getItem('sr_meridian'); return mr ? JSON.parse(mr) : {}; } catch(e) { return {}; }
+    }
+
+    function rhHandleTrialGate(data) {
+      if (data && !data.success && data.error === 'TRIAL_GATE') {
+        try { if (data.reason === 'trial_cap_reached' || data.reason === 'trial_expired') localStorage.setItem('vantage_trial_cap_hit','1'); } catch(e){}
+        window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
+        return true;
+      }
+      return false;
+    }
+
+    window.rhStartSim = async function() {
+      rhScenario = document.getElementById('rh-scenario').value.trim();
+      rhObjective = document.getElementById('rh-objective').value.trim();
+      rhHistory = []; rhExchangeCount = 0; rhPracticeSession = '';
+      document.getElementById('rh-msgs').innerHTML = '';
+      var stakes = document.getElementById('rh-stakes-strip');
+      if (stakes) stakes.style.display = 'none';
+      rhShowView('loading');
+      document.getElementById('rh-load-text').textContent = 'SETTING THE SCENE...';
+      try {
+        var tok = await rhGetToken();
+        var res = await fetch(WORKER, {
+          method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
+          body:JSON.stringify({ tool:'aria', mode:'rehearse', scenario:rhScenario, objective:rhObjective, stakeholderRole:rhRole, difficulty:rhDiff, history:[], meridian:rhGetMeridian() })
+        });
+        var data = await res.json();
+        if (rhHandleTrialGate(data)) return;
+        if (data.success && data.trial_calls_remaining === 0) { try { localStorage.setItem('vantage_trial_cap_hit','1'); } catch(e){} }
+        if (data.success) {
+          rhPracticeSession = data.data.practiceSession || '';
+          var parsed = rhParseFirstResponse(data.data.response);
+          if (parsed.briefing) rhShowStakes(parsed.briefing);
+          var dialogue = parsed.dialogue || data.data.response;
+          rhHistory.push({ role:'assistant', content:dialogue });
+          rhShowView('chat');
+          if (dialogue) rhAddMsg('them', dialogue);
+        } else {
+          rhShowView('setup');
+          var em = data.error === 'USAGE_LIMIT' ? (data.message || 'Daily limit reached. Try again tomorrow.') : ('Something went wrong: ' + (data.error || 'Please try again.'));
+          alert(em);
+        }
+      } catch(err) {
+        rhShowView('setup');
+        alert('Connection error. Please check your network and try again.');
+      }
+    };
+
+    window.rhSendMsg = async function() {
+      var inp = document.getElementById('rh-chat-input');
+      var text = inp ? inp.value.trim() : '';
+      if (!text) return;
+      if (inp) inp.value = '';
+      var sendBtn = document.getElementById('rh-send-btn');
+      if (sendBtn) sendBtn.disabled = true;
+      rhAddMsg('you', text);
+      rhHistory.push({ role:'user', content:text });
+      rhExchangeCount++;
+      var ctr = document.getElementById('rh-exchange-ctr');
+      if (ctr) ctr.textContent = rhExchangeCount + ' / ' + rhMax + ' exchanges';
+      rhAddMsg('them', '', true);
+      try {
+        var tok = await rhGetToken();
+        var res = await fetch(WORKER, {
+          method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
+          body:JSON.stringify({ tool:'aria', mode:'rehearse', scenario:rhScenario, objective:rhObjective, stakeholderRole:rhRole, difficulty:rhDiff, history:rhHistory, practiceSession:rhPracticeSession, meridian:rhGetMeridian() })
+        });
+        var data = await res.json();
+        rhRemoveTyping();
+        if (rhHandleTrialGate(data)) return;
+        if (data.success) {
+          rhHistory.push({ role:'assistant', content:data.data.response });
+          rhAddMsg('them', data.data.response);
+          if (rhExchangeCount >= rhMax) {
+            var info = document.createElement('div');
+            info.style.cssText = 'text-align:center;font-family:JetBrains Mono,monospace;font-size:11px;color:rgba(255,255,255,.45);padding:10px 0';
+            info.textContent = 'Max exchanges reached. Press "End Practice & Get Debrief" when ready.';
+            document.getElementById('rh-msgs').appendChild(info);
+            document.getElementById('rh-msgs').scrollTop = document.getElementById('rh-msgs').scrollHeight;
+          }
+        } else {
+          var em2 = data.error === 'USAGE_LIMIT' ? (data.message || 'Daily limit reached.') : 'Something went wrong. Please try again.';
+          rhAddMsg('them', em2);
+        }
+      } catch(err) { rhRemoveTyping(); rhAddMsg('them', 'Connection error. Please check your network.'); }
+      if (sendBtn) sendBtn.disabled = false;
+    };
+
+    window.rhEndPractice = async function() {
+      rhShowView('loading');
+      document.getElementById('rh-load-text').textContent = 'GENERATING YOUR DEBRIEF...';
+      try {
+        var tok = await rhGetToken();
+        var res = await fetch(WORKER, {
+          method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
+          body:JSON.stringify({ tool:'aria', mode:'rehearse', scenario:rhScenario, objective:rhObjective, stakeholderRole:rhRole, difficulty:rhDiff, history:rhHistory, practiceSession:rhPracticeSession, meridian:rhGetMeridian(), requestDebrief:true })
+        });
+        var data = await res.json();
+        if (rhHandleTrialGate(data)) return;
+        if (data.success) rhRenderDebrief(data.data);
+        else { rhShowView('chat'); alert(data.error || 'Debrief generation failed. Please try again.'); }
+      } catch(err) { rhShowView('chat'); alert('Connection error. Please check your network and try again.'); }
+    };
+
+    function rhRenderDebrief(r) {
+      function listItems(arr, dotColor) {
+        return (arr||[]).map(function(w){
+          return '<div style="display:flex;gap:8px;margin-bottom:10px"><div style="width:6px;height:6px;border-radius:50%;background:'+dotColor+';margin-top:6px;flex-shrink:0"></div><div style="font-size:13px;color:rgba(255,255,255,.7);line-height:1.6">'+rhEscape(w)+'</div></div>';
+        }).join('');
+      }
+      document.getElementById('rh-db-worked').innerHTML   = listItems(r.whatWorked, '#6366f1');
+      document.getElementById('rh-db-improve').innerHTML  = listItems(r.whatToImprove, '#FFB547');
+      document.getElementById('rh-db-inflect').textContent    = r.inflectionPoint    || '—';
+      document.getElementById('rh-db-technique').textContent  = r.techniqueForNextTime || '—';
+      document.getElementById('rh-db-prep').textContent       = r.preparationBrief   || '—';
+      rhShowView('debrief');
+    }
+
+    window.rhPracticeAgain = function() {
+      document.getElementById('rh-msgs').innerHTML = '';
+      rhHistory = []; rhExchangeCount = 0; rhPracticeSession = '';
+      var stakes = document.getElementById('rh-stakes-strip');
+      if (stakes) stakes.style.display = 'none';
+      window.rhStartSim();
+    };
+
+    window.rhNewScenario = function() { rhShowView('setup'); };
+
+    // Global aliases for inline HTML onclick attributes
+    window.rhStartSim    = window.rhStartSim;
+    window.rhSendMsg     = window.rhSendMsg;
+    window.rhEndPractice = window.rhEndPractice;
+    window.rhPracticeAgain = window.rhPracticeAgain;
+    window.rhNewScenario   = window.rhNewScenario;
+    window.rhSelectRole    = window.rhSelectRole;
+    window.rhSelectDiff    = window.rhSelectDiff;
+
+  })();
+  </script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
   <script src="aria-volumetric-product.js"></script>
   <script src="clerk-auth.js"></script>

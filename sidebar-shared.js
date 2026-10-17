@@ -349,7 +349,6 @@
     f.appendChild(ni('people-roi-brief.html',       '\uD83D\uDCBC', 'The Business Case'));
     f.appendChild(ni('policy-advisor.html',          '\uD83E\uDDED', 'Policy Advisor'));
     f.appendChild(ni('retention-advisor.html',       '\u2696\uFE0F', 'Retention Advisor'));
-    f.appendChild(ni('difficult-conversations.html', '\uD83C\uDFAD', 'Difficult Conversations'));
 
     // YOUR RECORD
     f.appendChild(ns('Your Record'));
@@ -605,7 +604,7 @@
     if (document.querySelector('.vantage-bottom-nav')) return;
 
     var path = window.location.pathname;
-    var curSlug = path.split('/').filter(function(s) { return s; }).pop() || 'dashboard';     curSlug = curSlug.replace('.html', '');     var SLUG = { 'er-case-navigator': 'employee-case-advisor', 'business-case': 'people-roi-brief', 'policy-compass': 'policy-advisor', 'offer-intelligence': 'retention-advisor', 'conversation-simulator': 'difficult-conversations', 'ledger': 'standpoint', 'case-library': 'vantage-record' };     var TAB_MATCH = { 'er-case-navigator': ['employee-case-advisor', 'people-roi-brief', 'policy-advisor', 'retention-advisor', 'difficult-conversations'], 'tools-hub': ['tools-hub', 'employee-case-advisor', 'people-roi-brief', 'policy-advisor', 'retention-advisor', 'difficult-conversations'], 'case-library': ['vantage-record', 'standpoint', 'debrief'] };     function slugOf(key) { return SLUG[key] || key; }     function isActive(page) { var list = TAB_MATCH[page] || [slugOf(page)]; return list.indexOf(curSlug) !== -1; }     function onMainTab() { return isActive('dashboard') || isActive('aria') || isActive('tools-hub') || isActive('er-case-navigator') || isActive('case-library'); }
+    var curSlug = path.split('/').filter(function(s) { return s; }).pop() || 'dashboard';     curSlug = curSlug.replace('.html', '');     var SLUG = { 'er-case-navigator': 'employee-case-advisor', 'business-case': 'people-roi-brief', 'policy-compass': 'policy-advisor', 'offer-intelligence': 'retention-advisor', 'ledger': 'standpoint', 'case-library': 'vantage-record' };     var TAB_MATCH = { 'er-case-navigator': ['employee-case-advisor', 'people-roi-brief', 'policy-advisor', 'retention-advisor'], 'tools-hub': ['tools-hub', 'employee-case-advisor', 'people-roi-brief', 'policy-advisor', 'retention-advisor'], 'case-library': ['vantage-record', 'standpoint', 'debrief'] };     function slugOf(key) { return SLUG[key] || key; }     function isActive(page) { var list = TAB_MATCH[page] || [slugOf(page)]; return list.indexOf(curSlug) !== -1; }     function onMainTab() { return isActive('dashboard') || isActive('aria') || isActive('tools-hub') || isActive('er-case-navigator') || isActive('case-library'); }
 
     var style = document.createElement('style');
     style.id = 'vantage-bottom-nav-style';
@@ -845,7 +844,6 @@
           { icon: IC.briefcase, label: 'The Business Case', sub: 'Numbers for the room, or one specific person', href: 'people-roi-brief.html', page: 'business-case' },
           { icon: IC.book, label: 'Policy Advisor', sub: 'Applicable law, every time', href: 'policy-advisor.html', page: 'policy-compass' },
           { icon: IC.scale, label: 'Retention Advisor', sub: 'Stay or go: model the cost', href: 'retention-advisor.html', page: 'offer-intelligence' },
-          { icon: IC.chat, label: 'Difficult Conversations', sub: 'Rehearse before you walk in', href: 'difficult-conversations.html', page: 'conversation-simulator' },
         ]
       },
       {
@@ -1448,7 +1446,6 @@
     'policy-advisor.html':         'policy-compass',
     'people-roi-brief.html':    'business-case',
     'retention-advisor.html':     'offer-intelligence',
-    'difficult-conversations.html': 'conversation-simulator',
     'vantage-record.html':           'case-library'
   };
 
