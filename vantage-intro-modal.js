@@ -21,7 +21,7 @@ var PAGE_PATHS = {
   'policy-compass':         'policy-advisor.html',
   'business-case':          'people-roi-brief.html',
   'offer-intelligence':     'retention-advisor.html',
-  'conversation-simulator': 'difficult-conversations.html',
+  'conversation-simulator': 'aria.html',
   'case-library':           'vantage-record.html'
 };
 
