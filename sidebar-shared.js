@@ -400,23 +400,26 @@
 
     // Re-append MERIDIAN chip (page-specific JS references its child IDs)
     if (chipEl) {
+      // Strip any stale .vr-attr previously placed inside the chip (old placement caused
+      // the chip's purple bg to bleed below the attribution link as a visible purple rectangle)
+      var oldAttr = chipEl.querySelector('.vr-attr');
+      if (oldAttr) chipEl.removeChild(oldAttr);
       sidebar.appendChild(chipEl);
-      // Virorah attribution
-      if (!chipEl.querySelector('.vr-attr')) {
-        var attr = document.createElement('div');
-        attr.className = 'vr-attr';
-        attr.style.cssText = 'padding-top:10px;margin-top:8px;border-top:1px solid rgba(255,255,255,0.06);text-align:center';
-        var attrA = document.createElement('a');
-        attrA.href = 'https://virorah.com';
-        attrA.target = '_blank';
-        attrA.textContent = 'A Virorah Product ↗';
-        attrA.style.cssText = 'font-family:JetBrains Mono,monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-decoration:none;display:block;transition:color .2s';
-        attrA.onmouseover = function(){ this.style.color = 'rgba(99,102,241,0.6)'; };
-        attrA.onmouseout  = function(){ this.style.color = 'rgba(255,255,255,0.35)'; };
-        attr.appendChild(attrA);
-        chipEl.appendChild(attr);
-      }
     }
+    // Virorah attribution — appended as a SIBLING of the chip, never inside it,
+    // so the chip's purple background doesn't bleed below the link
+    var attr = document.createElement('div');
+    attr.className = 'vr-attr';
+    attr.style.cssText = 'padding:6px 12px 0;margin-top:4px;text-align:center';
+    var attrA = document.createElement('a');
+    attrA.href = 'https://virorah.com';
+    attrA.target = '_blank';
+    attrA.textContent = 'A Virorah Product ↗';
+    attrA.style.cssText = 'font-family:JetBrains Mono,monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-decoration:none;display:block;transition:color .2s';
+    attrA.onmouseover = function(){ this.style.color = 'rgba(99,102,241,0.6)'; };
+    attrA.onmouseout  = function(){ this.style.color = 'rgba(255,255,255,0.35)'; };
+    attr.appendChild(attrA);
+    sidebar.appendChild(attr);
   })();
 
   // ── MERIDIAN NOT-CONFIGURED WARNING BANNER ────────────────
