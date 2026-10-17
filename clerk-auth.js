@@ -172,6 +172,34 @@
   // Expose for access.html to call after sign-in
   window._clerkSyncUser = syncUser;
 
+  // ── PLAN DATA REFRESH ─────────────────────────────────────────────────────
+  // Called once per session after Clerk confirms the user. Fetches plan fields
+  // (subscription_status, next_billing_date, razorpay_subscription_id) from
+  // Airtable via the Worker and merges them into localStorage.vantage_plan.
+  // Non-blocking — page reveal is not delayed. JWT is injected by the fetch
+  // interceptor above; vantage_paid_user is NOT touched here (webhook only).
+  function _fetchPlanData() {
+    try {
+      fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tool: 'get_plan' })
+      }).then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (res) {
+          if (!res || !res.success || !res.data) return;
+          try {
+            var plan = JSON.parse(localStorage.getItem('vantage_plan') || 'null') || {};
+            var d    = res.data;
+            if (d.subscription_status) plan.status = d.subscription_status;
+            if (d.next_billing_date)   plan.next_billing_date = d.next_billing_date;
+            if (d.razorpay_subscription_id) plan.razorpay_subscription_id = d.razorpay_subscription_id;
+            localStorage.setItem('vantage_plan', JSON.stringify(plan));
+          } catch (e) {}
+        })
+        .catch(function () {});
+    } catch (e) {}
+  }
+
   // ── LOAD CLERK SDK ─────────────────────────────────────────────────────────
   var s = document.createElement('script');
   s.async = true;
@@ -199,6 +227,8 @@
 
       // Session confirmed — sync user data
       syncUser(user);
+      // Background: refresh plan data (next_billing_date) from Worker
+      _fetchPlanData();
       // Reveal the page now that auth is confirmed
       _revealPage();
 
