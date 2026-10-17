@@ -202,7 +202,16 @@
         };
       }
 
-      // ── TRIAL STATE ───────────────────────────────────────────────────────
+      // ── TRIAL EXPIRED (server-confirmed via Airtable → Worker → _fetchPlanData) ─
+      if (plan && plan.status === 'trial_expired') {
+        return {
+          label: 'Subscribe', href: 'subscribe.html?reason=trial_expired', page: 'subscribe',
+          badge: 'Trial Ended',
+          badgeColor: 'rgba(248,113,113,.85)', badgeBg: 'rgba(248,113,113,.1)'
+        };
+      }
+
+      // ── TRIAL STATE (client-side fallback) ───────────────────────────────
       var trialStartMs = parseInt(localStorage.getItem('vantage_trial_start') || '0', 10);
       var capHit = localStorage.getItem('vantage_trial_cap_hit') === '1';
 
