@@ -270,6 +270,7 @@
         <div class="pills">
           <div class="pill on" onclick="setMode(this,'explore')">Explore</div>
           <div class="pill" onclick="setMode(this,'reflection')">Reflection</div>
+          <div class="pill" onclick="setMode(this,'rehearse')">Rehearse</div>
         </div>
         <button class="endb" id="end-btn" onclick="endSession()">End Session</button>
       </div>
@@ -628,7 +629,9 @@
 
     window.setMode=function(el,mode) {
       document.querySelectorAll('.pill').forEach(function(p){p.classList.remove('on');});
-      el.classList.add('on'); curMode=mode; hist=[];
+      el.classList.add('on');
+      if(mode==='rehearse'){if(window.launchRehearsal)window.launchRehearsal();return;}
+      curMode=mode; hist=[];
       var labels={explore:'Explore',reflection:'Reflection'};
       document.getElementById('panel-title').innerText=labels[mode];
       clearMessages(); setState('idle');
@@ -1061,9 +1064,18 @@
       // counsel: ARIA chat is already rendered underneath, just revealed
     };
 
+    window.launchRehearsal = function() {
+      document.getElementById('rehearsal-overlay').style.display = 'flex';
+      rhShowView('setup');
+    };
+
     window.backToARIA = function() {
       document.getElementById('rehearsal-overlay').style.display = 'none';
       document.getElementById('aria-entry').style.display = 'none';
+      // Reset pill active state back to Explore
+      document.querySelectorAll('.pill').forEach(function(p){p.classList.remove('on');});
+      var firstPill = document.querySelector('.pill');
+      if (firstPill) firstPill.classList.add('on');
       var chatTab = document.getElementById('tab-chat');
       if (chatTab) chatTab.style.display = 'flex';
     };
