@@ -193,6 +193,7 @@
             if (d.subscription_status) plan.status = d.subscription_status;
             if (d.next_billing_date)   plan.next_billing_date = d.next_billing_date;
             if (d.razorpay_subscription_id) plan.razorpay_subscription_id = d.razorpay_subscription_id;
+            if (d.trial_end_date)           plan.trial_end_date = d.trial_end_date;
             localStorage.setItem('vantage_plan', JSON.stringify(plan));
           } catch (e) {}
         })
