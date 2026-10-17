@@ -643,6 +643,7 @@
           window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
           return;
         }
+        if (data.success && data.trial_calls_remaining === 0) { try { localStorage.setItem('vantage_trial_cap_hit', '1'); } catch(e) {} }
         if (data.success) {
           currentResult = data.data;
           renderOutput();

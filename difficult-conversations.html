@@ -764,6 +764,7 @@
           window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
           return;
         }
+        if (data.success && data.trial_calls_remaining === 0) { try { localStorage.setItem('vantage_trial_cap_hit', '1'); } catch(e) {} }
         if (data.success && data.data && data.data.wrongTool) {
           showWrongTool(data.data.reason, data.data.suggestedTool);
           return;
@@ -836,6 +837,7 @@
           window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
           return;
         }
+        if (data.success && data.trial_calls_remaining === 0) { try { localStorage.setItem('vantage_trial_cap_hit', '1'); } catch(e) {} }
         if (data.success) {
           var response = data.data.response;
           conversationHistory.push({ role: 'assistant', content: response });
@@ -891,6 +893,7 @@
           window.location.href = 'subscribe.html?reason=' + (data.reason || 'trial_expired');
           return;
         }
+        if (data.success && data.trial_calls_remaining === 0) { try { localStorage.setItem('vantage_trial_cap_hit', '1'); } catch(e) {} }
         if (data.success) renderDebrief(data.data);
         else { showError(data.error || 'Debrief generation failed. Please try again.', 'chat-view'); }
       } catch(err) {
