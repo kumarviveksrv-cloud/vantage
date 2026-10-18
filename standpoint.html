@@ -111,15 +111,6 @@
       .main{padding:18px 16px}
       .summary-strip{flex-direction:column}
     }
-    /* QUESTION BANK */
-    .qb-section{margin-bottom:14px}
-    .qb-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.45);margin-bottom:9px;display:block}
-    .qb-grid{display:flex;flex-wrap:wrap;gap:7px}
-    .qb-chip{font-size:12px;color:#c7d2fe;background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.2);border-radius:18px;padding:6px 13px;cursor:pointer;transition:all .18s;line-height:1.4}
-    .qb-chip:hover{background:rgba(99,102,241,0.17);border-color:rgba(99,102,241,0.42);color:#e0e7ff}
-    .qb-chip.qb-selected{background:rgba(99,102,241,0.2);border-color:rgba(99,102,241,0.5);color:#e0e7ff}
-    .qb-more-btn{margin-top:9px;display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,0.5);background:none;border:none;cursor:pointer;padding:2px 0;transition:color .18s}
-    .qb-more-btn:hover{color:rgba(165,180,252,0.8)}
   </style>
 </head>
 <body>
@@ -198,32 +189,6 @@
 
       <div class="form-group">
         <label class="form-label">What's the situation?</label>
-        <div class="qb-section">
-          <span class="qb-label">Quick start — pick a scenario or describe your own below</span>
-          <div class="qb-grid" id="qb-sp-grid">
-            <div class="qb-chip" onclick="qbFill('f-situation',this)">Engineering lead wants to skip the PIP and terminate a mid-performer directly.</div>
-            <div class="qb-chip" onclick="qbFill('f-situation',this)">Finance wants to recover training costs from an employee who resigned during the bond period.</div>
-            <div class="qb-chip" onclick="qbFill('f-situation',this)">MD wants to issue a verbal warning off-record to avoid documentation. I recommended formal process.</div>
-            <div class="qb-chip" onclick="qbFill('f-situation',this)">Department head wants to demote an employee without any performance process.</div>
-            <div class="qb-chip" onclick="qbFill('f-situation',this)">Sales leader wants to terminate for missing targets for 2 months. No documented warnings exist.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">Leadership asked HR to find a way to exit a long-tenured employee without full severance.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">Line manager promoted their close associate in appraisals. I flagged it. They overruled me.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">Business wanted to terminate someone on maternity leave, citing restructuring. I pushed back.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">Legal wants us to add non-disparagement clauses to all exit settlements. I advised against it.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">COO wants to implement mandatory work on national holidays without extra pay.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">A manager asked me to falsify the termination reason on an exit letter. I refused.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">Leadership decided to publicise a disciplinary case to 'make an example.' I said it was risky.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">Founder wants to hire a senior external candidate above a higher-rated internal one, without a process.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">Business head wants different PIP timelines for people in the same role.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">I recommended a domestic enquiry before termination. MD said it's unnecessary for confirmed cases.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">Finance head wants to delay final settlement beyond 2 working days, citing audit cycle.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">Recommended mediation for a POSH complaint. Leadership wanted a full inquiry immediately.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">MD wants to put an employee's client communications on record without informing the employee.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">Team head accused an HR BP of sharing a confidential complaint. I recommended an investigation.</div>
-            <div class="qb-chip" style="display:none" data-extra onclick="qbFill('f-situation',this)">I gave structured feedback to a leader about their management style. They threatened my role.</div>
-          </div>
-          <button class="qb-more-btn" data-expanded="0" onclick="qbToggleMore(this,'qb-sp-grid')">+ 15 more scenarios &#x25be;</button>
-        </div>
         <textarea id="f-situation" class="form-textarea" placeholder="e.g. Engineering lead wants to skip the PIP process and terminate a mid-performer directly"></textarea>
       </div>
       <div class="form-group">
@@ -314,27 +279,6 @@
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
     var allEntries = [];
-
-    function qbFill(targetId, chipEl, postFn) {
-      var el = document.getElementById(targetId);
-      if (!el) return;
-      el.value = chipEl.getAttribute('data-text') || chipEl.textContent.trim();
-      el.dispatchEvent(new Event('input', {bubbles: true}));
-      var grid = chipEl.closest('.qb-grid');
-      if (grid) grid.querySelectorAll('.qb-chip').forEach(function(c){c.classList.remove('qb-selected')});
-      chipEl.classList.add('qb-selected');
-      setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'nearest'});el.focus();}, 60);
-      if (typeof postFn === 'function') postFn();
-    }
-    function qbToggleMore(btn, gridId) {
-      var grid = document.getElementById(gridId);
-      if (!grid) return;
-      var extras = grid.querySelectorAll('[data-extra]');
-      var expanded = btn.getAttribute('data-expanded') === '1';
-      extras.forEach(function(c){c.style.display = expanded ? 'none' : ''});
-      btn.setAttribute('data-expanded', expanded ? '0' : '1');
-      btn.textContent = expanded ? ('+ ' + extras.length + ' more scenarios ▾') : 'Show fewer ▴';
-    }
     var currentFilter = 'all';
     var resolvingId = null;
 

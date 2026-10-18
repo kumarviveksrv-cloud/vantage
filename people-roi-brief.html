@@ -291,6 +291,15 @@
       .line-card{page-break-inside:avoid}
       @page{margin:14mm 12mm}
     }
+    /* QUESTION BANK */
+    .qb-section{margin-bottom:16px}
+    .qb-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.45);margin-bottom:9px;display:block}
+    .qb-grid{display:flex;flex-wrap:wrap;gap:7px}
+    .qb-chip{font-size:12px;color:#c7d2fe;background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.2);border-radius:18px;padding:6px 13px;cursor:pointer;transition:all .18s;line-height:1.4}
+    .qb-chip:hover{background:rgba(99,102,241,0.17);border-color:rgba(99,102,241,0.42);color:#e0e7ff}
+    .qb-chip.qb-selected{background:rgba(99,102,241,0.2);border-color:rgba(99,102,241,0.5);color:#e0e7ff}
+    .qb-more-btn{margin-top:9px;display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,0.5);background:none;border:none;cursor:pointer;padding:2px 0;transition:color .18s}
+    .qb-more-btn:hover{color:rgba(165,180,252,0.8)}
   </style>
 </head>
 <body>
@@ -400,6 +409,32 @@
         </div>
         <div class="form-section">
           <label class="form-label">What's the business context? What decision are you trying to influence? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic</span></label>
+          <div class="qb-section">
+            <span class="qb-label">Quick start — pick an initiative or describe your own below</span>
+            <div class="qb-grid" id="qb-bc-grid">
+              <div class="qb-chip" onclick="qbFill('context',this)">Engineering attrition has climbed from 14% to 22% in one quarter. Leadership thinks it's a market issue, not an HR one.</div>
+              <div class="qb-chip" onclick="qbFill('context',this)">Making the case to hire a dedicated HRBP for a 250-person division that currently has no HR support.</div>
+              <div class="qb-chip" onclick="qbFill('context',this)">Justifying the investment in a structured L&amp;D program after two high-potential exits cited growth stagnation.</div>
+              <div class="qb-chip" onclick="qbFill('context',this)">Building a case to replace the legacy HRMS with a modern platform. Finance wants to see a cost-benefit.</div>
+              <div class="qb-chip" onclick="qbFill('context',this)">Three new joiners left within 90 days. Making the case to redesign onboarding before the next cohort.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Requesting budget for a compensation benchmarking exercise. Leadership believes we're market-competitive but we haven't validated that.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Making the case for a structured succession planning process for leadership roles.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Justifying the cost of an exit interview and attrition analytics program to the CFO.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Building a case for a manager effectiveness program after engagement scores dropped across 3 teams.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Making the case to formalize a structured performance review cycle instead of ad-hoc appraisals.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Justifying a salary correction exercise after discovering a significant pay gap versus market median.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Building a case for a POSH training and awareness program after a formal complaint was raised.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Making the case to hire a specialist recruiter for senior roles rather than continuing with agencies.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Requesting budget for an employee wellbeing initiative after an internal survey flagged high burnout.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Building a case for a structured HR audit and documentation overhaul ahead of Series A fundraising.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Making the case to introduce a structured probation process with standardised checkpoints across all roles.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Justifying an HR tech stack consolidation — we're running 4 tools doing overlapping things.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Building a case for a diversity hiring initiative after leadership asked why senior roles skew heavily in one direction.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Making the case to automate time &amp; attendance tracking — current manual process has payroll errors every month.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Requesting headcount for an additional recruiter — current team of 2 is sourcing for 40+ open roles.</div>
+            </div>
+            <button class="qb-more-btn" data-expanded="0" onclick="qbToggleMore(this,'qb-bc-grid')">+ 15 more scenarios &#x25be;</button>
+          </div>
           <div class="voice-wrap">
           <textarea id="context" placeholder='e.g. "Q2 attrition in engineering has gone up from 14% to 22% in 3 months. Leadership doesn&apos;t see it as an HR problem. They think it&apos;s a market issue. I need to present next week and change that narrative. The CFO specifically wants to know what it&apos;s costing us."' rows="4" style="padding-right:48px"></textarea>
           <button class="voice-btn" id="context-mic" onclick="toggleVoiceInput('context', this)" title="Tap to speak">&#127908;</button>
@@ -704,6 +739,27 @@
 
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+
+    function qbFill(targetId, chipEl, postFn) {
+      var el = document.getElementById(targetId);
+      if (!el) return;
+      el.value = chipEl.getAttribute('data-text') || chipEl.textContent.trim();
+      el.dispatchEvent(new Event('input', {bubbles: true}));
+      var grid = chipEl.closest('.qb-grid');
+      if (grid) grid.querySelectorAll('.qb-chip').forEach(function(c){c.classList.remove('qb-selected')});
+      chipEl.classList.add('qb-selected');
+      setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'nearest'});el.focus();}, 60);
+      if (typeof postFn === 'function') postFn();
+    }
+    function qbToggleMore(btn, gridId) {
+      var grid = document.getElementById(gridId);
+      if (!grid) return;
+      var extras = grid.querySelectorAll('[data-extra]');
+      var expanded = btn.getAttribute('data-expanded') === '1';
+      extras.forEach(function(c){c.style.display = expanded ? 'none' : ''});
+      btn.setAttribute('data-expanded', expanded ? '0' : '1');
+      btn.textContent = expanded ? ('+ ' + extras.length + ' more scenarios ▾') : 'Show fewer ▴';
+    }
 
     async function getClerkToken() {
       if (window.Clerk && window.Clerk.session) {
