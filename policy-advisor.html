@@ -321,10 +321,13 @@
 
     <!-- OUTPUT VIEW -->
     <div id="output-view" style="display:none">
-      <div class="page-header">
-        <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="policy-advisor.html">Policy Advisor</a> &middot; Guidance</div>
-        <div class="page-title">Policy Guidance</div>
-        <div class="page-sub">Calibrated to your MERIDIAN profile and Indian law.</div>
+      <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &middot; <a href="policy-advisor.html">Policy Advisor</a> &middot; Guidance</div>
+          <div class="page-title">Policy Guidance</div>
+          <div class="page-sub">Calibrated to your MERIDIAN profile and Indian law.</div>
+        </div>
+        <button onclick="startNew()" style="flex-shrink:0;margin-top:6px;padding:10px 20px;background:transparent;color:#a5b4fc;font-family:var(--font),sans-serif;font-size:13px;font-weight:600;border:1px solid rgba(99,102,241,0.35);border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:.04em" onmouseover="this.style.borderColor='rgba(99,102,241,.7)';this.style.color='#c7d2fe'" onmouseout="this.style.borderColor='rgba(99,102,241,.35)';this.style.color='#a5b4fc'">&#x2190; New Question</button>
       </div>
       <div class="output-section">
 
@@ -387,10 +390,10 @@
 
         <!-- Action row -->
         <div class="action-row">
+          <button class="btn-primary" onclick="startNew()">&#x2190; New Question</button>
           <button class="btn-primary" onclick="openInCaseNavigator()">Open in Employee Case Advisor &rarr;</button>
           <button class="btn-ghost" id="save-record-btn" onclick="saveToRecord()" style="display:none">&#x2713; Save to Vantage Record</button>
           <button class="btn-ghost" onclick="printReport()">&#x2913; Download Report</button>
-          <button class="btn-ghost" onclick="startNew()">New Question</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
         </div>
 
