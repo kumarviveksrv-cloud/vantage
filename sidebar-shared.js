@@ -823,7 +823,7 @@
       {
         title: 'Overview',
         items: [
-          { icon: IC.map, label: 'Platform Tour', sub: 'Guided walkthrough', href: 'platform-tour.html', page: 'platform-tour' },
+          { icon: IC.home, label: 'Home', sub: '', href: 'dashboard.html', page: 'home' },
           { icon: IC.globe, label: 'Humacity', sub: '', href: 'https://humacity.com', page: 'humacity', external: true },
         ]
       },
@@ -835,18 +835,23 @@
         ]
       },
       {
-        title: 'Your HRBP',
+        title: 'Your Thinking Partner',
         items: [
           { icon: IC.sparkle, label: 'ARIA', sub: 'Your private HR intelligence ally', href: 'aria.html', page: 'aria' },
         ]
       },
       {
-        title: 'Your Core Tools',
+        title: 'Revenue Fluency',
         items: [
           { icon: IC.bolt, label: 'Employee Case Advisor', sub: 'Navigate any employee situation', href: 'employee-case-advisor.html', page: 'er-case-navigator' },
           { icon: IC.briefcase, label: 'The Business Case', sub: 'Numbers for the room, or one specific person', href: 'people-roi-brief.html', page: 'business-case' },
-          { icon: IC.book, label: 'Policy Advisor', sub: 'Applicable law, every time', href: 'policy-advisor.html', page: 'policy-compass' },
           { icon: IC.scale, label: 'Retention Advisor', sub: 'Stay or go: model the cost', href: 'retention-advisor.html', page: 'offer-intelligence' },
+        ]
+      },
+      {
+        title: 'Legal Intelligence',
+        items: [
+          { icon: IC.book, label: 'Policy Advisor', sub: 'Applicable law, every time', href: 'policy-advisor.html', page: 'policy-compass' },
         ]
       },
       {
