@@ -594,11 +594,17 @@
       if (hint && (ok || !quiet)) hint.textContent = ok ? '' : msg;
     }
 
-    // Figures come back as "Rs.17L, one sentence of explanation". Show only the leading figure.
+    // Extract the first Rs./\u20b9 figure from a string \u2014 handles both "Rs.17.24L, explanation"
+    // and "Rs.17.24L midpoint replacement cost..." (no delimiter) patterns.
     function leadFigure(str) {
       if (!str) return 'N/A';
-      var head = String(str).split(/\u2014|,\s/)[0].trim();
-      return head || String(str);
+      var s = String(str);
+      // Grab first Rs./\u20b9 amount, optionally including a range (e.g. Rs.14L to Rs.20L)
+      var m = s.match(/(?:Rs\.?|\u20b9)\s*[\d,]+(?:\.\d+)?(?:L|Cr|K)?(?:\s*(?:\u2013|-|to)\s*(?:Rs\.?|\u20b9)?\s*[\d,]+(?:\.\d+)?(?:L|Cr|K)?)?/i);
+      if (m) return m[0].trim();
+      // Fallback: split on em-dash or comma+space
+      var head = s.split(/\u2014|,\s/)[0].trim();
+      return head || s;
     }
 
     function formatINR(n) {
@@ -708,8 +714,15 @@
         var repCost = fm.replacementCost || {};
         var retCost = fm.retentionCost || {};
         html += '<div class="fin-grid">';
-        html += '<div class="fin-cell"><div class="fin-cell-label">Replacement Cost</div><div class="fin-cell-amount">' + (repCost.total || 'N/A') + '</div><ul class="breakdown-list">' + ((repCost.breakdown || []).map(function(b){ return '<li>' + b + '</li>'; }).join('')) + '</ul></div>';
-        html += '<div class="fin-cell"><div class="fin-cell-label">Break-even Ceiling</div><div class="fin-cell-amount">' + (fm.breakEvenCeiling ? leadFigure(fm.breakEvenCeiling) : 'N/A') + '</div><div class="fin-cell-sub">' + (fm.breakEvenCeiling || '') + '</div></div>';
+        var repTotal = repCost.total || 'N/A';
+        var repFig = leadFigure(repTotal);
+        var repSub = (repFig !== repTotal && repFig !== 'N/A') ? '<div class="fin-cell-sub" style="margin-bottom:6px">' + repTotal + '</div>' : '';
+        html += '<div class="fin-cell"><div class="fin-cell-label">Replacement Cost</div><div class="fin-cell-amount">' + repFig + '</div>' + repSub + '<ul class="breakdown-list">' + ((repCost.breakdown || []).map(function(b){ return '<li>' + b + '</li>'; }).join('')) + '</ul></div>';
+        var becFull = fm.breakEvenCeiling || '';
+        var becFig = becFull ? leadFigure(becFull) : 'N/A';
+        // Sub-line: strip the leading figure from the full string to avoid repeating it
+        var becSub = becFull ? becFull.replace(/^(?:Rs\.?|₹)\s*[\d,]+(?:\.\d+)?(?:L|Cr|K)?(?:\s*(?:–|-|to)\s*(?:Rs\.?|₹)?\s*[\d,]+(?:\.\d+)?(?:L|Cr|K)?)?\s*/i, '').trim() : '';
+        html += '<div class="fin-cell"><div class="fin-cell-label">Break-even Ceiling</div><div class="fin-cell-amount">' + becFig + '</div>' + (becSub ? '<div class="fin-cell-sub">' + becSub + '</div>' : '') + '</div>';
         html += '<div class="fin-cell highlight"><div class="fin-cell-label">Recommended Match</div><div class="fin-cell-amount">' + (rec.figure || '\u2014') + '</div></div>';
         html += '</div>';
 
