@@ -263,6 +263,15 @@
       .communication-card{page-break-inside:avoid}
       @page{margin:14mm 12mm}
     }
+    /* QUESTION BANK */
+    .qb-section{margin-bottom:16px}
+    .qb-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.45);margin-bottom:9px;display:block}
+    .qb-grid{display:flex;flex-wrap:wrap;gap:7px}
+    .qb-chip{font-size:12px;color:#c7d2fe;background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.2);border-radius:18px;padding:6px 13px;cursor:pointer;transition:all .18s;line-height:1.4}
+    .qb-chip:hover{background:rgba(99,102,241,0.17);border-color:rgba(99,102,241,0.42);color:#e0e7ff}
+    .qb-chip.qb-selected{background:rgba(99,102,241,0.2);border-color:rgba(99,102,241,0.5);color:#e0e7ff}
+    .qb-more-btn{margin-top:9px;display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,0.5);background:none;border:none;cursor:pointer;padding:2px 0;transition:color .18s}
+    .qb-more-btn:hover{color:rgba(165,180,252,0.8)}
   </style>
 </head>
 <body>
@@ -344,6 +353,32 @@
         </div>
         <div class="form-section">
           <label class="form-label">What's happening? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic to speak</span></label>
+          <div class="qb-section">
+            <span class="qb-label">Quick start — pick a scenario or describe your own below</span>
+            <div class="qb-grid" id="qb-eca-grid">
+              <div class="qb-chip" onclick="qbFill('narrative',this)">Senior engineer absent 7 days, two prior verbal warnings, manager wants to terminate.</div>
+              <div class="qb-chip" onclick="qbFill('narrative',this)">Employee on PIP for 2 months consistently missing targets. Documentation in place.</div>
+              <div class="qb-chip" onclick="qbFill('narrative',this)">POSH complaint raised informally against a team lead. No POSH committee yet.</div>
+              <div class="qb-chip" onclick="qbFill('narrative',this)">Two employees had a physical altercation in the office. Both senior, claims of self-defence.</div>
+              <div class="qb-chip" onclick="qbFill('narrative',this)">Terminated for misconduct. Employee is now threatening a Labour Court complaint.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee resigned after 2 years, claims constructive dismissal. Likely salary-driven.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Line manager has been consistently excluding one team member from meetings for 3 months.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee submitting medical certificates for 6 weeks but may be working elsewhere during this time.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Team lead accused of sharing confidential salary data. Two witnesses. They deny it.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Consistent underperformer has a close personal relationship with the MD. Manager won't document.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Moving an employee to another business unit. They're threatening to quit.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee shared a confidential company presentation on their personal LinkedIn without permission.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Probationary employee absent 12 days in first 3 months, medical certificate each time.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee back from maternity leave finds her role substantially changed. She's threatening action.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Caught an employee clocking in for a colleague who wasn't present that day.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Senior sales manager is actively poaching clients for a new venture he's setting up.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee on 3-month notice appears to have already started at a competitor.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Manager gave a high appraisal rating to their close associate despite clear performance gaps.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee placed on PIP has now raised a discrimination grievance midway through the process.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Want to recover ₹4L from an employee who left mid-project and caused client losses.</div>
+            </div>
+            <button class="qb-more-btn" data-expanded="0" onclick="qbToggleMore(this,'qb-eca-grid')">+ 15 more scenarios &#x25be;</button>
+          </div>
           <div class="voice-wrap">
           <textarea id="narrative" placeholder='e.g. "A senior engineer has been absent without information for 4 days. There were two verbal warnings for attendance in the last 3 months, both documented. His manager wants to terminate but we haven&apos;t done a domestic enquiry yet. I need to know where I stand before I call him in tomorrow."
 
@@ -530,6 +565,27 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
 
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
+
+    function qbFill(targetId, chipEl, postFn) {
+      var el = document.getElementById(targetId);
+      if (!el) return;
+      el.value = chipEl.getAttribute('data-text') || chipEl.textContent.trim();
+      el.dispatchEvent(new Event('input', {bubbles: true}));
+      var grid = chipEl.closest('.qb-grid');
+      if (grid) grid.querySelectorAll('.qb-chip').forEach(function(c){c.classList.remove('qb-selected')});
+      chipEl.classList.add('qb-selected');
+      setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'nearest'});el.focus();}, 60);
+      if (typeof postFn === 'function') postFn();
+    }
+    function qbToggleMore(btn, gridId) {
+      var grid = document.getElementById(gridId);
+      if (!grid) return;
+      var extras = grid.querySelectorAll('[data-extra]');
+      var expanded = btn.getAttribute('data-expanded') === '1';
+      extras.forEach(function(c){c.style.display = expanded ? 'none' : ''});
+      btn.setAttribute('data-expanded', expanded ? '0' : '1');
+      btn.textContent = expanded ? ('+ ' + extras.length + ' more scenarios ▾') : 'Show fewer ▴';
+    }
 
     function renderGreenCat(gc) {
       if (!gc || !gc.primary) return '';

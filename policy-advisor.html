@@ -130,6 +130,15 @@
     .voice-btn{position:absolute;bottom:10px;right:10px;width:32px;height:32px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);color:#a5b4fc;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:2;line-height:1}
     .voice-btn:hover{background:rgba(99,102,241,0.22);border-color:rgba(99,102,241,0.45)}
     .voice-btn.listening{background:rgba(124,58,237,0.25);border-color:rgba(124,58,237,0.6);color:#c4b5fd;animation:voicePulse 1s ease-in-out infinite}
+    /* QUESTION BANK */
+    .qb-section{margin-bottom:16px}
+    .qb-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(165,180,252,0.45);margin-bottom:9px;display:block}
+    .qb-grid{display:flex;flex-wrap:wrap;gap:7px}
+    .qb-chip{font-size:12px;color:#c7d2fe;background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.2);border-radius:18px;padding:6px 13px;cursor:pointer;transition:all .18s;line-height:1.4}
+    .qb-chip:hover{background:rgba(99,102,241,0.17);border-color:rgba(99,102,241,0.42);color:#e0e7ff}
+    .qb-chip.qb-selected{background:rgba(99,102,241,0.2);border-color:rgba(99,102,241,0.5);color:#e0e7ff}
+    .qb-more-btn{margin-top:9px;display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,0.5);background:none;border:none;cursor:pointer;padding:2px 0;transition:color .18s}
+    .qb-more-btn:hover{color:rgba(165,180,252,0.8)}
     @keyframes voicePulse{0%{box-shadow:0 0 0 0 rgba(124,58,237,0.5)}70%{box-shadow:0 0 0 10px rgba(124,58,237,0)}100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}}
 
     /* ── DOCUMENT UPLOAD (NEW) ── */
@@ -271,6 +280,32 @@
         </div>
         <div class="form-section">
           <label class="form-label">What's the situation? What are you considering doing? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic</span></label>
+          <div class="qb-section">
+            <span class="qb-label">Quick start — pick a scenario or type your own below</span>
+            <div class="qb-grid" id="qb-policy-grid">
+              <div class="qb-chip" onclick="qbFill('query',this)">Employee absent 10+ days with zero communication — can we terminate?</div>
+              <div class="qb-chip" onclick="qbFill('query',this)">Employee caught sharing confidential data with a competitor. Options?</div>
+              <div class="qb-chip" onclick="qbFill('query',this)">Building a PIP. What must it include to hold up legally in India?</div>
+              <div class="qb-chip" onclick="qbFill('query',this)">POSH complaint raised informally against a manager. What are we required to do now?</div>
+              <div class="qb-chip" onclick="qbFill('query',this)">Can we demote instead of terminate for serious misconduct?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Probationary employee isn't meeting expectations. What does a fair exit look like?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee falsified educational credentials on their CV. Can we exit immediately?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">What does a legally sound domestic enquiry process look like?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee claims constructive dismissal after a reporting line change. How real is this risk?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Can we claw back a joining bonus if they leave before the 6-month lock-in?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee on long-term sick leave — can we hire a permanent replacement?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee refuses to relocate per their appointment letter. Is that treated as resignation?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Can we monitor employee emails and devices? What disclosures are legally required?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee found drinking at work. What's a proportionate disciplinary response?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Planning redundancies in a restructuring. What's the legally mandated process in India?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee claims we underpaid overtime. What's our Wages Code exposure?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Non-compete clause in a departing employee's F&amp;F settlement — is it enforceable in India?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee back from maternity leave found her role substantially changed. What's our risk?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">We want a moonlighting policy. What are the legal limits under Indian law?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee is serving notice but appears to have already joined a competitor.</div>
+            </div>
+            <button class="qb-more-btn" data-expanded="0" onclick="qbToggleMore(this,'qb-policy-grid')">+ 15 more scenarios &#x25be;</button>
+          </div>
           <div class="voice-wrap">
           <textarea id="query" style="padding-right:48px" placeholder='e.g. "Can I terminate an employee who has been absent without information for 7 days? He has been warned twice verbally, but we never issued a formal written warning. We&apos;re in Maharashtra, manufacturing sector, and we have certified standing orders." Just describe it, no need to frame it as a legal question.' rows="5"></textarea>
           <button class="voice-btn" id="query-mic" onclick="toggleVoiceInput('query', this)" title="Tap to speak">&#127908;</button>
@@ -763,6 +798,26 @@
       window.location.href = BASE + 'employee-case-advisor.html';
     }
 
+    function qbFill(targetId, chipEl, postFn) {
+      var el = document.getElementById(targetId);
+      if (!el) return;
+      el.value = chipEl.getAttribute('data-text') || chipEl.textContent.trim();
+      el.dispatchEvent(new Event('input', {bubbles: true}));
+      var grid = chipEl.closest('.qb-grid');
+      if (grid) grid.querySelectorAll('.qb-chip').forEach(function(c){c.classList.remove('qb-selected')});
+      chipEl.classList.add('qb-selected');
+      setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'nearest'});el.focus();}, 60);
+      if (typeof postFn === 'function') postFn();
+    }
+    function qbToggleMore(btn, gridId) {
+      var grid = document.getElementById(gridId);
+      if (!grid) return;
+      var extras = grid.querySelectorAll('[data-extra]');
+      var expanded = btn.getAttribute('data-expanded') === '1';
+      extras.forEach(function(c){c.style.display = expanded ? 'none' : ''});
+      btn.setAttribute('data-expanded', expanded ? '0' : '1');
+      btn.textContent = expanded ? ('+ ' + extras.length + ' more scenarios ▾') : 'Show fewer ▴';
+    }
     function startNew() {
       currentResult = null;
       parsedSections = {};
