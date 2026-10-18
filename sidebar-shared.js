@@ -868,7 +868,7 @@
       {
         title: 'Account',
         items: [
-          { icon: IC.tag, label: _mobileBilling.label, href: _mobileBilling.href, page: _mobileBilling.page, badge: _mobileBilling.badge, badgeBg: _mobileBilling.badgeBg, badgeColor: _mobileBilling.badgeColor },
+          { icon: IC.tag, label: _mobileBilling.label, href: _mobileBilling.href, page: _mobileBilling.page, badge: _mobileBilling.badge, badgeBg: _mobileBilling.badgeBg, badgeColor: _mobileBilling.badgeColor, billingItem: true },
           { icon: IC.shield, label: 'My Data & Privacy', sub: 'Your data settings', href: 'data-dashboard.html', page: 'data-dashboard' },
           { icon: IC.chat, label: 'Send Feedback', sub: 'Share what you think', href: '#', page: 'feedback', feedbackTrigger: true },
         ]
@@ -943,6 +943,7 @@
         var a = document.createElement('a');
         a.className = 'vbn-drawer-item' + (active ? ' active' : '');
         a.href = item.href;
+        if (item.billingItem) a.setAttribute('data-billing-item', '1');
         if (item.external) a.target = '_blank';
         if (item.signout) {
           a.onclick = function(e) {
@@ -980,7 +981,7 @@
         a.innerHTML = [
           '<span class="vbn-drawer-icon">' + item.icon + '</span>',
           '<span class="vbn-drawer-label"><span>' + item.label + '</span>' + (item.sub ? '<span class="vbn-drawer-sub">' + item.sub + '</span>' : '') + '</span>',
-          (item.badge ? '<span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.04em;background:' + item.badgeBg + ';color:' + item.badgeColor + ';padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0">' + item.badge + '</span>' : ''),
+          (item.badge ? '<span ' + (item.billingItem ? 'data-billing-badge="1" ' : '') + 'style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.04em;background:' + item.badgeBg + ';color:' + item.badgeColor + ';padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0">' + item.badge + '</span>' : ''),
         ].join('');
         drawer.appendChild(a);
       });
@@ -1005,10 +1006,77 @@
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injectMobileNav);
-  } else {
+  // ── MOBILE BILLING ASYNC SYNC ───────────────────────────────────────────
+  // Patches the billing drawer item with server-authoritative status after
+  // injectMobileNav() has rendered. Needed because vantage_plan is per-browser
+  // localStorage — a device that never ran the payment flow shows "Trial" even
+  // when the user is an active subscriber on another device.
+  // Calls Worker /me/billing (reads from KV written by the Razorpay webhook)
+  // and writes the real plan back to localStorage so all future page loads are fast.
+  function _syncMobileBillingAsync() {
+    if (window.innerWidth > 768) return;
+    var WORKER_BILLING = 'https://situation-room-api.kumarvivek-srv.workers.dev/me/billing';
+
+    function patchBillingDOM(plan) {
+      if (!plan || plan.status !== 'active') return;
+      // Sync to localStorage → future page loads use the fast synchronous path
+      try { localStorage.setItem('vantage_plan', JSON.stringify(plan)); } catch(e) {}
+      try { localStorage.setItem('vantage_paid_user', '1'); } catch(e) {}
+      // Patch the live DOM using the updated localStorage state
+      var el = document.querySelector('[data-billing-item]');
+      if (!el) return;
+      var newB = getBillingStatus();
+      el.href = newB.href;
+      var labelSpan = el.querySelector('.vbn-drawer-label > span:first-child');
+      if (labelSpan) labelSpan.textContent = newB.label;
+      var badgeEl = el.querySelector('[data-billing-badge]');
+      if (newB.badge) {
+        if (!badgeEl) {
+          badgeEl = document.createElement('span');
+          badgeEl.setAttribute('data-billing-badge', '1');
+          badgeEl.style.cssText = 'font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.04em;padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0';
+          el.appendChild(badgeEl);
+        }
+        badgeEl.style.background = newB.badgeBg;
+        badgeEl.style.color = newB.badgeColor;
+        badgeEl.textContent = newB.badge;
+      }
+    }
+
+    function doSync() {
+      if (!window.Clerk || !window.Clerk.session) return;
+      window.Clerk.session.getToken().then(function(token) {
+        if (!token) return;
+        fetch(WORKER_BILLING, {
+          headers: { 'Authorization': 'Bearer ' + token },
+          cache: 'no-store',
+        })
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) { if (data && data.plan) patchBillingDOM(data.plan); })
+        .catch(function() {});
+      }).catch(function() {});
+    }
+
+    // Clerk initializes async — poll until session is available (max 10s)
+    if (window.Clerk && window.Clerk.session) {
+      doSync();
+    } else {
+      var _bsTimer = setInterval(function() {
+        if (window.Clerk && window.Clerk.session) { clearInterval(_bsTimer); doSync(); }
+      }, 500);
+      setTimeout(function() { clearInterval(_bsTimer); }, 10000);
+    }
+  }
+
+  function _runMobileNav() {
     injectMobileNav();
+    _syncMobileBillingAsync();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _runMobileNav);
+  } else {
+    _runMobileNav();
   }
   window.addEventListener('resize', function() {
     var existing = document.querySelector('.vantage-bottom-nav');
@@ -1025,7 +1093,7 @@
       // FIX: the opposite direction was entirely unhandled — shrinking back
       // down to mobile width (e.g. rotating a tablet, or resizing a desktop
       // window) never restored the nav once it had been removed.
-      injectMobileNav();
+      _runMobileNav();
     }
   });
 
