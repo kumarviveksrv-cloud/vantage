@@ -868,7 +868,7 @@
       {
         title: 'Account',
         items: [
-          { icon: IC.tag, label: _mobileBilling.label, sub: _mobileBilling.badge || '', href: _mobileBilling.href, page: _mobileBilling.page },
+          { icon: IC.tag, label: _mobileBilling.label, href: _mobileBilling.href, page: _mobileBilling.page, badge: _mobileBilling.badge, badgeBg: _mobileBilling.badgeBg, badgeColor: _mobileBilling.badgeColor },
           { icon: IC.shield, label: 'My Data & Privacy', sub: 'Your data settings', href: 'data-dashboard.html', page: 'data-dashboard' },
           { icon: IC.chat, label: 'Send Feedback', sub: 'Share what you think', href: '#', page: 'feedback', feedbackTrigger: true },
         ]
@@ -980,6 +980,7 @@
         a.innerHTML = [
           '<span class="vbn-drawer-icon">' + item.icon + '</span>',
           '<span class="vbn-drawer-label"><span>' + item.label + '</span>' + (item.sub ? '<span class="vbn-drawer-sub">' + item.sub + '</span>' : '') + '</span>',
+          (item.badge ? '<span style="font-family:JetBrains Mono,monospace;font-size:8px;letter-spacing:.04em;background:' + item.badgeBg + ';color:' + item.badgeColor + ';padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0">' + item.badge + '</span>' : ''),
         ].join('');
         drawer.appendChild(a);
       });
