@@ -599,6 +599,8 @@
       logout:    '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
       doc:       '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
       lock:      '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>',
+      home_sm:   '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>',
+      clock:     '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" '+S+'><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>',
     };
     // FIX: no other injection in this file lacks this check — without it,
     // any second call to this function (e.g. from the resize fix below)
@@ -823,7 +825,8 @@
       {
         title: 'Overview',
         items: [
-          { icon: IC.home, label: 'Home', sub: '', href: 'dashboard.html', page: 'home' },
+          { icon: IC.map, label: 'Platform Tour', sub: 'Guided walkthrough', href: 'platform-tour.html', page: 'platform-tour' },
+          { icon: IC.home_sm, label: 'Home', sub: '', href: 'dashboard.html', page: 'home' },
           { icon: IC.globe, label: 'Humacity', sub: '', href: 'https://humacity.com', page: 'humacity', external: true },
         ]
       },
@@ -868,7 +871,6 @@
           { icon: IC.tag, label: _mobileBilling.label, sub: _mobileBilling.badge || '', href: _mobileBilling.href, page: _mobileBilling.page },
           { icon: IC.shield, label: 'My Data & Privacy', sub: 'Your data settings', href: 'data-dashboard.html', page: 'data-dashboard' },
           { icon: IC.chat, label: 'Send Feedback', sub: 'Share what you think', href: '#', page: 'feedback', feedbackTrigger: true },
-          { icon: IC.logout, label: 'Sign Out', sub: '', href: 'access.html', page: 'signout', signout: true },
         ]
       },
       {
@@ -876,6 +878,13 @@
         items: [
           { icon: IC.doc, label: 'Terms of Service', sub: '', href: 'terms.html', page: 'terms' },
           { icon: IC.lock, label: 'Privacy Policy', sub: '', href: 'privacy.html', page: 'privacy' },
+        ]
+      },
+      {
+        title: '',
+        items: [
+          { icon: IC.logout, label: 'Sign Out', sub: '', href: '#', page: 'signout', signout: true },
+          { icon: IC.clock, label: 'Set your location', sub: 'Date · Time · City', href: '#', page: 'location', locationTrigger: true },
         ]
       },
     ];
@@ -922,10 +931,12 @@
     ].join('');
 
     drawerSections.forEach(function(section) {
-      var titleEl = document.createElement('div');
-      titleEl.className = 'vbn-drawer-title';
-      titleEl.textContent = section.title;
-      drawer.appendChild(titleEl);
+      if (section.title) {
+        var titleEl = document.createElement('div');
+        titleEl.className = 'vbn-drawer-title';
+        titleEl.textContent = section.title;
+        drawer.appendChild(titleEl);
+      }
 
       section.items.forEach(function(item) {
         var active = item.page !== 'signout' && curSlug === slugOf(item.page);
@@ -952,6 +963,16 @@
               e.preventDefault();
               closeDrawer();
               setTimeout(function() { if (typeof openVantageFeedback === 'function') openVantageFeedback(); }, 220);
+              return false;
+            };
+          })(a);
+        }
+        if (item.locationTrigger) {
+          (function(el) {
+            el.onclick = function(e) {
+              e.preventDefault();
+              closeDrawer();
+              setTimeout(function() { if (typeof window._vclockOpen === 'function') window._vclockOpen(); }, 220);
               return false;
             };
           })(a);
