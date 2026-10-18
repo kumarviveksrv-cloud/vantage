@@ -860,7 +860,7 @@
       {
         title: 'Account',
         items: [
-          { icon: IC.tag, label: _mobileBilling.label, sub: '', href: _mobileBilling.href, page: _mobileBilling.page },
+          { icon: IC.tag, label: _mobileBilling.label, sub: _mobileBilling.badge || '', href: _mobileBilling.href, page: _mobileBilling.page },
           { icon: IC.shield, label: 'My Data & Privacy', sub: 'Your data settings', href: 'data-dashboard.html', page: 'data-dashboard' },
           { icon: IC.chat, label: 'Send Feedback', sub: 'Share what you think', href: '#', page: 'feedback', feedbackTrigger: true },
           { icon: IC.logout, label: 'Sign Out', sub: '', href: 'access.html', page: 'signout', signout: true },
