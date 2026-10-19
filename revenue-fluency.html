@@ -112,14 +112,18 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 
 .rf-eyebrow {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  font: 600 10px/1 var(--mono);
+  font: 600 10px/1.6 var(--mono);
   letter-spacing: .2em;
   color: rgba(196,181,253,.55);
   text-transform: uppercase;
   margin-bottom: 30px;
+  max-width: 600px;
+  text-align: center;
 }
 .rf-eyebrow-dot {
   width: 6px; height: 6px;
@@ -321,6 +325,12 @@ html, body { overflow-x: hidden; background: var(--bg); }
   font-style: italic;
 }
 .rf-gap p + p { margin-top: 18px; }
+.rf-gap-tagline {
+  font: 400 clamp(20px, 2.8vw, 28px)/1.5 var(--display) !important;
+  font-style: italic !important;
+  color: rgba(196,181,253,.95) !important;
+  margin-top: 36px !important;
+}
 
 /* ── WHAT YOU GET — 4 TILES ─────────────────────────────────────────── */
 .rf-tiles-section { padding: 100px 24px; }
@@ -731,7 +741,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
       <div class="rf-for-badge">For Individual HR Professionals · Not Enterprise</div>
       <div class="rf-eyebrow">
         <span class="rf-eyebrow-dot"></span>
-        VANTAGE / HR INTELLIGENCE PLATFORM
+        Your HR Judgment, Quantified. Your Career Impact, Documented.
       </div>
       <h1>Get Revenue Fluent.</h1>
       <p class="rf-hero-sub">
@@ -789,6 +799,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
     <p>Finance has a language for everything it does.</p>
     <p>HR doesn't — and that silence is costing us <em>the seat at the table.</em></p>
     <p>You can change that.</p>
+    <p class="rf-gap-tagline">Your HR judgment, quantified. Your career impact, documented.</p>
   </div>
 
   <!-- ── WHAT YOU GET ─────────────────────────────────────────────────── -->
