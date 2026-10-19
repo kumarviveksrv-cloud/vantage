@@ -61,7 +61,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 88px 24px 100px;
+  padding: 128px 24px 100px;
   position: relative;
   z-index: 2;
   overflow: hidden;
@@ -357,19 +357,25 @@ html, body { overflow-x: hidden; background: var(--bg); }
   margin-top: 36px !important;
 }
 
-/* ── ANNOUNCEMENT STRIP ────────────────────────────────────────────── */
+/* ── ANNOUNCEMENT STRIP — fixed, sits directly under the fixed nav ──── */
 .rf-announce {
+  position: fixed;
+  top: 78px;
+  left: 0;
+  right: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 10px 24px;
-  background: rgba(99,102,241,.08);
+  padding: 11px 24px;
+  background: rgba(10,8,25,.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(99,102,241,.16);
-  font: 500 13px var(--font);
-  color: rgba(244,243,255,.8);
+  font: 500 13px/1.4 var(--font);
+  color: rgba(244,243,255,.82);
   text-align: center;
-  position: relative;
-  z-index: 5;
+  z-index: 90;
 }
 .rf-announce-dot {
   width: 6px; height: 6px;
@@ -377,6 +383,9 @@ html, body { overflow-x: hidden; background: var(--bg); }
   background: #6366f1;
   box-shadow: 0 0 8px rgba(99,102,241,.8);
   flex-shrink: 0;
+}
+@media (max-width: 560px) {
+  .rf-announce { font-size: 11.5px; padding: 9px 16px; }
 }
 
 /* ── TOOLS ROSTER ──────────────────────────────────────────────────── */
@@ -808,10 +817,10 @@ html, body { overflow-x: hidden; background: var(--bg); }
   </div>
 </header>
 
-<!-- ANNOUNCEMENT STRIP — built, hidden until Kumar confirms real copy (no founding-customer/seats claim invented). Flip display to flex and fill .rf-announce-text to activate. -->
-<div class="rf-announce" style="display:none">
+<!-- ANNOUNCEMENT STRIP — real trial terms, pulled above the fold -->
+<div class="rf-announce">
   <span class="rf-announce-dot"></span>
-  <span class="rf-announce-text">PLACEHOLDER — confirm copy before enabling</span>
+  <span class="rf-announce-text">7 days free · No credit card required · Cancel anytime</span>
 </div>
 
 <main>
