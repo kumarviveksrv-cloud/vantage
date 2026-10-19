@@ -41,8 +41,11 @@
 /* Reset overflow */
 html, body { overflow-x: hidden; background: var(--bg); }
 
-/* Suppress only the heavy 3D canvases — grain/scanlines/cursor-orb are ACTIVE */
-#world, #cinemaCanvas, .cinema-hud, .intel-rail {
+/* Dialed-down sandbox: suppress ALL atmospheric/cinematic effects on this
+   page (grain, scanlines, cursor-orb, 3D canvases). index.html and the rest
+   of the site are untouched — this suppression is scoped to this file only. */
+#world, #cinemaCanvas, .cinema-hud, .intel-rail,
+.grain, .scanlines, .cursor-orb {
   display: none !important;
 }
 
@@ -53,31 +56,24 @@ html, body { overflow-x: hidden; background: var(--bg); }
   transform: none !important;
 }
 
-/* ── HERO ───────────────────────────────────────────────────────────── */
+/* ── HERO — restrained, Cognexus-style layout (sandbox test) ─────────── */
 .rf-hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 128px 24px 100px;
+  display: block;
+  padding: 150px 24px 90px;
   position: relative;
   z-index: 2;
-  overflow: hidden;
 }
 
-/* Hero ambient glow — multiple radials for cinematic depth */
-.rf-hero-glow {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 60% 50% at 50% 20%, rgba(99,102,241,.26) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 35% at 28% 60%, rgba(124,58,237,.10) 0%, transparent 65%),
-    radial-gradient(ellipse 40% 35% at 72% 60%, rgba(168,85,247,.08) 0%, transparent 65%),
-    radial-gradient(ellipse 80% 40% at 50% 100%, rgba(99,102,241,.14) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
+.rf-hero-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 64px;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .rf-hero-grid { grid-template-columns: 1fr; gap: 48px; }
 }
 
 /* System status line above hero content */
@@ -113,93 +109,54 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 @keyframes rf-live-pulse { 50% { opacity: .4; box-shadow: none; } }
 
-/* Hero content wrapper — above the rings */
+/* Hero copy column — left-aligned, single typeface (DM Sans) */
 .rf-hero-copy {
   position: relative;
   z-index: 10;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  text-align: left;
+}
+@media (max-width: 900px) {
+  .rf-hero-copy { align-items: center; text-align: center; }
 }
 
-.rf-eyebrow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font: 600 10px/1.6 var(--mono);
-  letter-spacing: .2em;
-  color: rgba(196,181,253,.55);
-  text-transform: uppercase;
-  margin-bottom: 30px;
-  max-width: 600px;
-  text-align: center;
-}
-.rf-eyebrow-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: #6366f1;
-  box-shadow: 0 0 8px rgba(99,102,241,.8);
-  animation: rf-pulse 2s ease-in-out infinite;
-}
-@keyframes rf-pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
-
-/* B2C positioning badge — above eyebrow */
+/* B2C positioning badge — flat, no glow/gradient fill */
 .rf-for-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font: 700 9px/1 var(--mono);
-  letter-spacing: .22em;
+  font: 600 10px/1 var(--mono);
+  letter-spacing: .18em;
   text-transform: uppercase;
-  color: #050410;
-  background: linear-gradient(90deg, #6366f1 0%, #7c3aed 100%);
+  color: rgba(196,181,253,.85);
+  background: transparent;
+  border: 1px solid rgba(99,102,241,.35);
   border-radius: 2px;
-  padding: 6px 12px 5px;
-  margin-bottom: 20px;
-  box-shadow: 0 0 18px rgba(99,102,241,.5);
+  padding: 7px 12px 6px;
+  margin-bottom: 22px;
 }
 
 .rf-hero h1 {
-  font: 700 clamp(52px, 9vw, 110px)/1.0 var(--font);
-  letter-spacing: -0.03em;
-  margin: 0 0 28px;
-  background: linear-gradient(135deg, #f4f3ff 0%, #c4b5fd 42%, #6366f1 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  text-shadow: none;
+  font: 700 clamp(42px, 5.4vw, 68px)/1.08 var(--font);
+  letter-spacing: -0.02em;
+  margin: 0 0 22px;
+  color: #f4f3ff;
+}
+.rf-hero h1 .rf-accent {
+  color: #818cf8;
 }
 
-.rf-hero-sub {
-  font: 400 clamp(17px, 2.2vw, 22px)/1.65 var(--font);
-  color: rgba(244,243,255,.55);
-  max-width: 580px;
-  margin: 0 auto 44px;
+.rf-hero-deck {
+  font: 400 clamp(16px, 1.6vw, 18px)/1.65 var(--font);
+  color: rgba(244,243,255,.6);
+  max-width: 480px;
+  margin: 0 0 36px;
 }
-.rf-hero-sub strong {
-  color: rgba(244,243,255,.88);
+.rf-hero-deck strong {
+  color: rgba(244,243,255,.9);
   font-weight: 500;
-}
-
-/* Definitional block — between H1 and hero-sub */
-.rf-definition {
-  max-width: 640px;
-  margin: 0 auto 48px;
-  padding: 36px 0 0;
-  border-top: 1px solid rgba(99,102,241,.18);
-}
-.rf-def-primary {
-  font: 400 clamp(21px, 2.5vw, 26px)/1.6 var(--display);
-  color: rgba(244,243,255,.82);
-  margin: 0 0 14px;
-}
-.rf-def-secondary {
-  font: 400 clamp(15px, 1.6vw, 17px)/1.65 var(--font);
-  color: rgba(196,181,253,.58);
-  margin: 0;
 }
 
 .rf-actions {
@@ -207,100 +164,181 @@ html, body { overflow-x: hidden; background: var(--bg); }
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
+@media (max-width: 900px) { .rf-actions { justify-content: center; } }
 
 .btn-rf-primary {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 14px 28px;
-  background: linear-gradient(135deg, #6366f1, #a855f7);
+  padding: 14px 26px;
+  background: #6366f1;
   color: #fff;
   font: 600 14px/1 var(--font);
   letter-spacing: .02em;
-  border-radius: 10px;
+  border-radius: 8px;
   text-decoration: none;
   border: none;
   cursor: pointer;
-  box-shadow: 0 8px 32px rgba(99,102,241,.35), 0 0 0 1px rgba(99,102,241,.2);
-  transition: opacity .2s, transform .2s, box-shadow .2s;
+  box-shadow: 0 4px 16px rgba(99,102,241,.25);
+  transition: background .2s, transform .2s, box-shadow .2s;
 }
 .btn-rf-primary:hover {
-  opacity: .9;
-  transform: translateY(-2px);
-  box-shadow: 0 16px 52px rgba(99,102,241,.50), 0 0 0 1px rgba(99,102,241,.3);
+  background: #5457e5;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(99,102,241,.35);
 }
-.btn-rf-primary span { opacity: .75; }
+.btn-rf-primary span { opacity: .85; }
 
 .btn-rf-ghost {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 13px 26px;
-  background: rgba(99,102,241,.06);
-  color: rgba(196,181,253,.85);
+  padding: 13px 24px;
+  background: transparent;
+  color: rgba(244,243,255,.78);
   font: 500 14px/1 var(--font);
   letter-spacing: .02em;
-  border-radius: 10px;
+  border-radius: 8px;
   text-decoration: none;
-  border: 1px solid rgba(99,102,241,.2);
+  border: 1px solid rgba(244,243,255,.16);
   cursor: pointer;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transition: background .2s, border-color .2s, color .2s;
+  transition: border-color .2s, color .2s;
 }
 .btn-rf-ghost:hover {
-  background: rgba(99,102,241,.14);
-  border-color: rgba(99,102,241,.4);
+  border-color: rgba(244,243,255,.4);
   color: #f4f3ff;
 }
 
-.rf-trial-note {
-  font: 400 12px var(--mono);
-  letter-spacing: .09em;
-  color: rgba(196,181,253,.35);
+/* Trust cues — flat checklist, replaces the old mono trial-note line */
+.rf-trust-cues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
 }
-.rf-trial-note span { margin: 0 8px; opacity: .4; }
+.rf-trust-cues li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 400 13px var(--font);
+  color: rgba(244,243,255,.52);
+}
+.rf-trust-cues li::before {
+  content: '✓';
+  color: #818cf8;
+  font-weight: 700;
+  font-size: 12px;
+}
+@media (max-width: 900px) { .rf-trust-cues { justify-content: center; } }
 
 .rf-about-link {
   display: inline-block;
-  margin-top: 22px;
   font: 400 13px var(--font);
-  color: rgba(196,181,253,.42);
+  color: rgba(196,181,253,.5);
   text-decoration: none;
   letter-spacing: .01em;
-  border-bottom: 1px solid rgba(196,181,253,.14);
+  border-bottom: 1px solid rgba(196,181,253,.16);
   padding-bottom: 2px;
   transition: color .2s, border-color .2s;
 }
-.rf-about-link:hover { color: rgba(196,181,253,.85); border-color: rgba(196,181,253,.4); }
+.rf-about-link:hover { color: rgba(196,181,253,.9); border-color: rgba(196,181,253,.4); }
 
-/* Hero scroll indicator */
-.rf-hero-scroll {
-  position: absolute;
-  bottom: 36px;
-  left: 50%;
-  transform: translateX(-50%);
-  font: 10px var(--mono);
-  letter-spacing: .18em;
-  color: rgba(196,181,253,.2);
+/* ── HERO PRODUCT PANEL — right column, mock ARIA conversation ───────── */
+.rf-hero-panel {
+  position: relative;
+  z-index: 10;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  background: rgba(13,11,30,.6);
+  overflow: hidden;
+}
+.rf-panel-head {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 10px;
-  z-index: 10;
-  pointer-events: none;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
 }
-.rf-hero-scroll i {
+.rf-panel-dots { display: flex; gap: 5px; }
+.rf-panel-dots i {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255,255,255,.14);
   display: block;
-  width: 1px;
-  height: 32px;
-  background: linear-gradient(#c4b5fd, transparent);
-  animation: rf-scrollline 2s ease-in-out infinite;
 }
-@keyframes rf-scrollline { 50% { height: 50px; opacity: .25; } }
+.rf-panel-title {
+  font: 500 12px var(--font);
+  color: rgba(244,243,255,.6);
+}
+.rf-panel-live {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: 600 10px var(--mono);
+  letter-spacing: .1em;
+  color: #6ee7b7;
+}
+.rf-panel-live i {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #6ee7b7;
+}
+.rf-panel-body { padding: 18px; }
+.rf-panel-starters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.rf-panel-chip {
+  font: 400 11.5px var(--font);
+  color: rgba(244,243,255,.6);
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 7px;
+  padding: 7px 11px;
+}
+.rf-panel-msg {
+  font: 400 13px/1.6 var(--font);
+  border-radius: 9px;
+  padding: 11px 13px;
+  margin-bottom: 10px;
+  max-width: 88%;
+}
+.rf-panel-msg.user {
+  background: rgba(255,255,255,.05);
+  color: rgba(244,243,255,.82);
+  margin-left: auto;
+}
+.rf-panel-msg.aria {
+  background: rgba(99,102,241,.1);
+  border: 1px solid rgba(99,102,241,.2);
+  color: rgba(244,243,255,.85);
+}
+.rf-panel-cites {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 2px 0 14px;
+}
+.rf-panel-cites span {
+  font: 500 10px var(--mono);
+  letter-spacing: .04em;
+  color: #a5b4fc;
+  background: rgba(99,102,241,.08);
+  border: 1px solid rgba(99,102,241,.18);
+  border-radius: 5px;
+  padding: 4px 8px;
+}
+.rf-panel-foot {
+  font: 400 11px var(--font);
+  color: rgba(244,243,255,.3);
+  text-align: center;
+}
+@media (max-width: 900px) { .rf-hero-panel { max-width: 520px; margin: 0 auto; } }
 
 /* ── TICKER ─────────────────────────────────────────────────────────── */
 .rf-ticker {
@@ -829,54 +867,64 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
 <main>
 
-  <!-- ── HERO ────────────────────────────────────────────────────────── -->
+  <!-- ── HERO — restrained layout (sandbox test, index.html untouched) ── -->
   <section class="rf-hero">
-    <!-- Cinematic background layers -->
-    <div class="rf-hero-glow" aria-hidden="true"></div>
-    <div class="hero-field" aria-hidden="true">
-      <div class="hero-ring r1"></div>
-      <div class="hero-ring r2"></div>
-      <div class="hero-ring r3"></div>
-      <div class="hero-core"></div>
-    </div>
-
     <!-- System status sysline -->
     <div class="rf-sysline" aria-hidden="true">
       <span>INDIA / HR INTELLIGENCE PLATFORM</span>
       <span class="rf-sysline-live"><i></i>LIVE</span>
     </div>
 
-    <!-- Hero content -->
-    <div class="rf-hero-copy">
-      <div class="rf-for-badge">For Individual HR Professionals · Not Enterprise</div>
-      <h1>Your decisions have a price tag.</h1>
-      <div class="rf-definition">
-        <p class="rf-def-primary">Vantage is HR financial intelligence software, which quantifies the business value of HR decisions.</p>
-        <p class="rf-def-secondary">Built for the professional who wants to speak the language of the business and leave every role with tangible records of value delivered. It translates your decisions into financial figures, documents your professional impact, and follows you across every role you'll ever hold.</p>
-      </div>
-      <p class="rf-hero-sub">
-        So you stop being invisible to the room that matters.
-        <strong>This is your subscription — not a platform your company buys or deploys.</strong>
-        Every decision you log, every model you build, stays yours when you move on.
-      </p>
-      <div class="rf-actions">
-        <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html">
-          Start Free Trial <span>→</span>
+    <div class="rf-hero-grid">
+      <!-- Left: copy -->
+      <div class="rf-hero-copy">
+        <div class="rf-for-badge">For Individual HR Professionals · Not Enterprise</div>
+        <h1>Your decisions have a <span class="rf-accent">price tag</span>.</h1>
+        <p class="rf-hero-deck">
+          Vantage quantifies the business value of every HR decision you make — in rupees, with evidence — and keeps a permanent record of the impact you created.
+          <strong>It's your subscription, not a platform your company buys.</strong>
+        </p>
+        <div class="rf-actions">
+          <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html">
+            Start Free Trial <span>→</span>
+          </a>
+          <a class="btn-rf-ghost" href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">
+            Try the Demo <span>↗</span>
+          </a>
+        </div>
+        <ul class="rf-trust-cues">
+          <li>7 days free</li>
+          <li>No credit card required</li>
+          <li>Cancel anytime</li>
+        </ul>
+        <a href="about.html" class="rf-about-link" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">
+          What Vantage is and how it works →
         </a>
-        <a class="btn-rf-ghost" href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">
-          Try the Demo <span>↗</span>
-        </a>
       </div>
-      <p class="rf-trial-note">
-        7 days free <span>·</span> No credit card required <span>·</span> Cancel anytime
-      </p>
-      <a href="about.html" class="rf-about-link" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">
-        What Vantage is and how it works →
-      </a>
-    </div>
 
-    <!-- Scroll cue -->
-    <div class="rf-hero-scroll" aria-hidden="true">SCROLL<i></i></div>
+      <!-- Right: product mockup panel -->
+      <div class="rf-hero-panel" aria-hidden="true">
+        <div class="rf-panel-head">
+          <span class="rf-panel-dots"><i></i><i></i><i></i></span>
+          <span class="rf-panel-title">Vantage · ARIA</span>
+          <span class="rf-panel-live"><i></i>LIVE</span>
+        </div>
+        <div class="rf-panel-body">
+          <div class="rf-panel-starters">
+            <span class="rf-panel-chip">Can I terminate for repeated absence?</span>
+            <span class="rf-panel-chip">How much gratuity is owed?</span>
+            <span class="rf-panel-chip">Is this process compliant?</span>
+          </div>
+          <div class="rf-panel-msg user">Can I terminate for repeated absence?</div>
+          <div class="rf-panel-msg aria">Yes — but only with due process. Repeated unexcused absence can justify termination for cause, but it requires documented warnings and adherence to notice rules. Skipping process risks an arbitrary-dismissal claim.</div>
+          <div class="rf-panel-cites">
+            <span>Shops &amp; Establishments Act</span>
+            <span>Notice period</span>
+          </div>
+          <div class="rf-panel-foot">Illustrative — actual guidance is state and case specific</div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ── TICKER ───────────────────────────────────────────────────────── -->
