@@ -124,16 +124,23 @@ html, body { overflow-x: hidden; background: var(--bg); }
   font-weight: 600;
 }
 
-/* ── HERO — orb + starfield (Humacity-style experiment, hero-only) ───── */
+/* ── HERO — orb + starfield (Humacity-style experiment, hero-only) ─────
+   Container must be a genuine full-viewport section, matching
+   humacity's own .hero{min-height:100vh}. Shrinking this changes the
+   canvas aspect ratio the Three.js camera reads on init, which widens
+   the horizontal FOV and crams the sprite field into a dense, flat
+   smear instead of the sparse, deep starfield humacity shows — this
+   is the actual cause of the earlier "wrong" result, not the sphere
+   itself. */
 .rf-hero {
   position: relative;
-  min-height: 62vh;
-  padding: 78px 24px 0;
+  min-height: 100vh;
+  padding: 94px 24px 40px;
   overflow: hidden;
   z-index: 1;
 }
 @media (max-width: 700px) {
-  .rf-hero { min-height: 42vh; padding-top: 70px; }
+  .rf-hero { padding-top: 84px; }
 }
 
 .rf-hero-orb {
@@ -156,8 +163,8 @@ html, body { overflow-x: hidden; background: var(--bg); }
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(620px, 82vw);
-  height: min(620px, 82vw);
+  width: min(700px, 90vw);
+  height: min(700px, 90vw);
   opacity: .92;
   z-index: 1;
 }
@@ -1292,7 +1299,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
   if(!canvas || !root) return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  function getSize(){ return Math.min(620, window.innerWidth * .82); }
+  function getSize(){ return Math.min(700, window.innerWidth * .9); }
   var sz = getSize(); canvas.width = sz; canvas.height = sz;
 
   var scene = new THREE.Scene();
