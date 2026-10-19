@@ -173,6 +173,24 @@ html, body { overflow-x: hidden; background: var(--bg); }
   font-weight: 500;
 }
 
+/* Definitional block — between H1 and hero-sub */
+.rf-definition {
+  max-width: 600px;
+  margin: 0 auto 40px;
+  padding: 28px 0 0;
+  border-top: 1px solid rgba(99,102,241,.18);
+}
+.rf-def-primary {
+  font: 500 clamp(15px, 1.7vw, 18px)/1.65 var(--font);
+  color: rgba(244,243,255,.75);
+  margin: 0 0 14px;
+}
+.rf-def-secondary {
+  font: 400 clamp(13px, 1.4vw, 15px)/1.7 var(--font);
+  color: rgba(244,243,255,.38);
+  margin: 0;
+}
+
 .rf-actions {
   display: flex;
   align-items: center;
@@ -744,8 +762,11 @@ html, body { overflow-x: hidden; background: var(--bg); }
         Your HR Judgment, Quantified. Your Career Impact, Documented.
       </div>
       <h1>Get Revenue Fluent.</h1>
+      <div class="rf-definition">
+        <p class="rf-def-primary">Vantage is HR financial intelligence software, which quantifies the business value of HR decisions.</p>
+        <p class="rf-def-secondary">Built for the professional who wants to speak the language of the business and leave every role with tangible records of value delivered. It translates your decisions into financial figures, documents your professional impact, and follows you across every role you'll ever hold.</p>
+      </div>
       <p class="rf-hero-sub">
-        Vantage quantifies the business value of every HR decision you make.
         <strong>In financial figures. With evidence.</strong>
         So you stop being invisible to the room that matters.
         <strong>This is your personal subscription. Not a platform your company buys or deploys.</strong>
