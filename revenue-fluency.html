@@ -626,14 +626,43 @@ html, body { overflow-x: hidden; background: var(--bg); }
   text-align: center;
 }
 .rf-pricing-card {
-  display: inline-block;
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
   background: rgba(255,255,255,.02);
   border: 1px solid rgba(255,255,255,.1);
   border-radius: 14px;
-  padding: 48px 60px;
+  padding: 48px 44px;
   position: relative;
 }
-@media (max-width: 480px) { .rf-pricing-card { padding: 36px 24px; } }
+@media (max-width: 480px) { .rf-pricing-card { padding: 36px 28px; } }
+
+.rf-pricing-features {
+  list-style: none;
+  margin: 28px 0 32px;
+  padding: 24px 0 0;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  text-align: left;
+}
+.rf-pricing-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font: 400 13.5px/1.5 var(--font);
+  color: rgba(244,243,255,.65);
+}
+.rf-pricing-features li::before {
+  content: '✓';
+  color: #818cf8;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
 .rf-pricing-badge {
   display: inline-block;
   background: rgba(99,102,241,.12);
@@ -1115,8 +1144,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
       <p class="rf-pricing-sub">
         7-day free trial <span>·</span> No credit card required <span>·</span> Cancel anytime
       </p>
-      <p class="rf-pricing-personal">You sign up. No company procurement. No IT approvals.</p>
-      <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html" style="font-size:15px;padding:16px 36px;position:relative;z-index:1">
+      <ul class="rf-pricing-features">
+        <li>Full access to all 8 tools, including ARIA</li>
+        <li>Unlimited cases, models, and financial calculations</li>
+        <li>Vantage Record — permanent, portable, follows you</li>
+        <li>No company procurement, no IT approvals, no seat limits</li>
+      </ul>
+      <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html" style="width:100%;justify-content:center;font-size:15px;padding:16px 36px;position:relative;z-index:1">
         Start Free Trial <span>→</span>
       </a>
     </div>
