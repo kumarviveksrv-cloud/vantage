@@ -56,6 +56,74 @@ html, body { overflow-x: hidden; background: var(--bg); }
   transform: none !important;
 }
 
+/* ── MOBILE NAV: hamburger toggle + drawer ────────────────────────────
+   Shared vantage-cinematic.css already hides .nav nav / .nav-status
+   below 900px. This adds the trigger + panel that were missing, plus
+   hides the three header buttons on mobile so the top bar matches the
+   clean logo+hamburger pattern (the links move into the drawer). */
+@media (max-width: 900px) {
+  .nav-actions .nav-sign,
+  .nav-actions .nav-cta-demo,
+  .nav-actions .nav-cta-trial { display: none; }
+  .rf-nav-toggle { display: flex; }
+}
+.rf-nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 30px; height: 30px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.rf-nav-toggle span {
+  display: block;
+  width: 100%;
+  height: 1.5px;
+  background: rgba(244,243,255,.85);
+  transition: transform .25s ease, opacity .2s ease;
+}
+.rf-nav-toggle.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.rf-nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+.rf-nav-toggle.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.rf-mobile-menu {
+  position: fixed;
+  top: 118px; /* clears fixed nav (78px) + announcement strip (~40px) */
+  left: 0; right: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(8,7,20,.98);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding: 4px 24px 20px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .3s ease;
+  z-index: 95;
+}
+.rf-mobile-menu.is-open { max-height: 440px; }
+.rf-mobile-menu a {
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  font: 500 15px var(--font);
+  color: rgba(244,243,255,.82);
+  text-decoration: none;
+}
+.rf-mobile-menu .rf-mobile-cta {
+  margin-top: 16px;
+  text-align: center;
+  background: #6366f1;
+  color: #fff;
+  border-radius: 8px;
+  border-bottom: none;
+  padding: 14px;
+  font-weight: 600;
+}
+
 /* ── HERO — restrained, Cognexus-style layout (sandbox test) ─────────── */
 .rf-hero {
   display: block;
@@ -462,7 +530,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 
 .rf-tool-name {
-  font: 400 clamp(18px, 2vw, 21px)/1.25 var(--display);
+  font: 600 clamp(16px, 1.7vw, 18px)/1.3 var(--font);
   color: rgba(244,243,255,.9);
   margin: 0;
   padding-top: 2px;
@@ -503,59 +571,17 @@ html, body { overflow-x: hidden; background: var(--bg); }
 @media (max-width: 680px) { .rf-tiles { grid-template-columns: 1fr; } }
 
 .rf-tile {
-  background: rgba(10,8,25,.75);
-  border: 1px solid rgba(99,102,241,.12);
-  border-radius: 16px;
-  padding: 32px 28px;
-  transition: border-color .3s, background .3s, box-shadow .3s, transform .3s;
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 28px 26px;
+  transition: border-color .2s, background .2s;
   position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-/* Top gradient border on hover */
-.rf-tile::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(99,102,241,.55), rgba(168,85,247,.4), transparent);
-  opacity: 0;
-  transition: opacity .3s;
-}
-/* Mouse-tracking radial glow */
-.rf-tile::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(99,102,241,.13), transparent 55%);
-  opacity: 0;
-  transition: opacity .3s;
-  pointer-events: none;
 }
 .rf-tile:hover {
-  border-color: rgba(99,102,241,.32);
-  background: rgba(10,8,25,.94);
-  box-shadow: 0 24px 72px rgba(0,0,0,.45), 0 0 0 1px rgba(99,102,241,.08);
-  transform: translateY(-5px);
+  border-color: rgba(99,102,241,.4);
+  background: rgba(255,255,255,.035);
 }
-.rf-tile:hover::before { opacity: 1; }
-.rf-tile:hover::after  { opacity: 1; }
-
-/* HUD corner brackets */
-.rf-hud {
-  position: absolute;
-  width: 10px; height: 10px;
-  border-color: rgba(99,102,241,.22);
-  border-style: solid;
-  border-width: 0;
-  transition: border-color .3s;
-  pointer-events: none;
-}
-.rf-hud.tl { top: 10px; left: 10px; border-top-width: 1px; border-left-width: 1px; }
-.rf-hud.tr { top: 10px; right: 10px; border-top-width: 1px; border-right-width: 1px; }
-.rf-hud.bl { bottom: 10px; left: 10px; border-bottom-width: 1px; border-left-width: 1px; }
-.rf-hud.br { bottom: 10px; right: 10px; border-bottom-width: 1px; border-right-width: 1px; }
-.rf-tile:hover .rf-hud { border-color: rgba(99,102,241,.52); }
 
 .rf-tile-label {
   font: 600 9px var(--mono);
@@ -586,27 +612,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
   position: relative;
   overflow: hidden;
 }
-/* Subtle grid texture */
-.rf-framework-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(196,181,253,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(196,181,253,.025) 1px, transparent 1px);
-  background-size: 60px 60px;
-  mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, #000 15%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, #000 15%, transparent 100%);
-  pointer-events: none;
-}
-/* Ambient glow center */
-.rf-framework-glow {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 700px; height: 300px;
-  background: radial-gradient(ellipse at center, rgba(99,102,241,.1), transparent 65%);
-  pointer-events: none;
-}
+.rf-framework-grid, .rf-framework-glow { display: none; }
 .rf-framework-inner {
   max-width: 820px;
   margin: 0 auto;
@@ -635,11 +641,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 .rf-framework-title em {
   font-style: normal;
-  background: linear-gradient(135deg, #c4b5fd, #6366f1);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  color: #818cf8;
 }
 .rf-framework-body {
   font: 400 16px/1.78 var(--font);
@@ -656,36 +658,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 .rf-pricing-card {
   display: inline-block;
-  background: rgba(10,8,25,.82);
-  border: 1px solid rgba(99,102,241,.22);
-  border-radius: 20px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
   padding: 48px 60px;
   position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  box-shadow:
-    0 0 80px rgba(99,102,241,.1),
-    0 40px 120px rgba(0,0,0,.4),
-    inset 0 0 60px rgba(99,102,241,.04);
 }
 @media (max-width: 480px) { .rf-pricing-card { padding: 36px 24px; } }
-/* Top gradient border */
-.rf-pricing-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(99,102,241,.55), rgba(168,85,247,.45), transparent);
-  pointer-events: none;
-}
-/* Inner radial glow */
-.rf-pricing-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 80% 55% at 50% 0%, rgba(99,102,241,.12), transparent 70%);
-  pointer-events: none;
-}
 .rf-pricing-badge {
   display: inline-block;
   background: rgba(99,102,241,.12);
@@ -716,11 +695,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-price-amount {
   font: 700 64px/1 var(--stat);
   letter-spacing: -.03em;
-  background: linear-gradient(135deg, #f4f3ff 0%, #c4b5fd 60%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  color: #f4f3ff;
 }
 .rf-price-period {
   font: 400 16px var(--font);
@@ -745,6 +720,40 @@ html, body { overflow-x: hidden; background: var(--bg); }
   z-index: 1;
 }
 
+/* ── FAQ ──────────────────────────────────────────────────────────────── */
+.rf-faq { padding: 100px 24px; }
+.rf-faq-inner { max-width: 760px; margin: 0 auto; }
+.rf-faq-list { border-top: 1px solid rgba(255,255,255,.08); }
+.rf-faq-item {
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding: 22px 0;
+}
+.rf-faq-item summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  font: 600 16px/1.4 var(--font);
+  color: rgba(244,243,255,.9);
+}
+.rf-faq-item summary::-webkit-details-marker { display: none; }
+.rf-faq-item summary::after {
+  content: '+';
+  flex-shrink: 0;
+  font: 400 22px/1 var(--font);
+  color: #818cf8;
+  transition: transform .2s ease;
+}
+.rf-faq-item[open] summary::after { transform: rotate(45deg); }
+.rf-faq-item p {
+  margin: 14px 0 0;
+  font: 400 14px/1.7 var(--font);
+  color: rgba(244,243,255,.55);
+  max-width: 640px;
+}
+
 /* ── FINAL CTA ───────────────────────────────────────────────────────── */
 .rf-final {
   padding: 120px 24px 100px;
@@ -752,59 +761,66 @@ html, body { overflow-x: hidden; background: var(--bg); }
   position: relative;
   overflow: hidden;
 }
-.rf-final-glow {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 70% 60% at 50% 50%, rgba(99,102,241,.18), transparent 70%),
-    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(124,58,237,.08), transparent 55%);
-  pointer-events: none;
-}
+.rf-final-glow { display: none; }
 .rf-final-copy {
   position: relative;
   z-index: 2;
 }
 .rf-final-line {
-  font: 400 clamp(28px, 5vw, 56px)/1.2 var(--display);
-  color: rgba(244,243,255,.85);
-  margin: 0 0 40px;
-  font-style: italic;
-  letter-spacing: -.01em;
+  font: 700 clamp(26px, 4vw, 42px)/1.25 var(--font);
+  color: #f4f3ff;
+  margin: 0 0 32px;
+  letter-spacing: -.02em;
 }
 .rf-final-line em {
   font-style: normal;
-  background: linear-gradient(135deg, #c4b5fd 0%, #6366f1 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  color: #818cf8;
 }
 
 /* ── FOOTER ──────────────────────────────────────────────────────────── */
 .rf-footer {
-  border-top: 1px solid rgba(196,181,253,.07);
-  padding: 40px 24px;
-  text-align: center;
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding: 48px 24px 32px;
+}
+.rf-footer-top {
+  max-width: 1180px;
+  margin: 0 auto 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.rf-footer-brand {
+  font: 700 14px var(--font);
+  letter-spacing: .02em;
+  color: rgba(244,243,255,.85);
+}
+.rf-footer-brand i {
+  font-style: normal;
+  font-weight: 400;
+  color: rgba(244,243,255,.4);
+  margin-left: 4px;
 }
 .rf-footer-links {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 28px;
+  gap: 26px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
 }
 .rf-footer-links a {
-  font: 400 12px var(--font);
-  color: rgba(244,243,255,.32);
+  font: 400 13px var(--font);
+  color: rgba(244,243,255,.5);
   text-decoration: none;
   transition: color .2s;
 }
-.rf-footer-links a:hover { color: rgba(244,243,255,.68); }
+.rf-footer-links a:hover { color: rgba(244,243,255,.85); }
 .rf-footer-copy {
-  font: 400 11px var(--mono);
-  letter-spacing: .08em;
-  color: rgba(196,181,253,.2);
+  max-width: 1180px;
+  margin: 0 auto;
+  text-align: left;
+  font: 400 12px var(--font);
+  color: rgba(244,243,255,.3);
 }
 
 /* ── SCROLL FADE-IN ─────────────────────────────────────────────────── */
@@ -856,8 +872,21 @@ html, body { overflow-x: hidden; background: var(--bg); }
     <a class="nav-sign vantage-auth-link" href="access.html" data-signed-in-text="Dashboard" data-signed-in-href="dashboard.html">Sign in</a>
     <a class="nav-cta nav-cta-demo" href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;};" style="white-space:nowrap">Try the Demo <b>↗</b></a>
     <a class="nav-cta nav-cta-trial" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html" style="white-space:nowrap;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;border-color:transparent">Start Free Trial <b>→</b></a>
+    <button class="rf-nav-toggle" id="rfNavToggle" aria-label="Open menu" aria-expanded="false" aria-controls="rfMobileMenu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+
+<!-- Mobile menu drawer — shows <900px, replaces hidden nav links/CTAs -->
+<nav class="rf-mobile-menu" id="rfMobileMenu" aria-hidden="true">
+  <a href="about.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">About</a>
+  <a href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">Demo</a>
+  <a href="#rf-pricing">Pricing</a>
+  <a href="#rf-faq">FAQ</a>
+  <a class="vantage-auth-link" href="access.html" data-signed-in-text="Dashboard" data-signed-in-href="dashboard.html">Sign in</a>
+  <a class="rf-mobile-cta" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html">Start Free Trial →</a>
+</nav>
 
 <!-- ANNOUNCEMENT STRIP — real trial terms, pulled above the fold -->
 <div class="rf-announce">
@@ -1031,40 +1060,24 @@ html, body { overflow-x: hidden; background: var(--bg); }
       <div class="rf-tiles">
 
         <div class="rf-tile">
-          <div class="rf-hud tl" aria-hidden="true"></div>
-          <div class="rf-hud tr" aria-hidden="true"></div>
-          <div class="rf-hud bl" aria-hidden="true"></div>
-          <div class="rf-hud br" aria-hidden="true"></div>
           <span class="rf-tile-label">01 / Financial Exposure</span>
           <h3 class="rf-tile-title">The financial cost of every case</h3>
           <p class="rf-tile-desc">Before a situation escalates, Vantage calculates what it's worth — legally, financially, and in organizational risk. You walk in prepared, not exposed.</p>
         </div>
 
         <div class="rf-tile">
-          <div class="rf-hud tl" aria-hidden="true"></div>
-          <div class="rf-hud tr" aria-hidden="true"></div>
-          <div class="rf-hud bl" aria-hidden="true"></div>
-          <div class="rf-hud br" aria-hidden="true"></div>
           <span class="rf-tile-label">02 / HR P&L</span>
           <h3 class="rf-tile-title">What your decisions cost the business</h3>
           <p class="rf-tile-desc">Every attrition event, case closure, and retention action mapped to a number. Your Human P&L makes the invisible visible — line by line.</p>
         </div>
 
         <div class="rf-tile">
-          <div class="rf-hud tl" aria-hidden="true"></div>
-          <div class="rf-hud tr" aria-hidden="true"></div>
-          <div class="rf-hud bl" aria-hidden="true"></div>
-          <div class="rf-hud br" aria-hidden="true"></div>
           <span class="rf-tile-label">03 / Business Case Value</span>
           <h3 class="rf-tile-title">Every retention decision, quantified</h3>
           <p class="rf-tile-desc">The business case your manager needs before approving a counteroffer or team intervention — built from your numbers, not industry estimates.</p>
         </div>
 
         <div class="rf-tile">
-          <div class="rf-hud tl" aria-hidden="true"></div>
-          <div class="rf-hud tr" aria-hidden="true"></div>
-          <div class="rf-hud bl" aria-hidden="true"></div>
-          <div class="rf-hud br" aria-hidden="true"></div>
           <span class="rf-tile-label">04 / HR Decision Capital</span>
           <h3 class="rf-tile-title">Your cumulative strategic impact</h3>
           <p class="rf-tile-desc">The total business value of decisions you've made, calculated over time. The number you bring to the room when someone asks what HR actually does.</p>
@@ -1110,6 +1123,36 @@ html, body { overflow-x: hidden; background: var(--bg); }
     </div>
   </section>
 
+  <!-- ── FAQ ──────────────────────────────────────────────────────────── -->
+  <section class="rf-faq rf-reveal" id="rf-faq">
+    <div class="rf-faq-inner">
+      <span class="rf-section-label">Questions</span>
+      <h2 class="rf-section-headline">Frequently asked</h2>
+      <div class="rf-faq-list">
+        <details class="rf-faq-item">
+          <summary>Is Vantage for HR teams, or individual professionals?</summary>
+          <p>Individual professionals. Vantage is a personal subscription — ₹799/month, billed to you, not your company. There's no procurement process and no company deployment to wait on.</p>
+        </details>
+        <details class="rf-faq-item">
+          <summary>What happens to my data if I change jobs?</summary>
+          <p>It stays yours. Every case you log, every model you build, and every record Vantage generates follows you, not your employer. Vantage Record is portable and permanent.</p>
+        </details>
+        <details class="rf-faq-item">
+          <summary>How much does it cost?</summary>
+          <p>₹799/month after a 7-day free trial. No credit card required to start, and you can cancel anytime.</p>
+        </details>
+        <details class="rf-faq-item">
+          <summary>Is Vantage's guidance legal advice?</summary>
+          <p>No. Vantage gives you frameworks, financial models, and the relevant Acts and rules to work from, not a substitute for legal counsel. Guidance is state and case specific, so confirm high-stakes decisions with qualified counsel.</p>
+        </details>
+        <details class="rf-faq-item">
+          <summary>Can I cancel anytime?</summary>
+          <p>Yes. No lock-in, no contracts. Cancel whenever you want from your account settings.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
   <!-- ── FINAL CTA ─────────────────────────────────────────────────────── -->
   <section class="rf-final rf-reveal">
     <div class="rf-final-glow" aria-hidden="true"></div>
@@ -1123,12 +1166,17 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
   <!-- ── FOOTER ────────────────────────────────────────────────────────── -->
   <footer class="rf-footer">
-    <div class="rf-footer-links">
-      <a href="about.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">About</a>
-      <a href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">Demo</a>
-      <a href="legal/privacy.html">Privacy</a>
-      <a href="legal/terms.html">Terms</a>
-      <a href="https://humacity.com" target="_blank" rel="noopener">Humacity</a>
+    <div class="rf-footer-top">
+      <span class="rf-footer-brand">VANTAGE <i>by Virorah</i></span>
+      <div class="rf-footer-links">
+        <a href="about.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">About</a>
+        <a href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">Demo</a>
+        <a href="#rf-pricing">Pricing</a>
+        <a href="#rf-faq">FAQ</a>
+        <a href="legal/privacy.html">Privacy</a>
+        <a href="legal/terms.html">Terms</a>
+        <a href="https://humacity.com" target="_blank" rel="noopener">Humacity</a>
+      </div>
     </div>
     <p class="rf-footer-copy">© 2024–2025 Virorah. All rights reserved.</p>
   </footer>
@@ -1169,14 +1217,24 @@ html, body { overflow-x: hidden; background: var(--bg); }
   })();
 })();
 
-/* ── TILE MOUSE-TRACKING GLOW ───────────────────────────────────────── */
-document.querySelectorAll('.rf-tile').forEach(function(tile){
-  tile.addEventListener('mousemove', function(e){
-    var r = tile.getBoundingClientRect();
-    tile.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
-    tile.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+/* ── MOBILE NAV TOGGLE ─────────────────────────────────────────────── */
+(function(){
+  var btn = document.getElementById('rfNavToggle');
+  var menu = document.getElementById('rfMobileMenu');
+  if(!btn || !menu) return;
+  function setOpen(open){
+    menu.classList.toggle('is-open', open);
+    btn.classList.toggle('is-open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    menu.setAttribute('aria-hidden', open ? 'false' : 'true');
+  }
+  btn.addEventListener('click', function(){
+    setOpen(!menu.classList.contains('is-open'));
   });
-});
+  menu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ setOpen(false); });
+  });
+})();
 
 /* ── NAV CLOCK ───────────────────────────────────────────────────────── */
 (function(){
