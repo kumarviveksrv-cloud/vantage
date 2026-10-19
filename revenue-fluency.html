@@ -85,13 +85,17 @@ html, body { overflow-x: hidden; background: var(--bg); }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: min(680px, calc(100% - 48px));
+  position: absolute;
+  top: 36px;
+  left: 24px;
+  right: 24px;
   font: 11px var(--mono);
   letter-spacing: .15em;
   color: rgba(196,181,253,.28);
-  margin-bottom: 38px;
-  position: relative;
-  z-index: 10;
+  z-index: 6;
+}
+@media (max-width: 560px) {
+  .rf-sysline { top: 24px; left: 16px; right: 16px; font-size: 9.5px; }
 }
 .rf-sysline-live {
   display: inline-flex;
