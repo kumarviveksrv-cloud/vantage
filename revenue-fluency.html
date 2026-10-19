@@ -130,6 +130,22 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 @keyframes rf-pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
 
+/* B2C positioning badge — above eyebrow */
+.rf-for-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 700 9px/1 var(--mono);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: #050410;
+  background: linear-gradient(90deg, #6366f1 0%, #7c3aed 100%);
+  border-radius: 2px;
+  padding: 6px 12px 5px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 18px rgba(99,102,241,.5);
+}
+
 .rf-hero h1 {
   font: 700 clamp(52px, 9vw, 110px)/1.0 var(--font);
   letter-spacing: -0.03em;
@@ -567,6 +583,15 @@ html, body { overflow-x: hidden; background: var(--bg); }
   z-index: 1;
 }
 .rf-pricing-sub span { margin: 0 8px; opacity: .45; }
+.rf-pricing-personal {
+  font: 500 11px/1 var(--mono);
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: rgba(99,102,241,.7);
+  margin: 0 0 32px;
+  position: relative;
+  z-index: 1;
+}
 
 /* ── FINAL CTA ───────────────────────────────────────────────────────── */
 .rf-final {
@@ -703,6 +728,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
     <!-- Hero content -->
     <div class="rf-hero-copy">
+      <div class="rf-for-badge">For Individual HR Professionals · Not Enterprise</div>
       <div class="rf-eyebrow">
         <span class="rf-eyebrow-dot"></span>
         VANTAGE / HR INTELLIGENCE PLATFORM
@@ -712,6 +738,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
         Vantage quantifies the business value of every HR decision you make.
         <strong>In rupees. With evidence.</strong>
         So you stop being invisible to the room that matters.
+        <strong>This is your personal subscription. Not a platform your company buys or deploys. You sign up. You own it.</strong>
       </p>
       <div class="rf-actions">
         <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html">
@@ -834,7 +861,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
   <!-- ── PRICING ──────────────────────────────────────────────────────── -->
   <section class="rf-pricing rf-reveal" id="rf-pricing">
     <div class="rf-pricing-card">
-      <div class="rf-pricing-badge">VANTAGE CORE — ONE PLAN</div>
+      <div class="rf-pricing-badge">INDIVIDUAL PLAN · FOR HR PROFESSIONALS</div>
       <div class="rf-price">
         <span class="rf-price-currency">₹</span>
         <span class="rf-price-amount">799</span>
@@ -843,6 +870,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
       <p class="rf-pricing-sub">
         7-day free trial <span>·</span> No credit card required <span>·</span> Cancel anytime
       </p>
+      <p class="rf-pricing-personal">You sign up. No company procurement. No IT approvals.</p>
       <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html" style="font-size:15px;padding:16px 36px;position:relative;z-index:1">
         Start Free Trial <span>→</span>
       </a>
