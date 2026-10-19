@@ -351,6 +351,50 @@ html, body { overflow-x: hidden; background: var(--bg); }
   margin-top: 36px !important;
 }
 
+/* ── TOOLS ROSTER ──────────────────────────────────────────────────── */
+.rf-roster { padding: 100px 24px; }
+.rf-roster-inner { max-width: 800px; margin: 0 auto; }
+
+.rf-roster-group { margin-top: 64px; }
+
+.rf-roster-group-label {
+  font: 600 10px/1 var(--mono);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(99,102,241,.65);
+  margin: 0 0 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(99,102,241,.18);
+  display: block;
+}
+
+.rf-tool-row {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  gap: 0 40px;
+  padding: 22px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  align-items: start;
+}
+.rf-tool-row--last { border-bottom: none; }
+
+@media (max-width: 600px) {
+  .rf-tool-row { grid-template-columns: 1fr; gap: 6px; }
+}
+
+.rf-tool-name {
+  font: 400 clamp(18px, 2vw, 21px)/1.25 var(--display);
+  color: rgba(244,243,255,.9);
+  margin: 0;
+  padding-top: 2px;
+}
+
+.rf-tool-desc {
+  font: 400 clamp(13px, 1.35vw, 15px)/1.65 var(--font);
+  color: rgba(196,181,253,.58);
+  margin: 0;
+}
+
 /* ── WHAT YOU GET — 4 TILES ─────────────────────────────────────────── */
 .rf-tiles-section { padding: 100px 24px; }
 .rf-tiles-inner { max-width: 1000px; margin: 0 auto; }
@@ -822,6 +866,63 @@ html, body { overflow-x: hidden; background: var(--bg); }
     <p>You can change that.</p>
     <p class="rf-gap-tagline">Your HR judgment, quantified. Your career impact, documented.</p>
   </div>
+
+  <!-- ── TOOLS ROSTER ────────────────────────────────────────────────── -->
+  <section class="rf-roster rf-reveal">
+    <div class="rf-roster-inner">
+      <span class="rf-section-label">What's inside Vantage</span>
+      <h2 class="rf-section-headline">Eight tools. One subscription.</h2>
+
+      <div class="rf-roster-group">
+        <span class="rf-roster-group-label">Your Active Tools</span>
+
+        <div class="rf-tool-row">
+          <p class="rf-tool-name">Employee Case Advisor</p>
+          <p class="rf-tool-desc">Describe the situation. Get the exact process, financial exposure, and documentation needed — before you walk into the room.</p>
+        </div>
+
+        <div class="rf-tool-row">
+          <p class="rf-tool-name">The Business Case</p>
+          <p class="rf-tool-desc">Input your HR numbers. Get the financial argument that lands with finance — not a template, a case built from your actual data.</p>
+        </div>
+
+        <div class="rf-tool-row">
+          <p class="rf-tool-name">Retention Advisor</p>
+          <p class="rf-tool-desc">Name the person. Model the full cost of keeping or losing them — replacement, productivity loss, counter-offer value — before anyone asks.</p>
+        </div>
+
+        <div class="rf-tool-row">
+          <p class="rf-tool-name">Policy Advisor</p>
+          <p class="rf-tool-desc">Describe the gap. Get the applicable Acts, the rules, and the compliance requirements for your exact state and situation.</p>
+        </div>
+
+        <div class="rf-tool-row rf-tool-row--last">
+          <p class="rf-tool-name">ARIA</p>
+          <p class="rf-tool-desc">Your private HR intelligence ally. Context-aware. Available at 9pm when the case is still open and you need to think it through.</p>
+        </div>
+      </div>
+
+      <div class="rf-roster-group">
+        <span class="rf-roster-group-label">Your Record</span>
+
+        <div class="rf-tool-row">
+          <p class="rf-tool-name">Standpoint</p>
+          <p class="rf-tool-desc">File your professional position before the outcome is known. Timestamped. Permanent. Evidence you called it right — before anyone knew how it would end.</p>
+        </div>
+
+        <div class="rf-tool-row">
+          <p class="rf-tool-name">The Debrief</p>
+          <p class="rf-tool-desc">Last working day of every month, Vantage writes it for you — cases handled, value created, growth signal. You don't author it. It auto-generates from your work.</p>
+        </div>
+
+        <div class="rf-tool-row rf-tool-row--last">
+          <p class="rf-tool-name">Vantage Record</p>
+          <p class="rf-tool-desc">Every tool you use writes to your archive. Searchable, portable, permanently yours. The complete record of everything you navigated — that follows you when you move on.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
 
   <!-- ── WHAT YOU GET ─────────────────────────────────────────────────── -->
   <section class="rf-tiles-section rf-reveal">
