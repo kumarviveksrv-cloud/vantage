@@ -46,6 +46,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
   display: none !important;
 }
 
+/* This page has no boot sequence (vantage-cinematic.js is not loaded here),
+   so nothing ever adds .nav.ready. Force the nav visible on load instead
+   of leaving it permanently parked above the viewport. */
+.nav {
+  transform: none !important;
+}
+
 /* ── HERO ───────────────────────────────────────────────────────────── */
 .rf-hero {
   min-height: 100vh;
