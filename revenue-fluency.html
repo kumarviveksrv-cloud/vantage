@@ -124,37 +124,55 @@ html, body { overflow-x: hidden; background: var(--bg); }
   font-weight: 600;
 }
 
-/* ── HERO — restrained, Cognexus-style layout (sandbox test) ─────────── */
+/* ── HERO — orb + starfield (Humacity-style experiment, hero-only) ───── */
 .rf-hero {
-  display: block;
-  padding: 112px 24px 90px;
   position: relative;
-  z-index: 2;
+  min-height: 62vh;
+  padding: 78px 24px 0;
+  overflow: hidden;
+  z-index: 1;
+}
+@media (max-width: 700px) {
+  .rf-hero { min-height: 42vh; padding-top: 70px; }
 }
 
-.rf-hero-grid {
-  max-width: 1180px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1.05fr .95fr;
-  gap: 64px;
-  align-items: center;
+.rf-hero-orb {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
 }
-@media (max-width: 900px) {
-  .rf-hero-grid { grid-template-columns: 1fr; gap: 48px; }
+#rfStarfieldCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+#rfOrbCanvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(620px, 82vw);
+  height: min(620px, 82vw);
+  opacity: .92;
+  z-index: 1;
 }
 
-/* Hero copy column — left-aligned, single typeface (DM Sans) */
+/* Hero copy block — sits below the orb, centered single column */
 .rf-hero-copy {
   position: relative;
   z-index: 10;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-}
-@media (max-width: 900px) {
-  .rf-hero-copy { align-items: center; text-align: center; }
+  align-items: center;
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 10px 24px 70px;
 }
 
 /* B2C positioning badge — flat, no glow/gradient fill */
@@ -173,13 +191,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
   margin-bottom: 22px;
 }
 
-.rf-hero h1 {
+.rf-hero-copy h1 {
   font: 700 clamp(42px, 5.4vw, 68px)/1.08 var(--font);
   letter-spacing: -0.02em;
   margin: 0 0 22px;
   color: #f4f3ff;
 }
-.rf-hero h1 .rf-accent {
+.rf-hero-copy h1 .rf-accent {
   color: #818cf8;
 }
 
@@ -282,10 +300,14 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 .rf-about-link:hover { color: rgba(196,181,253,.9); border-color: rgba(196,181,253,.4); }
 
-/* ── HERO PRODUCT PANEL — right column, mock ARIA conversation ───────── */
+/* ── ARIA PREVIEW — relocated below the hero orb, mock conversation ──── */
+.rf-aria-preview { padding: 10px 24px 100px; }
+.rf-aria-preview-inner { max-width: 640px; margin: 0 auto; }
 .rf-hero-panel {
   position: relative;
   z-index: 10;
+  max-width: 520px;
+  margin: 0 auto;
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 14px;
   background: rgba(13,11,30,.6);
@@ -373,7 +395,6 @@ html, body { overflow-x: hidden; background: var(--bg); }
   color: rgba(244,243,255,.3);
   text-align: center;
 }
-@media (max-width: 900px) { .rf-hero-panel { max-width: 520px; margin: 0 auto; } }
 
 /* ── TICKER ─────────────────────────────────────────────────────────── */
 .rf-ticker {
@@ -891,36 +912,43 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
 <main>
 
-  <!-- ── HERO — restrained layout (sandbox test, index.html untouched) ── -->
+  <!-- ── HERO — orb + starfield (hero-only experiment, rest of page restrained) ── -->
   <section class="rf-hero">
-    <div class="rf-hero-grid">
-      <!-- Left: copy -->
-      <div class="rf-hero-copy">
-        <div class="rf-for-badge">For Individual HR Professionals · Not Enterprise</div>
-        <h1>Your decisions have a <span class="rf-accent">price tag</span>.</h1>
-        <p class="rf-hero-deck">
-          Vantage quantifies the business value of every HR decision you make — in rupees, with evidence — and keeps a permanent record of the impact you created.
-          <strong>It's your subscription, not a platform your company buys.</strong>
-        </p>
-        <div class="rf-actions">
-          <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html">
-            Start Free Trial <span>→</span>
-          </a>
-          <a class="btn-rf-ghost" href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">
-            Try the Demo <span>↗</span>
-          </a>
-        </div>
-        <ul class="rf-trust-cues">
-          <li>7 days free</li>
-          <li>No credit card required</li>
-          <li>Cancel anytime</li>
-        </ul>
-        <a href="about.html" class="rf-about-link" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">
-          What Vantage is and how it works →
-        </a>
-      </div>
+    <div class="rf-hero-orb" id="rfHeroOrb">
+      <canvas id="rfStarfieldCanvas"></canvas>
+      <canvas id="rfOrbCanvas"></canvas>
+    </div>
+  </section>
 
-      <!-- Right: product mockup panel -->
+  <!-- Headline sits below the orb -->
+  <div class="rf-hero-copy">
+    <div class="rf-for-badge">For Individual HR Professionals · Not Enterprise</div>
+    <h1>Your decisions have a <span class="rf-accent">price tag</span>.</h1>
+    <p class="rf-hero-deck">
+      Vantage quantifies the business value of every HR decision you make — in rupees, with evidence — and keeps a permanent record of the impact you created.
+      <strong>It's your subscription, not a platform your company buys.</strong>
+    </p>
+    <div class="rf-actions">
+      <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html">
+        Start Free Trial <span>→</span>
+      </a>
+      <a class="btn-rf-ghost" href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">
+        Try the Demo <span>↗</span>
+      </a>
+    </div>
+    <ul class="rf-trust-cues">
+      <li>7 days free</li>
+      <li>No credit card required</li>
+      <li>Cancel anytime</li>
+    </ul>
+    <a href="about.html" class="rf-about-link" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">
+      What Vantage is and how it works →
+    </a>
+  </div>
+
+  <!-- ── ARIA PREVIEW — relocated below the orb+headline, mock conversation ── -->
+  <section class="rf-aria-preview rf-reveal">
+    <div class="rf-aria-preview-inner">
       <div class="rf-hero-panel" aria-hidden="true">
         <div class="rf-panel-head">
           <span class="rf-panel-dots"><i></i><i></i><i></i></span>
@@ -1251,6 +1279,230 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="vantage-prologue.js"></script>
+
+<!-- ── HERO ORB + STARFIELD — Three.js r128 (hero-only experiment) ─────── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ── RF HERO ORB — Vantage-brand sphere, rings, particle clouds ──────────
+(function(){
+  'use strict';
+  if(!window.THREE) return;
+  var canvas = document.getElementById('rfOrbCanvas');
+  var root = document.getElementById('rfHeroOrb');
+  if(!canvas || !root) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  function getSize(){ return Math.min(620, window.innerWidth * .82); }
+  var sz = getSize(); canvas.width = sz; canvas.height = sz;
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(55, 1, 0.1, 100);
+  camera.position.set(0, 0, 3.4);
+  var renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true, alpha: true});
+  renderer.setSize(sz, sz);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  var core = new THREE.Mesh(new THREE.SphereGeometry(.85,80,80), new THREE.MeshStandardMaterial({color:0x0d0b1e,roughness:.2,metalness:.9,emissive:0x1e1b4b,emissiveIntensity:.5}));
+  scene.add(core);
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(.9,32,32), new THREE.MeshBasicMaterial({color:0x6366f1,transparent:true,opacity:.06,side:THREE.BackSide})));
+  var wire = new THREE.Mesh(new THREE.SphereGeometry(.87,24,24), new THREE.MeshBasicMaterial({color:0x7c3aed,wireframe:true,transparent:true,opacity:.09}));
+  scene.add(wire);
+
+  function makeRing(r,tube,color,opacity,rx,ry,rz){
+    var m = new THREE.Mesh(new THREE.TorusGeometry(r,tube,8,160), new THREE.MeshBasicMaterial({color:color,transparent:true,opacity:opacity}));
+    m.rotation.set(rx,ry,rz);
+    scene.add(m);
+    return m;
+  }
+  var ring1 = makeRing(1.2,.005,0x6366f1,.5,Math.PI*.28,0,0);
+  var ring2 = makeRing(1.38,.003,0xa5b4fc,.25,Math.PI*.5,0,Math.PI*.2);
+  var ring3 = makeRing(1.55,.002,0x7c3aed,.15,Math.PI*.15,Math.PI*.1,0);
+  var ring4 = makeRing(1.0,.004,0xa5b4fc,.3,Math.PI*.7,0,Math.PI*.4);
+
+  function makeParticles(count,minR,maxR,color,size){
+    var pos = new Float32Array(count*3);
+    for(var i=0;i<count;i++){
+      var phi = Math.acos(-1+(2*i)/count),
+          theta = Math.sqrt(count*Math.PI)*phi + (Math.random()-.5)*.8,
+          r = minR + Math.random()*(maxR-minR);
+      pos[i*3] = r*Math.sin(phi)*Math.cos(theta);
+      pos[i*3+1] = r*Math.sin(phi)*Math.sin(theta);
+      pos[i*3+2] = r*Math.cos(phi);
+    }
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    var pts = new THREE.Points(geo, new THREE.PointsMaterial({color:color,size:size,transparent:true,opacity:.7,sizeAttenuation:true}));
+    scene.add(pts);
+    return pts;
+  }
+  var cloud1 = makeParticles(600,1.1,1.9,0x7c3aed,.022);
+  var cloud2 = makeParticles(200,.92,1.05,0xa5b4fc,.035);
+  var cloud3 = makeParticles(80,2.0,2.8,0x6366f1,.015);
+
+  scene.add(new THREE.AmbientLight(0x050410,4));
+  var mLight = new THREE.PointLight(0x6366f1,4,10); mLight.position.set(2.5,2,2); scene.add(mLight);
+  var gLight = new THREE.PointLight(0xa5b4fc,2,10); gLight.position.set(-2,-1.5,1.5); scene.add(gLight);
+  var bLight = new THREE.PointLight(0x4f46e5,1.5,8); bLight.position.set(0,-2.5,-1); scene.add(bLight);
+  var fLight = new THREE.PointLight(0xc4b5fd,1.2,6); fLight.position.set(-1.5,1.5,2); scene.add(fLight);
+
+  var mouseX=0, mouseY=0;
+  addEventListener('mousemove', function(e){
+    mouseX = (e.clientX/window.innerWidth-.5)*1.2;
+    mouseY = (e.clientY/window.innerHeight-.5)*1.2;
+  }, {passive:true});
+
+  var onScreen = true, t = 0;
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ onScreen = e.isIntersecting; });
+  }, {threshold:.1});
+  io.observe(root);
+
+  function animate(){
+    requestAnimationFrame(animate);
+    if(!onScreen) return;
+    t += .004;
+    core.rotation.y = t*.25; core.rotation.x = Math.sin(t*.15)*.08;
+    wire.rotation.y = t*.4; wire.rotation.x = -t*.15;
+    ring1.rotation.z = t*.35; ring2.rotation.y = t*.28; ring2.rotation.x += .002;
+    ring3.rotation.z = -t*.2; ring3.rotation.y = t*.15; ring4.rotation.x = t*.3; ring4.rotation.z = -t*.18;
+    cloud1.rotation.y = t*.12; cloud1.rotation.x = Math.sin(t*.08)*.04;
+    cloud2.rotation.y = -t*.18; cloud2.rotation.z = t*.06; cloud3.rotation.y = t*.06;
+    var breath = 1+Math.sin(t*.7)*.018;
+    core.scale.setScalar(breath); wire.scale.setScalar(breath*1.01);
+    scene.rotation.x += (mouseY*.6-scene.rotation.x)*.03;
+    scene.rotation.y += (mouseX*.6-scene.rotation.y)*.03;
+    mLight.intensity = 3.5+Math.sin(t*1.1)*.8;
+    gLight.intensity = 1.8+Math.cos(t*.9)*.5;
+    renderer.render(scene, camera);
+  }
+  animate();
+  addEventListener('resize', function(){
+    var s = getSize();
+    canvas.style.width = s+'px'; canvas.style.height = s+'px';
+    renderer.setSize(s,s);
+  }, {passive:true});
+})();
+
+// ── RF STARFIELD — Vantage-term sprites streaming toward camera ─────────
+(function(){
+  'use strict';
+  if(!window.THREE) return;
+  var canvas = document.getElementById('rfStarfieldCanvas');
+  if(!canvas) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var W, H, scene, camera, renderer;
+  var mouse = {x:0,y:0};
+  var PARTICLE_COUNT = 500;
+  var sprites = [];
+
+  var SYMBOLS = [
+    'ARIA','VANTAGE','Vantage Record','Business Case','Retention Advisor',
+    'Employee Case Advisor','HR P&L','Financial Exposure','HR Decision Capital',
+    'Talent Premium','Org Vitals','Revenue Fluent','₹','ROI','P&L','Evidence',
+    'Cited','Due Process','Notice Period','Gratuity','Compliance','Documentation',
+    'Shops & Establishments Act','Termination','Severance','LIVE','VERIFIED'
+  ];
+  var COLORS = ['#6366f1','#a5b4fc','#c4b5fd','#6366f1','#a5b4fc','#6366f1','#f4f3ff','rgba(244,243,255,0.45)'];
+
+  function makeSpriteTex(text,color){
+    var c = document.createElement('canvas');
+    var ctx = c.getContext('2d');
+    var fontSize = text.length>8?13:text.length>4?16:20;
+    ctx.font = '600 '+fontSize+'px "JetBrains Mono", "DM Mono", monospace';
+    var tw = ctx.measureText(text).width;
+    c.width = Math.ceil(tw)+16;
+    c.height = fontSize+12;
+    ctx.font = '600 '+fontSize+'px "JetBrains Mono", "DM Mono", monospace';
+    ctx.clearRect(0,0,c.width,c.height);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 1.0;
+    ctx.fillText(text,8,fontSize+2);
+    return {tex: new THREE.CanvasTexture(c), aspect: c.width/c.height};
+  }
+  function makeSprite(tex,aspect){
+    var mat = new THREE.SpriteMaterial({map:tex,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending});
+    var sp = new THREE.Sprite(mat);
+    var baseSize = 0.5+Math.random()*0.9;
+    sp.scale.set(baseSize*aspect*10, baseSize*10, 1);
+    return sp;
+  }
+  function resetSprite(data, randomZ){
+    var spread = 800;
+    data.sprite.position.x = (Math.random()-0.5)*spread;
+    data.sprite.position.y = (Math.random()-0.5)*spread;
+    data.sprite.position.z = randomZ ? -900+Math.random()*700 : -1000+Math.random()*100;
+    data.speed = 0.3+Math.random()*0.7;
+    data.maxOpacity = 0.70+Math.random()*0.30;
+    data.sprite.material.opacity = 0;
+    data.fadeIn = true;
+  }
+  function init(){
+    var hero = document.getElementById('rfHeroOrb');
+    W = hero ? hero.offsetWidth : window.innerWidth;
+    H = hero ? hero.offsetHeight : window.innerHeight;
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(70, W/H, 0.1, 2000);
+    camera.position.z = 500;
+    renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:true, alpha:true});
+    renderer.setSize(W,H);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+    renderer.setClearColor(0x000000,0);
+    var texCache = {};
+    SYMBOLS.forEach(function(sym){
+      var col = COLORS[Math.floor(Math.random()*COLORS.length)];
+      texCache[sym] = makeSpriteTex(sym,col);
+    });
+    for(var i=0;i<PARTICLE_COUNT;i++){
+      var sym = SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)];
+      var tc = texCache[sym];
+      var sp = makeSprite(tc.tex, tc.aspect);
+      scene.add(sp);
+      var data = {sprite:sp, speed:0, maxOpacity:0, fadeIn:true};
+      resetSprite(data, true);
+      sprites.push(data);
+    }
+  }
+  var onScreen = true;
+  function animate(){
+    requestAnimationFrame(animate);
+    if(!onScreen) return;
+    var camZ = 500;
+    sprites.forEach(function(data){
+      var sp = data.sprite;
+      sp.position.z += data.speed;
+      sp.position.x += mouse.x*0.06;
+      sp.position.y -= mouse.y*0.06;
+      var progress = (sp.position.z+900)/1400;
+      if(data.fadeIn && progress<0.6){
+        sp.material.opacity = Math.min(data.maxOpacity, progress*data.maxOpacity*4.0);
+      }
+      if(sp.position.z>420){ sp.material.opacity *= 0.88; }
+      if(sp.position.z>camZ+50){ resetSprite(data,false); }
+    });
+    renderer.render(scene,camera);
+  }
+  addEventListener('mousemove', function(e){
+    mouse.x = (e.clientX/window.innerWidth-0.5)*2;
+    mouse.y = (e.clientY/window.innerHeight-0.5)*2;
+  }, {passive:true});
+  addEventListener('resize', function(){
+    var hero = document.getElementById('rfHeroOrb');
+    W = hero ? hero.offsetWidth : window.innerWidth;
+    H = hero ? hero.offsetHeight : window.innerHeight;
+    camera.aspect = W/H; camera.updateProjectionMatrix();
+    renderer.setSize(W,H);
+  }, {passive:true});
+  var root = document.getElementById('rfHeroOrb');
+  if(root){
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ onScreen = e.isIntersecting; }); }, {threshold:.1});
+    io.observe(root);
+  }
+  init();
+  animate();
+})();
+</script>
 
 <script>
 /* ── SCROLL REVEAL ─────────────────────────────────────────────────── */
