@@ -144,39 +144,6 @@ html, body { overflow-x: hidden; background: var(--bg); }
   .rf-hero-grid { grid-template-columns: 1fr; gap: 48px; }
 }
 
-/* System status line above hero content */
-.rf-sysline {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: absolute;
-  top: 36px;
-  left: 24px;
-  right: 24px;
-  font: 11px var(--mono);
-  letter-spacing: .15em;
-  color: rgba(196,181,253,.28);
-  z-index: 6;
-}
-@media (max-width: 560px) {
-  .rf-sysline { top: 24px; left: 16px; right: 16px; font-size: 9.5px; }
-}
-.rf-sysline-live {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: rgba(196,181,253,.35);
-}
-.rf-sysline-live i {
-  display: inline-block;
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: #75f5bb;
-  box-shadow: 0 0 8px #75f5bb;
-  animation: rf-live-pulse 2.5s ease-in-out infinite;
-}
-@keyframes rf-live-pulse { 50% { opacity: .4; box-shadow: none; } }
-
 /* Hero copy column — left-aligned, single typeface (DM Sans) */
 .rf-hero-copy {
   position: relative;
@@ -926,12 +893,6 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
   <!-- ── HERO — restrained layout (sandbox test, index.html untouched) ── -->
   <section class="rf-hero">
-    <!-- System status sysline -->
-    <div class="rf-sysline" aria-hidden="true">
-      <span>INDIA / HR INTELLIGENCE PLATFORM</span>
-      <span class="rf-sysline-live"><i></i>LIVE</span>
-    </div>
-
     <div class="rf-hero-grid">
       <!-- Left: copy -->
       <div class="rf-hero-copy">
