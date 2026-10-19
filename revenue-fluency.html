@@ -61,12 +61,6 @@ html, body { overflow-x: hidden; background: var(--bg); }
    below 900px. This adds the trigger + panel that were missing, plus
    hides the three header buttons on mobile so the top bar matches the
    clean logo+hamburger pattern (the links move into the drawer). */
-@media (max-width: 900px) {
-  .nav-actions .nav-sign,
-  .nav-actions .nav-cta-demo,
-  .nav-actions .nav-cta-trial { display: none; }
-  .rf-nav-toggle { display: flex; }
-}
 .rf-nav-toggle {
   display: none;
   flex-direction: column;
@@ -77,6 +71,12 @@ html, body { overflow-x: hidden; background: var(--bg); }
   border: none;
   padding: 0;
   cursor: pointer;
+}
+@media (max-width: 900px) {
+  .nav-actions .nav-sign,
+  .nav-actions .nav-cta-demo,
+  .nav-actions .nav-cta-trial { display: none; }
+  .rf-nav-toggle { display: flex; }
 }
 .rf-nav-toggle span {
   display: block;
