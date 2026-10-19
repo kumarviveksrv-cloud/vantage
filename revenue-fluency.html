@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050410">
+<title>Get Revenue Fluent — Vantage</title>
+<meta name="description" content="Vantage quantifies the business value of every HR decision you make. In rupees. With evidence. Become Revenue Fluent.">
+<link rel="icon" href="favicon.png">
+<link rel="canonical" href="https://vantage.virorah.com/revenue-fluency.html">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<!-- ── OPEN GRAPH ─────────────────────────────────────────────────────── -->
+<meta property="og:type"         content="website">
+<meta property="og:url"          content="https://vantage.virorah.com/revenue-fluency.html">
+<meta property="og:site_name"    content="Virorah Vantage">
+<meta property="og:title"        content="Get Revenue Fluent — Vantage">
+<meta property="og:description"  content="Vantage quantifies the business value of every HR decision you make. In rupees. With evidence.">
+<meta property="og:image"        content="https://vantage.virorah.com/og-image.png">
+<meta property="og:locale"       content="en_IN">
+
+<!-- ── GOOGLE ANALYTICS 4 ────────────────────────────────────────────── -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5JZR3EMJ5Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5JZR3EMJ5Q');
+</script>
+
+<link href="/fonts/fonts.css" rel="stylesheet"/>
+<link rel="stylesheet" href="vantage-cinematic.css">
+<link rel="stylesheet" href="vantage-cinematic-v4.css">
+<link rel="stylesheet" href="vantage-prologue.css">
+<link rel="stylesheet" href="vantage-theme.css">
+
+<style>
+/* ── RF PAGE — REVENUE FLUENCY LANDING ──────────────────────────────── */
+
+/* Reset overflow for this page layout */
+html, body { overflow-x: hidden; background: var(--bg); }
+
+/* ── HERO ───────────────────────────────────────────────────────────── */
+.rf-hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 140px 24px 80px;
+  position: relative;
+  z-index: 2;
+}
+
+.rf-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(99,102,241,.18) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(124,58,237,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.rf-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 10px/1 var(--mono);
+  letter-spacing: .2em;
+  color: rgba(196,181,253,.6);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.rf-eyebrow-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #6366f1;
+  box-shadow: 0 0 8px rgba(99,102,241,.8);
+  animation: rf-pulse 2s ease-in-out infinite;
+}
+@keyframes rf-pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.rf-hero h1 {
+  font: 700 clamp(52px, 9vw, 110px)/1.0 var(--font);
+  letter-spacing: -0.03em;
+  margin: 0 0 28px;
+  background: linear-gradient(135deg, #f4f3ff 0%, #c4b5fd 40%, #6366f1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.rf-hero-sub {
+  font: 400 clamp(17px, 2.2vw, 22px)/1.65 var(--font);
+  color: rgba(244,243,255,.58);
+  max-width: 580px;
+  margin: 0 auto 44px;
+}
+.rf-hero-sub strong {
+  color: rgba(244,243,255,.88);
+  font-weight: 500;
+}
+
+.rf-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.btn-rf-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: #fff;
+  font: 600 14px/1 var(--font);
+  letter-spacing: .02em;
+  border-radius: 10px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity .2s, transform .2s;
+}
+.btn-rf-primary:hover { opacity: .88; transform: translateY(-1px); }
+.btn-rf-primary span { opacity: .8; }
+
+.btn-rf-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 26px;
+  background: rgba(99,102,241,.08);
+  color: rgba(196,181,253,.9);
+  font: 500 14px/1 var(--font);
+  letter-spacing: .02em;
+  border-radius: 10px;
+  text-decoration: none;
+  border: 1px solid rgba(99,102,241,.25);
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.btn-rf-ghost:hover {
+  background: rgba(99,102,241,.14);
+  border-color: rgba(99,102,241,.4);
+}
+
+.rf-trial-note {
+  font: 400 12px var(--mono);
+  letter-spacing: .08em;
+  color: rgba(196,181,253,.42);
+}
+.rf-trial-note span { margin: 0 8px; opacity: .5; }
+
+.rf-about-link {
+  display: inline-block;
+  margin-top: 20px;
+  font: 400 13px var(--font);
+  color: rgba(196,181,253,.52);
+  text-decoration: none;
+  letter-spacing: .01em;
+  transition: color .2s;
+}
+.rf-about-link:hover { color: rgba(196,181,253,.88); }
+
+/* ── SECTION SHARED ─────────────────────────────────────────────────── */
+.rf-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 100px 24px;
+}
+.rf-section-narrow {
+  max-width: 720px;
+}
+
+/* ── GAP SECTION ────────────────────────────────────────────────────── */
+.rf-gap {
+  text-align: center;
+  padding: 80px 24px 100px;
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+}
+.rf-gap::before {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(180deg, transparent, rgba(99,102,241,.4));
+  margin: 0 auto 60px;
+}
+.rf-gap p {
+  font: 400 clamp(18px, 2.4vw, 24px)/1.7 var(--display);
+  color: rgba(244,243,255,.68);
+  margin: 0;
+}
+.rf-gap p em {
+  color: rgba(196,181,253,.95);
+  font-style: italic;
+}
+.rf-gap p + p { margin-top: 18px; }
+
+/* ── TICKER (signal strip) ───────────────────────────────────────────── */
+.rf-ticker {
+  width: 100%;
+  overflow: hidden;
+  border-top: 1px solid rgba(99,102,241,.1);
+  border-bottom: 1px solid rgba(99,102,241,.1);
+  padding: 12px 0;
+  background: rgba(99,102,241,.03);
+}
+.rf-ticker-track {
+  display: flex;
+  gap: 40px;
+  white-space: nowrap;
+  animation: rf-ticker 28s linear infinite;
+}
+@keyframes rf-ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.rf-ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font: 600 11px var(--mono);
+  letter-spacing: .16em;
+  color: rgba(196,181,253,.38);
+}
+.rf-ticker-item b { color: rgba(99,102,241,.7); font-size: 8px; }
+
+/* ── WHAT YOU GET — 4 TILES ─────────────────────────────────────────── */
+.rf-tiles-section {
+  padding: 100px 24px;
+}
+.rf-tiles-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.rf-section-label {
+  font: 600 10px var(--mono);
+  letter-spacing: .22em;
+  color: rgba(99,102,241,.8);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: block;
+  text-align: center;
+}
+.rf-section-headline {
+  font: 700 clamp(28px, 4vw, 46px)/1.2 var(--font);
+  letter-spacing: -.02em;
+  color: var(--white);
+  text-align: center;
+  margin: 0 0 60px;
+}
+.rf-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+@media (max-width: 680px) {
+  .rf-tiles { grid-template-columns: 1fr; }
+}
+.rf-tile {
+  background: rgba(13,11,30,.7);
+  border: 1px solid rgba(99,102,241,.12);
+  border-radius: 16px;
+  padding: 32px 28px;
+  transition: border-color .25s, background .25s;
+  position: relative;
+  overflow: hidden;
+}
+.rf-tile::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,.35), transparent);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.rf-tile:hover {
+  border-color: rgba(99,102,241,.28);
+  background: rgba(13,11,30,.95);
+}
+.rf-tile:hover::before { opacity: 1; }
+.rf-tile-label {
+  font: 600 9px var(--mono);
+  letter-spacing: .22em;
+  color: rgba(99,102,241,.7);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: block;
+}
+.rf-tile-title {
+  font: 700 20px/1.2 var(--font);
+  letter-spacing: -.01em;
+  color: var(--white);
+  margin: 0 0 12px;
+}
+.rf-tile-desc {
+  font: 400 14px/1.65 var(--font);
+  color: rgba(244,243,255,.5);
+  margin: 0;
+}
+
+/* ── FRAMEWORK SECTION ───────────────────────────────────────────────── */
+.rf-framework {
+  padding: 100px 24px;
+  background: rgba(9,7,22,.5);
+  border-top: 1px solid rgba(99,102,241,.08);
+  border-bottom: 1px solid rgba(99,102,241,.08);
+}
+.rf-framework-inner {
+  max-width: 820px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 60px;
+  align-items: start;
+}
+@media (max-width: 720px) {
+  .rf-framework-inner { grid-template-columns: 1fr; gap: 36px; }
+}
+.rf-framework-left {}
+.rf-framework-label {
+  font: 600 9px var(--mono);
+  letter-spacing: .22em;
+  color: rgba(99,102,241,.7);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: block;
+}
+.rf-framework-title {
+  font: 700 clamp(24px, 3.5vw, 38px)/1.2 var(--font);
+  letter-spacing: -.02em;
+  color: var(--white);
+  margin: 0;
+}
+.rf-framework-title em {
+  font-style: normal;
+  background: linear-gradient(135deg, #c4b5fd, #6366f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.rf-framework-body {
+  font: 400 16px/1.75 var(--font);
+  color: rgba(244,243,255,.55);
+}
+.rf-framework-body p { margin: 0 0 18px; }
+.rf-framework-body p:last-child { margin: 0; }
+.rf-framework-body strong {
+  color: rgba(244,243,255,.82);
+  font-weight: 500;
+}
+
+/* ── PRICING SECTION ─────────────────────────────────────────────────── */
+.rf-pricing {
+  padding: 100px 24px;
+  text-align: center;
+}
+.rf-pricing-card {
+  display: inline-block;
+  background: rgba(13,11,30,.8);
+  border: 1px solid rgba(99,102,241,.2);
+  border-radius: 20px;
+  padding: 48px 60px;
+  position: relative;
+  overflow: hidden;
+}
+@media (max-width: 480px) {
+  .rf-pricing-card { padding: 36px 24px; }
+}
+.rf-pricing-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(99,102,241,.1), transparent 70%);
+  pointer-events: none;
+}
+.rf-pricing-badge {
+  display: inline-block;
+  background: rgba(99,102,241,.15);
+  border: 1px solid rgba(99,102,241,.3);
+  border-radius: 100px;
+  padding: 5px 14px;
+  font: 600 9px var(--mono);
+  letter-spacing: .2em;
+  color: rgba(196,181,253,.85);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.rf-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+.rf-price-currency {
+  font: 600 24px var(--stat);
+  color: rgba(244,243,255,.7);
+}
+.rf-price-amount {
+  font: 700 64px/1 var(--stat);
+  letter-spacing: -.03em;
+  background: linear-gradient(135deg, #f4f3ff 0%, #c4b5fd 60%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.rf-price-period {
+  font: 400 16px var(--font);
+  color: rgba(244,243,255,.38);
+}
+.rf-pricing-sub {
+  font: 400 13px var(--mono);
+  letter-spacing: .08em;
+  color: rgba(196,181,253,.42);
+  margin: 0 0 36px;
+}
+.rf-pricing-sub span { margin: 0 8px; opacity: .5; }
+
+/* ── FINAL CTA ───────────────────────────────────────────────────────── */
+.rf-final {
+  padding: 120px 24px 100px;
+  text-align: center;
+  position: relative;
+}
+.rf-final::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(99,102,241,.14), transparent 70%);
+  pointer-events: none;
+}
+.rf-final-line {
+  font: 400 clamp(28px, 5vw, 56px)/1.2 var(--display);
+  color: rgba(244,243,255,.85);
+  margin: 0 0 40px;
+  font-style: italic;
+  letter-spacing: -.01em;
+}
+.rf-final-line em {
+  font-style: normal;
+  background: linear-gradient(135deg, #c4b5fd 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── FOOTER ──────────────────────────────────────────────────────────── */
+.rf-footer {
+  border-top: 1px solid rgba(196,181,253,.07);
+  padding: 40px 24px;
+  text-align: center;
+}
+.rf-footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.rf-footer-links a {
+  font: 400 12px var(--font);
+  color: rgba(244,243,255,.38);
+  text-decoration: none;
+  transition: color .2s;
+}
+.rf-footer-links a:hover { color: rgba(244,243,255,.75); }
+.rf-footer-copy {
+  font: 400 11px var(--mono);
+  letter-spacing: .08em;
+  color: rgba(196,181,253,.22);
+}
+
+/* ── SCROLL FADE-IN ─────────────────────────────────────────────────── */
+.rf-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+.rf-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── FORCE HERO ABOVE CINEMATIC CANVASES ───────────────────────────── */
+#world, #cinemaCanvas, .cinema-hud, .grain, .scanlines, .cursor-orb, .intel-rail {
+  display: none !important;
+}
+</style>
+</head>
+<body>
+
+<script src="vantage-page-fade.js"></script>
+
+<div id="prologue" aria-label="Vantage 21:00 prologue">
+  <div class="prologue-photo" aria-hidden="true"></div>
+  <canvas id="prologueCanvas" aria-hidden="true"></canvas>
+  <div class="prologue-grid"></div><div class="prologue-vignette"></div>
+  <div class="prologue-top"><span>VANTAGE / 21:00</span><span class="prologue-time"><i></i><strong>PRIVATE HR DECISION / LIVE</strong></span></div>
+  <div class="prologue-signal"><span>INCOMING <b>HIGH PRIORITY</b></span><span>Employee relations <b>CASE 2841</b></span><span>MANAGER <b>NEEDS CLOSURE</b></span><span>DOCUMENTATION <b>INCOMPLETE</b></span></div>
+  <div class="prologue-note"><strong>09:18 PM</strong>The office is mostly empty.<br>The decision is still open.</div>
+  <div class="prologue-copy"><div class="prologue-kicker">The Building Has Gone Quiet</div><div class="prologue-message">Somewhere in it, a decision<br>is still being made.<br><em>Alone.</em></div><div class="prologue-sub">No Escalation Path. No Second Opinion. Just The Clock.</div></div>
+  <button class="prologue-skip" id="prologueSkip">SKIP PROLOGUE ↗</button>
+  <div class="prologue-countdown" id="prologueCountdown"><span>ENTERING VANTAGE</span><strong id="prologueCountNum">3</strong></div>
+  <div class="prologue-fade"></div>
+</div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html" aria-label="Virorah Vantage home">
+    <img src="virorah-vantage-logo.png" alt="Virorah Vantage">
+  </a>
+  <div class="nav-status"><i></i><span>VANTAGE / ONLINE</span></div>
+  <nav>
+    <a href="about.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">About</a>
+    <a href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">Demo</a>
+    <a href="#rf-pricing">Pricing</a>
+  </nav>
+  <div class="nav-actions">
+    <a class="nav-sign vantage-auth-link" href="access.html" data-signed-in-text="Dashboard" data-signed-in-href="dashboard.html">Sign in</a>
+    <a class="nav-cta nav-cta-demo" href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;};" style="white-space:nowrap">Try the Demo <b>↗</b></a>
+    <a class="nav-cta nav-cta-trial" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html" style="white-space:nowrap;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;border-color:transparent">Start Free Trial <b>→</b></a>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── HERO ────────────────────────────────────────────────────────── -->
+  <section class="rf-hero">
+    <div class="rf-eyebrow">
+      <span class="rf-eyebrow-dot"></span>
+      VANTAGE / HR INTELLIGENCE PLATFORM
+    </div>
+    <h1>Get Revenue Fluent.</h1>
+    <p class="rf-hero-sub">
+      Vantage quantifies the business value of every HR decision you make.
+      <strong>In rupees. With evidence.</strong>
+      So you stop being invisible to the room that matters.
+    </p>
+    <div class="rf-actions">
+      <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html">
+        Start Free Trial <span>→</span>
+      </a>
+      <a class="btn-rf-ghost" href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">
+        Try the Demo <span>↗</span>
+      </a>
+    </div>
+    <p class="rf-trial-note">
+      7 days free <span>·</span> No credit card required <span>·</span> Cancel anytime
+    </p>
+    <a href="about.html" class="rf-about-link" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">
+      What Vantage is and how it works →
+    </a>
+  </section>
+
+  <!-- ── TICKER ───────────────────────────────────────────────────────── -->
+  <div class="rf-ticker">
+    <div class="rf-ticker-track">
+      <span class="rf-ticker-item">FINANCIAL EXPOSURE <b>◆</b></span>
+      <span class="rf-ticker-item">HR P&amp;L <b>◆</b></span>
+      <span class="rf-ticker-item">BUSINESS CASE VALUE <b>◆</b></span>
+      <span class="rf-ticker-item">HR DECISION CAPITAL <b>◆</b></span>
+      <span class="rf-ticker-item">TALENT PREMIUM <b>◆</b></span>
+      <span class="rf-ticker-item">ORG VITALS <b>◆</b></span>
+      <span class="rf-ticker-item">RETENTION ADVISOR <b>◆</b></span>
+      <span class="rf-ticker-item">HUMAN P&amp;L <b>◆</b></span>
+      <!-- Duplicate for seamless loop -->
+      <span class="rf-ticker-item">FINANCIAL EXPOSURE <b>◆</b></span>
+      <span class="rf-ticker-item">HR P&amp;L <b>◆</b></span>
+      <span class="rf-ticker-item">BUSINESS CASE VALUE <b>◆</b></span>
+      <span class="rf-ticker-item">HR DECISION CAPITAL <b>◆</b></span>
+      <span class="rf-ticker-item">TALENT PREMIUM <b>◆</b></span>
+      <span class="rf-ticker-item">ORG VITALS <b>◆</b></span>
+      <span class="rf-ticker-item">RETENTION ADVISOR <b>◆</b></span>
+      <span class="rf-ticker-item">HUMAN P&amp;L <b>◆</b></span>
+    </div>
+  </div>
+
+  <!-- ── THE GAP ──────────────────────────────────────────────────────── -->
+  <div class="rf-gap rf-reveal">
+    <p>Finance has a language for everything it does.</p>
+    <p>HR doesn't — and that silence is costing us <em>the seat at the table.</em></p>
+    <p>Revenue Fluency changes that.</p>
+  </div>
+
+  <!-- ── WHAT YOU GET ─────────────────────────────────────────────────── -->
+  <section class="rf-tiles-section rf-reveal">
+    <div class="rf-tiles-inner">
+      <span class="rf-section-label">What Revenue Fluency looks like</span>
+      <h2 class="rf-section-headline">Four outputs. One language.</h2>
+      <div class="rf-tiles">
+
+        <div class="rf-tile">
+          <span class="rf-tile-label">01 / Financial Exposure</span>
+          <h3 class="rf-tile-title">The rupee cost of every case</h3>
+          <p class="rf-tile-desc">Before a situation escalates, Vantage calculates what it's worth — legally, financially, and in organizational risk. You walk in prepared, not exposed.</p>
+        </div>
+
+        <div class="rf-tile">
+          <span class="rf-tile-label">02 / HR P&L</span>
+          <h3 class="rf-tile-title">What your decisions cost the business</h3>
+          <p class="rf-tile-desc">Every attrition event, case closure, and retention action mapped to a number. Your Human P&L makes the invisible visible — line by line.</p>
+        </div>
+
+        <div class="rf-tile">
+          <span class="rf-tile-label">03 / Business Case Value</span>
+          <h3 class="rf-tile-title">Every retention decision, quantified</h3>
+          <p class="rf-tile-desc">The business case your manager needs before approving a counteroffer or team intervention — built from your numbers, not industry estimates.</p>
+        </div>
+
+        <div class="rf-tile">
+          <span class="rf-tile-label">04 / HR Decision Capital</span>
+          <h3 class="rf-tile-title">Your cumulative strategic impact</h3>
+          <p class="rf-tile-desc">The total business value of decisions you've made, calculated over time. The number you bring to the room when someone asks what HR actually does.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── THE FRAMEWORK ────────────────────────────────────────────────── -->
+  <section class="rf-framework rf-reveal">
+    <div class="rf-framework-inner">
+      <div class="rf-framework-left">
+        <span class="rf-framework-label">The Framework</span>
+        <h2 class="rf-framework-title">The <em>HR Financial Model</em></h2>
+      </div>
+      <div class="rf-framework-body">
+        <p>Revenue Fluency runs on the <strong>HR Financial Model</strong> — a framework that maps every people decision to a financial outcome. Not estimates. Not ballparks. Rupee-level precision, drawn from your context: your sector, your headcount, your role.</p>
+        <p><strong>HR Financial Value</strong> is the number on the other side. It's what you bring to the table when the business asks: <em>"What does HR actually do for us?"</em></p>
+        <p>Human P&L. Human Balance Sheet. Value Ledger. Talent Premium. Org Vitals. Every output in Vantage is a layer of this model — built for Indian HR, grounded in the decisions that land on your desk.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PRICING ──────────────────────────────────────────────────────── -->
+  <section class="rf-pricing rf-reveal" id="rf-pricing">
+    <div class="rf-pricing-card">
+      <div class="rf-pricing-badge">VANTAGE CORE — ONE PLAN</div>
+      <div class="rf-price">
+        <span class="rf-price-currency">₹</span>
+        <span class="rf-price-amount">799</span>
+        <span class="rf-price-period">/ month</span>
+      </div>
+      <p class="rf-pricing-sub">
+        7-day free trial <span>·</span> No credit card required <span>·</span> Cancel anytime
+      </p>
+      <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html" style="font-size:15px;padding:16px 36px">
+        Start Free Trial <span>→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── FINAL CTA ─────────────────────────────────────────────────────── -->
+  <section class="rf-final rf-reveal">
+    <p class="rf-final-line">Seven days to get <em>Revenue Fluent.</em></p>
+    <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html" style="font-size:15px;padding:16px 36px">
+      Start Free Trial <span>→</span>
+    </a>
+  </section>
+
+  <!-- ── FOOTER ────────────────────────────────────────────────────────── -->
+  <footer class="rf-footer">
+    <div class="rf-footer-links">
+      <a href="about.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">About</a>
+      <a href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">Demo</a>
+      <a href="legal/privacy.html">Privacy</a>
+      <a href="legal/terms.html">Terms</a>
+      <a href="https://humacity.com" target="_blank" rel="noopener">Humacity</a>
+    </div>
+    <p class="rf-footer-copy">© 2024–2025 Virorah. All rights reserved.</p>
+  </footer>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="vantage-prologue.js"></script>
+
+<script>
+/* ── SCROLL REVEAL ─────────────────────────────────────────────────── */
+(function(){
+  var els = document.querySelectorAll('.rf-reveal');
+  if(!els.length) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('is-visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  els.forEach(function(el){ io.observe(el); });
+})();
+
+/* ── Live clock in nav status (reuse pattern from index.html) ───────── */
+(function(){
+  function pad(n){ return n < 10 ? '0'+n : ''+n; }
+  function tick(){
+    var d = new Date();
+    var el = document.querySelector('.nav-status span');
+    if(el) el.textContent = 'VANTAGE / ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+  tick();
+  setInterval(tick, 60000);
+})();
+</script>
+
+</body>
+</html>
