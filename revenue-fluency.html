@@ -191,19 +191,15 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 
 /* B2C positioning badge — flat, no glow/gradient fill */
+/* Plain eyebrow label, matching .rf-section-label used by every other
+   section on the page — the old bordered-pill treatment forced a
+   two-line wrap and read as a cramped box against the starfield. */
 .rf-for-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font: 600 10px/1 var(--mono);
-  letter-spacing: .18em;
+  font: 600 10px var(--mono);
+  letter-spacing: .16em;
   text-transform: uppercase;
-  color: rgba(196,181,253,.85);
-  background: transparent;
-  border: 1px solid rgba(99,102,241,.35);
-  border-radius: 2px;
-  padding: 7px 12px 6px;
-  margin-bottom: 22px;
+  color: rgba(165,180,252,.65);
+  margin-bottom: 18px;
 }
 
 .rf-hero-copy h1 {
