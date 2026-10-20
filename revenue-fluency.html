@@ -98,14 +98,22 @@ html, body { overflow-x: hidden; background: var(--bg); }
   background: rgba(8,7,20,.98);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(255,255,255,.08);
-  padding: 4px 24px 20px;
+  padding: 0 24px;
   max-height: 0;
   overflow: hidden;
-  transition: max-height .3s ease;
+  transition: max-height .3s ease, padding .3s ease;
   z-index: 95;
 }
-.rf-mobile-menu.is-open { max-height: 440px; }
+/* padding and border live ONLY in the open state — in the base state
+   above, max-height:0 clips CONTENT, but padding/border are box
+   properties that ignore that clip and render regardless, which is
+   exactly what was painting a permanent ~24px bar under the nav even
+   while "closed". */
+.rf-mobile-menu.is-open {
+  max-height: 440px;
+  padding: 4px 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
 .rf-mobile-menu a {
   padding: 15px 0;
   border-bottom: 1px solid rgba(255,255,255,.07);
