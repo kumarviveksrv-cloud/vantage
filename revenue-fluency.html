@@ -429,11 +429,30 @@ html, body { overflow-x: hidden; background: var(--bg); }
     0 28px 80px -18px rgba(99,102,241,.5),
     0 0 110px -12px rgba(124,58,237,.35),
     inset 0 1px 0 rgba(255,255,255,.12);
-  /* Column flex so .rf-panel-body can stretch to the pinned min-height
-     (set by pinPanelHeight() in JS) and its footer disclaimer can be
-     pushed to the true bottom of the box via margin-top:auto, instead
-     of trailing right under the shortest-content rotation and drifting
-     up and down as the cycling demo swaps in longer/shorter answers. */
+  /* Three fixes were tried on this box before landing here -- worth
+     keeping the history, because each one failed for a different
+     subtle reason and the next person touching this should not
+     re-attempt any of them:
+       1. Pin to the tallest height any rotation could ever need (both
+          slots filled, fixed, no animation). Killed the resize-jitter,
+          but left a conspicuous EMPTY gap for the whole stretch of
+          every cycle where slot 2 hadn't started yet.
+       2. Track actual current content height live and smoothly
+          CSS-transition the panel to match. No permanent empty
+          space, but every time content shrank (a pair resetting), the
+          panel's own border took ~350ms to visually catch down to the
+          new shorter content, and whatever absorbed that lag (first
+          the gap under the footer, then -- after chasing it -- the gap
+          ABOVE the footer) was still a visible hole for that whole
+          window. Moving the slack around the box doesn't remove it.
+       3. (This one.) Stop resizing the box at all. .rf-panel-body
+          below is a genuinely fixed-height, internally-scrolling
+          window onto the conversation -- like a real chat UI -- so
+          there is no "right" height to chase in the first place, and
+          .rf-panel-foot is a true sibling of body, outside the
+          scrolling area, so it never has to wait on or react to
+          content either. Nothing here is ever a function of how much
+          text the current rotation happens to have. */
   display: flex;
   flex-direction: column;
 }
@@ -482,11 +501,31 @@ html, body { overflow-x: hidden; background: var(--bg); }
   box-shadow: 0 0 8px 1px rgba(110,231,183,.85);
 }
 .rf-panel-body {
+  /* Fixed-height, internally-scrolling conversation window -- like any
+     real chat UI. JS (see the DATA array section below) keeps it
+     scrolled to the latest message as content comes in, Slack/WhatsApp
+     style, instead of growing the box to fit. overflow is hidden
+     rather than auto/scroll so no scrollbar ever draws (this panel is
+     aria-hidden and purely decorative -- nobody is meant to scroll it
+     by hand); JS sets scrollTop directly and scroll-behavior:smooth
+     eases that into a real, visible scroll rather than a jump, which
+     is where the "dynamic" motion now lives instead of in a resizing
+     box.
+     Height is intentionally generous enough to show a full exchange
+     (question + answer + stat + citations) without scrolling on most
+     rotations, so the scroll itself is only a few hundred px most of
+     the time, not a jarring sudden shift. */
+  height: 420px;
   padding: 18px;
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 0;
+  overflow: hidden;
+  scroll-behavior: smooth;
+}
+@media (min-width: 420px) {
+  .rf-panel-body { height: 460px; }
+}
+.rf-panel-content {
+  /* No special sizing needed -- this is free to be taller than
+     .rf-panel-body above; that's the whole point (body scrolls to it). */
 }
 .rf-panel-starters {
   display: flex;
@@ -638,11 +677,15 @@ html, body { overflow-x: hidden; background: var(--bg); }
   padding: 4px 8px;
 }
 .rf-panel-foot {
+  /* A true sibling of the scrolling .rf-panel-body now, not a flex
+     item inside it -- it's simply always here, at a fixed position
+     right under the (fixed-height) conversation window, never moving
+     and never waiting on content. */
   font: 400 11px var(--font);
   color: rgba(244,243,255,.42);
   text-align: center;
-  margin-top: auto;
-  padding-top: 16px;
+  padding: 14px 18px;
+  border-top: 1px solid rgba(165,180,252,.1);
 }
 
 /* ── TICKER ─────────────────────────────────────────────────────────── */
@@ -1274,6 +1317,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
           <span class="rf-panel-live"><i></i>LIVE</span>
         </div>
         <div class="rf-panel-body">
+          <div class="rf-panel-content">
           <div class="rf-panel-starters" id="rfPanelStarters">
             <span class="rf-panel-chip is-active">Can I terminate for repeated absence?</span>
             <span class="rf-panel-chip is-active">What's the real cost to the business?</span>
@@ -1307,8 +1351,9 @@ html, body { overflow-x: hidden; background: var(--bg); }
             <span>Cost-of-vacancy modeling</span>
             <span>Backfill vs severance</span>
           </div>
-          <div class="rf-panel-foot">Illustrative — actual guidance is state and case specific</div>
+          </div>
         </div>
+        <div class="rf-panel-foot">Illustrative — actual guidance is state and case specific</div>
       </div>
     </div>
   </section>
@@ -1943,57 +1988,22 @@ html, body { overflow-x: hidden; background: var(--bg); }
     }
   ];
 
-  // Pin the panel to the tallest height any rotation actually needs, so
-  // the typing/cycling animation fills a stable box instead of visibly
-  // growing and shrinking the whole hero section as each answer types
-  // in (that growth is what was reading as "glitchy"). Measured live,
-  // at the real on-screen width, rather than a guessed breakpoint table
-  // -- panel height is very width-sensitive (a phone at 320px needs
-  // ~45% more height than one at 412px for the same text), so a fixed
-  // px value would either clip on narrow phones or leave a big empty
-  // gap on wider ones. The three measurement swaps below happen
-  // synchronously with no yield in between, so the browser never paints
-  // the intermediate states -- only the final, restored content shows.
-  function pinPanelHeight(){
-    var pairs = [[0,1],[1,2],[2,0]];
-    var snap = {
-      u1: userMsg.textContent,  a1: ariaText.textContent,  l1: statLabel.innerHTML,  v1: statValue.textContent,
-      u2: userMsg2.textContent, a2: ariaText2.textContent, l2: stat2Label.innerHTML, v2: stat2Value.textContent
-    };
-    var maxH = 0;
-    pairs.forEach(function(pair){
-      var item1 = DATA[pair[0]], item2 = DATA[pair[1]];
-      userMsg.textContent = item1.q;   ariaText.textContent = item1.a;   statLabel.innerHTML = item1.statLabel;   statValue.textContent = item1.statValue;
-      userMsg2.textContent = item2.q;  ariaText2.textContent = item2.a;  stat2Label.innerHTML = item2.statLabel;  stat2Value.textContent = item2.statValue;
-      var h = panel.getBoundingClientRect().height;
-      if(h > maxH) maxH = h;
-    });
-    userMsg.textContent = snap.u1;   ariaText.textContent = snap.a1;   statLabel.innerHTML = snap.l1;   statValue.textContent = snap.v1;
-    userMsg2.textContent = snap.u2;  ariaText2.textContent = snap.a2;  stat2Label.innerHTML = snap.l2;  stat2Value.textContent = snap.v2;
-    if(maxH) panel.style.minHeight = Math.ceil(maxH + 12) + 'px';
-  }
-  // Measuring before web fonts finish swapping in would pin the box to
-  // the fallback font's (slightly different) metrics, risking a sliver
-  // of clipping once the real font loads. Wait for fonts.ready first --
-  // with a hard 1500ms cap so a font that never resolves (flaky network,
-  // unsupported API) can't block this forever.
-  (function(){
-    var done = false;
-    function run(){ if(done) return; done = true; pinPanelHeight(); }
-    if(document.fonts && document.fonts.ready){
-      document.fonts.ready.then(run);
-      setTimeout(run, 1500);
-    } else {
-      run();
-    }
-  })();
-  // Re-measure on resize/orientation change (debounced) so the pinned
-  // height stays correct if the viewport width changes after load.
-  var pinResizeTimer;
-  window.addEventListener('resize', function(){
-    clearTimeout(pinResizeTimer);
-    pinResizeTimer = setTimeout(pinPanelHeight, 200);
+  // .rf-panel-body is a fixed-height, internally-scrolling window (see
+  // CSS) -- the box itself never resizes, so there is nothing to pin,
+  // measure or animate on the outside. All that's left is keeping the
+  // scroll position pinned to the latest message as content comes in,
+  // the same way any real chat UI auto-scrolls. A ResizeObserver on
+  // .rf-panel-content (which grows taller than its fixed-height parent
+  // as text types in, a stat badge appears, etc.) fires on every such
+  // change and scrolls body to match; scroll-behavior:smooth (CSS)
+  // turns each of those into a real, visible glide instead of a jump,
+  // which is where the demo's motion now lives.
+  var panelContent = panel.querySelector('.rf-panel-content');
+  var panelBody = panel.querySelector('.rf-panel-body');
+  var ro = new ResizeObserver(function(){
+    panelBody.scrollTop = panelBody.scrollHeight;
   });
+  ro.observe(panelContent);
 
   var onScreen = true;
   var io = new IntersectionObserver(function(es){
@@ -2064,9 +2074,23 @@ html, body { overflow-x: hidden; background: var(--bg); }
   }
 
   function resetSlot(slot){
+    // These elements only fade via opacity (see .rf-panel-msg/.rf-panel-stat/
+    // .rf-panel-cites CSS) -- they're never display:none, so even while
+    // invisible they still occupy real layout height based on whatever
+    // text they currently hold. Before this cleared ariaText only, so
+    // the user bubble and the stat badge kept showing the PREVIOUS
+    // rotation's full text while invisible -- the panel's content-matched
+    // height (see ResizeObserver setup above) was correctly measuring
+    // that leftover, invisible content, which is exactly the "ghost gap"
+    // that showed up between a freshly-reset slot's visible bits and the
+    // footer. Clearing every slot's text here, not just ariaText, shrinks
+    // a reset slot down to its true near-zero footprint.
     slot.user.classList.remove('is-visible');
+    slot.user.textContent = '';
     slot.ariaMsg.classList.remove('is-visible');
     slot.stat.classList.remove('is-visible');
+    slot.statLabel.innerHTML = '';
+    slot.statValue.textContent = '';
     slot.cites.classList.remove('is-visible');
     slot.cites.innerHTML = '';
     slot.typing.classList.remove('is-hidden');
