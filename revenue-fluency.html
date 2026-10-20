@@ -424,6 +424,10 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-panel-title {
   font: 500 12px var(--font);
   color: rgba(244,243,255,.78);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 .rf-panel-live {
   margin-left: auto;
@@ -514,6 +518,49 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 .rf-panel-aria-text.is-done::after { display: none; }
 @keyframes rf-cursor-blink { 50% { opacity: 0; } }
+
+/* The quantified-value stat — this is the actual product USP (every
+   HR decision gets a number attached), so it gets more visual weight
+   than the citation chips below it, not less. */
+.rf-panel-stat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin: 2px 0 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(139,92,246,.2), rgba(99,102,241,.1));
+  border: 1px solid rgba(165,180,252,.4);
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+.rf-panel-stat.is-visible { opacity: 1; }
+.rf-panel-stat-label {
+  font: 600 10px var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(244,243,255,.6);
+  flex: 1 1 auto;
+  min-width: 120px;
+}
+.rf-panel-stat-label i { font-style: normal; display: block; margin-top: 2px; color: rgba(244,243,255,.4); letter-spacing: .02em; text-transform: none; }
+.rf-panel-stat-value {
+  font: 700 19px var(--font);
+  color: #c4b5fd;
+  text-shadow: 0 0 18px rgba(139,92,246,.4);
+}
+.rf-panel-stat-risk {
+  font: 600 10px var(--mono);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 5px;
+}
+.rf-panel-stat-risk.is-hidden { display: none; }
+.rf-panel-stat-risk.risk-high { color: #fca5a5; background: rgba(248,113,113,.14); border: 1px solid rgba(248,113,113,.32); }
+.rf-panel-stat-risk.risk-medium { color: #fcd34d; background: rgba(250,204,21,.14); border: 1px solid rgba(250,204,21,.32); }
+
 .rf-panel-cites {
   display: flex;
   flex-wrap: wrap;
@@ -1132,7 +1179,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
       <div class="rf-hero-panel" aria-hidden="true" id="rfAriaPanel">
         <div class="rf-panel-head">
           <span class="rf-panel-dots"><i></i><i></i><i></i></span>
-          <span class="rf-panel-title">Vantage · ARIA</span>
+          <span class="rf-panel-title">Vantage · Case Advisor</span>
           <span class="rf-panel-live"><i></i>LIVE</span>
         </div>
         <div class="rf-panel-body">
@@ -1146,6 +1193,11 @@ html, body { overflow-x: hidden; background: var(--bg); }
             <span class="rf-panel-typing is-hidden" id="rfPanelTyping"><i></i><i></i><i></i></span>
             <span class="rf-panel-aria-text is-done" id="rfPanelAriaText">Yes — but only with due process. Repeated unexcused absence can justify termination for cause, but it requires documented warnings and adherence to notice rules. Skipping process risks an arbitrary-dismissal claim. Courts also weigh whether each absence was genuinely unexcused and whether you gave the employee a real chance to respond before the final warning.</span>
           </div>
+          <div class="rf-panel-stat is-visible" id="rfPanelStat">
+            <span class="rf-panel-stat-label" id="rfPanelStatLabel">Financial Exposure <i>if undocumented</i></span>
+            <span class="rf-panel-stat-value" id="rfPanelStatValue">₹3.4L</span>
+            <span class="rf-panel-stat-risk risk-high" id="rfPanelStatRisk">High risk</span>
+          </div>
           <div class="rf-panel-cites is-visible" id="rfPanelCites">
             <span>Shops &amp; Establishments Act</span>
             <span>Notice period</span>
@@ -1154,6 +1206,11 @@ html, body { overflow-x: hidden; background: var(--bg); }
           <div class="rf-panel-msg aria is-visible" id="rfPanelAriaMsg2">
             <span class="rf-panel-typing is-hidden" id="rfPanelTyping2"><i></i><i></i><i></i></span>
             <span class="rf-panel-aria-text is-done" id="rfPanelAriaText2">For continuous service of 5+ years, gratuity is 15 days’ wages per completed year, capped at ₹20L. Under 5 years, it’s typically not payable except in death or disability. The calculation uses last-drawn basic plus DA, not gross salary, so confirm which figure you’re quoting before it goes in writing.</span>
+          </div>
+          <div class="rf-panel-stat is-visible" id="rfPanelStat2">
+            <span class="rf-panel-stat-label" id="rfPanelStat2Label">Amount Payable <i>8 yrs · ₹60K basic+DA</i></span>
+            <span class="rf-panel-stat-value" id="rfPanelStat2Value">₹2.77L</span>
+            <span class="rf-panel-stat-risk is-hidden" id="rfPanelStat2Risk"></span>
           </div>
           <div class="rf-panel-cites is-visible" id="rfPanelCites2">
             <span>Payment of Gratuity Act</span>
@@ -1748,8 +1805,18 @@ html, body { overflow-x: hidden; background: var(--bg); }
   var typing2   = document.getElementById('rfPanelTyping2');
   var ariaText2 = document.getElementById('rfPanelAriaText2');
   var cites2    = document.getElementById('rfPanelCites2');
+  var stat      = document.getElementById('rfPanelStat');
+  var statLabel = document.getElementById('rfPanelStatLabel');
+  var statValue = document.getElementById('rfPanelStatValue');
+  var statRisk  = document.getElementById('rfPanelStatRisk');
+  var stat2      = document.getElementById('rfPanelStat2');
+  var stat2Label = document.getElementById('rfPanelStat2Label');
+  var stat2Value = document.getElementById('rfPanelStat2Value');
+  var stat2Risk  = document.getElementById('rfPanelStat2Risk');
   if(!chips.length || !userMsg || !ariaMsg || !typing || !ariaText || !cites ||
-     !userMsg2 || !ariaMsg2 || !typing2 || !ariaText2 || !cites2) return;
+     !userMsg2 || !ariaMsg2 || !typing2 || !ariaText2 || !cites2 ||
+     !stat || !statLabel || !statValue || !statRisk ||
+     !stat2 || !stat2Label || !stat2Value || !stat2Risk) return;
 
   // The panel already renders items 0 and 1 fully, statically, in the
   // HTML — that's the no-JS / reduced-motion fallback (a two-round
@@ -1761,17 +1828,26 @@ html, body { overflow-x: hidden; background: var(--bg); }
     {
       q: 'Can I terminate for repeated absence?',
       a: 'Yes — but only with due process. Repeated unexcused absence can justify termination for cause, but it requires documented warnings and adherence to notice rules. Skipping process risks an arbitrary-dismissal claim. Courts also weigh whether each absence was genuinely unexcused and whether you gave the employee a real chance to respond before the final warning.',
-      cites: ['Shops & Establishments Act', 'Notice period']
+      cites: ['Shops & Establishments Act', 'Notice period'],
+      statLabel: 'Financial Exposure <i>if undocumented</i>',
+      statValue: '₹3.4L',
+      statRisk: 'high'
     },
     {
       q: 'How much gratuity is owed?',
       a: 'For continuous service of 5+ years, gratuity is 15 days’ wages per completed year, capped at ₹20L. Under 5 years, it’s typically not payable except in death or disability. The calculation uses last-drawn basic plus DA, not gross salary, so confirm which figure you’re quoting before it goes in writing.',
-      cites: ['Payment of Gratuity Act', '5-year threshold']
+      cites: ['Payment of Gratuity Act', '5-year threshold'],
+      statLabel: 'Amount Payable <i>8 yrs · ₹60K basic+DA</i>',
+      statValue: '₹2.77L',
+      statRisk: null
     },
     {
       q: 'Is this process compliant?',
       a: 'Depends on your state’s Shops & Establishments Act and whether every step — notice, documentation, hearing — was followed in sequence. Skipping one step is the most common way employers lose a compliance claim. Keep a dated paper trail for each step; a verbal warning with nothing in writing carries almost no weight if this is ever challenged.',
-      cites: ['State Shops Act', 'Due process']
+      cites: ['State Shops Act', 'Due process'],
+      statLabel: 'Financial Exposure <i>if any step skipped</i>',
+      statValue: '₹5.1L',
+      statRisk: 'high'
     }
   ];
 
@@ -1823,8 +1899,21 @@ html, body { overflow-x: hidden; background: var(--bg); }
       slot.typing.classList.add('is-hidden');
       typeText(slot.ariaText, item.a, 16, function(){
         after(function(){
-          showCites(slot.cites, item.cites);
-          if(next) after(next, 650);
+          slot.statLabel.innerHTML = item.statLabel;
+          slot.statValue.textContent = item.statValue;
+          slot.statRisk.classList.remove('risk-high', 'risk-medium');
+          if(item.statRisk){
+            slot.statRisk.textContent = item.statRisk === 'high' ? 'High risk' : 'Medium risk';
+            slot.statRisk.classList.add('risk-' + item.statRisk);
+            slot.statRisk.classList.remove('is-hidden');
+          } else {
+            slot.statRisk.classList.add('is-hidden');
+          }
+          slot.stat.classList.add('is-visible');
+          after(function(){
+            showCites(slot.cites, item.cites);
+            if(next) after(next, 650);
+          }, 200);
         }, 250);
       });
     }, 2100);
@@ -1833,14 +1922,15 @@ html, body { overflow-x: hidden; background: var(--bg); }
   function resetSlot(slot){
     slot.user.classList.remove('is-visible');
     slot.ariaMsg.classList.remove('is-visible');
+    slot.stat.classList.remove('is-visible');
     slot.cites.classList.remove('is-visible');
     slot.cites.innerHTML = '';
     slot.typing.classList.remove('is-hidden');
     slot.ariaText.textContent = '';
   }
 
-  var slot1 = { user: userMsg,  ariaMsg: ariaMsg,  typing: typing,  ariaText: ariaText,  cites: cites };
-  var slot2 = { user: userMsg2, ariaMsg: ariaMsg2, typing: typing2, ariaText: ariaText2, cites: cites2 };
+  var slot1 = { user: userMsg,  ariaMsg: ariaMsg,  typing: typing,  ariaText: ariaText,  cites: cites,  stat: stat,  statLabel: statLabel,  statValue: statValue,  statRisk: statRisk };
+  var slot2 = { user: userMsg2, ariaMsg: ariaMsg2, typing: typing2, ariaText: ariaText2, cites: cites2, stat: stat2, statLabel: stat2Label, statValue: stat2Value, statRisk: stat2Risk };
 
   function runPair(i){
     idx = i;
