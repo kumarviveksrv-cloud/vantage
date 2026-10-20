@@ -177,26 +177,6 @@ html, body { overflow-x: hidden; background: var(--bg); }
   z-index: 1;
 }
 
-/* Wordmark, small, sitting inside the orb's own footprint. The
-   starfield keeps a center exclusion zone (see rfStarfieldCanvas JS)
-   so sprite text can't drift behind/through it. */
-.rf-orb-word {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  font: 800 clamp(20px, 2.8vw, 30px)/1 var(--font);
-  letter-spacing: .05em;
-  background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 35%, #7c3aed 65%, #c4b5fd 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 0 36px rgba(99,102,241,.3);
-  white-space: nowrap;
-  pointer-events: none;
-}
-
 /* Hero copy block — sits below the orb, centered single column */
 .rf-hero-copy {
   position: relative;
@@ -1008,7 +988,6 @@ html, body { overflow-x: hidden; background: var(--bg); }
     <div class="rf-hero-orb" id="rfHeroOrb">
       <canvas id="rfStarfieldCanvas"></canvas>
       <canvas id="rfOrbCanvas"></canvas>
-      <div class="rf-orb-word" aria-hidden="true">VANTAGE</div>
     </div>
   </section>
 
@@ -1488,7 +1467,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
   var W, H, scene, camera, renderer;
   var mouse = {x:0,y:0};
-  var PARTICLE_COUNT = 500;
+  var PARTICLE_COUNT = 300; // was 500 — too dense, felt like clutter
   var sprites = [];
 
   var SYMBOLS = [
