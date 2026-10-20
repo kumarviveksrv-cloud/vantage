@@ -216,7 +216,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
 @media (min-width: 1024px) {
   .rf-hero-split {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* Was 1fr 1fr: at 1180px max-width that gives the panel column only
+       ~542px, which .rf-hero-panel's 540px cap was already maxed out
+       against. The chat bubbles inside wrap hard at that width, which is
+       what was pushing the panel tall at the bottom. Tilting the ratio
+       toward the panel (and raising its cap to match, below) gives the
+       dialogue more horizontal room so it grows less vertically. */
+    grid-template-columns: 0.9fr 1.1fr;
     /* start, not center: the panel's content height varies as its demo
        conversation cycles (one round vs two, stat badge in/out), and
        center-alignment was letting that height change drag the panel's
@@ -251,6 +257,10 @@ html, body { overflow-x: hidden; background: var(--bg); }
      restore enough top space for a clean break from the hero section. */
   .rf-hero-split .rf-aria-preview { padding: 40px 0 64px; }
   .rf-hero-split .rf-aria-preview-inner { max-width: none; margin: 0; }
+  /* Raise the panel's own 540px cap to match the wider column above --
+     otherwise the extra column width goes unused and the panel stays
+     the same size it was. */
+  .rf-hero-split .rf-hero-panel { max-width: 640px; }
 }
 
 /* B2C positioning badge — flat, no glow/gradient fill */
