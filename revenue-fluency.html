@@ -143,12 +143,27 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-hero {
   position: relative;
   min-height: 100vh;
-  padding: 94px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 94px 24px 60px;
   overflow: hidden;
   z-index: 1;
 }
 @media (max-width: 700px) {
   .rf-hero { padding-top: 84px; }
+}
+
+/* Headline overlaid directly on the orb, inside the first viewport —
+   the only thing a visitor should have to scroll past to reach it
+   is nothing. Deck copy and CTA still live below in .rf-hero-copy. */
+.rf-hero-headline {
+  position: relative;
+  z-index: 5;
+  max-width: 700px;
+  padding: 0 16px;
 }
 
 .rf-hero-orb {
@@ -202,13 +217,14 @@ html, body { overflow-x: hidden; background: var(--bg); }
   margin-bottom: 18px;
 }
 
-.rf-hero-copy h1 {
+.rf-hero-headline h1 {
   font: 700 clamp(28px, 4.2vw, 42px)/1.22 var(--font);
   letter-spacing: -0.01em;
-  margin: 0 0 22px;
+  margin: 0;
   color: #f4f3ff;
+  text-shadow: 0 4px 40px rgba(5,4,16,.8);
 }
-.rf-hero-copy h1 .rf-accent {
+.rf-hero-headline h1 .rf-accent {
   color: #818cf8;
 }
 
@@ -984,18 +1000,20 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
 <main>
 
-  <!-- ── HERO — orb + starfield (hero-only experiment, rest of page restrained) ── -->
+  <!-- ── HERO — orb + starfield, headline overlaid in the same first viewport ── -->
   <section class="rf-hero">
     <div class="rf-hero-orb" id="rfHeroOrb">
       <canvas id="rfStarfieldCanvas"></canvas>
       <canvas id="rfOrbCanvas"></canvas>
     </div>
+    <div class="rf-hero-headline">
+      <div class="rf-for-badge">For Individual HR Professionals · Not Enterprise</div>
+      <h1>Your HR decisions already have a financial outcome. <span class="rf-accent">Vantage proves it.</span></h1>
+    </div>
   </section>
 
-  <!-- Headline sits below the orb -->
+  <!-- Deck copy + CTA sit below the hero -->
   <div class="rf-hero-copy">
-    <div class="rf-for-badge">For Individual HR Professionals · Not Enterprise</div>
-    <h1>Your HR decisions already have a financial outcome. <span class="rf-accent">Vantage proves it.</span></h1>
     <p class="rf-hero-statement">Vantage is HR financial intelligence software, which quantifies the business value of HR decisions.</p>
     <p class="rf-hero-deck">It translates your decisions into financial figures, documents your professional impact, and follows you across every role you'll ever hold.</p>
     <p class="rf-hero-deck">It is built for the HR professional who wants to speak the language of the business and leave every role with tangible records of value delivered.</p>
