@@ -553,7 +553,15 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 .rf-panel-stat.is-visible { opacity: 1; }
 .rf-panel-stat-label {
-  font: 600 10px var(--mono);
+  /* 500, not 600 -- JetBrains Mono only has 400 and 500 registered
+     in fonts.css (checked: no 600 or 700 face exists for this
+     family at all). Requesting 600 with no matching face forces the
+     browser to pick a fallback/synthesis path for the unmatched
+     weight, and that path is inconsistent across browsers -- it was
+     rendering fine in my own test browser and genuinely soft in
+     Kumar's, which is exactly the kind of thing a cache/zoom check
+     can't catch. 500 is a real, hinted font file. */
+  font: 500 10px var(--mono);
   letter-spacing: .06em;
   text-transform: uppercase;
   color: rgba(244,243,255,.72);
@@ -573,7 +581,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
      rupee figure, not a place for a stylistic flourish. */
 }
 .rf-panel-stat-risk {
-  font: 600 10px var(--mono);
+  font: 500 10px var(--mono); /* same unregistered-weight fix as .rf-panel-stat-label above */
   letter-spacing: .04em;
   text-transform: uppercase;
   padding: 4px 9px;
