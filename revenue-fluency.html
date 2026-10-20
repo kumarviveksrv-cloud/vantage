@@ -750,11 +750,15 @@ html, body { overflow-x: hidden; background: var(--bg); }
   width: 100%;
   max-width: 420px;
   margin: 0 auto;
-  background: rgba(255,255,255,.02);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 14px;
+  background: linear-gradient(165deg, rgba(155,48,255,.14) 0%, rgba(17,14,36,.68) 45%, rgba(13,11,30,.85) 100%);
+  border: 1px solid rgba(190,140,255,.3);
+  border-radius: 18px;
   padding: 48px 44px;
   position: relative;
+  box-shadow:
+    0 28px 80px -18px rgba(155,48,255,.4),
+    0 0 100px -15px rgba(155,48,255,.3),
+    inset 0 1px 0 rgba(255,255,255,.1);
 }
 @media (max-width: 480px) { .rf-pricing-card { padding: 36px 28px; } }
 
@@ -785,13 +789,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 .rf-pricing-badge {
   display: inline-block;
-  background: rgba(99,102,241,.12);
-  border: 1px solid rgba(99,102,241,.28);
+  background: rgba(155,48,255,.14);
+  border: 1px solid rgba(190,140,255,.35);
   border-radius: 100px;
   padding: 5px 14px;
-  font: 600 9px var(--mono);
+  font: 700 9px var(--mono);
   letter-spacing: .2em;
-  color: rgba(196,181,253,.82);
+  color: #9b30ff;
   text-transform: uppercase;
   margin-bottom: 24px;
   position: relative;
