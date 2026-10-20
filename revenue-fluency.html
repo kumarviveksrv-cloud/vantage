@@ -653,20 +653,22 @@ html, body { overflow-x: hidden; background: var(--bg); }
 @media (max-width: 680px) { .rf-tiles { grid-template-columns: 1fr; } }
 
 .rf-tile {
-  background: linear-gradient(165deg, rgba(99,102,241,.1) 0%, rgba(17,14,36,.6) 55%, rgba(13,11,30,.7) 100%);
-  border: 1px solid rgba(165,180,252,.2);
+  background: linear-gradient(165deg, rgba(139,92,246,.12) 0%, rgba(17,14,36,.62) 55%, rgba(13,11,30,.78) 100%);
+  border: 1px solid rgba(167,139,250,.25);
   border-radius: 14px;
   padding: 28px 26px;
   box-shadow:
-    0 14px 36px -16px rgba(99,102,241,.35),
-    inset 0 1px 0 rgba(255,255,255,.06);
+    0 20px 50px -18px rgba(139,92,246,.4),
+    0 0 70px -22px rgba(139,92,246,.35),
+    inset 0 1px 0 rgba(255,255,255,.08);
   transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
   position: relative;
 }
 .rf-tile:hover {
-  border-color: rgba(165,180,252,.45);
+  border-color: rgba(167,139,250,.5);
   box-shadow:
-    0 18px 46px -16px rgba(99,102,241,.5),
+    0 24px 60px -18px rgba(139,92,246,.55),
+    0 0 90px -20px rgba(139,92,246,.45),
     inset 0 1px 0 rgba(255,255,255,.1);
   transform: translateY(-1px);
 }
