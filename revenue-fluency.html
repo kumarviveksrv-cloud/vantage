@@ -1540,6 +1540,15 @@ html, body { overflow-x: hidden; background: var(--bg); }
   var mouse = {x:0,y:0};
   var PARTICLE_COUNT = 300; // was 500 — too dense, felt like clutter
   var sprites = [];
+  // Particle spawn radius — scaled by aspect ratio so the field fills a
+  // wide laptop viewport edge to edge instead of clustering in the center
+  // (a fixed radius sized for mobile portrait left huge empty margins on
+  // wide screens). 0.62 is roughly mobile-portrait aspect, our baseline.
+  var EXCLUDE_R = 170, maxR = 400;
+  function updateSpread(){
+    var aspect = (W && H) ? (W/H) : 0.62;
+    maxR = 400 * Math.max(1, aspect/0.62);
+  }
 
   var SYMBOLS = [
     'ARIA','VANTAGE','Vantage Record','Business Case','Retention Advisor',
@@ -1575,8 +1584,9 @@ html, body { overflow-x: hidden; background: var(--bg); }
   function resetSprite(data, randomZ){
     // Center exclusion zone — keeps sprite text from drifting behind
     // the orb/wordmark. Polar placement, radius always >= EXCLUDE_R,
-    // so nothing spawns in that dead-center disc.
-    var spread = 800, maxR = spread/2, EXCLUDE_R = 170;
+    // so nothing spawns in that dead-center disc. maxR comes from the
+    // outer, aspect-scaled value (see updateSpread) so this still works
+    // for particles recycled mid-animation after a resize.
     var angle = Math.random()*Math.PI*2;
     var r = EXCLUDE_R + Math.random()*(maxR-EXCLUDE_R);
     data.sprite.position.x = Math.cos(angle)*r;
@@ -1591,6 +1601,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
     var hero = document.getElementById('rfHeroOrb');
     W = hero ? hero.offsetWidth : window.innerWidth;
     H = hero ? hero.offsetHeight : window.innerHeight;
+    updateSpread();
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(70, W/H, 0.1, 2000);
     camera.position.z = 500;
@@ -1640,6 +1651,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
     var hero = document.getElementById('rfHeroOrb');
     W = hero ? hero.offsetWidth : window.innerWidth;
     H = hero ? hero.offsetHeight : window.innerHeight;
+    updateSpread();
     camera.aspect = W/H; camera.updateProjectionMatrix();
     renderer.setSize(W,H);
   }, {passive:true});
