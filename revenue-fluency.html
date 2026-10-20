@@ -405,8 +405,10 @@ html, body { overflow-x: hidden; background: var(--bg); }
   border: 1px solid rgba(165,180,252,.3);
   border-radius: 18px;
   background: var(--bg, #050410);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  /* backdrop-filter removed: it blurs whatever's behind this element
+     through its own background, and that background is now solid
+     opaque black, so it had nothing left to do. Dead weight, cut
+     while chasing a blur complaint on content inside this box. */
   overflow: hidden;
   box-shadow:
     0 28px 80px -18px rgba(99,102,241,.5),
@@ -562,13 +564,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-panel-stat-value {
   font: 700 19px var(--font);
   color: #c4b5fd;
-  /* This is a rupee figure someone needs to actually read, not a
-     decorative accent -- the 18px blur radius this used to carry was
-     copied from the page's large (32-46px) headline-glow convention,
-     where it's proportionate. On 19px digits that same radius is
-     nearly as wide as the glyphs themselves and smudges them instead
-     of haloing them. Small enough here to still read as a glow. */
-  text-shadow: 0 0 6px rgba(139,92,246,.35);
+  /* No text-shadow at all, on purpose -- the citation chips right
+     below this run through the exact same opacity:0->1 reveal
+     transition and render perfectly crisp, because they carry no
+     glow. Tuning the blur radius down (18px, then 6px) still left a
+     real blur on 19px glyphs; the only fix that actually matches the
+     chips' sharpness is dropping the shadow entirely. This is a
+     rupee figure, not a place for a stylistic flourish. */
 }
 .rf-panel-stat-risk {
   font: 600 10px var(--mono);
