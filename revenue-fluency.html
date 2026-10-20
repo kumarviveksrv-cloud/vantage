@@ -429,6 +429,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
     0 28px 80px -18px rgba(99,102,241,.5),
     0 0 110px -12px rgba(124,58,237,.35),
     inset 0 1px 0 rgba(255,255,255,.12);
+  /* Column flex so .rf-panel-body can stretch to the pinned min-height
+     (set by pinPanelHeight() in JS) and its footer disclaimer can be
+     pushed to the true bottom of the box via margin-top:auto, instead
+     of trailing right under the shortest-content rotation and drifting
+     up and down as the cycling demo swaps in longer/shorter answers. */
+  display: flex;
+  flex-direction: column;
 }
 .rf-hero-panel::before {
   content: '';
@@ -474,7 +481,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
   background: #6ee7b7;
   box-shadow: 0 0 8px 1px rgba(110,231,183,.85);
 }
-.rf-panel-body { padding: 18px; }
+.rf-panel-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
 .rf-panel-starters {
   display: flex;
   flex-wrap: wrap;
@@ -628,6 +641,8 @@ html, body { overflow-x: hidden; background: var(--bg); }
   font: 400 11px var(--font);
   color: rgba(244,243,255,.42);
   text-align: center;
+  margin-top: auto;
+  padding-top: 16px;
 }
 
 /* ── TICKER ─────────────────────────────────────────────────────────── */
