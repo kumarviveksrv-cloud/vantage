@@ -391,7 +391,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 .rf-panel-title {
   font: 500 12px var(--font);
-  color: rgba(244,243,255,.6);
+  color: rgba(244,243,255,.78);
 }
 .rf-panel-live {
   margin-left: auto;
@@ -416,7 +416,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 .rf-panel-chip {
   font: 400 11.5px var(--font);
-  color: rgba(244,243,255,.6);
+  color: rgba(244,243,255,.8);
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 7px;
@@ -442,13 +442,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-panel-msg.is-visible { opacity: 1; transform: translateY(0); }
 .rf-panel-msg.user {
   background: rgba(255,255,255,.05);
-  color: rgba(244,243,255,.82);
+  color: rgba(244,243,255,.94);
   margin-left: auto;
 }
 .rf-panel-msg.aria {
   background: linear-gradient(135deg, rgba(99,102,241,.2), rgba(124,58,237,.12));
   border: 1px solid rgba(165,180,252,.35);
-  color: rgba(244,243,255,.9);
+  color: rgba(244,243,255,.97);
   box-shadow: 0 8px 30px -8px rgba(99,102,241,.35);
   min-height: 1.6em;
 }
@@ -494,15 +494,15 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-panel-cites span {
   font: 500 10px var(--mono);
   letter-spacing: .04em;
-  color: #a5b4fc;
-  background: rgba(99,102,241,.08);
-  border: 1px solid rgba(99,102,241,.18);
+  color: #c7d2fe;
+  background: rgba(99,102,241,.14);
+  border: 1px solid rgba(99,102,241,.32);
   border-radius: 5px;
   padding: 4px 8px;
 }
 .rf-panel-foot {
   font: 400 11px var(--font);
-  color: rgba(244,243,255,.3);
+  color: rgba(244,243,255,.42);
   text-align: center;
 }
 
@@ -1107,7 +1107,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
           <div class="rf-panel-msg user is-visible" id="rfPanelUserMsg">Can I terminate for repeated absence?</div>
           <div class="rf-panel-msg aria is-visible" id="rfPanelAriaMsg">
             <span class="rf-panel-typing is-hidden" id="rfPanelTyping"><i></i><i></i><i></i></span>
-            <span class="rf-panel-aria-text is-done" id="rfPanelAriaText">Yes — but only with due process. Repeated unexcused absence can justify termination for cause, but it requires documented warnings and adherence to notice rules. Skipping process risks an arbitrary-dismissal claim.</span>
+            <span class="rf-panel-aria-text is-done" id="rfPanelAriaText">Yes — but only with due process. Repeated unexcused absence can justify termination for cause, but it requires documented warnings and adherence to notice rules. Skipping process risks an arbitrary-dismissal claim. Courts also weigh whether each absence was genuinely unexcused and whether you gave the employee a real chance to respond before the final warning.</span>
           </div>
           <div class="rf-panel-cites is-visible" id="rfPanelCites">
             <span>Shops &amp; Establishments Act</span>
@@ -1703,17 +1703,17 @@ html, body { overflow-x: hidden; background: var(--bg); }
   var DATA = [
     {
       q: 'Can I terminate for repeated absence?',
-      a: 'Yes — but only with due process. Repeated unexcused absence can justify termination for cause, but it requires documented warnings and adherence to notice rules. Skipping process risks an arbitrary-dismissal claim.',
+      a: 'Yes — but only with due process. Repeated unexcused absence can justify termination for cause, but it requires documented warnings and adherence to notice rules. Skipping process risks an arbitrary-dismissal claim. Courts also weigh whether each absence was genuinely unexcused and whether you gave the employee a real chance to respond before the final warning.',
       cites: ['Shops & Establishments Act', 'Notice period']
     },
     {
       q: 'How much gratuity is owed?',
-      a: 'For continuous service of 5+ years, gratuity is 15 days’ wages per completed year, capped at ₹20L. Under 5 years, it’s typically not payable except in death or disability.',
+      a: 'For continuous service of 5+ years, gratuity is 15 days’ wages per completed year, capped at ₹20L. Under 5 years, it’s typically not payable except in death or disability. The calculation uses last-drawn basic plus DA, not gross salary, so confirm which figure you’re quoting before it goes in writing.',
       cites: ['Payment of Gratuity Act', '5-year threshold']
     },
     {
       q: 'Is this process compliant?',
-      a: 'Depends on your state’s Shops & Establishments Act and whether every step — notice, documentation, hearing — was followed in sequence. Skipping one step is the most common way employers lose a compliance claim.',
+      a: 'Depends on your state’s Shops & Establishments Act and whether every step — notice, documentation, hearing — was followed in sequence. Skipping one step is the most common way employers lose a compliance claim. Keep a dated paper trail for each step; a verbal warning with nothing in writing carries almost no weight if this is ever challenged.',
       cites: ['State Shops Act', 'Due process']
     }
   ];
