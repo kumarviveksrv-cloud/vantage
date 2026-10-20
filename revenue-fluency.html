@@ -581,15 +581,29 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-tool-row {
   display: grid;
   grid-template-columns: 210px 1fr;
-  gap: 0 40px;
-  padding: 22px 0;
-  border-bottom: 1px solid rgba(255,255,255,.05);
+  gap: 10px 40px;
   align-items: start;
+  padding: 24px 22px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(165,180,252,.2);
+  border-radius: 14px;
+  background: linear-gradient(165deg, rgba(99,102,241,.1) 0%, rgba(17,14,36,.6) 55%, rgba(13,11,30,.7) 100%);
+  box-shadow:
+    0 14px 36px -16px rgba(99,102,241,.35),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
 }
-.rf-tool-row--last { border-bottom: none; }
+.rf-tool-row:hover {
+  border-color: rgba(165,180,252,.45);
+  box-shadow:
+    0 18px 46px -16px rgba(99,102,241,.5),
+    inset 0 1px 0 rgba(255,255,255,.1);
+  transform: translateY(-1px);
+}
+.rf-tool-row--last { margin-bottom: 0; }
 
 @media (max-width: 600px) {
-  .rf-tool-row { grid-template-columns: 1fr; gap: 6px; }
+  .rf-tool-row { grid-template-columns: 1fr; gap: 8px; padding: 20px 18px; }
 }
 
 .rf-tool-name {
