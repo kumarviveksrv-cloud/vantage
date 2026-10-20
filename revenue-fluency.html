@@ -1015,6 +1015,10 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
 /* ── FOOTER — ported structure from index.html, restyled flat ────────── */
 .rf-footer {
+  display: block; /* vantage-cinematic.css sets a sitewide `footer{display:flex}`
+                      for the old single-line footer; this page's 3-block footer
+                      needs to stack, so override it here rather than touch the
+                      shared stylesheet. */
   border-top: 1px solid rgba(255,255,255,.08);
   padding: 56px 24px 0;
 }
@@ -1025,6 +1029,11 @@ html, body { overflow-x: hidden; background: var(--bg); }
   grid-template-columns: 1.6fr 1fr 1fr 1fr;
   gap: 40px;
   padding-bottom: 44px;
+}
+.rf-footer-brand-col {
+  display: block; /* vantage-cinematic.css's sitewide `footer div{display:flex}`
+                      was forcing the tagline and description onto one row;
+                      this div needs its two paragraph children to stack. */
 }
 @media (max-width: 760px) {
   .rf-footer-grid { grid-template-columns: 1fr 1fr; }
