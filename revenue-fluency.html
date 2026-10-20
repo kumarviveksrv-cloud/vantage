@@ -1027,6 +1027,18 @@ html, body { overflow-x: hidden; background: var(--bg); }
   color: #8b5cf6;
   text-shadow: 0 0 24px rgba(139,92,246,.45);
 }
+@media (max-width: 640px) {
+  /* .rf-faq's 100px bottom padding + .rf-final's 120px top padding (220px
+     total) is fine desktop breathing room but becomes a conspicuously
+     large, content-free dead zone on a narrow phone screen -- confirmed
+     by reproducing it in a 412px-wide render. Tighten just this seam on
+     mobile; .rf-faq's matching top padding (the pricing -> FAQ transition)
+     is untouched, that's a different seam. Placed after both base rules
+     so it isn't overridden by .rf-final's own unconditional rule above,
+     which comes later in the cascade at equal specificity. */
+  .rf-faq { padding-bottom: 56px; }
+  .rf-final { padding-top: 64px; }
+}
 
 /* ── FOOTER — ported structure from index.html, restyled flat ────────── */
 .rf-footer {
