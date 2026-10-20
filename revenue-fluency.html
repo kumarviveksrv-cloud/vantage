@@ -206,32 +206,6 @@ html, body { overflow-x: hidden; background: var(--bg); }
   padding: 10px 24px 70px;
 }
 
-/* Ambient side glow for wide viewports — .rf-hero-copy is where this
-   content actually lives (it's a sibling of the .rf-hero section tag,
-   NOT nested inside it), and on a wide screen its centered 640px column
-   leaves wide empty margins with nothing behind them. z-index: -1 keeps
-   these behind the in-flow text (not an overlay); desktop-only via the
-   min-width query since mobile has no dead margin to fill. */
-.rf-hero-copy::before,
-.rf-hero-copy::after {
-  content: '';
-  position: absolute;
-  top: -8%;
-  width: 50vw;
-  height: 116%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(139,92,246,.4) 0%, rgba(139,92,246,.18) 45%, rgba(139,92,246,0) 75%);
-  filter: blur(36px);
-  pointer-events: none;
-  z-index: -1;
-  display: none;
-}
-.rf-hero-copy::before { left: -26vw; }
-.rf-hero-copy::after { right: -26vw; }
-@media (min-width: 1100px) {
-  .rf-hero-copy::before,
-  .rf-hero-copy::after { display: block; }
-}
 
 /* B2C positioning badge — flat, no glow/gradient fill */
 /* Plain eyebrow label, matching .rf-section-label used by every other
