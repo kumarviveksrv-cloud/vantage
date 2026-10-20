@@ -1101,7 +1101,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
         <div class="rf-panel-body">
           <div class="rf-panel-starters" id="rfPanelStarters">
             <span class="rf-panel-chip is-active">Can I terminate for repeated absence?</span>
-            <span class="rf-panel-chip">How much gratuity is owed?</span>
+            <span class="rf-panel-chip is-active">How much gratuity is owed?</span>
             <span class="rf-panel-chip">Is this process compliant?</span>
           </div>
           <div class="rf-panel-msg user is-visible" id="rfPanelUserMsg">Can I terminate for repeated absence?</div>
@@ -1112,6 +1112,15 @@ html, body { overflow-x: hidden; background: var(--bg); }
           <div class="rf-panel-cites is-visible" id="rfPanelCites">
             <span>Shops &amp; Establishments Act</span>
             <span>Notice period</span>
+          </div>
+          <div class="rf-panel-msg user is-visible" id="rfPanelUserMsg2">How much gratuity is owed?</div>
+          <div class="rf-panel-msg aria is-visible" id="rfPanelAriaMsg2">
+            <span class="rf-panel-typing is-hidden" id="rfPanelTyping2"><i></i><i></i><i></i></span>
+            <span class="rf-panel-aria-text is-done" id="rfPanelAriaText2">For continuous service of 5+ years, gratuity is 15 days’ wages per completed year, capped at ₹20L. Under 5 years, it’s typically not payable except in death or disability. The calculation uses last-drawn basic plus DA, not gross salary, so confirm which figure you’re quoting before it goes in writing.</span>
+          </div>
+          <div class="rf-panel-cites is-visible" id="rfPanelCites2">
+            <span>Payment of Gratuity Act</span>
+            <span>5-year threshold</span>
           </div>
           <div class="rf-panel-foot">Illustrative — actual guidance is state and case specific</div>
         </div>
@@ -1683,7 +1692,9 @@ html, body { overflow-x: hidden; background: var(--bg); }
   els.forEach(function(el){ io.observe(el); });
 })();
 
-/* ── ARIA PANEL — cycling typing demo, makes the mock panel feel live ── */
+/* ── ARIA PANEL — cycling typing demo, makes the mock panel feel live ──
+   Shows TWO question/answer rounds stacked per cycle (a short thread,
+   not a single exchange) before clearing and starting the next pair. */
 (function(){
   var panel = document.getElementById('rfAriaPanel');
   if(!panel) return;
@@ -1693,11 +1704,18 @@ html, body { overflow-x: hidden; background: var(--bg); }
   var typing    = document.getElementById('rfPanelTyping');
   var ariaText  = document.getElementById('rfPanelAriaText');
   var cites     = document.getElementById('rfPanelCites');
-  if(!chips.length || !userMsg || !ariaMsg || !typing || !ariaText || !cites) return;
+  var userMsg2  = document.getElementById('rfPanelUserMsg2');
+  var ariaMsg2  = document.getElementById('rfPanelAriaMsg2');
+  var typing2   = document.getElementById('rfPanelTyping2');
+  var ariaText2 = document.getElementById('rfPanelAriaText2');
+  var cites2    = document.getElementById('rfPanelCites2');
+  if(!chips.length || !userMsg || !ariaMsg || !typing || !ariaText || !cites ||
+     !userMsg2 || !ariaMsg2 || !typing2 || !ariaText2 || !cites2) return;
 
-  // The panel already renders item 0 fully, statically, in the HTML —
-  // that's the no-JS / reduced-motion fallback. This script only takes
-  // over the cycling if motion is allowed.
+  // The panel already renders items 0 and 1 fully, statically, in the
+  // HTML — that's the no-JS / reduced-motion fallback (a two-round
+  // thread, same as the animated version settles into). This script
+  // only takes over the cycling if motion is allowed.
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   var DATA = [
@@ -1741,48 +1759,70 @@ html, body { overflow-x: hidden; background: var(--bg); }
     })();
   }
 
-  function runCycle(i){
-    idx = i;
-    if(!onScreen){ after(function(){ runCycle(idx); }, 600); return; }
-    var item = DATA[idx];
+  function showCites(target, list){
+    list.forEach(function(c){
+      var s = document.createElement('span');
+      s.textContent = c;
+      target.appendChild(s);
+    });
+    target.classList.add('is-visible');
+  }
 
-    userMsg.classList.remove('is-visible');
-    ariaMsg.classList.remove('is-visible');
-    cites.classList.remove('is-visible');
-    cites.innerHTML = '';
-    typing.classList.remove('is-hidden');
-    ariaText.textContent = '';
-    chips.forEach(function(c){ c.classList.remove('is-active'); });
+  // Runs one round (user question -> typing -> ARIA answer -> citations)
+  // into a given set of slot elements, then calls `next` once settled.
+  function runRound(chipIdx, item, slot, next){
+    chips[chipIdx].classList.add('is-active');
 
     after(function(){
-      chips[idx].classList.add('is-active');
-      userMsg.textContent = item.q;
-      userMsg.classList.add('is-visible');
+      slot.user.textContent = item.q;
+      slot.user.classList.add('is-visible');
     }, 300);
 
-    after(function(){ ariaMsg.classList.add('is-visible'); }, 900);
+    after(function(){ slot.ariaMsg.classList.add('is-visible'); }, 900);
 
     after(function(){
-      typing.classList.add('is-hidden');
-      typeText(ariaText, item.a, 16, function(){
+      slot.typing.classList.add('is-hidden');
+      typeText(slot.ariaText, item.a, 16, function(){
         after(function(){
-          item.cites.forEach(function(c){
-            var s = document.createElement('span');
-            s.textContent = c;
-            cites.appendChild(s);
-          });
-          cites.classList.add('is-visible');
+          showCites(slot.cites, item.cites);
+          if(next) after(next, 650);
         }, 250);
       });
     }, 2100);
-
-    var holdDelay = 2100 + item.a.length * 16 + 3200;
-    after(function(){ runCycle((idx + 1) % DATA.length); }, holdDelay);
   }
 
-  // Let the static first state (already rendered in HTML) sit for a
-  // beat, then take over and start cycling from question 2.
-  after(function(){ runCycle(1); }, 3400);
+  function resetSlot(slot){
+    slot.user.classList.remove('is-visible');
+    slot.ariaMsg.classList.remove('is-visible');
+    slot.cites.classList.remove('is-visible');
+    slot.cites.innerHTML = '';
+    slot.typing.classList.remove('is-hidden');
+    slot.ariaText.textContent = '';
+  }
+
+  var slot1 = { user: userMsg,  ariaMsg: ariaMsg,  typing: typing,  ariaText: ariaText,  cites: cites };
+  var slot2 = { user: userMsg2, ariaMsg: ariaMsg2, typing: typing2, ariaText: ariaText2, cites: cites2 };
+
+  function runPair(i){
+    idx = i;
+    var idx2 = (i + 1) % DATA.length;
+    if(!onScreen){ after(function(){ runPair(idx); }, 600); return; }
+
+    resetSlot(slot1);
+    resetSlot(slot2);
+    chips.forEach(function(c){ c.classList.remove('is-active'); });
+
+    runRound(idx, DATA[idx], slot1, function(){
+      runRound(idx2, DATA[idx2], slot2, function(){
+        after(function(){ runPair((idx + 2) % DATA.length); }, 3400);
+      });
+    });
+  }
+
+  // Let the static first state (already rendered in HTML — a two-round
+  // thread covering items 0 and 1) sit for a beat, then take over and
+  // continue the rotation from the third question.
+  after(function(){ runPair(2); }, 3400);
 })();
 
 /* ── CURSOR ORB (smooth lag) ────────────────────────────────────────── */
