@@ -217,7 +217,14 @@ html, body { overflow-x: hidden; background: var(--bg); }
   .rf-hero-split {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    align-items: center;
+    /* start, not center: the panel's content height varies as its demo
+       conversation cycles (one round vs two, stat badge in/out), and
+       center-alignment was letting that height change drag the panel's
+       top edge up past the hero/starfield boundary above, and drag the
+       copy column out of alignment with it as it did. Pinning both
+       columns to the row's top keeps the panel's top fixed and lets it
+       only ever grow downward. */
+    align-items: start;
     gap: 48px;
     padding: 0 24px;
   }
@@ -235,7 +242,14 @@ html, body { overflow-x: hidden; background: var(--bg); }
     margin-left: 0;
     margin-right: 0;
   }
-  .rf-hero-split .rf-aria-preview { padding: 0; }
+  /* Zeroing this out entirely (the old single-column value was
+     "10px 24px 100px") had also zeroed the gap between the hero
+     section above and the panel below, so the panel's card could sit
+     flush against — and on shorter viewports, visually read as
+     crossing into — the starfield area above it. Keep the sides/bottom
+     at 0 (the grid gap and page padding already handle those) but
+     restore enough top space for a clean break from the hero section. */
+  .rf-hero-split .rf-aria-preview { padding: 40px 0 0; }
   .rf-hero-split .rf-aria-preview-inner { max-width: none; margin: 0; }
 }
 
