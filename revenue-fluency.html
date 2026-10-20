@@ -1063,7 +1063,12 @@ html, body { overflow-x: hidden; background: var(--bg); }
                       this div needs its two paragraph children to stack. */
 }
 @media (max-width: 760px) {
-  .rf-footer-grid { grid-template-columns: 1fr 1fr; }
+  /* Was 1fr 1fr: with 3 link columns (PRODUCT, COMPANY, START) plus the
+     full-width brand row, that put PRODUCT/COMPANY side by side and left
+     START alone on its own row with empty space next to it -- uneven and
+     not how a stacked mobile footer is supposed to read. One column, all
+     four groups stacked top to bottom, is the standard pattern. */
+  .rf-footer-grid { grid-template-columns: 1fr; gap: 32px; }
   .rf-footer-brand-col { grid-column: 1 / -1; }
 }
 .rf-footer-tagline {
@@ -1110,6 +1115,11 @@ html, body { overflow-x: hidden; background: var(--bg); }
   border-top: 1px solid rgba(255,255,255,.08);
 }
 .rf-footer-bar-text {
+  display: block; /* Same sitewide `footer div{display:flex;gap:20px}` leak
+                      as .rf-footer and .rf-footer-brand-col above -- it was
+                      splitting this single sentence's <strong>, bare text,
+                      and <span> into three separate flex columns instead of
+                      one block of text that wraps normally. */
   font: 400 13px/1.6 var(--font);
   color: rgba(244,243,255,.55);
 }
