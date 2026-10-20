@@ -1234,7 +1234,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
         <div class="rf-panel-body">
           <div class="rf-panel-starters" id="rfPanelStarters">
             <span class="rf-panel-chip is-active">Can I terminate for repeated absence?</span>
-            <span class="rf-panel-chip is-active">How much gratuity is owed?</span>
+            <span class="rf-panel-chip is-active">What's the real cost to the business?</span>
             <span class="rf-panel-chip">Is this process compliant?</span>
           </div>
           <div class="rf-panel-msg user is-visible" id="rfPanelUserMsg">Can I terminate for repeated absence?</div>
@@ -1251,19 +1251,19 @@ html, body { overflow-x: hidden; background: var(--bg); }
             <span>Shops &amp; Establishments Act</span>
             <span>Notice period</span>
           </div>
-          <div class="rf-panel-msg user is-visible" id="rfPanelUserMsg2">How much gratuity is owed?</div>
+          <div class="rf-panel-msg user is-visible" id="rfPanelUserMsg2">What's the real cost of this to the business — not just what I owe?</div>
           <div class="rf-panel-msg aria is-visible" id="rfPanelAriaMsg2">
             <span class="rf-panel-typing is-hidden" id="rfPanelTyping2"><i></i><i></i><i></i></span>
-            <span class="rf-panel-aria-text is-done" id="rfPanelAriaText2">For continuous service of 5+ years, gratuity is 15 days’ wages per completed year, capped at ₹20L. Under 5 years, it’s typically not payable except in death or disability. The calculation uses last-drawn basic plus DA, not gross salary, so confirm which figure you’re quoting before it goes in writing.</span>
+            <span class="rf-panel-aria-text is-done" id="rfPanelAriaText2">Beyond the ₹3.37L severance, factor in backfill: recruiting, onboarding, and a 90–120 day productivity ramp for a role at this level typically run 0.5–1.5× annual CTC. That's the number that actually belongs in a CFO conversation — the exit payout alone makes this look cheaper than it is.</span>
           </div>
           <div class="rf-panel-stat is-visible" id="rfPanelStat2">
-            <span class="rf-panel-stat-label" id="rfPanelStat2Label">Amount Payable <i>8 yrs · ₹60K basic+DA</i></span>
-            <span class="rf-panel-stat-value" id="rfPanelStat2Value">₹2.77L</span>
+            <span class="rf-panel-stat-label" id="rfPanelStat2Label">Backfill Cost <i>beyond severance</i></span>
+            <span class="rf-panel-stat-value" id="rfPanelStat2Value">0.5–1.5× CTC</span>
             <span class="rf-panel-stat-risk is-hidden" id="rfPanelStat2Risk"></span>
           </div>
           <div class="rf-panel-cites is-visible" id="rfPanelCites2">
-            <span>Payment of Gratuity Act</span>
-            <span>5-year threshold</span>
+            <span>Cost-of-vacancy modeling</span>
+            <span>Backfill vs severance</span>
           </div>
           <div class="rf-panel-foot">Illustrative — actual guidance is state and case specific</div>
         </div>
@@ -1883,11 +1883,11 @@ html, body { overflow-x: hidden; background: var(--bg); }
       statRisk: 'high'
     },
     {
-      q: 'How much gratuity is owed?',
-      a: 'For continuous service of 5+ years, gratuity is 15 days’ wages per completed year, capped at ₹20L. Under 5 years, it’s typically not payable except in death or disability. The calculation uses last-drawn basic plus DA, not gross salary, so confirm which figure you’re quoting before it goes in writing.',
-      cites: ['Payment of Gratuity Act', '5-year threshold'],
-      statLabel: 'Amount Payable <i>8 yrs · ₹60K basic+DA</i>',
-      statValue: '₹2.77L',
+      q: 'What’s the real cost of this to the business — not just what I owe?',
+      a: 'Beyond the ₹3.37L severance, factor in backfill: recruiting, onboarding, and a 90–120 day productivity ramp for a role at this level typically run 0.5–1.5× annual CTC. That’s the number that actually belongs in a CFO conversation — the exit payout alone makes this look cheaper than it is.',
+      cites: ['Cost-of-vacancy modeling', 'Backfill vs severance'],
+      statLabel: 'Backfill Cost <i>beyond severance</i>',
+      statValue: '0.5–1.5× CTC',
       statRisk: null
     },
     {
