@@ -271,7 +271,12 @@ html, body { overflow-x: hidden; background: var(--bg); }
   font: 500 10px var(--mono);
   letter-spacing: .16em;
   text-transform: uppercase;
-  color: rgba(165,180,252,.65);
+  color: rgba(196,205,255,.85);
+  /* The hero's starfield/word-cloud canvas sits directly behind this
+     label with no card or gradient to separate them (unlike the h1 right
+     below it, which has its own dark text-shadow). Without a shadow of
+     its own this badge was reading as part of the background noise. */
+  text-shadow: 0 2px 16px rgba(5,4,16,.9), 0 0 6px rgba(5,4,16,.9);
   margin-bottom: 18px;
 }
 
