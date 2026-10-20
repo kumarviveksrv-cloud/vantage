@@ -1957,7 +1957,21 @@ html, body { overflow-x: hidden; background: var(--bg); }
     userMsg2.textContent = snap.u2;  ariaText2.textContent = snap.a2;  stat2Label.innerHTML = snap.l2;  stat2Value.textContent = snap.v2;
     if(maxH) panel.style.minHeight = Math.ceil(maxH + 12) + 'px';
   }
-  pinPanelHeight();
+  // Measuring before web fonts finish swapping in would pin the box to
+  // the fallback font's (slightly different) metrics, risking a sliver
+  // of clipping once the real font loads. Wait for fonts.ready first --
+  // with a hard 1500ms cap so a font that never resolves (flaky network,
+  // unsupported API) can't block this forever.
+  (function(){
+    var done = false;
+    function run(){ if(done) return; done = true; pinPanelHeight(); }
+    if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(run);
+      setTimeout(run, 1500);
+    } else {
+      run();
+    }
+  })();
   // Re-measure on resize/orientation change (debounced) so the pinned
   // height stays correct if the viewport width changes after load.
   var pinResizeTimer;
