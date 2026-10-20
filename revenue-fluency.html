@@ -554,15 +554,21 @@ html, body { overflow-x: hidden; background: var(--bg); }
   font: 600 10px var(--mono);
   letter-spacing: .06em;
   text-transform: uppercase;
-  color: rgba(244,243,255,.6);
+  color: rgba(244,243,255,.72);
   flex: 1 1 auto;
   min-width: 120px;
 }
-.rf-panel-stat-label i { font-style: normal; display: block; margin-top: 2px; color: rgba(244,243,255,.4); letter-spacing: .02em; text-transform: none; }
+.rf-panel-stat-label i { font-style: normal; display: block; margin-top: 2px; color: rgba(244,243,255,.5); letter-spacing: .02em; text-transform: none; }
 .rf-panel-stat-value {
   font: 700 19px var(--font);
   color: #c4b5fd;
-  text-shadow: 0 0 18px rgba(139,92,246,.4);
+  /* This is a rupee figure someone needs to actually read, not a
+     decorative accent -- the 18px blur radius this used to carry was
+     copied from the page's large (32-46px) headline-glow convention,
+     where it's proportionate. On 19px digits that same radius is
+     nearly as wide as the glyphs themselves and smudges them instead
+     of haloing them. Small enough here to still read as a glow. */
+  text-shadow: 0 0 6px rgba(139,92,246,.35);
 }
 .rf-panel-stat-risk {
   font: 600 10px var(--mono);
