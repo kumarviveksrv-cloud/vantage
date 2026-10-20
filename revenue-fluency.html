@@ -206,6 +206,38 @@ html, body { overflow-x: hidden; background: var(--bg); }
   padding: 10px 24px 70px;
 }
 
+/* Hero split — text column left, ARIA demo panel right, on wide screens.
+   Below 1024px this is a no-op: .rf-hero-copy and .rf-aria-preview just
+   stack in document order exactly as they always have. */
+.rf-hero-split {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+@media (min-width: 1024px) {
+  .rf-hero-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 48px;
+    padding: 0 24px;
+  }
+  .rf-hero-split .rf-hero-copy {
+    max-width: none;
+    margin: 0;
+    padding: 10px 0;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .rf-hero-split .rf-hero-statement { max-width: none; }
+  .rf-hero-split .rf-hero-deck,
+  .rf-hero-split .rf-hero-close {
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .rf-hero-split .rf-aria-preview { padding: 0; }
+  .rf-hero-split .rf-aria-preview-inner { max-width: none; margin: 0; }
+}
 
 /* B2C positioning badge — flat, no glow/gradient fill */
 /* Plain eyebrow label, matching .rf-section-label used by every other
@@ -1065,7 +1097,12 @@ html, body { overflow-x: hidden; background: var(--bg); }
     </div>
   </section>
 
-  <!-- Deck copy + CTA sit below the hero -->
+  <!-- Deck copy + ARIA preview, side by side on wide screens (text left,
+       live-demo panel right — same pattern CogNexusHR uses), stacked on
+       mobile/tablet where there's no dead margin to fill in the first
+       place. See .rf-hero-split below. -->
+  <div class="rf-hero-split">
+  <!-- Deck copy + CTA -->
   <div class="rf-hero-copy">
     <p class="rf-hero-statement">Vantage is HR financial intelligence software, which quantifies the business value of HR decisions.</p>
     <p class="rf-hero-deck">It translates your decisions into financial figures, documents your professional impact, and follows you across every role you'll ever hold.</p>
@@ -1127,6 +1164,8 @@ html, body { overflow-x: hidden; background: var(--bg); }
       </div>
     </div>
   </section>
+  </div>
+  <!-- /.rf-hero-split -->
 
   <!-- ── TICKER ───────────────────────────────────────────────────────── -->
   <div class="rf-ticker">
