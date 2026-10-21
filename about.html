@@ -1060,12 +1060,30 @@ a{color:inherit;text-decoration:none}
 
 <!-- WHAT VANTAGE COVERS -->
 <section class="ab-section" id="scope">
-  <span class="ab-section-label">1. SCOPE</span>
-  <h2>The employment relationship,<br><em>in its full complexity.</em></h2>
-  <p class="ab-section-lede">The moment someone joins your organisation until the moment they leave: every decision in between that carries legal exposure, financial consequence, or stakeholder risk. That is the zone Vantage operates in.</p>
-
+  <!-- SR-fix (scope alignment, round 3 -- the actual root cause): every
+       previous attempt at this treated it as a CSS problem, measuring
+       .ab-scope-copy against .vd-radar inside .ab-scope-grid and finding
+       them pixel-identical, which they are. The mistake was the reference
+       point. .ab-section-label/h2/.ab-section-lede live ABOVE and OUTSIDE
+       .ab-scope-grid (this is the shared header pattern for all 8 sections
+       on this page), so the grid's actual first row is "Most HR tools..."
+       on the left against the radar's label on the right -- and THOSE two
+       were already aligned, confirmed again from Kumar's own live
+       view-source screenshot (520px vs 514px). What Kumar is comparing by
+       eye is the HEADING to the radar, and the heading was never a grid
+       sibling of the radar to begin with. index.html's own #what section
+       doesn't have this split: its eyebrow+h2+body all live INSIDE .vd-copy,
+       the grid's own left column, genuinely paired with the radar in the
+       same row. Fixed by moving the label/h2/lede inside .ab-scope-copy to
+       match that structure, as an exception to this page's shared
+       section-header pattern (only this section pairs a heading with a
+       dashboard visual; the other 7 don't have a competing visual to pair
+       with). -->
   <div class="ab-scope-grid">
     <div class="ab-scope-copy">
+      <span class="ab-section-label">1. SCOPE</span>
+      <h2>The employment relationship,<br><em>in its full complexity.</em></h2>
+      <p class="ab-section-lede" style="margin-bottom:28px">The moment someone joins your organisation until the moment they leave: every decision in between that carries legal exposure, financial consequence, or stakeholder risk. That is the zone Vantage operates in.</p>
       <p>Most HR tools try to cover all of HR. Vantage doesn't. It covers the part that requires the most professional judgment, carries the highest financial and legal stakes, and produces, when handled well, the kind of evidence that changes how an HR professional is perceived in any room they walk into.</p>
       <p>That part is the <strong>employment relationship</strong>. The live, ongoing relationship between an employer and the people already inside the organisation. Every disciplinary process. Every at-risk conversation. Every moment where the line between a good outcome and an expensive tribunal starts to matter.</p>
       <p>Vantage doesn't touch talent acquisition. That's the pipeline before someone joins. It doesn't touch L&D programme design. That's the curriculum after they're settled. It doesn't do payroll, HRIS configuration, or compensation benchmarking. These are deliberate choices, not limitations. The employment relationship is complex enough to deserve a platform built entirely around it.</p>
