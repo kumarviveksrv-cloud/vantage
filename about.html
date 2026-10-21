@@ -95,6 +95,42 @@ a{color:inherit;text-decoration:none}
 .ab-out-label{font:7px var(--mono);letter-spacing:.14em;color:rgba(255,255,255,.22);flex-shrink:0}
 .ab-out-tags{display:flex;flex-wrap:wrap;gap:5px}
 .ab-out-tag{font:7px var(--mono);letter-spacing:.08em;color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.07);padding:2px 7px;border-radius:3px}
+/* SCOPE RADAR -- ported verbatim from index.html's #vdRadar (same class
+   names, on purpose, so the CSS and initRadarViz() port over unchanged).
+   This is a different visual from the .ab-scope-visual/.ab-timeline-wrap/
+   .ab-caps-grid block directly above, which stays retired per the SR-fix
+   note: that one duplicated the prose next to it. This one is index.html's
+   actual coverage diagram, added back per an explicit, separate request. */
+.vd-radar{text-align:center}
+.vd-radar-svg{width:100%;max-width:440px;display:block;margin:0 auto}
+.vd-radar-outerring{transform-origin:230px 230px;animation:vdRadarSlowSpin 70s linear infinite}
+@keyframes vdRadarSlowSpin{to{transform:rotate(360deg)}}
+.vd-radar-boundary,.vd-radar-boundary-fill{opacity:0;transition:opacity 1.1s ease}
+.vd-radar-in .vd-radar-boundary,.vd-radar-in .vd-radar-boundary-fill{opacity:1}
+.vd-radar-sweep-group{opacity:0;transform-origin:230px 230px}
+.vd-radar-in .vd-radar-sweep-group{opacity:1;animation:vdRadarSpin 5s linear infinite}
+@keyframes vdRadarSpin{to{transform:rotate(360deg)}}
+.vd-radar-beam{stroke:#c4b5fd;stroke-width:1.6;filter:drop-shadow(0 0 6px #8b5cf6) drop-shadow(0 0 14px #6366f1)}
+.vd-radar-trail{stroke:#6366f1;stroke-width:12;opacity:.1}
+.vd-radar-trail-2{stroke-width:7;opacity:.16}
+.vd-radar-spoke{stroke:rgba(196,181,253,.16);stroke-width:1;opacity:0;transition:opacity 1s ease .3s}
+.vd-radar-in .vd-radar-spoke{opacity:1}
+.vd-radar-hub-pulse{fill:none;stroke:#c4b5fd;stroke-width:1.2;opacity:0}
+.vd-radar-in .vd-radar-hub-pulse{animation:vdRadarHubPulse 2.4s ease-out infinite}
+@keyframes vdRadarHubPulse{0%{r:40;opacity:.5}100%{r:72;opacity:0}}
+.vd-radar-hub{fill:url(#vdRadarCore);stroke:#c4b5fd;stroke-width:1.4;opacity:0;transform-origin:230px 230px;transform:scale(.6);transition:opacity .7s ease,transform .7s ease}
+.vd-radar-in .vd-radar-hub{opacity:1;transform:scale(1)}
+.vd-radar-hub-t{font:700 13px 'Space Grotesk',sans-serif;fill:#fff;text-anchor:middle;letter-spacing:.02em}
+.vd-radar-hub-sub{font:7px 'JetBrains Mono',monospace;fill:rgba(255,255,255,.7);text-anchor:middle;letter-spacing:.12em}
+.vd-radar-node circle{fill:rgba(99,102,241,.1);stroke:rgba(196,181,253,.4);stroke-width:1.2;opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.3);transition:opacity .55s ease,transform .55s ease}
+.vd-radar-in .vd-radar-node circle{opacity:1;transform:scale(1);animation:vdRadarNodeGlow 3s ease-in-out infinite}
+@keyframes vdRadarNodeGlow{0%,100%{filter:drop-shadow(0 0 0 rgba(99,102,241,0))}50%{filter:drop-shadow(0 0 8px rgba(99,102,241,.6))}}
+.vd-radar-node-t{font:700 8.5px 'JetBrains Mono',monospace;fill:#c4b5fd;text-anchor:middle;letter-spacing:.03em;opacity:0;transition:opacity .55s ease}
+.vd-radar-in .vd-radar-node-t{opacity:1}
+.vd-radar-legend{max-width:520px;margin:32px auto 0;text-align:center}
+.vd-radar-legend-main{font:500 clamp(17px,1.78vw,23px)/1.5 'Cormorant Garamond',serif;font-style:italic;letter-spacing:-.005em;margin:0;background:linear-gradient(135deg,#c4b5fd 0%,#6366f1 40%,#e879f9 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.vd-radar-legend-sub{margin:10px 0 0;font:500 clamp(17px,2vw,22px)/1.5 'DM Sans',sans-serif;letter-spacing:.01em;color:rgba(244,243,255,.42)}
+.vd-scope-label{font:8.5px 'JetBrains Mono',monospace;letter-spacing:.2em;color:rgba(196,181,253,.45);margin-bottom:20px}
 /* ARIA SECTION */
 .ab-aria-grid{display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:start}
 .ab-aria-copy p{font-size:14px;color:var(--grey);line-height:1.85;margin-bottom:16px}
@@ -318,12 +354,70 @@ a{color:inherit;text-decoration:none}
   <h2>The employment relationship,<br><em>in its full complexity.</em></h2>
   <p class="ab-section-lede">The moment someone joins your organisation until the moment they leave: every decision in between that carries legal exposure, financial consequence, or stakeholder risk. That is the zone Vantage operates in.</p>
 
-  <div class="ab-scope-grid ab-scope-single">
+  <div class="ab-scope-grid">
     <div class="ab-scope-copy">
       <p>Most HR tools try to cover all of HR. Vantage doesn't. It covers the part that requires the most professional judgment, carries the highest financial and legal stakes, and produces, when handled well, the kind of evidence that changes how an HR professional is perceived in any room they walk into.</p>
       <p>That part is the <strong>employment relationship</strong>. The live, ongoing relationship between an employer and the people already inside the organisation. Every disciplinary process. Every at-risk conversation. Every moment where the line between a good outcome and an expensive tribunal starts to matter.</p>
       <p>Vantage doesn't touch talent acquisition. That's the pipeline before someone joins. It doesn't touch L&D programme design. That's the curriculum after they're settled. It doesn't do payroll, HRIS configuration, or compensation benchmarking. These are deliberate choices, not limitations. The employment relationship is complex enough to deserve a platform built entirely around it.</p>
       <p style="font:italic 600 16px/1.5 var(--display);color:rgba(244,243,255,.82);margin-top:8px">Six capabilities. One zone of consequence. Every decision documented.</p>
+    </div>
+    <div class="vd-radar" id="vdRadar">
+      <div class="vd-scope-label">VANTAGE COVERAGE SCOPE &middot; THE EMPLOYMENT RELATIONSHIP</div>
+      <svg class="vd-radar-svg" viewBox="0 0 460 460" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="vdRadarCore" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#e9e0ff"/>
+            <stop offset="45%" stop-color="#8b5cf6"/>
+            <stop offset="100%" stop-color="#4338ca"/>
+          </radialGradient>
+        </defs>
+        <circle class="vd-radar-outerring" cx="230" cy="230" r="165" fill="none" stroke="rgba(196,181,253,0.08)" stroke-width="1" stroke-dasharray="2 6"/>
+        <circle class="vd-radar-boundary" cx="230" cy="230" r="140" fill="none" stroke="rgba(99,102,241,0.28)" stroke-width="1" stroke-dasharray="4 4"/>
+        <circle class="vd-radar-boundary-fill" cx="230" cy="230" r="140" fill="url(#vdRadarCore)" opacity="0.045"/>
+        <g class="vd-radar-sweep-group">
+          <line class="vd-radar-trail" x1="230" y1="230" x2="230" y2="35" transform="rotate(-16 230 230)"/>
+          <line class="vd-radar-trail vd-radar-trail-2" x1="230" y1="230" x2="230" y2="35" transform="rotate(-8 230 230)"/>
+          <line class="vd-radar-beam" x1="230" y1="230" x2="230" y2="35"/>
+        </g>
+        <line class="vd-radar-spoke" x1="230" y1="230" x2="230" y2="122"/>
+        <line class="vd-radar-spoke" x1="230" y1="230" x2="323.5" y2="176"/>
+        <line class="vd-radar-spoke" x1="230" y1="230" x2="323.5" y2="284"/>
+        <line class="vd-radar-spoke" x1="230" y1="230" x2="230" y2="338"/>
+        <line class="vd-radar-spoke" x1="230" y1="230" x2="136.5" y2="284"/>
+        <line class="vd-radar-spoke" x1="230" y1="230" x2="136.5" y2="176"/>
+        <circle class="vd-radar-hub-pulse" cx="230" cy="230" r="40"/>
+        <circle class="vd-radar-hub" cx="230" cy="230" r="40"/>
+        <text x="230" y="227" class="vd-radar-hub-t">VANTAGE</text>
+        <text x="230" y="240" class="vd-radar-hub-sub">THE SCOPE</text>
+        <g class="vd-radar-node" style="transition-delay:.1s">
+          <circle cx="230" cy="122" r="20"/>
+          <text x="230" y="126" class="vd-radar-node-t">CASES</text>
+        </g>
+        <g class="vd-radar-node" style="transition-delay:.2s">
+          <circle cx="323.5" cy="176" r="20"/>
+          <text x="323.5" y="180" class="vd-radar-node-t">ECONOMICS</text>
+        </g>
+        <g class="vd-radar-node" style="transition-delay:.3s">
+          <circle cx="323.5" cy="284" r="20"/>
+          <text x="323.5" y="288" class="vd-radar-node-t">INFLUENCE</text>
+        </g>
+        <g class="vd-radar-node" style="transition-delay:.4s">
+          <circle cx="230" cy="338" r="20"/>
+          <text x="230" y="342" class="vd-radar-node-t">POLICY</text>
+        </g>
+        <g class="vd-radar-node" style="transition-delay:.5s">
+          <circle cx="136.5" cy="284" r="20"/>
+          <text x="136.5" y="288" class="vd-radar-node-t">ORG HEALTH</text>
+        </g>
+        <g class="vd-radar-node" style="transition-delay:.6s">
+          <circle cx="136.5" cy="176" r="20"/>
+          <text x="136.5" y="180" class="vd-radar-node-t">RECORD</text>
+        </g>
+      </svg>
+      <div class="vd-radar-legend">
+        <p class="vd-radar-legend-main">Where Vantage focuses: the decisions that need judgment, not the systems that need data entry.</p>
+        <p class="vd-radar-legend-sub">The systems already exist everywhere. The judgment is what&rsquo;s been missing.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -699,6 +793,22 @@ a{color:inherit;text-decoration:none}
       nav.classList.toggle('is-visible', !entries[0].isIntersecting);
     }, {threshold: 0}).observe(hero);
   }
+})();
+</script>
+
+<script>
+/* Coverage-scope radar reveal, ported verbatim from index.html's
+   initRadarViz() in vantage-curtain.js. */
+(function initRadarViz(){
+  'use strict';
+  const radar = document.getElementById('vdRadar');
+  if(!radar) return;
+  let fired = false;
+  new IntersectionObserver(entries=>{
+    if(!entries[0].isIntersecting || fired) return;
+    fired = true;
+    radar.classList.add('vd-radar-in');
+  },{threshold:0.3}).observe(radar);
 })();
 </script>
 
