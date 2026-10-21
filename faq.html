@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>FAQ | Vantage</title>
+<meta name="description" content="Everything you want to know before you start: what Vantage is, who it's for, how your data is handled, what it costs, and what it doesn't do.">
+<link rel="canonical" href="https://vantage.virorah.com/faq.html">
+<meta property="og:type"        content="website">
+<meta property="og:url"         content="https://vantage.virorah.com/faq.html">
+<meta property="og:site_name"   content="Virorah Vantage">
+<meta property="og:title"       content="FAQ — Vantage">
+<meta property="og:description" content="Everything you want to know before you start: what Vantage is, who it's for, how your data is handled, what it costs, and what it doesn't do.">
+<meta property="og:image"       content="https://vantage.virorah.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta property="og:locale"      content="en_IN">
+<meta name="twitter:card"       content="summary_large_image">
+<meta name="twitter:title"      content="FAQ — Vantage">
+<meta name="twitter:description" content="Everything you want to know before you start: what Vantage is, who it's for, how your data is handled, what it costs, and what it doesn't do.">
+<meta name="twitter:image"      content="https://vantage.virorah.com/og-image.png">
+<link rel="icon" type="image/png" href="favicon.png"/>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="/fonts/fonts.css" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050410;--card:#0d0b1e;--card2:#11102a;
+  --cobalt:#6366f1;--violet:#7c3aed;
+  --muted:#a5b4fc;--lavender:#c4b5fd;
+  --white:#f4f3ff;--grey:rgba(244,243,255,0.62);
+  --border:rgba(99,102,241,0.12);--red:#FF4D6D;
+  --font:'DM Sans',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --display:'Cormorant Garamond',serif;
+}
+html,body{background:var(--bg);color:var(--white);font-family:var(--font);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* NAV -- same component as about.html, kept byte-identical so the two
+   pages feel like the same site, not a bolt-on. */
+.nav{position:fixed;top:0;left:0;right:0;height:68px;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;background:rgba(5,4,16,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-brand img{height:44px}
+.nav-back{font:600 12px var(--mono);letter-spacing:.06em;color:var(--lavender);text-decoration:none;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.5);padding:8px 16px;border-radius:8px;transition:all .25s;box-shadow:0 0 14px rgba(99,102,241,0.35),0 0 36px rgba(99,102,241,0.12);white-space:nowrap}
+.nav-back:hover{background:rgba(99,102,241,0.26);box-shadow:0 0 22px rgba(99,102,241,0.55),0 0 56px rgba(99,102,241,0.22);border-color:rgba(99,102,241,0.75)}
+@media(max-width:480px){.nav-back{font-size:10px;padding:7px 10px}}
+.nav-cta{font:700 12px 'DM Sans',sans-serif;background:linear-gradient(135deg,var(--cobalt),var(--violet));padding:10px 18px;border-radius:7px;color:#fff;box-shadow:0 4px 20px rgba(99,102,241,.3)}
+
+/* HERO -- compact, not full-height like about.html's: this page is a
+   reference page people land on to find one answer, not a cinematic
+   first impression. */
+.faq-hero{padding:140px 6vw 60px;text-align:center;position:relative;overflow:hidden}
+.faq-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(99,102,241,.14),transparent 55%);z-index:0}
+.faq-hero-content{position:relative;z-index:1;max-width:680px;margin:0 auto}
+.faq-eyebrow{font:600 10px var(--mono);letter-spacing:.2em;color:var(--muted);margin-bottom:20px;display:block}
+.faq-hero h1{font:700 clamp(28px,4.8vw,52px)/1.15 var(--display);letter-spacing:-.02em;margin-bottom:16px}
+.faq-hero h1 em{font-style:italic;color:var(--lavender)}
+.faq-hero-sub{font-size:15px;color:var(--grey);line-height:1.75;max-width:520px;margin:0 auto}
+
+/* QUICK JUMP -- category chips, mirrors about.html's .ab-jumpnav pattern
+   so repeat visitors recognise the interaction immediately. */
+.faq-jump{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:0 6vw 60px;max-width:900px;margin:0 auto}
+.faq-jump a{font:600 10px var(--mono);letter-spacing:.1em;color:var(--muted);padding:8px 16px;border:1px solid var(--border);border-radius:20px;transition:all .2s;white-space:nowrap}
+.faq-jump a:hover{color:var(--white);border-color:rgba(196,181,253,.35);background:rgba(99,102,241,.08)}
+
+/* CATEGORY + LIST */
+.faq-main{max-width:760px;margin:0 auto;padding:0 6vw 100px}
+.faq-category{margin-bottom:56px;scroll-margin-top:90px}
+.faq-category-label{font:700 11px var(--mono);letter-spacing:.14em;color:var(--lavender);text-transform:uppercase;margin-bottom:18px;display:block;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.faq-list{display:flex;flex-direction:column;gap:10px}
+.faq-item{border:1px solid rgba(196,181,253,.12);border-radius:12px;background:rgba(13,11,30,.5);overflow:hidden;transition:border-color .25s}
+.faq-item:hover{border-color:rgba(196,181,253,.22)}
+.faq-item summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;font:600 15px/1.4 var(--font);color:rgba(244,243,255,.9)}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:'+';flex-shrink:0;font:400 20px/1 var(--font);color:var(--lavender);transition:transform .2s ease}
+.faq-item[open] summary::after{transform:rotate(45deg)}
+.faq-item[open]{border-color:rgba(99,102,241,.3)}
+.faq-item .faq-a{padding:0 22px 20px}
+.faq-item .faq-a p{font:400 14px/1.75 var(--font);color:rgba(244,243,255,.78);max-width:640px}
+.faq-item .faq-a p + p{margin-top:12px}
+.faq-item .faq-a p strong{color:rgba(244,243,255,.92);font-weight:600}
+
+/* FOOTER -- correct root-level paths; see git history for the
+   legal/privacy.html + legal/terms.html typo this intentionally avoids. */
+.vantage-footer{border-top:1px solid var(--border);padding:64px 6vw 32px;background:rgba(8,7,20,.6)}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;max-width:1100px;margin:0 auto 48px}
+@media(max-width:800px){.footer-grid{grid-template-columns:1fr 1fr;gap:32px}}
+@media(max-width:480px){.footer-grid{grid-template-columns:1fr}}
+.footer-tagline{font:700 15px var(--font);color:var(--white);margin-bottom:10px}
+.footer-desc{font-size:13px;line-height:1.7;color:var(--grey);max-width:280px}
+.footer-col{display:flex;flex-direction:column;gap:10px}
+.footer-col-h{font:700 10px var(--mono);letter-spacing:.14em;color:rgba(196,181,253,.5);text-transform:uppercase;margin-bottom:4px}
+.footer-col a{font-size:13px;color:var(--grey);transition:color .2s}
+.footer-col a:hover{color:var(--white)}
+.footer-bar{max-width:1100px;margin:0 auto 32px;padding:20px 24px;border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;background:rgba(99,102,241,.05)}
+.footer-bar-text{font-size:13px;color:var(--grey)}
+.footer-bar-text strong{color:var(--white)}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;background:linear-gradient(135deg,var(--cobalt),var(--violet));border-radius:8px;font:700 12px 'DM Sans',sans-serif;color:#fff;white-space:nowrap}
+.footer-bottom{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font:500 10px var(--mono);letter-spacing:.08em;color:rgba(165,180,252,.4);text-transform:uppercase}
+</style>
+</head>
+<body>
+<div id="page-fade-overlay" style="position:fixed;inset:0;background:#050410;z-index:99999;opacity:1;transition:opacity .5s ease;pointer-events:none"></div>
+<script src="vantage-page-fade.js"></script>
+
+<nav class="nav">
+  <a href="/" class="nav-brand" onclick="sessionStorage.setItem('vantage_skip_intro_from','1')"><img src="virorah-vantage-logo.png" alt="Virorah Vantage"/></a>
+  <a href="index.html" class="nav-back" onclick="return vantageGoHome()">&larr; Back to Vantage</a>
+  <a href="access.html" class="nav-cta">Sign In &#8599;</a>
+</nav>
+
+<section class="faq-hero">
+  <div class="faq-hero-bg"></div>
+  <div class="faq-hero-content">
+    <span class="faq-eyebrow">VIRORAH VANTAGE &middot; FREQUENTLY ASKED</span>
+    <h1>Before you start,<br><em>the real answers.</em></h1>
+    <p class="faq-hero-sub">What Vantage actually is, who it's built for, what happens to your data, and what it costs. No marketing gloss &mdash; if something's a limitation, we say so here.</p>
+  </div>
+</section>
+
+<nav class="faq-jump" aria-label="Jump to category">
+  <a href="#getting-started">Getting Started</a>
+  <a href="#privacy-data">Privacy &amp; Your Data</a>
+  <a href="#pricing-billing">Pricing &amp; Billing</a>
+  <a href="#legal-accuracy">Legal &amp; Accuracy</a>
+  <a href="#eligibility-scope">Eligibility &amp; Scope</a>
+</nav>
+
+<main class="faq-main">
+
+  <div class="faq-category" id="getting-started">
+    <span class="faq-category-label">Getting Started</span>
+    <div class="faq-list">
+
+      <details class="faq-item">
+        <summary>Is this another tool my company has to buy and roll out?</summary>
+        <div class="faq-a"><p>No. Vantage isn&rsquo;t an organisational system at all, and it isn&rsquo;t an HRIS, ATS, or payroll tool either. Those manage the company&rsquo;s people data. Vantage is built for you, the individual HR professional, the way a personal business partner would be: somewhere to think through a hard call, quantify what it actually costs, and keep a record of the decisions you made and why. Nobody asks IT for approval. Nobody else inside the organisation needs to adopt it for you to use it. It&rsquo;s a genuinely new kind of tool for the profession: private, personal, and yours, in a field that has never had anything like it before.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How is this different from just using a general AI chatbot?</summary>
+        <div class="faq-a"><p>A general-purpose large language model, whichever one you use, answers the question you typed, starting from zero every conversation. Vantage is a different kind of thing: a contextual decision system. MERIDIAN calibrates every response to India&rsquo;s current labour codes, your state, your industry, your org size, and your seniority before you type a word. The tools build a case history, quantify financial exposure in INR, and compound in value the longer you use them. Vantage starts from your context, your record, and your professional reality, not a blank page.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Who can sign up for Vantage?</summary>
+        <div class="faq-a"><p>Anyone in the HR profession, at any level of the pyramid. At the top: CHROs, VPs of HR, HR Directors and HR Heads who need the financial language and legal precision to hold their own in boardrooms and leadership tables. In the middle: HR Managers, HRBPs, Employee Relations Specialists, HR Generalists and HR Specialists who carry the bulk of the day-to-day decisions, the ones that rarely come with a second opinion. At the entry end: HR Executives, HR Associates and HR Trainees who are building their instincts and want a thinking partner that doesn&rsquo;t judge the question. And across every kind of engagement: independent HR Consultants and fractional HR professionals who work across multiple organisations and need a calibrated intelligence layer that travels with them. Vantage was built for the entire profession, not a tier of it.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Do I need to configure MERIDIAN before using the tools?</summary>
+        <div class="faq-a"><p>Not required, but strongly recommended. Without MERIDIAN, every tool gives you mid-size private sector Maharashtra defaults. With it, every output is calibrated to your state, industry, org type, seniority, union status, and internal policies. Setup takes 5 minutes and the difference in output quality is significant.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What is the Humac Score?</summary>
+        <div class="faq-a"><p>A two-number provisional index (Raw Humac and HCI-adjusted, each 0 to 100) intended to reflect how your organisation is converting people investment into value. Built from five pillars: Value Ledger, Talent Premium, Org Vitals, Human P&amp;L, and Human Balance Sheet, with Value Ledger carrying the rupee-denominated, modelled estimate. Accompanied by a Trajectory Index showing the direction of travel once you have more than one period to compare.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Does Vantage work without the mic?</summary>
+        <div class="faq-a"><p>Yes. Every tool has a text input. The mic on ARIA is an enhancement, not a requirement. Type anywhere you would speak.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Is Vantage built for desktop or mobile?</summary>
+        <div class="faq-a"><p>Both, by design. Vantage was built for the HR professional who needs to consult it on the spot: a conversation happening right now, a decision that can&rsquo;t wait until you&rsquo;re back at your desk, a quick policy check between two meetings. That experience is fully mobile. At the same time, many Vantage outputs are detailed: a financial model, a legal position, a full Employee Case Advisor diagnostic across four dimensions. When you need to read through an analysis carefully, review a case you saved, or work through a structured output end to end, the larger screen gives you the space to do that properly. Vantage is built to travel with you and to be waiting at your desk when you get back.</p></div>
+      </details>
+
+    </div>
+  </div>
+
+  <div class="faq-category" id="privacy-data">
+    <span class="faq-category-label">Privacy &amp; Your Data</span>
+    <div class="faq-list">
+
+      <details class="faq-item">
+        <summary>Does my company see what I do on Vantage?</summary>
+        <div class="faq-a"><p>No. Vantage is built for you personally, not licensed to your employer. What you research, the cases you document, the conversations you rehearse with ARIA: none of it is visible to your organisation. Your Vantage Record moves with you if you change jobs; your HRIS never does.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Can I use Vantage without my organisation finding out?</summary>
+        <div class="faq-a"><p>Yes. Vantage is a personal subscription, not something your company procures or administers. You sign up and use it the same way you&rsquo;d use any personal professional tool.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What happens to my Vantage Record if I leave my job?</summary>
+        <div class="faq-a"><p>It stays with you. That&rsquo;s the entire point. Your company owns your HRIS access; you own your Vantage Record. It travels with you to your next role, your next company, your next title.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How is my data secured?</summary>
+        <div class="faq-a">
+          <p>Vantage is built on infrastructure that carries enterprise-grade security certifications, even though Virorah as a company does not yet hold SOC 2 or ISO 27001 in its own name.</p>
+          <p><strong>Authentication:</strong> Every sign-in goes through Clerk, which is SOC 2 Type II certified. Your credentials are never stored by Vantage directly.</p>
+          <p><strong>Data storage:</strong> Your case records, MERIDIAN profile, and Humac Score are stored in Airtable, which is SOC 2 Type II certified and GDPR compliant. Data is hosted on servers in the United States.</p>
+          <p><strong>API and traffic layer:</strong> All traffic between your browser and Vantage&rsquo;s backend runs through Cloudflare Workers. Cloudflare is SOC 2 Type II and ISO 27001 certified.</p>
+          <p><strong>AI processing:</strong> Anthropic, the AI provider powering Vantage&rsquo;s tools, does not use API data to train its models by default. This is documented in their usage policy.</p>
+          <p><strong>Anonymisation &mdash; a two-step process:</strong> When you submit a case narrative, your original text first reaches Anthropic&rsquo;s Claude Haiku model, which identifies and replaces person names, company names, and specific locations with role-consistent placeholders. Only the anonymised output then reaches Claude for the actual analysis &mdash; your original text reaches Anthropic once, for anonymisation only. This step fails closed: if anonymisation cannot complete safely, the request is blocked rather than sent unredacted.</p>
+          <p><strong>Encryption:</strong> All data is encrypted in transit over TLS. Your case content is never shared with advertisers or used for any purpose outside your account.</p>
+          <p><strong>Your control:</strong> You can export all your data or delete it permanently at any time from within your account.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Where is my data actually stored?</summary>
+        <div class="faq-a"><p>Your case records and profile are stored with Airtable, on servers based in the United States. Your original, unredacted text stays there. Your original text reaches Anthropic&rsquo;s Claude Haiku model once, for the anonymisation step only. Only the anonymised version is then sent to Claude for analysis. You can export everything or delete it permanently, at any time, from within your account.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What happens to my data if I cancel?</summary>
+        <div class="faq-a"><p>Cancelling your subscription does not delete your data on its own: your MERIDIAN profile, case library, and Humac Score remain in your account. To delete everything, use &ldquo;Delete Everything Permanently&rdquo; in Data &amp; Privacy, which starts a 30-day grace period before permanent deletion. You can export your data from Data &amp; Privacy at any time before then.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Is my case data ever used to train AI models?</summary>
+        <div class="faq-a"><p>No. Your individual case narratives and outputs are never used to train AI models, by Vantage or by its AI provider.</p></div>
+      </details>
+
+    </div>
+  </div>
+
+  <div class="faq-category" id="pricing-billing">
+    <span class="faq-category-label">Pricing &amp; Billing</span>
+    <div class="faq-list">
+
+      <details class="faq-item">
+        <summary>What does Vantage cost?</summary>
+        <div class="faq-a"><p>&#8377;799 per month, one plan, billed monthly. No annual contracts, no enterprise procurement, no lock-in. Cancel anytime and you keep access until the end of your current billing period.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Is there an annual plan?</summary>
+        <div class="faq-a"><p>No. Vantage is monthly only, always. There is no annual lock-in, no discounted upfront payment, no commitment period. You pay month to month and cancel whenever you choose. The retention mechanism is value, not a contract.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Is there a free trial?</summary>
+        <div class="faq-a"><p>Yes. Every new account gets a 7-day trial with up to 10 uses across four working tools: Employee Case Advisor, The Business Case, Policy Advisor, and Retention Advisor, with no card required. Whichever limit you reach first ends the trial. ARIA, including its Rehearsal mode for practicing difficult conversations, is part of the paid plan only. MERIDIAN, Humac Score, Vantage Record, Standpoint and The Debrief are not part of the trial limit. After that, Vantage is &#8377;799 per month, billed monthly, and you can cancel anytime.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Can I get a refund if I cancel?</summary>
+        <div class="faq-a"><p>Subscriptions aren&rsquo;t refunded once a billing period has started, but there&rsquo;s nothing locking you in either. Cancel anytime and you simply won&rsquo;t be charged again.</p></div>
+      </details>
+
+    </div>
+  </div>
+
+  <div class="faq-category" id="legal-accuracy">
+    <span class="faq-category-label">Legal &amp; Accuracy</span>
+    <div class="faq-list">
+
+      <details class="faq-item">
+        <summary>Is the legal information current and accurate?</summary>
+        <div class="faq-a"><p>Vantage runs on India&rsquo;s current labour codes, with the verification date shown alongside each legal reference on the page. Labour law changes over time and varies by state. Vantage is a decision aid, not a substitute for your own legal counsel on a specific case.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Does Vantage give me legal advice?</summary>
+        <div class="faq-a"><p>No. Vantage is a decision-intelligence tool, not a law firm, and nothing it generates should be treated as legal advice. For any decision with real legal consequences (a termination, a POSH investigation, anything that could end up in front of a tribunal), consult a qualified legal practitioner before acting.</p></div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Where do the financial numbers on this page come from?</summary>
+        <div class="faq-a"><p>The numbers you see in product previews and marketing pages are illustrative examples, built to show you how the calculation works, not live data. Once you&rsquo;re inside Vantage, every number is calculated from the actual details of your own case, with a confidence level attached.</p></div>
+      </details>
+
+    </div>
+  </div>
+
+  <div class="faq-category" id="eligibility-scope">
+    <span class="faq-category-label">Eligibility &amp; Scope</span>
+    <div class="faq-list">
+
+      <details class="faq-item">
+        <summary>Is Vantage only for HR professionals in India?</summary>
+        <div class="faq-a"><p>Right now, yes. Vantage is built specifically for Indian employment law and the Indian HR context. That precision is deliberate: generic, multi-country HR intelligence is already free everywhere. Vantage exists because precision requires an engine calibrated to one legal system, not a dozen. Global expansion is planned. The GCC and Singapore are next in the pipeline, each with their own calibrated legal and regulatory context built in before launch.</p></div>
+      </details>
+
+    </div>
+  </div>
+
+</main>
+
+<div class="vantage-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <p class="footer-tagline">Your Personal HR Business Partner</p>
+      <p class="footer-desc">Private decision intelligence for Indian HR professionals: context-aware guidance, modelled financial estimates, and a career record that&rsquo;s yours, not your company&rsquo;s.</p>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-h">PRODUCT</span>
+      <a href="about.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">What Vantage is</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">Try the Demo</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-h">COMPANY</span>
+      <a href="about.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">About Vantage</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-h">START</span>
+      <a href="access.html">Sign In</a>
+      <a href="https://virorah.com">Virorah Universe</a>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <div class="footer-bar-text"><strong>No enterprise procurement. No annual lock-in.</strong> Your account is yours. &nbsp;&middot;&nbsp; <span style="color:rgba(196,181,253,.6)">7 days free &nbsp;&middot;&nbsp; No payment needed to start</span></div>
+    <a href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html" class="btn-primary">Start Free Trial <span>&rarr;</span></a>
+  </div>
+  <div class="footer-bottom">
+    <span>VIRORAH VANTAGE</span>
+    <span>INDIA / HR</span>
+    <span>&copy; 2026 Virorah Private Limited. All rights reserved.</span>
+  </div>
+</div>
+
+<script>if(window.VantageFade){VantageFade.hide(150);}</script>
+</body>
+</html>
