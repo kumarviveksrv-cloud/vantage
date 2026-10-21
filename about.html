@@ -718,8 +718,15 @@ a{color:inherit;text-decoration:none}
    to Kumar as a known tradeoff rather than silently shipped. */
 .ab-journey-grid{display:grid;grid-template-columns:1fr minmax(300px,420px);gap:6vw;align-items:start}
 @media(max-width:900px){.ab-journey-grid{grid-template-columns:1fr;gap:0}}
-.ab-journey{display:flex;flex-direction:column;gap:0;position:relative}
-.ab-journey::before{content:'';position:absolute;left:16px;top:32px;bottom:32px;width:1px;background:linear-gradient(180deg,rgba(99,102,241,.5),rgba(124,58,237,.5))}
+.ab-journey{display:flex;flex-direction:column;gap:0}
+/* SR-fix (journey layout, round 3): .ab-journey now also holds the
+   section's label/h2/lede (see the round-3 comment on the section above),
+   so the connecting line can no longer anchor to .ab-journey's own top --
+   that would run it through the heading text instead of starting at the
+   first dot. Moved it to .ab-journey-items, the new wrapper around just
+   the five timeline entries. */
+.ab-journey-items{display:flex;flex-direction:column;gap:0;position:relative}
+.ab-journey-items::before{content:'';position:absolute;left:16px;top:32px;bottom:32px;width:1px;background:linear-gradient(180deg,rgba(99,102,241,.5),rgba(124,58,237,.5))}
 .ab-journey-item{display:flex;gap:24px;padding:24px 0}
 .ab-journey-dot{width:32px;height:32px;border-radius:50%;border:1px solid rgba(99,102,241,.4);background:var(--card);display:flex;align-items:center;justify-content:center;flex-shrink:0;font:700 11px 'Space Grotesk',sans-serif;color:var(--muted);z-index:1}
 .ab-journey-content{flex:1;padding-top:4px}
@@ -978,7 +985,16 @@ a{color:inherit;text-decoration:none}
 @keyframes dosScan{0%,100%{top:-1px;opacity:0}5%{opacity:.6}50%{top:100%;opacity:.12}55%{opacity:0}}
 .record-links{display:flex;justify-content:center;gap:28px;margin-top:24px}
 .text-link{display:inline-block;margin-top:22px;color:var(--lavender);font:12px var(--mono);text-decoration:none}
-.record-example-label{text-align:left;font:12px var(--mono);letter-spacing:.06em;color:rgba(196,181,253,0.68);margin-top:32px}
+/* SR-fix (journey layout, round 3): this label used to sit BELOW the
+   dossier as a standalone divider, hence margin-top:32px for spacing
+   above it. It's now the FIRST child of .record-dossier-wrap, sitting
+   beside .ab-section-label (which has zero top margin) -- so that
+   leftover top margin was pushing this label ~32px lower than the
+   heading it's paired with. Moved the spacing to margin-bottom instead,
+   where it's actually needed now (between the label and the dossier
+   box below it). Verified via getBoundingClientRect at 1920px: both
+   labels' .top now match. */
+.record-example-label{text-align:left;font:12px var(--mono);letter-spacing:.06em;color:rgba(196,181,253,0.68);margin-bottom:16px}
 /* WHO IT'S FOR */
 .ab-for-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .ab-for-card{padding:24px;border:1px solid var(--border);border-radius:12px;background:var(--card)}
@@ -1660,10 +1676,15 @@ a{color:inherit;text-decoration:none}
 
 <!-- YOUR FIRST 90 DAYS -->
 <section class="ab-section" id="journey">
-  <span class="ab-section-label">8. YOUR FIRST 90 DAYS</span>
-  <h2>What Vantage builds for you<br><em>without you trying to build it.</em></h2>
-  <p class="ab-section-lede">The record starts accumulating from Day 1. Here is what 90 days on Vantage actually looks like.</p>
-
+  <!-- SR-fix (journey layout, round 3 -- same root cause as #scope round 3,
+       #aria, #capital): label/h2/lede moved inside .ab-journey so the
+       heading pairs with the dossier card in the same grid row, instead of
+       floating above a grid where nothing on the card's side competed with
+       that vertical space. Caught the same day as the others but applied
+       late -- #journey wasn't restructured into a grid until the dossier
+       moved beside the timeline (see the round-2 comment just below), so
+       it didn't exist yet when the round-3 sweep checked the rest of the
+       page for this pattern. -->
   <!-- SR-fix (journey layout, round 2): Kumar's call -- put the dossier
        beside the timeline like the other dashboard sections, instead of
        stacked below it. The naive version of that (a plain two-column grid)
@@ -1683,6 +1704,10 @@ a{color:inherit;text-decoration:none}
        align-items:start the way the other dashboard grids on this page do. -->
   <div class="ab-journey-grid">
   <div class="ab-journey">
+    <span class="ab-section-label">8. YOUR FIRST 90 DAYS</span>
+    <h2>What Vantage builds for you<br><em>without you trying to build it.</em></h2>
+    <p class="ab-section-lede" style="margin-bottom:28px">The record starts accumulating from Day 1. Here is what 90 days on Vantage actually looks like.</p>
+    <div class="ab-journey-items">
     <div class="ab-journey-item">
       <div class="ab-journey-dot">1</div>
       <div class="ab-journey-content">
@@ -1722,6 +1747,7 @@ a{color:inherit;text-decoration:none}
         <div class="ab-journey-title">The record compounds. The number gets harder to ignore.</div>
         <div class="ab-journey-desc">At 12 months, Vantage generates a comprehensive career record across every decision, every pattern, and every financial moment of the year. At three years (at the end of a company tenure), you have a documented, financially quantified professional story no other HR professional in India can produce. That is the document you walk into your next interview with. It is not a CV. It is a documented log. It is not evidence of value created.</div>
       </div>
+    </div>
     </div>
   </div>
 
