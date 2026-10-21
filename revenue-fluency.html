@@ -1231,6 +1231,32 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .prologue-fade   { z-index: 8 !important; }
 .prologue-grid, .prologue-vignette { z-index: 2 !important; }
 
+/* On desktop, prologue-bg.png frames the subject/laptop around the
+   center-right of the frame. The base .prologue-copy rule
+   (vantage-prologue.css) centers the text block across almost the
+   full width, which lands it on top of the subject. Shift it into
+   the open left side of the frame on desktop only -- the mobile
+   photo (prologue-bg-mobile.png) already centers the subject, so
+   the base centered rule stays correct below the 900px breakpoint
+   vantage-prologue.css already uses for its own overrides. */
+@media (min-width: 901px) {
+  /* vantage-curtain.js's initPrologueTypewriter() force-applies
+     left:50%/transform:translateX(-50%)/max-width:760px as an inline
+     style (a load-bearing overflow safety net for narrow/short
+     screens -- not something to touch, it's shared with index.html).
+     Inline styles beat non-!important stylesheet rules, so transform
+     and max-width have to be overridden explicitly too, or the
+     leftover translateX(-50%) shifts this box off-screen. */
+  .prologue-copy {
+    left: 48px !important;
+    right: auto !important;
+    transform: none !important;
+    width: 46% !important;
+    max-width: 560px !important;
+    text-align: left !important;
+  }
+}
+
 /* ── PROLOGUE HANDOFF: init-overlay / tada-overlay ─────────────────────
    Ported from index.html. tada-overlay's own styling already lives in
    vantage-cinematic.css (linked above); only init-overlay/init-text
