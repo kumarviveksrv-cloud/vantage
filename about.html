@@ -694,7 +694,31 @@ a{color:inherit;text-decoration:none}
 .humac-scanline{pointer-events:none;position:absolute;left:0;right:0;height:1px;background:rgba(196,181,253,.08);top:-1px;animation:humacScan 9s 2s ease-in-out infinite}
 @keyframes humacScan{0%,100%{top:-1px;opacity:0}5%{opacity:.65}50%{top:100%;opacity:.12}55%{opacity:0}}
 /* 90 DAYS */
-.ab-journey{display:flex;flex-direction:column;gap:0;position:relative;max-width:680px}
+/* SR-fix (journey layout, round 2): the dossier used to sit stacked below
+   the timeline, full-width. Kumar asked for it beside the timeline like
+   the other dashboard sections.
+   First attempt at this used position:sticky on the dossier so it would
+   stay in view while the much-longer timeline scrolled past -- reverted
+   after actually measuring it, not assuming it worked: this page's own
+   html,body carry overflow-x:hidden site-wide (see the .ab-jumpnav
+   comment above, which hit this exact same trap already and had to work
+   around it with position:fixed + IntersectionObserver instead), and any
+   non-visible overflow on an ancestor silently kills position:sticky for
+   every descendant in Chromium. Confirmed via getBoundingClientRect: the
+   "sticky" card's own height was being stretched to match the timeline's
+   full height and it moved in exact lockstep with the timeline on scroll,
+   zero sticking. A JS-driven fixed/released pin (the jumpnav's own
+   pattern) would work but is real added surface area, so this ships the
+   plain version first: align-items:start, same as the other paired
+   sections on this page (.ab-scope-grid/.ab-aria-grid/.ab-hdc-grid). The
+   card sits once at the top of its column and does not follow the
+   timeline down -- there will be empty space below it once the timeline
+   runs past the card's own height, which it does (timeline ~1270px tall
+   across 5 entries vs. the card's much shorter natural height). Flagged
+   to Kumar as a known tradeoff rather than silently shipped. */
+.ab-journey-grid{display:grid;grid-template-columns:1fr minmax(300px,420px);gap:6vw;align-items:start}
+@media(max-width:900px){.ab-journey-grid{grid-template-columns:1fr;gap:0}}
+.ab-journey{display:flex;flex-direction:column;gap:0;position:relative}
 .ab-journey::before{content:'';position:absolute;left:16px;top:32px;bottom:32px;width:1px;background:linear-gradient(180deg,rgba(99,102,241,.5),rgba(124,58,237,.5))}
 .ab-journey-item{display:flex;gap:24px;padding:24px 0}
 .ab-journey-dot{width:32px;height:32px;border-radius:50%;border:1px solid rgba(99,102,241,.4);background:var(--card);display:flex;align-items:center;justify-content:center;flex-shrink:0;font:700 11px 'Space Grotesk',sans-serif;color:var(--muted);z-index:1}
@@ -719,19 +743,17 @@ a{color:inherit;text-decoration:none}
    as-is. */
 .record-dossier-wrap {
   position: relative;
-  max-width: 680px;
-  margin: clamp(48px,6vw,80px) 0 0;
 }
-/* SR-fix (journey/dossier alignment): index.html's own #record section puts
-   this dossier in its own section, next to centered copy (.record-head),
-   so margin:auto there is correct. Here it's appended below .ab-journey,
-   which is NOT centered -- it's flush-left at max-width:680px (confirmed via
-   getBoundingClientRect: left edge 86px). The inherited margin:auto centered
-   the dossier in the full section width instead, putting its left edge 274px
-   to the right of the timeline's left edge -- a real structural mismatch,
-   not a caching artifact (reproduced locally, independent of live-site
-   cache). Dropped the auto-centering and matched the 680px width so the
-   dossier's left edge lines up with the timeline above it. */
+@media(max-width:900px){
+  .record-dossier-wrap{margin-top:clamp(48px,6vw,80px)}
+}
+/* History on this element: centered in index.html's own #record section
+   (correct there, next to centered copy); left-aligned flush with the
+   timeline once it was stacked below it in about.html; briefly made
+   sticky as a column beside the timeline (reverted, doesn't work on this
+   page -- see the long comment on .ab-journey-grid above). Now it's a
+   plain grid column, align-items:start on .ab-journey-grid handles the
+   top-alignment, nothing extra needed here. */
 .record-dossier {
   background: rgba(8,7,24,.88);
   border: 1px solid rgba(124,58,237,.28);
@@ -1642,6 +1664,24 @@ a{color:inherit;text-decoration:none}
   <h2>What Vantage builds for you<br><em>without you trying to build it.</em></h2>
   <p class="ab-section-lede">The record starts accumulating from Day 1. Here is what 90 days on Vantage actually looks like.</p>
 
+  <!-- SR-fix (journey layout, round 2): Kumar's call -- put the dossier
+       beside the timeline like the other dashboard sections, instead of
+       stacked below it. The naive version of that (a plain two-column grid)
+       would look worse than the current stacked layout, not better: the
+       timeline is five long entries (easily 2-3x the card's height), so a
+       top-aligned card would just float at the top of its column with a
+       growing dead-space gap below it as the timeline runs on, the exact
+       kind of "floating, disconnected" look already fixed twice this
+       session elsewhere on this page. Used position:sticky on the dossier
+       column instead (a standard pattern for a short summary panel beside
+       long scrolling content): the dossier stays in view as you scroll
+       through the five timeline entries, then releases once the timeline
+       ends. This needs the grid column itself to stay full (default
+       stretch) height-wise -- align-items:start would shrink the column to
+       the card's own short height and sticky would have no room to move
+       within it, so .ab-journey-grid intentionally does NOT set
+       align-items:start the way the other dashboard grids on this page do. -->
+  <div class="ab-journey-grid">
   <div class="ab-journey">
     <div class="ab-journey-item">
       <div class="ab-journey-dot">1</div>
@@ -1685,8 +1725,8 @@ a{color:inherit;text-decoration:none}
     </div>
   </div>
 
-  <p class="record-example-label">ILLUSTRATIVE EXAMPLE &middot; YOUR OWN VANTAGE RECORD BUILDS FROM YOUR FIRST CASE</p>
   <div class="record-dossier-wrap">
+    <p class="record-example-label">ILLUSTRATIVE EXAMPLE &middot; YOUR OWN VANTAGE RECORD BUILDS FROM YOUR FIRST CASE</p>
     <div class="record-dossier" id="recordDossier">
       <div class="dos-header">
         <div class="dos-title-row">
@@ -1762,9 +1802,10 @@ a{color:inherit;text-decoration:none}
       </div>
     </div>
     <div class="dos-glow"></div>
+    <div class="record-links"><a href="vantage-record.html" class="text-link">Open your Vantage Record &rarr;</a><a href="debrief.html" class="text-link">Read your monthly Debrief &rarr;</a></div>
+    <p style="font-size:12px;color:var(--grey);margin-top:16px;line-height:1.7;text-align:center">Sample entries shown to illustrate what the record looks like, not a live demo. Your own Vantage Record builds from your first case.</p>
   </div>
-  <div class="record-links"><a href="vantage-record.html" class="text-link">Open your Vantage Record &rarr;</a><a href="debrief.html" class="text-link">Read your monthly Debrief &rarr;</a></div>
-  <p style="font-size:12px;color:var(--grey);margin-top:16px;line-height:1.7;text-align:center">Sample entries shown to illustrate what the record looks like, not a live demo. Your own Vantage Record builds from your first case.</p>
+  </div>
 </section>
 
 <!-- FINAL CTA -->
