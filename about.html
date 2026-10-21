@@ -215,6 +215,225 @@ a{color:inherit;text-decoration:none}
 .ab-meridian-output-text{font:italic 500 16px/1.5 var(--display);color:rgba(244,243,255,.85)}
 .ab-meridian-output-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 .ab-meridian-output-tag{font:9px var(--mono);letter-spacing:.08em;color:var(--muted);padding:4px 9px;border:1px solid var(--border);border-radius:5px}
+/* SR-PhaseB: Kumar corrected the step-3 scope -- about.html must carry
+   index.html's REAL animated dashboards, not a card-language rebuild
+   of them. The .ab-meridian-* rules above are now dead (unused markup
+   below), kept rather than deleted per the same caution as the
+   .ab-scope-visual block elsewhere on this page. The MERIDIAN section
+   now uses the classes below, ported verbatim from index.html's own
+   #system section -- .meridian-grid/.context-readout/.readout-line
+   come from vantage-cinematic.css with var() names remapped to this
+   page's own tokens (--lav->--lavender, --dim->--grey, --line->--border,
+   --indigo->--cobalt -- all four are exact or near-exact color matches,
+   confirmed by comparing the two :root blocks), and the full .ms-*/
+   .msl-* stack CSS comes from index.html's own inline <style> verbatim
+   (no vars there, so no remapping needed). */
+.meridian-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:5vw;align-items:start}
+.context-readout{margin-top:35px;border-top:1px solid var(--border);padding-top:14px;font:11px var(--mono);color:var(--grey);letter-spacing:.1em}
+.context-readout>b{float:right;color:var(--lavender)}
+.readout-line{display:flex;gap:5px;margin-top:13px}
+.readout-line i{height:2px;flex:1;background:rgba(196,181,253,.08)}
+.readout-line i.on{background:var(--lavender);box-shadow:0 0 12px var(--cobalt)}
+@media(max-width:900px){.meridian-grid{grid-template-columns:1fr;gap:40px}}
+
+.meridian-stack { display:flex;flex-direction:column;gap:0;position:relative; }
+.ms-input {
+  background:rgba(196,181,253,.05);
+  border:1px solid rgba(196,181,253,.14);
+  border-radius:12px 12px 0 0;
+  padding:16px 20px;
+}
+.ms-input-label {
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;
+  letter-spacing:.2em;color:rgba(196,181,253,.55);
+  margin-bottom:10px;display:flex;align-items:center;gap:10px;
+}
+.ms-itag {
+  background:rgba(196,181,253,.08);border:1px solid rgba(196,181,253,.15);
+  padding:2px 8px;border-radius:4px;font-size:7px;letter-spacing:.12em;
+  color:rgba(196,181,253,.45);
+}
+.ms-params { display:flex;flex-wrap:wrap;gap:7px; }
+.ms-params span {
+  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;
+  color:rgba(255,255,255,.6);background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);padding:4px 10px;border-radius:5px;
+}
+.ms-divider {
+  border-left:1px solid rgba(124,58,237,.3);
+  border-right:1px solid rgba(124,58,237,.3);
+  background:rgba(124,58,237,.1);
+  padding:10px 20px;display:flex;align-items:center;gap:10px;
+}
+.ms-divider::before,.ms-divider::after {
+  content:'';flex:1;height:1px;background:rgba(124,58,237,.4);
+}
+.ms-divider-label {
+  font-family:'JetBrains Mono',monospace;font-size:7.5px;
+  letter-spacing:.18em;color:rgba(168,85,247,.75);white-space:nowrap;
+}
+.ms-layer {
+  border-left:1px solid rgba(124,58,237,.18);
+  border-right:1px solid rgba(124,58,237,.18);
+  border-bottom:1px solid rgba(124,58,237,.1);
+  padding:15px 20px;display:flex;gap:14px;align-items:flex-start;
+  opacity:0;transform:translateY(-8px);
+  transition:opacity .5s ease,transform .5s ease,background .4s,border-color .4s;
+}
+.ms-layer.msl-active {
+  opacity:1;transform:translateY(0);
+  background:rgba(124,58,237,.06);
+  border-left-color:rgba(124,58,237,.3);
+  border-right-color:rgba(124,58,237,.3);
+}
+.ms-layer--core.msl-active {
+  background:rgba(124,58,237,.11);
+  border-left-color:rgba(168,85,247,.45);
+  border-right-color:rgba(168,85,247,.45);
+}
+.msl-left { flex-shrink:0;padding-top:1px; }
+.msl-num {
+  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.18em;
+  color:rgba(168,85,247,.85);background:rgba(124,58,237,.18);
+  padding:3px 8px;border-radius:4px;display:block;
+}
+.msl-right { flex:1;min-width:0; }
+.msl-name {
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;
+  color:rgba(255,255,255,.78);margin-bottom:5px;
+}
+.msl-desc {
+  font-family:var(--font), sans-serif;font-size:12px;
+  color:rgba(255,255,255,.4);line-height:1.5;margin-bottom:9px;
+}
+.msl-bar { height:2px;background:rgba(196,181,253,.08);border-radius:2px;overflow:hidden; }
+.msl-fill {
+  height:100%;width:0%;
+  background:linear-gradient(90deg,#7c3aed,#c084fc);
+  border-radius:2px;transition:width 1.1s cubic-bezier(.25,.46,.45,.94);
+}
+.msl-active .msl-fill { width:100%; }
+.ms-layer--core .msl-fill { background:linear-gradient(90deg,#6366f1,#8b5cf6,#c084fc); }
+.ms-output {
+  background:rgba(124,58,237,.1);
+  border:1px solid rgba(124,58,237,.28);
+  border-top:none;border-radius:0 0 12px 12px;
+  padding:18px 20px;text-align:center;
+  opacity:0;transition:opacity .6s ease,background .4s;
+}
+.ms-output.mso-active { opacity:1;background:rgba(124,58,237,.16); }
+.ms-output-arrow { font-size:13px;color:rgba(168,85,247,.55);margin-bottom:5px; }
+.ms-output-label {
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  letter-spacing:.22em;color:rgba(196,181,253,.42);margin-bottom:4px;
+}
+.ms-output-value {
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(17px,1.9vw,22px);font-weight:700;
+  background:linear-gradient(90deg,#c084fc,#8b5cf6,#6366f1);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;
+  margin-bottom:5px;display:block;
+}
+.ms-output-sub {
+  font-family:var(--font), sans-serif;font-size:11px;
+  color:rgba(255,255,255,.38);font-style:italic;
+}
+.ms-calibrate {
+  border-left:1px solid rgba(124,58,237,.3);
+  border-right:1px solid rgba(124,58,237,.3);
+  background:linear-gradient(135deg,rgba(99,102,241,.07),rgba(124,58,237,.04));
+  padding:14px 20px;border-bottom:1px solid rgba(124,58,237,.12);
+}
+.ms-cal-header {
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+.ms-cal-dot {
+  width:6px;height:6px;border-radius:50%;
+  background:#4ade80;box-shadow:0 0 8px rgba(74,222,128,.6);
+  animation:msDotPulse 2s ease-in-out infinite;flex-shrink:0;
+}
+@keyframes msDotPulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ms-cal-label {
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  letter-spacing:.2em;color:#4ade80;
+}
+.ms-cal-context {
+  display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;
+}
+.ms-cal-tag {
+  font-family:'JetBrains Mono',monospace;font-size:7.5px;
+  letter-spacing:.08em;color:rgba(196,181,253,.8);
+  background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);
+  padding:3px 8px;border-radius:4px;
+}
+.ms-cal-bar {
+  height:2px;background:rgba(99,102,241,.1);border-radius:2px;overflow:hidden;
+  position:relative;
+}
+.ms-cal-fill {
+  height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#4ade80);
+  border-radius:2px;transition:width 1.8s cubic-bezier(.25,.46,.45,.94);
+}
+.ms-cal-active .ms-cal-fill { width:88%; }
+.ms-cal-status {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.12em;color:rgba(196,181,253,.45);
+  margin-top:6px;
+}
+.msl-signals {
+  margin-top:10px;border-top:1px solid rgba(124,58,237,.1);
+  padding-top:10px;display:flex;flex-direction:column;gap:8px;
+}
+.msl-signal {
+  display:flex;align-items:flex-start;gap:8px;
+}
+.msl-signal-icon {
+  font-size:7px;color:rgba(168,85,247,.6);margin-top:2px;flex-shrink:0;
+}
+.msl-signal-body { flex:1;min-width:0; }
+.msl-signal-tag {
+  font-family:'JetBrains Mono',monospace;font-size:7.5px;
+  letter-spacing:.12em;color:rgba(196,181,253,.5);margin-bottom:2px;
+}
+.msl-signal-val {
+  font-family:var(--font), sans-serif;font-size:11.5px;
+  color:rgba(255,255,255,.78);line-height:1.45;
+}
+.msl-signal-val em {
+  font-style:normal;color:rgba(196,181,253,.65);font-size:10.5px;
+}
+.msl-badge {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.1em;padding:2px 7px;border-radius:3px;
+  flex-shrink:0;margin-top:2px;
+}
+.msl-badge--critical { background:rgba(255,77,109,.12);color:#FF4D6D;border:1px solid rgba(255,77,109,.25); }
+.msl-badge--high    { background:rgba(255,181,71,.1);color:#FFB547;border:1px solid rgba(255,181,71,.2); }
+.msl-badge--ok      { background:rgba(74,222,128,.08);color:#4ade80;border:1px solid rgba(74,222,128,.18); }
+.msl-badge--info    { background:rgba(99,102,241,.1);color:#a5b4fc;border:1px solid rgba(99,102,241,.2); }
+.ms-output-snippet {
+  margin-top:14px;padding:12px 14px;
+  background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.18);
+  border-radius:8px;border-left:3px solid #6366f1;
+}
+.ms-output-snippet-label {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.16em;color:rgba(196,181,253,.4);margin-bottom:7px;
+}
+.ms-output-snippet-text {
+  font-family:var(--font), sans-serif;font-size:11.5px;
+  color:rgba(255,255,255,.72);line-height:1.6;font-style:italic;
+}
+.ms-output-meta {
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;
+}
+.ms-output-meta-tag {
+  font-family:'JetBrains Mono',monospace;font-size:7px;
+  letter-spacing:.1em;color:rgba(165,180,252,.5);
+  background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.14);
+  padding:3px 8px;border-radius:3px;
+}
 /* HUMAC SCORE -- same card pattern as .ab-hdc-card (hero number +
    breakdown rows), different content. Deliberately uses a DIFFERENT
    illustrative Human P&L figure than the HDC card above (9.6L vs
@@ -516,50 +735,199 @@ a{color:inherit;text-decoration:none}
 <!-- HR DECISION CAPITAL -->
 <section class="ab-section" id="meridian">
   <span class="ab-section-label">4. UNDERSTAND <span class="ab-powered-by">&middot; powered by MERIDIAN</span></span>
-  <h2>Every tool answers to<br><em>the same engine underneath.</em></h2>
-  <p class="ab-section-lede">MERIDIAN came up twice already in the ARIA section above: it's the context engine every Vantage tool pulls from, the reason an answer is calibrated to your state, your org, your seniority, instead of generic HR advice. Here's what's actually running underneath those eight fields.</p>
+  <div class="meridian-grid">
+    <div class="meridian-copy">
+      <h2>Every tool answers to<br><em>the same engine underneath.</em></h2>
+      <p class="ab-section-lede" style="margin-bottom:0">MERIDIAN came up twice already in the ARIA section above: it's the context engine every Vantage tool pulls from, the reason an answer is calibrated to your state, your org, your seniority, instead of generic HR advice. Here's what's actually running underneath those eight fields.</p>
+      <div class="context-readout"><span>EXAMPLE CONTEXT</span><b id="meridianStatus">CALIBRATING...</b><div class="readout-line"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+    </div>
 
-  <div class="ab-meridian-params">
-    <span class="ab-meridian-param">STATE</span>
-    <span class="ab-meridian-param">INDUSTRY</span>
-    <span class="ab-meridian-param">ORG TYPE</span>
-    <span class="ab-meridian-param">ORG SIZE</span>
-    <span class="ab-meridian-param">SENIORITY</span>
-    <span class="ab-meridian-param">UNION STATUS</span>
-    <span class="ab-meridian-param">FUNCTION</span>
-    <span class="ab-meridian-param">POLICY</span>
-  </div>
+    <div class="meridian-stack" id="meridianStack">
 
-  <div class="ab-meridian-grid">
-    <div class="ab-meridian-layer">
-      <span class="ab-meridian-num">L4</span>
-      <div class="ab-meridian-name">Signal Framework</div>
-      <div class="ab-meridian-desc">Reads your situation and classifies it: what kind of case this is, how likely it is to escalate, and whether it matches a pattern seen in similar cases before.</div>
-    </div>
-    <div class="ab-meridian-layer">
-      <span class="ab-meridian-num">L3</span>
-      <div class="ab-meridian-name">Employee Case Advisor + Influence Stack</div>
-      <div class="ab-meridian-desc">Runs the process diagnosis (what documentation exists, what's missing), models the financial exposure, and maps the recommended path, before any tool-specific output is generated.</div>
-    </div>
-    <div class="ab-meridian-layer">
-      <span class="ab-meridian-num">L2</span>
-      <div class="ab-meridian-name">India Legal Layer</div>
-      <div class="ab-meridian-desc">The active law for your state, cited and dated: the Industrial Relations Code 2020 (in force since 21 November 2025, replacing the Industrial Disputes Act 1947), your state's specific thresholds, and the Bharatiya Nyaya Sanhita where it replaces the IPC.</div>
-    </div>
-    <div class="ab-meridian-layer ml-core">
-      <span class="ab-meridian-num">L1</span>
-      <div class="ab-meridian-name">Humacity Core</div>
-      <div class="ab-meridian-desc">Sector attrition benchmarks, drawn from Aon, CIEL HR, Business Today, WSNE Consulting and Venturesathi where sources converge, labelled sector-logic estimates where they don't, plus the replacement-cost modelling behind Retention Advisor and the Humac Score below.</div>
-    </div>
-  </div>
+      <div class="ms-input">
+        <div class="ms-input-label">INPUT SURFACE <span class="ms-itag">WHAT YOU PROVIDE</span></div>
+        <div class="ms-params">
+          <span>STATE</span><span>INDUSTRY</span><span>ORG TYPE</span>
+          <span>ORG SIZE</span><span>SENIORITY</span><span>UNION STATUS</span><span>FUNCTION</span><span>POLICY</span>
+        </div>
+      </div>
 
-  <div class="ab-meridian-output">
-    <div class="ab-meridian-output-label">ILLUSTRATIVE EXAMPLE &middot; MAHARASHTRA &middot; IT/SAAS &middot; HR MANAGER</div>
-    <div class="ab-meridian-output-text">&ldquo;Issue a written show-cause notice today. Five years of tenure with zero documentation on file means your tribunal exposure starts at &#x20B9;8L and rises with every day you act without this step on record.&rdquo;</div>
-    <div class="ab-meridian-output-meta">
-      <span class="ab-meridian-output-tag">LEGAL CONF: HIGH</span>
-      <span class="ab-meridian-output-tag">PROCESS RISK: HIGH</span>
-      <span class="ab-meridian-output-tag">GREEN: RISK MITIGATION</span>
+      <div class="ms-calibrate" id="msCalibrate">
+        <div class="ms-cal-header">
+          <div class="ms-cal-dot"></div>
+          <div class="ms-cal-label">ILLUSTRATIVE EXAMPLE &middot; YOUR OWN PRECISION AND RISK FIGURES ARE CALCULATED FROM YOUR ACTUAL CASE</div>
+        </div>
+        <div class="ms-cal-context">
+          <span class="ms-cal-tag">Maharashtra</span>
+          <span class="ms-cal-tag">IT / SaaS</span>
+          <span class="ms-cal-tag">251&ndash;1,000 employees</span>
+          <span class="ms-cal-tag">HR Manager</span>
+          <span class="ms-cal-tag">Non-unionised</span>
+          <span class="ms-cal-tag">Employee Relations</span>
+        </div>
+        <div class="ms-cal-bar"><div class="ms-cal-fill"></div></div>
+        <div class="ms-cal-status">88% PRECISION CONFIDENCE &middot; ALL 8 PARAMETERS SET</div>
+        <div class="ms-cal-status" style="margin-top:5px;opacity:.65">Legal basis: IR Code 2020, in force 21 Nov 2025 &middot; Central &amp; State rules still in draft as of early 2026</div>
+      </div>
+
+      <div class="ms-divider">
+        <span class="ms-divider-label">WHAT MERIDIAN ACTUALLY RUNS ON</span>
+      </div>
+
+      <div class="ms-layer" data-d="3">
+        <div class="msl-left"><span class="msl-num">L4</span></div>
+        <div class="msl-right">
+          <div class="msl-name">SIGNAL FRAMEWORK</div>
+          <div class="msl-desc">Situational reading &middot; Case pattern recognition &middot; Escalation mapping</div>
+          <div class="msl-bar"><div class="msl-fill"></div></div>
+          <div class="msl-signals">
+            <div class="msl-signal">
+              <div class="msl-signal-icon">&#x25B6;</div>
+              <div class="msl-signal-body">
+                <div class="msl-signal-tag">CASE CLASSIFICATION</div>
+                <div class="msl-signal-val">Termination risk: documentation gap <em>No written warning on record</em></div>
+              </div>
+              <div class="msl-badge msl-badge--critical">CRITICAL</div>
+            </div>
+            <div class="msl-signal">
+              <div class="msl-signal-icon">&#x25B6;</div>
+              <div class="msl-signal-body">
+                <div class="msl-signal-tag">ESCALATION SIGNAL</div>
+                <div class="msl-signal-val">Tribunal filing probability 45&ndash;55% <em>Adjusted for non-unionised status</em></div>
+              </div>
+              <div class="msl-badge msl-badge--high">HIGH</div>
+            </div>
+            <div class="msl-signal">
+              <div class="msl-signal-icon">&#x25B6;</div>
+              <div class="msl-signal-body">
+                <div class="msl-signal-tag">PATTERN DETECTED</div>
+                <div class="msl-signal-val">3 of 5 recent IT/SaaS case types share same process failure <em>Premature closure without domestic enquiry</em></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ms-layer" data-d="2">
+        <div class="msl-left"><span class="msl-num">L3</span></div>
+        <div class="msl-right">
+          <div class="msl-name">EMPLOYEE CASE ADVISOR + INFLUENCE STACK</div>
+          <div class="msl-desc">ER case frameworks &middot; Stakeholder dynamics &middot; Consequence modelling</div>
+          <div class="msl-bar"><div class="msl-fill"></div></div>
+          <div class="msl-signals">
+            <div class="msl-signal">
+              <div class="msl-signal-icon">&#x25B6;</div>
+              <div class="msl-signal-body">
+                <div class="msl-signal-tag">PROCESS DIAGNOSIS</div>
+                <div class="msl-signal-val">No show-cause notice on record <em>High procedural vulnerability before any action</em></div>
+              </div>
+              <div class="msl-badge msl-badge--critical">GAP</div>
+            </div>
+            <div class="msl-signal">
+              <div class="msl-signal-icon">&#x25B6;</div>
+              <div class="msl-signal-body">
+                <div class="msl-signal-tag">FINANCIAL EXPOSURE</div>
+                <div class="msl-signal-val">&#x20B9;8L&ndash;&#x20B9;14L <em>5-year tenure &middot; Maharashtra &middot; BFSI/IT sector</em></div>
+              </div>
+              <div class="msl-badge msl-badge--high">MEDIUM CONF</div>
+            </div>
+            <div class="msl-signal">
+              <div class="msl-signal-icon">&#x25B6;</div>
+              <div class="msl-signal-body">
+                <div class="msl-signal-tag">RECOMMENDED PATH</div>
+                <div class="msl-signal-val">Domestic enquiry route <em>Legally defensible &middot; Issue show-cause notice first</em></div>
+              </div>
+              <div class="msl-badge msl-badge--ok">DEFENSIBLE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ms-layer" data-d="1">
+        <div class="msl-left"><span class="msl-num">L2</span></div>
+        <div class="msl-right">
+          <div class="msl-name">INDIA LEGAL LAYER</div>
+          <div class="msl-desc">Jurisdiction &middot; Labour law &middot; Regulatory precedent &middot; State compliance</div>
+          <div class="msl-bar"><div class="msl-fill"></div></div>
+          <div class="msl-signals">
+            <div class="msl-signal">
+              <div class="msl-signal-icon">&#x25B6;</div>
+              <div class="msl-signal-body">
+                <div class="msl-signal-tag">ACTIVE LAW</div>
+                <div class="msl-signal-val">IR Code 2020: effective 21 Nov 2025 <em>Replaced the Industrial Disputes Act 1947</em></div>
+              </div>
+              <div class="msl-badge msl-badge--info">CURRENT</div>
+            </div>
+            <div class="msl-signal">
+              <div class="msl-signal-icon">&#x25B6;</div>
+              <div class="msl-signal-body">
+                <div class="msl-signal-tag">YOUR THRESHOLD</div>
+                <div class="msl-signal-val">Below 300-worker retrenchment cap <em>251&ndash;1,000 employees &middot; prior permission not required</em></div>
+              </div>
+            </div>
+            <div class="msl-signal">
+              <div class="msl-signal-icon">&#x25B6;</div>
+              <div class="msl-signal-body">
+                <div class="msl-signal-tag">KEY CITATION</div>
+                <div class="msl-signal-val">IR Code 2020 &middot; Maharashtra S&amp;E Act <em>BNS replaces IPC (effective Jul 2024) &middot; not IPC</em></div>
+              </div>
+              <div class="msl-badge msl-badge--info">VERIFIED 21 NOV 2025</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ms-layer ms-layer--core" data-d="0">
+        <div class="msl-left"><span class="msl-num">L1</span></div>
+        <div class="msl-right">
+          <div class="msl-name">HUMACITY CORE</div>
+          <div class="msl-desc">People Financial Intelligence &middot; The Human P&amp;L &middot; Humac Score v0.9, provisional</div>
+          <div class="msl-bar"><div class="msl-fill"></div></div>
+          <div class="msl-signals">
+            <div class="msl-signal">
+              <div class="msl-signal-icon">&#x25B6;</div>
+              <div class="msl-signal-body">
+                <div class="msl-signal-tag">SECTOR ATTRITION BENCHMARK</div>
+                <div class="msl-signal-val">IT / SaaS: 12&ndash;15% typical <em>Sourced &middot; Aon 32nd Annual Survey 2025&ndash;26</em></div>
+              </div>
+            </div>
+            <div class="msl-signal">
+              <div class="msl-signal-icon">&#x25B6;</div>
+              <div class="msl-signal-body">
+                <div class="msl-signal-tag">REPLACEMENT COST MODEL</div>
+                <div class="msl-signal-val">&#x20B9;34L modelled exposure on current flight risk <em>0.5–2.0× salary, base 1.0×, plus ramp and knowledge transfer</em></div>
+              </div>
+              <div class="msl-badge msl-badge--high">L1 SIGNAL</div>
+            </div>
+            <div class="msl-signal">
+              <div class="msl-signal-icon">&#x25B6;</div>
+              <div class="msl-signal-body">
+                <div class="msl-signal-tag">HUMAC TRAJECTORY &middot; FIXED EXAMPLE</div>
+                <div class="msl-signal-val">Value Ledger under pressure <em>Modelled HR return: &#x20B9;0.82 per &#x20B9;100 invested</em></div>
+              </div>
+              <div class="msl-badge msl-badge--high">WATCH</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ms-output" id="msOutput">
+        <div class="ms-output-arrow">&#8595;</div>
+        <div class="ms-output-label">OUTPUT</div>
+        <div class="ms-output-value">PRECISION ADVICE</div>
+        <div class="ms-output-sub">Calibrated to the reality you are actually operating in</div>
+        <div class="ms-output-snippet">
+          <div class="ms-output-snippet-label">SAMPLE OUTPUT &middot; MAHARASHTRA &middot; IT/SAAS &middot; HR MANAGER</div>
+          <div class="ms-output-snippet-text">&ldquo;Issue a written show-cause notice today. Five years of tenure with zero documentation on file means your tribunal exposure starts at &#x20B9;8L and rises with every day you act without this step on record. Do not proceed to termination without it.&rdquo;</div>
+        </div>
+        <div class="ms-output-meta">
+          <span class="ms-output-meta-tag">LEGAL CONF: HIGH</span>
+          <span class="ms-output-meta-tag">PROCESS RISK: HIGH</span>
+          <span class="ms-output-meta-tag">HUMAC: L1</span>
+          <span class="ms-output-meta-tag">GREEN: RISK MITIGATION</span>
+        </div>
+      </div>
+
     </div>
   </div>
   <p style="font-size:12px;color:var(--grey);margin-top:16px;line-height:1.7">This is a sample output calibrated to one illustrative context, shown to demonstrate what calibration looks like, not a live demo. Your own output is calibrated to your eight inputs and generated the moment you use a tool.</p>
@@ -813,6 +1181,109 @@ a{color:inherit;text-decoration:none}
 </script>
 
 <script>
+/* MERIDIAN signal-row stack, ported verbatim from index.html's
+   initMeridianStack() in vantage-curtain.js. One line adapted: the
+   IntersectionObserver trigger watches #meridian (this page's actual
+   section id) instead of index.html's ".meridian.cinematic-panel"
+   selector -- everything else, including the #meridianStack/#msOutput/
+   #msCalibrate ids and the injected meridian-anim-css block, is
+   unchanged so the function drops onto the ported markup above as-is. */
+(function initMeridianStack(){
+  'use strict';
+  const stack=document.getElementById('meridianStack');
+  if(!stack)return;
+  const layers=[...stack.querySelectorAll('.ms-layer')].reverse();
+  const output=document.getElementById('msOutput');
+  const outputText=output?output.querySelector('.mso-label'):null;
+  let fired=false;
+
+  if(!document.getElementById('meridian-anim-css')){
+    const s=document.createElement('style');s.id='meridian-anim-css';
+    s.textContent=`
+      .ms-layer{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .6s ease}
+      .ms-layer.msl-active{opacity:1;transform:none}
+      #msOutput{opacity:0;transition:opacity .6s ease}
+      #msOutput.mso-active{opacity:1}
+      #msOutput.mso-active .mso-label{animation:mOutputBreathe 4s 1.2s ease-in-out infinite}
+      @keyframes mOutputBreathe{0%,100%{opacity:1}50%{opacity:.78}}
+      .meridian-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+      .meridian-p{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(196,181,253,.18);animation:mFloat linear infinite}
+      @keyframes mFloat{0%{transform:translateY(0) translateX(0);opacity:.18}33%{transform:translateY(-20px) translateX(7px);opacity:.32}66%{transform:translateY(-8px) translateX(-5px);opacity:.15}100%{transform:translateY(0) translateX(0);opacity:.18}}
+      .meridian-packet{position:absolute;left:50%;width:7px;height:7px;margin-left:-3px;border-radius:50%;background:rgba(196,181,253,.75);pointer-events:none;opacity:0;animation:mPacket 5s 1.8s ease-in-out infinite;z-index:2}
+      @keyframes mPacket{0%{top:4%;opacity:0}6%{opacity:.95}82%{top:90%;opacity:.4}88%{opacity:0}100%{top:4%;opacity:0}}
+      #meridianStack{position:relative;overflow:hidden}
+    `;
+    document.head.appendChild(s);
+  }
+
+  function run(){
+    if(fired)return;fired=true;
+
+    if(sessionStorage.getItem('vantage_dash_animated')){
+      layers.forEach(l=>l.classList.add('msl-active'));
+      if(output){output.classList.add('mso-active');if(outputText)outputText.classList.add('advice-burst');}
+      const calFast=document.getElementById('msCalibrate');
+      if(calFast) calFast.classList.add('ms-cal-active');
+      if(!stack.querySelector('.meridian-particles')){
+        const pc=document.createElement('div');pc.className='meridian-particles';
+        [[10,20,12],[28,62,9],[52,15,14],[68,70,10],[85,38,11],[38,82,13]].forEach(([l,t,d])=>{
+          const p=document.createElement('div');p.className='meridian-p';
+          p.style.left=l+'%';p.style.top=t+'%';p.style.animationDuration=d+'s';
+          p.style.animationDelay=(-Math.random()*d).toFixed(1)+'s';pc.appendChild(p);
+        });
+        stack.appendChild(pc);
+        const pkt=document.createElement('div');pkt.className='meridian-packet';stack.appendChild(pkt);
+      }
+      return;
+    }
+
+    const pc=document.createElement('div');pc.className='meridian-particles';
+    [[10,20,12],[28,62,9],[52,15,14],[68,70,10],[85,38,11],[38,82,13]].forEach(([l,t,d])=>{
+      const p=document.createElement('div');p.className='meridian-p';
+      p.style.left=l+'%';p.style.top=t+'%';
+      p.style.animationDuration=d+'s';
+      p.style.animationDelay=(-Math.random()*d).toFixed(1)+'s';
+      pc.appendChild(p);
+    });
+    stack.appendChild(pc);
+
+    const pkt=document.createElement('div');pkt.className='meridian-packet';stack.appendChild(pkt);
+
+    const calEl=document.getElementById('msCalibrate');
+    if(calEl){
+      setTimeout(()=>calEl.classList.add('ms-cal-active'),200);
+    }
+
+    const D=window._vDash;
+    layers.forEach((layer,i)=>{
+      setTimeout(()=>{
+        layer.classList.add('msl-active');
+        const label=layer.querySelector('.msl-label');
+        if(label&&D){const orig=label.textContent.trim();D.str(label,orig,450);}
+        const desc=layer.querySelector('.msl-desc');
+        if(desc){
+          desc.style.opacity='0';
+          setTimeout(()=>{
+            desc.style.opacity='1';
+            if(D){const orig=desc.textContent.trim();D.str(desc,orig,600);}
+          },200);
+        }
+      },200+i*520);
+    });
+
+    setTimeout(()=>{
+      if(output)output.classList.add('mso-active');
+      if(outputText)outputText.classList.add('advice-burst');
+    },200+layers.length*520+320);
+  }
+
+  const section=document.getElementById('meridian');
+  if(!section)return;
+  new IntersectionObserver(es=>{if(es[0].isIntersecting){var d=sessionStorage.getItem('vantage_dash_animated')?0:3000;setTimeout(run,d);}},{threshold:0.15}).observe(section);
+})();
+</script>
+
+<script>
 /* window._vDash -- scramble-then-settle counter, scramble-text, and a
    scan-line sweep, extracted verbatim from vantage-curtain.js's
    "SHARED DASHBOARD ANIMATION UTILITIES (SR18.2)" block. Pulled in
@@ -877,14 +1348,15 @@ window._vDash={
 </script>
 
 <script>
-/* Wires _vDash to the cards: each card's numbers scramble-count-up to
-   their real value once, the first time it scrolls into view. The
-   MERIDIAN layer cards get a light-sweep "calibrating" pass instead
-   (staggered L4 -> L1) since those cards don't carry a single number
-   to count, and the sample-output tags scramble in as short strings.
-   Everything is a progressive enhancement over the static text
-   already in the HTML -- if this script fails for any reason, the
-   page already shows the correct final values. */
+/* Wires _vDash to the HDC/Humac cards: each card's numbers
+   scramble-count-up to their real value once, the first time it
+   scrolls into view. (The MERIDIAN layer-card sweep and output-tag
+   scramble that used to run here were removed in the Phase-B port --
+   #meridian now uses the real ported dashboard above, driven by its
+   own initMeridianStack(), not this generic card wiring.) Everything
+   here is a progressive enhancement over the static text already in
+   the HTML -- if this script fails for any reason, the page already
+   shows the correct final values. */
 (function(){
   'use strict';
   if(!window._vDash) return;
@@ -914,29 +1386,6 @@ window._vDash={
       });
     });
   });
-
-  // MERIDIAN layer cards: staggered scan-line sweep, L4 -> L1 (DOM order).
-  var meridianGrid = document.querySelector('.ab-meridian-grid');
-  if(meridianGrid){
-    onceVisible(meridianGrid, function(){
-      var layers = meridianGrid.querySelectorAll('.ab-meridian-layer');
-      layers.forEach(function(layer, i){
-        setTimeout(function(){ _vDash.scan(layer, 650); }, i * 220);
-      });
-    });
-  }
-
-  // MERIDIAN sample-output tags: scramble in as short strings.
-  var meridianOutput = document.querySelector('.ab-meridian-output');
-  if(meridianOutput){
-    onceVisible(meridianOutput, function(){
-      var tags = meridianOutput.querySelectorAll('.ab-meridian-output-tag');
-      tags.forEach(function(tag, i){
-        var final = tag.textContent;
-        setTimeout(function(){ _vDash.str(tag, final, 500); }, 300 + i * 180);
-      });
-    });
-  }
 })();
 </script>
 
