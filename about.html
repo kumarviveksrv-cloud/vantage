@@ -675,6 +675,251 @@ a{color:inherit;text-decoration:none}
 .ab-journey-period{font:8.5px var(--mono);letter-spacing:.18em;color:var(--muted);display:block;margin-bottom:5px}
 .ab-journey-title{font:700 16px 'DM Sans',sans-serif;color:var(--white);margin-bottom:6px}
 .ab-journey-desc{font:13.5px var(--font);color:var(--grey);line-height:1.75}
+/* SR-PhaseB: the Vantage Record dossier (Kumar's screenshot 4),
+   ported verbatim from index.html's #record section -- the one piece
+   of the 4-dashboard correction that also touches a decision I'd made
+   earlier in this session (recommending the dossier be skipped as a
+   third redundant timeline, which Kumar had said "Go ahead" on at the
+   time). His later message explicitly re-listed screenshot 4 as
+   missing, which settles it -- so it's ported here. Placed inside the
+   existing #journey section as a visual capstone to the timeline
+   above (the "record compounds" item), rather than as a new section
+   with its own duplicate copy -- Kumar's complaint was the missing
+   VISUAL, and #journey already carries the narrative this illustrates.
+   The record-head copy block and the closing "record-payoff" quote
+   from index.html's own #record section are deliberately left out for
+   that reason. All colors hardcoded, no var() dependency, so ported
+   as-is. */
+.record-dossier-wrap {
+  position: relative;
+  max-width: 720px;
+  margin: clamp(48px,6vw,80px) auto 0;
+}
+.record-dossier {
+  background: rgba(8,7,24,.88);
+  border: 1px solid rgba(124,58,237,.28);
+  border-radius: 20px;
+  padding: clamp(28px,4vw,48px);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 0 100px rgba(99,102,241,.1), 0 0 0 1px rgba(196,181,253,.04), 0 32px 64px rgba(0,0,0,.5);
+  position: relative;
+  overflow: hidden;
+}
+.record-dossier::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: -60px; right: -60px;
+  height: 180px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+.dos-header { margin-bottom: 32px; }
+.dos-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.dos-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .28em;
+  color: rgba(196,181,253,.45);
+}
+.dos-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .16em;
+  color: rgba(168,85,247,.8);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dos-pulse {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #a855f7;
+  box-shadow: 0 0 8px #a855f7;
+  display: inline-block;
+  animation: dosPulse 2s ease-in-out infinite;
+}
+@keyframes dosPulse {
+  0%,100% { opacity: 1; box-shadow: 0 0 8px #a855f7; }
+  50% { opacity: .4; box-shadow: 0 0 2px #a855f7; }
+}
+.dos-meta-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.dos-meta-row span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.28);
+}
+.dos-meta-row em { color: rgba(196,181,253,.4); font-style: normal; }
+.dos-progress-track {
+  height: 2px;
+  background: rgba(196,181,253,.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.dos-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg,#7c3aed,#a855f7);
+  border-radius: 2px;
+  transition: width 2.2s cubic-bezier(.25,.46,.45,.94);
+}
+.dos-progress-label {
+  display: flex;
+  justify-content: space-between;
+}
+.dos-progress-label span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.25);
+}
+#dosPercent { color: rgba(168,85,247,.7) !important; }
+.dos-entries { display: flex; flex-direction: column; gap: 0; }
+.dos-entry {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .55s ease, transform .55s ease;
+  border-left: 2px solid rgba(124,58,237,.2);
+  padding: 20px 0 20px 22px;
+  position: relative;
+}
+.dos-entry + .dos-entry { border-top: 1px solid rgba(196,181,253,.05); }
+.dos-entry::before {
+  content: '';
+  position: absolute;
+  left: -5px; top: 24px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(124,58,237,.4);
+  border: 1px solid rgba(124,58,237,.6);
+  transition: background .3s, box-shadow .3s;
+}
+.dos-entry.dos-visible { opacity: 1; transform: translateY(0); }
+.dos-entry.dos-visible::before {
+  background: #7c3aed;
+  box-shadow: 0 0 12px rgba(124,58,237,.7);
+}
+.dos-entry--final { border-left-color: rgba(168,85,247,.45) !important; }
+.dos-entry--final.dos-visible::before {
+  background: #a855f7;
+  box-shadow: 0 0 16px rgba(168,85,247,.8);
+}
+.dos-entry-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.dos-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .18em;
+  color: rgba(196,181,253,.4);
+}
+.dos-type {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .14em;
+  color: rgba(168,85,247,.75);
+}
+.dos-entry-title {
+  font-family: var(--font), sans-serif !important;
+  font-size: clamp(14px,1.45vw,18px) !important;
+  color: rgba(255,255,255,.88) !important;
+  line-height: 1.6 !important;
+  margin: 0 0 10px !important;
+  font-weight: 400 !important;
+}
+.dos-entry-foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.dos-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .15em;
+  color: rgba(196,181,253,.75);
+  background: rgba(124,58,237,.15);
+  border: 1px solid rgba(124,58,237,.3);
+  padding: 3px 9px;
+  border-radius: 4px;
+}
+.dos-outcome {
+  font-family: var(--font), sans-serif;
+  font-size: 13px;
+  color: rgba(255,255,255,.42);
+}
+.dos-impact {
+  font-family: var(--font), sans-serif;
+  font-size: 13px;
+  color: rgba(196,181,253,.65);
+  margin-top: 8px;
+}
+.dos-impact strong { color: #a855f7; font-weight: 700; }
+.dos-footer {
+  border-top: 1px solid rgba(196,181,253,.08);
+  margin-top: 28px;
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dos-total-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .2em;
+  color: rgba(196,181,253,.38);
+  display: block;
+  margin-bottom: 6px;
+}
+.dos-total-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(32px,3.5vw,48px);
+  font-weight: 700;
+  background: linear-gradient(90deg,#c084fc 0%,#8b5cf6 50%,#6366f1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  display: block;
+}
+.dos-stamp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .22em;
+  color: rgba(124,58,237,.22);
+  border: 1px solid rgba(124,58,237,.14);
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-align: center;
+  line-height: 1.6;
+}
+.dos-glow {
+  position: absolute;
+  inset: -80px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,.07) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: -1;
+}
+.dos-live-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#34d399;margin-left:6px;animation:dosLivePulse 2.2s ease-in-out infinite;vertical-align:middle}
+@keyframes dosLivePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
+.dos-scanline{pointer-events:none;position:absolute;left:0;right:0;height:1px;background:rgba(196,181,253,.08);top:-1px;animation:dosScan 10s 3s ease-in-out infinite}
+@keyframes dosScan{0%,100%{top:-1px;opacity:0}5%{opacity:.6}50%{top:100%;opacity:.12}55%{opacity:0}}
+.record-links{display:flex;justify-content:center;gap:28px;margin-top:24px}
+.text-link{display:inline-block;margin-top:22px;color:var(--lavender);font:12px var(--mono);text-decoration:none}
+.record-example-label{text-align:center;font:12px var(--mono);letter-spacing:.06em;color:rgba(196,181,253,0.68);margin-top:32px}
 /* WHO IT'S FOR */
 .ab-for-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .ab-for-card{padding:24px;border:1px solid var(--border);border-radius:12px;background:var(--card)}
@@ -1378,6 +1623,87 @@ a{color:inherit;text-decoration:none}
       </div>
     </div>
   </div>
+
+  <p class="record-example-label">ILLUSTRATIVE EXAMPLE &middot; YOUR OWN VANTAGE RECORD BUILDS FROM YOUR FIRST CASE</p>
+  <div class="record-dossier-wrap">
+    <div class="record-dossier" id="recordDossier">
+      <div class="dos-header">
+        <div class="dos-title-row">
+          <span class="dos-label">VANTAGE RECORD</span>
+          <span class="dos-status"><i class="dos-pulse"></i>ACTIVE &middot; BUILDING</span>
+        </div>
+        <div class="dos-meta-row">
+          <span>PROFESSIONAL / <em>CONFIDENTIAL</em></span>
+          <span>ID: VR-2025-0847</span>
+        </div>
+        <div class="dos-progress-track"><div class="dos-progress-fill" id="dosProgress"></div></div>
+        <div class="dos-progress-label"><span>Career capital documented</span><span id="dosPercent">0%</span></div>
+      </div>
+
+      <div class="dos-entries" id="dosEntries">
+        <div class="dos-entry" data-index="0">
+          <div class="dos-entry-head">
+            <span class="dos-date">14 JAN 2025</span>
+            <span class="dos-type">ER CASE FILED</span>
+          </div>
+          <p class="dos-entry-title">Employee absent 7 days. Manager in crisis. You held the room.</p>
+          <div class="dos-entry-foot">
+            <span class="dos-tag">CASE LIBRARY</span>
+            <span class="dos-outcome">Written warning issued, process documented</span>
+          </div>
+          <div class="dos-impact">Modelled financial exposure <strong>&#x20B9;4.2L</strong></div>
+        </div>
+
+        <div class="dos-entry" data-index="1">
+          <div class="dos-entry-head">
+            <span class="dos-date">08 MAR 2025</span>
+            <span class="dos-type">CONVERSATION REHEARSED &middot; #17</span>
+          </div>
+          <p class="dos-entry-title">Stakeholder alignment call. CFO convinced. Policy passed boardroom review.</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.08em;color:rgba(196,181,253,.4);margin:2px 0 0">Sample record entry &middot; illustrative outcome text</p>
+          <div class="dos-entry-foot">
+           <span class="dos-tag">SIMULATOR</span>
+           <span class="dos-outcome">17 conversations logged this quarter</span>
+          </div>
+        </div>
+
+        <div class="dos-entry" data-index="2">
+          <div class="dos-entry-head">
+            <span class="dos-date">APR 2025</span>
+            <span class="dos-type">MONTHLY DEBRIEF #09</span>
+          </div>
+          <p class="dos-entry-title">9 months on Vantage. 47 decisions on record. 12 policy calls. Every one defensible.</p>
+          <div class="dos-entry-foot">
+            <span class="dos-tag">DEBRIEF</span>
+            <span class="dos-outcome">Intelligence summary compiled and filed</span>
+          </div>
+        </div>
+
+        <div class="dos-entry dos-entry--final" data-index="3">
+          <div class="dos-entry-head">
+            <span class="dos-date">YEAR 1 COMPLETE</span>
+            <span class="dos-type">RECORD CERTIFIED</span>
+          </div>
+          <p class="dos-entry-title">Six stakeholder wins. Nine debriefs. Forty-seven cases. A career, documented.</p>
+          <div class="dos-entry-foot">
+            <span class="dos-tag">HUMACITY</span>
+            <span class="dos-outcome">Modelled exposure, not verified impact</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dos-footer">
+        <div class="dos-total-block">
+          <span class="dos-total-label">TOTAL HR DECISION CAPITAL</span>
+          <span class="dos-total-value" id="dosTotal">&#x20B9;0L</span>
+        </div>
+        <div class="dos-stamp">VANTAGE<br>PRIVATE</div>
+      </div>
+    </div>
+    <div class="dos-glow"></div>
+  </div>
+  <div class="record-links"><a href="vantage-record.html" class="text-link">Open your Vantage Record &rarr;</a><a href="debrief.html" class="text-link">Read your monthly Debrief &rarr;</a></div>
+  <p style="font-size:12px;color:var(--grey);margin-top:16px;line-height:1.7;text-align:center">Sample entries shown to illustrate what the record looks like, not a live demo. Your own Vantage Record builds from your first case.</p>
 </section>
 
 <!-- FINAL CTA -->
@@ -1688,6 +2014,98 @@ a{color:inherit;text-decoration:none}
   const section=document.getElementById('humac');
   if(!section)return;
   new IntersectionObserver(es=>{if(es[0].isIntersecting){var d=sessionStorage.getItem('vantage_dash_animated')?0:3000;setTimeout(run,d);}},{threshold:0.15}).observe(section);
+})();
+</script>
+
+<script>
+/* Vantage Record dossier, ported verbatim from index.html's
+   initDossier() in vantage-curtain.js. Same single adaptation as the
+   other two: trigger watches #journey (the section this dossier is
+   embedded in on this page) instead of index.html's
+   ".record.cinematic-panel" selector. Like initHumacSynthesis(), a
+   few of its own selectors (.dos-ts / .dos-title / .dos-badge) don't
+   match the real entry markup (.dos-date / .dos-entry-title / .dos-tag)
+   -- confirmed inert in index.html's own source too, ported as-is.
+   This is also the function that sets sessionStorage's
+   'vantage_dash_animated' flag, same as in index.html -- intentional:
+   it's the last of the three dashboards in reading order on this page
+   too (MERIDIAN, then Humac Score, then this), so the flag still only
+   gets set once all three have had their first real play. */
+(function initDossier(){
+  'use strict';
+  const dossier=document.getElementById('recordDossier');
+  if(!dossier)return;
+  const entries=[...dossier.querySelectorAll('.dos-entry')];
+  const progress=document.getElementById('dosProgress');
+  const percent=document.getElementById('dosPercent');
+  const total=document.getElementById('dosTotal');
+  let fired=false;
+
+  if(!document.getElementById('dos-anim-css')){
+    const s=document.createElement('style');s.id='dos-anim-css';
+    s.textContent=`
+      .dos-entry{opacity:0;transform:translateY(8px);transition:opacity .45s ease,transform .45s ease}
+      .dos-entry.dos-visible{opacity:1;transform:none}
+      .dos-live-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#34d399;margin-left:6px;animation:dosLivePulse 2.2s ease-in-out infinite;vertical-align:middle}
+      @keyframes dosLivePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
+      .dos-scanline{pointer-events:none;position:absolute;left:0;right:0;height:1px;background:rgba(196,181,253,.08);top:-1px;animation:dosScan 10s 3s ease-in-out infinite}
+      @keyframes dosScan{0%,100%{top:-1px;opacity:0}5%{opacity:.6}50%{top:100%;opacity:.12}55%{opacity:0}}
+    `;
+    document.head.appendChild(s);
+  }
+
+  function run(){
+    if(fired)return;fired=true;
+    const D=window._vDash;if(!D)return;
+
+    if(sessionStorage.getItem('vantage_dash_animated')){
+      entries.forEach(e=>e.classList.add('dos-visible'));
+      if(progress)progress.style.width='73%';
+      if(percent)percent.textContent='73%';
+      if(total)total.textContent='₹18.4L';
+      dossier.style.position='relative';dossier.style.overflow='hidden';
+      if(!dossier.querySelector('.dos-scanline')){const sc=document.createElement('div');sc.className='dos-scanline';dossier.appendChild(sc);}
+      return;
+    }
+    setTimeout(()=>{D.bar(progress,73,1800);D.num(percent,73,2000,'','%');},120);
+
+    entries.forEach((entry,i)=>{
+      setTimeout(()=>{
+        entry.classList.add('dos-visible');
+        const ts=entry.querySelector('.dos-ts');
+        if(ts){const orig=ts.textContent.trim();ts.textContent='';D.str(ts,orig,380);}
+        const title=entry.querySelector('.dos-title');
+        if(title){const orig=title.textContent.trim();title.textContent='';D.str(title,orig,600);}
+        const badges=entry.querySelectorAll('.dos-badge');
+        badges.forEach((b,bi)=>{
+          setTimeout(()=>{
+            b.style.opacity='0';b.style.transform='scale(.4) translateY(4px)';b.style.transition='none';
+            setTimeout(()=>{b.style.transition='';b.classList.add('badge-pop');b.style.opacity='1';},60+bi*60);
+          },600);
+        });
+      },300+i*480);
+    });
+
+    setTimeout(()=>{if(total)D.num(total,18.4,1800,'₹','L',1);},300+entries.length*480+200);
+
+    const header=dossier.querySelector('.record-dossier-wrap')||dossier;
+    if(header&&!header.querySelector('.dos-live-dot')){
+      const dot=document.createElement('span');dot.className='dos-live-dot';
+      if(!document.getElementById('dosLiveDotStyle')){
+        const ss=document.createElement('style');ss.id='dosLiveDotStyle';document.head.appendChild(ss);
+      }
+      const anchor=dossier.querySelector('.dos-progress-label')||dossier.querySelector('h3')||dossier.firstElementChild;
+      if(anchor)anchor.appendChild(dot);
+    }
+
+    dossier.style.position='relative';dossier.style.overflow='hidden';
+    const scan=document.createElement('div');scan.className='dos-scanline';dossier.appendChild(scan);
+    sessionStorage.setItem('vantage_dash_animated','1');
+  }
+
+  const section=document.getElementById('journey');
+  if(!section)return;
+  new IntersectionObserver(es=>{if(es[0].isIntersecting){var d=sessionStorage.getItem('vantage_dash_animated')?0:3000;setTimeout(run,d);}},{threshold:0.2}).observe(section);
 })();
 </script>
 
