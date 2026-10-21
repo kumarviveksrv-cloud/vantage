@@ -85,9 +85,8 @@ html, body { overflow-x: hidden; background: var(--bg); }
   background: rgba(244,243,255,.85);
   transition: transform .25s ease, opacity .2s ease;
 }
-.rf-nav-toggle.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-.rf-nav-toggle.is-open span:nth-child(2) { opacity: 0; }
-.rf-nav-toggle.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+/* Deliberately no .is-open morph into an X here -- stays a plain
+   hamburger in both states; tapping it again closes the drawer. */
 
 .rf-mobile-menu {
   position: fixed;
