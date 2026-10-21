@@ -108,6 +108,30 @@ a{color:inherit;text-decoration:none}
 .ab-aria-row-text{flex:1}
 .ab-aria-row-label{font:600 10px var(--mono);letter-spacing:.12em;color:var(--muted);display:block;margin-bottom:3px}
 .ab-aria-row-desc{font:13px var(--font);color:var(--grey);line-height:1.6}
+/* ARIA particle face — ported from index.html's aria-room/aria-figure,
+   scaled down to fit inside the ab-aria-card rather than a full-bleed
+   section. Markup/canvas ids/class names kept identical to index.html
+   on purpose so aria-volumetric.js and the extracted ambient-particle
+   script run completely unmodified. */
+.aria-room{height:460px;position:relative;border:1px solid rgba(196,181,253,.1);border-radius:12px;overflow:hidden;margin-bottom:20px;background:radial-gradient(circle at 50% 45%,rgba(99,102,241,.16),transparent 55%),linear-gradient(180deg,#060511,#020207)}
+.aria-room canvas{position:absolute}
+#ariaAmbient{inset:0;width:100%;height:100%}
+.aria-light{position:absolute;border-radius:50%;filter:blur(32px)}
+.aria-light.a1{width:130px;height:210px;background:rgba(99,102,241,.22);left:8%;top:8%}
+.aria-light.a2{width:110px;height:190px;background:rgba(196,181,253,.14);right:6%;top:24%}
+/* NOTE: gl_PointSize in aria-volumetric.js's shader is fixed in screen
+   pixels, not relative to canvas size — shrinking this box much further
+   makes the same particle count overlap into solid noise instead of a
+   legible face. Keeping it close to index.html's original ~0.93 aspect
+   ratio (560x600) is what keeps the face actually readable. */
+.aria-figure{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:420px;height:450px;display:grid;place-items:center}
+.aria-figure canvas{width:100%;height:100%;position:relative}
+.ab-aria-meet{display:inline-flex;align-items:center;gap:6px;font:600 12px var(--mono);letter-spacing:.08em;color:var(--white);text-decoration:none;padding:9px 16px;border:1px solid rgba(99,102,241,.4);border-radius:8px;background:rgba(99,102,241,.08);margin-bottom:20px;transition:.2s}
+.ab-aria-meet:hover{background:rgba(99,102,241,.16);border-color:rgba(139,92,246,.6)}
+@media(max-width:600px){
+  .aria-room{height:320px}
+  .aria-figure{width:280px;height:300px}
+}
 /* TOOLS SECTION */
 .ab-tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .ab-tool{border:1px solid var(--border);border-radius:14px;padding:24px;background:var(--card);position:relative;overflow:hidden;transition:border-color .3s,background .3s}
@@ -293,7 +317,13 @@ a{color:inherit;text-decoration:none}
       <p style="font:italic 600 18px/1.4 var(--display);color:rgba(244,243,255,.8);margin-top:4px">"Each Vantage tool has its own intelligence engine. MERIDIAN calibrates all of them to you. ARIA is the one that thinks with you, not for you."</p>
     </div>
     <div class="ab-aria-card">
-      <div class="ab-aria-orb"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2 5.5 5.5 2-5.5 2L12 17l-2-5.5L4.5 9.5l5.5-2z"/><path d="M19 17l.7 2.3L22 20l-2.3.7L19 23l-.7-2.3L16 20l2.3-.7z"/></svg></div>
+      <div class="aria-room">
+        <canvas id="ariaAmbient" aria-hidden="true"></canvas>
+        <div class="aria-light a1"></div>
+        <div class="aria-light a2"></div>
+        <div class="aria-figure"><canvas id="ariaVolumetricCanvas" aria-hidden="true"></canvas></div>
+      </div>
+      <a href="aria.html" class="ab-aria-meet">Meet ARIA <span>&rarr;</span></a>
       <div class="ab-aria-quote">"Somewhere between the situation and the decision, ARIA sits in that space."</div>
       <div class="ab-aria-distinction">
         <div class="ab-aria-row">
@@ -471,6 +501,76 @@ a{color:inherit;text-decoration:none}
     requestAnimationFrame(draw);
   }
   draw();
+})();
+</script>
+
+<!-- ARIA particle face: same THREE build + same unmodified aria-volumetric.js
+     index.html uses, so the shader (which requires THREE.SRGBColorSpace,
+     r152+ only) behaves identically here. Both scripts no-op safely if
+     their target elements aren't found, so this never breaks the page. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
+<script src="aria-volumetric.js?v=2"></script>
+<script>
+/* ARIA room — ambient particle cloud (SR18), extracted from vantage-curtain.js.
+   Identical to the original except the visibility-gate selector, which
+   targets this page's #aria section instead of index.html's
+   ".aria.cinematic-panel" (about.html doesn't use that class). */
+(function initAriaAmbient(){
+  'use strict';
+  const canvas=document.getElementById('ariaAmbient');
+  if(!canvas) return;
+  const room=canvas.closest('.aria-room');
+  if(!room) return;
+  const ctx=canvas.getContext('2d');
+  let W=0,H=0,pts=null,anim=null;
+
+  function resize(){
+    W=room.offsetWidth||500; H=room.offsetHeight||600;
+    canvas.width=W; canvas.height=H;
+  }
+
+  function makePts(){
+    pts=Array.from({length:220},()=>({
+      x:Math.random()*W, y:Math.random()*H,
+      r:0.4+Math.random()*1.6,
+      vx:(Math.random()-.5)*.25,
+      vy:(Math.random()-.5)*.25,
+      a:0.08+Math.random()*.28,
+      phase:Math.random()*Math.PI*2,
+    }));
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const t=performance.now()/1000;
+    pts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<-2)p.x=W+2; if(p.x>W+2)p.x=-2;
+      if(p.y<-2)p.y=H+2; if(p.y>H+2)p.y=-2;
+      const alpha=Math.max(0,p.a+Math.sin(t*1.2+p.phase)*.1);
+      const u=p.x/W;
+      const r=Math.round(168-u*44);
+      const g=Math.round(85-u*27);
+      const b=Math.round(247-u*10);
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${r},${g},${b},${alpha})`;
+      ctx.fill();
+    });
+    anim=requestAnimationFrame(draw);
+  }
+
+  const section=document.getElementById('aria');
+  if(!section) return;
+  new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting){
+      resize(); if(!pts)makePts(); if(!anim)draw();
+    } else {
+      if(anim){cancelAnimationFrame(anim);anim=null;}
+    }
+  },{threshold:0.05}).observe(section);
+
+  window.addEventListener('resize',()=>{resize();makePts();},{passive:true});
 })();
 </script>
 <script>if(window.VantageFade){VantageFade.hide(150);}</script>
