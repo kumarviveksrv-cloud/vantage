@@ -235,6 +235,26 @@ a{color:inherit;text-decoration:none}
   .ab-hero-actions{flex-direction:column;align-items:stretch}
   .ab-btn-primary,.ab-btn-ghost{justify-content:center;width:100%}
 }
+/* IN-PAGE JUMP NAV
+   NOTE: position:sticky doesn't work here -- html,body carry
+   overflow-x:hidden (above, site-wide, used to stop horizontal
+   scroll from full-bleed decorative elements), and that's a known
+   Chromium trap: any non-visible overflow on an ancestor breaks
+   sticky positioning for descendants. Using position:fixed instead,
+   toggled visible/hidden by scroll position via IntersectionObserver
+   on .ab-hero (see script near the end of body) so it doesn't cover
+   the hero. */
+.ab-jumpnav{position:fixed;top:68px;left:0;right:0;z-index:90;display:flex;gap:6px;padding:12px 5vw;background:rgba(5,4,16,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;transform:translateY(-120%);transition:transform .25s ease}
+.ab-jumpnav.is-visible{transform:translateY(0)}
+.ab-jumpnav::-webkit-scrollbar{display:none}
+.ab-jumpnav a{flex-shrink:0;font:600 10px var(--mono);letter-spacing:.07em;color:var(--muted);text-decoration:none;padding:7px 13px;border:1px solid var(--border);border-radius:20px;background:var(--card);transition:color .2s,border-color .2s,background .2s;white-space:nowrap}
+.ab-jumpnav a:hover{color:var(--white);border-color:rgba(99,102,241,.4)}
+.ab-jumpnav a.is-active{color:var(--white);border-color:rgba(99,102,241,.55);background:rgba(99,102,241,.16)}
+.ab-section{scroll-margin-top:122px}
+@media(max-width:600px){
+  .ab-jumpnav{padding:10px 20px}
+  .ab-jumpnav a{font-size:9px;padding:6px 11px}
+}
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -279,6 +299,17 @@ a{color:inherit;text-decoration:none}
 <div style="text-align:center;padding:28px 6vw;border-top:1px solid rgba(99,102,241,0.1)">
   <p style="font:600 10px 'JetBrains Mono',monospace;letter-spacing:.18em;color:rgba(196,181,253,.32);text-transform:uppercase;margin:0">Every case follows the same arc &nbsp;&middot;&nbsp; Context &rarr; Judgment &rarr; Business impact &rarr; Memory</p>
 </div>
+
+<nav class="ab-jumpnav" id="abJumpNav" aria-label="Jump to section">
+  <a href="#scope">SCOPE</a>
+  <a href="#tools">TOOLS</a>
+  <a href="#aria">ARIA</a>
+  <a href="#meridian">MERIDIAN</a>
+  <a href="#capital">DECISION CAPITAL</a>
+  <a href="#humac">HUMAC SCORE</a>
+  <a href="#for">WHO IT&rsquo;S FOR</a>
+  <a href="#journey">90 DAYS</a>
+</nav>
 
 <!-- WHAT VANTAGE COVERS -->
 <section class="ab-section" id="scope">
@@ -632,6 +663,41 @@ a{color:inherit;text-decoration:none}
     requestAnimationFrame(draw);
   }
   draw();
+})();
+</script>
+
+<script>
+/* Jump-nav active-state highlighting. Self-contained: no-ops if the
+   nav or sections aren't present. */
+(function(){
+  var nav = document.getElementById('abJumpNav');
+  if(!nav) return;
+  var links = Array.prototype.slice.call(nav.querySelectorAll('a'));
+  var map = {};
+  links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.ab-section[id]'))
+    .filter(function(s){ return map[s.id]; });
+  if(!sections.length) return;
+  var current = null;
+  function setActive(id){
+    if(id === current) return;
+    if(current && map[current]) map[current].classList.remove('is-active');
+    if(id && map[id]) map[id].classList.add('is-active');
+    current = id;
+  }
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting) setActive(e.target.id);
+    });
+  }, {rootMargin: '-130px 0px -70% 0px', threshold: 0});
+  sections.forEach(function(s){ observer.observe(s); });
+
+  var hero = document.querySelector('.ab-hero');
+  if(hero){
+    new IntersectionObserver(function(entries){
+      nav.classList.toggle('is-visible', !entries[0].isIntersecting);
+    }, {threshold: 0}).observe(hero);
+  }
 })();
 </script>
 
