@@ -1208,6 +1208,38 @@ html, body { overflow-x: hidden; background: var(--bg); }
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ── PROLOGUE HANDOFF: init-overlay / tada-overlay ─────────────────────
+   Ported from index.html. tada-overlay's own styling already lives in
+   vantage-cinematic.css (linked above); only init-overlay/init-text
+   need to be defined here, since those live inline in index.html too. */
+#init-overlay {
+  position: fixed;
+  inset: 0;
+  background: #050410;
+  z-index: 8900;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+#init-overlay.init-active { display: flex; }
+#init-overlay { z-index: 8800 !important; } /* must be below #tada-overlay */
+#init-text {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: clamp(13px,1.4vw,18px) !important;
+  letter-spacing: .18em !important;
+  color: rgba(196,181,253,.72) !important;
+  position: relative !important;
+  white-space: nowrap;
+}
+#init-text::after {
+  content: '|';
+  animation: initCursor .55s step-end infinite;
+  color: rgba(196,181,253,.5);
+  margin-left: 2px;
+}
+@keyframes initCursor { 0%,100%{opacity:1} 50%{opacity:0} }
 </style>
 </head>
 <body>
@@ -1231,6 +1263,16 @@ html, body { overflow-x: hidden; background: var(--bg); }
   <button class="prologue-skip" id="prologueSkip">SKIP PROLOGUE ↗</button>
   <div class="prologue-countdown" id="prologueCountdown"><span>ENTERING VANTAGE</span><strong id="prologueCountNum">3</strong></div>
   <div class="prologue-fade"></div>
+</div>
+
+<div id="init-overlay" aria-hidden="true">
+  <p id="init-text"></p>
+</div>
+<div id="tada-overlay" aria-hidden="true">
+  <canvas id="tada-canvas"></canvas>
+  <div id="tada-logo">
+    <img src="virorah-vantage-logo.png" alt="Virorah Vantage" id="tada-logoimg">
+  </div>
 </div>
 
 <header class="nav" id="nav">
@@ -1907,6 +1949,12 @@ html, body { overflow-x: hidden; background: var(--bg); }
   animate();
 })();
 </script>
+
+<!-- vantage-curtain.js drives the prologue's post-countdown handoff
+     (init-overlay typewriter + tada-overlay particle burst). It only
+     needs typeof THREE !== 'undefined', so it's loaded after the
+     existing r128 three.min.js above -- no second three.js build. -->
+<script src="vantage-curtain.js?v=14"></script>
 
 <script>
 /* ── SCROLL REVEAL ─────────────────────────────────────────────────── */
