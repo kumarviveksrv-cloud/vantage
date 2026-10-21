@@ -1209,6 +1209,28 @@ html, body { overflow-x: hidden; background: var(--bg); }
   transform: translateY(0);
 }
 
+/* ── PROLOGUE PHOTO BACKGROUND ──────────────────────────────────────────────── */
+.prologue-photo {
+  position: absolute; inset: 0;
+  background: url('prologue-bg.png') center center / cover no-repeat;
+  z-index: 0; opacity: 0; transition: opacity 2s ease;
+}
+#prologue.active .prologue-photo { opacity: 1; }
+@media (max-width: 700px) and (orientation: portrait) {
+  .prologue-photo { background-image: url('prologue-bg-mobile.png'); }
+}
+/* Hide Three.js canvas -- photo is the visual */
+#prologueCanvas { opacity: 0 !important; pointer-events: none; }
+
+/* Ensure text overlays sit above photo/rain (z:0-1). NO position override --
+   prologue-css already sets absolute/fixed on these elements. */
+.prologue-top, .prologue-note,
+.prologue-copy, .prologue-countdown { z-index: 5 !important; }
+.prologue-signal { z-index: 5 !important; }
+.prologue-skip   { z-index: 10 !important; }
+.prologue-fade   { z-index: 8 !important; }
+.prologue-grid, .prologue-vignette { z-index: 2 !important; }
+
 /* ── PROLOGUE HANDOFF: init-overlay / tada-overlay ─────────────────────
    Ported from index.html. tada-overlay's own styling already lives in
    vantage-cinematic.css (linked above); only init-overlay/init-text
