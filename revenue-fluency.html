@@ -1255,6 +1255,18 @@ html, body { overflow-x: hidden; background: var(--bg); }
     max-width: 560px !important;
     text-align: left !important;
   }
+
+  /* Rebalance the type scale for the narrower (560px) left-anchored
+     column above -- the base sizes were tuned for the old ~full-width
+     centered box. At that width, .prologue-kicker/.prologue-sub (11px/
+     12px, both with very wide letter-spacing) read fine as small
+     tracked labels either side of a wide .prologue-message; in a
+     560px column the same two sizes are too small to read, while
+     .prologue-message's clamp(28px,4.5vw,62px) -- maxing out at 62px
+     on any wide desktop viewport -- overpowers the narrow column. */
+  .prologue-kicker { font-size: 13px !important; }
+  .prologue-message { font-size: clamp(26px, 3vw, 40px) !important; }
+  .prologue-sub { font-size: 13px !important; }
 }
 
 /* ── PROLOGUE HANDOFF: init-overlay / tada-overlay ─────────────────────
