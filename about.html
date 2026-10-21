@@ -253,8 +253,8 @@ a{color:inherit;text-decoration:none}
    come from vantage-cinematic.css with var() names remapped to this
    page's own tokens (--lav->--lavender, --dim->--grey, --line->--border,
    --indigo->--cobalt -- all four are exact or near-exact color matches,
-   confirmed by comparing the two :root blocks), and the full .ms-*/
-   .msl-* stack CSS comes from index.html's own inline <style> verbatim
+   confirmed by comparing the two :root blocks), and the full .ms- /
+   .msl- stack CSS comes from index.html's own inline style block, verbatim
    (no vars there, so no remapping needed). */
 .meridian-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:5vw;align-items:start}
 .context-readout{margin-top:35px;border-top:1px solid var(--border);padding-top:14px;font:11px var(--mono);color:var(--grey);letter-spacing:.1em}
@@ -493,8 +493,8 @@ a{color:inherit;text-decoration:none}
    remapping as MERIDIAN (--lav->--lavender, --dim->--grey,
    --line->--border), and align-items changed center->start for the
    same reason (tall right column, short left column). The
-   .humac-synthesis/.hs-*/.hsf-*/.hs-score-panel/.hsp-* rules come
-   from TWO places inside index.html's own inline <style> -- an
+   .humac-synthesis / .hs- / .hsf- / .hs-score-panel / .hsp- rules come
+   from TWO places inside index.html's own inline style block -- an
    earlier block (SR18) and a later one (the actual .hsp-trio
    three-metric layout actually used by the live markup, which
    supersedes part of the earlier block without removing it). Both
