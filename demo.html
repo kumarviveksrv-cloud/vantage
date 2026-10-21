@@ -242,7 +242,7 @@
 <div class="hero">
   <div class="hero-eyebrow"><div class="hero-eyebrow-dot"></div>Fixed examples, plus one live answer</div>
   <div class="hero-title">The Employee Case Advisor tab is the live one.<br>The cards below are not.</div>
-  <div class="hero-sub">See how HR professionals use Vantage's other five tools to navigate the cases, conversations, and data moments that define their careers.</div>
+  <div class="hero-sub">See how HR professionals use Vantage's other four tools to navigate the cases, conversations, and data moments that define their careers.</div>
   <div class="hero-note">These reflect real Vantage output quality on fixed example scenarios. On the full platform, every output is generated live from your own case.</div>
 </div>
 
@@ -251,7 +251,6 @@
   <div class="tool-tab" id="tab-business_case" onclick="switchTool('business_case')"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></span> The Business Case</div>
   <div class="tool-tab" id="tab-policy" onclick="switchTool('policy')"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></span> Policy Advisor</div>
   <div class="tool-tab" id="tab-offer" onclick="switchTool('offer')"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><path d="M7 3h10"/><path d="M3.5 9l3.5 7H0l3.5-7zM16.5 9l3.5 7H13l3.5-7z"/></svg></span> Retention Advisor</div>
-  <div class="tool-tab" id="tab-practice" onclick="switchTool('practice')"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span> Difficult Conversations</div>
   <div class="tool-tab" id="tab-aria" onclick="switchTool('aria')"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2 5.5 5.5 2-5.5 2L12 17l-2-5.5L4.5 9.5l5.5-2z"/><path d="M19 17l.7 2.3L22 20l-2.3.7L19 23l-.7-2.3L16 20l2.3-.7z"/></svg></span> ARIA</div>
 </div>
 
@@ -321,29 +320,6 @@
       <div class="output-wrap" id="offer-output"></div>
     </div>
   </div>
-  <div id="practice-tool" style="display:none">
-    <div class="demo-card">
-      <div class="demo-card-header"><div class="demo-card-title"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span> Difficult Conversations <div class="demo-tag">Example &middot; Denied Promotion</div></div></div>
-      <div class="scenario-label">Example transcript &middot; read-only preview</div>
-      <div class="scenario-text">On the full platform this is a live, typed back-and-forth. Below is a real example of how a session plays out, so you can see the shape of it before you try it yourself.</div>
-      <div class="transcript-wrap">
-        <div class="t-bubble t-sys">STAKES BRIEFING &middot; Financial exposure: Low &middot; Humac pillar: L3 &middot; Practising with: a results-driven senior associate who has been told &ldquo;not yet&rdquo; once before</div>
-        <div class="t-bubble t-you"><span class="t-label">You (Manager)</span>I wanted to talk through this year&rsquo;s promotion cycle with you directly.</div>
-        <div class="t-bubble t-them"><span class="t-label">Employee</span>Let me guess. Not this cycle either.</div>
-        <div class="t-bubble t-you"><span class="t-label">You</span>Not this cycle. Your delivery has been strong, but the panel wants to see more cross-team influence before senior level.</div>
-        <div class="t-bubble t-them"><span class="t-label">Employee</span>I&rsquo;ve heard &ldquo;cross-team influence&rdquo; for two cycles now with no clear definition of what that actually looks like.</div>
-        <div class="t-bubble t-you"><span class="t-label">You</span>That&rsquo;s fair, and it&rsquo;s on me to make it concrete. Let&rsquo;s define two specific cross-team initiatives you&rsquo;ll lead this quarter, and I&rsquo;ll bring that evidence to the panel myself next cycle.</div>
-        <div class="t-bubble t-them"><span class="t-label">Employee</span>Okay. I want that in writing, and I want to know this isn&rsquo;t just another six months of vague feedback.</div>
-      </div>
-      <div class="t-debrief">
-        <div class="t-debrief-title">Debrief</div>
-        <div class="t-debrief-row"><b>What worked:</b> Naming the specific gap instead of a vague deferral, and owning the ambiguity rather than defending the panel&rsquo;s decision.</div>
-        <div class="t-debrief-row"><b>Inflection point:</b> Turn 4: offering to define concrete initiatives converted the conversation from a decision announcement into a plan the employee could act on.</div>
-        <div class="t-debrief-row"><b>Technique for next time:</b> Put the two initiatives in writing within 24 hours, before the conversation&rsquo;s momentum fades.</div>
-      </div>
-      <div class="demo-cta"><div class="demo-cta-title">Practice this exact conversation yourself.</div><div class="demo-cta-sub">On the full platform, you type your own responses and the AI stays fully in character, scored on empathy, clarity, and outcome.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>
-    </div>
-  </div>
   <div id="aria-tool" style="display:none">
     <div class="demo-card">
       <div class="demo-card-header"><div class="demo-card-title"><span style="display:inline-flex;align-items:center;vertical-align:middle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2 5.5 5.5 2-5.5 2L12 17l-2-5.5L4.5 9.5l5.5-2z"/><path d="M19 17l.7 2.3L22 20l-2.3.7L19 23l-.7-2.3L16 20l2.3-.7z"/></svg></span> ARIA <div class="demo-tag">Example &middot; Reflection Mode</div></div></div>
@@ -376,7 +352,6 @@
       <div class="dash-nav-item" data-nav="The Business Case"><i></i>The Business Case</div>
       <div class="dash-nav-item" data-nav="Policy Advisor"><i></i>Policy Advisor</div>
       <div class="dash-nav-item" data-nav="Retention Advisor"><i></i>Retention Advisor</div>
-      <div class="dash-nav-item" data-nav="Difficult Conversations"><i></i>Difficult Conversations</div>
       <div class="dash-nav-item" data-nav="ARIA"><i></i>ARIA</div>
     </div>
     <div class="dash-main">
@@ -864,7 +839,7 @@
   var demoMeridian = { state:'Maharashtra', industry:'IT / SaaS', orgType:'Corporate / Pvt Ltd', orgSize:'251 \u2013 1,000', seniority:'HR Manager', unionStatus:'Non-unionised', hrFunction:'Employee Relations specialist' };
   function wait(ms) { return new Promise(function(resolve){ setTimeout(resolve, ms); }); }
   function demoDelay() { return 3400 + Math.random() * 1200; }
-  var TOOL_IDS = ['pact','business_case','policy','offer','practice','aria'];
+  var TOOL_IDS = ['pact','business_case','policy','offer','aria'];
 
   /* ── DYNAMIC DASHBOARD PREVIEW ──────────────────────────────────────
      Each tool tab has its own "page" of the dashboard mock: a matching
@@ -897,12 +872,6 @@
         { tag:'RETENTION', risk:'score-high', riskLabel:'MONITORING', title:'Senior architect: flight risk', meta:'Flagged 2 days ago &middot; Active' }
       ],
       stats: [ ['14','Retention Cases'], ['&#8377;1.2Cr','Modelled replacement cost, example'], ['22','Offers Modeled'], ['11','Counter-offers modelled'] ] },
-    practice: { title: 'Difficult Conversations', nav: 'Difficult Conversations',
-      cards: [
-        { tag:'REHEARSED', risk:'score-low', riskLabel:'DEBRIEFED', title:'Denied promotion: senior associate', meta:'Practised 2 days ago &middot; Scored 8/10' },
-        { tag:'REHEARSED', risk:'score-low', riskLabel:'DEBRIEFED', title:'Manager feedback: underperformance', meta:'Practised 5 days ago &middot; Scored 7/10' }
-      ],
-      stats: [ ['17','Rehearsed'], ['8.2/10','Avg Score'], ['17','Debriefs Filed'], ['4','This Month'] ] },
     aria: { title: 'ARIA', nav: 'ARIA',
       cards: [
         { tag:'ARIA', risk:'score-low', riskLabel:'LOGGED', title:"This week's reflection: 3 ER cases", meta:'Logged today' },
