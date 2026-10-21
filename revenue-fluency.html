@@ -1265,8 +1265,25 @@ html, body { overflow-x: hidden; background: var(--bg); }
      .prologue-message's clamp(28px,4.5vw,62px) -- maxing out at 62px
      on any wide desktop viewport -- overpowers the narrow column. */
   .prologue-kicker { font-size: 13px !important; }
-  .prologue-message { font-size: clamp(26px, 3vw, 40px) !important; }
+  .prologue-message {
+    font-size: clamp(26px, 3vw, 40px) !important;
+    line-height: 1.35 !important;
+  }
   .prologue-sub { font-size: 13px !important; }
+
+  /* .prologue-top and .prologue-note are both 8px in the base
+     stylesheet -- a HUD-style readout size that's illegible at normal
+     viewing distance on a real desktop monitor. Bumped for actual
+     readability; widened .prologue-note slightly so the longer lines
+     at the new size don't wrap awkwardly. */
+  .prologue-top { font-size: 12px !important; }
+  .prologue-note {
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+    width: 260px !important;
+    color: rgba(196, 181, 253, 0.6) !important;
+  }
+  .prologue-note strong { color: rgba(244, 243, 255, 0.85) !important; }
 }
 
 /* ── PROLOGUE HANDOFF: init-overlay / tada-overlay ─────────────────────
@@ -1316,7 +1333,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
   <div class="prologue-photo" aria-hidden="true"></div>
   <canvas id="prologueCanvas" aria-hidden="true"></canvas>
   <div class="prologue-grid"></div><div class="prologue-vignette"></div>
-  <div class="prologue-top"><span>VANTAGE / 21:00</span><span class="prologue-time"><i></i><strong>PRIVATE HR DECISION / LIVE</strong></span></div>
+  <div class="prologue-top"><span>VANTAGE / 21:00</span><span class="prologue-time"><i></i><strong>DECISION IN PROGRESS / LIVE</strong></span></div>
   <div class="prologue-signal"><span>INCOMING <b>HIGH PRIORITY</b></span><span>Employee relations <b>CASE 2841</b></span><span>MANAGER <b>NEEDS CLOSURE</b></span><span>DOCUMENTATION <b>INCOMPLETE</b></span></div>
   <div class="prologue-note"><strong>09:18 PM</strong>The office is mostly empty.<br>The decision is still open.</div>
   <div class="prologue-copy"><div class="prologue-kicker">The Building Has Gone Quiet</div><div class="prologue-message">Somewhere in it, a decision<br>is still being made.<br><em>Alone.</em></div><div class="prologue-sub">No Escalation Path. No Second Opinion. Just The Clock.</div></div>
