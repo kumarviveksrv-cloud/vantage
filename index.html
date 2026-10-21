@@ -1294,6 +1294,24 @@ html, body { overflow-x: hidden; background: var(--bg); }
   .prologue-note strong { color: rgba(244, 243, 255, 0.85) !important; }
 }
 
+/* vantage-curtain.js's initPrologueTypewriter() force-applies
+   bottom:36px as an inline style on .prologue-copy (the same
+   load-bearing overflow safety net mentioned above). That 36px value
+   never accounted for .prologue-skip sitting below it, so on narrow
+   viewports the last line of prologue copy (.prologue-sub) lands
+   directly on top of the Skip Prologue button. Inline style beats a
+   plain stylesheet rule, so this needs !important to win, same as
+   the desktop overrides above. Two tiers matching vantage-prologue.css's
+   own breakpoints (560px/900px), each value measured against the
+   skip button's real on-screen height at that width rather than
+   guessed -- 390px: skip button occupies the bottom 52px, 768px: 71px. */
+@media (max-width: 560px) {
+  .prologue-copy { bottom: 78px !important; }
+}
+@media (min-width: 561px) and (max-width: 900px) {
+  .prologue-copy { bottom: 98px !important; }
+}
+
 /* ── PROLOGUE HANDOFF: init-overlay / tada-overlay ─────────────────────
    Ported from index.html. tada-overlay's own styling already lives in
    vantage-cinematic.css (linked above); only init-overlay/init-text
