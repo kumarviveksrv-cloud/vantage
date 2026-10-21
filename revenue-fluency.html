@@ -1666,69 +1666,19 @@ html, body { overflow-x: hidden; background: var(--bg); }
           <p>No. Vantage is built for you personally, not licensed to your employer. What you research, the cases you document, the conversations you rehearse with ARIA: none of it is visible to your organisation. Your Vantage Record moves with you if you change jobs; your HRIS never does.</p>
         </details>
         <details class="rf-faq-item">
-          <summary>How is this different from just using a general AI chatbot?</summary>
-          <p>A general-purpose large language model, whichever one you use, answers the question you typed, starting from zero every conversation. Vantage is a different kind of thing: a contextual decision system. MERIDIAN calibrates every response to India's current labour codes, your state, your industry, your org size, and your seniority before you type a word. The tools build a case history, quantify financial exposure in INR, and compound in value the longer you use them. Vantage starts from your context, your record, and your professional reality, not a blank page.</p>
-        </details>
-        <details class="rf-faq-item">
-          <summary>Is the legal information current and accurate?</summary>
-          <p>Vantage runs on India's current labour codes, with the verification date shown alongside each legal reference on the page. Labour law changes over time and varies by state. Vantage is a decision aid, not a substitute for your own legal counsel on a specific case.</p>
-        </details>
-        <details class="rf-faq-item">
-          <summary>Where do the financial numbers on this page come from?</summary>
-          <p>The numbers you see in the product previews on this page are illustrative examples, built to show you how the calculation works, not live data. Once you're inside Vantage, every number is calculated from the actual details of your own case, with a confidence level attached.</p>
-        </details>
-        <details class="rf-faq-item">
           <summary>Can I use Vantage without my organisation finding out?</summary>
           <p>Yes. Vantage is a personal subscription, not something your company procures or administers. You sign up and use it the same way you'd use any personal professional tool.</p>
-        </details>
-        <details class="rf-faq-item">
-          <summary>What happens to my Vantage Record if I leave my job?</summary>
-          <p>It stays with you. That's the entire point. Your company owns your HRIS access; you own your Vantage Record. It travels with you to your next role, your next company, your next title.</p>
-        </details>
-        <details class="rf-faq-item">
-          <summary>Is Vantage only for HR professionals in India?</summary>
-          <p>Right now, yes. Vantage is built specifically for Indian employment law and the Indian HR context. That precision is deliberate: generic, multi-country HR intelligence is already free everywhere. Vantage exists because precision requires an engine calibrated to one legal system, not a dozen. Global expansion is planned. The GCC and Singapore are next in the pipeline, each with their own calibrated legal and regulatory context built in before launch.</p>
-        </details>
-        <details class="rf-faq-item">
-          <summary>Is Vantage built for desktop or mobile?</summary>
-          <p>Both, by design. Vantage was built for the HR professional who needs to consult it on the spot: a conversation happening right now, a decision that can't wait until you're back at your desk, a quick policy check between two meetings. That experience is fully mobile. At the same time, many Vantage outputs are detailed: a financial model, a legal position, a full Employee Case Advisor diagnostic across four dimensions. When you need to read through an analysis carefully, review a case you saved, or work through a structured output end to end, the larger screen gives you the space to do that properly. Vantage is built to travel with you and to be waiting at your desk when you get back.</p>
-        </details>
-        <details class="rf-faq-item">
-          <summary>How is my data secured?</summary>
-          <p>Vantage is built on infrastructure that carries enterprise-grade security certifications, even though Virorah as a company does not yet hold SOC 2 or ISO 27001 in its own name.</p>
-          <p><strong>Authentication:</strong> Every sign-in goes through Clerk, which is SOC 2 Type II certified. Your credentials are never stored by Vantage directly.</p>
-          <p><strong>Data storage:</strong> Your case records, MERIDIAN profile, and Humac Score are stored in Airtable, which is SOC 2 Type II certified and GDPR compliant. Data is hosted on servers in the United States.</p>
-          <p><strong>API and traffic layer:</strong> All traffic between your browser and Vantage's backend runs through Cloudflare Workers. Cloudflare is SOC 2 Type II and ISO 27001 certified.</p>
-          <p><strong>AI processing:</strong> Anthropic, the AI provider powering Vantage's tools, does not use API data to train its models by default. This is documented in their usage policy.</p>
-          <p><strong>Anonymisation — a two-step process:</strong> When you submit a case narrative, your original text first reaches Anthropic's Claude Haiku model, which identifies and replaces person names, company names, and specific locations with role-consistent placeholders. Only the anonymised output then reaches Claude for the actual analysis — your original text reaches Anthropic once, for anonymisation only. This step fails closed: if anonymisation cannot complete safely, the request is blocked rather than sent unredacted.</p>
-          <p><strong>Encryption:</strong> All data is encrypted in transit over TLS. Your case content is never shared with advertisers or used for any purpose outside your account.</p>
-          <p><strong>Your control:</strong> You can export all your data or delete it permanently at any time from within your account.</p>
-        </details>
-        <details class="rf-faq-item">
-          <summary>Where is my data actually stored?</summary>
-          <p>Your case records and profile are stored with Airtable, on servers based in the United States. Your original, unredacted text stays there. Your original text reaches Anthropic's Claude Haiku model once, for the anonymisation step only. Only the anonymised version is then sent to Claude for analysis. You can export everything or delete it permanently, at any time, from within your account.</p>
         </details>
         <details class="rf-faq-item">
           <summary>What does Vantage cost?</summary>
           <p>₹799 per month, one plan, billed monthly. No annual contracts, no enterprise procurement, no lock-in. Cancel anytime and you keep access until the end of your current billing period.</p>
         </details>
         <details class="rf-faq-item">
-          <summary>Can I get a refund if I cancel?</summary>
-          <p>Subscriptions aren't refunded once a billing period has started, but there's nothing locking you in either. Cancel anytime and you simply won't be charged again.</p>
-        </details>
-        <details class="rf-faq-item">
           <summary>Does Vantage give me legal advice?</summary>
           <p>No. Vantage is a decision-intelligence tool, not a law firm, and nothing it generates should be treated as legal advice. For any decision with real legal consequences (a termination, a POSH investigation, anything that could end up in front of a tribunal), consult a qualified legal practitioner before acting.</p>
         </details>
-        <details class="rf-faq-item">
-          <summary>Is my case data ever used to train AI models?</summary>
-          <p>No. Your individual case narratives and outputs are never used to train AI models, by Vantage or by its AI provider.</p>
-        </details>
-        <details class="rf-faq-item">
-          <summary>Who can sign up for Vantage?</summary>
-          <p>Anyone in the HR profession, at any level of the pyramid. At the top: CHROs, VPs of HR, HR Directors and HR Heads who need the financial language and legal precision to hold their own in boardrooms and leadership tables. In the middle: HR Managers, HRBPs, Employee Relations Specialists, HR Generalists and HR Specialists who carry the bulk of the day-to-day decisions, the ones that rarely come with a second opinion. At the entry end: HR Executives, HR Associates and HR Trainees who are building their instincts and want a thinking partner that doesn't judge the question. And across every kind of engagement: independent HR Consultants and fractional HR professionals who work across multiple organisations and need a calibrated intelligence layer that travels with them. Vantage was built for the entire profession, not a tier of it.</p>
-        </details>
       </div>
+      <p style="text-align:center;margin-top:28px"><a href="faq.html" style="font:500 12px 'JetBrains Mono',monospace;letter-spacing:.08em;color:#a5b4fc;text-decoration:none;border-bottom:1px solid rgba(165,180,252,.3);padding-bottom:2px">See all FAQs &rarr;</a></p>
     </div>
   </section>
 
@@ -1759,9 +1709,9 @@ html, body { overflow-x: hidden; background: var(--bg); }
       <div class="rf-footer-col">
         <span class="rf-footer-col-h">COMPANY</span>
         <a href="about.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('about.html');return false;}">About Vantage</a>
-        <a href="#rf-faq">FAQ</a>
-        <a href="legal/privacy.html">Privacy</a>
-        <a href="legal/terms.html">Terms</a>
+        <a href="faq.html">FAQ</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
       </div>
       <div class="rf-footer-col">
         <span class="rf-footer-col-h">START</span>
