@@ -101,23 +101,34 @@ a{color:inherit;text-decoration:none}
    .ab-caps-grid block directly above, which stays retired per the SR-fix
    note: that one duplicated the prose next to it. This one is index.html's
    actual coverage diagram, added back per an explicit, separate request. */
-.vd-radar{text-align:center;margin-top:-70px}
-/* SR-fix (scope alignment): index.html's own .vd-grid uses align-items:center,
-   which works there because its copy column (eyebrow+h2+4 paragraphs) is
-   TALLER than the radar (874px vs 667px measured), so centering nets a small
-   downward nudge on the radar that reads fine. about.html's .ab-scope-copy is
-   shorter than the radar (432px vs 647px measured) because this page's scope
-   copy is leaner, so the same align-items:center instead pushes the copy
-   column down ~107px into empty space (tested, confirmed worse — screenshot
-   showed the text floating with a visible top gap). Grid stays align-items:start
-   (true DOM top-alignment, confirmed via getBoundingClientRect: both columns
-   start at the identical y). The remaining visual gap Kumar flagged is the
-   vd-scope-label's margin-bottom (20px) plus the SVG's own internal inset
-   geometry pushing the ring's visible weight ~87px below the column top, while
-   the copy column's heading reads as "visual weight" almost immediately. This
-   margin-top:-70px pulls the radar's visual content up to read level with the
-   copy, without touching the grid's actual top-alignment. Verified via
-   Playwright screenshot at both 1440px and 390px. */
+.vd-radar{text-align:center}
+/* SR-fix (scope alignment, round 2): the first attempt at this used a fixed
+   margin-top:-70px on .vd-radar to pull the circle up level with the copy.
+   That was wrong on two counts, caught after Kumar re-reported "still
+   misaligned" on his own screen (a much wider browser window than the
+   1440px/390px this was checked at). First, a fixed px offset can't track a
+   responsive SVG: .vd-radar-svg is width:100% up to max-width:440px, so on
+   any viewport where the column is narrower than 440px the svg itself
+   shrinks, and -70px overshoots. Second, and the actual root cause: it
+   dragged the WHOLE .vd-radar block up, including vd-scope-label, so the
+   label stopped lining up with the grid row at all, instead floating above
+   it by 70px.
+   The real source of the gap is internal to the SVG's own coordinate space,
+   not the surrounding layout: viewBox="0 0 460 460" draws its outermost
+   ring (cx=230,cy=230,r=165) starting at y=65, so the top 65 units of the
+   460-unit-tall box are always dead space, a fixed PROPORTION of the svg's
+   rendered size regardless of viewport -- which a px margin can never
+   correctly cancel. Fixed by cropping that dead space out of the viewBox
+   itself (box now starts at y=55, a few units of breathing room above the
+   ring) instead of faking it with layout. This scales correctly at any
+   column width because it's the SVG's own intrinsic box, not a hack bolted
+   on from outside it. Lowest real content in the diagram is the outer ring's
+   bottom edge at y=395, well inside the new viewBox's y=55..460 range, so
+   nothing is clipped. Grid itself stays align-items:start (confirmed via
+   getBoundingClientRect: both columns' DOM tops, and now vd-scope-label's
+   top, are identical). Verified via Playwright at 390px, 1440px, and 1920px
+   -- the width Kumar's own screenshot was taken at, which is exactly the
+   width the old fixed-px version was never checked against. */
 .vd-radar-svg{width:100%;max-width:440px;display:block;margin:0 auto}
 .vd-radar-outerring{transform-origin:230px 230px;animation:vdRadarSlowSpin 70s linear infinite}
 @keyframes vdRadarSlowSpin{to{transform:rotate(360deg)}}
@@ -960,14 +971,6 @@ a{color:inherit;text-decoration:none}
 /* RESPONSIVE */
 @media(max-width:900px){
   .ab-scope-grid,.ab-aria-grid,.ab-hdc-grid,.ab-humac-grid{grid-template-columns:1fr}
-  /* SR-fix (scope alignment, mobile): the -70px nudge on .vd-radar above is a
-     fix for the desktop two-column row, where it pulls the radar's visual
-     content up to read level with the copy. Below 900px the grid collapses to
-     a single stacked column, so that same negative margin instead pulls the
-     radar up INTO the last line of copy text above it (confirmed via
-     screenshot: the "VANTAGE COVERAGE SCOPE" label overlapped the preceding
-     paragraph). Reset to 0 here so mobile keeps normal stacked spacing. */
-  .vd-radar{margin-top:0}
   .ab-tools-grid,.ab-meridian-grid{grid-template-columns:1fr}
   .ab-distinct-row{flex-direction:column;gap:6px}
   .ab-distinct-label{width:auto}
@@ -1070,7 +1073,7 @@ a{color:inherit;text-decoration:none}
     </div>
     <div class="vd-radar" id="vdRadar">
       <div class="vd-scope-label">VANTAGE COVERAGE SCOPE &middot; THE EMPLOYMENT RELATIONSHIP</div>
-      <svg class="vd-radar-svg" viewBox="0 0 460 460" xmlns="http://www.w3.org/2000/svg">
+      <svg class="vd-radar-svg" viewBox="0 55 460 405" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <radialGradient id="vdRadarCore" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stop-color="#e9e0ff"/>
