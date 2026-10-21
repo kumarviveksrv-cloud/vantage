@@ -708,9 +708,19 @@ a{color:inherit;text-decoration:none}
    as-is. */
 .record-dossier-wrap {
   position: relative;
-  max-width: 720px;
-  margin: clamp(48px,6vw,80px) auto 0;
+  max-width: 680px;
+  margin: clamp(48px,6vw,80px) 0 0;
 }
+/* SR-fix (journey/dossier alignment): index.html's own #record section puts
+   this dossier in its own section, next to centered copy (.record-head),
+   so margin:auto there is correct. Here it's appended below .ab-journey,
+   which is NOT centered -- it's flush-left at max-width:680px (confirmed via
+   getBoundingClientRect: left edge 86px). The inherited margin:auto centered
+   the dossier in the full section width instead, putting its left edge 274px
+   to the right of the timeline's left edge -- a real structural mismatch,
+   not a caching artifact (reproduced locally, independent of live-site
+   cache). Dropped the auto-centering and matched the 680px width so the
+   dossier's left edge lines up with the timeline above it. */
 .record-dossier {
   background: rgba(8,7,24,.88);
   border: 1px solid rgba(124,58,237,.28);
@@ -935,7 +945,7 @@ a{color:inherit;text-decoration:none}
 @keyframes dosScan{0%,100%{top:-1px;opacity:0}5%{opacity:.6}50%{top:100%;opacity:.12}55%{opacity:0}}
 .record-links{display:flex;justify-content:center;gap:28px;margin-top:24px}
 .text-link{display:inline-block;margin-top:22px;color:var(--lavender);font:12px var(--mono);text-decoration:none}
-.record-example-label{text-align:center;font:12px var(--mono);letter-spacing:.06em;color:rgba(196,181,253,0.68);margin-top:32px}
+.record-example-label{text-align:left;font:12px var(--mono);letter-spacing:.06em;color:rgba(196,181,253,0.68);margin-top:32px}
 /* WHO IT'S FOR */
 .ab-for-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .ab-for-card{padding:24px;border:1px solid var(--border);border-radius:12px;background:var(--card)}
