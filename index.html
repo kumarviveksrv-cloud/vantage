@@ -1165,32 +1165,34 @@ html, body { overflow-x: hidden; background: var(--bg); }
   flex-shrink: 0;
   padding-top: 1px;
 }
-/* Kumar: the card was too short and never actually named what the 8
-   tools are -- "full access to all 8 tools" asks visitors to take it
-   on faith. Naming them, same names used in the roster section above
-   on this same page, gives the card real substance instead of a
-   marketing-shaped placeholder. */
-.rf-pricing-tools {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin: 12px 0 0;
-  width: 100%;
+/* Kumar: naming "8 tools" without saying what any of them do still
+   asked visitors to take it on faith, and made the card look thin.
+   This mirrors the full detailed breakdown that already lives on the
+   dedicated pricing.html page (same copy, verbatim -- not rewritten
+   here) so the homepage card and the pricing page never disagree
+   about what's actually included: Humac Score's five pillars, the
+   MERIDIAN profile, and a real one-line description per tool instead
+   of just a name. */
+.rf-pricing-features-label {
+  font: 700 9px var(--mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+  margin: 28px 0 14px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  text-align: left;
 }
-.rf-pricing-tools span {
-  display: block;
-  font: 600 10.5px var(--mono);
-  letter-spacing: .01em;
-  color: rgba(196,181,253,.78);
-  background: rgba(139,92,246,.08);
-  border: 1px solid rgba(139,92,246,.2);
-  border-radius: 6px;
-  padding: 7px 10px;
-  text-align: center;
-}
-@media (max-width: 420px) {
-  .rf-pricing-tools { grid-template-columns: 1fr; }
-}
+.rf-pricing-features--detailed { margin: 0 0 24px; padding: 0; border-top: none; gap: 11px; }
+.rf-pricing-features--detailed li { font-size: 12.5px; line-height: 1.55; }
+/* li's bold label + description text are two separate inline nodes;
+   without wrapping them, flexbox on the <li> splits them into two
+   independently-wrapping flex items (a narrow bold column next to a
+   narrow text column) instead of one flowing sentence. The <span>
+   wrapper in the markup makes them a single flex item again. */
+.rf-pricing-features--detailed li > span { flex: 1; min-width: 0; }
+.rf-pricing-features--detailed strong { color: rgba(244,243,255,.92); font-weight: 600; }
+.rf-pricing-features--plain { margin: 0 0 32px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); }
 .rf-pricing-badge {
   display: inline-block;
   background: rgba(139,92,246,.14);
@@ -1907,24 +1909,21 @@ html, body { overflow-x: hidden; background: var(--bg); }
       <p class="rf-pricing-sub">
         7-day free trial <span>·</span> No credit card required <span>·</span> Cancel anytime
       </p>
-      <ul class="rf-pricing-features">
-        <li>
-          <div>
-            Full access to all 8 tools
-            <div class="rf-pricing-tools">
-              <span>ARIA</span>
-              <span>Employee Case Advisor</span>
-              <span>The Business Case</span>
-              <span>Retention Advisor</span>
-              <span>Policy Advisor</span>
-              <span>Standpoint</span>
-              <span>The Debrief</span>
-              <span>Vantage Record</span>
-            </div>
-          </div>
-        </li>
+      <div class="rf-pricing-features-label">What's included</div>
+      <ul class="rf-pricing-features rf-pricing-features--detailed">
+        <li><span><strong>Employee Case Advisor:</strong> structured diagnostic and 7-section Decision Protocol</span></li>
+        <li><span><strong>The Business Case:</strong> SIGNAL narrative for the room, or a 5-layer INFLUENCE Stack for one person, with modelled Revenue at Risk</span></li>
+        <li><span><strong>Policy Advisor:</strong> BNS / BNSS / BSA · state-specific · POSH · labour law</span></li>
+        <li><span><strong>Retention Advisor:</strong> flight-risk read and counter-offer modelling with a break-even ceiling</span></li>
+        <li><span><strong>ARIA:</strong> Counsel + Rehearsal (paid plan only, not during the trial)</span></li>
+        <li><span><strong>MERIDIAN Profile:</strong> single organisation, 8-parameter calibration</span></li>
+        <li><span><strong>Humac Score + Trajectory Index:</strong> five pillars — Value Ledger, Talent Premium, Org Vitals, Human P&amp;L, Human Balance Sheet</span></li>
+        <li><span><strong>Vantage Record:</strong> full history, all cases, permanent and portable, follows you</span></li>
+        <li><span><strong>Standpoint:</strong> file your professional position before the outcome is known</span></li>
+        <li><span><strong>The Monthly Debrief:</strong> your intelligence brief, last working day of the month</span></li>
+      </ul>
+      <ul class="rf-pricing-features rf-pricing-features--plain">
         <li>Unlimited cases, models, and financial calculations</li>
-        <li>Vantage Record — permanent, portable, follows you</li>
         <li>No company procurement, no IT approvals, no seat limits</li>
       </ul>
       <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html" style="width:100%;justify-content:center;font-size:15px;padding:16px 36px;position:relative;z-index:1">
