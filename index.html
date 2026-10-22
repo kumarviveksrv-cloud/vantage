@@ -1312,6 +1312,32 @@ html, body { overflow-x: hidden; background: var(--bg); }
   .prologue-copy { bottom: 98px !important; }
 }
 
+/* The three prologue-copy lines read as an incoherent type scale on
+   mobile: .prologue-kicker's base letter-spacing is 0.9em (tuned for
+   a wide, full-width desktop label), which at any font-size sprawls
+   each character ~9px apart -- on a narrow column that reads as the
+   loudest, "biggest" line in the block even though its font-size
+   (11px) is the smallest of the three. .prologue-message only picks
+   up vantage-prologue.css's flat 11vw rule below 560px, which undersells
+   it as the actual headline (down to ~40px on a 360px-wide phone).
+   Tightening the kicker's tracking and giving the message its own
+   clamp fixes the hierarchy without touching .prologue-sub, which
+   already reads correctly at its current size/tracking. */
+@media (max-width: 560px) {
+  .prologue-kicker { letter-spacing: .3em !important; }
+  .prologue-message {
+    font-size: clamp(32px, 11.5vw, 44px) !important;
+    line-height: 1.18 !important;
+  }
+}
+@media (min-width: 561px) and (max-width: 900px) {
+  .prologue-kicker { letter-spacing: .35em !important; }
+  .prologue-message {
+    font-size: clamp(38px, 7vw, 50px) !important;
+    line-height: 1.2 !important;
+  }
+}
+
 /* ── PROLOGUE HANDOFF: init-overlay / tada-overlay ─────────────────────
    Ported from index.html. tada-overlay's own styling already lives in
    vantage-cinematic.css (linked above); only init-overlay/init-text

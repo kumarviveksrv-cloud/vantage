@@ -1172,21 +1172,30 @@
     /* JS safety net for mobile font sizing — inline !important always
        wins over any external stylesheet regardless of its selector
        specificity, so this guarantees the CSS media query above isn't
-       silently overridden by vantage-prologue.css. Sizes reduced
-       further this round — the previous pass still weren't small
-       enough to reliably fit on narrow/short phone screens. */
+       silently overridden by vantage-prologue.css. A prior pass had
+       the kicker (16px, uppercase, tracked, JetBrains Mono) and the
+       message (17px, Cormorant Garamond) within 1px of each other —
+       the kicker's tracking/caps made it read as the loudest line
+       despite being the smallest *role* in the hierarchy, while the
+       message, meant to be the headline, was barely bigger than the
+       label above it. Re-balanced so the message actually dominates
+       and the kicker recedes to a true label; .prologue-copy's own
+       maxHeight + overflow-y:auto (set above) is what actually
+       guards against overflow, not small font sizes, so this is safe
+       to raise without reintroducing the earlier clipping issue.
+       .prologue-sub left alone — its size/weight already read correctly. */
     {
       const vw = window.innerWidth;
       const kickerEl = pro.querySelector('.prologue-kicker');
       const msgEl    = pro.querySelector('.prologue-message');
       const subEl    = pro.querySelector('.prologue-sub');
       if(vw <= 375){
-        if(kickerEl){ kickerEl.style.setProperty('font-size','14px','important'); kickerEl.style.setProperty('margin-bottom','8px','important'); }
-        if(msgEl){ msgEl.style.setProperty('font-size','15px','important'); msgEl.style.setProperty('line-height','1.28','important'); }
+        if(kickerEl){ kickerEl.style.setProperty('font-size','10px','important'); kickerEl.style.setProperty('margin-bottom','8px','important'); }
+        if(msgEl){ msgEl.style.setProperty('font-size','26px','important'); msgEl.style.setProperty('line-height','1.2','important'); }
         if(subEl){ subEl.style.setProperty('font-size','11px','important'); subEl.style.setProperty('margin-top','8px','important'); }
       } else if(vw <= 480){
-        if(kickerEl){ kickerEl.style.setProperty('font-size','16px','important'); kickerEl.style.setProperty('margin-bottom','10px','important'); }
-        if(msgEl){ msgEl.style.setProperty('font-size','17px','important'); msgEl.style.setProperty('line-height','1.3','important'); }
+        if(kickerEl){ kickerEl.style.setProperty('font-size','11px','important'); kickerEl.style.setProperty('margin-bottom','10px','important'); }
+        if(msgEl){ msgEl.style.setProperty('font-size','30px','important'); msgEl.style.setProperty('line-height','1.22','important'); }
         if(subEl){ subEl.style.setProperty('font-size','12px','important'); subEl.style.setProperty('margin-top','10px','important'); }
       }
     }
