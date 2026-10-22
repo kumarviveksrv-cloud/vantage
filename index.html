@@ -757,6 +757,39 @@ html, body { overflow-x: hidden; background: var(--bg); }
   font-weight: 600;
 }
 .rf-gap p + p { margin-top: 18px; }
+
+/* Staggered scroll reveal (22 Oct 2026) -- Kumar flagged this section
+   as reading too plain for how much rhetorical work the copy is doing
+   (the "Finance has a language... HR doesn't" build-up to "Revenue
+   Fluency"). Was a single block-level fade via .rf-reveal, same as
+   every other section -- reused that same observer/class instead of
+   writing new JS: .rf-gap keeps the "rf-reveal" class so the existing
+   IntersectionObserver still watches it and still adds "is-visible",
+   but .rf-gap's OWN opacity/transform from .rf-reveal is neutralized
+   below so the block doesn't ALSO fade as one piece -- all the motion
+   now comes from each line fading up individually, one after another,
+   matching how the copy is actually written. No new motion once
+   triggered -- it's a one-time scroll-in, not a running animation, so
+   it doesn't add to the "too much pulsing" the card glows got flagged
+   for earlier today. */
+.rf-gap.rf-reveal { opacity: 1; transform: none; }
+.rf-gap p {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.rf-gap.is-visible p:nth-of-type(1) { transition-delay: .05s; }
+.rf-gap.is-visible p:nth-of-type(2) { transition-delay: .25s; }
+.rf-gap.is-visible p:nth-of-type(3) { transition-delay: .45s; }
+.rf-gap.is-visible p:nth-of-type(4) { transition-delay: .65s; }
+.rf-gap.is-visible p:nth-of-type(5) { transition-delay: .85s; }
+.rf-gap.is-visible p {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .rf-gap p { opacity: 1; transform: none; transition: none; }
+}
 .rf-gap-tagline {
   font: 600 clamp(19px, 2.6vw, 25px)/1.5 var(--font) !important;
   font-style: normal !important;
@@ -918,6 +951,28 @@ html, body { overflow-x: hidden; background: var(--bg); }
   align-items: start;
   position: relative;
   z-index: 2;
+  /* Quiet-emphasis treatment (22 Oct 2026) -- Kumar flagged this section
+     as reading too plain against the rest of the page. Static accent
+     rail along the left edge, same gradient idea .rf-gap::before
+     already uses above its own text, so it reads as this page's
+     established "important copy" marker rather than a new motif. No
+     motion, no glow layer -- deliberately restrained after today's
+     pulsing-glow back-and-forth on the card sections. */
+  padding-left: 28px;
+}
+.rf-framework-inner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg,
+    rgba(139,92,246,0) 0%,
+    rgba(139,92,246,.55) 18%,
+    rgba(139,92,246,.55) 82%,
+    rgba(139,92,246,0) 100%);
 }
 @media (max-width: 720px) { .rf-framework-inner { grid-template-columns: 1fr; gap: 36px; } }
 
@@ -930,8 +985,8 @@ html, body { overflow-x: hidden; background: var(--bg); }
   display: block;
 }
 .rf-framework-title {
-  font: 700 clamp(26px, 3.8vw, 40px)/1.2 var(--display);
-  letter-spacing: -.02em;
+  font: 700 clamp(26px, 3.8vw, 40px)/1.16 var(--display);
+  letter-spacing: -.03em;
   color: var(--white);
   margin: 0;
 }
