@@ -1816,16 +1816,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
 
-  /* roughness:.2/metalness:.9 made the core near-mirror, so each of the
-     4 point lights below (mLight/gLight/bLight/fLight) threw a sharp,
-     bright specular highlight onto the sphere -- the "4 bulbs" Kumar
-     flagged as distracting. Those lights still do the real work of
-     tinting the sphere and rim-lighting the rings/particle clouds, so
-     removing them would flatten the whole visual, not just the glints.
-     Softened the surface instead: higher roughness scatters each
-     highlight into a broad soft sheen instead of a pinpoint glare,
-     lower metalness keeps it from reading as mirror-polished. */
-  var core = new THREE.Mesh(new THREE.SphereGeometry(.85,80,80), new THREE.MeshStandardMaterial({color:0x0d0b1e,roughness:.75,metalness:.55,emissive:0x1e1b4b,emissiveIntensity:.5}));
+  /* The near-mirror core (roughness:.2/metalness:.9) is what gives this
+     sphere its character -- turning it matte (tried first, see commit
+     0e9307a) killed the 4 bright specular dots Kumar flagged but made
+     the whole orb read flat. Reverted the material; dimming the 4
+     point lights that cause the glints (below) is the right lever --
+     same sharp glossy highlights, just toned down instead of removed. */
+  var core = new THREE.Mesh(new THREE.SphereGeometry(.85,80,80), new THREE.MeshStandardMaterial({color:0x0d0b1e,roughness:.2,metalness:.9,emissive:0x1e1b4b,emissiveIntensity:.5}));
   scene.add(core);
   scene.add(new THREE.Mesh(new THREE.SphereGeometry(.9,32,32), new THREE.MeshBasicMaterial({color:0x6366f1,transparent:true,opacity:.06,side:THREE.BackSide})));
   var wire = new THREE.Mesh(new THREE.SphereGeometry(.87,24,24), new THREE.MeshBasicMaterial({color:0x7c3aed,wireframe:true,transparent:true,opacity:.09}));
@@ -1863,10 +1860,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
   var cloud3 = makeParticles(80,2.0,2.8,0x6366f1,.015);
 
   scene.add(new THREE.AmbientLight(0x050410,4));
-  var mLight = new THREE.PointLight(0x6366f1,4,10); mLight.position.set(2.5,2,2); scene.add(mLight);
-  var gLight = new THREE.PointLight(0xa5b4fc,2,10); gLight.position.set(-2,-1.5,1.5); scene.add(gLight);
-  var bLight = new THREE.PointLight(0x4f46e5,1.5,8); bLight.position.set(0,-2.5,-1); scene.add(bLight);
-  var fLight = new THREE.PointLight(0xc4b5fd,1.2,6); fLight.position.set(-1.5,1.5,2); scene.add(fLight);
+  /* Dimmed ~30% from the original (4/2/1.5/1.2) -- keeps the same 4
+     sharp glints the glossy core produces, just softer, instead of
+     matte-ing the surface and losing the highlight character entirely. */
+  var mLight = new THREE.PointLight(0x6366f1,2.8,10); mLight.position.set(2.5,2,2); scene.add(mLight);
+  var gLight = new THREE.PointLight(0xa5b4fc,1.4,10); gLight.position.set(-2,-1.5,1.5); scene.add(gLight);
+  var bLight = new THREE.PointLight(0x4f46e5,1.05,8); bLight.position.set(0,-2.5,-1); scene.add(bLight);
+  var fLight = new THREE.PointLight(0xc4b5fd,.85,6); fLight.position.set(-1.5,1.5,2); scene.add(fLight);
 
   var mouseX=0, mouseY=0;
   addEventListener('mousemove', function(e){
@@ -1894,8 +1894,11 @@ html, body { overflow-x: hidden; background: var(--bg); }
     core.scale.setScalar(breath); wire.scale.setScalar(breath*1.01);
     scene.rotation.x += (mouseY*.6-scene.rotation.x)*.03;
     scene.rotation.y += (mouseX*.6-scene.rotation.y)*.03;
-    mLight.intensity = 3.5+Math.sin(t*1.1)*.8;
-    gLight.intensity = 1.8+Math.cos(t*.9)*.5;
+    /* These two overwrite the dimmed initial values above every frame --
+       scaled ~30% dimmer too (same oscillation shape, lower center and
+       amplitude) so the per-frame pulse doesn't undo the dimming. */
+    mLight.intensity = 2.45+Math.sin(t*1.1)*.56;
+    gLight.intensity = 1.26+Math.cos(t*.9)*.35;
     renderer.render(scene, camera);
   }
   animate();
