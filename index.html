@@ -424,7 +424,12 @@ html, body { overflow-x: hidden; background: var(--bg); }
   z-index: 10;
   max-width: 540px;
   margin: 0 auto;
-  border: 1px solid rgba(165,180,252,.3);
+  /* Border + glow were on their own indigo palette (99,102,241 /
+     124,58,237 / border 165,180,252) while every other card on the
+     page -- roster rows, tiles, pricing card -- runs violet
+     (139,92,246, border 167,139,250). Kumar flagged the mismatch;
+     unified onto the shared violet. */
+  border: 1px solid rgba(167,139,250,.3);
   border-radius: 18px;
   background: var(--bg, #050410);
   /* backdrop-filter removed: it blurs whatever's behind this element
@@ -432,14 +437,12 @@ html, body { overflow-x: hidden; background: var(--bg); }
      opaque black, so it had nothing left to do. Dead weight, cut
      while chasing a blur complaint on content inside this box. */
   overflow: hidden;
-  /* Dimmed 22 Oct 2026 -- Kumar flagged the glow as too bright. Mirror
-     this value in @keyframes rf-pulse-hero-panel below (both its 0%/
-     100% resting state and its 50% peak) if it's ever touched again --
-     this static value is also what reduced-motion visitors see as
-     their only, non-animated state. */
+  /* This static value is the reduced-motion fallback and the pulse's
+     peak anchor (see @keyframes rf-pulse-hero-panel below) -- keep
+     both in sync if this is ever touched again. */
   box-shadow:
-    0 28px 80px -18px rgba(99,102,241,.34),
-    0 0 110px -16px rgba(124,58,237,.22),
+    0 28px 80px -18px rgba(139,92,246,.34),
+    0 0 110px -16px rgba(139,92,246,.22),
     inset 0 1px 0 rgba(255,255,255,.12);
   /* Three fixes were tried on this box before landing here -- worth
      keeping the history, because each one failed for a different
@@ -968,13 +971,22 @@ html, body { overflow-x: hidden; background: var(--bg); }
 @media (max-width: 480px) { .rf-pricing-card { padding: 36px 28px; } }
 
 /* Soft pulsating glow on every card-style element on the landing page --
-   roster rows, tiles, the pricing card, and the hero ARIA panel. Purely
-   a box-shadow intensity animation between each card's own resting glow
-   and a slightly brighter peak, so it reads as "breathing" rather than
-   flashing; colors/layers are each card's own existing recipe, only the
-   alpha/blur moves. Gated behind prefers-reduced-motion, same as the
-   hero orb's Three.js animation bailing out for that preference, so
-   motion-sensitive visitors get the static resting glow only.
+   roster rows, tiles, the pricing card, and the hero ARIA panel. Second
+   pass (22 Oct 2026): the first version (0%/100% at a dim-but-visible
+   resting glow, 50% brighter) never actually went away, it just wobbled
+   between two always-on states -- Kumar called that out as reading like
+   a constant glow, not a pulse. Redesigned so 0%/100% fade down near
+   zero (card still reads fine off its own border + background gradient)
+   and 50% rises to each card's own accepted resting box-shadow value
+   (the one still set directly on the element, which also stays the
+   reduced-motion fallback and the very first paint before this
+   kicks in) -- genuine fade in/out, not an intensity wobble. All four
+   now share the same violet (139,92,246) the other three already did;
+   .rf-hero-panel's indigo was the one Kumar flagged as inconsistent,
+   recolored above where its own box-shadow is set.
+   Gated behind prefers-reduced-motion, same as the hero orb's Three.js
+   animation bailing out for that preference, so motion-sensitive
+   visitors get the static value with no animation at all.
    .rf-tool-row and .rf-tile already have their own :hover box-shadow +
    transition -- a CSS animation always wins over a transition on the
    same property, so without an override hover's brighter glow would
@@ -984,54 +996,54 @@ html, body { overflow-x: hidden; background: var(--bg); }
 @keyframes rf-pulse-hero-panel {
   0%, 100% {
     box-shadow:
-      0 28px 80px -18px rgba(99,102,241,.34),
-      0 0 110px -16px rgba(124,58,237,.22),
+      0 28px 80px -18px rgba(139,92,246,.05),
+      0 0 110px -16px rgba(139,92,246,.03),
       inset 0 1px 0 rgba(255,255,255,.12);
   }
   50% {
     box-shadow:
-      0 28px 88px -15px rgba(99,102,241,.44),
-      0 0 120px -14px rgba(124,58,237,.32),
+      0 28px 80px -18px rgba(139,92,246,.34),
+      0 0 110px -16px rgba(139,92,246,.22),
       inset 0 1px 0 rgba(255,255,255,.12);
   }
 }
 @keyframes rf-pulse-tool-row {
   0%, 100% {
     box-shadow:
-      0 14px 36px -16px rgba(139,92,246,.35),
+      0 14px 36px -16px rgba(139,92,246,.05),
       inset 0 1px 0 rgba(255,255,255,.06);
   }
   50% {
     box-shadow:
-      0 14px 44px -14px rgba(139,92,246,.5),
+      0 14px 36px -16px rgba(139,92,246,.35),
       inset 0 1px 0 rgba(255,255,255,.06);
   }
 }
 @keyframes rf-pulse-tile {
   0%, 100% {
     box-shadow:
-      0 20px 50px -18px rgba(139,92,246,.4),
-      0 0 70px -22px rgba(139,92,246,.35),
+      0 20px 50px -18px rgba(139,92,246,.06),
+      0 0 70px -22px rgba(139,92,246,.05),
       inset 0 1px 0 rgba(255,255,255,.08);
   }
   50% {
     box-shadow:
-      0 20px 58px -16px rgba(139,92,246,.55),
-      0 0 85px -18px rgba(139,92,246,.5),
+      0 20px 50px -18px rgba(139,92,246,.4),
+      0 0 70px -22px rgba(139,92,246,.35),
       inset 0 1px 0 rgba(255,255,255,.08);
   }
 }
 @keyframes rf-pulse-pricing-card {
   0%, 100% {
     box-shadow:
-      0 28px 80px -18px rgba(139,92,246,.4),
-      0 0 100px -15px rgba(139,92,246,.3),
+      0 28px 80px -18px rgba(139,92,246,.06),
+      0 0 100px -15px rgba(139,92,246,.05),
       inset 0 1px 0 rgba(255,255,255,.1);
   }
   50% {
     box-shadow:
-      0 28px 90px -16px rgba(139,92,246,.55),
-      0 0 115px -12px rgba(139,92,246,.45),
+      0 28px 80px -18px rgba(139,92,246,.4),
+      0 0 100px -15px rgba(139,92,246,.3),
       inset 0 1px 0 rgba(255,255,255,.1);
   }
 }
