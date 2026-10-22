@@ -213,6 +213,15 @@
             if (d.next_billing_date)   plan.next_billing_date = d.next_billing_date;
             if (d.razorpay_subscription_id) plan.razorpay_subscription_id = d.razorpay_subscription_id;
             if (d.trial_end_date)           plan.trial_end_date = d.trial_end_date;
+            // effective_trial_end is server-computed: it's trial_end_date, UNLESS an
+            // incident relief window (TRIAL_EXTEND_FROM/UNTIL) is active for this user,
+            // in which case it's the later TRIAL_EXTEND_UNTIL cutoff instead. The sidebar
+            // countdown must read this, not trial_end_date, or it shows "Trial Ended"
+            // during an active relief window even though the backend is still letting
+            // calls through (SOP gap fixed 22 Oct 2026).
+            if (d.effective_trial_end)      plan.effective_trial_end = d.effective_trial_end;
+            if (typeof d.trial_extended === 'boolean') plan.trial_extended = d.trial_extended;
+            if (typeof d.trial_calls_used === 'number') plan.trial_calls_used = d.trial_calls_used;
             localStorage.setItem('vantage_plan', JSON.stringify(plan));
           } catch (e) {}
         })

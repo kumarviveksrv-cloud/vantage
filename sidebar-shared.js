@@ -211,12 +211,27 @@
         };
       }
 
-      // ── TRIAL STATE (client-side fallback) ───────────────────────────────
+      // ── TRIAL STATE ───────────────────────────────────────────────────────
+      // Prefer the server-confirmed deadline (plan.effective_trial_end, merged
+      // in by clerk-auth.js's _fetchPlanData from the Worker's get_plan tool).
+      // effective_trial_end already accounts for any active incident relief
+      // window (TRIAL_EXTEND_FROM/UNTIL) — trial_end_date alone does not, since
+      // the backend deliberately never rewrites that field when granting relief.
+      // Falls back to the local vantage_trial_start+7days guess only when the
+      // server hasn't answered yet (e.g. the very first paint of a session).
+      // FIX (22 Oct 2026): previously this always computed purely from the
+      // local timestamp, so during an active relief window the backend kept
+      // letting calls through while this badge could still read "Trial Ended" —
+      // a real, flagged UI/backend desync, not a styling nit.
       var trialStartMs = parseInt(localStorage.getItem('vantage_trial_start') || '0', 10);
       var capHit = localStorage.getItem('vantage_trial_cap_hit') === '1';
+      if (plan && typeof plan.trial_calls_used === 'number' && plan.trial_calls_used >= 10) capHit = true;
 
-      if (trialStartMs) {
-        var trialEndMs = trialStartMs + (TRIAL_DAYS * 86400000);
+      var serverTrialEndMs = (plan && plan.effective_trial_end) ? new Date(plan.effective_trial_end).getTime() : NaN;
+      var localTrialEndMs  = trialStartMs ? (trialStartMs + (TRIAL_DAYS * 86400000)) : NaN;
+      var trialEndMs = !isNaN(serverTrialEndMs) ? serverTrialEndMs : localTrialEndMs;
+
+      if (!isNaN(trialEndMs)) {
         var now = Date.now();
 
         // Trial ended: cap hit (10 calls) or time expired
