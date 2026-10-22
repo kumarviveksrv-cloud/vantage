@@ -962,6 +962,82 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 @media (max-width: 480px) { .rf-pricing-card { padding: 36px 28px; } }
 
+/* Soft pulsating glow on every card-style element on the landing page --
+   roster rows, tiles, the pricing card, and the hero ARIA panel. Purely
+   a box-shadow intensity animation between each card's own resting glow
+   and a slightly brighter peak, so it reads as "breathing" rather than
+   flashing; colors/layers are each card's own existing recipe, only the
+   alpha/blur moves. Gated behind prefers-reduced-motion, same as the
+   hero orb's Three.js animation bailing out for that preference, so
+   motion-sensitive visitors get the static resting glow only.
+   .rf-tool-row and .rf-tile already have their own :hover box-shadow +
+   transition -- a CSS animation always wins over a transition on the
+   same property, so without an override hover's brighter glow would
+   never show, just the frozen pulse value. Hover sets animation:none
+   there to hand box-shadow back to the existing transition. Durations
+   are offset per card type so the page doesn't visibly beat in unison. */
+@keyframes rf-pulse-hero-panel {
+  0%, 100% {
+    box-shadow:
+      0 28px 80px -18px rgba(99,102,241,.5),
+      0 0 110px -12px rgba(124,58,237,.35),
+      inset 0 1px 0 rgba(255,255,255,.12);
+  }
+  50% {
+    box-shadow:
+      0 28px 92px -16px rgba(99,102,241,.65),
+      0 0 125px -10px rgba(124,58,237,.5),
+      inset 0 1px 0 rgba(255,255,255,.12);
+  }
+}
+@keyframes rf-pulse-tool-row {
+  0%, 100% {
+    box-shadow:
+      0 14px 36px -16px rgba(139,92,246,.35),
+      inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  50% {
+    box-shadow:
+      0 14px 44px -14px rgba(139,92,246,.5),
+      inset 0 1px 0 rgba(255,255,255,.06);
+  }
+}
+@keyframes rf-pulse-tile {
+  0%, 100% {
+    box-shadow:
+      0 20px 50px -18px rgba(139,92,246,.4),
+      0 0 70px -22px rgba(139,92,246,.35),
+      inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  50% {
+    box-shadow:
+      0 20px 58px -16px rgba(139,92,246,.55),
+      0 0 85px -18px rgba(139,92,246,.5),
+      inset 0 1px 0 rgba(255,255,255,.08);
+  }
+}
+@keyframes rf-pulse-pricing-card {
+  0%, 100% {
+    box-shadow:
+      0 28px 80px -18px rgba(139,92,246,.4),
+      0 0 100px -15px rgba(139,92,246,.3),
+      inset 0 1px 0 rgba(255,255,255,.1);
+  }
+  50% {
+    box-shadow:
+      0 28px 90px -16px rgba(139,92,246,.55),
+      0 0 115px -12px rgba(139,92,246,.45),
+      inset 0 1px 0 rgba(255,255,255,.1);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rf-hero-panel   { animation: rf-pulse-hero-panel 3.8s ease-in-out infinite; }
+  .rf-tool-row     { animation: rf-pulse-tool-row 4s ease-in-out infinite; }
+  .rf-tile         { animation: rf-pulse-tile 4.6s ease-in-out infinite; }
+  .rf-pricing-card { animation: rf-pulse-pricing-card 5.2s ease-in-out infinite; }
+  .rf-tool-row:hover, .rf-tile:hover { animation: none; }
+}
+
 .rf-pricing-features {
   list-style: none;
   margin: 28px 0 32px;
