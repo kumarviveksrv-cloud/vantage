@@ -1191,11 +1191,11 @@
       const subEl    = pro.querySelector('.prologue-sub');
       if(vw <= 375){
         if(kickerEl){ kickerEl.style.setProperty('font-size','10px','important'); kickerEl.style.setProperty('margin-bottom','8px','important'); }
-        if(msgEl){ msgEl.style.setProperty('font-size','26px','important'); msgEl.style.setProperty('line-height','1.2','important'); }
+        if(msgEl){ msgEl.style.setProperty('font-size','20px','important'); msgEl.style.setProperty('line-height','1.2','important'); }
         if(subEl){ subEl.style.setProperty('font-size','11px','important'); subEl.style.setProperty('margin-top','8px','important'); }
       } else if(vw <= 480){
         if(kickerEl){ kickerEl.style.setProperty('font-size','11px','important'); kickerEl.style.setProperty('margin-bottom','10px','important'); }
-        if(msgEl){ msgEl.style.setProperty('font-size','30px','important'); msgEl.style.setProperty('line-height','1.22','important'); }
+        if(msgEl){ msgEl.style.setProperty('font-size','23px','important'); msgEl.style.setProperty('line-height','1.22','important'); }
         if(subEl){ subEl.style.setProperty('font-size','12px','important'); subEl.style.setProperty('margin-top','10px','important'); }
       }
     }
