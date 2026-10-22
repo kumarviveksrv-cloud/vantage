@@ -111,6 +111,12 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
     .aria-label .name{font-family:var(--font),sans-serif;font-size:12px;font-weight:600;color:var(--muted)}
     .aria-label .status{font-size:11px;color:var(--grey)}
 
+    /* HEADER CLOCK */
+    .header-clock{display:flex;align-items:center;gap:10px;padding:8px 14px;border:1px solid rgba(99,102,241,.18);border-radius:12px;background:rgba(99,102,241,.06)}
+    .header-clock-time{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;color:var(--white);letter-spacing:.02em;min-width:76px;text-align:right}
+    .header-clock-tz{background:transparent;border:none;color:var(--muted);font-family:var(--font),sans-serif;font-size:11px;letter-spacing:.03em;cursor:pointer;outline:none;max-width:132px}
+    .header-clock-tz option{background:#0d0b1e;color:var(--white)}
+
     /* HUMAC WIDGET */
     #humac-widget{background:var(--card);border:1px solid rgba(99,102,241,.18);border-radius:16px;padding:24px 28px;margin-bottom:24px;position:relative;overflow:hidden;animation:fadeIn .4s ease .05s both}
     #humac-widget::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,.4),transparent)}
@@ -396,6 +402,22 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
         <div class="welcome-name">Good to have you here.</div>
         <div class="welcome-sub">Your MERIDIAN context is ready. What's happening today?</div>
       </div>
+      <div style="display:flex;align-items:center;gap:16px">
+      <div class="header-clock" id="header-clock" title="Time shown is in the timezone you pick below, not auto-detected">
+        <div class="header-clock-time" id="header-clock-time">--:--</div>
+        <select class="header-clock-tz" id="header-clock-tz" aria-label="Clock timezone">
+          <option value="Asia/Kolkata">IST &middot; Kolkata</option>
+          <option value="America/New_York">ET &middot; New York</option>
+          <option value="America/Los_Angeles">PT &middot; Los Angeles</option>
+          <option value="Europe/London">GMT &middot; London</option>
+          <option value="Europe/Berlin">CET &middot; Berlin</option>
+          <option value="Asia/Dubai">GST &middot; Dubai</option>
+          <option value="Asia/Singapore">SGT &middot; Singapore</option>
+          <option value="Asia/Tokyo">JST &middot; Tokyo</option>
+          <option value="Australia/Sydney">AEDT &middot; Sydney</option>
+          <option value="UTC">UTC</option>
+        </select>
+      </div>
       <div class="header-aria" onclick="window.location.href='aria.html'">
         <svg class="aria-orb" viewBox="0 0 120 120" width="52" height="52" xmlns="http://www.w3.org/2000/svg">
           <defs><radialGradient id="dcg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#a5b4fc" stop-opacity="0.9"/><stop offset="100%" stop-color="#4f46e5" stop-opacity="0"/></radialGradient><filter id="dgl"><feGaussianBlur stdDeviation="2.5" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter></defs>
@@ -413,6 +435,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
           <div class="name">ARIA</div>
           <div class="status" id="aria-dash-status">Ready</div>
         </div>
+      </div>
       </div>
     </div>
 
@@ -1562,6 +1585,57 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
     init();
   }
 
+})();
+</script>
+
+<!-- HEADER CLOCK -->
+<script>
+(function(){
+  var TZ_KEY = 'vantage_clock_tz';
+  var DEFAULT_TZ = 'Asia/Kolkata'; // Vantage is India-only; this is a sane default, not a detected one.
+
+  function render(tz){
+    var el = document.getElementById('header-clock-time');
+    if(!el) return;
+    try {
+      var text = new Date().toLocaleTimeString('en-GB', {
+        timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+      el.textContent = text;
+    } catch(e) {
+      // Unsupported/garbled tz value (shouldn't happen from our own dropdown,
+      // but don't let a bad localStorage value break the clock silently).
+      el.textContent = '--:--:--';
+    }
+  }
+
+  function initClock(){
+    var select = document.getElementById('header-clock-tz');
+    if(!select) return;
+
+    var saved = null;
+    try { saved = localStorage.getItem(TZ_KEY); } catch(e) {}
+    var tz = (saved && select.querySelector('option[value="' + saved + '"]')) ? saved : DEFAULT_TZ;
+    select.value = tz;
+
+    render(tz);
+    var tickHandle = setInterval(function(){ render(select.value); }, 1000);
+
+    select.addEventListener('change', function(){
+      var next = select.value;
+      try { localStorage.setItem(TZ_KEY, next); } catch(e) {}
+      render(next);
+    });
+
+    // Defensive: if the element ever gets removed from the DOM, stop ticking.
+    window.addEventListener('beforeunload', function(){ clearInterval(tickHandle); });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initClock);
+  } else {
+    initClock();
+  }
 })();
 </script>
 </body>
