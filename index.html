@@ -1816,7 +1816,16 @@ html, body { overflow-x: hidden; background: var(--bg); }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
 
-  var core = new THREE.Mesh(new THREE.SphereGeometry(.85,80,80), new THREE.MeshStandardMaterial({color:0x0d0b1e,roughness:.2,metalness:.9,emissive:0x1e1b4b,emissiveIntensity:.5}));
+  /* roughness:.2/metalness:.9 made the core near-mirror, so each of the
+     4 point lights below (mLight/gLight/bLight/fLight) threw a sharp,
+     bright specular highlight onto the sphere -- the "4 bulbs" Kumar
+     flagged as distracting. Those lights still do the real work of
+     tinting the sphere and rim-lighting the rings/particle clouds, so
+     removing them would flatten the whole visual, not just the glints.
+     Softened the surface instead: higher roughness scatters each
+     highlight into a broad soft sheen instead of a pinpoint glare,
+     lower metalness keeps it from reading as mirror-polished. */
+  var core = new THREE.Mesh(new THREE.SphereGeometry(.85,80,80), new THREE.MeshStandardMaterial({color:0x0d0b1e,roughness:.75,metalness:.55,emissive:0x1e1b4b,emissiveIntensity:.5}));
   scene.add(core);
   scene.add(new THREE.Mesh(new THREE.SphereGeometry(.9,32,32), new THREE.MeshBasicMaterial({color:0x6366f1,transparent:true,opacity:.06,side:THREE.BackSide})));
   var wire = new THREE.Mesh(new THREE.SphereGeometry(.87,24,24), new THREE.MeshBasicMaterial({color:0x7c3aed,wireframe:true,transparent:true,opacity:.09}));
