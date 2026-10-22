@@ -757,6 +757,24 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 .rf-gap::before { margin-bottom: 52px; }
 .rf-gap::after { margin-top: 52px; transform: rotate(180deg); }
+
+/* Kumar wanted something actually ongoing, not just a one-time
+   reveal + static frame -- a slow breathing pulse on the two rails,
+   same genuine fade-to-near-zero-and-back pattern already approved
+   for the card glows earlier today (not a brightness wobble, a real
+   pulse). Offset the two rails by half a cycle so they alternate
+   rather than breathing in unison -- reads as more alive without
+   being busier, and keeps the paragraph text itself untouched/calm. */
+@keyframes rf-pulse-gap-rail {
+  0%, 100% { opacity: .25; }
+  50% { opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rf-gap::before, .rf-gap::after {
+    animation: rf-pulse-gap-rail 4.2s ease-in-out infinite;
+  }
+  .rf-gap::after { animation-delay: 2.1s; }
+}
 .rf-gap p {
   font: 400 clamp(17px, 2.2vw, 22px)/1.65 var(--font);
   color: rgba(244,243,255,.8);
