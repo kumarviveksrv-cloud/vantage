@@ -53,6 +53,25 @@
     }
   }
 
+  // SOP gap fix (22 Oct 2026): when Clerk's own SDK script can't load at all
+  // (CDN outage, network block), the old behaviour called _revealPage(),
+  // which just un-hid the normal page shell with no auth check performed.
+  // Every real data call still needs a Clerk token verified server-side, so
+  // this was never a data-exposure hole, but it was a confusing broken-looking
+  // page. Show an honest "sign-in unavailable" screen instead, only for the
+  // unknown-visitor loader path (returning users on the fast-path never get
+  // a loader in the first place, so there's nothing here to retroactively cover).
+  function _showAuthUnavailable() {
+    var el = document.getElementById('vantage-auth-loader');
+    if (!el) { return; } // returning-user fast path: no loader exists, nothing to swap
+    el.innerHTML =
+      '<div style="font-family:sans-serif;font-size:14px;color:rgba(244,243,255,0.85);text-align:center;max-width:300px;line-height:1.6;padding:0 24px">' +
+        'Sign-in is temporarily unavailable.<br>Please check your connection and try again.' +
+      '</div>' +
+      '<button type="button" onclick="window.location.reload()" style="margin-top:20px;padding:10px 22px;border-radius:8px;border:none;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#f4f3ff;font-family:sans-serif;font-size:13px;font-weight:600;cursor:pointer">Retry</button>';
+    el.style.opacity = '1';
+  }
+
   // ── FAST-PATH ──────────────────────────────────────────────────────────────
   // If the localStorage flag is set (written after sign-in), pre-populate
   // sessionStorage so existing inline page checks don't redirect to access.html
@@ -244,9 +263,14 @@
 
   s.addEventListener('error', function () {
     console.error('[Clerk] SDK failed to load — auth unavailable');
-    // Restore visibility so the page isn't stuck hidden
-    _revealPage();
-    // Don't redirect — let existing sessionStorage gate handle it
+    if (isAccessPage) {
+      // access.html handles its own UI for a failed Clerk load; just unblock it.
+      _revealPage();
+      return;
+    }
+    // Show a clear unavailable screen instead of silently exposing the page
+    // shell with no auth check performed (SOP gap, fixed 22 Oct 2026).
+    _showAuthUnavailable();
   });
 
   document.head.appendChild(s);
