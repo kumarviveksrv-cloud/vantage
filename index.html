@@ -737,14 +737,26 @@ html, body { overflow-x: hidden; background: var(--bg); }
   margin: 0 auto;
   position: relative;
 }
-.rf-gap::before {
+/* Persistent frame (22 Oct 2026) -- the staggered-paragraph reveal
+   below is motion-only: once it fires, the resting state is pixel
+   identical to the old plain block, so anyone who loads the page
+   already scrolled past this section (or looks at a static
+   screenshot) sees nothing different. Added a static top/bottom
+   rail pair so the section reads as deliberately framed at rest too,
+   not just during the one-time scroll-in. Same violet rail language
+   as the .rf-framework-inner accent rail below it, so the two
+   sections Kumar flagged together stay visually related. */
+.rf-gap::before, .rf-gap::after {
   content: '';
   display: block;
-  width: 1px;
-  height: 60px;
-  background: linear-gradient(180deg, transparent, rgba(99,102,241,.45));
-  margin: 0 auto 60px;
+  width: 2px;
+  height: 72px;
+  margin: 0 auto;
+  border-radius: 2px;
+  background: linear-gradient(180deg, transparent, rgba(139,92,246,.6));
 }
+.rf-gap::before { margin-bottom: 52px; }
+.rf-gap::after { margin-top: 52px; transform: rotate(180deg); }
 .rf-gap p {
   font: 400 clamp(17px, 2.2vw, 22px)/1.65 var(--font);
   color: rgba(244,243,255,.8);
