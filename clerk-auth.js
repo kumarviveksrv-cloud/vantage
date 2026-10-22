@@ -225,7 +225,11 @@
   s.async = true;
   s.crossOrigin = 'anonymous';
   s.setAttribute('data-clerk-publishable-key', PUBLISHABLE_KEY);
-  s.src = CLERK_DOMAIN + '/npm/@clerk/clerk-js@latest/dist/clerk.browser.js';
+  // Pinned (not @latest) per SOP gap fix 22 Oct 2026 — an untested Clerk
+  // release can change sign-in behaviour overnight with zero warning.
+  // 6.40.0 is the version live and working as of this pin; bump deliberately
+  // and test before changing.
+  s.src = CLERK_DOMAIN + '/npm/@clerk/clerk-js@6.40.0/dist/clerk.browser.js';
 
   s.addEventListener('load', function () {
     window.Clerk.load().then(function () {

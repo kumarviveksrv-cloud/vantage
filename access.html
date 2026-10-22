@@ -185,7 +185,8 @@
     s.async = true;
     s.crossOrigin = 'anonymous';
     s.setAttribute('data-clerk-publishable-key', PUBLISHABLE_KEY);
-    s.src = CLERK_CDN + '/npm/@clerk/clerk-js@latest/dist/clerk.browser.js';
+    // Pinned (not @latest), matching clerk-auth.js — SOP gap fix 22 Oct 2026.
+    s.src = CLERK_CDN + '/npm/@clerk/clerk-js@6.40.0/dist/clerk.browser.js';
 
     s.addEventListener('load', function() {
       window.Clerk.load().then(function() {
