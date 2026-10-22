@@ -1083,7 +1083,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       cases.forEach(function(f) {
         var v1 = parseExposureLakhsDash(f.financial_exposure || '');
         if (v1 > 0) { comp1 += v1; entries++; }
-        var v2 = parseExposureLakhsDash(f.retention_value || '');
+        var v2 = parseExposureLakhsDash(f.modelled_replacement_cost || '');
         if (v2 > 0) { comp2 += v2; entries++; }
         var v3 = parseExposureLakhsDash(f.business_case_value || '');
         if (v3 > 0) { comp3 += v3; entries++; }
@@ -1102,7 +1102,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
 
       var parts = [];
       if (comp1 > 0) parts.push('Exposure ' + fmtL(comp1));
-      if (comp2 > 0) parts.push('Retention ' + fmtL(comp2));
+      if (comp2 > 0) parts.push('Modelled replacement cost ' + fmtL(comp2));
       if (comp3 > 0) parts.push('ROI ' + fmtL(comp3));
       if (cntEl) cntEl.textContent = entries + (entries === 1 ? ' entry' : ' entries') + (parts.length ? ' \u00b7 ' + parts.join(' \u00b7 ') : '');
       card.style.display = 'block';
