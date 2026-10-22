@@ -432,9 +432,14 @@ html, body { overflow-x: hidden; background: var(--bg); }
      opaque black, so it had nothing left to do. Dead weight, cut
      while chasing a blur complaint on content inside this box. */
   overflow: hidden;
+  /* Dimmed 22 Oct 2026 -- Kumar flagged the glow as too bright. Mirror
+     this value in @keyframes rf-pulse-hero-panel below (both its 0%/
+     100% resting state and its 50% peak) if it's ever touched again --
+     this static value is also what reduced-motion visitors see as
+     their only, non-animated state. */
   box-shadow:
-    0 28px 80px -18px rgba(99,102,241,.5),
-    0 0 110px -12px rgba(124,58,237,.35),
+    0 28px 80px -18px rgba(99,102,241,.34),
+    0 0 110px -16px rgba(124,58,237,.22),
     inset 0 1px 0 rgba(255,255,255,.12);
   /* Three fixes were tried on this box before landing here -- worth
      keeping the history, because each one failed for a different
@@ -979,14 +984,14 @@ html, body { overflow-x: hidden; background: var(--bg); }
 @keyframes rf-pulse-hero-panel {
   0%, 100% {
     box-shadow:
-      0 28px 80px -18px rgba(99,102,241,.5),
-      0 0 110px -12px rgba(124,58,237,.35),
+      0 28px 80px -18px rgba(99,102,241,.34),
+      0 0 110px -16px rgba(124,58,237,.22),
       inset 0 1px 0 rgba(255,255,255,.12);
   }
   50% {
     box-shadow:
-      0 28px 92px -16px rgba(99,102,241,.65),
-      0 0 125px -10px rgba(124,58,237,.5),
+      0 28px 88px -15px rgba(99,102,241,.44),
+      0 0 120px -14px rgba(124,58,237,.32),
       inset 0 1px 0 rgba(255,255,255,.12);
   }
 }
