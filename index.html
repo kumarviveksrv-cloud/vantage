@@ -1165,6 +1165,32 @@ html, body { overflow-x: hidden; background: var(--bg); }
   flex-shrink: 0;
   padding-top: 1px;
 }
+/* Kumar: the card was too short and never actually named what the 8
+   tools are -- "full access to all 8 tools" asks visitors to take it
+   on faith. Naming them, same names used in the roster section above
+   on this same page, gives the card real substance instead of a
+   marketing-shaped placeholder. */
+.rf-pricing-tools {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0 0;
+  width: 100%;
+}
+.rf-pricing-tools span {
+  display: block;
+  font: 600 10.5px var(--mono);
+  letter-spacing: .01em;
+  color: rgba(196,181,253,.78);
+  background: rgba(139,92,246,.08);
+  border: 1px solid rgba(139,92,246,.2);
+  border-radius: 6px;
+  padding: 7px 10px;
+  text-align: center;
+}
+@media (max-width: 420px) {
+  .rf-pricing-tools { grid-template-columns: 1fr; }
+}
 .rf-pricing-badge {
   display: inline-block;
   background: rgba(139,92,246,.14);
@@ -1882,7 +1908,21 @@ html, body { overflow-x: hidden; background: var(--bg); }
         7-day free trial <span>·</span> No credit card required <span>·</span> Cancel anytime
       </p>
       <ul class="rf-pricing-features">
-        <li>Full access to all 8 tools, including ARIA</li>
+        <li>
+          <div>
+            Full access to all 8 tools
+            <div class="rf-pricing-tools">
+              <span>ARIA</span>
+              <span>Employee Case Advisor</span>
+              <span>The Business Case</span>
+              <span>Retention Advisor</span>
+              <span>Policy Advisor</span>
+              <span>Standpoint</span>
+              <span>The Debrief</span>
+              <span>Vantage Record</span>
+            </div>
+          </div>
+        </li>
         <li>Unlimited cases, models, and financial calculations</li>
         <li>Vantage Record — permanent, portable, follows you</li>
         <li>No company procurement, no IT approvals, no seat limits</li>
