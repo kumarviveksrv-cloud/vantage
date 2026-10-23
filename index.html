@@ -892,6 +892,14 @@ html, body { overflow-x: hidden; background: var(--bg); }
   color: rgba(232,230,255,.85);
   margin: 0;
 }
+.rf-tool-note {
+  font: 600 11px var(--mono);
+  letter-spacing: .04em;
+  color: #a78bfa;
+  margin: 8px 0 0;
+  grid-column: 2;
+}
+@media (max-width: 680px) { .rf-tool-note { grid-column: 1; } }
 
 /* ── WHAT YOU GET — 4 TILES ─────────────────────────────────────────── */
 /* ── INSIDE VANTAGE (proof mockups) ──────────────────────────────────── */
@@ -1992,6 +2000,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
         <div class="rf-tool-row rf-tool-row--last">
           <p class="rf-tool-name">Policy Advisor</p>
           <p class="rf-tool-desc">Describe the gap. Get the applicable Acts, the rules, and the compliance requirements for your exact state, cited to BNS, BNSS, and BSA, not the repealed IPC.</p>
+          <p class="rf-tool-note">✓ Every citation carries a verification date, so you know it isn't pre-code law</p>
         </div>
       </div>
 
