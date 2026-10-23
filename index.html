@@ -1295,6 +1295,29 @@ html, body { overflow-x: hidden; background: var(--bg); }
   z-index: 1;
 }
 .rf-pricing-sub span { margin: 0 8px; opacity: .45; }
+.rf-pricing-lock {
+  display: block;
+  font: 600 11px var(--mono);
+  letter-spacing: .06em;
+  color: #a78bfa;
+  text-transform: uppercase;
+  margin: -24px 0 32px;
+  position: relative;
+  z-index: 1;
+}
+.rf-pricing-founder-link {
+  display: inline-block;
+  margin-top: 16px;
+  font: 500 12px var(--mono);
+  letter-spacing: .04em;
+  color: rgba(196,181,253,.6);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(196,181,253,.25);
+  padding-bottom: 2px;
+  position: relative;
+  z-index: 1;
+}
+.rf-pricing-founder-link:hover { color: rgba(196,181,253,.85); border-color: rgba(196,181,253,.5); }
 .rf-pricing-personal {
   font: 700 11px/1 var(--mono);
   letter-spacing: .15em;
@@ -2049,6 +2072,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
       <p class="rf-pricing-sub">
         7-day free trial <span>·</span> No credit card required <span>·</span> Cancel anytime
       </p>
+      <span class="rf-pricing-lock">Founding price, locked for life · reviews once Vantage exits beta</span>
       <div class="rf-pricing-features-label">What's included</div>
       <ul class="rf-pricing-features rf-pricing-features--detailed">
         <li><span><strong>Employee Case Advisor:</strong> structured diagnostic and 7-section Decision Protocol</span></li>
@@ -2069,6 +2093,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
       <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html" style="width:100%;justify-content:center;font-size:15px;padding:16px 36px;position:relative;z-index:1">
         Start Free Trial <span>→</span>
       </a>
+      <a class="rf-pricing-founder-link" href="mailto:info@virorah.com?subject=Question%20about%20Vantage">Have a question first? Talk to the founder →</a>
     </div>
   </section>
 
