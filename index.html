@@ -1033,6 +1033,63 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-framework-body p:last-child { margin: 0; }
 .rf-framework-body strong { color: rgba(244,243,255,.82); font-weight: 500; }
 
+/* ── COMPARISON SECTION ──────────────────────────────────────────────── */
+.rf-compare { padding: 100px 24px; }
+.rf-compare-inner { max-width: 900px; margin: 0 auto; }
+.rf-compare-tagline {
+  font: 400 16px/1.6 var(--font);
+  color: rgba(244,243,255,.72);
+  text-align: center;
+  max-width: 560px;
+  margin: -36px auto 48px;
+}
+.rf-compare-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.rf-compare-table { width: 100%; min-width: 600px; border-collapse: collapse; table-layout: fixed; }
+.rf-compare-table th:first-child, .rf-compare-table td:first-child { width: 46%; }
+.rf-compare-table th:not(:first-child), .rf-compare-table td:not(:first-child) { width: 18%; }
+@media (max-width: 680px) {
+  .rf-compare-table { min-width: 480px; }
+  .rf-compare-table th:first-child, .rf-compare-table td:first-child { width: 44%; }
+}
+.rf-compare-table thead th {
+  font: 700 12px var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(244,243,255,.5);
+  padding: 0 12px 18px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.rf-compare-table thead th:first-child { text-align: left; }
+.rf-compare-table thead th.rf-compare-win-head {
+  color: #8b5cf6;
+  background: rgba(139,92,246,.08);
+  border-radius: 10px 10px 0 0;
+  padding-top: 10px;
+}
+.rf-compare-table td {
+  padding: 16px 12px;
+  text-align: center;
+  font: 400 14px/1.5 var(--font);
+  color: rgba(244,243,255,.8);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.rf-compare-table td:first-child {
+  text-align: left;
+  color: rgba(244,243,255,.88);
+  font-weight: 500;
+  padding-right: 20px;
+}
+.rf-compare-table tbody tr:last-child td { border-bottom: none; }
+.rf-compare-table td.rf-compare-win { background: rgba(139,92,246,.08); }
+.rf-compare-table tbody tr:last-child td.rf-compare-win { border-radius: 0 0 10px 10px; }
+.rf-compare-check { color: #8b5cf6; font-weight: 700; font-size: 16px; }
+.rf-compare-dash { color: rgba(244,243,255,.25); }
+@media (max-width: 560px) {
+  .rf-compare-table td:first-child { font-size: 13px; }
+  .rf-compare-tagline { margin-top: -24px; }
+}
+
 /* ── PRICING SECTION ─────────────────────────────────────────────────── */
 .rf-pricing {
   padding: 100px 24px;
@@ -1893,6 +1950,89 @@ html, body { overflow-x: hidden; background: var(--bg); }
         <p>Every HR decision you make has a financial dimension. The cost of an unresolved case. The value of a retained employee. The risk exposure behind a policy call. Most HR professionals never put a number on any of it, not because they can't, but because no one built the model for it.</p>
         <p>That's the <strong>HR Financial Model</strong> gap: the layer of financial thinking that HR decisions deserve but rarely get. <strong>HR Financial Value</strong> is what comes out the other side: the financial impact of what you do, finally calculated.</p>
         <p>When you can calculate it, walk in with it, and defend it, you're Revenue Fluent. That's what Vantage is built for.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── COMPARISON ───────────────────────────────────────────────────── -->
+  <section class="rf-compare rf-reveal">
+    <div class="rf-compare-inner">
+      <span class="rf-section-label">How Vantage is different</span>
+      <h2 class="rf-section-headline">Not an HRIS. Not a chatbot.</h2>
+      <p class="rf-compare-tagline">Vantage isn't a records system, and it isn't a generic AI window open in another tab. It's built to carry the weight a real HR call needs.</p>
+      <div class="rf-compare-scroll">
+        <table class="rf-compare-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Traditional HRIS</th>
+              <th>Raw LLM</th>
+              <th class="rf-compare-win-head">Vantage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Stores employee records</td>
+              <td><span class="rf-compare-check">✓</span></td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td class="rf-compare-win"><span class="rf-compare-dash">–</span></td>
+            </tr>
+            <tr>
+              <td>Generates answers instantly</td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td><span class="rf-compare-check">✓</span></td>
+              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Grounds answers in the applicable Act, not general knowledge</td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Calibrated to your exact state, industry, org size, seniority, union status</td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Separates the legal floor from best-practice convention</td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Remembers your organisation's context across every session</td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Files a timestamped, defensible record of your call, before the outcome is known</td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Quantifies the financial exposure and value behind your decisions</td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Builds a searchable professional record that's yours, not your employer's</td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td><span class="rf-compare-check">✓</span></td>
+              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Synthesises your month into a narrative automatically</td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
