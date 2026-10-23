@@ -204,13 +204,14 @@ html, body { overflow-x: hidden; background: var(--bg); }
   z-index: 1;
 }
 /* Laptop/desktop only (mobile keeps the 115vw-driven scaling above) --
-   10% smaller than the 1000px desktop cap, i.e. 900px flat. Matches
-   the getSize() cap in the Three.js init script below, which drives
-   the actual canvas render resolution -- this rule only matters for
-   the first paint before that script runs, and the reduced-motion
-   bailout where the script never runs at all. */
+   two successive 10% cuts from the original 1000px desktop cap
+   (1000 -> 900 -> 810), flat at 810px. Matches the getSize() cap in
+   the Three.js init script below, which drives the actual canvas
+   render resolution -- this rule only matters for the first paint
+   before that script runs, and the reduced-motion bailout where the
+   script never runs at all. */
 @media (min-width: 901px) {
-  #rfOrbCanvas { width: 900px; height: 900px; }
+  #rfOrbCanvas { width: 810px; height: 810px; }
 }
 
 /* Hero copy block — sits below the orb, centered single column */
@@ -2427,7 +2428,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
   if(!canvas || !root) return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  function getSize(){ return window.innerWidth > 900 ? 900 : Math.min(1000, window.innerWidth * 1.15); }
+  function getSize(){ return window.innerWidth > 900 ? 810 : Math.min(1000, window.innerWidth * 1.15); }
   var sz = getSize(); canvas.width = sz; canvas.height = sz;
 
   var scene = new THREE.Scene();
