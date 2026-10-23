@@ -244,14 +244,20 @@ html, body { overflow-x: hidden; background: var(--bg); }
        toward the panel (and raising its cap to match, below) gives the
        dialogue more horizontal room so it grows less vertically. */
     grid-template-columns: 0.9fr 1.1fr;
-    /* start, not center: the panel's content height varies as its demo
-       conversation cycles (one round vs two, stat badge in/out), and
+    /* Was "start": the panel's content height used to vary as its demo
+       conversation cycled (one round vs two, stat badge in/out), and
        center-alignment was letting that height change drag the panel's
        top edge up past the hero/starfield boundary above, and drag the
        copy column out of alignment with it as it did. Pinning both
-       columns to the row's top keeps the panel's top fixed and lets it
-       only ever grow downward. */
-    align-items: start;
+       columns to the row's top fixed that.
+       Now "stretch": .rf-panel-body stopped being content-driven a while
+       back (it's a fixed/flexible-height internally-scrolling window,
+       see its own comment below), so there's no longer any dynamic
+       height left to drag the top edge around -- stretch just grows the
+       panel's bottom edge down to match the copy column's (taller,
+       static) height instead of leaving a gap under it. Top edge stays
+       pinned exactly as "start" pinned it. */
+    align-items: stretch;
     gap: 48px;
     padding: 0 24px;
   }
@@ -276,12 +282,29 @@ html, body { overflow-x: hidden; background: var(--bg); }
      crossing into — the starfield area above it. Keep the sides/bottom
      at 0 (the grid gap and page padding already handle those) but
      restore enough top space for a clean break from the hero section. */
-  .rf-hero-split .rf-aria-preview { padding: 40px 0 64px; }
-  .rf-hero-split .rf-aria-preview-inner { max-width: none; margin: 0; }
+  .rf-hero-split .rf-aria-preview {
+    /* Bottom padding dropped from 64px to 10px (matching .rf-hero-copy's
+       own 10px 0 padding) now that this column stretches to the copy
+       column's height -- the old 64px was eating into the stretch,
+       leaving the panel's bottom edge short of the copy column's by
+       roughly that same amount. */
+    padding: 40px 0 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  .rf-hero-split .rf-aria-preview-inner {
+    max-width: none;
+    margin: 0;
+    flex: 1;
+    display: flex;
+  }
   /* Raise the panel's own 540px cap to match the wider column above --
      otherwise the extra column width goes unused and the panel stays
-     the same size it was. */
-  .rf-hero-split .rf-hero-panel { max-width: 640px; }
+     the same size it was. Panel also now stretches to fill the inner
+     wrapper's height (see align-items: stretch above and the inner
+     wrapper's flex:1), instead of sitting at its own fixed content
+     height with empty space below it. */
+  .rf-hero-split .rf-hero-panel { max-width: 640px; height: 100%; }
 }
 
 /* B2C positioning badge — flat, no glow/gradient fill */
@@ -566,14 +589,21 @@ html, body { overflow-x: hidden; background: var(--bg); }
      Height is intentionally generous enough to show a full exchange
      (question + answer + stat + citations) without scrolling on most
      rotations, so the scroll itself is only a few hundred px most of
-     the time, not a jarring sudden shift. */
-  height: 420px;
+     the time, not a jarring sudden shift.
+     flex: 1 (not a plain height) so that on the 1024px+ split layout,
+     where .rf-hero-panel now stretches to the copy column's height
+     (see .rf-hero-split align-items: stretch), this window absorbs
+     that extra height instead of leaving it as dead space below a
+     fixed-size box. min-height keeps the original floor everywhere
+     else, where the panel still sizes to its own content. */
+  flex: 1 1 420px;
+  min-height: 420px;
   padding: 18px;
   overflow: hidden;
   scroll-behavior: smooth;
 }
 @media (min-width: 420px) {
-  .rf-panel-body { height: 460px; }
+  .rf-panel-body { flex-basis: 460px; min-height: 460px; }
 }
 .rf-panel-content {
   /* No special sizing needed -- this is free to be taller than
