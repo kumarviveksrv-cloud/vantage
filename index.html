@@ -1320,11 +1320,26 @@ html, body { overflow-x: hidden; background: var(--bg); }
       inset 0 1px 0 rgba(255,255,255,.1);
   }
 }
+@keyframes rf-pulse-proof-card {
+  0%, 100% {
+    box-shadow:
+      0 20px 50px -18px rgba(139,92,246,.06),
+      0 0 70px -22px rgba(139,92,246,.05),
+      inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  50% {
+    box-shadow:
+      0 20px 50px -18px rgba(139,92,246,.4),
+      0 0 70px -22px rgba(139,92,246,.35),
+      inset 0 1px 0 rgba(255,255,255,.08);
+  }
+}
 @media (prefers-reduced-motion: no-preference) {
   .rf-hero-panel   { animation: rf-pulse-hero-panel 3.8s ease-in-out infinite; }
   .rf-tool-row     { animation: rf-pulse-tool-row 4s ease-in-out infinite; }
   .rf-tile         { animation: rf-pulse-tile 4.6s ease-in-out infinite; }
   .rf-pricing-card { animation: rf-pulse-pricing-card 5.2s ease-in-out infinite; }
+  .rf-proof-card   { animation: rf-pulse-proof-card 4.4s ease-in-out infinite; }
   .rf-tool-row:hover, .rf-tile:hover { animation: none; }
 }
 
