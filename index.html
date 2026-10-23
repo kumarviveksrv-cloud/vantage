@@ -894,6 +894,83 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 
 /* ── WHAT YOU GET — 4 TILES ─────────────────────────────────────────── */
+/* ── INSIDE VANTAGE (proof mockups) ──────────────────────────────────── */
+.rf-proof { padding: 100px 24px 60px; }
+.rf-proof-inner { max-width: 1000px; margin: 0 auto; }
+.rf-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 16px;
+}
+@media (max-width: 820px) { .rf-proof-grid { grid-template-columns: 1fr; } }
+.rf-proof-card {
+  background: linear-gradient(165deg, rgba(139,92,246,.08) 0%, rgba(17,14,36,.6) 55%, rgba(13,11,30,.78) 100%);
+  border: 1px solid rgba(167,139,250,.2);
+  border-radius: 14px;
+  padding: 26px 24px;
+}
+.rf-proof-badge {
+  display: inline-block;
+  font: 700 9px var(--mono);
+  letter-spacing: .18em;
+  color: #a5b4fc;
+  text-transform: uppercase;
+  background: rgba(99,102,241,.1);
+  border: 1px solid rgba(99,102,241,.25);
+  border-radius: 4px;
+  padding: 3px 9px;
+  margin-bottom: 12px;
+}
+.rf-proof-title { font: 700 17px var(--font); color: var(--white); margin: 0 0 4px; }
+.rf-proof-case { font: 500 12px var(--mono); color: rgba(244,243,255,.5); margin: 0 0 18px; }
+.rf-proof-dims { display: flex; flex-direction: column; gap: 9px; margin-bottom: 18px; }
+.rf-proof-dim {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font: 500 12.5px var(--font);
+  color: rgba(244,243,255,.8);
+  padding: 8px 10px;
+  background: rgba(255,255,255,.03);
+  border-radius: 7px;
+}
+.rf-proof-dim-risk {
+  font: 700 9px var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.rf-proof-dim-risk.risk-high { color: #fca5a5; background: rgba(248,113,113,.14); border: 1px solid rgba(248,113,113,.32); }
+.rf-proof-dim-risk.risk-medium { color: #fcd34d; background: rgba(250,204,21,.14); border: 1px solid rgba(250,204,21,.32); }
+.rf-proof-dim-risk.risk-low { color: #86efac; background: rgba(74,222,128,.12); border: 1px solid rgba(74,222,128,.28); }
+.rf-proof-row { margin-bottom: 14px; }
+.rf-proof-row:last-of-type { margin-bottom: 0; }
+.rf-proof-label {
+  font: 700 10px var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(244,243,255,.45);
+  margin-bottom: 5px;
+}
+.rf-proof-text { font: 400 13px/1.6 var(--font); color: rgba(244,243,255,.78); }
+.rf-proof-stat { display: flex; align-items: baseline; gap: 10px; margin-bottom: 18px; }
+.rf-proof-stat-value { font: 700 28px var(--stat); color: #f4f3ff; letter-spacing: -.02em; }
+.rf-proof-stat-label { font: 400 11.5px/1.4 var(--font); color: rgba(244,243,255,.5); max-width: 220px; }
+.rf-proof-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+.rf-proof-chip {
+  font: 600 10px var(--mono);
+  letter-spacing: .04em;
+  color: #a78bfa;
+  background: rgba(139,92,246,.1);
+  border: 1px solid rgba(167,139,250,.22);
+  border-radius: 100px;
+  padding: 4px 10px;
+}
+.rf-proof-foot { font: 400 11px var(--font); color: rgba(244,243,255,.35); font-style: italic; margin-top: 4px; }
+
 .rf-tiles-section { padding: 100px 24px; }
 .rf-tiles-inner { max-width: 1000px; margin: 0 auto; }
 
@@ -1937,6 +2014,63 @@ html, body { overflow-x: hidden; background: var(--bg); }
         </div>
       </div>
 
+    </div>
+  </section>
+
+  <!-- ── INSIDE VANTAGE (proof mockups) ──────────────────────────────── -->
+  <section class="rf-proof rf-reveal">
+    <div class="rf-proof-inner">
+      <span class="rf-section-label">Inside Vantage</span>
+      <h2 class="rf-section-headline">Not a summary. A protocol.</h2>
+      <div class="rf-proof-grid">
+
+        <!-- Employee Case Advisor -->
+        <div class="rf-proof-card">
+          <span class="rf-proof-badge">PACT + PROTOCOL</span>
+          <h3 class="rf-proof-title">Employee Case Advisor</h3>
+          <p class="rf-proof-case">Repeated absence · termination</p>
+          <div class="rf-proof-dims">
+            <div class="rf-proof-dim"><span>Process Integrity</span><span class="rf-proof-dim-risk risk-medium">Medium risk</span></div>
+            <div class="rf-proof-dim"><span>Accountability Clarity</span><span class="rf-proof-dim-risk risk-high">High risk</span></div>
+            <div class="rf-proof-dim"><span>Consequence Mapping</span><span class="rf-proof-dim-risk risk-medium">Medium risk</span></div>
+            <div class="rf-proof-dim"><span>Trust Preservation</span><span class="rf-proof-dim-risk risk-low">Low risk</span></div>
+          </div>
+          <div class="rf-proof-row">
+            <div class="rf-proof-label">⚖ Legal Position</div>
+            <div class="rf-proof-text">Shops &amp; Establishments Act governs notice and dues here. Skipping documented warnings risks an arbitrary-dismissal claim.</div>
+          </div>
+          <div class="rf-proof-stat">
+            <span class="rf-proof-stat-value">₹3.37L</span>
+            <span class="rf-proof-stat-label">Modelled financial exposure, this case</span>
+          </div>
+          <p class="rf-proof-foot">Illustrative: actual guidance is state and case specific.</p>
+        </div>
+
+        <!-- The Business Case -->
+        <div class="rf-proof-card">
+          <span class="rf-proof-badge">SIGNAL</span>
+          <h3 class="rf-proof-title">The Business Case</h3>
+          <p class="rf-proof-case">Attrition risk · retention case</p>
+          <div class="rf-proof-stat">
+            <span class="rf-proof-stat-value">₹41L</span>
+            <span class="rf-proof-stat-label">Modelled Revenue at Risk, cost of inaction over 12 months</span>
+          </div>
+          <div class="rf-proof-chips">
+            <span class="rf-proof-chip">S · Situation</span>
+            <span class="rf-proof-chip">I · Impact</span>
+            <span class="rf-proof-chip">G · Gap</span>
+            <span class="rf-proof-chip">N · Narrative</span>
+            <span class="rf-proof-chip">A · Action</span>
+            <span class="rf-proof-chip">L · Linkage</span>
+          </div>
+          <div class="rf-proof-row">
+            <div class="rf-proof-label">🏛 Boardroom line</div>
+            <div class="rf-proof-text">"Three regretted exits this quarter put ₹41L of forward revenue at risk. Here's the intervention, and what it costs to do nothing."</div>
+          </div>
+          <p class="rf-proof-foot">Illustrative: calibrated to your actual numbers, not industry averages.</p>
+        </div>
+
+      </div>
     </div>
   </section>
 
