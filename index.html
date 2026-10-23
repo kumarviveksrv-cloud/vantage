@@ -1153,9 +1153,14 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-compare-table { width: 100%; min-width: 600px; border-collapse: collapse; table-layout: fixed; }
 .rf-compare-table th:first-child, .rf-compare-table td:first-child { width: 46%; }
 .rf-compare-table th:not(:first-child), .rf-compare-table td:not(:first-child) { width: 18%; }
+.rf-compare-short { display: none; }
 @media (max-width: 680px) {
   .rf-compare-table { min-width: 480px; }
   .rf-compare-table th:first-child, .rf-compare-table td:first-child { width: 44%; }
+}
+@media (max-width: 560px) {
+  .rf-compare-full { display: none; }
+  .rf-compare-short { display: inline; }
 }
 .rf-compare-table thead th {
   font: 700 12px var(--mono);
@@ -2171,8 +2176,8 @@ html, body { overflow-x: hidden; background: var(--bg); }
           <thead>
             <tr>
               <th></th>
-              <th>Traditional HRIS</th>
-              <th>Raw LLM</th>
+              <th><span class="rf-compare-full">Traditional HRIS</span><span class="rf-compare-short">HRIS</span></th>
+              <th><span class="rf-compare-full">Raw LLM</span><span class="rf-compare-short">LLM</span></th>
               <th class="rf-compare-win-head">Vantage</th>
             </tr>
           </thead>
@@ -2356,6 +2361,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
       </div>
       <div class="rf-footer-col">
         <span class="rf-footer-col-h">START</span>
+        <a href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html">Start Free Trial</a>
         <a href="demo.html" onclick="if(window.VantageFade){VantageFade.navigateWithFade('demo.html');return false;}">Try the Demo</a>
         <a href="access.html" class="vantage-auth-link" data-signed-in-text="Dashboard" data-signed-in-href="dashboard.html">Sign In</a>
         <a href="https://virorah.com">Virorah Universe</a>
