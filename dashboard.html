@@ -215,6 +215,20 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       .stats-grid{grid-template-columns:1fr 1fr}
       .two-col{grid-template-columns:1fr}
       .tools-grid{grid-template-columns:1fr}
+      /* FIX (24 Oct 2026): .page-header stayed a flex ROW on mobile (no
+         rule here touched it before), splitting the viewport in half --
+         that squeezed .welcome-name's 32px serif headline into a column
+         so narrow it wrapped one word per line, and pushed the clock +
+         ARIA orb block right off the edge of the screen. Stack the
+         header, shrink the headline, and let the clock/ARIA row take
+         the full width on its own line instead of fighting for half. */
+      .page-header{flex-direction:column;align-items:flex-start;gap:14px}
+      .welcome-name{font-size:24px}
+      .header-meta{width:100%;justify-content:space-between}
+      .header-clock{padding:6px 10px}
+      .header-clock-time{font-size:13px;min-width:58px}
+      .header-clock-tz{max-width:96px;font-size:10px}
+      .header-aria .aria-orb{width:40px;height:40px}
     }
   </style>
 </head>
@@ -402,7 +416,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
         <div class="welcome-name">Good to have you here.</div>
         <div class="welcome-sub">Your MERIDIAN context is ready. What's happening today?</div>
       </div>
-      <div style="display:flex;align-items:center;gap:16px">
+      <div class="header-meta" style="display:flex;align-items:center;gap:16px">
       <div class="header-clock" id="header-clock" title="Time shown is in the timezone you pick below, not auto-detected">
         <div class="header-clock-time" id="header-clock-time">--:--</div>
         <select class="header-clock-tz" id="header-clock-tz" aria-label="Clock timezone">
