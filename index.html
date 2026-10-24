@@ -799,11 +799,21 @@ html, body { overflow-x: hidden; background: var(--bg); }
 /* ── GAP SECTION ────────────────────────────────────────────────────── */
 .rf-gap {
   text-align: center;
-  padding: 80px 24px 100px;
+  padding: 80px 24px 80px;
   max-width: 700px;
   margin: 0 auto;
   position: relative;
 }
+/* Bottom padding matched to the top (80px, was 100px) -- this section
+   carries its own closing rail (::after below, 124px incl. its
+   margin-top) before this padding even starts, which the OTHER
+   sections that use the page's 100px standard don't have. Left at
+   100px, this section's real trailing whitespace (rail + padding +
+   the next section's own 100px top padding) ran to ~320px, well
+   past the ~200px gap every other section boundary on the page
+   uses. 80px keeps the same proportion as the top (padding + rail
+   = ~200px there too) instead of quietly stacking an extra rail's
+   worth of blank space on top of the standard gap. */
 /* Persistent frame (22 Oct 2026) -- the staggered-paragraph reveal
    below is motion-only: once it fires, the resting state is pixel
    identical to the old plain block, so anyone who loads the page
@@ -900,6 +910,14 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-roster-inner { max-width: 800px; margin: 0 auto; }
 
 .rf-roster-group { margin-top: 64px; }
+/* The Foundation group is now the first thing in this section -- it
+   sits directly against .rf-roster's own 100px top padding, which
+   already matches this page's standard ~200px section-to-section gap
+   (paired with the previous section's own 100px bottom padding). The
+   64px above was meant for spacing after a headline (used between
+   tool groups later in this same roster) and doubled up with that
+   100px here, overshooting the page's normal rhythm. */
+.rf-roster-group:first-child { margin-top: 0; }
 
 .rf-roster-group-label {
   font: 700 12px/1 var(--mono);
@@ -1061,9 +1079,14 @@ html, body { overflow-x: hidden; background: var(--bg); }
 /* Only fires when a roster group sits directly above this label (the
    "Your Foundation" group ahead of "What's inside Vantage") -- every
    other .rf-section-label on the page is the first element in its
-   section and never needs this. Matches the roster's own 64px group
-   rhythm instead of the two sitting flush against each other. */
-.rf-roster-group + .rf-section-label { margin-top: 64px; }
+   section and never needs this. "What's Inside Vantage" + its headline
+   is as real a section-level transition as any break elsewhere on the
+   page, so this uses this page's standard 100px section-gap value
+   (every section wrapper -- .rf-roster, .rf-proof, .rf-tiles-section,
+   .rf-framework, .rf-compare, .rf-pricing, .rf-faq, .rf-final -- pads
+   100px top/bottom, pairing into a consistent ~200px gap at every
+   section boundary), not the smaller 64px tool-group rhythm. */
+.rf-roster-group + .rf-section-label { margin-top: 100px; }
 .rf-section-headline {
   font: 700 clamp(30px, 4.4vw, 48px)/1.2 var(--display);
   letter-spacing: -.02em;
