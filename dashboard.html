@@ -739,6 +739,19 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
     var hasSavedCase = !!localStorage.getItem('sr_last_case_id');
     var setupDismissed = localStorage.getItem('vantage_setup_dismissed') === '1';
 
+    // FIX (24 Oct 2026): .welcome-sub was a hardcoded "Your MERIDIAN context
+    // is ready" string, shown to every visitor regardless of hasMeridian --
+    // directly contradicting the setup checklist below it, which correctly
+    // shows "Set up MERIDIAN" / "Set up ->" for anyone who hasn't done it.
+    // Make the header tell the truth too.
+    (function(){
+      var sub = document.querySelector('.welcome-sub');
+      if (!sub) return;
+      sub.textContent = hasMeridian
+        ? 'Your MERIDIAN context is ready. What\'s happening today?'
+        : 'Set up MERIDIAN to get advice calibrated to your context, not generic HR best practice.';
+    })();
+
     var SETUP_STEPS = [
       {key:'meridian',done:hasMeridian,icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>',name:'Set up MERIDIAN',
        desc:'Your professional context. Without this, every tool gives generic advice. Sets your state, industry, org size, and authority depth.',href:'onboarding.html',cta:'Set up \u2192'},
