@@ -1058,6 +1058,12 @@ html, body { overflow-x: hidden; background: var(--bg); }
   display: block;
   text-align: center;
 }
+/* Only fires when a roster group sits directly above this label (the
+   "Your Foundation" group ahead of "What's inside Vantage") -- every
+   other .rf-section-label on the page is the first element in its
+   section and never needs this. Matches the roster's own 64px group
+   rhythm instead of the two sitting flush against each other. */
+.rf-roster-group + .rf-section-label { margin-top: 64px; }
 .rf-section-headline {
   font: 700 clamp(30px, 4.4vw, 48px)/1.2 var(--display);
   letter-spacing: -.02em;
@@ -2057,7 +2063,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
   <section class="rf-roster rf-reveal" id="rf-roster">
     <div class="rf-roster-inner">
       <div class="rf-roster-group">
-        <span class="rf-roster-group-label">Your Foundation — set once, not counted among the eight</span>
+        <span class="rf-roster-group-label">Your Foundation</span>
 
         <div class="rf-tool-row">
           <p class="rf-tool-name">MERIDIAN Profile</p>
