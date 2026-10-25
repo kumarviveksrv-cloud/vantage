@@ -83,7 +83,6 @@
 
 
 /* ── SR17 — Em italic: glowing lavender (works on all wrapped text) ─────── */
-.cinematic-panel em,
 .portal-copy em,
 .hero-deck em,
 .interlude p em,
@@ -253,49 +252,11 @@
   to   { opacity: 1; transform: none; }
 }
 
-/* ── Section stacking — curtain slides up over section ──────────────────── */
-/* Sections sit BEHIND their curtain card using negative margin */
-.humacity.cinematic-panel,
-.record.cinematic-panel,
-.meridian.cinematic-panel,
-.aria.cinematic-panel {
-  
-  position: relative;
-  z-index: 1;
-}
-
-/* After curtain removes itself, section snaps to natural position */
-.humacity.cinematic-panel.is-revealed,
-.record.cinematic-panel.is-revealed,
-.meridian.cinematic-panel.is-revealed,
-.aria.cinematic-panel.is-revealed {
-  margin-top: 0;
-  transition: margin-top 0s;
-}
-
-/* Section fade-in reveal */
-
-
-
-@media(max-width:768px){
-  
-  
-}
-
-
-/* ── Sections always visible — curtain cards are the reveal mechanic ─────── */
-.reveal-section { opacity: 1 !important; transform: none !important; }
-.sim-room { opacity: 1 !important; transform: none !important; }
-.cta-moment.is-revealed { opacity: 1 !important; transform: none !important; }
-
-
-
 /* ══════════════════════════════════════════════════════════════════════════
    SR17 — FINAL POLISH: gradient em, no-caps, globe, ta-da
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* Fix 2: Italic em — gradient purple + glow (display:inline-block solves wrapping) */
-.cinematic-panel em,
 .portal-copy em,
 .hero-deck em,
 .hero-title em,
