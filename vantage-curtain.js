@@ -68,7 +68,6 @@
 (function(){
   'use strict';
 
-  const Q_KEY = 'vantage_q_v6';
   const DELAY = 10000;
 
   // ── Fibonacci hero globe ────────────────────────────────────────────────
@@ -101,14 +100,6 @@
     (function tick(now){requestAnimationFrame(tick);if(!vis||now-last<33)return;last=now;grp.rotation.y+=.0018+mx*.001;grp.rotation.x+=.0004+my*.0005;rdr.render(scene,cam);})(0);
     window.addEventListener('resize',()=>{W=section.offsetWidth;H=section.offsetHeight;rdr.setSize(W,H);cam.aspect=W/H;cam.updateProjectionMatrix();},{passive:true});
   })();
-
-  // ── Question data ───────────────────────────────────────────────────────
-  const CARDS = [
-    { trigger:'.meridian.cinematic-panel', pre:'Before any answer is calibrated to you', q:'What state are you in? What\u2019s your headcount? Are your workers unionised?', sub:'These questions have always mattered. MERIDIAN is built to ask them, and to calibrate what you see here around your answers.', nudge:'A question about MERIDIAN' },
-    { trigger:'.aria.cinematic-panel',     pre:'Another question',   q:'Who do you call at 9 pm tonight, when the decision is yours to make alone?', sub:'Not a chatbot. Something built to learn your context, your policies, your history over time, and ask the right questions back.', nudge:'A question about ARIA' },
-    { trigger:'.humacity.cinematic-panel', pre:'Still with us?',     q:'Do you know the rupee value of the work you did last quarter?', sub:'Not headcount. Not engagement scores. A modelled estimate of the financial contribution HR made to the business.', nudge:'A question about Humacity' },
-    { trigger:'.record.cinematic-panel',   pre:'One last question',  q:'When you leave this organisation, what do you take with you?', sub:'Every decision navigated. Every case closed. Every difficult conversation held. Is any of it saved anywhere?', nudge:'A question about your Record' },
-  ];
 
   // ── Shared overlay builder ──────────────────────────────────────────────
   const ov = document.createElement('div');
@@ -186,22 +177,6 @@
 
   ov.addEventListener('click', dismissOverlay);
   document.getElementById('q-skip')?.addEventListener('click', e=>{ e.stopPropagation(); dismissOverlay(); });
-
-  // ── Section curtain raisers (first visit only) ──────────────────────────
-  if(!sessionStorage.getItem(Q_KEY) && !matchMedia('(prefers-reduced-motion:reduce)').matches){
-    const triggered = new Set();
-    const io = new IntersectionObserver(entries=>{
-      entries.forEach(e=>{
-        if(!e.isIntersecting) return;
-        const i = CARDS.findIndex(c=>e.target.matches(c.trigger));
-        if(i===-1 || triggered.has(i)) return;
-        triggered.add(i);
-        setTimeout(()=>showOverlay(CARDS[i], DELAY), 300);
-        if(triggered.size >= CARDS.length) sessionStorage.setItem(Q_KEY,'1');
-      });
-    },{threshold:0.1});
-    CARDS.forEach(c=>{const el=document.querySelector(c.trigger);if(el)io.observe(el);});
-  }
 
   // ── Demo button intercept ───────────────────────────────────────────────
   // Shows a reflection question before going to demo.html — once per session.
@@ -358,143 +333,6 @@
     });
     obs.observe(document.body,{attributes:true,attributeFilter:['class']});
   }
-
-  // ── Persistent Questions modal ──────────────────────────────────────────
-  const qBtn = document.createElement('button');
-  qBtn.id = 'questions-fab';
-  qBtn.innerHTML = '<span>\u2726</span> Reflect';
-  qBtn.title = 'Revisit the questions';
-  /* SR18: start hidden until prologue/boot are done */
-  qBtn.style.display = 'none';
-  document.body.appendChild(qBtn);
-
-  /* SR18: show Reflect only after prologue is dismissed or skipped */
-  function revealReflect(){
-    /* Don't show during prologue or boot */
-    const prologue = document.getElementById('prologue');
-    const boot = document.getElementById('boot');
-    const prologueGone = !prologue || prologue.style.display === 'none' || getComputedStyle(prologue).display === 'none' || getComputedStyle(prologue).opacity === '0' || document.body.classList.contains('prologue-complete');
-    const bootGone = !boot || boot.style.display === 'none' || getComputedStyle(boot).display === 'none' || getComputedStyle(boot).opacity === '0';
-    if(prologueGone && bootGone){
-      qBtn.style.display = '';
-      return true;
-    }
-    return false;
-  }
-  /* Try immediately, then watch for prologue-complete class */
-  if(!revealReflect()){
-    const reflectObs = new MutationObserver(()=>{
-      if(revealReflect()) reflectObs.disconnect();
-    });
-    reflectObs.observe(document.body, {attributes:true, attributeFilter:['class']});
-    /* Also check on visibility changes (prologue uses display:none) */
-    const reflectTimer = setInterval(()=>{
-      if(revealReflect()){ clearInterval(reflectTimer); }
-    }, 500);
-    /* Safety: stop checking after 30s */
-    setTimeout(()=>clearInterval(reflectTimer), 30000);
-  }
-
-  /* SR18: Nudge tooltip element */
-  const nudgeTip = document.createElement('div');
-  nudgeTip.id = 'reflect-nudge';
-  nudgeTip.style.cssText = 'position:fixed;bottom:70px;right:24px;background:rgba(99,102,241,.88);color:#fff;font:12px "DM Sans",sans-serif;padding:8px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .4s,transform .4s;transform:translateY(8px);z-index:8999;white-space:nowrap;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(99,102,241,.35);';
-  document.body.appendChild(nudgeTip);
-
-  /* SR18: Section-aware nudge on Reflect button */
-  let currentNudge = -1, nudgeTimeout = null;
-  function showNudge(text){
-    nudgeTip.textContent = text;
-    nudgeTip.style.opacity = '1';
-    nudgeTip.style.transform = 'translateY(0)';
-    qBtn.classList.add('reflect-pulse');
-    clearTimeout(nudgeTimeout);
-    nudgeTimeout = setTimeout(hideNudge, 4000);
-  }
-  function hideNudge(){
-    nudgeTip.style.opacity = '0';
-    nudgeTip.style.transform = 'translateY(8px)';
-    qBtn.classList.remove('reflect-pulse');
-  }
-
-  /* Nudge on ALL visits: pulse Reflect whenever user is inside a question section
-     Guard: skip if a curtain overlay is already active (!active) */
-  const nudgeIO = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      const i = CARDS.findIndex(c=>e.target.matches(c.trigger));
-      if(i === -1) return;
-      if(e.isIntersecting && currentNudge !== i && qBtn.style.display !== 'none' && !active){
-        currentNudge = i;
-        showNudge(CARDS[i].nudge);
-      } else if(!e.isIntersecting && currentNudge === i){
-        currentNudge = -1;
-        hideNudge();
-      }
-    });
-  },{threshold:0.2});
-  CARDS.forEach(c=>{const el=document.querySelector(c.trigger);if(el)nudgeIO.observe(el);});
-
-  /* SR18: pulse animation CSS injected */
-  const pulseStyle = document.createElement('style');
-  pulseStyle.textContent = `
-    @keyframes reflectPulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,.5); }
-      50% { box-shadow: 0 0 0 12px rgba(124,58,237,0); }
-    }
-    #questions-fab.reflect-pulse {
-      animation: reflectPulse 1.5s ease-in-out 3;
-    }
-  `;
-  document.head.appendChild(pulseStyle);
-
-  const qModal = document.createElement('div');
-  qModal.id = 'questions-modal';
-  qModal.innerHTML = `
-    <div id="questions-modal-inner">
-      <button id="questions-modal-close">\u00d7</button>
-      <p id="qm-pre">Four questions for the HR professional</p>
-      <h3 id="qm-heading">Sit with these.</h3>
-      <div id="qm-cards">
-        ${CARDS.map((c,i)=>`
-          <div class="qm-card" data-index="${i}">
-            <span class="qm-num">0${i+1}</span>
-            <p class="qm-q">${c.q}</p>
-            <p class="qm-sub">${c.sub}</p>
-            <button class="qm-explore" data-index="${i}">Explore this section \u2193</button>
-          </div>
-        `).join('')}
-      </div>
-    </div>`;
-  document.body.appendChild(qModal);
-
-  qBtn.addEventListener('click', ()=>{
-    hideNudge();
-    qModal.classList.add('qm-open');
-    document.body.style.overflow = 'hidden';
-  });
-
-  document.getElementById('questions-modal-close').addEventListener('click', closeModal);
-  qModal.addEventListener('click', e=>{ if(e.target===qModal) closeModal(); });
-
-  function closeModal(){
-    qModal.classList.remove('qm-open');
-    document.body.style.overflow = '';
-  }
-
-  // Clicking "Explore this section" closes modal, scrolls to section, shows question overlay
-  qModal.querySelectorAll('.qm-explore').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const i = parseInt(btn.dataset.index);
-      closeModal();
-      setTimeout(()=>{
-        const el = document.querySelector(CARDS[i].trigger);
-        if(el){
-          el.scrollIntoView({behavior:'smooth', block:'center'});
-          setTimeout(()=>showOverlay(CARDS[i], DELAY), 600);
-        }
-      }, 400);
-    });
-  });
 
   // ── Shared particle explosion ───────────────────────────────────────────
   /* Prewarm: compiles the EXACT SAME shader/material this particle
