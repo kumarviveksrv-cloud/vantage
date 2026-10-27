@@ -10,7 +10,7 @@
   <style>
     /* ── METHODOLOGY PAGE — page-specific styles only ── */
     /* Canonical tokens live in vantage-theme.css (SR20-compliant) */
-    body { background: var(--bg); color: var(--white); margin: 0 }
+    body { background: var(--bg); color: var(--white); font-family: var(--font); margin: 0 }
 
     /* ── NAV ── */
     .mth-nav {
@@ -145,7 +145,7 @@
       border-radius: 12px; padding: 32px 36px;
     }
     .mth-honesty-eyebrow {
-      font: 600 10px var(--bric); letter-spacing: .16em;
+      font: 600 10px var(--mono); letter-spacing: .16em;
       color: var(--muted); margin-bottom: 16px; display: block;
     }
     .mth-honesty h3 {
@@ -186,7 +186,7 @@
       display: inline-flex; align-items: center; gap: 8px;
       padding: 13px 26px;
       background: linear-gradient(135deg, var(--cobalt), var(--violet));
-      border-radius: 8px; font: 700 13px var(--bric); color: #fff;
+      border-radius: 8px; font: 700 13px var(--font); color: #fff;
       box-shadow: 0 4px 24px rgba(99,102,241,.4);
       transition: opacity .2s, transform .2s; text-decoration: none;
     }
@@ -195,7 +195,7 @@
       display: inline-flex; align-items: center; gap: 8px;
       padding: 13px 26px;
       border: 1px solid rgba(196,181,253,.18); border-radius: 8px;
-      font: 600 13px var(--bric); color: var(--muted);
+      font: 600 13px var(--font); color: var(--muted);
       transition: border-color .2s, color .2s; text-decoration: none;
     }
     .mth-btn-ghost:hover { border-color: rgba(196,181,253,.4); color: var(--white) }
