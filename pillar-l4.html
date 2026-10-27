@@ -166,7 +166,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
   .finding-card,.action-item,.pl-wrap{page-break-inside:avoid;break-inside:avoid}
   .assumption-bar,.assumptions,.book-note,.sc-btn,.gate{display:none!important}
 }
-
+.src-chip{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:rgba(99,102,241,.15);color:#a5b4fc;font-family:var(--mono);font-size:.55rem;text-decoration:none;vertical-align:super;line-height:1;margin-left:3px;border:1px solid rgba(99,102,241,.25);transition:background .15s,color .15s}
+.src-chip:hover{background:rgba(99,102,241,.35);color:#f4f3ff}
 </style>
 </head>
 <body>
@@ -310,7 +311,7 @@ function render(){
 
   var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L4 Score</div><div class="ratio-num">'+l4+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">Provisional band: '+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+(margin!=null?q4Ratio+' modelled margin, under the '+scenario+' case, from L1 return \xf7 L4 planning costs':'HR modelled margin not yet computed')+'</div><div class="context">'+(industry?'Provisional comparison range: <b>'+benchStr+'</b> (not a published benchmark).<br>':'')+'Return from the L1 Value Ledger divided by L4\u2019s own HR operating costs \u2014 not a second valuation of the people already priced in L1.<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' input coverage \xb7 '+scenario+' case \xb7 L4 carries 20% of Humac Score</div></div></div></div>';
 
-  var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l4+'/100</div><div class="sl">L4 Score</div></div><div class="stat"><div class="sv '+(margin==null?'sv-dim':isPos?'sv-green':'sv-red')+'">'+q4Ratio+'</div><div class="sl">Margin (L1 return \xf7 L4 cost)</div></div><div class="stat"><div class="sv sv-cobalt">'+benchStr+'</div><div class="sl">'+(industry||'Sector')+' provisional range</div></div><div class="stat"><div class="sv sv-dim">'+hci.toFixed(2)+'x</div><div class="sl">HCI coefficient</div></div></div>';
+  var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l4+'/100</div><div class="sl">L4 Score</div></div><div class="stat"><div class="sv '+(margin==null?'sv-dim':isPos?'sv-green':'sv-red')+'">'+q4Ratio+'</div><div class="sl">Margin (L1 return \xf7 L4 cost)</div></div><div class="stat"><div class="sv sv-cobalt">'+benchStr+'</div><div class="sl">'+(industry||'Sector')+' provisional range<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s6-legal" target="_blank" rel="noopener">?</a></div></div><div class="stat"><div class="sv sv-dim">'+hci.toFixed(2)+'x</div><div class="sl">HCI coefficient</div></div></div>';
 
   var findingsHtml=buildFindings(hr,compliance,culture);
 
