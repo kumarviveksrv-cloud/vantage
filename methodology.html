@@ -27,12 +27,8 @@
       height: env(safe-area-inset-top, 0px); z-index: 10;
       background: rgba(5,4,16,.94);
     }
-    .mth-nav-logo { display: flex; align-items: center; gap: 10px }
-    .mth-nav-logo-name { font: 700 15px var(--font); letter-spacing: -.01em; color: var(--white) }
-    .mth-nav-logo-tag {
-      font: 500 9px var(--mono); letter-spacing: .18em;
-      color: rgba(196,181,253,.4); padding-top: 1px;
-    }
+    .mth-nav-logo { display: flex; align-items: center; text-decoration: none }
+    .mth-nav-logo img { height: 44px; width: auto; display: block }
     .mth-nav-back {
       display: flex; align-items: center; gap: 7px;
       font: 500 11px var(--mono); letter-spacing: .1em;
@@ -262,11 +258,9 @@
     <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
     Back
   </a>
-  <div class="mth-nav-logo">
-    <span class="logo-dot"></span>
-    <span class="mth-nav-logo-name">Vantage</span>
-    <span class="mth-nav-logo-tag">BY VIRORAH</span>
-  </div>
+  <a href="index.html" class="mth-nav-logo">
+    <img src="virorah-vantage-logo.png" alt="Vantage by Virorah">
+  </a>
   <a href="access.html" class="mth-nav-cta">Get Started</a>
 </nav>
 
