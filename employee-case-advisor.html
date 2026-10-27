@@ -272,6 +272,8 @@
     .qb-chip.qb-selected{background:rgba(99,102,241,0.2);border-color:rgba(99,102,241,0.5);color:#e0e7ff}
     .qb-more-btn{margin-top:9px;display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,0.5);background:none;border:none;cursor:pointer;padding:2px 0;transition:color .18s}
     .qb-more-btn:hover{color:rgba(165,180,252,0.8)}
+    .src-chip{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:rgba(99,102,241,.15);color:#a5b4fc;font-family:var(--mono);font-size:.55rem;text-decoration:none;vertical-align:super;line-height:1;margin-left:3px;border:1px solid rgba(99,102,241,.25);transition:background .15s,color .15s}
+    .src-chip:hover{background:rgba(99,102,241,.35);color:#f4f3ff}
   </style>
 </head>
 <body>
@@ -502,7 +504,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           <div class="proto-label" style="margin-bottom:10px"><span class="proto-icon">💰</span> Modelled Financial Exposure</div>
           <div class="fin-top">
             <div>
-              <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.5);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Modelled range, not a measured figure</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.5);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Modelled range, not a measured figure<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s1-value-ledger" target="_blank" rel="noopener">?</a></div>
               <div class="fin-range" id="fin-range">-</div>
               <div class="fin-badges">
                 <span class="fin-badge" id="fin-confidence-badge"></span>

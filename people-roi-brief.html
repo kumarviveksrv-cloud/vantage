@@ -300,6 +300,8 @@
     .qb-chip.qb-selected{background:rgba(99,102,241,0.2);border-color:rgba(99,102,241,0.5);color:#e0e7ff}
     .qb-more-btn{margin-top:9px;display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,0.5);background:none;border:none;cursor:pointer;padding:2px 0;transition:color .18s}
     .qb-more-btn:hover{color:rgba(165,180,252,0.8)}
+    .src-chip{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:rgba(99,102,241,.15);color:#a5b4fc;font-family:var(--mono);font-size:.55rem;text-decoration:none;vertical-align:super;line-height:1;margin-left:3px;border:1px solid rgba(99,102,241,.25);transition:background .15s,color .15s}
+    .src-chip:hover{background:rgba(99,102,241,.35);color:#f4f3ff}
   </style>
 </head>
 <body>
@@ -399,7 +401,7 @@
         <div class="form-section">
           <label class="form-label">Your key HR metrics</label>
           <div class="metrics-grid">
-            <div class="metric-input-wrap"><label class="metric-label">Attrition rate (%)</label><input type="number" id="attrition" placeholder="e.g. 18" /></div>
+            <div class="metric-input-wrap"><label class="metric-label">Attrition rate (%)<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s2-meridian" target="_blank" rel="noopener">?</a></label><input type="number" id="attrition" placeholder="e.g. 18" /></div>
             <div class="metric-input-wrap"><label class="metric-label">Time to hire (days)</label><input type="number" id="time-to-hire" placeholder="e.g. 42" /></div>
             <div class="metric-input-wrap"><label class="metric-label">Engagement score (%)</label><input type="number" id="engagement" placeholder="e.g. 62" /></div>
             <div class="metric-input-wrap"><label class="metric-label">Open positions</label><input type="number" id="open-positions" placeholder="e.g. 14" /></div>
@@ -549,7 +551,7 @@
         <!-- Revenue at Risk + Humac -->
         <div class="top-two-col">
           <div class="rar-card">
-            <div class="rar-label">&#x26A0;&#xFE0F; Modelled Revenue at Risk: cost of inaction (12 months)</div>
+            <div class="rar-label">&#x26A0;&#xFE0F; Modelled Revenue at Risk: cost of inaction (12 months)<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s1-value-ledger" target="_blank" rel="noopener">?</a></div>
             <div class="rar-figure" id="rar-figure">&#8212;</div>
             <div class="rar-basis" id="rar-basis"></div>
             <span class="rar-conf" id="rar-conf"></span>
