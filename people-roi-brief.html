@@ -300,7 +300,7 @@
     .qb-chip.qb-selected{background:rgba(99,102,241,0.2);border-color:rgba(99,102,241,0.5);color:#e0e7ff}
     .qb-more-btn{margin-top:9px;display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,0.5);background:none;border:none;cursor:pointer;padding:2px 0;transition:color .18s}
     .qb-more-btn:hover{color:rgba(165,180,252,0.8)}
-    .qb-note{margin-top:10px;font-size:11px;color:rgba(165,180,252,0.38);font-family:'JetBrains Mono',monospace;font-style:italic;line-height:1.5;display:block}
+    .qb-note{margin-top:4px;margin-bottom:8px;font-size:11px;color:rgba(165,180,252,0.38);font-family:'JetBrains Mono',monospace;font-style:italic;line-height:1.5;display:block}
     .src-chip{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:rgba(99,102,241,.15);color:#a5b4fc;font-family:var(--mono);font-size:.55rem;text-decoration:none;vertical-align:super;line-height:1;margin-left:3px;border:1px solid rgba(99,102,241,.25);transition:background .15s,color .15s}
     .src-chip:hover{background:rgba(99,102,241,.35);color:#f4f3ff}
   </style>
@@ -414,30 +414,30 @@
           <label class="form-label">What's the business context? What decision are you trying to influence? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic</span></label>
           <div class="qb-section">
             <span class="qb-label">Quick start — pick an initiative or describe your own below</span>
+            <span class="qb-note">Just a starting point. Ideally, type your own actual situation below.</span>
             <div class="qb-grid" id="qb-bc-grid">
-              <div class="qb-chip" onclick="qbFill('context',this)">Engineering attrition has climbed from 14% to 22% in one quarter. Leadership thinks it's a market issue, not an HR one.</div>
-              <div class="qb-chip" onclick="qbFill('context',this)">Making the case to hire a dedicated HRBP for a 250-person division that currently has no HR support.</div>
-              <div class="qb-chip" onclick="qbFill('context',this)">Justifying the investment in a structured L&amp;D program after two high-potential exits cited growth stagnation.</div>
-              <div class="qb-chip" onclick="qbFill('context',this)">Building a case to replace the legacy HRMS with a modern platform. Finance wants to see a cost-benefit.</div>
-              <div class="qb-chip" onclick="qbFill('context',this)">Three new joiners left within 90 days. Making the case to redesign onboarding before the next cohort.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Requesting budget for a compensation benchmarking exercise. Leadership believes we're market-competitive but we haven't validated that.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Making the case for a structured succession planning process for leadership roles.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Justifying the cost of an exit interview and attrition analytics program to the CFO.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Building a case for a manager effectiveness program after engagement scores dropped across 3 teams.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Making the case to formalize a structured performance review cycle instead of ad-hoc appraisals.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Justifying a salary correction exercise after discovering a significant pay gap versus market median.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Building a case for a POSH training and awareness program after a formal complaint was raised.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Making the case to hire a specialist recruiter for senior roles rather than continuing with agencies.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Requesting budget for an employee wellbeing initiative after an internal survey flagged high burnout.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Building a case for a structured HR audit and documentation overhaul ahead of Series A fundraising.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Making the case to introduce a structured probation process with standardised checkpoints across all roles.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Justifying an HR tech stack consolidation — we're running 4 tools doing overlapping things.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Building a case for a diversity hiring initiative after leadership asked why senior roles skew heavily in one direction.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Making the case to automate time &amp; attendance tracking — current manual process has payroll errors every month.</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('context',this)">Requesting headcount for an additional recruiter — current team of 2 is sourcing for 40+ open roles.</div>
+              <div class="qb-chip" data-audience="CFO / Finance" data-ask="Approval for an attrition deep-dive and a budget for retention intervention in engineering" onclick="qbFillBC(this)">Engineering attrition has climbed from 14% to 22% in one quarter. Leadership thinks it's a market issue, not an HR one.</div>
+              <div class="qb-chip" data-audience="CEO / Founder" data-ask="Headcount approval for one dedicated HRBP for the 250-person division" onclick="qbFillBC(this)">Making the case to hire a dedicated HRBP for a 250-person division that currently has no HR support.</div>
+              <div class="qb-chip" data-audience="CEO / Founder" data-ask="Budget approval for a structured L&amp;D program to address growth and retention risk" onclick="qbFillBC(this)">Justifying the investment in a structured L&amp;D program after two high-potential exits cited growth stagnation.</div>
+              <div class="qb-chip" data-audience="CFO / Finance" data-ask="Sign-off on HRMS replacement after a cost-benefit review" onclick="qbFillBC(this)">Building a case to replace the legacy HRMS with a modern platform. Finance wants to see a cost-benefit.</div>
+              <div class="qb-chip" data-audience="CHRO / HR Head" data-ask="Approval to redesign the onboarding program before the next cohort joins" onclick="qbFillBC(this)">Three new joiners left within 90 days. Making the case to redesign onboarding before the next cohort.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CFO / Finance" data-ask="Budget approval for an annual compensation benchmarking study" onclick="qbFillBC(this)">Requesting budget for a compensation benchmarking exercise. Leadership believes we're market-competitive but we haven't validated that.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CEO / Founder" data-ask="Approval to design and implement a succession planning process for leadership roles" onclick="qbFillBC(this)">Making the case for a structured succession planning process for leadership roles.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CFO / Finance" data-ask="Budget for a structured exit interview program and attrition analytics capability" onclick="qbFillBC(this)">Justifying the cost of an exit interview and attrition analytics program to the CFO.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CEO / Founder" data-ask="Approval to launch a manager effectiveness program across the 3 impacted teams" onclick="qbFillBC(this)">Building a case for a manager effectiveness program after engagement scores dropped across 3 teams.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CHRO / HR Head" data-ask="Approval to implement a structured, standardised performance review cycle" onclick="qbFillBC(this)">Making the case to formalize a structured performance review cycle instead of ad-hoc appraisals.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CFO / Finance" data-ask="Budget approval for a targeted salary correction exercise to close the market gap" onclick="qbFillBC(this)">Justifying a salary correction exercise after discovering a significant pay gap versus market median.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CEO / Founder" data-ask="Approval to mandate POSH training across all employees within 60 days" onclick="qbFillBC(this)">Building a case for a POSH training and awareness program after a formal complaint was raised.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CEO / Founder" data-ask="Headcount approval for one specialist senior recruiter, replacing current agency spend" onclick="qbFillBC(this)">Making the case to hire a specialist recruiter for senior roles rather than continuing with agencies.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CEO / Founder" data-ask="Budget approval for an employee wellbeing initiative" onclick="qbFillBC(this)">Requesting budget for an employee wellbeing initiative after an internal survey flagged high burnout.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="Board / Investors" data-ask="Approval to conduct an HR audit and documentation overhaul before the Series A process begins" onclick="qbFillBC(this)">Building a case for a structured HR audit and documentation overhaul ahead of Series A fundraising.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CHRO / HR Head" data-ask="Approval to implement a standardised probation process with defined checkpoints across all roles" onclick="qbFillBC(this)">Making the case to introduce a structured probation process with standardised checkpoints across all roles.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CFO / Finance" data-ask="Approval to consolidate the HR tech stack from 4 tools to one integrated platform" onclick="qbFillBC(this)">Justifying an HR tech stack consolidation — we're running 4 tools doing overlapping things.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CEO / Founder" data-ask="Approval and budget for a structured diversity hiring initiative targeting senior roles" onclick="qbFillBC(this)">Building a case for a diversity hiring initiative after leadership asked why senior roles skew heavily in one direction.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CFO / Finance" data-ask="Approval to invest in automated time and attendance tracking to eliminate payroll errors" onclick="qbFillBC(this)">Making the case to automate time &amp; attendance tracking — current manual process has payroll errors every month.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CEO / Founder" data-ask="Headcount approval for one additional recruiter to manage sourcing for 40+ open roles" onclick="qbFillBC(this)">Requesting headcount for an additional recruiter — current team of 2 is sourcing for 40+ open roles.</div>
             </div>
             <button class="qb-more-btn" data-expanded="0" onclick="qbToggleMore(this,'qb-bc-grid')">+ 15 more scenarios &#x25be;</button>
-            <span class="qb-note">Just a starting point. For a case that actually lands, type your own real situation below.</span>
           </div>
           <div class="voice-wrap">
           <textarea id="context" placeholder='e.g. "Q2 attrition in engineering has gone up from 14% to 22% in 3 months. Leadership doesn&apos;t see it as an HR problem. They think it&apos;s a market issue. I need to present next week and change that narrative. The CFO specifically wants to know what it&apos;s costing us."' rows="4" style="padding-right:48px"></textarea>
@@ -754,6 +754,21 @@
       chipEl.classList.add('qb-selected');
       setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'nearest'});el.focus();}, 60);
       if (typeof postFn === 'function') postFn();
+    }
+    function qbFillBC(chipEl) {
+      var aud = chipEl.getAttribute('data-audience');
+      if (aud) {
+        document.querySelectorAll('.audience-btn').forEach(function(b) {
+          var oc = b.getAttribute('onclick') || '';
+          if (oc.indexOf("'" + aud + "'") !== -1) selectAudience(b, aud);
+        });
+      }
+      qbFill('context', chipEl);
+      var ask = chipEl.getAttribute('data-ask');
+      if (ask) {
+        var askEl = document.getElementById('ask');
+        if (askEl) { askEl.value = ask; askEl.dispatchEvent(new Event('input', {bubbles: true})); }
+      }
     }
     function qbToggleMore(btn, gridId) {
       var grid = document.getElementById(gridId);

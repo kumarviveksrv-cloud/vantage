@@ -272,7 +272,7 @@
     .qb-chip.qb-selected{background:rgba(99,102,241,0.2);border-color:rgba(99,102,241,0.5);color:#e0e7ff}
     .qb-more-btn{margin-top:9px;display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;color:rgba(165,180,252,0.5);background:none;border:none;cursor:pointer;padding:2px 0;transition:color .18s}
     .qb-more-btn:hover{color:rgba(165,180,252,0.8)}
-    .qb-note{margin-top:10px;font-size:11px;color:rgba(165,180,252,0.38);font-family:'JetBrains Mono',monospace;font-style:italic;line-height:1.5;display:block}
+    .qb-note{margin-top:4px;margin-bottom:8px;font-size:11px;color:rgba(165,180,252,0.38);font-family:'JetBrains Mono',monospace;font-style:italic;line-height:1.5;display:block}
     .src-chip{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:rgba(99,102,241,.15);color:#a5b4fc;font-family:var(--mono);font-size:.55rem;text-decoration:none;vertical-align:super;line-height:1;margin-left:3px;border:1px solid rgba(99,102,241,.25);transition:background .15s,color .15s}
     .src-chip:hover{background:rgba(99,102,241,.35);color:#f4f3ff}
   </style>
@@ -358,6 +358,7 @@
           <label class="form-label">What's happening? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic to speak</span></label>
           <div class="qb-section">
             <span class="qb-label">Quick start — pick a scenario or describe your own below</span>
+            <span class="qb-note">Just a starting point. Ideally, type your own actual situation below.</span>
             <div class="qb-grid" id="qb-eca-grid">
               <div class="qb-chip" onclick="qbFill('narrative',this)">Senior engineer absent 7 days, two prior verbal warnings, manager wants to terminate.</div>
               <div class="qb-chip" onclick="qbFill('narrative',this)">Employee on PIP for 2 months consistently missing targets. Documentation in place.</div>
@@ -381,7 +382,6 @@
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Want to recover ₹4L from an employee who left mid-project and caused client losses.</div>
             </div>
             <button class="qb-more-btn" data-expanded="0" onclick="qbToggleMore(this,'qb-eca-grid')">+ 15 more scenarios &#x25be;</button>
-            <span class="qb-note">Just a starting point. For advice that's actually useful, type your own real situation below.</span>
           </div>
           <div class="voice-wrap">
           <textarea id="narrative" placeholder='e.g. "A senior engineer has been absent without information for 4 days. There were two verbal warnings for attendance in the last 3 months, both documented. His manager wants to terminate but we haven&apos;t done a domestic enquiry yet. I need to know where I stand before I call him in tomorrow."
