@@ -419,8 +419,8 @@
               <div class="qb-chip" data-audience="CFO / Finance" data-ask="Approval for an attrition deep-dive and a budget for retention intervention in engineering" onclick="qbFillBC(this)">Engineering attrition has climbed from 14% to 22% in one quarter. Leadership thinks it's a market issue, not an HR one.</div>
               <div class="qb-chip" data-audience="CEO / Founder" data-ask="Headcount approval for one dedicated HRBP for the 250-person division" onclick="qbFillBC(this)">Making the case to hire a dedicated HRBP for a 250-person division that currently has no HR support.</div>
               <div class="qb-chip" data-audience="CEO / Founder" data-ask="Budget approval for a structured L&amp;D program to address growth and retention risk" onclick="qbFillBC(this)">Justifying the investment in a structured L&amp;D program after two high-potential exits cited growth stagnation.</div>
-              <div class="qb-chip" data-audience="CFO / Finance" data-ask="Sign-off on HRMS replacement after a cost-benefit review" onclick="qbFillBC(this)">Building a case to replace the legacy HRMS with a modern platform. Finance wants to see a cost-benefit.</div>
-              <div class="qb-chip" data-audience="CHRO / HR Head" data-ask="Approval to redesign the onboarding program before the next cohort joins" onclick="qbFillBC(this)">Three new joiners left within 90 days. Making the case to redesign onboarding before the next cohort.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CFO / Finance" data-ask="Sign-off on HRMS replacement after a cost-benefit review" onclick="qbFillBC(this)">Building a case to replace the legacy HRMS with a modern platform. Finance wants to see a cost-benefit.</div>
+              <div class="qb-chip" style="display:none" data-extra data-audience="CHRO / HR Head" data-ask="Approval to redesign the onboarding program before the next cohort joins" onclick="qbFillBC(this)">Three new joiners left within 90 days. Making the case to redesign onboarding before the next cohort.</div>
               <div class="qb-chip" style="display:none" data-extra data-audience="CFO / Finance" data-ask="Budget approval for an annual compensation benchmarking study" onclick="qbFillBC(this)">Requesting budget for a compensation benchmarking exercise. Leadership believes we're market-competitive but we haven't validated that.</div>
               <div class="qb-chip" style="display:none" data-extra data-audience="CEO / Founder" data-ask="Approval to design and implement a succession planning process for leadership roles" onclick="qbFillBC(this)">Making the case for a structured succession planning process for leadership roles.</div>
               <div class="qb-chip" style="display:none" data-extra data-audience="CFO / Finance" data-ask="Budget for a structured exit interview program and attrition analytics capability" onclick="qbFillBC(this)">Justifying the cost of an exit interview and attrition analytics program to the CFO.</div>
@@ -437,7 +437,7 @@
               <div class="qb-chip" style="display:none" data-extra data-audience="CFO / Finance" data-ask="Approval to invest in automated time and attendance tracking to eliminate payroll errors" onclick="qbFillBC(this)">Making the case to automate time &amp; attendance tracking — current manual process has payroll errors every month.</div>
               <div class="qb-chip" style="display:none" data-extra data-audience="CEO / Founder" data-ask="Headcount approval for one additional recruiter to manage sourcing for 40+ open roles" onclick="qbFillBC(this)">Requesting headcount for an additional recruiter — current team of 2 is sourcing for 40+ open roles.</div>
             </div>
-            <button class="qb-more-btn" data-expanded="0" onclick="qbToggleMore(this,'qb-bc-grid')">+ 15 more scenarios &#x25be;</button>
+            <button class="qb-more-btn" data-expanded="0" onclick="qbToggleMore(this,'qb-bc-grid')">+ 17 more scenarios &#x25be;</button>
           </div>
           <div class="voice-wrap">
           <textarea id="context" placeholder='e.g. "Q2 attrition in engineering has gone up from 14% to 22% in 3 months. Leadership doesn&apos;t see it as an HR problem. They think it&apos;s a market issue. I need to present next week and change that narrative. The CFO specifically wants to know what it&apos;s costing us."' rows="4" style="padding-right:48px"></textarea>
@@ -496,6 +496,18 @@
         </div>
         <div class="form-section">
           <label class="form-label">What's the situation? What resistance do you expect? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic</span></label>
+          <div class="qb-section">
+            <span class="qb-label">Quick start — pick a scenario or describe your own below</span>
+            <span class="qb-note">The following questions are sample ones to just give you a starting point. Ideally, type your own actual situation below.</span>
+            <div class="qb-grid" id="qb-inf-grid">
+              <div class="qb-chip" data-stakeholder="CEO / Founder" data-ask="Approval for a &#8377;18L retention intervention budget for the engineering team" onclick="qbFillInfluence(this)">Engineering attrition has climbed from 14% to 22% in one quarter. The CEO thinks it's a market issue, not an internal one. He's resistant to HR spending right now.</div>
+              <div class="qb-chip" data-stakeholder="CFO / Finance head" data-ask="Headcount approval for one dedicated HRBP for the 250-person division" onclick="qbFillInfluence(this)">The CFO has rejected the HRBP headcount request twice. He sees HR as overhead. Finance reviews every new hire personally.</div>
+              <div class="qb-chip" data-stakeholder="CHRO / HR Head" data-ask="Approval to redesign the onboarding program before the next cohort joins in 6 weeks" onclick="qbFillInfluence(this)">Three new joiners left within 90 days. The CHRO sees onboarding redesign as a nice to have. Next cohort joins in 6 weeks.</div>
+              <div class="qb-chip" style="display:none" data-extra data-stakeholder="CEO / Founder" data-ask="Budget approval for a structured L&amp;D program targeting retention risk" onclick="qbFillInfluence(this)">Two high-potential engineers left citing growth stagnation. The CEO thinks money is the real issue and L&amp;D won't fix it.</div>
+              <div class="qb-chip" style="display:none" data-extra data-stakeholder="Board / Investors" data-ask="Approval to conduct an HR audit and documentation overhaul before the Series A process begins" onclick="qbFillInfluence(this)">Board has flagged HR documentation as a diligence risk before Series A. Legal team is pushing to delay the timeline.</div>
+            </div>
+            <button class="qb-more-btn" data-expanded="0" onclick="qbToggleMore(this,'qb-inf-grid')">+ 2 more scenarios &#x25be;</button>
+          </div>
           <div class="voice-wrap">
           <textarea id="situation" placeholder='e.g. "CFO thinks attrition is a market issue, not an HR problem. He&apos;s cut two HR budgets this year already. He responds to numbers and cost arguments, not culture or engagement talk. I have 20 minutes in the Monday review meeting."' rows="4" style="padding-right:48px"></textarea>
           <button class="voice-btn" id="situation-mic" onclick="toggleVoiceInput('situation', this)" title="Tap to speak">&#127908;</button>
@@ -767,6 +779,21 @@
       var ask = chipEl.getAttribute('data-ask');
       if (ask) {
         var askEl = document.getElementById('ask');
+        if (askEl) { askEl.value = ask; askEl.dispatchEvent(new Event('input', {bubbles: true})); }
+      }
+    }
+    function qbFillInfluence(chipEl) {
+      var stk = chipEl.getAttribute('data-stakeholder');
+      if (stk) {
+        document.querySelectorAll('.stakeholder-btn').forEach(function(b) {
+          var oc = b.getAttribute('onclick') || '';
+          if (oc.indexOf("'" + stk + "'") !== -1) selectStakeholder(b, stk);
+        });
+      }
+      qbFill('situation', chipEl);
+      var ask = chipEl.getAttribute('data-ask');
+      if (ask) {
+        var askEl = document.getElementById('stakeholder-ask');
         if (askEl) { askEl.value = ask; askEl.dispatchEvent(new Event('input', {bubbles: true})); }
       }
     }
