@@ -1,14 +1,13 @@
 /* Virorah Vantage: Spatial Mode (Sprint 1)
  * Floating glass panels + webcam hand tracking (MediaPipe Hands, client-side).
- * Gestures: pinch on a panel = select + grab, move hand while pinched = drag,
- * quick pinch-release without moving = expand/collapse. Mouse/touch works as fallback.
+ * Gestures (index finger only): hold your fingertip on a panel = grab, move = drag,
+ * hold still = drop (or expand/collapse if you didn't move). Mouse/touch works as fallback.
  * Usage: SpatialMode.open(panels) where panels = [{id,title,tag,level,html}]
  */
 (function () {
   var MP_HANDS = 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js';
   var MP_BASE = 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
-  var PINCH_ON = 0.32, PINCH_OFF = 0.46; /* ratio of thumb-index distance to palm size, with hysteresis */
-
+  
   var css = '\
 #sm-root{position:fixed;inset:0;z-index:2000;background:radial-gradient(ellipse at 50% 30%,#0d0b1e 0%,#050410 70%);overflow:hidden;font-family:"DM Sans",sans-serif;color:#f4f3ff;animation:fadeIn .3s ease}\
 #sm-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);opacity:.12;filter:grayscale(1) contrast(1.1)}\
@@ -35,8 +34,8 @@
 .sm-clamp{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}\
 .sm-panel.open .sm-clamp{-webkit-line-clamp:unset;display:block}\
 .sm-pt{display:flex;gap:7px;margin-bottom:5px}.sm-pt:before{content:"";width:4px;height:4px;border-radius:50%;background:#6366f1;margin-top:7px;flex-shrink:0}\
-#sm-cursor{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:2px solid #a5b4fc;background:rgba(99,102,241,.18);pointer-events:none;z-index:40;display:none;transition:background .1s,transform .1s;box-shadow:0 0 18px rgba(99,102,241,.6)}\
-#sm-cursor.pinch{background:rgba(196,181,253,.75);transform:scale(.65);border-color:#fff}\
+#sm-cursor{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #a5b4fc;background:conic-gradient(rgba(196,181,253,.85) calc(var(--p)*1turn),rgba(99,102,241,.16) 0);pointer-events:none;z-index:40;display:none;box-shadow:0 0 18px rgba(99,102,241,.6)}\
+#sm-cursor.held-cur{border-color:#fff;box-shadow:0 0 24px rgba(196,181,253,.9)}\
 #sm-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.05em;color:rgba(165,180,252,.7);background:rgba(13,11,30,.7);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:8px 16px;text-align:center;max-width:92vw}\
 @media(max-width:768px){.sm-panel{width:240px}.sm-panel.open{width:88vw}#sm-title{display:none}}';
 
@@ -112,42 +111,73 @@
     return best;
   }
 
-  /* ---------- hand tracking ---------- */
-  function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+  /* ---------- hand tracking (index finger only) ---------- */
+  var DWELL_GRAB = 700, DWELL_DROP = 800, STILL_PX = 28, ACTIVE = 0.7; /* ACTIVE: central share of camera frame mapped to the full screen */
   var grabOff = { x: 0, y: 0 };
+  var dwell = { panel: null, t0: 0, ax: 0, ay: 0 };
+  var fl = { x: null, y: null };
+
+  /* One Euro filter: heavy smoothing when slow (kills jitter), light when fast (keeps it responsive) */
+  function LP() { this.y = null; }
+  LP.prototype.f = function (v, a) { this.y = this.y == null ? v : a * v + (1 - a) * this.y; return this.y; };
+  function OneEuro(minCut, beta, dCut) { this.minCut = minCut; this.beta = beta; this.dCut = dCut; this.x = new LP(); this.dx = new LP(); this.t = null; this.px = null; }
+  OneEuro.prototype.alpha = function (cut, dt) { var tau = 1 / (2 * Math.PI * cut); return 1 / (1 + tau / dt); };
+  OneEuro.prototype.filter = function (v, t) {
+    if (this.t == null) { this.t = t; this.px = v; return this.x.f(v, 1); }
+    var dt = Math.max((t - this.t) / 1000, 1e-3); this.t = t;
+    var d = (v - this.px) / dt; this.px = v;
+    var ed = this.dx.f(d, this.alpha(this.dCut, dt));
+    return this.x.f(v, this.alpha(this.minCut + this.beta * Math.abs(ed), dt));
+  };
+  OneEuro.prototype.reset = function () { this.t = null; this.x.y = null; this.dx.y = null; };
+  var fx = new OneEuro(0.5, 10, 1), fy = new OneEuro(0.5, 10, 1);
+
+  function setRing(p) { if (st.cursor) st.cursor.style.setProperty('--p', Math.max(0, Math.min(1, p))); }
+  function resetDwell(panel, px, py, now) { dwell.panel = panel; dwell.t0 = now; dwell.ax = px; dwell.ay = py; setRing(0); }
+  function clamp01(v) { return Math.max(0, Math.min(1, v)); }
+
   function onResults(res) {
     var lm = res.multiHandLandmarks && res.multiHandLandmarks[0];
-    var cur = st.cursor;
+    var cur = st.cursor, now = performance.now();
+    if (!cur) return;
     if (!lm) {
-      if (Date.now() - st.lastSeen > 500) { cur.style.display = 'none'; if (st.held && st.pinching) { st.pinching = false; release(st.held); } setStatus('Hand tracking: <b>show your hand</b>'); }
+      if (now - st.lastSeen > 500) {
+        cur.style.display = 'none'; fx.reset(); fy.reset(); setRing(0);
+        if (st.held) { st.moved = true; release(st.held); }
+        dwell.panel = null;
+        setStatus('Hand tracking: <b>point with your index finger</b>');
+      }
       return;
     }
-    st.lastSeen = Date.now();
+    st.lastSeen = now;
     var W = window.innerWidth, H = window.innerHeight;
-    /* pointer = midpoint of thumb tip (4) and index tip (8), mirrored */
-    var px = (1 - (lm[4].x + lm[8].x) / 2) * W, py = ((lm[4].y + lm[8].y) / 2) * H;
-    var palm = dist(lm[0], lm[9]) || 0.1, ratio = dist(lm[4], lm[8]) / palm;
-    var wasPinch = st.pinching;
-    if (!wasPinch && ratio < PINCH_ON) st.pinching = true;
-    else if (wasPinch && ratio > PINCH_OFF) st.pinching = false;
-
+    var m = (1 - ACTIVE) / 2;
+    var nx = clamp01(((1 - lm[8].x) - m) / ACTIVE), ny = clamp01((lm[8].y - m) / ACTIVE); /* index fingertip, mirrored */
+    var px = fx.filter(nx, now) * W, py = fy.filter(ny, now) * H;
     cur.style.display = 'block'; cur.style.left = px + 'px'; cur.style.top = py + 'px';
-    cur.classList.toggle('pinch', st.pinching);
+    cur.classList.toggle('held-cur', !!st.held);
 
-    if (st.pinching && !wasPinch) {
-      var hit = panelAt(px, py);
-      if (hit) { var r = hit.el.getBoundingClientRect(); grabOff.x = px - r.left; grabOff.y = py - r.top; grab(hit); st.startX = px; st.startY = py; }
-    } else if (st.pinching && st.held) {
-      if (Math.hypot(px - st.startX, py - st.startY) > 14) st.moved = true;
-      if (st.moved) place(st.held, px - grabOff.x, py - grabOff.y);
-    } else if (!st.pinching && wasPinch && st.held) {
-      release(st.held);
-    }
-    if (!st.pinching) {
+    if (st.cool && now < st.cool) { setRing(0); return; }
+
+    if (!st.held) {
       var h = panelAt(px, py);
       if (h !== st.hover) { if (st.hover) st.hover.el.classList.remove('hover'); if (h) h.el.classList.add('hover'); st.hover = h; }
+      if (!h) { dwell.panel = null; setRing(0); setStatus('Hand tracking: <b>live</b>'); return; }
+      if (h !== dwell.panel || Math.hypot(px - dwell.ax, py - dwell.ay) > STILL_PX) resetDwell(h, px, py, now);
+      var p = (now - dwell.t0) / DWELL_GRAB; setRing(p);
+      setStatus('Hand tracking: <b>hold to grab</b>');
+      if (p >= 1) {
+        var r = h.el.getBoundingClientRect(); grabOff.x = px - r.left; grabOff.y = py - r.top;
+        grab(h); st.startX = px; st.startY = py; resetDwell(h, px, py, now);
+      }
+    } else {
+      if (!st.moved && Math.hypot(px - st.startX, py - st.startY) > 40) st.moved = true;
+      if (st.moved) place(st.held, px - grabOff.x, py - grabOff.y);
+      if (Math.hypot(px - dwell.ax, py - dwell.ay) > STILL_PX) { dwell.ax = px; dwell.ay = py; dwell.t0 = now; }
+      var q = (now - dwell.t0) / DWELL_DROP; setRing(q);
+      setStatus('Hand tracking: <b>' + (st.moved ? 'hold still to drop' : 'hold still to expand') + '</b>');
+      if (q >= 1) { var done = st.held; release(done); dwell.panel = null; st.cool = now + 900; setRing(0); }
     }
-    setStatus('Hand tracking: <b>live</b>' + (st.pinching ? ' · pinched' : ''));
   }
 
   function startTracking() {
@@ -160,7 +190,7 @@
       .then(function () { setStatus('Loading hand model…'); return loadScript(MP_HANDS); })
       .then(function () {
         st.hands = new window.Hands({ locateFile: function (f) { return MP_BASE + f; } });
-        st.hands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.6, minTrackingConfidence: 0.5 });
+        st.hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6, minTrackingConfidence: 0.5 });
         st.hands.onResults(onResults);
         st.running = true; st.tracking = true;
         var busy = false;
@@ -172,8 +202,8 @@
           }
           st.raf = requestAnimationFrame(loop);
         })();
-        setStatus('Hand tracking: <b>show your hand</b>');
-        document.getElementById('sm-hint').textContent = 'Pinch a panel to grab it · move your hand to drag · quick pinch to expand · Esc to exit';
+        setStatus('Hand tracking: <b>point with your index finger</b>');
+        document.getElementById('sm-hint').textContent = 'Point at a panel and hold to grab · move to drag · hold still to drop (or expand) · Esc to exit';
       })
       .catch(function (e) {
         st.tracking = false;
@@ -194,7 +224,7 @@
       '<div id="sm-cursor"></div><div id="sm-hint">Starting…</div>';
     document.body.appendChild(root);
     st.root = root; st.video = root.querySelector('#sm-video'); st.cursor = root.querySelector('#sm-cursor');
-    st.panels = []; st.held = null; st.hover = null; st.pinching = false;
+    st.panels = []; st.held = null; st.hover = null; st.cool = 0; dwell.panel = null; fx.reset(); fy.reset();
     build(panels);
     root.querySelector('#sm-exit').onclick = close;
     root.querySelector('#sm-reset').onclick = function () { st.panels.forEach(function (p) { p.el.classList.remove('open'); }); layout(st.panels); };
@@ -215,5 +245,5 @@
     st.root = null; st.panels = [];
   }
 
-  window.SpatialMode = { open: open, close: close, esc: esc };
+  window.SpatialMode = { open: open, close: close, esc: esc, _feed: onResults };
 })();
