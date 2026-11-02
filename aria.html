@@ -530,7 +530,12 @@
       <div id="rh-msgs" style="flex:1;overflow-y:auto;padding:20px 32px;display:flex;flex-direction:column;gap:14px"></div>
       <div style="padding:14px 24px;border-top:1px solid rgba(99,102,241,.1);display:flex;gap:10px;flex-shrink:0">
         <textarea id="rh-chat-input" rows="1" style="flex:1;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:#fff;font-family:var(--font),sans-serif;font-size:13px;outline:none;resize:none;max-height:100px;transition:border .2s;box-sizing:border-box" placeholder="Type your response..." onkeydown="if(event.key==='Enter'&amp;&amp;!event.shiftKey){event.preventDefault();rhSendMsg()}" onfocus="this.style.borderColor='rgba(99,102,241,.35)'" onblur="this.style.borderColor='rgba(255,255,255,.08)'"></textarea>
+        <button id="rh-mic-btn" type="button" onclick="rhToggleMic()" aria-label="Speak your response" title="Speak your response" style="width:42px;padding:0;background:rgba(255,255,255,.05);color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:8px;cursor:pointer;font-size:16px;flex-shrink:0;transition:all .2s">&#127908;</button>
         <button id="rh-send-btn" onclick="rhSendMsg()" style="padding:10px 18px;background:#6366f1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:var(--font),sans-serif;font-weight:700;font-size:13px;flex-shrink:0;transition:opacity .2s">&#8594;</button>
+      </div>
+      <div style="padding:0 24px 12px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;flex-shrink:0">
+        <div id="rh-voice-hint" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,.8);letter-spacing:.03em">Tap the mic to speak. Your words appear in the box. Edit, then press send.</div>
+        <label style="display:flex;gap:6px;align-items:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,.8);cursor:pointer"><input type="checkbox" id="rh-speak-cb" onchange="rhSetSpeak(this.checked)"> Read replies aloud</label>
       </div>
     </div>
 
@@ -637,8 +642,8 @@
       var initial = document.getElementById('empty-chat');
       if (initial) initial.outerHTML = emptyChatHTML(curMode);
     });
-    var isListen=false, isSpeak=false, recog=null, voices=[], reviewMode=true;
-    var silenceTimer=null, liveTranscript='';
+    var isListen=false, isSpeak=false, voices=[], reviewMode=true;
+    var silenceTimer=null;
 
     window.speechSynthesis.onvoiceschanged=function(){voices=window.speechSynthesis.getVoices();};
     setTimeout(function(){voices=window.speechSynthesis.getVoices();},500);
@@ -784,139 +789,95 @@
       .catch(function(){rmTyping();setState('idle');addMsg('aria','Connection error. Please check your network.');});
     }
 
+    function idleHint(){ return reviewMode ? 'Tap to speak \xb7 review before sending' : 'Tap to speak \xb7 tap again to send'; }
     function voiceHint(msg){
       var h=document.getElementById('mic-hint'); if(!h)return;
       h.innerText=msg; clearTimeout(window._vhT);
-      window._vhT=setTimeout(function(){h.innerText=reviewMode?'Tap to speak \xb7 review before sending':'Tap to speak \xb7 5s silence auto-sends';},7000);
+      window._vhT=setTimeout(function(){h.innerText=idleHint();},7000);
     }
 
-    // CONTINUOUS MIC with 5s silence detection
-    function initRecog() {
-      var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-      if(!SR){voiceHint('Voice input is not supported in this browser. Type your message below, or open ARIA in Chrome.');return null;}
-      var r=new SR();
-      var isMobile=/Android|iPhone|iPad/i.test(navigator.userAgent);
-      r.continuous=!isMobile;
-      r.interimResults=!isMobile;
-      r.lang='en-IN';
-      r.maxAlternatives=3;
-
-      var fullTranscript='';
-      var finalAccumulator='';
-      var lastSpeechTime=Date.now();
-
-      r.onstart=function(){
-        isListen=true;
-        setState('listening');
-        fullTranscript='';
-        finalAccumulator='';
-        liveTranscript='';
-        lastSpeechTime=Date.now();
-        clearInterval(window._silenceCheck);
-        window._silenceCheck=setInterval(function(){
-          if(!isListen)return clearInterval(window._silenceCheck);
-          var elapsed=Date.now()-lastSpeechTime;
-          if(fullTranscript.length>0 && elapsed>5000){
-            clearInterval(window._silenceCheck);
-            if(reviewMode){showReview(fullTranscript.trim());}
-            else{stopAndSend();}
+    // VOICE: recorded on the device, transcribed by the Worker (Whisper). Tap to start, tap to stop.
+    // Auto-stops only as a safety net: 8 s of silence after speech, or the 90 s clip limit.
+    var voice=null, voiceBars=null;
+    function voiceInit(){
+      if(voice) return voice;
+      voice=VantageVoice.create({
+        maxMs:90000, silenceMs:8000,
+        onState:function(st){
+          var h=document.getElementById('mic-hint');
+          if(st==='recording'){
+            isListen=true; clearTimeout(window._vhT); setState('listening');
+            document.getElementById('slbl').innerText='Listening...';
+            if(h) h.innerText='0:00 \xb7 tap to stop';
+          } else if(st==='processing'){
+            isListen=false; setState('thinking');
+            document.getElementById('slbl').innerText='Transcribing...';
+            if(h) h.innerText='Transcribing your voice...';
+            resetBars();
+          } else if(st==='idle'){
+            isListen=false; resetBars();
           }
-        },500);
-      };
-
-      r.onresult=function(e){
-        lastSpeechTime=Date.now();
-        var interimTranscript='';
-        for(var i=e.resultIndex;i<e.results.length;i++){
-          if(e.results[i].isFinal){
-            finalAccumulator+=e.results[i][0].transcript+' ';
+        },
+        onTick:function(t){
+          var h=document.getElementById('mic-hint');
+          if(h){
+            var txt=VantageVoice.mmss(t.elapsedMs)+' \xb7 tap to stop';
+            if(t.remainingMs<=15000) txt=VantageVoice.mmss(t.elapsedMs)+' \xb7 stops at 1:30';
+            h.innerText=txt;
+          }
+          var bars=document.querySelectorAll('#wb .wb');
+          for(var i=0;i<bars.length;i++){
+            bars[i].style.animation='none';
+            var jitter=0.6+0.4*Math.abs(Math.sin(t.elapsedMs/140+i*1.7));
+            bars[i].style.height=Math.max(4,Math.min(20,4+t.level*260*jitter))+'px';
+          }
+        },
+        onText:function(text){
+          if(reviewMode){
+            var box=document.getElementById('review-text'), pop=document.getElementById('review-popup');
+            var open=pop.style.display==='block' && box.value.trim();
+            showReview(open ? box.value.trim()+' '+text : text);
           } else {
-            interimTranscript+=e.results[i][0].transcript;
+            var hh=document.getElementById('mic-hint'); if(hh) hh.innerText=idleHint();
+            callARIA(text);
           }
-        }
-        fullTranscript=(finalAccumulator+interimTranscript).trim();
-        liveTranscript=fullTranscript;
-        var hint=document.getElementById('mic-hint');
-        if(hint&&fullTranscript){hint.innerText=fullTranscript.substring(Math.max(0,fullTranscript.length-60));}
-      };
-
-      r.onerror=function(e){
-        if(e.error==='no-speech'){return;}
-        if(e.error==='language-not-supported' && r.lang!=='en-US'){r.lang='en-US';try{r.start();}catch(err){}return;}
-        isListen=false;
-        clearInterval(window._silenceCheck);
-        setState('idle');
-        if(e.error==='not-allowed'||e.error==='service-not-allowed'){voiceHint('Microphone is blocked. Allow mic access for this site in your browser settings, or type below.');}
-        else if(e.error==='network'){voiceHint('Voice needs an internet connection. Try again, or type below.');}
-        else if(e.error==='audio-capture'){voiceHint('No microphone found. Type below instead.');}
-      };
-
-      r.onend=function(){
-        var isMobileEnd=/Android|iPhone|iPad/i.test(navigator.userAgent);
-        if(isMobileEnd && isListen && fullTranscript.length>0){
-          clearInterval(window._silenceCheck);
-          liveTranscript=fullTranscript.trim();
-          if(reviewMode){showReview(liveTranscript);}
-          else{stopAndSend();}
-        } else if(isListen && fullTranscript.length===0){
-          try{r.start();}catch(err){isListen=false;setState('idle');}
-        } else if(isListen && fullTranscript.length>0){
-          clearInterval(window._silenceCheck);
-          liveTranscript=fullTranscript.trim();
-          if(reviewMode){showReview(liveTranscript);}
-          else{stopAndSend();}
-        }
-      };
-
-      return r;
+        },
+        onError:function(code,msg){ setState('idle'); voiceHint(msg); }
+      });
+      return voice;
     }
-
-    function stopAndSend() {
-      var txt=liveTranscript.trim();
-      liveTranscript='';
-      isListen=false;
-      clearInterval(window._silenceCheck);
-      if(recog)try{recog.stop();}catch(e){}
-      document.getElementById('mic-hint').innerText=reviewMode?'Tap to speak - review before sending':'Tap to speak - 5s silence auto-sends';
-      if(txt){setState('thinking');callARIA(txt);}
-      else setState('idle');
+    function resetBars(){
+      var bars=document.querySelectorAll('#wb .wb');
+      for(var i=0;i<bars.length;i++){ bars[i].style.animation=''; bars[i].style.height=''; }
     }
 
     function showReview(txt) {
-      isListen=false;
-      if(recog)try{recog.stop();}catch(e){}
       setState('idle');
       document.getElementById('review-text').value=txt;
       document.getElementById('review-popup').style.display='block';
+      var h=document.getElementById('mic-hint'); if(h) h.innerText=idleHint();
     }
 
-    window.cancelReview=function(){document.getElementById('review-popup').style.display='none';liveTranscript='';setState('idle');};
+    window.cancelReview=function(){document.getElementById('review-popup').style.display='none';setState('idle');};
     window.sendReview=function(){
       var txt=document.getElementById('review-text').value.trim();
       document.getElementById('review-popup').style.display='none';
-      liveTranscript='';
       if(txt)callARIA(txt);
     };
 
     window.toggleReviewMode=function(on){
       reviewMode=on;
-      document.getElementById('mic-hint').innerText=on?'Tap to speak \xb7 review before sending':'Tap to speak \xb7 5s silence auto-sends';
+      document.getElementById('mic-hint').innerText=idleHint();
     };
 
     window.handleMic=function(){
       if(isSpeak){window.speechSynthesis.cancel();isSpeak=false;setState('idle');return;}
-      if(isListen){
-        clearInterval(window._silenceCheck);
-        var txt=liveTranscript.trim();
-        isListen=false; if(recog)try{recog.stop();}catch(e){}
-        liveTranscript='';
-        document.getElementById('mic-hint').innerText=reviewMode?'Tap to speak - review before sending':'Tap to speak - 5s silence auto-sends';
-        if(txt){if(reviewMode)showReview(txt);else callARIA(txt);}
-        else setState('idle');
-        return;
-      }
-      recog=initRecog(); if(!recog)return;
-      try{recog.start();}catch(e){console.error(e);}
+      if(!window.VantageVoice || !VantageVoice.supported()){ voiceHint('Voice input is not supported in this browser. Please type below instead.'); return; }
+      var v=voiceInit();
+      if(v.state==='recording'){ v.stop(); return; }
+      if(v.state!=='idle' || ariaState==='thinking') return;
+      window.speechSynthesis.cancel(); isSpeak=false;
+      v.start();
     };
 
     window.sendText=function(){
@@ -1091,9 +1052,9 @@
     // End session
     window.endSession=function(){
       window.speechSynthesis.cancel(); clearTimeout(silenceTimer);
-      if(recog)try{recog.stop();}catch(e){}
+      if(voice)try{voice.cancel();}catch(e){}
       saveSession();
-      hist=[]; liveTranscript=''; isListen=false; isSpeak=false;
+      hist=[]; isListen=false; isSpeak=false;
       clearMessages(); setState('idle');
       var btn = document.getElementById('end-btn');
       btn.innerText = 'Session Ended';
@@ -1150,6 +1111,7 @@
     };
 
     function rhShowView(view) {
+      if (view !== 'chat' && typeof rhStopVoice === 'function') rhStopVoice();
       ['setup','loading','chat','debrief'].forEach(function(v) {
         var el = document.getElementById('rh-' + v);
         if (el) el.style.display = 'none';
@@ -1319,7 +1281,7 @@
           var dialogue = parsed.dialogue || data.data.response;
           rhHistory.push({ role:'assistant', content:dialogue });
           rhShowView('chat');
-          if (dialogue) rhAddMsg('them', dialogue);
+          if (dialogue) { rhAddMsg('them', dialogue); rhSpeak(dialogue); }
         } else {
           rhShowView('setup');
           var em = data.error === 'USAGE_LIMIT' ? (data.message || 'Daily limit reached. Try again tomorrow.') : ('Something went wrong: ' + (data.error || 'Please try again.'));
@@ -1331,11 +1293,73 @@
       }
     };
 
+    // Push-to-talk for the rehearsal. Words go into the box; the person edits and presses send.
+    var rhVoice = null, rhSpeakOn = false;
+    function rhHint(t) { var h = document.getElementById('rh-voice-hint'); if (h) h.textContent = t; }
+    var RH_HINT_IDLE = 'Tap the mic to speak. Your words appear in the box. Edit, then press send.';
+    function rhMicStyle(rec) {
+      var b = document.getElementById('rh-mic-btn'); if (!b) return;
+      b.style.background = rec ? 'rgba(255,77,109,.25)' : 'rgba(255,255,255,.05)';
+      b.style.borderColor = rec ? '#FF4D6D' : 'rgba(255,255,255,.12)';
+      b.innerHTML = rec ? '&#9209;' : '&#127908;';
+    }
+    window.rhToggleMic = function() {
+      if (!window.VantageVoice || !VantageVoice.supported()) { rhHint('Voice input is not supported in this browser. Please type instead.'); return; }
+      if (!rhVoice) {
+        rhVoice = VantageVoice.create({
+          maxMs: 90000, silenceMs: 8000,
+          onState: function(st) {
+            rhMicStyle(st === 'recording');
+            var b = document.getElementById('rh-mic-btn'); if (b) b.disabled = (st === 'processing' || st === 'starting');
+            if (st === 'recording') rhHint('0:00 · tap the mic to stop');
+            else if (st === 'processing') rhHint('Transcribing your voice...');
+          },
+          onTick: function(t) { rhHint(VantageVoice.mmss(t.elapsedMs) + (t.remainingMs <= 15000 ? ' · stops at 1:30' : ' · tap the mic to stop')); },
+          onText: function(text) {
+            var inp = document.getElementById('rh-chat-input');
+            if (inp) { inp.value = (inp.value.trim() ? inp.value.trim() + ' ' : '') + text; inp.focus(); inp.dispatchEvent(new Event('input')); }
+            rhHint('Check the words, edit if needed, then press send.');
+          },
+          onError: function(code, msg) { rhHint(msg); }
+        });
+      }
+      if (rhVoice.state === 'recording') { rhVoice.stop(); return; }
+      if (rhVoice.state !== 'idle') return;
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+      rhVoice.start();
+    };
+    // Spoken replies: off by default, on-device voices only, so no audio leaves the phone.
+    function rhLocalVoice() {
+      var vs = []; try { vs = window.speechSynthesis.getVoices() || []; } catch (e) {}
+      var loc = vs.filter(function(v) { return v.localService; });
+      return loc.find(function(v) { return v.lang === 'en-IN'; }) || loc.find(function(v) { return /^en/i.test(v.lang); }) || null;
+    }
+    window.rhSetSpeak = function(on) {
+      rhSpeakOn = !!on;
+      if (on && !rhLocalVoice()) { rhHint('No on-device voice found on this device, so replies will stay as text.'); }
+      if (!on) { try { window.speechSynthesis.cancel(); } catch (e) {} rhHint(RH_HINT_IDLE); }
+    };
+    function rhSpeak(text) {
+      if (!rhSpeakOn || !('speechSynthesis' in window)) return;
+      var v = rhLocalVoice(); if (!v) return;
+      try {
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(text); u.voice = v; u.lang = v.lang; u.rate = 0.95;
+        window.speechSynthesis.speak(u);
+      } catch (e) {}
+    }
+    function rhStopVoice() {
+      try { if (rhVoice && rhVoice.state === 'recording') rhVoice.cancel(); } catch (e) {}
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+      rhMicStyle(false); rhHint(RH_HINT_IDLE);
+    }
+
     window.rhSendMsg = async function() {
       var inp = document.getElementById('rh-chat-input');
       var text = inp ? inp.value.trim() : '';
       if (!text) return;
       if (inp) inp.value = '';
+      rhStopVoice();
       var sendBtn = document.getElementById('rh-send-btn');
       if (sendBtn) sendBtn.disabled = true;
       rhAddMsg('you', text);
@@ -1356,6 +1380,7 @@
         if (data.success) {
           rhHistory.push({ role:'assistant', content:data.data.response });
           rhAddMsg('them', data.data.response);
+          rhSpeak(data.data.response);
           if (rhExchangeCount >= rhMax) {
             var info = document.createElement('div');
             info.style.cssText = 'text-align:center;font-family:JetBrains Mono,monospace;font-size:11px;color:rgba(255,255,255,.45);padding:10px 0';
@@ -1427,6 +1452,7 @@
   <script src="aria-volumetric-product.js"></script>
   <script src="clerk-auth.js"></script>
   <script src="sidebar-shared.js"></script>
+  <script src="vantage-voice.js"></script>
   <script src="vantage-rehearse.js"></script>
   <script>if (window.VantageRehearse) { try { VantageRehearse.consume(); } catch (e) {} }</script>
 </body>
