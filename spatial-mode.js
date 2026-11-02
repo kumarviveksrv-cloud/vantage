@@ -6,8 +6,13 @@
  * Usage: SpatialMode.open(panels, {tool,title,caseType,footer}) where panels = [{id,title,tag,level,html,summary}]
  */
 (function () {
+  /* Hand-tracking runtime: served from our own origin first (works on locked-down corporate
+     networks); the public CDN is only a fallback if the local copy cannot be loaded. */
+  var SELF = (document.currentScript && document.currentScript.src) ? document.currentScript.src.replace(/[^\/]*$/, '') : '';
+  var MP_LOCAL = SELF + 'vendor/mediapipe-hands/';
   var MP_HANDS = 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js';
-  var MP_BASE = 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
+  var MP_CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/';
+  var MP_BASE = MP_LOCAL;
   
   var css = '\
 #sm-root{position:fixed;inset:0;z-index:2000;background:radial-gradient(ellipse at 50% 30%,#0d0b1e 0%,#050410 70%);overflow:hidden;font-family:"DM Sans",sans-serif;color:#f4f3ff;animation:fadeIn .3s ease}\
@@ -349,7 +354,7 @@
         st.stream = stream; st.video.srcObject = stream;
         return st.video.play();
       })
-      .then(function () { setStatus('Loading hand model…'); return loadScript(MP_HANDS); })
+      .then(function () { setStatus('Loading hand model…'); return loadScript(MP_LOCAL + 'hands.js').then(function () { MP_BASE = MP_LOCAL; }, function () { MP_BASE = MP_CDN; return loadScript(MP_HANDS); }); })
       .then(function () {
         st.hands = new window.Hands({ locateFile: function (f) { return MP_BASE + f; } });
         st.hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.35, minTrackingConfidence: 0.3 });
