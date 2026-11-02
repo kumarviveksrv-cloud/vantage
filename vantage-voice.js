@@ -111,7 +111,11 @@
         if (res.status === 401) { fail('auth', 'Please sign in again to use voice.'); return; }
         if (res.status === 429 || d.error === 'USAGE_LIMIT') { fail('limit', d.message || 'You have reached today’s voice limit. Please type instead.'); return; }
         if (res.status >= 500 && attempt < 1) { return new Promise(function (ok) { setTimeout(ok, 1200); }).then(function () { return send(blob, attempt + 1); }); }
-        if (!d.success) { fail('failed', 'Transcription failed. Try again, or type instead.'); return; }
+        if (!d.success) {
+          try { console.warn('[VantageVoice] /transcribe failed', res.status, d, 'clip bytes', blob.size); } catch (e) {}
+          var why = res.status + (d.error ? ': ' + String(d.error).slice(0, 60) : '');
+          fail('failed', 'Transcription failed (' + why + '). Try again, or type instead.'); return;
+        }
         var text = String(d.text || '').trim();
         if (!text) { fail('no_speech', 'Didn’t catch anything. Tap the mic and try again.'); return; }
         if (opts.onText) try { opts.onText(text); } catch (e) {}
