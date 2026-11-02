@@ -3,9 +3,14 @@
  * an elapsed timer and an estimated progress bar, and asks the browser to confirm
  * before the tab is refreshed or closed. The leave-guard is released as soon as the
  * server responds, so the app's own redirects (for example the trial gate) are never blocked.
+ *
+ * Live progress: watched Worker POSTs ask for ?stream=1. When the Worker streams, this file reads the
+ * progress events (stage, words written), shows them in the box, and finally hands the page an ordinary
+ * Response holding the normal JSON, so no page code changes. If the Worker does not stream (older
+ * deploy, or any other server), the plain JSON response is passed through untouched.
  */
 (function () {
-  var EST = 90, t0 = 0, timer = 0, box = null, guarding = false;
+  var EST = 90, t0 = 0, timer = 0, box = null, guarding = false, live = false;
   function guard(e) { e.preventDefault(); e.returnValue = ''; return ''; }
   function fmt(s) { return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
 
@@ -27,7 +32,7 @@
     box.querySelector('.vw-time').textContent = fmt(s);
     var pct = s <= EST ? (s / EST) * 92 : 92 + Math.min(6, (s - EST) / 30);
     box.querySelector('.vw-bar i').style.width = pct + '%';
-    if (s > EST + 15) {
+    if (s > EST + 15 && !live) {
       box.querySelector('.vw-head').textContent = 'Taking a little longer than usual';
       box.querySelector('.vw-msg').textContent = 'Your case is still being worked on. Please keep this tab open.';
     }
@@ -44,13 +49,84 @@
     window.addEventListener('beforeunload', guard); guarding = true;
   }
   function release() { if (guarding) { window.removeEventListener('beforeunload', guard); guarding = false; } }
-  function stop() { clearInterval(timer); timer = 0; release(); if (box) { box.remove(); box = null; } }
+  function stop() { clearInterval(timer); timer = 0; live = false; release(); if (box) { box.remove(); box = null; } }
   function visible(v) { return v.style.display !== 'none' && getComputedStyle(v).display !== 'none'; }
+
+
+  /* ---- live progress (Worker streaming) ---- */
+  var STAGES = {
+    anonymise: 'Step 1 of 2: removing names and identifying details',
+    analyse: 'Step 2 of 2: writing your analysis',
+    retry: 'Double-checking the structure of the result'
+  };
+  var stageText = '';
+  function showMsg(txt) { if (box) { var m = box.querySelector('.vw-msg'); if (m) m.textContent = txt; } }
+  function onStage(name) {
+    if (!STAGES[name]) return;
+    live = true; stageText = STAGES[name];
+    if (box) { box.querySelector('.vw-head').textContent = 'Working on your case'; }
+    showMsg(stageText);
+  }
+  function onGen(chars) {
+    if (!chars) return;
+    live = true;
+    var words = Math.max(1, Math.round(chars / 6));
+    showMsg((stageText || 'Writing your analysis') + ' (about ' + words + ' words so far)');
+  }
+  var IDLE_MS = 45000, TOTAL_MS = 240000;
+  function lostResponse() {
+    return new Response(JSON.stringify({ success: false, error: 'The connection dropped before your result arrived. Please try again.' }), { status: 502, headers: { 'Content-Type': 'application/json' } });
+  }
+  /* reads the SSE body; resolves with an ordinary JSON Response built from the final "result" event */
+  function readEvents(resp, arm) {
+    var reader = resp.body.getReader(), dec = new TextDecoder(), buf = '';
+    function handle(block) {
+      var ev = 'message', data = '';
+      block.split('\n').forEach(function (ln) {
+        if (ln.indexOf('event:') === 0) ev = ln.slice(6).trim();
+        else if (ln.indexOf('data:') === 0) data += ln.slice(5).trim();
+      });
+      if (!data) return null;
+      var d; try { d = JSON.parse(data); } catch (e) { return null; }
+      if (ev === 'stage') onStage(d.stage);
+      else if (ev === 'gen') onGen(d.chars);
+      else if (ev === 'result') return new Response(d.body, { status: d.status || 200, headers: { 'Content-Type': 'application/json' } });
+      return null;
+    }
+    function pump() {
+      return reader.read().then(function (step) {
+        if (step.done) return lostResponse();
+        arm();
+        buf += dec.decode(step.value, { stream: true });
+        buf = buf.replace(/\r\n/g, '\n');
+        var idx, out = null;
+        while ((idx = buf.indexOf('\n\n')) !== -1) {
+          var block = buf.slice(0, idx); buf = buf.slice(idx + 2);
+          out = handle(block) || out;
+        }
+        return out || pump();
+      });
+    }
+    return pump();
+  }
+  function streamed(self, input, init, url) {
+    var ctrl = new AbortController(), idleT = 0, totalT = 0;
+    function clear() { clearTimeout(idleT); clearTimeout(totalT); }
+    function arm() { clearTimeout(idleT); idleT = setTimeout(function () { ctrl.abort(); }, window.__vwIdleMs || IDLE_MS); }
+    totalT = setTimeout(function () { ctrl.abort(); }, window.__vwLimitMs || TOTAL_MS);
+    arm();
+    var u = url + (url.indexOf('?') === -1 ? '?' : '&') + 'stream=1';
+    return orig.call(self, u, Object.assign({}, init || {}, { signal: ctrl.signal })).then(function (resp) {
+      var ct = (resp.headers && resp.headers.get('Content-Type')) || '';
+      if (ct.indexOf('text/event-stream') === -1 || !resp.body || !resp.body.getReader) { clear(); release(); return resp; }
+      return readEvents(resp, arm).then(function (r) { clear(); release(); return r; });
+    }).catch(function (e) { clear(); release(); throw e; });
+  }
 
   /* once the server answers, the run is safe: stop asking the browser to block navigation */
   var viewEl = null;
+  var orig = window.fetch;
   if (typeof window.fetch === 'function') {
-    var orig = window.fetch;
     var LIMIT_MS = 130000; /* Worker now caps itself near 115 s worst case; client gives up shortly after so the server error wins */
     window.fetch = function (input, init) {
       var args = arguments, watched = false, t = 0;
@@ -58,7 +134,11 @@
         var method = ((init && init.method) || (input && input.method) || 'GET').toUpperCase();
         var url = (typeof input === 'string') ? input : (input && input.url) || '';
         watched = guarding && method === 'POST' && viewEl && visible(viewEl);
-        /* give a stuck AI call a way out instead of an endless spinner */
+        /* stream progress when the Worker supports it; the stuck-call timeout lives inside streamed() */
+        if (watched && typeof input === 'string' && url.indexOf('workers.dev') !== -1 && typeof AbortController !== 'undefined' && !(init && init.signal) && window.ReadableStream) {
+          return streamed(this, input, init, url);
+        }
+        /* fallback: give a stuck AI call a way out instead of an endless spinner */
         if (watched && url.indexOf('workers.dev') !== -1 && typeof AbortController !== 'undefined' && !(init && init.signal)) {
           var ctrl = new AbortController();
           t = setTimeout(function () { ctrl.abort(); }, window.__vwLimitMs || LIMIT_MS);
