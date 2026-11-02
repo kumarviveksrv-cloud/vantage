@@ -101,6 +101,14 @@
     .badge-medium{color:var(--muted);background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3)}
     .badge-low{color:var(--grey);background:rgba(244,243,255,0.06);border:1px solid rgba(244,243,255,0.1)}
 
+    /* SPATIAL MODE STRIP */
+    .spatial-strip{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 20px;margin-bottom:20px;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(99,102,241,0.04));border:1px solid rgba(124,58,237,0.22);transition:border-color .2s,background .2s}
+    .spatial-strip:hover,.spatial-strip:focus-visible{border-color:rgba(196,181,253,0.5);background:rgba(124,58,237,0.12);outline:none}
+    .spatial-strip-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#c4b5fd;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+    .spatial-strip-text{font-size:13px;color:var(--grey);line-height:1.5}
+    .spatial-strip-cta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#c4b5fd;white-space:nowrap}
+    @media print{.spatial-strip{display:none !important}}
+
     /* OUTPUT: PACT GRID */
     .pact-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
     .pact-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
@@ -456,6 +464,15 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
             <div class="risk-narrative" id="risk-narrative"></div>
           </div>
           <div class="risk-badge-lg" id="risk-badge">&mdash;</div>
+        </div>
+
+        <!-- Spatial Mode strip (laptop-class screens only, toggled by script) -->
+        <div class="spatial-strip" id="spatial-strip" style="display:none" onclick="openSpatial()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSpatial();}">
+          <div>
+            <div class="spatial-strip-label">&#x25C8; New &middot; Spatial Mode</div>
+            <div class="spatial-strip-text">View this case as floating panels. Grab and move them with a pinch of your hand (webcam) or your mouse.</div>
+          </div>
+          <span class="spatial-strip-cta">Enter &rarr;</span>
         </div>
 
         <!-- PACT grid -->
@@ -902,7 +919,12 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       var btn = document.getElementById('spatial-btn');
       if (!btn || !window.matchMedia) return;
       var mq = window.matchMedia('(min-width: 1024px) and (pointer: fine)');
-      function sync() { btn.style.display = (mq.matches && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ? '' : 'none'; }
+      var strip = document.getElementById('spatial-strip');
+      function sync() {
+        var ok = mq.matches && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+        btn.style.display = ok ? '' : 'none';
+        if (strip) strip.style.display = ok ? '' : 'none';
+      }
       sync();
       if (mq.addEventListener) mq.addEventListener('change', sync);
     })();
