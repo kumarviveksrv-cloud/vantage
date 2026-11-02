@@ -6,6 +6,7 @@
  * Ask ARIA: share ONE panel's text with ARIA after an explicit consent step (sessionStorage hand-off, aria.html does the rest).
  * Quick compare: opts.presets = [{label, a, b, hint}] (panel ids) become one-click side-by-side comparisons; presets whose panels are missing are skipped.
  * Save + Then vs now: Save keeps the briefed panels on this device only (localStorage, per signed-in email, last 10, cleared on sign-out); Quick compare can then compare a saved panel with the same panel in the current analysis.
+ * Setup check: while tracking, a small card reads the camera image (brightness only, on device) and the hand size and says plainly what to fix: too dark, light behind you, show your palm, too far, too close.
  * Present: walk the brief full screen, one panel per slide, in tray order (keys, buttons, or hold a fingertip on Next/Back; the fingertip is a laser pointer).
  * Leadership Brief: drag panels into the tray to build an ordered briefing; export as PDF (print) or copy as text.
  * Usage: SpatialMode.open(panels, {tool,title,caseType,footer}) where panels = [{id,title,tag,level,html,summary}]
@@ -106,6 +107,16 @@
 .sm-chip:hover,.sm-chip.hover{background:rgba(99,102,241,.3);border-color:#a5b4fc}\
 .sm-chip i{font-style:normal;color:#FFB547;margin-left:6px}\
 .sm-then-note{font-size:12px;color:rgba(244,243,255,.7);margin:0 0 10px}\
+#sm-check{position:absolute;left:16px;bottom:240px;width:288px;z-index:31;border-radius:14px;padding:12px 14px;background:rgba(13,11,30,.88);border:1px solid rgba(99,102,241,.35);box-shadow:0 18px 50px rgba(0,0,0,.5);pointer-events:none}\
+#sm-check-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#c4b5fd}\
+#sm-check-x{pointer-events:auto;cursor:pointer;background:none;border:none;color:rgba(244,243,255,.6);font-size:16px;line-height:1;padding:0 2px}\
+.sm-chk-row{display:flex;gap:9px;align-items:flex-start;margin:0 0 7px;font-size:12px;line-height:1.45;color:rgba(244,243,255,.82)}\
+.sm-chk-dot{flex-shrink:0;width:9px;height:9px;margin-top:5px;border-radius:50%;background:rgba(244,243,255,.25)}\
+.sm-chk-row.ok .sm-chk-dot{background:#34d399;box-shadow:0 0 8px rgba(52,211,153,.7)}\
+.sm-chk-row.bad .sm-chk-dot{background:#FF4D6D}\
+.sm-chk-row.warn .sm-chk-dot{background:#FFB547}\
+.sm-chk-row b{display:block;font-size:11px;color:#a5b4fc;font-weight:600}\
+.sm-chk-done{font-size:12px;color:#34d399;margin-top:2px}\
 #sm-pres{position:absolute;inset:0;z-index:100000;background:radial-gradient(ellipse at 50% 20%,#14102e 0%,#050410 75%);display:flex;flex-direction:column;padding:18px 28px 22px}\
 .sm-pres-top{display:flex;align-items:center;justify-content:space-between;gap:12px}\
 .sm-pres-meta{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#a5b4fc}\
@@ -137,7 +148,7 @@
 @media(max-width:768px){.sm-panel{width:240px}.sm-panel.open{width:88vw}#sm-title{display:none}}';
 
   var st = { root: null, video: null, cursor: null, hands: null, running: false, stream: null, raf: 0,
-             panels: [], brief: [], briefMode: 'summary', opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0, sel: [], focus: null, cmp: null, cmpEl: null, consentEl: null, presEl: null, presI: 0, presFull: false, ariaOk: true, qcEl: null, presets: [], thenEl: null, then: null, saved: [] };
+             panels: [], brief: [], briefMode: 'summary', opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0, sel: [], focus: null, cmp: null, cmpEl: null, consentEl: null, presEl: null, presI: 0, presFull: false, ariaOk: true, qcEl: null, presets: [], thenEl: null, then: null, saved: [], chkEl: null, chkT: 0, chkOk: 0, hand: null, lc: null };
 
   /* ARIA is paid-plan only. Hide Ask ARIA when we positively know the plan is not active:
      get_plan (run on every page load) stores trial_calls_used as a number, so its presence means the
@@ -340,6 +351,65 @@
   function closeConsent() {
     if (!st.consentEl) return;
     st.consentEl.remove(); st.consentEl = null; st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
+  }
+
+  /* ---------- setup check: is the light and distance good enough for hand tracking? ---------- */
+  /* Thresholds are starting estimates for a laptop webcam at arm's length; tune after real-camera tests. */
+  var CHK = { DARK: 55, BRIGHT: 205, BACKLIGHT_GAP: 35, BACKLIGHT_MIN: 140, PALM_FAR: 0.07, PALM_NEAR: 0.30, HAND_FRESH_MS: 1500 };
+  function sampleLight() {
+    var v = st.video; if (!v || v.readyState < 2 || !v.videoWidth) return null;
+    try {
+      if (!st.lc) { st.lc = document.createElement('canvas'); st.lc.width = 64; st.lc.height = 48; }
+      var c = st.lc.getContext('2d', { willReadFrequently: true }); c.drawImage(v, 0, 0, 64, 48);
+      var d = c.getImageData(0, 0, 64, 48).data, sc = 0, nc = 0, sb = 0, nb = 0;
+      for (var y = 0; y < 48; y++) for (var x = 0; x < 64; x++) {
+        var i = (y * 64 + x) * 4, l = 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
+        if (x >= 16 && x < 48 && y >= 12 && y < 36) { sc += l; nc++; } else { sb += l; nb++; }
+      }
+      var cm = sc / nc, bm = sb / nb; return { all: (sc + sb) / (nc + nb), center: cm, border: bm };
+    } catch (e) { return null; }
+  }
+  /* pure: light = {all, center, border} or null; hand = {ageMs, palm} or null (palm = wrist to middle knuckle as a share of frame width) */
+  function evalCheck(light, hand) {
+    var rows = [];
+    if (!light) rows.push({ k: 'Light', s: 'pend', t: 'Reading the camera image...' });
+    else if (light.all < CHK.DARK) rows.push({ k: 'Light', s: 'bad', t: 'Too dark. Put a lamp in front of you, not behind.' });
+    else if (light.all > CHK.BRIGHT) rows.push({ k: 'Light', s: 'warn', t: 'Very bright. Your hand may wash out. Dim the light or angle the screen.' });
+    else rows.push({ k: 'Light', s: 'ok', t: 'Good' });
+    if (light && light.border - light.center > CHK.BACKLIGHT_GAP && light.border > CHK.BACKLIGHT_MIN) rows.push({ k: 'Backlight', s: 'bad', t: 'Bright light is behind you. Face the window or turn your chair.' });
+    else rows.push({ k: 'Backlight', s: light ? 'ok' : 'pend', t: light ? 'None' : '...' });
+    var seen = !!(hand && hand.ageMs <= CHK.HAND_FRESH_MS);
+    rows.push(seen ? { k: 'Hand', s: 'ok', t: 'Found' } : { k: 'Hand', s: 'pend', t: 'Hold your open palm up to the camera.' });
+    if (!seen) rows.push({ k: 'Distance', s: 'pend', t: '...' });
+    else if (hand.palm < CHK.PALM_FAR) rows.push({ k: 'Distance', s: 'bad', t: 'Too far. Bring your hand closer to the screen.' });
+    else if (hand.palm > CHK.PALM_NEAR) rows.push({ k: 'Distance', s: 'warn', t: 'Too close. Move your hand back a little.' });
+    else rows.push({ k: 'Distance', s: 'ok', t: 'Good' });
+    return rows;
+  }
+  function checkTick() {
+    var o = st.chkEl; if (!o) return;
+    var h = st.hand ? { ageMs: performance.now() - st.hand.t, palm: st.hand.palm } : null;
+    renderCheck(evalCheck(sampleLight(), h));
+  }
+  function renderCheck(rows) {
+    var o = st.chkEl; if (!o) return;
+    var allOk = rows.every(function (r) { return r.s === 'ok'; });
+    o.querySelector('#sm-check-body').innerHTML = rows.map(function (r) {
+      return '<div class="sm-chk-row ' + (r.s === 'pend' ? '' : r.s) + '"><span class="sm-chk-dot"></span><div><b>' + esc(r.k) + '</b>' + esc(r.t) + '</div></div>';
+    }).join('') + (allOk ? '<div class="sm-chk-done">Looks good. You are ready.</div>' : '');
+    if (allOk) { st.chkOk++; if (st.chkOk >= 6) closeCheck(); } else st.chkOk = 0; /* ~3s of all-clear, then it gets out of the way */
+  }
+  function openCheck() {
+    if (st.chkEl || !st.root || !st.tracking) return;
+    var o = document.createElement('div'); o.id = 'sm-check'; o.setAttribute('role', 'status'); o.setAttribute('aria-live', 'polite');
+    o.innerHTML = '<div id="sm-check-head"><span>Setup check</span><button id="sm-check-x" aria-label="Close setup check">&times;</button></div><div id="sm-check-body"></div>';
+    st.root.appendChild(o); st.chkEl = o; st.chkOk = 0;
+    o.querySelector('#sm-check-x').addEventListener('click', closeCheck);
+    checkTick(); st.chkT = setInterval(checkTick, 500);
+  }
+  function closeCheck() {
+    clearInterval(st.chkT); st.chkT = 0;
+    if (st.chkEl) { st.chkEl.remove(); st.chkEl = null; }
   }
 
   /* ---------- saved briefs (on this device only) ---------- */
@@ -707,6 +777,7 @@
       return;
     }
     st.lastSeen = now;
+    try { var vw = st.video && st.video.videoWidth, vh = st.video && st.video.videoHeight; if (vw && vh) st.hand = { t: now, palm: Math.hypot((lm[0].x - lm[9].x) * vw, (lm[0].y - lm[9].y) * vh) / vw }; } catch (e) {}
     var W = window.innerWidth, H = window.innerHeight;
     var m = (1 - ACTIVE) / 2;
     var nx = clamp01(((1 - lm[8].x) - m) / ACTIVE), ny = clamp01((lm[8].y - m) / ACTIVE); /* index fingertip, mirrored */
@@ -763,6 +834,8 @@
         })();
         var pv = document.getElementById('sm-preview'); if (pv) pv.style.display = 'block';
         setStatus('Hand tracking: <b>show an open palm to lock on, then point</b>');
+        var cb = document.getElementById('sm-chk-btn'); if (cb) cb.style.display = '';
+        openCheck();
         document.getElementById('sm-hint').textContent = 'Hold your index finger on a panel to grab it · Focus enlarges one, Compare puts two side by side · drag into the Leadership Brief tray · Esc to exit';
       })
       .catch(function (e) {
@@ -777,12 +850,12 @@
   function open(panels, opts) {
     if (st.root) return;
     st.ariaOk = ariaAllowed();
-    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary'; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = []; st.thenEl = null; st.then = null; st.saved = [];
+    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary'; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = []; st.thenEl = null; st.then = null; st.saved = []; st.hand = null; st.chkOk = 0;
     injectCss();
     var root = document.createElement('div'); root.id = 'sm-root';
     root.innerHTML = '<video id="sm-video" playsinline muted></video><div id="sm-grid"></div>' +
       '<div id="sm-bar"><div><div id="sm-title">Spatial Mode · ' + esc((opts && opts.tool) || 'Vantage') + '</div><div id="sm-status">Initialising…</div></div>' +
-      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-qc" data-dwell aria-haspopup="menu" style="display:none">Quick compare</button><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
+      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-chk-btn" style="display:none">Setup check</button><button class="sm-btn" id="sm-qc" data-dwell aria-haspopup="menu" style="display:none">Quick compare</button><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
       '<div id="sm-tray"><div id="sm-tray-head"><div id="sm-tray-title">Leadership Brief</div><div id="sm-tray-sub"></div></div>' +
       '<div id="sm-tray-foot"><button class="sm-btn" id="sm-mode" data-dwell></button><button class="sm-btn primary" id="sm-present" data-dwell disabled>Present this brief</button><div id="sm-tray-btns"><button class="sm-btn" id="sm-dl" data-dwell disabled>Download</button><button class="sm-btn" id="sm-copy" data-dwell disabled>Copy text</button><button class="sm-btn" id="sm-save" data-dwell disabled title="Keep this brief on this device so you can compare it with a later analysis">Save</button></div><div id="sm-tray-msg"></div></div></div>' +
       '<canvas id="sm-preview" width="224" height="168"></canvas><div id="sm-cursor"></div><div id="sm-hint">Starting…</div>';
@@ -796,6 +869,7 @@
     refreshQcBtn();
     root.addEventListener('pointerdown', function (e) { if (st.qcEl && !(e.target.closest && e.target.closest('#sm-qc-menu, #sm-qc'))) closeQc(); });
     root.querySelector('#sm-present').onclick = openPresent;
+    root.querySelector('#sm-chk-btn').onclick = function () { if (st.chkEl) closeCheck(); else openCheck(); };
     root.querySelector('#sm-save').onclick = saveBrief;
     root.querySelector('#sm-dl').onclick = printBrief;
     root.querySelector('#sm-copy').onclick = copyBrief;
@@ -825,7 +899,7 @@
   }
   function onResize() { exitFocus(); layout(st.panels); arrangeTray(); }
   function close() {
-    st.running = false; cancelAnimationFrame(st.raf);
+    st.running = false; cancelAnimationFrame(st.raf); closeCheck();
     try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
     if (st.stream) st.stream.getTracks().forEach(function (t) { t.stop(); });
     try { if (st.hands) st.hands.close(); } catch (e) {}
@@ -836,5 +910,5 @@
     st.root = null; st.cursor = null; st.hover = null; st.panels = []; st.brief = []; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = []; st.thenEl = null; st.then = null; st.saved = [];
   }
 
-  window.SpatialMode = { open: open, _saveBrief: saveBrief, _presets: function () { return st.presets.map(function (x) { return x.label; }); }, _present: openPresent, _presStep: presStep, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
+  window.SpatialMode = { open: open, _evalCheck: evalCheck, _renderCheck: function (rows) { if (!st.chkEl) { st.tracking = true; openCheck(); } renderCheck(rows); }, _chk: CHK, _saveBrief: saveBrief, _presets: function () { return st.presets.map(function (x) { return x.label; }); }, _present: openPresent, _presStep: presStep, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
 })();
