@@ -3,6 +3,7 @@
  * Gestures (index finger only): hold your fingertip on a panel = grab, move = drag,
  * hold still = drop (or expand/collapse if you didn't move). Mouse/touch works as fallback.
  * Focus: enlarge one panel while the rest dim behind it. Compare: pick two panels, read them side by side.
+ * Ask ARIA: share ONE panel's text with ARIA after an explicit consent step (sessionStorage hand-off, aria.html does the rest).
  * Leadership Brief: drag panels into the tray to build an ordered briefing; export as PDF (print) or copy as text.
  * Usage: SpatialMode.open(panels, {tool,title,caseType,footer}) where panels = [{id,title,tag,level,html,summary}]
  */
@@ -86,11 +87,19 @@
 .sm-cmp-col .sm-body{font-size:14px;line-height:1.75;color:rgba(244,243,255,.86)}\
 .sm-cmp-col .sm-body p{margin:0 0 12px}\
 .sm-cmp-col .sm-clamp{display:block;-webkit-line-clamp:unset}\
+#sm-consent{position:absolute;inset:0;z-index:100001;background:rgba(5,4,16,.82);display:flex;align-items:center;justify-content:center;padding:24px}\
+.sm-consent-box{width:min(520px,100%);max-height:90vh;overflow-y:auto;border-radius:16px;padding:24px 26px;background:#0d0b1e;border:1px solid rgba(196,181,253,.45);box-shadow:0 30px 90px rgba(124,58,237,.35)}\
+.sm-consent-box h3{margin:0 0 10px;font-family:"Space Grotesk",sans-serif;font-size:18px;color:#f4f3ff}\
+.sm-consent-box p{margin:0 0 12px;font-size:13px;line-height:1.7;color:rgba(244,243,255,.82)}\
+.sm-consent-box details{margin:0 0 16px;font-size:12px;color:rgba(244,243,255,.7)}\
+.sm-consent-box summary{cursor:pointer;color:#c4b5fd;margin-bottom:8px}\
+.sm-consent-box pre{white-space:pre-wrap;word-break:break-word;margin:0;max-height:200px;overflow-y:auto;padding:12px;border-radius:8px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);font-family:"DM Sans",sans-serif;font-size:12px;line-height:1.6}\
+.sm-consent-btns{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}\
 @media(max-width:900px){.sm-cmp-cols{grid-template-columns:minmax(0,1fr);grid-auto-rows:minmax(0,1fr)}}\
 @media(max-width:768px){.sm-panel{width:240px}.sm-panel.open{width:88vw}#sm-title{display:none}}';
 
   var st = { root: null, video: null, cursor: null, hands: null, running: false, stream: null, raf: 0,
-             panels: [], brief: [], briefMode: 'summary', opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0, sel: [], focus: null, cmp: null, cmpEl: null };
+             panels: [], brief: [], briefMode: 'summary', opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0, sel: [], focus: null, cmp: null, cmpEl: null, consentEl: null };
 
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
   function injectCss() {
@@ -129,13 +138,14 @@
       el.className = 'sm-panel'; el.setAttribute('data-id', d.id); el.style.zIndex = ++st.z;
       el.innerHTML = '<div class="sm-head"><span class="sm-label"><span class="sm-num"></span>' + esc(d.title) + '</span>' +
         (d.tag ? '<span class="sm-tag ' + esc((d.level || '').toLowerCase()) + '">' + esc(d.tag) + '</span>' : '') +
-        '</div><div class="sm-acts"><button class="sm-act" data-act="focus" data-dwell>Focus</button><button class="sm-act" data-act="cmp" data-dwell>Compare</button></div>' +
+        '</div><div class="sm-acts"><button class="sm-act" data-act="focus" data-dwell>Focus</button><button class="sm-act" data-act="cmp" data-dwell>Compare</button><button class="sm-act" data-act="aria" data-dwell>Ask ARIA</button></div>' +
         '<div class="sm-body">' + (d.html || (d.summary ? '<p>' + esc(d.summary) + '</p>' : '')) + '</div>';
       st.root.appendChild(el);
       var p = { id: d.id, el: el, data: d, inBrief: false };
       st.panels.push(p);
       el.querySelector('[data-act="focus"]').addEventListener('click', function (e) { e.stopPropagation(); toggleFocus(p); });
       el.querySelector('[data-act="cmp"]').addEventListener('click', function (e) { e.stopPropagation(); toggleSel(p); });
+      el.querySelector('[data-act="aria"]').addEventListener('click', function (e) { e.stopPropagation(); askAria(p); });
       /* mouse / touch fallback */
       el.addEventListener('pointerdown', function (e) {
         if (e.target.closest && e.target.closest('.sm-act')) return; /* let the buttons click normally */
@@ -165,7 +175,7 @@
     if (tr && box) { var pt = dropPoint(p); box.classList.toggle('over', pt.x >= tr.left && pt.x <= tr.right && pt.y >= tr.top && pt.y <= tr.bottom); }
   }
   function panelAt(x, y) {
-    if (st.cmpEl || st.focus) return null; /* an overlay is up: only its own buttons are live */
+    if (st.cmpEl || st.focus || st.consentEl) return null; /* an overlay is up: only its own buttons are live */
     for (var i = st.panels.length - 1, best = null; i >= 0; i--) {
       var r = st.panels[i].el.getBoundingClientRect();
       if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
@@ -246,6 +256,40 @@
     if (!st.cmpEl) return;
     st.cmpEl.remove(); st.cmpEl = null; st.cmp = null; st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
     st.sel = []; refreshSel(); trayMsg('');
+  }
+
+  /* ---------- ask ARIA about one panel ---------- */
+  var ARIA_PANEL_KEY = 'sr_aria_panel', ARIA_PANEL_MAX = 2800;
+  function panelPlainText(p) {
+    var d = p.data, t = d.html ? htmlToText(d.html) : '';
+    if (!t && d.summary) t = String(d.summary);
+    t = String(t || '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+    return t.length > ARIA_PANEL_MAX ? t.slice(0, ARIA_PANEL_MAX).replace(/\s+\S*$/, '') + '...' : t;
+  }
+  function askAria(p) {
+    if (st.consentEl || st.cmpEl) return;
+    var txt = panelPlainText(p);
+    if (!txt) { trayMsg('This panel has no text to share.'); return; }
+    var o = document.createElement('div'); o.id = 'sm-consent';
+    o.innerHTML = '<div class="sm-consent-box" role="dialog" aria-modal="true" aria-label="Discuss this panel with ARIA"><h3>Discuss this panel with ARIA</h3>' +
+      '<p>ARIA will see the text of this one panel: <b>' + esc(p.data.title) + '</b>. Names and company names are removed before it reaches the AI. She cannot see the rest of your case, and the panel is not saved to your chat history.</p>' +
+      '<details><summary>Show exactly what is shared</summary><pre>' + esc(txt) + '</pre></details>' +
+      '<div class="sm-consent-btns"><button class="sm-btn" id="sm-consent-no" data-dwell>Cancel</button><button class="sm-btn primary" id="sm-consent-yes" data-dwell>Share and open ARIA</button></div></div>';
+    st.root.appendChild(o); st.consentEl = o;
+    st.hover = null; dwell.panel = null; setRing(0);
+    o.querySelector('#sm-consent-no').addEventListener('click', closeConsent);
+    o.addEventListener('click', function (e) { if (e.target === o) closeConsent(); });
+    o.querySelector('#sm-consent-yes').addEventListener('click', function () {
+      try {
+        sessionStorage.setItem(ARIA_PANEL_KEY, JSON.stringify({ tool: (st.opts && st.opts.tool) || 'Vantage', title: p.data.title, text: txt, ts: Date.now() }));
+      } catch (e) { closeConsent(); trayMsg('Could not hand the panel to ARIA. Open ARIA and describe it instead.'); return; }
+      close();
+      window.location.href = 'aria.html';
+    });
+  }
+  function closeConsent() {
+    if (!st.consentEl) return;
+    st.consentEl.remove(); st.consentEl = null; st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
   }
 
   /* ---------- leadership brief tray ---------- */
@@ -490,7 +534,7 @@
   /* ---------- open / close ---------- */
   function open(panels, opts) {
     if (st.root) return;
-    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary'; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null;
+    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary'; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null;
     injectCss();
     var root = document.createElement('div'); root.id = 'sm-root';
     root.innerHTML = '<video id="sm-video" playsinline muted></video><div id="sm-grid"></div>' +
@@ -514,7 +558,7 @@
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) startTracking();
     else { setStatus('No camera API. <b>Mouse mode</b>'); document.getElementById('sm-hint').textContent = 'Drag panels into the Leadership Brief tray · click to expand · Focus or Compare for a closer read · Esc to exit'; }
   }
-  function onKey(e) { if (e.key !== 'Escape') return; if (st.cmpEl) closeCompare(); else if (st.focus) exitFocus(); else close(); }
+  function onKey(e) { if (e.key !== 'Escape') return; if (st.consentEl) closeConsent(); else if (st.cmpEl) closeCompare(); else if (st.focus) exitFocus(); else close(); }
   function onResize() { exitFocus(); layout(st.panels); arrangeTray(); }
   function close() {
     st.running = false; cancelAnimationFrame(st.raf);
@@ -524,7 +568,7 @@
     document.removeEventListener('keydown', onKey); window.removeEventListener('resize', onResize);
     if (st.root) st.root.remove();
     clearTimeout(st.msgT);
-    st.root = null; st.cursor = null; st.hover = null; st.panels = []; st.brief = []; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null;
+    st.root = null; st.cursor = null; st.hover = null; st.panels = []; st.brief = []; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null;
   }
 
   window.SpatialMode = { open: open, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
