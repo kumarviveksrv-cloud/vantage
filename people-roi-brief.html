@@ -304,6 +304,14 @@
     .src-chip{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:rgba(99,102,241,.15);color:#a5b4fc;font-family:var(--mono);font-size:.55rem;text-decoration:none;vertical-align:super;line-height:1;margin-left:3px;border:1px solid rgba(99,102,241,.25);transition:background .15s,color .15s}
     .src-chip:hover{background:rgba(99,102,241,.35);color:#f4f3ff}
   </style>
+<style>
+.spatial-strip{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 20px;margin-bottom:20px;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(99,102,241,0.04));border:1px solid rgba(124,58,237,0.22);transition:border-color .2s,background .2s}
+.spatial-strip:hover,.spatial-strip:focus-visible{border-color:rgba(196,181,253,0.5);background:rgba(124,58,237,0.12);outline:none}
+.spatial-strip-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#c4b5fd;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.spatial-strip-text{font-size:13px;color:var(--grey);line-height:1.5}
+.spatial-strip-cta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#c4b5fd;white-space:nowrap}
+@media print{.spatial-strip{display:none !important}}
+</style>
 </head>
 <body>
 
@@ -562,6 +570,15 @@
           <div class="headline-text" id="headline-text">&#8212;</div>
         </div>
 
+        <!-- Brief Builder strip (laptop-class screens only) -->
+        <div class="spatial-strip" id="spatial-strip-general" style="display:none" onclick="openSpatialBC()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSpatialBC();}">
+          <div>
+            <div class="spatial-strip-label">&#x25C8; New &middot; Brief Builder</div>
+            <div class="spatial-strip-text">Build a presentation brief: pick the panels your CFO or CEO needs, put them in order, and export a one-page version. Use your index finger at the webcam, or your mouse.</div>
+          </div>
+          <span class="spatial-strip-cta">Enter &rarr;</span>
+        </div>
+
         <!-- Revenue at Risk + Humac -->
         <div class="top-two-col">
           <div class="rar-card">
@@ -651,6 +668,7 @@
         <div class="action-row">
           <button class="btn-primary" onclick="switchToStakeholderFlow()">Build the case for one person &#x2192;</button>
           <button class="btn-ghost" onclick="printReport()">&#x2193; Download Report</button>
+          <button class="btn-ghost" id="spatial-btn-general" style="display:none" onclick="openSpatialBC()">&#x25C8; Brief Builder</button>
           <button class="btn-ghost" id="save-record-btn" onclick="saveToRecord()">Save to Vantage Record &#x2192;</button>
           <button class="btn-ghost" onclick="fileToLedgerGeneral()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
           <button class="btn-ghost" onclick="startNewGeneral()">New Story</button>
@@ -682,6 +700,15 @@
         <div class="line-card">
           <div class="line-card-label">Opening line — the first sentence you say in the room</div>
           <div class="line-card-text" id="opening-line">&#8212;</div>
+        </div>
+
+        <!-- Brief Builder strip (laptop-class screens only) -->
+        <div class="spatial-strip" id="spatial-strip-stakeholder" style="display:none" onclick="openSpatialBC()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSpatialBC();}">
+          <div>
+            <div class="spatial-strip-label">&#x25C8; New &middot; Brief Builder</div>
+            <div class="spatial-strip-text">Build a one-page influence brief: pick the layers this stakeholder needs to hear, in the order you will say them. Use your index finger at the webcam, or your mouse.</div>
+          </div>
+          <span class="spatial-strip-cta">Enter &rarr;</span>
         </div>
 
         <!-- Stakeholder profile + Data Anchor header -->
@@ -740,6 +767,7 @@
         <div class="action-row">
           <button class="btn-primary" onclick="practiceConversation()">Simulate the Conversation &rarr;</button>
           <button class="btn-ghost" onclick="printReport()">&#x2193; Download Report</button>
+          <button class="btn-ghost" id="spatial-btn-stakeholder" style="display:none" onclick="openSpatialBC()">&#x25C8; Brief Builder</button>
           <button class="btn-ghost" id="save-record-btn-stakeholder" onclick="saveToRecordStakeholder()">&#x2713; Save to Vantage Record</button>
           <button class="btn-ghost" onclick="fileToLedgerStakeholder()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
           <button class="btn-ghost" onclick="startNewStakeholder()">New Stack</button>
@@ -1767,6 +1795,102 @@ VantageCollapse.init({ root: '#output-view-stakeholder', barBefore: '#influence-
   { sel: '.layer-card', head: '.layer-header', keep: ['.l-figure', '.l-rar'], preview: '.l-text' },
   { sel: '.humac-influence-card', head: '.humac-influence-label', keep: ['.humac-influence-grid', '#hi-green-cat'] }
 ]});
+</script>
+<script src="spatial-mode.js"></script>
+<script>
+/* Brief Builder for The Business Case (laptop-class screens only) */
+(function () {
+  var ids = ['spatial-btn-general', 'spatial-strip-general', 'spatial-btn-stakeholder', 'spatial-strip-stakeholder'];
+  if (!window.matchMedia) return;
+  var mq = window.matchMedia('(min-width: 1024px) and (pointer: fine)');
+  function sync() {
+    var ok = mq.matches && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+    ids.forEach(function (id) { var el = document.getElementById(id); if (el) el.style.display = ok ? '' : 'none'; });
+  }
+  sync();
+  if (mq.addEventListener) mq.addEventListener('change', sync);
+})();
+
+function openSpatialBC() {
+  var r = currentResult;
+  if (!r || !window.SpatialMode) return;
+  var e = window.SpatialMode.esc;
+  function plain(t) { return String(t == null ? '' : t).replace(/<[^>]*>/g, ''); }
+  function lead(t, max) {
+    t = plain(t).replace(/\s+/g, ' ').trim(); if (!t) return '';
+    var parts = t.match(/.*?[.!?](?=\s|$)|.+$/g) || [t], out = '';
+    for (var i = 0; i < parts.length; i++) {
+      var cand = (out ? out + ' ' : '') + parts[i].trim();
+      if (out && cand.length > max) break;
+      out = cand;
+      if (out.length >= 80) break;
+    }
+    if (out.length > max) out = out.slice(0, max).replace(/\s+\S*$/, '') + '…';
+    return out;
+  }
+  function paras(t) {
+    var s = plain(t).trim(); if (!s) return '';
+    return '<div class="sm-clamp">' + s.split(/\n+/).map(function (x) { return '<p>' + e(x.trim()) + '</p>'; }).join('') + '</div>';
+  }
+  function big(t) { return t ? '<div class="sm-big">' + e(plain(t)) + '</div>' : ''; }
+  function list(a) { return (a || []).map(function (x) { return '<div class="sm-pt"><span>' + e(plain(x)) + '</span></div>'; }).join(''); }
+  function labelled(k, v) { return v ? '<p><strong>' + e(k) + ':</strong> ' + e(plain(v)) + '</p>' : ''; }
+  var panels, opts;
+
+  if (!r.stack) {
+    /* SIGNAL narrative */
+    var sig = r.signal || {}, hum = r.humac || {}, rar = r.revenueAtRisk || {}, sit = sig.situation || {}, imp = sig.impact || {}, gap = sig.gap || {}, act = sig.action || {}, link = sig.linkage || {}, nar = sig.narrative || {};
+    var horizons = '';
+    (act.immediate || []).forEach(function (a) { horizons += '<div class="sm-pt"><span><strong>Now:</strong> ' + e(plain(a)) + '</span></div>'; });
+    (act.thirtyDay || []).forEach(function (a) { horizons += '<div class="sm-pt"><span><strong>30 days:</strong> ' + e(plain(a)) + '</span></div>'; });
+    (act.ninetyDay || []).forEach(function (a) { horizons += '<div class="sm-pt"><span><strong>90 days:</strong> ' + e(plain(a)) + '</span></div>'; });
+    var firstAct = (act.immediate && act.immediate[0]) || (act.thirtyDay && act.thirtyDay[0]) || (act.ninetyDay && act.ninetyDay[0]) || '';
+    panels = [
+      { id: 'headline', title: 'The number that opens the room', html: big(r.headline) },
+      { id: 'rar', title: 'Modelled revenue at risk (12 months)', tag: rar.confidence ? rar.confidence + ' coverage' : '',
+        summary: rar.figure ? 'Modelled revenue at risk over 12 months: ' + plain(rar.figure) + (rar.basis ? '. ' + lead(rar.basis, 160) : '') : '',
+        html: big(rar.figure) + paras(rar.basis) },
+      { id: 'humac', title: 'Humac financial translation', tag: hum.pillar ? 'Humac ' + hum.pillar : '',
+        summary: hum.range ? 'Modelled range ' + plain(hum.range) + (hum.pillar ? ', ' + plain(hum.pillar) + ' pillar.' : '.') : '',
+        html: big(hum.range) + paras(hum.pillarRationale) + list(hum.breakdown) + labelled('Planning signal', hum.trajectorySignal) },
+      { id: 's', title: 'S: Situation', summary: lead(sit.narrative, 240), html: paras(sit.narrative) + list(sit.keyMetrics) },
+      { id: 'i', title: 'I: Impact', summary: (imp.financialImpact ? plain(imp.financialImpact) + '. ' : '') + lead(imp.narrative, 200), html: big(imp.financialImpact) + paras(imp.narrative) + list(imp.breakdown) },
+      { id: 'g', title: 'G: Gap', summary: (gap.gapValue ? plain(gap.gapValue) + '. ' : '') + lead(gap.narrative, 200),
+        html: big(gap.gapValue) + paras(gap.narrative) + labelled('Now', gap.currentState) + labelled('Target', gap.desiredState) },
+      { id: 'a', title: 'A: Action', summary: firstAct ? 'Start now: ' + lead(firstAct, 200) : '', html: horizons },
+      { id: 'l', title: 'L: Linkage to business', summary: lead(link.businessOutcome, 240), html: paras(link.businessOutcome) + paras(link.revenueConnection || link.riskMitigation) },
+      { id: 'nb', title: 'Boardroom narrative', summary: lead(nar.boardroomVersion, 260), html: paras(nar.boardroomVersion) },
+      { id: 'nc', title: 'CFO narrative', summary: lead(nar.cfoVersion, 260), html: paras(nar.cfoVersion) },
+      { id: 'ne', title: 'CEO narrative', summary: lead(nar.ceoVersion, 260), html: paras(nar.ceoVersion) }
+    ];
+    opts = { title: 'Business Case Brief', caseType: selectedAudience ? 'Prepared for ' + selectedAudience : '' };
+  } else {
+    /* INFLUENCE stack */
+    var s = r.stack || {}, cred = s.credibility || {}, da = s.dataAnchor || {}, nb = s.narrativeBridge || {}, rm = s.riskMirror || {}, dr = s.decisionRunway || {}, h = r.humac || {};
+    var prob = rm.probability ? String(rm.probability).split(' — ')[0].split('.')[0] : '';
+    panels = [
+      { id: 'open', title: 'Opening line', html: paras(r.openingLine) },
+      { id: 'profile', title: 'Stakeholder profile', summary: lead(r.stakeholderProfile, 240), html: paras(r.stakeholderProfile) },
+      { id: 'l1', title: '1. Credibility foundation', summary: lead(cred.statement, 240), html: paras(cred.statement) + paras(cred.evidence) + labelled('Delivery', cred.deliveryNote) },
+      { id: 'l2', title: '2. Data anchor', summary: (da.figure ? plain(da.figure) + '. ' : '') + lead(da.context || da.headline, 200),
+        html: big(da.figure) + paras(da.headline) + paras(da.context) + labelled('Humac basis', da.humacBasis) },
+      { id: 'l3', title: '3. Narrative bridge', summary: lead(nb.story, 240), html: paras(nb.story) + paras(nb.connection) + labelled('The human fact inside the financial case', nb.emotionalHook) },
+      { id: 'l4', title: '4. Risk mirror: revenue at risk', summary: (rm.revenueAtRisk ? 'Revenue at risk ' + plain(rm.revenueAtRisk) + (prob ? ' (' + plain(prob) + ' modelled likelihood)' : '') + '. ' : '') + lead(rm.scenario, 160),
+        html: big(rm.revenueAtRisk) + paras(rm.revenueAtRiskBasis) + paras(rm.scenario) + labelled('Timeline', rm.timeline) },
+      { id: 'l5', title: '5. Decision runway', summary: lead(dr.ask, 240),
+        html: paras(dr.ask) + labelled('Deadline', dr.deadline) + list((dr.alternatives || []).map(function (a, i) { return (i === 0 ? 'Alt A: ' : 'Alt B: ') + a; })) + labelled('What you commit to report in 90 days', dr.successMetric) },
+      { id: 'humac', title: 'Humac financial intelligence', tag: h.pillar ? 'Humac ' + h.pillar : '',
+        summary: (h.pillar ? plain(h.pillar) + ' pillar. ' : '') + lead(h.meridianCalibration || h.pillarRationale, 200),
+        html: paras(h.pillarRationale) + paras(h.meridianCalibration) + labelled('Planning signal', h.trajectorySignal) },
+      { id: 'close', title: 'Closing line', html: paras(r.closingLine) }
+    ];
+    opts = { title: 'Influence Brief', caseType: selectedStakeholder ? 'Built for ' + selectedStakeholder : '' };
+  }
+  panels = panels.filter(function (p) { return String(p.summary || '').trim() || String(p.html || '').replace(/<[^>]*>/g, '').trim(); });
+  opts.tool = 'The Business Case';
+  opts.footer = 'Prepared with Virorah Vantage. Figures are modelled ranges and planning signals, not measured results.';
+  window.SpatialMode.open(panels, opts);
+}
 </script>
 </body>
 </html>
