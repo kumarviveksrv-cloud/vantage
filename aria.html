@@ -630,19 +630,22 @@
     window.speechSynthesis.onvoiceschanged=function(){voices=window.speechSynthesis.getVoices();};
     setTimeout(function(){voices=window.speechSynthesis.getVoices();},500);
 
+    // Replies are read aloud only with voices installed on the device (localService).
+    // Network voices such as "Google UK English Female" send the reply text to Google, so they are never used.
+    function localVoices(){ return (voices||[]).filter(function(v){ return v.localService; }); }
     function getBestVoice() {
-      var preferred=['Google UK English Female','Microsoft Zira Desktop','Microsoft Heera Desktop','Samantha','Karen','Moira','Victoria','Tessa'];
-      for(var i=0;i<preferred.length;i++){
-        var v=voices.find(function(x){return x.name===preferred[i];});
-        if(v)return v;
+      var loc=localVoices();
+      var en=loc.filter(function(v){return /^en/i.test(v.lang);});
+      if(!en.length) return null;
+      var femaleHint=/(female|zira|heera|veena|samantha|karen|moira|victoria|tessa|priya|neerja|aditi|swara)/i;
+      var order=['en-IN','en-GB','en-US'];
+      for(var i=0;i<order.length;i++){
+        var inLang=en.filter(function(v){return v.lang.replace('_','-')===order[i];});
+        var f=inLang.find(function(v){return femaleHint.test(v.name);});
+        if(f) return f;
+        if(inLang.length) return inLang[0];
       }
-      var female=voices.find(function(v){ return v.name.toLowerCase().includes('female')||(v.gender&&v.gender.toLowerCase()==='female'); });
-      if(female)return female;
-      var gb=voices.find(function(v){return v.lang==='en-GB';});
-      if(gb)return gb;
-      var inUS=voices.find(function(v){return v.lang==='en-IN';});
-      if(inUS)return inUS;
-      return voices.find(function(v){return v.lang.startsWith('en');})||null;
+      return en[0];
     }
 
     function setState(s) {
@@ -745,16 +748,7 @@
     }
     function rmTyping(){var t=document.getElementById('ty');if(t)t.remove();}
 
-    function speak(text) {
-      window.speechSynthesis.cancel(); isSpeak=true; setState('speaking');
-      var clean = (text || '').replace(/\*{1,3}/g, '').replace(/#{1,6}\s?/g, '').replace(/`/g, '').replace(/_/g, ' ').replace(/\n+/g, '. ').replace(/ +/g, ' ').trim();
-      var u=new SpeechSynthesisUtterance(clean);
-      u.lang='en-IN'; u.rate=0.88; u.pitch=1.1; u.volume=1.0;
-      var v=getBestVoice(); if(v)u.voice=v;
-      u.onend=function(){isSpeak=false;setState('idle');};
-      u.onerror=function(){isSpeak=false;setState('idle');};
-      window.speechSynthesis.speak(u);
-    }
+    function speak(text) { /* replaced below by the on-device-only version */ }
 
     function callARIA(msg) {
       hist.push({role:'user',content:msg});
@@ -915,46 +909,20 @@
       voices = window.speechSynthesis.getVoices();
       var sel = document.getElementById('voice-select');
       if (!sel || !voices.length) return;
-
-      var femaleNames = ['Google UK English Female','Microsoft Zira Desktop','Microsoft Heera Desktop','Samantha','Karen','Moira','Victoria','Tessa','Rishi','Veena'];
-      var maleNames = ['Google UK English Male','Microsoft David Desktop','Microsoft Ravi Desktop','Daniel','Alex','Tom','Fred'];
-
-      var femaleVoices = voices.filter(function(v) {
-        return femaleNames.some(function(n) { return v.name.includes(n); }) ||
-               v.name.toLowerCase().includes('female');
-      }).slice(0, 3);
-
-      var maleVoices = voices.filter(function(v) {
-     var n = v.name.toLowerCase();
-     return maleNames.some(function(nm) { return v.name.includes(nm); }) ||
-         (n.includes('male') && !n.includes('female'));
-    }).slice(0, 3);
-
-      if (femaleVoices.length === 0 && maleVoices.length === 0) {
-        var enVoices = voices.filter(function(v) { return v.lang.startsWith('en'); });
-        femaleVoices = enVoices.slice(0, 3);
-        maleVoices = enVoices.slice(3, 6);
+      var en = localVoices().filter(function(v) { return /^en/i.test(v.lang); }).slice(0, 8);
+      if (!en.length) {
+        sel.innerHTML = '<option value="auto">No on-device voice: text only</option>';
+        selectedVoiceName = 'auto';
+        return;
       }
-
-      var html = '<option value="auto">Auto (Female)</option>';
-      if (femaleVoices.length) {
-        html += '<optgroup label="Female">';
-        femaleVoices.forEach(function(v) {
-          html += '<option value="' + v.name + '">' + v.name.substring(0, 28) + '</option>';
-        });
-        html += '</optgroup>';
-      }
-      if (maleVoices.length) {
-        html += '<optgroup label="Male">';
-        maleVoices.forEach(function(v) {
-          html += '<option value="' + v.name + '">' + v.name.substring(0, 28) + '</option>';
-        });
-        html += '</optgroup>';
-      }
+      var html = '<option value="auto">Auto (on-device)</option>';
+      en.forEach(function(v) {
+        html += '<option value="' + v.name.replace(/"/g, '') + '">' + v.name.substring(0, 28) + '</option>';
+      });
       sel.innerHTML = html;
-
-      var saved = localStorage.getItem('aria_voice');
-      if (saved) { sel.value = saved; selectedVoiceName = saved; }
+      var saved = null; try { saved = localStorage.getItem('aria_voice'); } catch (e) {}
+      if (saved && en.some(function(v) { return v.name === saved; })) { sel.value = saved; selectedVoiceName = saved; }
+      else { sel.value = 'auto'; selectedVoiceName = 'auto'; }
     }
 
     window.changeVoice = function(name) {
@@ -985,18 +953,17 @@
 
     // Override speak to use selected voice and speed
     speak = function(text) {
+      var v = null;
+      if (selectedVoiceName !== 'auto') {
+        v = localVoices().find(function(x) { return x.name === selectedVoiceName; }) || null;
+      }
+      if (!v) v = getBestVoice();
+      if (!v) { isSpeak = false; setState('idle'); voiceHint('No on-device voice on this device, so ARIA replies stay in text.'); return; }
       window.speechSynthesis.cancel(); isSpeak=true; setState('speaking');
       var clean = (text || '').replace(/\*{1,3}/g, '').replace(/#{1,6}\s?/g, '').replace(/`/g, '').replace(/_/g, ' ').replace(/\n+/g, '. ').replace(/ +/g, ' ').trim();
       var u=new SpeechSynthesisUtterance(clean);
-      u.lang='en-IN'; u.rate=speechRate * 0.88; u.pitch=1.1; u.volume=1.0;
-
-      if (selectedVoiceName !== 'auto') {
-        var match = voices.find(function(v) { return v.name === selectedVoiceName; });
-        if (match) u.voice = match;
-      } else {
-        var v = getBestVoice(); if(v) u.voice = v;
-      }
-
+      u.voice = v; u.lang = v.lang;
+      u.rate=speechRate * 0.88; u.pitch=1.0; u.volume=1.0;
       u.onend=function(){isSpeak=false;setState('idle');};
       u.onerror=function(){isSpeak=false;setState('idle');};
       window.speechSynthesis.speak(u);
