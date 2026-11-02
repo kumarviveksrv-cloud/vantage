@@ -36,6 +36,8 @@
 .sm-clamp{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}\
 .sm-panel.open .sm-clamp{-webkit-line-clamp:unset;display:block}\
 .sm-pt{display:flex;gap:7px;margin-bottom:5px}.sm-pt:before{content:"";width:4px;height:4px;border-radius:50%;background:#6366f1;margin-top:7px;flex-shrink:0}\
+#sm-preview{display:none;position:absolute;left:16px;bottom:60px;width:224px;height:168px;border-radius:12px;border:2px solid rgba(255,181,71,.7);z-index:30;background:#000;opacity:.92;pointer-events:none}\
+#sm-preview.ok{border-color:rgba(124,58,237,.95)}\
 #sm-cursor{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #a5b4fc;background:conic-gradient(rgba(196,181,253,.85) calc(var(--p)*1turn),rgba(99,102,241,.16) 0);pointer-events:none;z-index:40;display:none;box-shadow:0 0 18px rgba(99,102,241,.6)}\
 #sm-cursor.held-cur{border-color:#fff;box-shadow:0 0 24px rgba(196,181,253,.9)}\
 #sm-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.05em;color:rgba(165,180,252,.7);background:rgba(13,11,30,.7);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:8px 16px;text-align:center;max-width:92vw}\
@@ -277,16 +279,33 @@
   function resetDwell(panel, px, py, now) { dwell.panel = panel; dwell.t0 = now; dwell.ax = px; dwell.ay = py; setRing(0); }
   function clamp01(v) { return Math.max(0, Math.min(1, v)); }
 
+  /* small live camera view with the detected hand points, so the person can see what the model sees */
+  function drawPreview(res, lm) {
+    var c = st.root && st.root.querySelector('#sm-preview'); if (!c) return;
+    var g = c.getContext('2d'), w = c.width, h = c.height;
+    g.save(); g.translate(w, 0); g.scale(-1, 1);
+    if (res.image) { try { g.drawImage(res.image, 0, 0, w, h); } catch (e) {} } else { g.clearRect(0, 0, w, h); }
+    if (lm) {
+      for (var i = 0; i < lm.length; i++) {
+        g.beginPath(); g.arc(lm[i].x * w, lm[i].y * h, i === 8 ? 6 : 2.5, 0, 6.3);
+        g.fillStyle = i === 8 ? '#ffffff' : 'rgba(196,181,253,.85)'; g.fill();
+      }
+    }
+    g.restore();
+    c.className = lm ? 'ok' : '';
+  }
+
   function onResults(res) {
     var lm = res.multiHandLandmarks && res.multiHandLandmarks[0];
     var cur = st.cursor, now = performance.now();
     if (!cur) return;
+    drawPreview(res, lm);
     if (!lm) {
-      if (now - st.lastSeen > 500) {
+      if (now - st.lastSeen > 900) {
         cur.style.display = 'none'; fx.reset(); fy.reset(); setRing(0);
         if (st.held) { st.moved = true; release(st.held); }
         dwell.panel = null;
-        setStatus('Hand tracking: <b>point with your index finger</b>');
+        setStatus('Hand tracking: <b>' + (now - st.lastSeen > 2500 ? 'no hand found. Move closer, add light, or show an open palm to lock on' : 'lost. Show an open palm to lock on') + '</b>');
       }
       return;
     }
@@ -325,7 +344,7 @@
 
   function startTracking() {
     setStatus('Starting camera…');
-    return navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480, facingMode: 'user' }, audio: false })
+    return navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' }, audio: false })
       .then(function (stream) {
         st.stream = stream; st.video.srcObject = stream;
         return st.video.play();
@@ -333,7 +352,7 @@
       .then(function () { setStatus('Loading hand model…'); return loadScript(MP_HANDS); })
       .then(function () {
         st.hands = new window.Hands({ locateFile: function (f) { return MP_BASE + f; } });
-        st.hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.6, minTrackingConfidence: 0.5 });
+        st.hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.35, minTrackingConfidence: 0.3 });
         st.hands.onResults(onResults);
         st.running = true; st.tracking = true;
         var busy = false;
@@ -345,7 +364,8 @@
           }
           st.raf = requestAnimationFrame(loop);
         })();
-        setStatus('Hand tracking: <b>point with your index finger</b>');
+        var pv = document.getElementById('sm-preview'); if (pv) pv.style.display = 'block';
+        setStatus('Hand tracking: <b>show an open palm to lock on, then point</b>');
         document.getElementById('sm-hint').textContent = 'Hold your index finger on a panel to grab it · drag it into the Leadership Brief tray · hold still to drop · Esc to exit';
       })
       .catch(function (e) {
@@ -367,7 +387,7 @@
       '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
       '<div id="sm-tray"><div id="sm-tray-head"><div id="sm-tray-title">Leadership Brief</div><div id="sm-tray-sub"></div></div>' +
       '<div id="sm-tray-foot"><button class="sm-btn" id="sm-mode" data-dwell></button><div id="sm-tray-btns"><button class="sm-btn primary" id="sm-dl" data-dwell disabled>Download</button><button class="sm-btn" id="sm-copy" data-dwell disabled>Copy text</button></div><div id="sm-tray-msg"></div></div></div>' +
-      '<div id="sm-cursor"></div><div id="sm-hint">Starting…</div>';
+      '<canvas id="sm-preview" width="224" height="168"></canvas><div id="sm-cursor"></div><div id="sm-hint">Starting…</div>';
     document.body.appendChild(root);
     st.root = root; st.video = root.querySelector('#sm-video'); st.cursor = root.querySelector('#sm-cursor');
     st.panels = []; st.held = null; st.hover = null; st.cool = 0; dwell.panel = null; fx.reset(); fy.reset();
