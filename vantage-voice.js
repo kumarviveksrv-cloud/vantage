@@ -13,7 +13,7 @@
  *
  * Audio is downmixed to mono and resampled to 16 kHz 16-bit WAV (about 1.9 MB per minute) before upload.
  * A clip with no detected speech is never sent (it would cost a daily transcription and Whisper tends to
- * invent text from silence). Server contract: POST multipart 'audio' (a .wav), Authorization: Bearer <Clerk JWT>.
+ * invent text from silence). Server contract: POST the raw WAV as the body with Content-Type audio/wav, Authorization: Bearer <Clerk JWT>.
  */
 (function () {
   var TARGET_RATE = 16000;
@@ -100,9 +100,9 @@
       var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
       var to = setTimeout(function () { if (ctrl) ctrl.abort(); }, 45000);
       return getToken().then(function (tok) {
-        var fd = new FormData(); fd.append('audio', blob, 'recording.wav');
-        var headers = {}; if (tok) headers['Authorization'] = 'Bearer ' + tok;
-        return fetch(worker + '/transcribe', { method: 'POST', headers: headers, body: fd, signal: ctrl ? ctrl.signal : undefined });
+        /* raw WAV bytes as the request body: no multipart, so nothing in between can mangle the file */
+        var headers = { 'Content-Type': 'audio/wav' }; if (tok) headers['Authorization'] = 'Bearer ' + tok;
+        return fetch(worker + '/transcribe', { method: 'POST', headers: headers, body: blob, signal: ctrl ? ctrl.signal : undefined });
       }).then(function (r) {
         clearTimeout(to);
         return r.json().catch(function () { return {}; }).then(function (d) { return { status: r.status, data: d || {} }; });
