@@ -1867,7 +1867,7 @@ function openSpatialBC() {
   } else {
     /* INFLUENCE stack */
     var s = r.stack || {}, cred = s.credibility || {}, da = s.dataAnchor || {}, nb = s.narrativeBridge || {}, rm = s.riskMirror || {}, dr = s.decisionRunway || {}, h = r.humac || {};
-    var prob = rm.probability ? String(rm.probability).split(' — ')[0].split('.')[0] : '';
+    var probM = rm.probability ? String(rm.probability).match(/\d+(\.\d+)?\s*(%|percent)/i) : null, prob = probM ? probM[0] : '';
     panels = [
       { id: 'open', title: 'Opening line', html: paras(r.openingLine) },
       { id: 'profile', title: 'Stakeholder profile', summary: lead(r.stakeholderProfile, 240), html: paras(r.stakeholderProfile) },
@@ -1875,7 +1875,7 @@ function openSpatialBC() {
       { id: 'l2', title: '2. Data anchor', summary: (da.figure ? plain(da.figure) + '. ' : '') + lead(da.context || da.headline, 200),
         html: big(da.figure) + paras(da.headline) + paras(da.context) + labelled('Humac basis', da.humacBasis) },
       { id: 'l3', title: '3. Narrative bridge', summary: lead(nb.story, 240), html: paras(nb.story) + paras(nb.connection) + labelled('The human fact inside the financial case', nb.emotionalHook) },
-      { id: 'l4', title: '4. Risk mirror: revenue at risk', summary: (rm.revenueAtRisk ? 'Revenue at risk ' + plain(rm.revenueAtRisk) + (prob ? ' (' + plain(prob) + ' modelled likelihood)' : '') + '. ' : '') + lead(rm.scenario, 160),
+      { id: 'l4', title: '4. Risk mirror: revenue at risk', summary: (rm.revenueAtRisk ? 'Revenue at risk ' + plain(rm.revenueAtRisk) + (prob ? ', likelihood ' + plain(prob) : '') + '. ' : '') + lead(rm.scenario, 160),
         html: big(rm.revenueAtRisk) + paras(rm.revenueAtRiskBasis) + paras(rm.scenario) + labelled('Timeline', rm.timeline) },
       { id: 'l5', title: '5. Decision runway', summary: lead(dr.ask, 240),
         html: paras(dr.ask) + labelled('Deadline', dr.deadline) + list((dr.alternatives || []).map(function (a, i) { return (i === 0 ? 'Alt A: ' : 'Alt B: ') + a; })) + labelled('What you commit to report in 90 days', dr.successMetric) },
