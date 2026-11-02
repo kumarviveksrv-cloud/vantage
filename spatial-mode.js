@@ -2,6 +2,7 @@
  * Floating glass panels + webcam hand tracking (MediaPipe Hands, client-side).
  * Gestures (index finger only): hold your fingertip on a panel = grab, move = drag,
  * hold still = drop (or expand/collapse if you didn't move). Mouse/touch works as fallback.
+ * Focus: enlarge one panel while the rest dim behind it. Compare: pick two panels, read them side by side.
  * Leadership Brief: drag panels into the tray to build an ordered briefing; export as PDF (print) or copy as text.
  * Usage: SpatialMode.open(panels, {tool,title,caseType,footer}) where panels = [{id,title,tag,level,html,summary}]
  */
@@ -43,7 +44,7 @@
 .sm-pt{display:flex;gap:7px;margin-bottom:5px}.sm-pt:before{content:"";width:4px;height:4px;border-radius:50%;background:#6366f1;margin-top:7px;flex-shrink:0}\
 #sm-preview{display:none;position:absolute;left:16px;bottom:60px;width:224px;height:168px;border-radius:12px;border:2px solid rgba(255,181,71,.7);z-index:30;background:#000;opacity:.92;pointer-events:none}\
 #sm-preview.ok{border-color:rgba(124,58,237,.95)}\
-#sm-cursor{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #a5b4fc;background:conic-gradient(rgba(196,181,253,.85) calc(var(--p)*1turn),rgba(99,102,241,.16) 0);pointer-events:none;z-index:40;display:none;box-shadow:0 0 18px rgba(99,102,241,.6)}\
+#sm-cursor{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #a5b4fc;background:conic-gradient(rgba(196,181,253,.85) calc(var(--p)*1turn),rgba(99,102,241,.16) 0);pointer-events:none;z-index:100002;display:none;box-shadow:0 0 18px rgba(99,102,241,.6)}\
 #sm-cursor.held-cur{border-color:#fff;box-shadow:0 0 24px rgba(196,181,253,.9)}\
 #sm-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.05em;color:rgba(165,180,252,.7);background:rgba(13,11,30,.7);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:8px 16px;text-align:center;max-width:92vw}\
 #sm-tray{position:absolute;top:76px;right:16px;width:300px;bottom:64px;z-index:5;border-radius:18px;border:1.5px dashed rgba(124,58,237,.4);background:rgba(124,58,237,.05);transition:border-color .2s,background .2s}\
@@ -64,10 +65,32 @@
 .sm-panel.briefed .sm-head{margin:0}\
 .sm-num{display:none;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:13px;color:#c4b5fd;margin-right:8px}\
 .sm-panel.briefed .sm-num{display:inline}\
+.sm-acts{display:flex;gap:6px;margin:-2px 0 10px}\
+.sm-act{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:6px;border:1px solid rgba(99,102,241,.35);background:rgba(99,102,241,.08);color:#c7d2fe;cursor:pointer}\
+.sm-act:hover,.sm-act.hover{background:rgba(99,102,241,.3);border-color:#a5b4fc}\
+.sm-act.on{background:rgba(124,58,237,.38);border-color:#c4b5fd;color:#fff}\
+.sm-panel.briefed .sm-acts{display:none}\
+.sm-panel.cmp-sel{border-color:#c4b5fd;box-shadow:0 0 0 1px rgba(196,181,253,.5),0 18px 50px rgba(124,58,237,.3)}\
+.sm-panel.focus{width:min(760px,58vw);max-height:calc(100vh - 150px);overflow-y:auto;cursor:default;border-color:#a5b4fc;box-shadow:0 30px 90px rgba(99,102,241,.4),inset 0 1px 0 rgba(165,180,252,.3)}\
+.sm-panel.focus .sm-clamp{display:block;-webkit-line-clamp:unset}\
+.sm-panel.focus .sm-body{font-size:14px;line-height:1.75}\
+.sm-panel.focus .sm-body p{margin:0 0 12px}\
+.sm-panel.sm-dim{opacity:.26;filter:blur(1.5px);pointer-events:none}\
+#sm-focus-bg{position:absolute;inset:0;background:rgba(5,4,16,.5)}\
+#sm-cmp{position:absolute;inset:0;z-index:100000;background:rgba(5,4,16,.93);backdrop-filter:blur(6px);display:flex;flex-direction:column;padding:16px 24px 24px}\
+.sm-cmp-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}\
+.sm-cmp-title{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd}\
+.sm-cmp-cols{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}\
+.sm-cmp-col{min-height:0;overflow-y:auto;border-radius:16px;padding:20px 24px;background:rgba(13,11,30,.85);border:1px solid rgba(99,102,241,.3)}\
+.sm-cmp-col .sm-head{padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid rgba(99,102,241,.18)}\
+.sm-cmp-col .sm-body{font-size:14px;line-height:1.75;color:rgba(244,243,255,.86)}\
+.sm-cmp-col .sm-body p{margin:0 0 12px}\
+.sm-cmp-col .sm-clamp{display:block;-webkit-line-clamp:unset}\
+@media(max-width:900px){.sm-cmp-cols{grid-template-columns:minmax(0,1fr);grid-auto-rows:minmax(0,1fr)}}\
 @media(max-width:768px){.sm-panel{width:240px}.sm-panel.open{width:88vw}#sm-title{display:none}}';
 
   var st = { root: null, video: null, cursor: null, hands: null, running: false, stream: null, raf: 0,
-             panels: [], brief: [], briefMode: 'summary', opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0 };
+             panels: [], brief: [], briefMode: 'summary', opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0, sel: [], focus: null, cmp: null, cmpEl: null };
 
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
   function injectCss() {
@@ -106,12 +129,17 @@
       el.className = 'sm-panel'; el.setAttribute('data-id', d.id); el.style.zIndex = ++st.z;
       el.innerHTML = '<div class="sm-head"><span class="sm-label"><span class="sm-num"></span>' + esc(d.title) + '</span>' +
         (d.tag ? '<span class="sm-tag ' + esc((d.level || '').toLowerCase()) + '">' + esc(d.tag) + '</span>' : '') +
-        '</div><div class="sm-body">' + d.html + '</div>';
+        '</div><div class="sm-acts"><button class="sm-act" data-act="focus" data-dwell>Focus</button><button class="sm-act" data-act="cmp" data-dwell>Compare</button></div>' +
+        '<div class="sm-body">' + (d.html || (d.summary ? '<p>' + esc(d.summary) + '</p>' : '')) + '</div>';
       st.root.appendChild(el);
       var p = { id: d.id, el: el, data: d, inBrief: false };
       st.panels.push(p);
+      el.querySelector('[data-act="focus"]').addEventListener('click', function (e) { e.stopPropagation(); toggleFocus(p); });
+      el.querySelector('[data-act="cmp"]').addEventListener('click', function (e) { e.stopPropagation(); toggleSel(p); });
       /* mouse / touch fallback */
       el.addEventListener('pointerdown', function (e) {
+        if (e.target.closest && e.target.closest('.sm-act')) return; /* let the buttons click normally */
+        if (st.focus === p) return; /* focused panel is read in place, not dragged */
         e.preventDefault(); st.moved = false;
         var r = el.getBoundingClientRect(), ox = e.clientX - r.left, oy = e.clientY - r.top;
         grab(p);
@@ -127,7 +155,7 @@
     p.el.classList.remove('held'); st.held = null;
     var tr = st.root && st.root.querySelector('#sm-tray'); if (tr) tr.classList.remove('over');
     if (st.moved) settle(p);
-    else if (!p.inBrief) p.el.classList.toggle('open'); /* click / hold-still without moving = expand */
+    else if (!p.inBrief && st.focus !== p) p.el.classList.toggle('open'); /* click / hold-still without moving = expand */
   }
   function place(p, x, y) {
     var W = window.innerWidth, H = window.innerHeight;
@@ -137,6 +165,7 @@
     if (tr && box) { var pt = dropPoint(p); box.classList.toggle('over', pt.x >= tr.left && pt.x <= tr.right && pt.y >= tr.top && pt.y <= tr.bottom); }
   }
   function panelAt(x, y) {
+    if (st.cmpEl || st.focus) return null; /* an overlay is up: only its own buttons are live */
     for (var i = st.panels.length - 1, best = null; i >= 0; i--) {
       var r = st.panels[i].el.getBoundingClientRect();
       if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
@@ -144,6 +173,79 @@
       }
     }
     return best;
+  }
+
+  /* ---------- focus + compare ---------- */
+  function setActLabel(p, act, text, on) {
+    var b = p.el.querySelector('[data-act="' + act + '"]'); if (!b) return; b.textContent = text; b.classList.toggle('on', !!on);
+  }
+  function enterFocus(p) {
+    if (p.inBrief || st.cmpEl) return;
+    if (st.focus) exitFocus();
+    var W = window.innerWidth, w = Math.min(760, W * 0.58), free = W < 768 ? W : W - 340;
+    p.sv = { left: p.el.style.left, top: p.el.style.top, open: p.el.classList.contains('open') };
+    var bg = document.createElement('div'); bg.id = 'sm-focus-bg'; bg.style.zIndex = ++st.z; bg.addEventListener('click', exitFocus);
+    st.root.appendChild(bg);
+    p.el.style.zIndex = ++st.z; p.el.classList.remove('open', 'held'); p.el.classList.add('focus');
+    p.el.style.left = Math.max(12, (free - w) / 2) + 'px'; p.el.style.top = '76px';
+    st.panels.forEach(function (q) { if (q !== p) q.el.classList.add('sm-dim'); });
+    setActLabel(p, 'focus', 'Back', true);
+    st.focus = p;
+    trayMsg('Focus on. Esc or Back returns to your layout.');
+  }
+  function exitFocus() {
+    var p = st.focus; if (!p) return;
+    p.el.classList.remove('focus'); p.el.classList.add('snap');
+    if (p.sv) { p.el.style.left = p.sv.left; p.el.style.top = p.sv.top; if (p.sv.open) p.el.classList.add('open'); }
+    var bg = st.root && st.root.querySelector('#sm-focus-bg'); if (bg) bg.remove();
+    st.panels.forEach(function (q) { q.el.classList.remove('sm-dim'); });
+    setActLabel(p, 'focus', 'Focus', false);
+    st.focus = null;
+  }
+  function toggleFocus(p) { if (st.focus === p) exitFocus(); else enterFocus(p); }
+
+  function refreshSel() {
+    st.panels.forEach(function (q) {
+      var on = st.sel.indexOf(q) >= 0;
+      q.el.classList.toggle('cmp-sel', on); setActLabel(q, 'cmp', on ? 'Selected' : 'Compare', on);
+    });
+  }
+  function toggleSel(p) {
+    if (p.inBrief || st.cmpEl) return;
+    if (st.focus) exitFocus();
+    var i = st.sel.indexOf(p);
+    if (i >= 0) { st.sel.splice(i, 1); refreshSel(); trayMsg(''); return; }
+    st.sel.push(p); refreshSel();
+    if (st.sel.length === 1) { trayMsg('Pick a second panel to compare it with.'); return; }
+    openCompare(st.sel[0], st.sel[1]);
+  }
+  function cmpCol(p) {
+    var d = p.data;
+    return '<div class="sm-cmp-col"><div class="sm-head"><span class="sm-label">' + esc(d.title) + '</span>' +
+      (d.tag ? '<span class="sm-tag ' + esc((d.level || '').toLowerCase()) + '">' + esc(d.tag) + '</span>' : '') +
+      '</div><div class="sm-body">' + (d.html || (d.summary ? '<p>' + esc(d.summary) + '</p>' : '')) + '</div></div>';
+  }
+  function renderCmp() {
+    var o = st.cmpEl; if (!o) return;
+    o.querySelector('.sm-cmp-cols').innerHTML = cmpCol(st.cmp[0]) + cmpCol(st.cmp[1]);
+  }
+  function openCompare(a, b) {
+    if (st.cmpEl) return;
+    st.cmp = [a, b];
+    var o = document.createElement('div'); o.id = 'sm-cmp';
+    o.innerHTML = '<div class="sm-cmp-bar"><div class="sm-cmp-title">Compare · ' + esc(a.data.title) + '  vs  ' + esc(b.data.title) + '</div>' +
+      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-cmp-swap" data-dwell>Swap sides</button><button class="sm-btn primary" id="sm-cmp-close" data-dwell>Close</button></div></div>' +
+      '<div class="sm-cmp-cols"></div>';
+    st.root.appendChild(o); st.cmpEl = o;
+    o.querySelector('#sm-cmp-close').addEventListener('click', closeCompare);
+    o.querySelector('#sm-cmp-swap').addEventListener('click', function () { st.cmp.reverse(); renderCmp(); });
+    renderCmp();
+    st.hover = null; dwell.panel = null; setRing(0);
+  }
+  function closeCompare() {
+    if (!st.cmpEl) return;
+    st.cmpEl.remove(); st.cmpEl = null; st.cmp = null; st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
+    st.sel = []; refreshSel(); trayMsg('');
   }
 
   /* ---------- leadership brief tray ---------- */
@@ -253,7 +355,11 @@
     for (var i = 0; i < bs.length; i++) {
       if (bs[i].disabled) continue;
       var r = bs[i].getBoundingClientRect();
-      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return bs[i];
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
+        var top = document.elementFromPoint(x, y);
+        if (top && !bs[i].contains(top)) continue; /* covered by another panel or overlay */
+        return bs[i];
+      }
     }
     return null;
   }
@@ -371,20 +477,20 @@
         })();
         var pv = document.getElementById('sm-preview'); if (pv) pv.style.display = 'block';
         setStatus('Hand tracking: <b>show an open palm to lock on, then point</b>');
-        document.getElementById('sm-hint').textContent = 'Hold your index finger on a panel to grab it · drag it into the Leadership Brief tray · hold still to drop · Esc to exit';
+        document.getElementById('sm-hint').textContent = 'Hold your index finger on a panel to grab it · Focus enlarges one, Compare puts two side by side · drag into the Leadership Brief tray · Esc to exit';
       })
       .catch(function (e) {
         st.tracking = false;
         var denied = e && (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError');
         setStatus(denied ? 'Camera blocked. <b>Mouse mode</b>' : 'Tracking unavailable. <b>Mouse mode</b>');
-        document.getElementById('sm-hint').textContent = 'Drag panels into the Leadership Brief tray · click to expand · Esc to exit';
+        document.getElementById('sm-hint').textContent = 'Drag panels into the Leadership Brief tray · click to expand · Focus or Compare for a closer read · Esc to exit';
       });
   }
 
   /* ---------- open / close ---------- */
   function open(panels, opts) {
     if (st.root) return;
-    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary';
+    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary'; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null;
     injectCss();
     var root = document.createElement('div'); root.id = 'sm-root';
     root.innerHTML = '<video id="sm-video" playsinline muted></video><div id="sm-grid"></div>' +
@@ -398,7 +504,7 @@
     st.panels = []; st.held = null; st.hover = null; st.cool = 0; dwell.panel = null; fx.reset(); fy.reset();
     build(panels);
     root.querySelector('#sm-exit').onclick = close;
-    root.querySelector('#sm-reset').onclick = function () { clearBrief(); st.panels.forEach(function (p) { p.el.classList.remove('open'); }); layout(st.panels); };
+    root.querySelector('#sm-reset').onclick = function () { closeCompare(); exitFocus(); st.sel = []; clearBrief(); refreshSel(); st.panels.forEach(function (p) { p.el.classList.remove('open'); }); layout(st.panels); };
     root.querySelector('#sm-dl').onclick = printBrief;
     root.querySelector('#sm-copy').onclick = copyBrief;
     root.querySelector('#sm-mode').onclick = function () { st.briefMode = st.briefMode === 'full' ? 'summary' : 'full'; updateTray(); trayMsg(st.briefMode === 'full' ? 'Brief will include full detail.' : 'Brief will show one summary line per panel.'); };
@@ -406,10 +512,10 @@
     document.addEventListener('keydown', onKey);
     window.addEventListener('resize', onResize);
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) startTracking();
-    else { setStatus('No camera API. <b>Mouse mode</b>'); document.getElementById('sm-hint').textContent = 'Drag panels into the Leadership Brief tray · click to expand · Esc to exit'; }
+    else { setStatus('No camera API. <b>Mouse mode</b>'); document.getElementById('sm-hint').textContent = 'Drag panels into the Leadership Brief tray · click to expand · Focus or Compare for a closer read · Esc to exit'; }
   }
-  function onKey(e) { if (e.key === 'Escape') close(); }
-  function onResize() { layout(st.panels); arrangeTray(); }
+  function onKey(e) { if (e.key !== 'Escape') return; if (st.cmpEl) closeCompare(); else if (st.focus) exitFocus(); else close(); }
+  function onResize() { exitFocus(); layout(st.panels); arrangeTray(); }
   function close() {
     st.running = false; cancelAnimationFrame(st.raf);
     if (st.stream) st.stream.getTracks().forEach(function (t) { t.stop(); });
@@ -418,7 +524,7 @@
     document.removeEventListener('keydown', onKey); window.removeEventListener('resize', onResize);
     if (st.root) st.root.remove();
     clearTimeout(st.msgT);
-    st.root = null; st.cursor = null; st.hover = null; st.panels = []; st.brief = [];
+    st.root = null; st.cursor = null; st.hover = null; st.panels = []; st.brief = []; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null;
   }
 
   window.SpatialMode = { open: open, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
