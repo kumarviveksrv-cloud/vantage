@@ -5,6 +5,7 @@
  * Focus: enlarge one panel while the rest dim behind it. Compare: pick two panels, read them side by side.
  * Ask ARIA: share ONE panel's text with ARIA after an explicit consent step (sessionStorage hand-off, aria.html does the rest).
  * Quick compare: opts.presets = [{label, a, b, hint}] (panel ids) become one-click side-by-side comparisons; presets whose panels are missing are skipped.
+ * Save + Then vs now: Save keeps the briefed panels on this device only (localStorage, per signed-in email, last 10, cleared on sign-out); Quick compare can then compare a saved panel with the same panel in the current analysis.
  * Present: walk the brief full screen, one panel per slide, in tray order (keys, buttons, or hold a fingertip on Next/Back; the fingertip is a laser pointer).
  * Leadership Brief: drag panels into the tray to build an ordered briefing; export as PDF (print) or copy as text.
  * Usage: SpatialMode.open(panels, {tool,title,caseType,footer}) where panels = [{id,title,tag,level,html,summary}]
@@ -96,6 +97,15 @@
 .sm-qc-item span{font-size:11px;color:rgba(244,243,255,.6)}\
 .sm-qc-item:hover,.sm-qc-item.hover{background:rgba(99,102,241,.3);border-color:#a5b4fc}\
 .sm-qc-cancel{padding:9px;text-align:center}\
+#sm-qc-head{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#c4b5fd;padding:8px 4px 2px}\
+.sm-qc-row{display:flex;gap:6px;align-items:stretch}.sm-qc-row .sm-qc-item{flex:1;min-width:0}\
+.sm-qc-del{padding:6px 10px;font-size:11px}\
+.sm-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}\
+.sm-chip{padding:8px 12px;border-radius:8px;border:1px solid rgba(99,102,241,.35);background:rgba(99,102,241,.08);color:#c7d2fe;font-family:"DM Sans",sans-serif;font-size:12px;cursor:pointer}\
+.sm-chip.on{background:rgba(124,58,237,.38);border-color:#c4b5fd;color:#fff}\
+.sm-chip:hover,.sm-chip.hover{background:rgba(99,102,241,.3);border-color:#a5b4fc}\
+.sm-chip i{font-style:normal;color:#FFB547;margin-left:6px}\
+.sm-then-note{font-size:12px;color:rgba(244,243,255,.7);margin:0 0 10px}\
 #sm-pres{position:absolute;inset:0;z-index:100000;background:radial-gradient(ellipse at 50% 20%,#14102e 0%,#050410 75%);display:flex;flex-direction:column;padding:18px 28px 22px}\
 .sm-pres-top{display:flex;align-items:center;justify-content:space-between;gap:12px}\
 .sm-pres-meta{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#a5b4fc}\
@@ -127,7 +137,7 @@
 @media(max-width:768px){.sm-panel{width:240px}.sm-panel.open{width:88vw}#sm-title{display:none}}';
 
   var st = { root: null, video: null, cursor: null, hands: null, running: false, stream: null, raf: 0,
-             panels: [], brief: [], briefMode: 'summary', opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0, sel: [], focus: null, cmp: null, cmpEl: null, consentEl: null, presEl: null, presI: 0, presFull: false, ariaOk: true, qcEl: null, presets: [] };
+             panels: [], brief: [], briefMode: 'summary', opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0, sel: [], focus: null, cmp: null, cmpEl: null, consentEl: null, presEl: null, presI: 0, presFull: false, ariaOk: true, qcEl: null, presets: [], thenEl: null, then: null, saved: [] };
 
   /* ARIA is paid-plan only. Hide Ask ARIA when we positively know the plan is not active:
      get_plan (run on every page load) stores trial_calls_used as a number, so its presence means the
@@ -294,7 +304,7 @@
   }
   function closeCompare() {
     if (!st.cmpEl) return;
-    st.cmpEl.remove(); st.cmpEl = null; st.cmp = null; st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
+    st.cmpEl.remove(); st.cmpEl = null; st.thenEl = null; st.then = null; st.cmp = null; st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
     st.sel = []; refreshSel(); trayMsg('');
   }
 
@@ -332,6 +342,84 @@
     st.consentEl.remove(); st.consentEl = null; st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
   }
 
+  /* ---------- saved briefs (on this device only) ---------- */
+  var BRIEFS_PREFIX = 'sr_briefs_', BRIEFS_MAX = 10;
+  function briefsKey() { var e = ''; try { e = localStorage.getItem('sr_user_email') || ''; } catch (x) {} return BRIEFS_PREFIX + (e || 'anon'); }
+  function loadBriefs() { try { var a = JSON.parse(localStorage.getItem(briefsKey()) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function storeBriefs(a) {
+    for (;;) {
+      try { localStorage.setItem(briefsKey(), JSON.stringify(a)); return true; }
+      catch (e) { if (a.length <= 1) return false; a.pop(); } /* storage full: drop the oldest */
+    }
+  }
+  function matchingSaved() {
+    var o = st.opts || {};
+    return loadBriefs().filter(function (r) { return r && r.tool === (o.tool || '') && r.title === (o.title || '') && Array.isArray(r.panels); });
+  }
+  function whenStr(ts) { return new Date(ts).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }); }
+  function refreshQcBtn() {
+    var b = st.root && st.root.querySelector('#sm-qc'); if (!b) return;
+    st.saved = matchingSaved();
+    var any = st.presets.length || st.saved.length;
+    b.style.display = any ? '' : 'none';
+    b.onclick = any ? toggleQc : null;
+  }
+  function saveBrief() {
+    if (!st.brief.length) return;
+    var o = st.opts || {};
+    var rec = { id: Date.now().toString(36), ts: Date.now(), tool: o.tool || '', title: o.title || '', caseType: o.caseType || '',
+      panels: st.brief.map(function (p) { var d = p.data; return { id: p.id, title: d.title || '', tag: d.tag || '', level: d.level || '', summary: d.summary || '', html: d.html || '' }; }) };
+    var a = loadBriefs(); a.unshift(rec); a = a.slice(0, BRIEFS_MAX);
+    trayMsg(storeBriefs(a) ? 'Saved on this device only. Cleared when you sign out.' : 'Could not save: browser storage is full or blocked.');
+    refreshQcBtn();
+  }
+  function deleteBrief(id) {
+    var a = loadBriefs().filter(function (r) { return r && r.id !== id; });
+    try { localStorage.setItem(briefsKey(), JSON.stringify(a)); } catch (e) {}
+    refreshQcBtn();
+  }
+  function cleanHtml(h) {
+    var t = document.createElement('template'); t.innerHTML = String(h || '');
+    t.content.querySelectorAll('script,iframe,object,embed,link,meta,style').forEach(function (n) { n.remove(); });
+    t.content.querySelectorAll('*').forEach(function (n) {
+      Array.prototype.slice.call(n.attributes).forEach(function (a) { if (/^on/i.test(a.name) || /^\s*javascript:/i.test(a.value)) n.removeAttribute(a.name); });
+    });
+    var d = document.createElement('div'); d.appendChild(t.content); return d.innerHTML;
+  }
+  function thenCol(kick, d) {
+    return '<div class="sm-cmp-col"><div class="sm-head"><span class="sm-label">' + esc(kick) + '  ·  ' + esc(d.title) + '</span>' +
+      (d.tag ? '<span class="sm-tag ' + esc((d.level || '').toLowerCase()) + '">' + esc(d.tag) + '</span>' : '') +
+      '</div><div class="sm-body">' + (d.html ? cleanHtml(d.html) : (d.summary ? '<p>' + esc(d.summary) + '</p>' : '')) + '</div></div>';
+  }
+  function sameText(a, b) { return htmlToText(String(a || '')).replace(/\s+/g, ' ').trim() === htmlToText(String(b || '')).replace(/\s+/g, ' ').trim(); }
+  function renderThen() {
+    var T = st.then, o = st.thenEl; if (!T || !o) return;
+    var cur = T.shared[T.i];
+    o.querySelector('.sm-chips').innerHTML = T.shared.map(function (x, i) {
+      return '<button class="sm-chip' + (i === T.i ? ' on' : '') + '" data-dwell data-i="' + i + '">' + esc(x.old.title) + (x.changed ? '<i title="Changed since the saved brief">changed</i>' : '') + '</button>';
+    }).join('');
+    o.querySelectorAll('.sm-chip').forEach(function (b) { b.addEventListener('click', function () { T.i = +b.getAttribute('data-i'); renderThen(); }); });
+    o.querySelector('.sm-cmp-cols').innerHTML = thenCol('Saved ' + whenStr(T.rec.ts), cur.old) + thenCol('Now', cur.now.data);
+  }
+  function openThen(rec) {
+    if (st.cmpEl) return;
+    var shared = [];
+    rec.panels.forEach(function (op) { var np = panelById(op.id); if (np) shared.push({ old: op, now: np, changed: !sameText(op.html || op.summary, np.data.html || np.data.summary) }); });
+    if (!shared.length) { trayMsg('Nothing in common between that saved brief and this analysis.'); return; }
+    var nChanged = shared.filter(function (x) { return x.changed; }).length;
+    var first = Math.max(0, shared.findIndex(function (x) { return x.changed; }));
+    st.then = { rec: rec, shared: shared, i: first };
+    var o = document.createElement('div'); o.id = 'sm-cmp';
+    o.innerHTML = '<div class="sm-cmp-bar"><div class="sm-cmp-title">Then vs now · ' + esc(whenStr(rec.ts)) + (rec.caseType ? ' · ' + esc(rec.caseType) : '') + '</div>' +
+      '<div style="display:flex;gap:8px"><button class="sm-btn primary" id="sm-cmp-close" data-dwell>Close</button></div></div>' +
+      '<p class="sm-then-note">' + nChanged + ' of ' + shared.length + ' shared ' + (shared.length === 1 ? 'panel has' : 'panels have') + ' changed. Pick a panel to compare. Left and Right arrow keys also work.</p>' +
+      '<div class="sm-chips"></div><div class="sm-cmp-cols"></div>';
+    st.root.appendChild(o); st.cmpEl = o; st.thenEl = o; st.cmp = null;
+    o.querySelector('#sm-cmp-close').addEventListener('click', closeCompare);
+    st.hover = null; dwell.panel = null; setRing(0);
+    renderThen();
+  }
+
   /* ---------- quick compare: one-click preset pairs ---------- */
   function panelById(id) { for (var i = 0; i < st.panels.length; i++) if (st.panels[i].id === id) return st.panels[i]; return null; }
   function resolvePresets(list) {
@@ -349,22 +437,41 @@
     var qb = st.root && st.root.querySelector('#sm-qc'); if (qb) qb.classList.remove('on');
   }
   function openQc() {
-    if (st.qcEl || st.cmpEl || st.consentEl || st.presEl || !st.presets.length) return;
+    st.saved = matchingSaved();
+    if (st.qcEl || st.cmpEl || st.consentEl || st.presEl || !(st.presets.length || st.saved.length)) return;
     exitFocus();
     var m = document.createElement('div'); m.id = 'sm-qc-menu'; m.setAttribute('role', 'menu');
     m.innerHTML = st.presets.map(function (x, i) {
       return '<button class="sm-qc-item" data-dwell data-qc="' + i + '" role="menuitem"><b>' + esc(x.label) + '</b>' + (x.hint ? '<span>' + esc(x.hint) + '</span>' : '') + '</button>';
-    }).join('') + '<button class="sm-btn sm-qc-cancel" id="sm-qc-cancel" data-dwell>Cancel</button>';
+    }).join('') +
+    (st.saved.length ? '<div id="sm-qc-head">Compare with a saved brief</div>' + st.saved.slice(0, 5).map(function (r) {
+      return '<div class="sm-qc-row"><button class="sm-qc-item" data-dwell data-then="' + esc(r.id) + '" role="menuitem"><b>' + esc(whenStr(r.ts)) + (r.caseType ? ' · ' + esc(r.caseType) : '') + '</b><span>' + r.panels.length + (r.panels.length === 1 ? ' panel' : ' panels') + ' saved</span></button>' +
+        '<button class="sm-btn sm-qc-del" data-dwell data-del="' + esc(r.id) + '">Delete</button></div>';
+    }).join('') : '') +
+    '<button class="sm-btn sm-qc-cancel" id="sm-qc-cancel" data-dwell>Cancel</button>';
     st.root.appendChild(m); st.qcEl = m;
     var qb = st.root.querySelector('#sm-qc'), r = qb.getBoundingClientRect();
     qb.classList.add('on');
     m.style.top = (r.bottom + 8) + 'px'; m.style.left = Math.max(8, Math.min(window.innerWidth - m.offsetWidth - 8, r.right - m.offsetWidth)) + 'px';
     st.hover = null; dwell.panel = null; setRing(0);
     m.querySelector('#sm-qc-cancel').addEventListener('click', closeQc);
-    m.querySelectorAll('.sm-qc-item').forEach(function (b) {
+    m.querySelectorAll('.sm-qc-item[data-qc]').forEach(function (b) {
       b.addEventListener('click', function () {
         var x = st.presets[+b.getAttribute('data-qc')]; if (!x) return;
         closeQc(); st.sel = []; refreshSel(); openCompare(x.a, x.b);
+      });
+    });
+    m.querySelectorAll('.sm-qc-item[data-then]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var id = b.getAttribute('data-then'), r = st.saved.filter(function (z) { return z.id === id; })[0]; if (!r) return;
+        closeQc(); st.sel = []; refreshSel(); openThen(r);
+      });
+    });
+    m.querySelectorAll('.sm-qc-del').forEach(function (b) {
+      b.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (b.getAttribute('data-arm') !== '1') { b.setAttribute('data-arm', '1'); b.textContent = 'Sure?'; setTimeout(function () { if (b.isConnected) { b.removeAttribute('data-arm'); b.textContent = 'Delete'; } }, 3500); return; }
+        deleteBrief(b.getAttribute('data-del')); closeQc(); openQc();
       });
     });
   }
@@ -491,7 +598,8 @@
       secs + '<footer>' + esc(o.footer || '') + '</footer></body></html>';
   }
   function htmlToText(html) {
-    var t = document.createElement('div'); t.innerHTML = html;
+    /* parsed in an inert document: nothing in the html can load, run or fire handlers while we read its text */
+    var t = new DOMParser().parseFromString('<div>' + String(html) + '</div>', 'text/html').body.firstChild;
     t.querySelectorAll('.sm-pt').forEach(function (e) { e.insertAdjacentText('afterbegin', '- '); });
     t.querySelectorAll('p,.sm-pt,.sm-big,.sm-clamp').forEach(function (e) { e.appendChild(document.createTextNode('\n')); });
     return t.textContent.replace(/\n{3,}/g, '\n\n').trim();
@@ -669,14 +777,14 @@
   function open(panels, opts) {
     if (st.root) return;
     st.ariaOk = ariaAllowed();
-    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary'; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = [];
+    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary'; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = []; st.thenEl = null; st.then = null; st.saved = [];
     injectCss();
     var root = document.createElement('div'); root.id = 'sm-root';
     root.innerHTML = '<video id="sm-video" playsinline muted></video><div id="sm-grid"></div>' +
       '<div id="sm-bar"><div><div id="sm-title">Spatial Mode · ' + esc((opts && opts.tool) || 'Vantage') + '</div><div id="sm-status">Initialising…</div></div>' +
       '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-qc" data-dwell aria-haspopup="menu" style="display:none">Quick compare</button><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
       '<div id="sm-tray"><div id="sm-tray-head"><div id="sm-tray-title">Leadership Brief</div><div id="sm-tray-sub"></div></div>' +
-      '<div id="sm-tray-foot"><button class="sm-btn" id="sm-mode" data-dwell></button><button class="sm-btn primary" id="sm-present" data-dwell disabled>Present this brief</button><div id="sm-tray-btns"><button class="sm-btn" id="sm-dl" data-dwell disabled>Download</button><button class="sm-btn" id="sm-copy" data-dwell disabled>Copy text</button></div><div id="sm-tray-msg"></div></div></div>' +
+      '<div id="sm-tray-foot"><button class="sm-btn" id="sm-mode" data-dwell></button><button class="sm-btn primary" id="sm-present" data-dwell disabled>Present this brief</button><div id="sm-tray-btns"><button class="sm-btn" id="sm-dl" data-dwell disabled>Download</button><button class="sm-btn" id="sm-copy" data-dwell disabled>Copy text</button><button class="sm-btn" id="sm-save" data-dwell disabled title="Keep this brief on this device so you can compare it with a later analysis">Save</button></div><div id="sm-tray-msg"></div></div></div>' +
       '<canvas id="sm-preview" width="224" height="168"></canvas><div id="sm-cursor"></div><div id="sm-hint">Starting…</div>';
     document.body.appendChild(root);
     st.root = root; st.video = root.querySelector('#sm-video'); st.cursor = root.querySelector('#sm-cursor');
@@ -685,9 +793,10 @@
     root.querySelector('#sm-exit').onclick = close;
     root.querySelector('#sm-reset').onclick = function () { closeQc(); closeCompare(); exitFocus(); st.sel = []; clearBrief(); refreshSel(); st.panels.forEach(function (p) { p.el.classList.remove('open'); }); layout(st.panels); };
     st.presets = resolvePresets(st.opts.presets);
-    var qcb = root.querySelector('#sm-qc'); if (st.presets.length) { qcb.style.display = ''; qcb.onclick = toggleQc; }
+    refreshQcBtn();
     root.addEventListener('pointerdown', function (e) { if (st.qcEl && !(e.target.closest && e.target.closest('#sm-qc-menu, #sm-qc'))) closeQc(); });
     root.querySelector('#sm-present').onclick = openPresent;
+    root.querySelector('#sm-save').onclick = saveBrief;
     root.querySelector('#sm-dl').onclick = printBrief;
     root.querySelector('#sm-copy').onclick = copyBrief;
     root.querySelector('#sm-mode').onclick = function () { st.briefMode = st.briefMode === 'full' ? 'summary' : 'full'; updateTray(); trayMsg(st.briefMode === 'full' ? 'Brief will include full detail.' : 'Brief will show one summary line per panel.'); };
@@ -708,6 +817,9 @@
       if (k === 'Escape') { closePresent(); return; }
       return;
     }
+    if (st.thenEl && st.then && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+      var n = st.then.shared.length; st.then.i = (st.then.i + (e.key === 'ArrowRight' ? 1 : n - 1)) % n; renderThen(); e.preventDefault(); return;
+    }
     if (e.key !== 'Escape') return;
     if (st.consentEl) closeConsent(); else if (st.cmpEl) closeCompare(); else if (st.qcEl) closeQc(); else if (st.focus) exitFocus(); else close();
   }
@@ -721,8 +833,8 @@
     document.removeEventListener('keydown', onKey); window.removeEventListener('resize', onResize);
     if (st.root) st.root.remove();
     clearTimeout(st.msgT);
-    st.root = null; st.cursor = null; st.hover = null; st.panels = []; st.brief = []; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = [];
+    st.root = null; st.cursor = null; st.hover = null; st.panels = []; st.brief = []; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = []; st.thenEl = null; st.then = null; st.saved = [];
   }
 
-  window.SpatialMode = { open: open, _presets: function () { return st.presets.map(function (x) { return x.label; }); }, _present: openPresent, _presStep: presStep, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
+  window.SpatialMode = { open: open, _saveBrief: saveBrief, _presets: function () { return st.presets.map(function (x) { return x.label; }); }, _present: openPresent, _presStep: presStep, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
 })();

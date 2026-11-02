@@ -108,7 +108,7 @@
 
     <div class="doc-eyebrow">Legal</div>
     <h1 class="doc-title">Privacy Policy</h1>
-    <div class="doc-meta">Virorah Private Limited &nbsp;&middot;&nbsp; Last updated: 2 November 2026 &nbsp;&middot;&nbsp; Effective: 2 November 2026</div>
+    <div class="doc-meta">Virorah Private Limited &nbsp;&middot;&nbsp; Last updated: 3 November 2026 &nbsp;&middot;&nbsp; Effective: 3 November 2026</div>
 
     <div class="commitment-banner">
       <strong>Our Privacy Commitment</strong>
@@ -263,7 +263,7 @@
     <p>Your data is stored using the following infrastructure:</p>
     <ul>
       <li><strong>Airtable (US servers):</strong> Your MERIDIAN profile, case records, and debrief data are stored in Airtable, a cloud database service. Airtable's servers are located in the United States (AWS us-east-1). By using the Platform, you explicitly consent to this cross-border transfer of your personal data to the United States.</li>
-      <li><strong>Browser Storage:</strong> Your browser's sessionStorage and localStorage hold your access status, your sign-in name and email, a cached copy of your MERIDIAN profile and plan, preferences such as ARIA's voice, and the last five ARIA sessions you ended. Those saved sessions contain only the anonymised version of your messages and ARIA's replies. This data stays on your device except as described above. Signing out, or scheduling account deletion, removes the saved ARIA sessions, your stored name and email, and the cached profile and plan from the browser you are using; small preferences such as voice choice stay until you clear your browser data.</li>
+      <li><strong>Browser Storage:</strong> Your browser's sessionStorage and localStorage hold your access status, your sign-in name and email, a cached copy of your MERIDIAN profile and plan, preferences such as ARIA's voice, and the last five ARIA sessions you ended. Those saved sessions contain only the anonymised version of your messages and ARIA's replies. If you choose Save in Spatial Mode, the panels in your brief (the analysis text and modelled figures shown in them, which can include compensation figures for an individual) are also kept, up to ten saved briefs, so you can compare them with a later analysis; they are stored under your own sign-in on this device and are never sent anywhere by the Platform. This data stays on your device except as described above. Signing out, or scheduling account deletion, removes the saved ARIA sessions, saved briefs, your stored name and email, and the cached profile and plan from the browser you are using; small preferences such as voice choice stay until you clear your browser data.</li>
       <li><strong>Anthropic (US servers):</strong> As described in Section 4, your original text first reaches Anthropic's Claude Haiku model (US servers) for the anonymisation step, and only the anonymised text then reaches Anthropic's Claude model for analysis. Neither use is for model training under Anthropic's API terms.</li>
       <li><strong>OpenAI (US servers):</strong> If you use a microphone button, your audio is processed by OpenAI's transcription service, with servers in the United States, under OpenAI's own terms. Virorah does not store the audio.</li>
       <li><strong>Cloudflare:</strong> The Platform's pages and the service that processes your requests run on Cloudflare's global network. Your requests pass through it in transit.</li>
@@ -336,7 +336,7 @@
       <li><strong>Debrief Records:</strong> Retained until you delete your account</li>
       <li><strong>Voice Recordings:</strong> Not stored by Virorah. Audio is sent to OpenAI for transcription as described in Sections 4 and 7, and is retained by OpenAI only as its own terms provide.</li>
       <li><strong>Feedback:</strong> Anonymous feedback (submitted without linking to an account) is retained for product improvement indefinitely and is not included in account export or purge requests. Non-anonymous feedback is retained until you delete your account.</li>
-      <li><strong>Post-deletion:</strong> After you delete your account or all data, records are permanently deleted from Airtable within 30 days. When you schedule deletion, the saved ARIA sessions, stored name and email, and cached profile and plan are cleared from the browser you used; on other devices, they are cleared when you sign out there or clear your browser data.</li>
+      <li><strong>Post-deletion:</strong> After you delete your account or all data, records are permanently deleted from Airtable within 30 days. When you schedule deletion, the saved ARIA sessions, saved briefs, stored name and email, and cached profile and plan are cleared from the browser you used; on other devices, they are cleared when you sign out there or clear your browser data.</li>
       <li><strong>Legal Hold:</strong> Where Virorah is required by law to retain certain data, it will be retained for the legally required period and then deleted.</li>
     </ul>
 
@@ -377,7 +377,7 @@
       <li>Access to Airtable data is restricted via API key authentication</li>
       <li>Text is anonymised via a two-step process (Section 4): your original text first reaches Anthropic's Claude Haiku model for anonymisation, then only the anonymised placeholder text reaches Claude for analysis, across every AI-powered tool on the Platform</li>
       <li>This step fails closed: if anonymisation cannot be completed safely, the request is blocked rather than sent unredacted</li>
-      <li>Browser sessionStorage, saved ARIA sessions and cached profile data are cleared on sign-out</li>
+      <li>Browser sessionStorage, saved ARIA sessions, saved briefs and cached profile data are cleared on sign-out</li>
     </ul>
     <p>No system is completely secure. In the event of a data breach that poses a risk to your rights, Virorah will notify affected users as required by the DPDP Act 2023 and report to the Data Protection Board of India within the prescribed timeframe.</p>
 
