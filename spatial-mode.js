@@ -2,7 +2,8 @@
  * Floating glass panels + webcam hand tracking (MediaPipe Hands, client-side).
  * Gestures (index finger only): hold your fingertip on a panel = grab, move = drag,
  * hold still = drop (or expand/collapse if you didn't move). Mouse/touch works as fallback.
- * Usage: SpatialMode.open(panels) where panels = [{id,title,tag,level,html}]
+ * Leadership Brief: drag panels into the tray to build an ordered briefing; export as PDF (print) or copy as text.
+ * Usage: SpatialMode.open(panels, {tool,title,caseType,footer}) where panels = [{id,title,tag,level,html}]
  */
 (function () {
   var MP_HANDS = 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js';
@@ -23,6 +24,7 @@
 .sm-panel.hover{border-color:rgba(165,180,252,.7)}\
 .sm-panel.held{cursor:grabbing;border-color:#a5b4fc;box-shadow:0 28px 70px rgba(99,102,241,.35),inset 0 1px 0 rgba(165,180,252,.3);transform:scale(1.02)}\
 .sm-panel.open{width:440px;max-height:78vh;overflow-y:auto}\
+.sm-panel.briefed.open{width:272px;max-height:50px}\
 .sm-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}\
 .sm-label{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#a5b4fc}\
 .sm-tag{font-family:"JetBrains Mono",monospace;font-size:9px;padding:2px 8px;border-radius:4px;border:1px solid rgba(99,102,241,.3);background:rgba(99,102,241,.12);color:#a5b4fc;white-space:nowrap}\
@@ -31,16 +33,33 @@
 .sm-body{font-size:12px;line-height:1.65;color:rgba(244,243,255,.72)}\
 .sm-body p{margin:0 0 8px}\
 .sm-big{font-family:"Space Grotesk",sans-serif;font-size:26px;font-weight:700;color:#f4f3ff;margin-bottom:6px}\
-.sm-clamp{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}\
+.sm-clamp{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}\
 .sm-panel.open .sm-clamp{-webkit-line-clamp:unset;display:block}\
 .sm-pt{display:flex;gap:7px;margin-bottom:5px}.sm-pt:before{content:"";width:4px;height:4px;border-radius:50%;background:#6366f1;margin-top:7px;flex-shrink:0}\
 #sm-cursor{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #a5b4fc;background:conic-gradient(rgba(196,181,253,.85) calc(var(--p)*1turn),rgba(99,102,241,.16) 0);pointer-events:none;z-index:40;display:none;box-shadow:0 0 18px rgba(99,102,241,.6)}\
 #sm-cursor.held-cur{border-color:#fff;box-shadow:0 0 24px rgba(196,181,253,.9)}\
 #sm-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.05em;color:rgba(165,180,252,.7);background:rgba(13,11,30,.7);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:8px 16px;text-align:center;max-width:92vw}\
+#sm-tray{position:absolute;top:76px;right:16px;width:300px;bottom:64px;z-index:5;border-radius:18px;border:1.5px dashed rgba(124,58,237,.4);background:rgba(124,58,237,.05);transition:border-color .2s,background .2s}\
+#sm-tray.over{border-color:#c4b5fd;background:rgba(124,58,237,.14)}\
+#sm-tray-head{padding:12px 16px 0}\
+#sm-tray-title{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#c4b5fd}\
+#sm-tray-sub{font-size:11px;color:rgba(244,243,255,.5);margin-top:3px;line-height:1.4}\
+#sm-tray-foot{position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-direction:column;gap:6px}\
+#sm-tray-btns{display:flex;gap:8px}\
+#sm-tray-btns .sm-btn{flex:1;padding:10px 8px}\
+.sm-btn[disabled]{opacity:.35;cursor:default}\
+.sm-btn.hover{background:rgba(99,102,241,.35);border-color:#a5b4fc}\
+#sm-tray-msg{font-family:"JetBrains Mono",monospace;font-size:9px;color:rgba(196,181,253,.8);min-height:12px;letter-spacing:.04em}\
+.sm-panel.snap{transition:left .28s ease,top .28s ease,width .25s,box-shadow .2s,border-color .2s}\
+.sm-panel.briefed{width:272px;max-height:50px;padding:11px 14px;overflow:hidden;border-radius:12px;border-color:rgba(196,181,253,.45)}\
+.sm-panel.briefed .sm-body{display:none}\
+.sm-panel.briefed .sm-head{margin:0}\
+.sm-num{display:none;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:13px;color:#c4b5fd;margin-right:8px}\
+.sm-panel.briefed .sm-num{display:inline}\
 @media(max-width:768px){.sm-panel{width:240px}.sm-panel.open{width:88vw}#sm-title{display:none}}';
 
   var st = { root: null, video: null, cursor: null, hands: null, running: false, stream: null, raf: 0,
-             panels: [], z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0 };
+             panels: [], brief: [], opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0 };
 
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
   function injectCss() {
@@ -57,15 +76,19 @@
   function setStatus(html) { var el = document.getElementById('sm-status'); if (el) el.innerHTML = html; }
 
   /* ---------- panels ---------- */
-  function layout(list) {
+  function layout(all) {
+    var list = all.filter(function (p) { return !p.inBrief; });
     var W = window.innerWidth, H = window.innerHeight, n = list.length;
-    var cols = W < 768 ? 1 : Math.min(4, Math.ceil(Math.sqrt(n * 1.6)));
-    var pw = W < 768 ? 240 : 300, gx = (W - cols * pw) / (cols + 1);
+    var free = W < 768 ? W : W - 340, pw = W < 768 ? 240 : 300;
+    var cols = W < 768 ? 1 : Math.max(1, Math.min(4, Math.ceil(Math.sqrt(n * 1.6)), Math.floor((free - 20) / (pw + 14))));
+    var gx = (free - cols * pw) / (cols + 1);
+    var rows = Math.max(1, Math.ceil(n / cols)), pitch = Math.max(150, Math.min(230, (H - 84 - 150) / rows));
     list.forEach(function (p, i) {
       var c = i % cols, r = Math.floor(i / cols);
       var jitter = ((i * 37) % 24) - 12;
+      p.el.classList.remove('snap');
       p.el.style.left = (gx + c * (pw + gx)) + 'px';
-      p.el.style.top = (84 + r * 230 + jitter) + 'px';
+      p.el.style.top = (84 + r * pitch + jitter) + 'px';
       if (W < 768) { p.el.style.left = ((W - pw) / 2 + jitter) + 'px'; p.el.style.top = (84 + i * 70) + 'px'; }
     });
   }
@@ -73,33 +96,37 @@
     panels.forEach(function (d) {
       var el = document.createElement('div');
       el.className = 'sm-panel'; el.setAttribute('data-id', d.id); el.style.zIndex = ++st.z;
-      el.innerHTML = '<div class="sm-head"><span class="sm-label">' + esc(d.title) + '</span>' +
+      el.innerHTML = '<div class="sm-head"><span class="sm-label"><span class="sm-num"></span>' + esc(d.title) + '</span>' +
         (d.tag ? '<span class="sm-tag ' + esc((d.level || '').toLowerCase()) + '">' + esc(d.tag) + '</span>' : '') +
         '</div><div class="sm-body">' + d.html + '</div>';
       st.root.appendChild(el);
-      var p = { id: d.id, el: el };
+      var p = { id: d.id, el: el, data: d, inBrief: false };
       st.panels.push(p);
       /* mouse / touch fallback */
       el.addEventListener('pointerdown', function (e) {
         e.preventDefault(); st.moved = false;
         var r = el.getBoundingClientRect(), ox = e.clientX - r.left, oy = e.clientY - r.top;
         grab(p);
-        function mv(ev) { st.moved = true; place(p, ev.clientX - ox, ev.clientY - oy); }
+        function mv(ev) { st.moved = true; st.ptr = { x: ev.clientX, y: ev.clientY }; place(p, ev.clientX - ox, ev.clientY - oy); }
         function up() { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); release(p); }
         window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up);
       });
     });
     layout(st.panels);
   }
-  function grab(p) { p.el.style.zIndex = ++st.z; p.el.classList.add('held'); st.held = p; st.moved = false; }
+  function grab(p) { p.el.style.zIndex = ++st.z; p.el.classList.remove('snap'); p.el.classList.add('held'); st.held = p; st.moved = false; st.ptr = null; }
   function release(p) {
     p.el.classList.remove('held'); st.held = null;
-    if (!st.moved) { p.el.classList.toggle('open'); } /* quick pinch / click = expand */
+    var tr = st.root && st.root.querySelector('#sm-tray'); if (tr) tr.classList.remove('over');
+    if (st.moved) settle(p);
+    else if (!p.inBrief) p.el.classList.toggle('open'); /* click / hold-still without moving = expand */
   }
   function place(p, x, y) {
     var W = window.innerWidth, H = window.innerHeight;
     p.el.style.left = Math.max(0, Math.min(W - 120, x)) + 'px';
     p.el.style.top = Math.max(56, Math.min(H - 80, y)) + 'px';
+    var tr = trayRect(), box = st.root && st.root.querySelector('#sm-tray');
+    if (tr && box) { var pt = dropPoint(p); box.classList.toggle('over', pt.x >= tr.left && pt.x <= tr.right && pt.y >= tr.top && pt.y <= tr.bottom); }
   }
   function panelAt(x, y) {
     for (var i = st.panels.length - 1, best = null; i >= 0; i--) {
@@ -110,6 +137,114 @@
     }
     return best;
   }
+
+  /* ---------- leadership brief tray ---------- */
+  function trayRect() { var t = st.root && st.root.querySelector('#sm-tray'); return t ? t.getBoundingClientRect() : null; }
+  function trayMsg(m) {
+    var e = st.root && st.root.querySelector('#sm-tray-msg'); if (!e) return;
+    e.textContent = m; clearTimeout(st.msgT); st.msgT = setTimeout(function () { e.textContent = ''; }, 4500);
+  }
+  function updateTray() {
+    if (!st.root) return;
+    var n = st.brief.length, sub = st.root.querySelector('#sm-tray-sub');
+    sub.textContent = n ? n + (n > 1 ? ' panels' : ' panel') + ' in your brief. Top to bottom is the order of the document.' : 'Drag the panels you want to present into this tray. Their order here is the order of your brief.';
+    st.root.querySelectorAll('#sm-tray-btns .sm-btn').forEach(function (b) { b.disabled = !n; });
+  }
+  function arrangeTray() {
+    var tr = trayRect(); if (!tr) return;
+    var n = st.brief.length, top0 = tr.top + 64, avail = tr.height - 64 - 84;
+    var step = Math.max(24, Math.min(57, n > 1 ? (avail - 50) / (n - 1) : 57));
+    st.brief.forEach(function (p, i) {
+      p.inBrief = true;
+      p.el.classList.add('snap', 'briefed'); p.el.classList.remove('open');
+      p.el.style.left = (tr.left + 14) + 'px'; p.el.style.top = (top0 + i * step) + 'px';
+      var nEl = p.el.querySelector('.sm-num'); if (nEl) nEl.textContent = (i + 1) + '.';
+    });
+    updateTray();
+  }
+  /* where the person is pointing (fingertip or mouse); falls back to the panel centre */
+  function dropPoint(p) {
+    if (st.ptr) return st.ptr;
+    var r = p.el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+  function settle(p) {
+    var tr = trayRect(); if (!tr) return;
+    var pt = dropPoint(p), cx = pt.x, cy = pt.y;
+    var inside = cx >= tr.left && cx <= tr.right && cy >= tr.top && cy <= tr.bottom;
+    var was = st.brief.indexOf(p);
+    if (inside) {
+      if (was >= 0) st.brief.splice(was, 1);
+      var idx = Math.max(0, Math.min(st.brief.length, Math.round((cy - (tr.top + 64) - 25) / 57)));
+      st.brief.splice(idx, 0, p);
+      arrangeTray();
+    } else if (was >= 0) {
+      st.brief.splice(was, 1); p.inBrief = false;
+      p.el.classList.remove('briefed', 'snap');
+      arrangeTray();
+    }
+  }
+  function clearBrief() {
+    st.brief.forEach(function (p) { p.inBrief = false; p.el.classList.remove('briefed', 'snap'); });
+    st.brief = []; updateTray();
+  }
+
+  var docCss = 'body{font-family:"DM Sans",Arial,sans-serif;color:#1a1a2e;max-width:760px;margin:24px auto;padding:0 28px;line-height:1.6;font-size:13px}header{border-bottom:2px solid #6366f1;padding-bottom:12px;margin-bottom:18px}.brand{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#6366f1;font-weight:700}h1{font-size:22px;margin:4px 0}.meta{font-size:11px;color:#666}section{margin-bottom:16px;page-break-inside:avoid}h2{font-size:14px;margin:0 0 6px;display:flex;gap:8px;align-items:baseline}h2 span{color:#6366f1}h2 em{font-style:normal;font-size:10px;border:1px solid #bbb;border-radius:4px;padding:1px 7px;color:#555;margin-left:auto}.b p{margin:0 0 6px}.sm-big{font-size:22px;font-weight:700;margin-bottom:4px}.sm-pt{display:flex;gap:7px;margin-bottom:3px}.sm-pt:before{content:"\\2022";color:#6366f1}footer{margin-top:22px;padding-top:10px;border-top:1px solid #ddd;font-size:10px;color:#777}';
+  function dateStr() { return new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }); }
+  function briefDoc() {
+    var o = st.opts || {};
+    var secs = st.brief.map(function (p, i) {
+      var d = p.data, body = String(d.html).replace(/ style="[^"]*"/g, '');
+      return '<section><h2><span>' + (i + 1) + '.</span> ' + esc(d.title) + (d.tag ? '<em>' + esc(d.tag) + '</em>' : '') + '</h2><div class="b">' + body + '</div></section>';
+    }).join('');
+    return '<!doctype html><html><head><meta charset="utf-8"><title>' + esc((o.title || 'Leadership Brief') + (o.caseType ? ' - ' + o.caseType : '')) + '</title><style>' + docCss + '</style></head><body>' +
+      '<header><div class="brand">Virorah Vantage</div><h1>' + esc(o.title || 'Leadership Brief') + '</h1><div class="meta">' + esc([o.caseType, dateStr()].filter(Boolean).join('  |  ')) + '</div></header>' +
+      secs + '<footer>' + esc(o.footer || '') + '</footer></body></html>';
+  }
+  function htmlToText(html) {
+    var t = document.createElement('div'); t.innerHTML = html;
+    t.querySelectorAll('.sm-pt').forEach(function (e) { e.insertAdjacentText('afterbegin', '- '); });
+    t.querySelectorAll('p,.sm-pt,.sm-big,.sm-clamp').forEach(function (e) { e.appendChild(document.createTextNode('\n')); });
+    return t.textContent.replace(/\n{3,}/g, '\n\n').trim();
+  }
+  function briefText() {
+    var o = st.opts || {};
+    var lines = [(o.title || 'Leadership Brief') + (o.caseType ? ' | ' + o.caseType : ''), dateStr(), ''];
+    st.brief.forEach(function (p, i) {
+      var d = p.data; lines.push((i + 1) + '. ' + String(d.title).toUpperCase() + (d.tag ? ' [' + d.tag + ']' : '')); lines.push(htmlToText(d.html)); lines.push('');
+    });
+    if (o.footer) lines.push(o.footer);
+    return lines.join('\n');
+  }
+  function printBrief() {
+    if (!st.brief.length) return;
+    var f = document.createElement('iframe'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+    document.body.appendChild(f);
+    var d = f.contentWindow.document; d.open(); d.write(briefDoc()); d.close();
+    setTimeout(function () { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) {} setTimeout(function () { f.remove(); }, 60000); }, 300);
+    trayMsg('Print dialog opening. Choose Save as PDF.');
+  }
+  function copyBrief() {
+    if (!st.brief.length) return;
+    var txt = briefText();
+    function fallback() {
+      var a = document.createElement('textarea'); a.value = txt; a.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(a); a.select();
+      var ok = false; try { ok = document.execCommand('copy'); } catch (e) {} a.remove();
+      trayMsg(ok ? 'Copied. Paste into email or chat.' : 'Copy failed. Use Download instead.');
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { trayMsg('Copied. Paste into email or chat.'); }, fallback);
+    else fallback();
+  }
+  function btnAt(x, y) {
+    if (!st.root) return null;
+    var bs = st.root.querySelectorAll('[data-dwell]');
+    for (var i = 0; i < bs.length; i++) {
+      if (bs[i].disabled) continue;
+      var r = bs[i].getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return bs[i];
+    }
+    return null;
+  }
+  function elOf(t) { return t && (t.el || t); }
 
   /* ---------- hand tracking (index finger only) ---------- */
   var DWELL_GRAB = 700, DWELL_DROP = 800, STILL_PX = 28, ACTIVE = 0.7; /* ACTIVE: central share of camera frame mapped to the full screen */
@@ -154,19 +289,21 @@
     var m = (1 - ACTIVE) / 2;
     var nx = clamp01(((1 - lm[8].x) - m) / ACTIVE), ny = clamp01((lm[8].y - m) / ACTIVE); /* index fingertip, mirrored */
     var px = fx.filter(nx, now) * W, py = fy.filter(ny, now) * H;
+    st.ptr = { x: px, y: py };
     cur.style.display = 'block'; cur.style.left = px + 'px'; cur.style.top = py + 'px';
     cur.classList.toggle('held-cur', !!st.held);
 
     if (st.cool && now < st.cool) { setRing(0); return; }
 
     if (!st.held) {
-      var h = panelAt(px, py);
-      if (h !== st.hover) { if (st.hover) st.hover.el.classList.remove('hover'); if (h) h.el.classList.add('hover'); st.hover = h; }
-      if (!h) { dwell.panel = null; setRing(0); setStatus('Hand tracking: <b>live</b>'); return; }
-      if (h !== dwell.panel || Math.hypot(px - dwell.ax, py - dwell.ay) > STILL_PX) resetDwell(h, px, py, now);
+      var btn = btnAt(px, py), h = btn ? null : panelAt(px, py), tgt = btn || h;
+      if (tgt !== st.hover) { if (st.hover) elOf(st.hover).classList.remove('hover'); if (tgt) elOf(tgt).classList.add('hover'); st.hover = tgt; }
+      if (!tgt) { dwell.panel = null; setRing(0); setStatus('Hand tracking: <b>live</b>'); return; }
+      if (tgt !== dwell.panel || Math.hypot(px - dwell.ax, py - dwell.ay) > STILL_PX) resetDwell(tgt, px, py, now);
       var p = (now - dwell.t0) / DWELL_GRAB; setRing(p);
-      setStatus('Hand tracking: <b>hold to grab</b>');
+      setStatus('Hand tracking: <b>' + (btn ? 'hold to press' : 'hold to grab') + '</b>');
       if (p >= 1) {
+        if (btn) { dwell.panel = null; st.cool = now + 1200; setRing(0); btn.click(); return; }
         var r = h.el.getBoundingClientRect(); grabOff.x = px - r.left; grabOff.y = py - r.top;
         grab(h); st.startX = px; st.startY = py; resetDwell(h, px, py, now);
       }
@@ -203,38 +340,44 @@
           st.raf = requestAnimationFrame(loop);
         })();
         setStatus('Hand tracking: <b>point with your index finger</b>');
-        document.getElementById('sm-hint').textContent = 'Point at a panel and hold to grab · move to drag · hold still to drop (or expand) · Esc to exit';
+        document.getElementById('sm-hint').textContent = 'Hold your index finger on a panel to grab it · drag it into the Leadership Brief tray · hold still to drop · Esc to exit';
       })
       .catch(function (e) {
         st.tracking = false;
         var denied = e && (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError');
         setStatus(denied ? 'Camera blocked. <b>Mouse mode</b>' : 'Tracking unavailable. <b>Mouse mode</b>');
-        document.getElementById('sm-hint').textContent = 'Drag panels with your mouse · click to expand · Esc to exit';
+        document.getElementById('sm-hint').textContent = 'Drag panels into the Leadership Brief tray · click to expand · Esc to exit';
       });
   }
 
   /* ---------- open / close ---------- */
-  function open(panels) {
+  function open(panels, opts) {
     if (st.root) return;
+    st.opts = opts || {}; st.brief = [];
     injectCss();
     var root = document.createElement('div'); root.id = 'sm-root';
     root.innerHTML = '<video id="sm-video" playsinline muted></video><div id="sm-grid"></div>' +
-      '<div id="sm-bar"><div><div id="sm-title">Spatial Mode · Employee Case Advisor</div><div id="sm-status">Initialising…</div></div>' +
-      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-reset">Reset layout</button><button class="sm-btn primary" id="sm-exit">Exit Spatial Mode</button></div></div>' +
+      '<div id="sm-bar"><div><div id="sm-title">Spatial Mode · ' + esc((opts && opts.tool) || 'Vantage') + '</div><div id="sm-status">Initialising…</div></div>' +
+      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
+      '<div id="sm-tray"><div id="sm-tray-head"><div id="sm-tray-title">Leadership Brief</div><div id="sm-tray-sub"></div></div>' +
+      '<div id="sm-tray-foot"><div id="sm-tray-btns"><button class="sm-btn primary" id="sm-dl" data-dwell disabled>Download</button><button class="sm-btn" id="sm-copy" data-dwell disabled>Copy text</button></div><div id="sm-tray-msg"></div></div></div>' +
       '<div id="sm-cursor"></div><div id="sm-hint">Starting…</div>';
     document.body.appendChild(root);
     st.root = root; st.video = root.querySelector('#sm-video'); st.cursor = root.querySelector('#sm-cursor');
     st.panels = []; st.held = null; st.hover = null; st.cool = 0; dwell.panel = null; fx.reset(); fy.reset();
     build(panels);
     root.querySelector('#sm-exit').onclick = close;
-    root.querySelector('#sm-reset').onclick = function () { st.panels.forEach(function (p) { p.el.classList.remove('open'); }); layout(st.panels); };
+    root.querySelector('#sm-reset').onclick = function () { clearBrief(); st.panels.forEach(function (p) { p.el.classList.remove('open'); }); layout(st.panels); };
+    root.querySelector('#sm-dl').onclick = printBrief;
+    root.querySelector('#sm-copy').onclick = copyBrief;
+    updateTray();
     document.addEventListener('keydown', onKey);
     window.addEventListener('resize', onResize);
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) startTracking();
-    else { setStatus('No camera API. <b>Mouse mode</b>'); document.getElementById('sm-hint').textContent = 'Drag panels with your mouse · click to expand · Esc to exit'; }
+    else { setStatus('No camera API. <b>Mouse mode</b>'); document.getElementById('sm-hint').textContent = 'Drag panels into the Leadership Brief tray · click to expand · Esc to exit'; }
   }
   function onKey(e) { if (e.key === 'Escape') close(); }
-  function onResize() { layout(st.panels); }
+  function onResize() { layout(st.panels); arrangeTray(); }
   function close() {
     st.running = false; cancelAnimationFrame(st.raf);
     if (st.stream) st.stream.getTracks().forEach(function (t) { t.stop(); });
@@ -242,8 +385,9 @@
     st.hands = null; st.stream = null;
     document.removeEventListener('keydown', onKey); window.removeEventListener('resize', onResize);
     if (st.root) st.root.remove();
-    st.root = null; st.panels = [];
+    clearTimeout(st.msgT);
+    st.root = null; st.cursor = null; st.hover = null; st.panels = []; st.brief = [];
   }
 
-  window.SpatialMode = { open: open, close: close, esc: esc, _feed: onResults };
+  window.SpatialMode = { open: open, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
 })();
