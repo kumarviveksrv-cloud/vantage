@@ -201,6 +201,14 @@
       @page{margin:14mm 12mm}
     }
   </style>
+<style>
+.spatial-strip{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 20px;margin-bottom:20px;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(99,102,241,0.04));border:1px solid rgba(124,58,237,0.22);transition:border-color .2s,background .2s}
+.spatial-strip:hover,.spatial-strip:focus-visible{border-color:rgba(196,181,253,0.5);background:rgba(124,58,237,0.12);outline:none}
+.spatial-strip-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#c4b5fd;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.spatial-strip-text{font-size:13px;color:rgba(244,243,255,0.6);line-height:1.5}
+.spatial-strip-cta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#c4b5fd;white-space:nowrap}
+@media print{.spatial-strip{display:none !important}}
+</style>
 </head>
 <body>
 <script>if(sessionStorage.getItem('sr_access')!=='true'){window.location.href='access.html';}</script>
@@ -412,9 +420,18 @@
         </div>
         <div class="print-date" id="print-date"></div>
       </div>
+      <!-- Brief Builder strip (laptop-class screens only) -->
+      <div class="spatial-strip" id="spatial-strip" style="display:none" onclick="openSpatialRA()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSpatialRA();}">
+        <div>
+          <div class="spatial-strip-label">&#x25C8; New &middot; Brief Builder</div>
+          <div class="spatial-strip-text">Build a one-page brief for the business head: pick the panels they need, put them in order, and export it. Use your index finger at the webcam, or your mouse.</div>
+        </div>
+        <span class="spatial-strip-cta">Enter &rarr;</span>
+      </div>
       <div class="output-section" id="output-content"></div>
       <div class="action-row">
         <button class="action-btn primary" id="save-btn" onclick="saveToLibrary()">Save to Vantage Record &#x2192;</button>
+        <button class="action-btn" id="spatial-btn" style="display:none" onclick="openSpatialRA()">&#x25C8; Brief Builder</button>
         <button class="action-btn" onclick="printReport()">&#x2913; Download Report</button>
         <button class="action-btn" onclick="fileToLedger()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
         <button class="action-btn" onclick="showView('intake-view');currentResult=null;">New Analysis</button>
@@ -952,6 +969,103 @@ VantageCollapse.init({ root: '#output-content', barBefore: '.fin-grid', cards: [
   { sel: '.fin-cell', head: '.fin-cell-label', keep: ['.fin-cell-amount', '.fin-cell-sub'] },
   { sel: '.script-card', head: '.script-header', preview: '.script-text' }
 ]});
+</script>
+<script src="spatial-mode.js"></script>
+<script>
+/* Brief Builder for Retention Advisor (laptop-class screens only) */
+(function () {
+  if (!window.matchMedia) return;
+  var mq = window.matchMedia('(min-width: 1024px) and (pointer: fine)');
+  function sync() {
+    var ok = mq.matches && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+    ['spatial-btn', 'spatial-strip'].forEach(function (id) { var el = document.getElementById(id); if (el) el.style.display = ok ? '' : 'none'; });
+  }
+  sync();
+  if (mq.addEventListener) mq.addEventListener('change', sync);
+})();
+
+function openSpatialRA() {
+  var d = currentResult;
+  if (!d || !window.SpatialMode) return;
+  var e = window.SpatialMode.esc;
+  function plain(t) { return String(t == null ? '' : t).replace(/<[^>]*>/g, ''); }
+  function lead(t, max) {
+    t = plain(t).replace(/\s+/g, ' ').trim(); if (!t) return '';
+    var parts = t.match(/.*?[.!?](?=\s|$)|.+$/g) || [t], out = '';
+    for (var i = 0; i < parts.length; i++) {
+      var cand = (out ? out + ' ' : '') + parts[i].trim();
+      if (out && cand.length > max) break;
+      out = cand;
+      if (out.length >= 80) break;
+    }
+    if (out.length > max) out = out.slice(0, max).replace(/\s+\S*$/, '') + '…';
+    return out;
+  }
+  function paras(t) {
+    var s = plain(t).trim(); if (!s) return '';
+    return '<div class="sm-clamp">' + s.split(/\n+/).map(function (x) { return '<p>' + e(x.trim()) + '</p>'; }).join('') + '</div>';
+  }
+  function big(t) { return t ? '<div class="sm-big">' + e(plain(t)) + '</div>' : ''; }
+  function list(a) { return (a || []).map(function (x) { return '<div class="sm-pt"><span>' + e(plain(x)) + '</span></div>'; }).join(''); }
+  function labelled(k, v) { return v ? '<p><strong>' + e(k) + ':</strong> ' + e(plain(v)) + '</p>' : ''; }
+  function inr(v) { try { return v ? plain(formatINR(v)) : ''; } catch (x) { return plain(v); } }
+  function join(a) { var o = a.filter(function (x) { return x; }).join('. ').replace(/\.\./g, '.'); return o && !/[.!?]$/.test(o) ? o + '.' : o; }
+
+  var ep = d.employeeProfile || {}, fm = d.financialModel || {}, rec = d.recommendation || {}, sc = d.scenarios || {}, comm = d.communication || {}, hm = d.humac || {};
+  var counter = d.flow === 'counter_offer';
+  var scA = sc.scenarioA || {}, scB = sc.scenarioB || {};
+  var humacPanel = { id: 'humac', title: 'Humac financial translation', tag: hm.pillar ? 'Humac ' + hm.pillar : '',
+    summary: join([hm.range ? 'Modelled range ' + plain(hm.range) : '', hm.pillar ? plain(hm.pillar) + ' pillar' : '']),
+    html: big(hm.range) + paras(hm.pillarRationale) + labelled('Planning signal', hm.trajectorySignal) };
+  var panels, opts = { tool: 'Retention Advisor' };
+
+  if (counter) {
+    var rc = fm.replacementCost || {};
+    var premium = ep.offerPremiumPct || (ep.currentCTC && ep.offerCTC ? Math.round(((ep.offerCTC - ep.currentCTC) / ep.currentCTC) * 100) : '');
+    var isPrimA = (rec.primary || '').toLowerCase().indexOf('walk') === -1;
+    function scen(id, label, s, primary) {
+      return { id: id, title: label + (primary ? ' (recommended path)' : ''), summary: join([plain(s.label), lead(s.financialCase, 170)]),
+        html: big(s.label) + paras(s.financialCase) + labelled('Prerequisite', s.condition) + labelled('Risk', s.risk) };
+    }
+    panels = [
+      { id: 'rec', title: 'Recommendation', summary: join([plain(rec.primary) + (rec.figure ? ': ' + plain(rec.figure) : ''), lead(rec.rationale, 170)]),
+        html: big((rec.primary || '') + (rec.figure ? ': ' + rec.figure : '')) + paras(rec.rationale) },
+      { id: 'profile', title: 'The employee and the offer',
+        summary: 'Current ' + inr(ep.currentCTC) + ', competing offer ' + inr(ep.offerCTC) + (premium ? ' (+' + premium + '%)' : '') + (ep.performanceBand ? ', band ' + plain(ep.performanceBand) : '') + (ep.tenureYears ? ', ' + plain(ep.tenureYears) + ' years' : '') + (ep.flightRisk ? ', flight risk ' + plain(ep.flightRisk) : '') + '.',
+        html: labelled('Current CTC', inr(ep.currentCTC)) + labelled('Competing offer', inr(ep.offerCTC)) + labelled('Premium', premium ? '+' + premium + '%' : '') + labelled('Band', ep.performanceBand) + labelled('Tenure (years)', ep.tenureYears) + labelled('Flight risk', ep.flightRisk) },
+      { id: 'rep', title: 'Cost of replacing them', summary: rc.total ? 'Modelled replacement cost: ' + plain(rc.total) : '', html: big(rc.total) + list(rc.breakdown) },
+      { id: 'bec', title: 'Break-even ceiling', summary: lead(fm.breakEvenCeiling, 200), html: paras(fm.breakEvenCeiling) },
+      scen('sa', 'Scenario A', scA, isPrimA),
+      scen('sb', 'Scenario B', scB, !isPrimA),
+      { id: 'bu', title: 'Conversation: BU Head / Manager', summary: lead((comm.buHead || {}).script, 220), html: paras((comm.buHead || {}).script) },
+      { id: 'emp', title: 'Conversation: the employee', summary: lead((comm.employee || {}).script, 220), html: paras((comm.employee || {}).script) },
+      humacPanel
+    ];
+    opts.title = 'Counter-offer Decision Brief';
+  } else {
+    var cl = fm.costOfLosingThem || {}, ic = fm.proactiveInterventionCost || {}, mg = comm.manager || {};
+    panels = [
+      { id: 'risk', title: 'Flight risk', tag: ep.flightRisk ? ep.flightRisk + ' risk' : '', level: String(ep.flightRisk || '').toLowerCase(),
+        summary: join([ep.flightRisk ? plain(ep.flightRisk) + ' flight risk' + (ep.estimatedTimeToLeave ? ', likely exit window ' + plain(ep.estimatedTimeToLeave) : '') : '', lead(ep.flightRiskRationale, 170)]),
+        html: big(ep.flightRisk ? ep.flightRisk + ' risk' : '') + labelled('Estimated time to exit', ep.estimatedTimeToLeave) + paras(ep.flightRiskRationale) },
+      { id: 'rec', title: 'Recommendation', summary: join([plain(rec.primary), lead(rec.rationale, 170)]), html: paras(rec.primary) + paras(rec.rationale) },
+      { id: 'loss', title: 'Cost of losing them', summary: cl.total ? 'Modelled cost of losing them: ' + plain(cl.total) : '', html: big(cl.total) + list(cl.breakdown) },
+      { id: 'int', title: 'Cost of acting now', summary: ic.salaryAdjustment ? 'Intervention cost ' + plain(ic.salaryAdjustment) + (ic.breakEvenMonths ? ', break-even in ' + plain(ic.breakEvenMonths) + ' months' : '') + '.' : '',
+        html: big(ic.salaryAdjustment) + labelled('Break-even (months)', ic.breakEvenMonths) + paras(ic.roi) },
+      { id: 'win', title: 'Action window', summary: join([plain(rec.urgency), lead(rec.actionWindow, 160)]), html: big(rec.urgency) + paras(rec.actionWindow) },
+      { id: 'sa', title: 'Scenario A: act now', summary: join([plain(scA.label), lead(scA.financialCase, 170)]), html: big(scA.label) + paras(scA.financialCase) + labelled('This week', scA.specificAction) + labelled('Risk if you wait', scA.risk) },
+      { id: 'sb', title: 'Scenario B: watch', summary: join([plain(scB.label), lead(scB.financialCase, 170)]),
+        html: big(scB.label) + paras(scB.financialCase) + labelled('Watch for', (scB.watchSignals || []).join(', ')) + labelled('Switch to act now when', scB.triggerPoint) },
+      { id: 'mgr', title: 'Conversation: the manager', summary: lead(mg.script, 220), html: paras(mg.script) },
+      humacPanel
+    ];
+    opts.title = 'Flight Risk Brief';
+  }
+  panels = panels.filter(function (p) { return String(p.summary || '').trim() || String(p.html || '').replace(/<[^>]*>/g, '').trim(); });
+  opts.caseType = counter ? 'Counter-offer decision' : 'Proactive retention';
+  opts.footer = 'Prepared with Virorah Vantage. Confidential: contains compensation data about an individual. Financial figures are modelled ranges, not measured figures.';
+  window.SpatialMode.open(panels, opts);
+}
 </script>
 </body>
 </html>
