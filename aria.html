@@ -799,16 +799,25 @@
 
     function speak(text) { /* replaced below by the on-device-only version */ }
 
+    // Privacy: the Worker anonymises the newest user turn and returns the anonymised text
+    // (anonymizedTurn). That text replaces the raw turn in hist, flagged a:true, so every later
+    // call sends only anonymised text and never re-sends what was actually typed. historyAnonymised
+    // tells the Worker it can skip re-anonymising older turns. If any earlier user turn is not
+    // flagged (failed call, old Worker, a legacy saved session), the flag is false and the Worker
+    // anonymises every turn itself. What was typed is shown on screen only, never kept.
     function callARIA(msg) {
-      hist.push({role:'user',content:msg});
+      var entry={role:'user',content:msg};
+      hist.push(entry);
       addMsg('user',msg); addMsg('aria','',true); setState('thinking');
       ariaContextReady.then(function(){
-      return fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'aria',mode:curMode,history:hist,meridian:meridian,ariaContext:ariaContext,sharedPanel:sharedPanel||undefined})});
+      var trusted=hist.every(function(m){return m===entry||m.role!=='user'||m.a===true;});
+      var wire=hist.map(function(m){return {role:m.role,content:m.content};});
+      return fetch(WORKER,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tool:'aria',mode:curMode,history:wire,meridian:meridian,ariaContext:ariaContext,sharedPanel:sharedPanel||undefined,historyAnonymised:trusted})});
       })
       .then(function(r){return r.json();})
       .then(function(data){
         rmTyping();
-        if(data.success){   var r=(data.data&&data.data.response)||data.response||(data.content&&data.content[0]&&data.content[0].text)||data.text||'';   if(!r){setState('idle');addMsg('aria','Response unavailable. Please try again.');return;}   if(sharedPanel&&!(data.data&&data.data.panelShared)&&!panelWarned){panelWarned=true;addMsg('aria','Heads up: your shared panel did not reach me this time, so this answer is not based on it.');}   hist.push({role:'assistant',content:r});addMsg('aria',r);speak(r); }
+        if(data.success){   var r=(data.data&&data.data.response)||data.response||(data.content&&data.content[0]&&data.content[0].text)||data.text||'';   if(!r){setState('idle');addMsg('aria','Response unavailable. Please try again.');return;}   if(sharedPanel&&!(data.data&&data.data.panelShared)&&!panelWarned){panelWarned=true;addMsg('aria','Heads up: your shared panel did not reach me this time, so this answer is not based on it.');}   var _at=data.data&&data.data.anonymizedTurn; if(typeof _at==='string'&&_at){entry.content=_at;entry.a=true;}   hist.push({role:'assistant',content:r});addMsg('aria',r);speak(r); }
         else if(data.error==='TRIAL_GATE'){window.location.href='subscribe.html?reason='+(data.reason||'trial_aria_excluded');return;}         else{setState('idle');var _em=data.error==='USAGE_LIMIT'?(data.message||'You\u2019ve reached your 50-message daily limit for ARIA. She\u2019ll be back tomorrow.'):'Something went wrong. Please try again.';addMsg('aria',_em);}
       })
       .catch(function(){rmTyping();setState('idle');addMsg('aria','Connection error. Please check your network.');});
@@ -904,7 +913,10 @@
       if(hist.length<2)return;
       var sessions=JSON.parse(localStorage.getItem('aria_sessions')||'[]');
       var modes={explore:'Explore',reflection:'Reflection'};
-      sessions.unshift({id:Date.now(),mode:curMode,modeLabel:modes[curMode],timestamp:new Date().toISOString(),messages:hist.slice(),preview:hist[0]?hist[0].content.substring(0,80):''});
+      // Only anonymised user turns are kept in this browser. A turn the Worker never anonymised
+      // (a failed call, an old Worker) is not stored, so raw typed text is never written to storage.
+      var safeMsgs=hist.map(function(m){return (m.role==='user'&&m.a!==true)?{role:'user',content:'[message not saved]',a:true}:m;});
+      sessions.unshift({id:Date.now(),mode:curMode,modeLabel:modes[curMode],timestamp:new Date().toISOString(),messages:safeMsgs,preview:safeMsgs[0]?safeMsgs[0].content.substring(0,80):''});
       sessions=sessions.slice(0,5);
       localStorage.setItem('aria_sessions',JSON.stringify(sessions));
     }
