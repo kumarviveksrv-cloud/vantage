@@ -361,7 +361,7 @@
     // YOUR CORE TOOLS
     f.appendChild(ns('Revenue Fluency'));
     f.appendChild(ni('employee-case-advisor.html', '\u26A1', 'Employee Case Advisor'));
-    f.appendChild(ni('people-roi-brief.html',       '\uD83D\uDCBC', 'The Business Case'));
+    f.appendChild(ni('business-case.html',       '\uD83D\uDCBC', 'The Business Case'));
     f.appendChild(ni('retention-advisor.html',       '\u2696\uFE0F', 'Retention Advisor'));
     // LEGAL INTELLIGENCE
     f.appendChild(ns('Legal Intelligence'));
@@ -624,7 +624,7 @@
     if (document.querySelector('.vantage-bottom-nav')) return;
 
     var path = window.location.pathname;
-    var curSlug = path.split('/').filter(function(s) { return s; }).pop() || 'dashboard';     curSlug = curSlug.replace('.html', '');     var SLUG = { 'er-case-navigator': 'employee-case-advisor', 'business-case': 'people-roi-brief', 'policy-compass': 'policy-advisor', 'offer-intelligence': 'retention-advisor', 'ledger': 'standpoint', 'case-library': 'vantage-record' };     var TAB_MATCH = { 'er-case-navigator': ['employee-case-advisor', 'people-roi-brief', 'policy-advisor', 'retention-advisor'], 'tools-hub': ['tools-hub', 'employee-case-advisor', 'people-roi-brief', 'policy-advisor', 'retention-advisor'], 'case-library': ['vantage-record', 'standpoint', 'debrief'] };     function slugOf(key) { return SLUG[key] || key; }     function isActive(page) { var list = TAB_MATCH[page] || [slugOf(page)]; return list.indexOf(curSlug) !== -1; }     function onMainTab() { return isActive('dashboard') || isActive('aria') || isActive('tools-hub') || isActive('er-case-navigator') || isActive('case-library'); }
+    var curSlug = path.split('/').filter(function(s) { return s; }).pop() || 'dashboard';     curSlug = curSlug.replace('.html', '');     var SLUG = { 'er-case-navigator': 'employee-case-advisor', 'business-case': 'business-case', 'policy-compass': 'policy-advisor', 'offer-intelligence': 'retention-advisor', 'ledger': 'standpoint', 'case-library': 'vantage-record' };     var TAB_MATCH = { 'er-case-navigator': ['employee-case-advisor', 'business-case', 'policy-advisor', 'retention-advisor'], 'tools-hub': ['tools-hub', 'employee-case-advisor', 'business-case', 'policy-advisor', 'retention-advisor'], 'case-library': ['vantage-record', 'standpoint', 'debrief'] };     function slugOf(key) { return SLUG[key] || key; }     function isActive(page) { var list = TAB_MATCH[page] || [slugOf(page)]; return list.indexOf(curSlug) !== -1; }     function onMainTab() { return isActive('dashboard') || isActive('aria') || isActive('tools-hub') || isActive('er-case-navigator') || isActive('case-library'); }
 
     var style = document.createElement('style');
     style.id = 'vantage-bottom-nav-style';
@@ -862,7 +862,7 @@
         title: 'Revenue Fluency',
         items: [
           { icon: IC.bolt, label: 'Employee Case Advisor', sub: 'Navigate any employee situation', href: 'employee-case-advisor.html', page: 'er-case-navigator' },
-          { icon: IC.briefcase, label: 'The Business Case', sub: 'Numbers for the room, or one specific person', href: 'people-roi-brief.html', page: 'business-case' },
+          { icon: IC.briefcase, label: 'The Business Case', sub: 'Numbers for the room, or one specific person', href: 'business-case.html', page: 'business-case' },
           { icon: IC.scale, label: 'Retention Advisor', sub: 'Stay or go: model the cost', href: 'retention-advisor.html', page: 'offer-intelligence' },
         ]
       },
@@ -1557,7 +1557,7 @@
     'humac-onboarding.html':       'humac',
     'employee-case-advisor.html':      'case-navigator',
     'policy-advisor.html':         'policy-compass',
-    'people-roi-brief.html':    'business-case',
+    'business-case.html':    'business-case',
     'retention-advisor.html':     'offer-intelligence',
     'vantage-record.html':           'case-library'
   };

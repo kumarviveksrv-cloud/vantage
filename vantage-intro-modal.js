@@ -19,7 +19,7 @@ var PAGE_PATHS = {
   'humac':                  'humac-onboarding.html',
   'case-navigator':         'employee-case-advisor.html',
   'policy-compass':         'policy-advisor.html',
-  'business-case':          'people-roi-brief.html',
+  'business-case':          'business-case.html',
   'offer-intelligence':     'retention-advisor.html',
   'conversation-simulator': 'aria.html',
   'case-library':           'vantage-record.html'
