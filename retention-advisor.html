@@ -847,6 +847,7 @@
       html += '<div class="aria-card"><div class="aria-text">✦ ' + (d.aria || 'Talk to ARIA to rehearse this conversation before it happens.') + '</div><a class="aria-btn" href="aria.html">Talk to ARIA →</a></div>';
 
       document.getElementById('output-content').innerHTML = html;
+      try { attachRehearse(d); } catch (e) {}
     }
 
     function fileToLedger() {
@@ -967,9 +968,10 @@
 <script>
 VantageCollapse.init({ root: '#output-content', barBefore: '.fin-grid', cards: [
   { sel: '.fin-cell', head: '.fin-cell-label', keep: ['.fin-cell-amount', '.fin-cell-sub'] },
-  { sel: '.script-card', head: '.script-header', preview: '.script-text' }
+  { sel: '.script-card', head: '.script-header', keep: ['.vr-wrap'], preview: '.script-text' }
 ]});
 </script>
+<script src="vantage-rehearse.js"></script>
 <script src="spatial-mode.js"></script>
 <script>
 /* Brief Builder for Retention Advisor (laptop-class screens only) */
@@ -983,6 +985,33 @@ VantageCollapse.init({ root: '#output-content', barBefore: '.fin-grid', cards: [
   sync();
   if (mq.addEventListener) mq.addEventListener('change', sync);
 })();
+
+function attachRehearse(d) {
+  var V = window.VantageRehearse; if (!V || !d) return;
+  var ep = d.employeeProfile || {}, rec = d.recommendation || {}, fm = d.financialModel || {}, counter = d.flow === 'counter_offer';
+  var premium = ep.offerPremiumPct || (ep.currentCTC && ep.offerCTC ? Math.round(((ep.offerCTC - ep.currentCTC) / ep.currentCTC) * 100) : '');
+  var who = (ep.performanceBand ? 'a ' + V.clip(ep.performanceBand, 40) + ' performer' : 'a valued employee') + (ep.tenureYears ? ' with ' + V.clip(ep.tenureYears, 10) + ' years of tenure' : '');
+  var offer = premium ? ' a competing offer ' + premium + '% above current pay' : ' a competing offer';
+  var repl = fm.replacementCost && fm.replacementCost.total ? ' Modelled replacement cost: ' + V.clip(fm.replacementCost.total, 60) + '.' : '';
+  var primary = V.clip(rec.primary, 120) || 'the recommended path';
+  document.querySelectorAll('#output-content .script-card').forEach(function (card) {
+    var t = (card.querySelector('.script-title') || {}).textContent || '', o = null;
+    if (/Employee Conversation/i.test(t)) {
+      o = { role: 'Direct report',
+        scenario: 'Retention conversation. I am speaking with ' + who + ' who has' + offer + '. The business is considering: ' + primary + '. I need to understand what would make them stay without promising what I cannot deliver.',
+        objective: 'Learn what is driving the move and whether staying is realistic, without over-committing.' };
+    } else if (/BU Head|Manager Conversation/i.test(t)) {
+      o = counter
+        ? { role: 'Skip-level leader',
+            scenario: 'Counter-offer decision. ' + who.charAt(0).toUpperCase() + who.slice(1) + ' has' + offer + '.' + repl + ' I am briefing the business head. My recommendation: ' + primary + '.',
+            objective: 'Get the business head to agree to: ' + primary + '.' }
+        : { role: 'Skip-level leader',
+            scenario: 'Proactive retention. ' + (ep.flightRisk ? V.clip(ep.flightRisk, 20) + ' flight risk' : 'Flight risk') + (ep.estimatedTimeToLeave ? ', likely exit window ' + V.clip(ep.estimatedTimeToLeave, 40) : '') + '. I am raising it with the manager before the employee resigns. ' + V.lead(ep.flightRiskRationale, 160),
+            objective: 'Get agreement to: ' + primary + '.' };
+    }
+    if (o) { o.source = 'Retention Advisor'; V.attach(card, o); }
+  });
+}
 
 function openSpatialRA() {
   var d = currentResult;

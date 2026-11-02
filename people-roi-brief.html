@@ -1585,11 +1585,18 @@
     }
 
     function practiceConversation() {
-      sessionStorage.setItem('sr_practice_context', JSON.stringify({
-        narrative: document.getElementById('situation').value.substring(0, 300),
-        role: selectedStakeholder
-      }));
-      window.location.href = BASE + 'aria.html';
+      var V = window.VantageRehearse, r = currentResult || {}, dr = (r.stack && r.stack.decisionRunway) || {};
+      if (!V || !currentResult) { window.location.href = BASE + 'aria.html'; return; }
+      var askEl = document.getElementById('stakeholder-ask'), ask = askEl ? askEl.value : '';
+      var roleMap = { 'CEO / Founder': 'CEO / Founder', 'CFO / Finance head': 'CFO / Finance head', 'CHRO / HR Head': 'CHRO / HR Head',
+        'Board / Investors': 'CEO / Founder', 'Leadership Team': 'CEO / Founder', 'Business Unit Head': 'Skip-level leader',
+        'Line Manager': 'Peer / colleague', 'Legal / Compliance': 'Legal counsel' };
+      V.go({
+        source: 'The Business Case',
+        role: roleMap[selectedStakeholder] || '',
+        scenario: 'Making the business case to ' + (selectedStakeholder || 'a senior stakeholder') + '. The ask: ' + V.clip(ask, 160) + '. ' + V.lead(r.stakeholderProfile, 220),
+        objective: V.clip(dr.ask || ask, 200) || 'Secure the decision I am asking for.'
+      });
     }
 
     function fileToLedgerStakeholder() {
@@ -1796,6 +1803,7 @@ VantageCollapse.init({ root: '#output-view-stakeholder', barBefore: '#influence-
   { sel: '.humac-influence-card', head: '.humac-influence-label', keep: ['.humac-influence-grid', '#hi-green-cat'] }
 ]});
 </script>
+<script src="vantage-rehearse.js"></script>
 <script src="spatial-mode.js"></script>
 <script>
 /* Brief Builder for The Business Case (laptop-class screens only) */

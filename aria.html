@@ -784,15 +784,21 @@
       .catch(function(){rmTyping();setState('idle');addMsg('aria','Connection error. Please check your network.');});
     }
 
+    function voiceHint(msg){
+      var h=document.getElementById('mic-hint'); if(!h)return;
+      h.innerText=msg; clearTimeout(window._vhT);
+      window._vhT=setTimeout(function(){h.innerText=reviewMode?'Tap to speak \xb7 review before sending':'Tap to speak \xb7 5s silence auto-sends';},7000);
+    }
+
     // CONTINUOUS MIC with 5s silence detection
     function initRecog() {
       var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-      if(!SR){alert('Voice recognition requires Chrome.');return null;}
+      if(!SR){voiceHint('Voice input is not supported in this browser. Type your message below, or open ARIA in Chrome.');return null;}
       var r=new SR();
       var isMobile=/Android|iPhone|iPad/i.test(navigator.userAgent);
       r.continuous=!isMobile;
       r.interimResults=!isMobile;
-      r.lang='en-US';
+      r.lang='en-IN';
       r.maxAlternatives=3;
 
       var fullTranscript='';
@@ -836,9 +842,13 @@
 
       r.onerror=function(e){
         if(e.error==='no-speech'){return;}
+        if(e.error==='language-not-supported' && r.lang!=='en-US'){r.lang='en-US';try{r.start();}catch(err){}return;}
         isListen=false;
         clearInterval(window._silenceCheck);
         setState('idle');
+        if(e.error==='not-allowed'||e.error==='service-not-allowed'){voiceHint('Microphone is blocked. Allow mic access for this site in your browser settings, or type below.');}
+        else if(e.error==='network'){voiceHint('Voice needs an internet connection. Try again, or type below.');}
+        else if(e.error==='audio-capture'){voiceHint('No microphone found. Type below instead.');}
       };
 
       r.onend=function(){
@@ -1417,5 +1427,7 @@
   <script src="aria-volumetric-product.js"></script>
   <script src="clerk-auth.js"></script>
   <script src="sidebar-shared.js"></script>
+  <script src="vantage-rehearse.js"></script>
+  <script>if (window.VantageRehearse) { try { VantageRehearse.consume(); } catch (e) {} }</script>
 </body>
 </html>

@@ -602,6 +602,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
 
   </div>
 
+  <script src="vantage-rehearse.js"></script>
   <script src="spatial-mode.js"></script>
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
@@ -1112,11 +1113,14 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     }
 
     function practiceConversation() {
-      sessionStorage.setItem('sr_practice_context', JSON.stringify({
-        caseType: selectedCaseType,
-        narrative: currentNarrative.substring(0, 300)
-      }));
-      window.location.href = BASE + 'aria.html';
+      var V = window.VantageRehearse, r = currentResult || {}, pr = r.protocol || {}, ps = r.pact_scores || {};
+      if (!V || !currentResult) { window.location.href = BASE + 'aria.html'; return; }
+      V.go({
+        source: 'Employee Case Advisor',
+        role: '',
+        scenario: 'Employee case: ' + (selectedCaseType || 'case') + (ps.overallRisk ? ', ' + ps.overallRisk + ' process risk' : '') + '. ' + V.lead(pr.communication, 360),
+        objective: 'Land the recommended path: ' + V.lead(pr.recommendation, 160)
+      });
     }
 
     function fileToLedger() {
