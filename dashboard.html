@@ -238,6 +238,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       .header-aria .aria-orb{width:40px;height:40px}
     }
   </style>
+<script src="vantage-format.js"></script>
 </head>
 <body>
 
@@ -1128,7 +1129,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       var hdcTotal = comp1 + comp2 + comp3;
       if (hdcTotal <= 0) return;
 
-      function fmtL(n) { return n <= 0 ? null : '\u20B9' + (n % 1 === 0 ? n : (Math.round(n * 10) / 10)) + 'L'; }
+      function fmtL(n) { return window.vantageFmtL(n); }
       var hdcDisplay = fmtL(hdcTotal);
 
       var card  = document.getElementById('hdc-dash-card');
@@ -1165,7 +1166,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
         var numEl = document.getElementById('hdc-dash-number');
         var cntEl = document.getElementById('hdc-dash-count');
         if (!card) return;
-        if (numEl) numEl.textContent = hdc.display || ('\u20B9' + hdc.value + 'L');
+        if (numEl) numEl.textContent = window.vantageFmtL(hdc.value) || hdc.display || '';
         if (cntEl) cntEl.textContent = (hdc.cases || 0) + (hdc.cases === 1 ? ' entry' : ' entries') + (hdc.updated ? ' \u00b7 updated ' + new Date(hdc.updated).toLocaleDateString('en-IN', {day:'numeric',month:'short'}) : '');
         card.style.display = 'block';
       } catch(e) {}
