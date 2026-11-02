@@ -3,7 +3,7 @@
  * Gestures (index finger only): hold your fingertip on a panel = grab, move = drag,
  * hold still = drop (or expand/collapse if you didn't move). Mouse/touch works as fallback.
  * Leadership Brief: drag panels into the tray to build an ordered briefing; export as PDF (print) or copy as text.
- * Usage: SpatialMode.open(panels, {tool,title,caseType,footer}) where panels = [{id,title,tag,level,html}]
+ * Usage: SpatialMode.open(panels, {tool,title,caseType,footer}) where panels = [{id,title,tag,level,html,summary}]
  */
 (function () {
   var MP_HANDS = 'https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js';
@@ -46,6 +46,7 @@
 #sm-tray-sub{font-size:11px;color:rgba(244,243,255,.5);margin-top:3px;line-height:1.4}\
 #sm-tray-foot{position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-direction:column;gap:6px}\
 #sm-tray-btns{display:flex;gap:8px}\
+#sm-mode{width:100%;padding:8px;font-size:11px}\
 #sm-tray-btns .sm-btn{flex:1;padding:10px 8px}\
 .sm-btn[disabled]{opacity:.35;cursor:default}\
 .sm-btn.hover{background:rgba(99,102,241,.35);border-color:#a5b4fc}\
@@ -59,7 +60,7 @@
 @media(max-width:768px){.sm-panel{width:240px}.sm-panel.open{width:88vw}#sm-title{display:none}}';
 
   var st = { root: null, video: null, cursor: null, hands: null, running: false, stream: null, raf: 0,
-             panels: [], brief: [], opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0 };
+             panels: [], brief: [], briefMode: 'summary', opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0 };
 
   function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
   function injectCss() {
@@ -149,10 +150,11 @@
     var n = st.brief.length, sub = st.root.querySelector('#sm-tray-sub');
     sub.textContent = n ? n + (n > 1 ? ' panels' : ' panel') + ' in your brief. Top to bottom is the order of the document.' : 'Drag the panels you want to present into this tray. Their order here is the order of your brief.';
     st.root.querySelectorAll('#sm-tray-btns .sm-btn').forEach(function (b) { b.disabled = !n; });
+    var mb = st.root.querySelector('#sm-mode'); if (mb) mb.textContent = 'Brief style: ' + (st.briefMode === 'full' ? 'Summary + detail' : 'Summary only');
   }
   function arrangeTray() {
     var tr = trayRect(); if (!tr) return;
-    var n = st.brief.length, top0 = tr.top + 64, avail = tr.height - 64 - 84;
+    var n = st.brief.length, top0 = tr.top + 64, avail = tr.height - 64 - 124;
     var step = Math.max(24, Math.min(57, n > 1 ? (avail - 50) / (n - 1) : 57));
     st.brief.forEach(function (p, i) {
       p.inBrief = true;
@@ -188,13 +190,14 @@
     st.brief = []; updateTray();
   }
 
-  var docCss = 'body{font-family:"DM Sans",Arial,sans-serif;color:#1a1a2e;max-width:760px;margin:24px auto;padding:0 28px;line-height:1.6;font-size:13px}header{border-bottom:2px solid #6366f1;padding-bottom:12px;margin-bottom:18px}.brand{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#6366f1;font-weight:700}h1{font-size:22px;margin:4px 0}.meta{font-size:11px;color:#666}section{margin-bottom:16px;page-break-inside:avoid}h2{font-size:14px;margin:0 0 6px;display:flex;gap:8px;align-items:baseline}h2 span{color:#6366f1}h2 em{font-style:normal;font-size:10px;border:1px solid #bbb;border-radius:4px;padding:1px 7px;color:#555;margin-left:auto}.b p{margin:0 0 6px}.sm-big{font-size:22px;font-weight:700;margin-bottom:4px}.sm-pt{display:flex;gap:7px;margin-bottom:3px}.sm-pt:before{content:"\\2022";color:#6366f1}footer{margin-top:22px;padding-top:10px;border-top:1px solid #ddd;font-size:10px;color:#777}';
+  var docCss = 'body{font-family:"DM Sans",Arial,sans-serif;color:#1a1a2e;max-width:760px;margin:24px auto;padding:0 28px;line-height:1.6;font-size:13px}header{border-bottom:2px solid #6366f1;padding-bottom:12px;margin-bottom:18px}.brand{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#6366f1;font-weight:700}h1{font-size:22px;margin:4px 0}.meta{font-size:11px;color:#666}section{margin-bottom:16px;page-break-inside:avoid}h2{font-size:14px;margin:0 0 6px;display:flex;gap:8px;align-items:baseline}h2 span{color:#6366f1}h2 em{font-style:normal;font-size:10px;border:1px solid #bbb;border-radius:4px;padding:1px 7px;color:#555;margin-left:auto}.b p{margin:0 0 6px}.sum{font-weight:600;margin:0 0 6px;font-size:13.5px}.sm-big{font-size:22px;font-weight:700;margin-bottom:4px}.sm-pt{display:flex;gap:7px;margin-bottom:3px}.sm-pt:before{content:"\\2022";color:#6366f1}footer{margin-top:22px;padding-top:10px;border-top:1px solid #ddd;font-size:10px;color:#777}';
   function dateStr() { return new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }); }
   function briefDoc() {
     var o = st.opts || {};
     var secs = st.brief.map(function (p, i) {
-      var d = p.data, body = String(d.html).replace(/ style="[^"]*"/g, '');
-      return '<section><h2><span>' + (i + 1) + '.</span> ' + esc(d.title) + (d.tag ? '<em>' + esc(d.tag) + '</em>' : '') + '</h2><div class="b">' + body + '</div></section>';
+      var d = p.data, full = st.briefMode === 'full' || !d.summary, body = String(d.html).replace(/ style="[^"]*"/g, '');
+      return '<section><h2><span>' + (i + 1) + '.</span> ' + esc(d.title) + (d.tag ? '<em>' + esc(d.tag) + '</em>' : '') + '</h2>' +
+        (d.summary ? '<p class="sum">' + esc(d.summary) + '</p>' : '') + (full ? '<div class="b">' + body + '</div>' : '') + '</section>';
     }).join('');
     return '<!doctype html><html><head><meta charset="utf-8"><title>' + esc((o.title || 'Leadership Brief') + (o.caseType ? ' - ' + o.caseType : '')) + '</title><style>' + docCss + '</style></head><body>' +
       '<header><div class="brand">Virorah Vantage</div><h1>' + esc(o.title || 'Leadership Brief') + '</h1><div class="meta">' + esc([o.caseType, dateStr()].filter(Boolean).join('  |  ')) + '</div></header>' +
@@ -210,7 +213,10 @@
     var o = st.opts || {};
     var lines = [(o.title || 'Leadership Brief') + (o.caseType ? ' | ' + o.caseType : ''), dateStr(), ''];
     st.brief.forEach(function (p, i) {
-      var d = p.data; lines.push((i + 1) + '. ' + String(d.title).toUpperCase() + (d.tag ? ' [' + d.tag + ']' : '')); lines.push(htmlToText(d.html)); lines.push('');
+      var d = p.data; lines.push((i + 1) + '. ' + String(d.title).toUpperCase() + (d.tag ? ' [' + d.tag + ']' : ''));
+      if (d.summary) lines.push(d.summary);
+      if (st.briefMode === 'full' || !d.summary) lines.push(htmlToText(d.html));
+      lines.push('');
     });
     if (o.footer) lines.push(o.footer);
     return lines.join('\n');
@@ -353,14 +359,14 @@
   /* ---------- open / close ---------- */
   function open(panels, opts) {
     if (st.root) return;
-    st.opts = opts || {}; st.brief = [];
+    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary';
     injectCss();
     var root = document.createElement('div'); root.id = 'sm-root';
     root.innerHTML = '<video id="sm-video" playsinline muted></video><div id="sm-grid"></div>' +
       '<div id="sm-bar"><div><div id="sm-title">Spatial Mode · ' + esc((opts && opts.tool) || 'Vantage') + '</div><div id="sm-status">Initialising…</div></div>' +
       '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
       '<div id="sm-tray"><div id="sm-tray-head"><div id="sm-tray-title">Leadership Brief</div><div id="sm-tray-sub"></div></div>' +
-      '<div id="sm-tray-foot"><div id="sm-tray-btns"><button class="sm-btn primary" id="sm-dl" data-dwell disabled>Download</button><button class="sm-btn" id="sm-copy" data-dwell disabled>Copy text</button></div><div id="sm-tray-msg"></div></div></div>' +
+      '<div id="sm-tray-foot"><button class="sm-btn" id="sm-mode" data-dwell></button><div id="sm-tray-btns"><button class="sm-btn primary" id="sm-dl" data-dwell disabled>Download</button><button class="sm-btn" id="sm-copy" data-dwell disabled>Copy text</button></div><div id="sm-tray-msg"></div></div></div>' +
       '<div id="sm-cursor"></div><div id="sm-hint">Starting…</div>';
     document.body.appendChild(root);
     st.root = root; st.video = root.querySelector('#sm-video'); st.cursor = root.querySelector('#sm-cursor');
@@ -370,6 +376,7 @@
     root.querySelector('#sm-reset').onclick = function () { clearBrief(); st.panels.forEach(function (p) { p.el.classList.remove('open'); }); layout(st.panels); };
     root.querySelector('#sm-dl').onclick = printBrief;
     root.querySelector('#sm-copy').onclick = copyBrief;
+    root.querySelector('#sm-mode').onclick = function () { st.briefMode = st.briefMode === 'full' ? 'summary' : 'full'; updateTray(); trayMsg(st.briefMode === 'full' ? 'Brief will include full detail.' : 'Brief will show one summary line per panel.'); };
     updateTray();
     document.addEventListener('keydown', onKey);
     window.addEventListener('resize', onResize);

@@ -940,20 +940,36 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           (d.points || []).map(function (p) { return '<div class="sm-pt"><span>' + e(String(p).replace(/<[^>]*>/g, '')) + '</span></div>'; }).join('');
       }
       function prose(t) { return '<div class="sm-clamp">' + e(t || '') + '</div>'; }
+      /* one-line summary for the leadership brief: lead sentence, capped */
+      function lead(t, max) {
+        t = String(t || '').replace(/\s+/g, ' ').trim(); if (!t) return '';
+        var parts = t.match(/.*?[.!?](?=\s|$)|.+$/g) || [t], out = '';
+        for (var i = 0; i < parts.length; i++) {
+          var cand = (out ? out + ' ' : '') + parts[i].trim();
+          if (out && cand.length > max) break;
+          out = cand;
+          if (out.length >= 80) break; /* a very short opener is not a summary: keep adding until it carries substance */
+        }
+        if (out.length > max) out = out.slice(0, max).replace(/\s+\S*$/, '') + '\u2026';
+        return out;
+      }
+      function dim(d) { return d ? (d.status || (d.points && d.points[0] ? String(d.points[0]).replace(/<[^>]*>/g, '') : '')) : ''; }
       var panels = [
         { id: 'risk', title: 'Overall PACT Risk', tag: (ps.overallRisk || '').toUpperCase(), level: ps.overallRisk,
+          summary: lead(ps.overallNarrative, 240) || ((ps.overallRisk || '') + ' risk'),
           html: '<div class="sm-big">' + e(ps.overallRisk || '') + ' Risk</div>' + prose(ps.overallNarrative) },
-        { id: 'p', title: 'Process Integrity', tag: ps.process && ps.process.score, level: ps.process && ps.process.score, html: pts(ps.process) },
-        { id: 'a', title: 'Accountability Clarity', tag: ps.accountability && ps.accountability.score, level: ps.accountability && ps.accountability.score, html: pts(ps.accountability) },
-        { id: 'c', title: 'Consequence Mapping', tag: ps.consequence && ps.consequence.score, level: ps.consequence && ps.consequence.score, html: pts(ps.consequence) },
-        { id: 't', title: 'Trust Preservation', tag: ps.trust && ps.trust.score, level: ps.trust && ps.trust.score, html: pts(ps.trust) },
-        { id: 'legal', title: 'Legal Position', html: prose(pr.legal) },
+        { id: 'p', title: 'Process Integrity', tag: ps.process && ps.process.score, level: ps.process && ps.process.score, summary: dim(ps.process), html: pts(ps.process) },
+        { id: 'a', title: 'Accountability Clarity', tag: ps.accountability && ps.accountability.score, level: ps.accountability && ps.accountability.score, summary: dim(ps.accountability), html: pts(ps.accountability) },
+        { id: 'c', title: 'Consequence Mapping', tag: ps.consequence && ps.consequence.score, level: ps.consequence && ps.consequence.score, summary: dim(ps.consequence), html: pts(ps.consequence) },
+        { id: 't', title: 'Trust Preservation', tag: ps.trust && ps.trust.score, level: ps.trust && ps.trust.score, summary: dim(ps.trust), html: pts(ps.trust) },
+        { id: 'legal', title: 'Legal Position', summary: lead(pr.legal, 260), html: prose(pr.legal) },
         { id: 'fin', title: 'Modelled Financial Exposure', tag: fin.confidence ? fin.confidence + ' coverage' : '',
+          summary: fin.range ? 'Modelled exposure ' + fin.range + (fin.confidence ? ' (' + fin.confidence + ' input coverage).' : '.') : '',
           html: '<div class="sm-big">' + e(fin.range || 'Not calculated') + '</div>' +
             (fin.breakdown || []).map(function (b) { return '<div class="sm-pt"><span>' + e(String(b).replace(/<[^>]*>/g, '')) + '</span></div>'; }).join('') },
-        { id: 'rec', title: 'Recommended Path', html: prose(pr.recommendation) },
-        { id: 'comm', title: 'Communication', html: prose(pr.communication) },
-        { id: 'assess', title: 'Assessment', html: prose(pr.assessment) }
+        { id: 'rec', title: 'Recommended Path', summary: lead(pr.recommendation, 260), html: prose(pr.recommendation) },
+        { id: 'comm', title: 'Communication', summary: lead(pr.communication, 260), html: prose(pr.communication) },
+        { id: 'assess', title: 'Assessment', summary: lead(pr.assessment, 260), html: prose(pr.assessment) }
       ].filter(function (p) { return p.html && p.html.replace(/<[^>]*>/g, '').trim(); });
       window.SpatialMode.open(panels, {
         tool: 'Employee Case Advisor',
