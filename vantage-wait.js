@@ -51,7 +51,7 @@
   var viewEl = null;
   if (typeof window.fetch === 'function') {
     var orig = window.fetch;
-    var LIMIT_MS = 180000; /* normal runs take 60 to 90 s; past 3 minutes something is stuck */
+    var LIMIT_MS = 130000; /* Worker now caps itself near 115 s worst case; client gives up shortly after so the server error wins */
     window.fetch = function (input, init) {
       var args = arguments, watched = false, t = 0;
       try {
