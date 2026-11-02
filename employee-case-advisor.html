@@ -603,7 +603,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
   </div>
 
   <script src="vantage-rehearse.js"></script>
-  <script src="spatial-mode.js?v=20261103a"></script>
+  <script src="spatial-mode.js?v=20261103b"></script>
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
 
@@ -993,6 +993,12 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       window.SpatialMode.open(panels, {
         tool: 'Employee Case Advisor',
         title: 'Leadership Brief',
+        presets: [
+          { label: 'Legal position vs Financial exposure', hint: 'What the Codes say vs what it could cost', a: 'legal', b: 'fin' },
+          { label: 'Recommended path vs Communication', hint: 'What to do vs how to say it', a: 'rec', b: 'comm' },
+          { label: 'Process vs Trust', hint: 'A fair process vs the relationship afterwards', a: 'p', b: 't' },
+          { label: 'Consequence vs Accountability', hint: 'What follows vs who owns it', a: 'c', b: 'a' }
+        ],
         caseType: selectedCaseType,
         footer: 'Prepared with Virorah Vantage. The legal position is a reading of the process against the Codes, not a formal legal opinion. Financial figures are modelled ranges, not measured figures.'
       });

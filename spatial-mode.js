@@ -4,6 +4,7 @@
  * hold still = drop (or expand/collapse if you didn't move). Mouse/touch works as fallback.
  * Focus: enlarge one panel while the rest dim behind it. Compare: pick two panels, read them side by side.
  * Ask ARIA: share ONE panel's text with ARIA after an explicit consent step (sessionStorage hand-off, aria.html does the rest).
+ * Quick compare: opts.presets = [{label, a, b, hint}] (panel ids) become one-click side-by-side comparisons; presets whose panels are missing are skipped.
  * Present: walk the brief full screen, one panel per slide, in tray order (keys, buttons, or hold a fingertip on Next/Back; the fingertip is a laser pointer).
  * Leadership Brief: drag panels into the tray to build an ordered briefing; export as PDF (print) or copy as text.
  * Usage: SpatialMode.open(panels, {tool,title,caseType,footer}) where panels = [{id,title,tag,level,html,summary}]
@@ -89,6 +90,12 @@
 .sm-cmp-col .sm-body{font-size:14px;line-height:1.75;color:rgba(244,243,255,.86)}\
 .sm-cmp-col .sm-body p{margin:0 0 12px}\
 .sm-cmp-col .sm-clamp{display:block;-webkit-line-clamp:unset}\
+#sm-qc-menu{position:absolute;z-index:99990;width:min(340px,92vw);padding:8px;border-radius:14px;background:#0d0b1e;border:1px solid rgba(196,181,253,.45);box-shadow:0 24px 70px rgba(124,58,237,.35);display:flex;flex-direction:column;gap:6px}\
+.sm-qc-item{text-align:left;padding:12px 14px;border-radius:10px;border:1px solid rgba(99,102,241,.3);background:rgba(99,102,241,.08);color:#f4f3ff;cursor:pointer;font-family:"DM Sans",sans-serif;display:flex;flex-direction:column;gap:3px}\
+.sm-qc-item b{font-size:13px}\
+.sm-qc-item span{font-size:11px;color:rgba(244,243,255,.6)}\
+.sm-qc-item:hover,.sm-qc-item.hover{background:rgba(99,102,241,.3);border-color:#a5b4fc}\
+.sm-qc-cancel{padding:9px;text-align:center}\
 #sm-pres{position:absolute;inset:0;z-index:100000;background:radial-gradient(ellipse at 50% 20%,#14102e 0%,#050410 75%);display:flex;flex-direction:column;padding:18px 28px 22px}\
 .sm-pres-top{display:flex;align-items:center;justify-content:space-between;gap:12px}\
 .sm-pres-meta{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#a5b4fc}\
@@ -120,7 +127,7 @@
 @media(max-width:768px){.sm-panel{width:240px}.sm-panel.open{width:88vw}#sm-title{display:none}}';
 
   var st = { root: null, video: null, cursor: null, hands: null, running: false, stream: null, raf: 0,
-             panels: [], brief: [], briefMode: 'summary', opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0, sel: [], focus: null, cmp: null, cmpEl: null, consentEl: null, presEl: null, presI: 0, presFull: false, ariaOk: true };
+             panels: [], brief: [], briefMode: 'summary', opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0, sel: [], focus: null, cmp: null, cmpEl: null, consentEl: null, presEl: null, presI: 0, presFull: false, ariaOk: true, qcEl: null, presets: [] };
 
   /* ARIA is paid-plan only. Hide Ask ARIA when we positively know the plan is not active:
      get_plan (run on every page load) stores trial_calls_used as a number, so its presence means the
@@ -208,7 +215,7 @@
     if (tr && box) { var pt = dropPoint(p); box.classList.toggle('over', pt.x >= tr.left && pt.x <= tr.right && pt.y >= tr.top && pt.y <= tr.bottom); }
   }
   function panelAt(x, y) {
-    if (st.cmpEl || st.focus || st.consentEl || st.presEl) return null; /* an overlay is up: only its own buttons are live */
+    if (st.cmpEl || st.focus || st.consentEl || st.presEl || st.qcEl) return null; /* an overlay is up: only its own buttons are live */
     for (var i = st.panels.length - 1, best = null; i >= 0; i--) {
       var r = st.panels[i].el.getBoundingClientRect();
       if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
@@ -324,6 +331,44 @@
     if (!st.consentEl) return;
     st.consentEl.remove(); st.consentEl = null; st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
   }
+
+  /* ---------- quick compare: one-click preset pairs ---------- */
+  function panelById(id) { for (var i = 0; i < st.panels.length; i++) if (st.panels[i].id === id) return st.panels[i]; return null; }
+  function resolvePresets(list) {
+    var out = [];
+    (list || []).forEach(function (x) {
+      if (!x || !x.label) return;
+      var a = panelById(x.a), b = panelById(x.b);
+      if (a && b && a !== b) out.push({ label: String(x.label), hint: x.hint ? String(x.hint) : '', a: a, b: b });
+    });
+    return out;
+  }
+  function closeQc() {
+    if (!st.qcEl) return;
+    st.qcEl.remove(); st.qcEl = null; st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
+    var qb = st.root && st.root.querySelector('#sm-qc'); if (qb) qb.classList.remove('on');
+  }
+  function openQc() {
+    if (st.qcEl || st.cmpEl || st.consentEl || st.presEl || !st.presets.length) return;
+    exitFocus();
+    var m = document.createElement('div'); m.id = 'sm-qc-menu'; m.setAttribute('role', 'menu');
+    m.innerHTML = st.presets.map(function (x, i) {
+      return '<button class="sm-qc-item" data-dwell data-qc="' + i + '" role="menuitem"><b>' + esc(x.label) + '</b>' + (x.hint ? '<span>' + esc(x.hint) + '</span>' : '') + '</button>';
+    }).join('') + '<button class="sm-btn sm-qc-cancel" id="sm-qc-cancel" data-dwell>Cancel</button>';
+    st.root.appendChild(m); st.qcEl = m;
+    var qb = st.root.querySelector('#sm-qc'), r = qb.getBoundingClientRect();
+    qb.classList.add('on');
+    m.style.top = (r.bottom + 8) + 'px'; m.style.left = Math.max(8, Math.min(window.innerWidth - m.offsetWidth - 8, r.right - m.offsetWidth)) + 'px';
+    st.hover = null; dwell.panel = null; setRing(0);
+    m.querySelector('#sm-qc-cancel').addEventListener('click', closeQc);
+    m.querySelectorAll('.sm-qc-item').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var x = st.presets[+b.getAttribute('data-qc')]; if (!x) return;
+        closeQc(); st.sel = []; refreshSel(); openCompare(x.a, x.b);
+      });
+    });
+  }
+  function toggleQc() { if (st.qcEl) closeQc(); else openQc(); }
 
   /* ---------- present: walk the brief, one panel per slide ---------- */
   function renderPres() {
@@ -624,12 +669,12 @@
   function open(panels, opts) {
     if (st.root) return;
     st.ariaOk = ariaAllowed();
-    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary'; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null;
+    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary'; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = [];
     injectCss();
     var root = document.createElement('div'); root.id = 'sm-root';
     root.innerHTML = '<video id="sm-video" playsinline muted></video><div id="sm-grid"></div>' +
       '<div id="sm-bar"><div><div id="sm-title">Spatial Mode · ' + esc((opts && opts.tool) || 'Vantage') + '</div><div id="sm-status">Initialising…</div></div>' +
-      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
+      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-qc" data-dwell aria-haspopup="menu" style="display:none">Quick compare</button><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
       '<div id="sm-tray"><div id="sm-tray-head"><div id="sm-tray-title">Leadership Brief</div><div id="sm-tray-sub"></div></div>' +
       '<div id="sm-tray-foot"><button class="sm-btn" id="sm-mode" data-dwell></button><button class="sm-btn primary" id="sm-present" data-dwell disabled>Present this brief</button><div id="sm-tray-btns"><button class="sm-btn" id="sm-dl" data-dwell disabled>Download</button><button class="sm-btn" id="sm-copy" data-dwell disabled>Copy text</button></div><div id="sm-tray-msg"></div></div></div>' +
       '<canvas id="sm-preview" width="224" height="168"></canvas><div id="sm-cursor"></div><div id="sm-hint">Starting…</div>';
@@ -638,7 +683,10 @@
     st.panels = []; st.held = null; st.hover = null; st.cool = 0; dwell.panel = null; fx.reset(); fy.reset();
     build(panels);
     root.querySelector('#sm-exit').onclick = close;
-    root.querySelector('#sm-reset').onclick = function () { closeCompare(); exitFocus(); st.sel = []; clearBrief(); refreshSel(); st.panels.forEach(function (p) { p.el.classList.remove('open'); }); layout(st.panels); };
+    root.querySelector('#sm-reset').onclick = function () { closeQc(); closeCompare(); exitFocus(); st.sel = []; clearBrief(); refreshSel(); st.panels.forEach(function (p) { p.el.classList.remove('open'); }); layout(st.panels); };
+    st.presets = resolvePresets(st.opts.presets);
+    var qcb = root.querySelector('#sm-qc'); if (st.presets.length) { qcb.style.display = ''; qcb.onclick = toggleQc; }
+    root.addEventListener('pointerdown', function (e) { if (st.qcEl && !(e.target.closest && e.target.closest('#sm-qc-menu, #sm-qc'))) closeQc(); });
     root.querySelector('#sm-present').onclick = openPresent;
     root.querySelector('#sm-dl').onclick = printBrief;
     root.querySelector('#sm-copy').onclick = copyBrief;
@@ -661,7 +709,7 @@
       return;
     }
     if (e.key !== 'Escape') return;
-    if (st.consentEl) closeConsent(); else if (st.cmpEl) closeCompare(); else if (st.focus) exitFocus(); else close();
+    if (st.consentEl) closeConsent(); else if (st.cmpEl) closeCompare(); else if (st.qcEl) closeQc(); else if (st.focus) exitFocus(); else close();
   }
   function onResize() { exitFocus(); layout(st.panels); arrangeTray(); }
   function close() {
@@ -673,8 +721,8 @@
     document.removeEventListener('keydown', onKey); window.removeEventListener('resize', onResize);
     if (st.root) st.root.remove();
     clearTimeout(st.msgT);
-    st.root = null; st.cursor = null; st.hover = null; st.panels = []; st.brief = []; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null;
+    st.root = null; st.cursor = null; st.hover = null; st.panels = []; st.brief = []; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = [];
   }
 
-  window.SpatialMode = { open: open, _present: openPresent, _presStep: presStep, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
+  window.SpatialMode = { open: open, _presets: function () { return st.presets.map(function (x) { return x.label; }); }, _present: openPresent, _presStep: presStep, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
 })();

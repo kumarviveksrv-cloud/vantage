@@ -1716,7 +1716,7 @@ VantageCollapse.init({ root: '#output-view-stakeholder', barBefore: '#influence-
 ]});
 </script>
 <script src="vantage-rehearse.js"></script>
-<script src="spatial-mode.js?v=20261103a"></script>
+<script src="spatial-mode.js?v=20261103b"></script>
 <script>
 /* Brief Builder for The Business Case (laptop-class screens only) */
 (function () {
@@ -1808,6 +1808,15 @@ function openSpatialBC() {
   }
   panels = panels.filter(function (p) { return String(p.summary || '').trim() || String(p.html || '').replace(/<[^>]*>/g, '').trim(); });
   opts.tool = 'The Business Case';
+  opts.presets = [
+    { label: 'Boardroom vs CFO narrative', hint: 'The same case, told for two audiences', a: 'nb', b: 'nc' },
+    { label: 'CFO vs CEO narrative', hint: 'What changes between finance and the top job', a: 'nc', b: 'ne' },
+    { label: 'Impact vs Gap', hint: 'What it costs now vs what is missing', a: 'i', b: 'g' },
+    { label: 'Revenue at risk vs Humac translation', hint: 'The exposure and what it means in Humac terms', a: 'rar', b: 'humac' },
+    { label: 'Risk mirror vs Decision runway', hint: 'If nothing is done vs what to ask for', a: 'l4', b: 'l5' },
+    { label: 'Data anchor vs Risk mirror', hint: 'The number vs what it puts at risk', a: 'l2', b: 'l4' },
+    { label: 'Credibility vs Narrative bridge', hint: 'Why they should listen vs the story that lands', a: 'l1', b: 'l3' }
+  ];
   opts.footer = 'Prepared with Virorah Vantage. Figures are modelled ranges and planning signals, not measured results.';
   window.SpatialMode.open(panels, opts);
 }

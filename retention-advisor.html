@@ -972,7 +972,7 @@ VantageCollapse.init({ root: '#output-content', barBefore: '.fin-grid', cards: [
 ]});
 </script>
 <script src="vantage-rehearse.js"></script>
-<script src="spatial-mode.js?v=20261103a"></script>
+<script src="spatial-mode.js?v=20261103b"></script>
 <script>
 /* Brief Builder for Retention Advisor (laptop-class screens only) */
 (function () {
@@ -1092,6 +1092,12 @@ function openSpatialRA() {
   }
   panels = panels.filter(function (p) { return String(p.summary || '').trim() || String(p.html || '').replace(/<[^>]*>/g, '').trim(); });
   opts.caseType = counter ? 'Counter-offer decision' : 'Proactive retention';
+  opts.presets = [
+    { label: 'Cost of replacing vs Break-even ceiling', hint: 'What losing them costs vs the most worth paying', a: 'rep', b: 'bec' },
+    { label: 'Manager vs Employee conversation', hint: 'The two scripts side by side', a: 'bu', b: 'emp' },
+    { label: 'Cost of losing vs Cost of acting now', hint: 'Do nothing vs intervene', a: 'loss', b: 'int' },
+    { label: 'Act now vs Watch', hint: 'The two scenarios compared', a: 'sa', b: 'sb' }
+  ];
   opts.footer = 'Prepared with Virorah Vantage. Confidential: contains compensation data about an individual. Financial figures are modelled ranges, not measured figures.';
   window.SpatialMode.open(panels, opts);
 }
