@@ -558,6 +558,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           <button class="btn-secondary" onclick="printReport()">&#x2913; Download Report</button>
           <button class="btn-secondary" onclick="practiceConversation()">Simulate the Conversation &rarr;</button>
           <button class="btn-ghost" onclick="fileToLedger()" title="Record this recommendation in Standpoint, timestamped before the outcome is known">File to Standpoint &rarr;</button>
+          <button class="btn-secondary" id="spatial-btn" style="display:none" onclick="openSpatial()" title="Optional: view this case as floating panels you move with your hand (webcam) or mouse">&#x25C8; Spatial Mode</button>
           <button class="btn-ghost" onclick="startNew()">New Case</button>
           <div style="flex-basis:100%;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.6;color:rgba(165,180,252,.55);letter-spacing:.02em">File to Standpoint saves this recommendation with today's date. Later you record what leadership decided and what actually happened.</div>
         </div>
@@ -567,6 +568,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
 
   </div>
 
+  <script src="spatial-mode.js"></script>
   <script>
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
 
@@ -893,6 +895,45 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       document.getElementById('proto-aria').innerText = currentARIAScenario;
 
       showView('output-view');
+    }
+
+    /* Spatial Mode is laptop-class only: wide screen + mouse pointer + camera API. Phones never see the button. */
+    (function () {
+      var btn = document.getElementById('spatial-btn');
+      if (!btn || !window.matchMedia) return;
+      var mq = window.matchMedia('(min-width: 1024px) and (pointer: fine)');
+      function sync() { btn.style.display = (mq.matches && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) ? '' : 'none'; }
+      sync();
+      if (mq.addEventListener) mq.addEventListener('change', sync);
+    })();
+
+    function openSpatial() {
+      var r = currentResult;
+      if (!r || !window.SpatialMode) return;
+      var e = window.SpatialMode.esc;
+      var ps = r.pact_scores || {}, pr = r.protocol || {}, fin = pr.financial || {};
+      function pts(d) {
+        if (!d) return '';
+        return '<p><strong style="color:#f4f3ff">' + e(d.status || '') + '</strong></p>' +
+          (d.points || []).map(function (p) { return '<div class="sm-pt"><span>' + e(String(p).replace(/<[^>]*>/g, '')) + '</span></div>'; }).join('');
+      }
+      function prose(t) { return '<div class="sm-clamp">' + e(t || '') + '</div>'; }
+      var panels = [
+        { id: 'risk', title: 'Overall PACT Risk', tag: (ps.overallRisk || '').toUpperCase(), level: ps.overallRisk,
+          html: '<div class="sm-big">' + e(ps.overallRisk || '') + ' Risk</div>' + prose(ps.overallNarrative) },
+        { id: 'p', title: 'Process Integrity', tag: ps.process && ps.process.score, level: ps.process && ps.process.score, html: pts(ps.process) },
+        { id: 'a', title: 'Accountability Clarity', tag: ps.accountability && ps.accountability.score, level: ps.accountability && ps.accountability.score, html: pts(ps.accountability) },
+        { id: 'c', title: 'Consequence Mapping', tag: ps.consequence && ps.consequence.score, level: ps.consequence && ps.consequence.score, html: pts(ps.consequence) },
+        { id: 't', title: 'Trust Preservation', tag: ps.trust && ps.trust.score, level: ps.trust && ps.trust.score, html: pts(ps.trust) },
+        { id: 'legal', title: 'Legal Position', html: prose(pr.legal) },
+        { id: 'fin', title: 'Modelled Financial Exposure', tag: fin.confidence ? fin.confidence + ' coverage' : '',
+          html: '<div class="sm-big">' + e(fin.range || 'Not calculated') + '</div>' +
+            (fin.breakdown || []).map(function (b) { return '<div class="sm-pt"><span>' + e(String(b).replace(/<[^>]*>/g, '')) + '</span></div>'; }).join('') },
+        { id: 'rec', title: 'Recommended Path', html: prose(pr.recommendation) },
+        { id: 'comm', title: 'Communication', html: prose(pr.communication) },
+        { id: 'assess', title: 'Assessment', html: prose(pr.assessment) }
+      ].filter(function (p) { return p.html && p.html.replace(/<[^>]*>/g, '').trim(); });
+      window.SpatialMode.open(panels);
     }
 
     function saveCase() {
