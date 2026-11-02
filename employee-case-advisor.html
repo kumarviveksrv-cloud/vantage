@@ -109,6 +109,21 @@
     .spatial-strip-cta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#c4b5fd;white-space:nowrap}
     @media print{.spatial-strip{display:none !important}}
 
+    /* COLLAPSIBLE DETAIL CARDS */
+    .coll-bar{display:flex;justify-content:flex-end;margin:-8px 0 12px}
+    .coll-all{background:none;border:1px solid rgba(99,102,241,0.25);border-radius:6px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;padding:5px 12px;cursor:pointer;transition:all .15s}
+    .coll-all:hover{background:rgba(99,102,241,0.1);color:#f4f3ff}
+    .coll-toggle{display:block;margin-top:12px;padding:4px 0;background:none;border:none;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;cursor:pointer}
+    .coll-toggle:hover{color:#f4f3ff}
+    .coll-head{cursor:pointer}
+    .coll.collapsed{cursor:pointer;transition:border-color .15s}
+    .coll.collapsed:hover{border-color:rgba(99,102,241,0.38)}
+    .pact-card.collapsed .pact-points{display:none}
+    .pact-card.collapsed .pact-status{margin-bottom:0}
+    .protocol-section.collapsed .proto-text,.communication-card.collapsed .comm-text{max-height:48px;overflow:hidden;-webkit-mask-image:linear-gradient(#000 30%,transparent);mask-image:linear-gradient(#000 30%,transparent)}
+    .fin-card.collapsed .fin-breakdown,.fin-card.collapsed .fin-divider,.fin-card.collapsed .fin-pillar-row,.fin-card.collapsed .fin-trajectory{display:none !important}
+    @media print{.coll-toggle,.coll-bar{display:none !important}}
+
     /* OUTPUT: PACT GRID */
     .pact-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
     .pact-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
@@ -474,6 +489,8 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           </div>
           <span class="spatial-strip-cta">Enter &rarr;</span>
         </div>
+
+        <div class="coll-bar"><button type="button" class="coll-all" id="coll-all" onclick="toggleAllDetail()">Expand all detail</button></div>
 
         <!-- PACT grid -->
         <div class="pact-grid">
@@ -911,6 +928,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       currentARIAScenario = pr.aria || '';
       document.getElementById('proto-aria').innerText = currentARIAScenario;
 
+      setupCollapsibles();
       showView('output-view');
     }
 
@@ -978,6 +996,66 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         footer: 'Prepared with Virorah Vantage. The legal position is a reading of the process against the Codes, not a formal legal opinion. Financial figures are modelled ranges, not measured figures.'
       });
     }
+
+    /* Collapsible detail cards: the answer stays open, supporting detail is one click away */
+    var COLL_DEFS = [
+      { sel: '#output-view .pact-card', head: '.pact-dimension' },
+      { sel: '#output-view .protocol-section', head: '.proto-label' },
+      { sel: '#output-view .fin-card', head: '.proto-label' },
+      { sel: '#output-view .communication-card', head: '.comm-label' }
+    ];
+    var _collState = null;
+    function collCards() {
+      var out = [];
+      COLL_DEFS.forEach(function (d) {
+        document.querySelectorAll(d.sel).forEach(function (c) { out.push({ el: c, head: c.querySelector(d.head) }); });
+      });
+      return out;
+    }
+    function setColl(card, collapsed) {
+      card.classList.toggle('collapsed', collapsed);
+      var b = card.querySelector('.coll-toggle');
+      if (b) { b.textContent = collapsed ? 'Show detail \u25BE' : 'Hide detail \u25B4'; b.setAttribute('aria-expanded', String(!collapsed)); }
+    }
+    function syncCollAll() {
+      var b = document.getElementById('coll-all'); if (!b) return;
+      var anyCollapsed = collCards().some(function (c) { return c.el.classList.contains('collapsed'); });
+      b.textContent = anyCollapsed ? 'Expand all detail' : 'Collapse all detail';
+    }
+    function toggleAllDetail() {
+      var cards = collCards();
+      var anyCollapsed = cards.some(function (c) { return c.el.classList.contains('collapsed'); });
+      cards.forEach(function (c) { setColl(c.el, !anyCollapsed); });
+      syncCollAll();
+    }
+    function setupCollapsibles() {
+      collCards().forEach(function (c) {
+        var el = c.el;
+        if (!el.classList.contains('coll')) {
+          el.classList.add('coll');
+          var b = document.createElement('button'); b.type = 'button'; b.className = 'coll-toggle'; el.appendChild(b);
+          b.addEventListener('click', function (e) { e.stopPropagation(); setColl(el, !el.classList.contains('collapsed')); syncCollAll(); });
+          if (c.head) c.head.classList.add('coll-head');
+          el.addEventListener('click', function (e) {
+            if (window.getSelection && String(window.getSelection())) return; /* person is selecting text to copy */
+            if (el.classList.contains('collapsed')) { setColl(el, false); syncCollAll(); }
+            else if (c.head && c.head.contains(e.target)) { setColl(el, true); syncCollAll(); }
+          });
+        }
+        setColl(el, true);
+      });
+      syncCollAll();
+    }
+    /* printing and saving a report always shows everything */
+    window.addEventListener('beforeprint', function () {
+      _collState = collCards().map(function (c) { return c.el.classList.contains('collapsed'); });
+      collCards().forEach(function (c) { setColl(c.el, false); });
+    });
+    window.addEventListener('afterprint', function () {
+      if (!_collState) return;
+      collCards().forEach(function (c, i) { setColl(c.el, _collState[i]); });
+      _collState = null; syncCollAll();
+    });
 
     function saveCase() {
       var userId = getUserId();
@@ -1227,5 +1305,6 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       <button onclick="document.getElementById('vantage-error').style.display='none'" style="background:none;border:none;color:rgba(244,243,255,.3);cursor:pointer;font-size:16px;padding:0;line-height:1;flex-shrink:0">&#x2715;</button>
     </div>
   </div>
+<script src="vantage-wait.js"></script>
 </body>
 </html>
