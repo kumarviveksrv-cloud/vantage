@@ -1757,5 +1757,16 @@
     </div>
   </div>
 <script src="vantage-wait.js"></script>
+<script src="vantage-collapse.js"></script>
+<script>
+VantageCollapse.init({ root: '#output-view-general', barBefore: '.signal-grid', cards: [
+  { sel: '.signal-card', head: '.signal-dim', keep: ['.signal-figure', '.gap-value'], preview: '.signal-narrative, .action-timeline' },
+  { sel: '.humac-signal-card', head: '.humac-signal-label', keep: ['.humac-signal-range', '#humac-green-cat', '.humac-signal-pillar'] }
+]});
+VantageCollapse.init({ root: '#output-view-stakeholder', barBefore: '#influence-layers', cards: [
+  { sel: '.layer-card', head: '.layer-header', keep: ['.l-figure', '.l-rar'], preview: '.l-text' },
+  { sel: '.humac-influence-card', head: '.humac-influence-label', keep: ['.humac-influence-grid', '#hi-green-cat'] }
+]});
+</script>
 </body>
 </html>

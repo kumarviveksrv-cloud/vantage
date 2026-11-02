@@ -394,7 +394,7 @@
         <div class="policy-section legal-section">
           <div class="policy-section-label"><span class="policy-section-icon">&#x2696;&#xFE0F;</span> Legal Position</div>
           <div class="policy-section-text" id="section-legal"></div>
-          <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(99,102,241,0.12);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.02em">Guidance from the cited provisions, not a legal opinion. Confirm with counsel before you act.</div>
+          <div class="policy-disclaimer" style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(99,102,241,0.12);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.02em">Guidance from the cited provisions, not a legal opinion. Confirm with counsel before you act.</div>
         </div>
 
         <!-- Recommended Path -->
@@ -955,5 +955,11 @@
     </div>
   </div>
 <script src="vantage-wait.js"></script>
+<script src="vantage-collapse.js"></script>
+<script>
+VantageCollapse.init({ root: '#output-view', bar: false, cards: [
+  { sel: '.policy-section', head: '.policy-section-label', keep: ['.policy-disclaimer'], preview: '.policy-section-text' }
+]});
+</script>
 </body>
 </html>
