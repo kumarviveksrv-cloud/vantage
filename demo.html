@@ -426,6 +426,7 @@
 .cor-room.entered .cor-door{display:none}
 @keyframes insideReveal{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
 .cor-scenario{text-align:center;margin-bottom:32px;padding:24px 0}
+.cor-illus{display:inline-block;margin-bottom:12px;padding:3px 10px;border:1px solid rgba(196,181,253,.32);border-radius:999px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#c4b5fd;background:rgba(124,58,237,.08)}
 .cor-case-id-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.22em;color:rgba(196,181,253,.45);margin-bottom:14px;display:block}
 .cor-scenario h3{font-family:var(--font), sans-serif;font-size:clamp(18px,2.4vw,28px);font-weight:700;color:rgba(255,255,255,.88);line-height:1.4}
 .cor-choices{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;width:100%;margin-bottom:24px}
@@ -494,7 +495,7 @@
     <div class="cor-room active" id="demoRoom1">
       <div class="cor-door" id="demoDoor1" onclick="openDoor(1)"><div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div><div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div><div class="cor-door-tag">ROOM 1 / CASE ANALYSIS</div></div>
       <div class="cor-inside">
-        <div class="cor-scenario"><span class="cor-case-id-label">CASE 2841 / Employee Relations</span><h3>Employee absent 7 days.<br>Manager wants termination tonight.<br>No written warnings on file.</h3></div>
+        <div class="cor-scenario"><span class="cor-illus">Illustrative scenario</span><span class="cor-case-id-label">CASE 2841 / Employee Relations</span><h3>Employee absent 7 days.<br>Manager wants termination tonight.<br>No written warnings on file.</h3></div>
         <div class="cor-choices" id="demoChoices1">
           <div class="cor-choice" onclick="selectChoice(1,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Terminate immediately</span><span class="cor-choice-risk">close it out tonight</span></div>
           <div class="cor-choice" onclick="selectChoice(1,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Start domestic enquiry</span><span class="cor-choice-risk">a formal hearing process</span></div>
@@ -509,7 +510,7 @@
     <div class="cor-room" id="demoRoom2">
       <div class="cor-door" id="demoDoor2" onclick="openDoor(2)"><div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div><div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div><div class="cor-door-tag">ROOM 2 / EVIDENCE</div></div>
       <div class="cor-inside">
-        <div class="cor-scenario"><span class="cor-case-id-label">EVIDENCE ANALYSIS</span><h3>Enquiry reveals undocumented verbal warnings.<br>Two witnesses remember.<br>Nothing is on paper.</h3></div>
+        <div class="cor-scenario"><span class="cor-illus">Illustrative scenario</span><span class="cor-case-id-label">EVIDENCE ANALYSIS</span><h3>Enquiry reveals undocumented verbal warnings.<br>Two witnesses remember.<br>Nothing is on paper.</h3></div>
         <div class="cor-choices" id="demoChoices2">
           <div class="cor-choice" onclick="selectChoice(2,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Accept the evidence gap</span><span class="cor-choice-risk">proceed anyway</span></div>
           <div class="cor-choice" onclick="selectChoice(2,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Reconstruct the trail</span><span class="cor-choice-risk">manager notes and calendars</span></div>
@@ -524,7 +525,7 @@
     <div class="cor-room" id="demoRoom3">
       <div class="cor-door" id="demoDoor3" onclick="openDoor(3)"><div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div><div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div><div class="cor-door-tag">ROOM 3 / BOARDROOM</div></div>
       <div class="cor-inside">
-        <div class="cor-scenario"><span class="cor-case-id-label">BOARDROOM CHALLENGE</span><h3>CFO asks: &ldquo;What does keeping this person cost us?&rdquo;<br>The boardroom is waiting.</h3></div>
+        <div class="cor-scenario"><span class="cor-illus">Illustrative scenario</span><span class="cor-case-id-label">BOARDROOM CHALLENGE</span><h3>CFO asks: &ldquo;What does keeping this person cost us?&rdquo;<br>The boardroom is waiting.</h3></div>
         <div class="cor-choices" id="demoChoices3">
           <div class="cor-choice" onclick="selectChoice(3,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Estimate from experience</span><span class="cor-choice-risk">a number based on judgment</span></div>
           <div class="cor-choice" onclick="selectChoice(3,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Present the full cost breakdown</span><span class="cor-choice-risk">replacement cost, ramp time, legal exposure</span></div>
@@ -539,7 +540,7 @@
     <div class="cor-room" id="demoRoom4">
       <div class="cor-door" id="demoDoor4" onclick="openDoor(4)"><div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div><div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div><div class="cor-door-tag">ROOM 4 / ARIA</div></div>
       <div class="cor-inside">
-        <div class="cor-scenario"><span class="cor-case-id-label">STAKEHOLDER PREPARATION</span><h3>COO call tomorrow morning.<br>She will ask about precedent, exposure, and your recommendation.</h3></div>
+        <div class="cor-scenario"><span class="cor-illus">Illustrative scenario</span><span class="cor-case-id-label">STAKEHOLDER PREPARATION</span><h3>COO call tomorrow morning.<br>She will ask about precedent, exposure, and your recommendation.</h3></div>
         <div class="cor-choices" id="demoChoices4">
           <div class="cor-choice" onclick="selectChoice(4,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Go in without preparing</span><span class="cor-choice-risk">rely on the moment</span></div>
           <div class="cor-choice" onclick="selectChoice(4,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Rehearse the conversation first</span><span class="cor-choice-risk">practice the likely questions out loud</span></div>
@@ -554,7 +555,7 @@
     <div class="cor-room" id="demoRoom5">
       <div class="cor-door" id="demoDoor5" onclick="openDoor(5)"><div class="cor-door-frame"><div class="cor-door-panel cor-door-l"></div><div class="cor-door-panel cor-door-r"></div></div><div class="cor-lock"><span class="cor-lock-icon">&#x1F512;</span><span class="cor-lock-label">Click to enter</span></div><div class="cor-door-tag">ROOM 5 / VANTAGE RECORD</div></div>
       <div class="cor-inside">
-        <div class="cor-scenario"><span class="cor-case-id-label">9 MONTHS LATER</span><h3>Same scenario. New employee. New manager.<br>Everything you learned the first time...</h3></div>
+        <div class="cor-scenario"><span class="cor-illus">Illustrative scenario</span><span class="cor-case-id-label">9 MONTHS LATER</span><h3>Same scenario. New employee. New manager.<br>Everything you learned the first time...</h3></div>
         <div class="cor-choices" id="demoChoices5">
           <div class="cor-choice" onclick="selectChoice(5,this,'A')"><span class="cor-choice-letter">A</span><span class="cor-choice-text">Start from scratch</span><span class="cor-choice-risk">rebuild the process from memory</span></div>
           <div class="cor-choice" onclick="selectChoice(5,this,'B')"><span class="cor-choice-letter">B</span><span class="cor-choice-text">Pull up your documented case history</span><span class="cor-choice-risk">reference what you did last time</span></div>
