@@ -1078,7 +1078,13 @@
   (function(){
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
     var rhRole = '', rhDiff = 'standard', rhHistory = [], rhExchangeCount = 0, rhMax = 8;
-    var rhScenario = '', rhObjective = '', rhPracticeSession = '';
+    var rhScenario = '', rhObjective = '', rhPracticeSession = '', rhSetupAnon = false;
+    // Privacy: the Worker returns the anonymised scenario, objective and each anonymised turn. They replace
+    // what was typed (flagged), so later calls send only anonymised text and the Worker does not have to
+    // re-process it. If any piece is missing or unflagged, the flags stay false and the Worker anonymises
+    // everything itself. What was typed stays on screen only.
+    function rhWire() { return rhHistory.map(function(m){ return {role:m.role, content:m.content}; }); }
+    function rhHistTrusted(except) { return rhHistory.every(function(m){ return m === except || m.role !== 'user' || m.a === true; }); }
 
     // Show entry point on every visit
     document.getElementById('aria-entry').style.display = 'flex';
@@ -1258,7 +1264,7 @@
     window.rhStartSim = async function() {
       rhScenario = document.getElementById('rh-scenario').value.trim();
       rhObjective = document.getElementById('rh-objective').value.trim();
-      rhHistory = []; rhExchangeCount = 0; rhPracticeSession = '';
+      rhHistory = []; rhExchangeCount = 0; rhPracticeSession = ''; rhSetupAnon = false;
       document.getElementById('rh-msgs').innerHTML = '';
       var stakes = document.getElementById('rh-stakes-strip');
       if (stakes) stakes.style.display = 'none';
@@ -1275,6 +1281,11 @@
         if (data.success && data.trial_calls_remaining === 0) { try { localStorage.setItem('vantage_trial_cap_hit','1'); } catch(e){} }
         if (data.success) {
           rhPracticeSession = data.data.practiceSession || '';
+          (function(){
+            var as = data.data.anonymizedScenario, ao = data.data.anonymizedObjective;
+            var okS = !rhScenario || (typeof as === 'string' && as), okO = !rhObjective || (typeof ao === 'string' && ao);
+            if (okS && okO) { if (rhScenario) rhScenario = as; if (rhObjective) rhObjective = ao; rhSetupAnon = true; }
+          })();
           var parsed = rhParseFirstResponse(data.data.response);
           if (parsed.briefing) rhShowStakes(parsed.briefing);
           var dialogue = parsed.dialogue || data.data.response;
@@ -1362,7 +1373,8 @@
       var sendBtn = document.getElementById('rh-send-btn');
       if (sendBtn) sendBtn.disabled = true;
       rhAddMsg('you', text);
-      rhHistory.push({ role:'user', content:text });
+      var rhEntry = { role:'user', content:text, a:false };
+      rhHistory.push(rhEntry);
       rhExchangeCount++;
       var ctr = document.getElementById('rh-exchange-ctr');
       if (ctr) ctr.textContent = rhExchangeCount + ' / ' + rhMax + ' exchanges';
@@ -1371,12 +1383,13 @@
         var tok = await rhGetToken();
         var res = await fetch(WORKER, {
           method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
-          body:JSON.stringify({ tool:'aria', mode:'rehearse', scenario:rhScenario, objective:rhObjective, stakeholderRole:rhRole, difficulty:rhDiff, history:rhHistory, practiceSession:rhPracticeSession, meridian:rhGetMeridian() })
+          body:JSON.stringify({ tool:'aria', mode:'rehearse', scenario:rhScenario, objective:rhObjective, stakeholderRole:rhRole, difficulty:rhDiff, history:rhWire(), historyAnonymised:rhHistTrusted(rhEntry), setupAnonymised:rhSetupAnon, practiceSession:rhPracticeSession, meridian:rhGetMeridian() })
         });
         var data = await res.json();
         rhRemoveTyping();
         if (rhHandleTrialGate(data)) return;
         if (data.success) {
+          if (typeof data.data.anonymizedTurn === 'string' && data.data.anonymizedTurn) { rhEntry.content = data.data.anonymizedTurn; rhEntry.a = true; }
           rhHistory.push({ role:'assistant', content:data.data.response });
           rhAddMsg('them', data.data.response);
           rhSpeak(data.data.response);
@@ -1402,7 +1415,7 @@
         var tok = await rhGetToken();
         var res = await fetch(WORKER, {
           method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
-          body:JSON.stringify({ tool:'aria', mode:'rehearse', scenario:rhScenario, objective:rhObjective, stakeholderRole:rhRole, difficulty:rhDiff, history:rhHistory, practiceSession:rhPracticeSession, meridian:rhGetMeridian(), requestDebrief:true })
+          body:JSON.stringify({ tool:'aria', mode:'rehearse', scenario:rhScenario, objective:rhObjective, stakeholderRole:rhRole, difficulty:rhDiff, history:rhWire(), historyAnonymised:rhHistTrusted(), setupAnonymised:rhSetupAnon, practiceSession:rhPracticeSession, meridian:rhGetMeridian(), requestDebrief:true })
         });
         var data = await res.json();
         if (rhHandleTrialGate(data)) return;
@@ -1427,7 +1440,7 @@
 
     window.rhPracticeAgain = function() {
       document.getElementById('rh-msgs').innerHTML = '';
-      rhHistory = []; rhExchangeCount = 0; rhPracticeSession = '';
+      rhHistory = []; rhExchangeCount = 0; rhPracticeSession = ''; rhSetupAnon = false;
       var stakes = document.getElementById('rh-stakes-strip');
       if (stakes) stakes.style.display = 'none';
       window.rhStartSim();
@@ -1449,7 +1462,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.152.2/three.min.js"></script>
   <script src="aria-volumetric-product.js"></script>
-  <script src="clerk-auth.js"></script>
+  <script src="clerk-auth.js?v=20261102a"></script>
   <script src="sidebar-shared.js"></script>
   <script src="vantage-voice.js"></script>
   <script src="vantage-rehearse.js"></script>

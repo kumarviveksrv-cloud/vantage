@@ -91,8 +91,30 @@
     }
   }
 
+  // ── CLEAR PERSONAL DATA HELD IN THIS BROWSER ───────────────────────────────
+  // Used by sign-out and by account deletion so the Privacy Policy is literally true: saved ARIA
+  // sessions, the stored name and email, cached MERIDIAN profiles, plan cache and the last-case
+  // pointer do not outlive the person on this device. Deliberately NOT cleared: the trial-cap flag
+  // (anti-abuse, no personal data) and harmless UI preferences (voice, "seen the intro").
+  window.vantageClearLocalData = function () {
+    try {
+      var drop = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k) continue;
+        if (k === 'aria_sessions' || k === 'sr_user_email' || k === 'sr_user_name' || k === 'sr_user_id' ||
+            k === 'sr_last_case_id' || k === 'vantage_plan' || k === 'vantage_paid_user' ||
+            k.indexOf('sr_meridian_') === 0) {
+          drop.push(k);
+        }
+      }
+      drop.forEach(function (k) { localStorage.removeItem(k); });
+    } catch (e) {}
+  };
+
   // ── GLOBAL SIGN OUT ────────────────────────────────────────────────────────
   window.clerkSignOut = function () {
+    window.vantageClearLocalData();
     localStorage.removeItem('vantage_clerk_signed_in');
     sessionStorage.clear();
     /* Redirect to LANDING PAGE, not access.html.

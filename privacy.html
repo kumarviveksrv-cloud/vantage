@@ -108,7 +108,7 @@
 
     <div class="doc-eyebrow">Legal</div>
     <h1 class="doc-title">Privacy Policy</h1>
-    <div class="doc-meta">Virorah Private Limited &nbsp;&middot;&nbsp; Last updated: 8 October 2026 &nbsp;&middot;&nbsp; Effective: 8 October 2026</div>
+    <div class="doc-meta">Virorah Private Limited &nbsp;&middot;&nbsp; Last updated: 2 November 2026 &nbsp;&middot;&nbsp; Effective: 2 November 2026</div>
 
     <div class="commitment-banner">
       <strong>Our Privacy Commitment</strong>
@@ -200,6 +200,12 @@
           <td>To turn your speech into text</td>
         </tr>
         <tr>
+          <td><strong>Camera View (optional)</strong></td>
+          <td>Live camera view, only if you turn on hand tracking in Spatial Mode and allow your browser's camera permission. It is analysed inside your browser, on your device. Virorah does not upload, record or store it. The hand-tracking model files are served from Virorah's own site; if they cannot load from there, they are fetched from a public software host (jsDelivr), which sees your IP address as any website would, but never your video.</td>
+          <td>Provided by you when you choose hand tracking instead of the mouse</td>
+          <td>To let you move and open panels with your finger</td>
+        </tr>
+        <tr>
           <td><strong>Payment Data</strong></td>
           <td>Subscription tier and payment status. Payments are designed to be processed by Razorpay; Virorah does not store card details. This Policy will be updated to confirm live payment processing once fully deployed.</td>
           <td>Via Razorpay, once payment processing is live</td>
@@ -231,13 +237,15 @@
     <p>We do not use your data for advertising. We do not sell your data to any third party. We do not use your individual case narratives or outputs to train AI models.</p>
 
     <h2 id="anonymisation">4. Anonymisation Before AI Processing</h2>
-    <p>Anonymisation is a two-step process. The Platform first sends your text to Anthropic's Claude Haiku model, which identifies person names, company names, and specific locations and replaces them with role-consistent placeholders — for example, "Manager A" and "Employee B" rather than real names, inferred from context so the underlying diagnostic still makes sense. Only the anonymised output of that step is then sent to Anthropic's Claude model for the actual analysis. This means your original text reaches Anthropic once — solely for the purpose of anonymisation by Claude Haiku — before the placeholder version reaches Claude for analysis. This applies across every AI-powered tool on the Platform: the Employee Case Advisor, The Business Case, Policy Advisor, Retention Advisor, Difficult Conversations, and ARIA. It also applies to the case notes used to generate your monthly Debrief.</p>
+    <p>Anonymisation is a two-step process. The Platform first sends your text to Anthropic's Claude Haiku model, which identifies person names, company names, and specific locations and replaces them with role-consistent placeholders — for example, "Manager A" and "Employee B" rather than real names, inferred from context so the underlying diagnostic still makes sense. Only the anonymised output of that step is then sent to Anthropic's Claude model for the actual analysis. This means your original text reaches Anthropic — solely for the purpose of anonymisation by Claude Haiku, and once in the normal course (the exceptions are described below) — before the placeholder version reaches Claude for analysis. This applies across every AI-powered tool on the Platform: the Employee Case Advisor, The Business Case, Policy Advisor, Retention Advisor, Difficult Conversations, and ARIA. It also applies to the case notes used to generate your monthly Debrief.</p>
     <div class="highlight">
       <strong style="display:block;margin-bottom:6px;color:#6366f1;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase">What happens if anonymisation cannot be completed</strong>
       This step fails closed: if the anonymisation process cannot produce a safe result after a brief automatic retry, the Platform blocks that request entirely rather than sending your original text unredacted. You will see an error asking you to try again, not a silent fallback.
     </div>
-    <p>For ARIA and Difficult Conversations specifically (both ongoing conversations rather than single submissions), the Platform anonymises each new message as it is sent. Earlier turns in the same conversation are not re-processed on every new message, since they were already anonymised when originally sent.</p>
-    <p>Separately: your original text, exactly as you typed it, is stored in your own Airtable record and is not shared with any third party beyond what is described in Section 7. As described above, the original text reaches Anthropic's Claude Haiku model once, for the anonymisation step only. The anonymised version then reaches Anthropic's Claude model for analysis. Neither step uses your data to train AI models.</p>
+    <p>For ARIA and Difficult Conversations specifically (both ongoing conversations rather than single submissions), each new message is anonymised as it is sent, and the Platform sends the anonymised version back. Your browser then uses that anonymised version, in place of what you typed, for the rest of the conversation, so your original wording is not sent again with later messages. What you typed stays visible on your own screen during the conversation, but it is not kept in the sessions your browser saves.</p>
+    <p>There is one fallback. If the Platform cannot confirm that earlier messages were already anonymised (for example after an interrupted request, or when a session saved by an older version is reopened), it anonymises every earlier message again before the conversation goes to Claude for analysis. An earlier message that cannot be anonymised is left out rather than sent unredacted.</p>
+    <p><strong>Sharing a panel with ARIA.</strong> In Spatial Mode you can choose to discuss one panel of an analysis with ARIA. This only happens after you confirm a message showing exactly what will be shared. Only the text of that one panel is shared, not the rest of your case. That text is anonymised again, in the same way as anything you type, before it reaches Claude, and it is used only to answer within that conversation. Virorah does not store it, your browser holds it only for that conversation, and it is not added to your saved ARIA sessions.</p>
+    <p>Separately: your original text, exactly as you typed it, is stored in your own Airtable record and is not shared with any third party beyond what is described in Section 7. As described above, the original text reaches Anthropic's Claude Haiku model, in the normal course once, for the anonymisation step only. The anonymised version then reaches Anthropic's Claude model for analysis. Neither step uses your data to train AI models.</p>
     <div class="highlight">
       <strong style="display:block;margin-bottom:6px;color:#6366f1;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase">Voice input is different</strong>
       If you use a microphone button, your audio is sent to OpenAI to be turned into text. Anonymisation can only work on text, so it cannot happen before that step: any name you say aloud is heard by the transcription service. Please do not speak real names. The transcribed text is then anonymised before AI processing, like anything you type. Virorah does not store your audio. Voice mode in Difficult Conversations uses your browser's own speech recognition, which in some browsers (Chrome, for example) is processed by the browser's maker under its own terms, outside Virorah's control.
@@ -255,7 +263,7 @@
     <p>Your data is stored using the following infrastructure:</p>
     <ul>
       <li><strong>Airtable (US servers):</strong> Your MERIDIAN profile, case records, and debrief data are stored in Airtable, a cloud database service. Airtable's servers are located in the United States (AWS us-east-1). By using the Platform, you explicitly consent to this cross-border transfer of your personal data to the United States.</li>
-      <li><strong>Browser Storage:</strong> Your session data (access status, current-session MERIDIAN profile) is stored in your browser's sessionStorage and localStorage. This data never leaves your device except as described above.</li>
+      <li><strong>Browser Storage:</strong> Your browser's sessionStorage and localStorage hold your access status, your sign-in name and email, a cached copy of your MERIDIAN profile and plan, preferences such as ARIA's voice, and the last five ARIA sessions you ended. Those saved sessions contain only the anonymised version of your messages and ARIA's replies. This data stays on your device except as described above. Signing out, or scheduling account deletion, removes the saved ARIA sessions, your stored name and email, and the cached profile and plan from the browser you are using; small preferences such as voice choice stay until you clear your browser data.</li>
       <li><strong>Anthropic (US servers):</strong> As described in Section 4, your original text first reaches Anthropic's Claude Haiku model (US servers) for the anonymisation step, and only the anonymised text then reaches Anthropic's Claude model for analysis. Neither use is for model training under Anthropic's API terms.</li>
       <li><strong>OpenAI (US servers):</strong> If you use a microphone button, your audio is processed by OpenAI's transcription service, with servers in the United States, under OpenAI's own terms. Virorah does not store the audio.</li>
       <li><strong>Cloudflare:</strong> The Platform's pages and the service that processes your requests run on Cloudflare's global network. Your requests pass through it in transit.</li>
@@ -328,7 +336,7 @@
       <li><strong>Debrief Records:</strong> Retained until you delete your account</li>
       <li><strong>Voice Recordings:</strong> Not stored by Virorah. Audio is sent to OpenAI for transcription as described in Sections 4 and 7, and is retained by OpenAI only as its own terms provide.</li>
       <li><strong>Feedback:</strong> Anonymous feedback (submitted without linking to an account) is retained for product improvement indefinitely and is not included in account export or purge requests. Non-anonymous feedback is retained until you delete your account.</li>
-      <li><strong>Post-deletion:</strong> After you delete your account or all data, records are permanently deleted from Airtable within 30 days. Browser localStorage and sessionStorage data is deleted immediately upon your request or when you clear your browser data.</li>
+      <li><strong>Post-deletion:</strong> After you delete your account or all data, records are permanently deleted from Airtable within 30 days. When you schedule deletion, the saved ARIA sessions, stored name and email, and cached profile and plan are cleared from the browser you used; on other devices, they are cleared when you sign out there or clear your browser data.</li>
       <li><strong>Legal Hold:</strong> Where Virorah is required by law to retain certain data, it will be retained for the legally required period and then deleted.</li>
     </ul>
 
@@ -369,7 +377,7 @@
       <li>Access to Airtable data is restricted via API key authentication</li>
       <li>Text is anonymised via a two-step process (Section 4): your original text first reaches Anthropic's Claude Haiku model for anonymisation, then only the anonymised placeholder text reaches Claude for analysis, across every AI-powered tool on the Platform</li>
       <li>This step fails closed: if anonymisation cannot be completed safely, the request is blocked rather than sent unredacted</li>
-      <li>Browser sessionStorage is cleared on sign-out</li>
+      <li>Browser sessionStorage, saved ARIA sessions and cached profile data are cleared on sign-out</li>
     </ul>
     <p>No system is completely secure. In the event of a data breach that poses a risk to your rights, Virorah will notify affected users as required by the DPDP Act 2023 and report to the Data Protection Board of India within the prescribed timeframe.</p>
 
