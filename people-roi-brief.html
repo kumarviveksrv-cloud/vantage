@@ -1079,7 +1079,7 @@
         }
       } catch(err) {
         clearInterval(loadInterval);
-        showError('Connection error. Please check your network and try again.');
+        showError((err && err.name === 'AbortError') ? 'This is taking much longer than usual, so we stopped waiting. Your details are still here. Please try again in a minute.' : 'Connection error. Please check your network and try again.');
       }
     }
 
@@ -1474,7 +1474,7 @@
         }
       } catch(err) {
         clearInterval(loadInterval);
-        showError('Connection error. Please check your network and try again.');
+        showError((err && err.name === 'AbortError') ? 'This is taking much longer than usual, so we stopped waiting. Your details are still here. Please try again in a minute.' : 'Connection error. Please check your network and try again.');
       }
     }
 

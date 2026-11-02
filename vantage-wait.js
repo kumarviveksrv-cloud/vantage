@@ -51,12 +51,23 @@
   var viewEl = null;
   if (typeof window.fetch === 'function') {
     var orig = window.fetch;
+    var LIMIT_MS = 180000; /* normal runs take 60 to 90 s; past 3 minutes something is stuck */
     window.fetch = function (input, init) {
-      var p = orig.apply(this, arguments);
+      var args = arguments, watched = false, t = 0;
       try {
         var method = ((init && init.method) || (input && input.method) || 'GET').toUpperCase();
-        if (guarding && method === 'POST' && viewEl && visible(viewEl)) { p.then(release, release); }
+        var url = (typeof input === 'string') ? input : (input && input.url) || '';
+        watched = guarding && method === 'POST' && viewEl && visible(viewEl);
+        /* give a stuck AI call a way out instead of an endless spinner */
+        if (watched && url.indexOf('workers.dev') !== -1 && typeof AbortController !== 'undefined' && !(init && init.signal)) {
+          var ctrl = new AbortController();
+          t = setTimeout(function () { ctrl.abort(); }, window.__vwLimitMs || LIMIT_MS);
+          args = [input, Object.assign({}, init || {}, { signal: ctrl.signal })];
+        }
       } catch (e) {}
+      var p = orig.apply(this, args);
+      if (t) p.then(function () { clearTimeout(t); }, function () { clearTimeout(t); });
+      if (watched) { p.then(release, release); }
       return p;
     };
   }
