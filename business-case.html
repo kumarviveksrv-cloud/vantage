@@ -228,19 +228,22 @@
 .l-figure{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--lavender);letter-spacing:-0.3px;margin-bottom:6px}
 .l-humac-basis{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.12);border-radius:7px;padding:9px 12px;font-size:12px;color:var(--grey);line-height:1.5;margin-top:10px}
 .l-humac-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(165,180,252,0.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
-.l-prob-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase}
-.l-rar-figure{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;line-height:1.2;color:#FF4D6D;letter-spacing:-0.3px}
-.l-rar{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 14px;margin-bottom:18px}
-.l-sub{font-size:13px;color:rgba(244,243,255,0.76);line-height:1.75;margin-bottom:16px;padding-left:14px;border-left:2px solid rgba(99,102,241,0.38)}
+.l-prob-badge{font-family:var(--font),sans-serif;font-size:12.5px;font-style:italic;font-weight:500;padding:3px 12px;border-radius:999px;letter-spacing:0;text-transform:none;line-height:1.5;white-space:nowrap}
+.l-prob-note{font-family:var(--font),sans-serif;font-size:13.5px;font-style:italic;line-height:1.85;color:#f2d9a6;margin:-4px 0 24px;max-width:78ch}
+.l-rar-figure{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;line-height:1.3;color:#FF4D6D;letter-spacing:-0.3px}
+.l-rar{display:flex;align-items:baseline;flex-wrap:wrap;gap:10px 16px;margin-bottom:18px}
+.l-sub{font-size:13.5px;color:rgba(244,243,255,0.8);line-height:1.85;margin-bottom:24px;padding:2px 0 2px 16px;border-left:2px solid rgba(99,102,241,0.38)}
+.l-sub p,.l-text p{margin:0 0 12px}
+.l-sub p:last-child,.l-text p:last-child{margin-bottom:0}
 .l-success-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(34,197,94,0.5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
 .l-success{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:7px;padding:9px 12px;font-size:12px;color:rgba(244,243,255,0.6);line-height:1.5;margin-top:10px}
-.l-tactic{font-size:12.5px;color:rgba(244,243,255,0.8);font-family:'JetBrains Mono',monospace;letter-spacing:.02em;line-height:1.75;margin-top:8px;border-top:1px solid var(--border);padding-top:14px}
+.l-tactic{font-size:12.5px;color:rgba(244,243,255,0.82);font-family:'JetBrains Mono',monospace;letter-spacing:.02em;line-height:1.9;margin-top:20px;border-top:1px solid var(--border);padding-top:18px}
 .l-tactic strong{color:#c4b5fd;font-weight:600}
 /* Layer content styles */
-    .l-text{font-size:14px;color:rgba(244,243,255,0.92);line-height:1.8;margin-bottom:16px}
+    .l-text{font-size:14.5px;color:rgba(244,243,255,0.92);line-height:1.85;margin-bottom:24px}
     .layer-card > :last-child{margin-bottom:0}
-.layer-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 26px;transition:border-color .2s}
-.layer-header{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.layer-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px 30px;transition:border-color .2s}
+.layer-header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
 .layer-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
 .layer-num{width:28px;height:28px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--muted);flex-shrink:0}
 .line-card-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
@@ -1493,18 +1496,25 @@
     }
 
     // Long AI paragraphs are split at sentence ends into 2-3 shorter ones so they can be read, not decoded.
-    function fillParas(el, text) {
-      el.innerHTML = '';
+    function splitParas(text) {
       text = String(text || '').trim();
-      if (!text) return;
+      if (!text) return [];
       var sents = [text];
       try { sents = text.split(new RegExp('(?<=[.!?])\\s+(?=[A-Z\'\u2018\u201C"])')); } catch (e) { sents = [text]; }
       var per = sents.length >= 4 ? Math.ceil(sents.length / 3) : 2;
-      for (var i = 0; i < sents.length; i += per) {
+      var out = [];
+      for (var i = 0; i < sents.length; i += per) out.push(sents.slice(i, i + per).join(' '));
+      return out;
+    }
+    function escHtml(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function parasHtml(text) { return splitParas(text).map(function (p) { return '<p>' + escHtml(p) + '</p>'; }).join(''); }
+    function fillParas(el, text) {
+      el.innerHTML = '';
+      splitParas(text).forEach(function (t) {
         var para = document.createElement('p');
-        para.textContent = sents.slice(i, i + per).join(' ');
+        para.textContent = t;
         el.appendChild(para);
-      }
+      });
     }
 
     function renderOutputStakeholder() {
@@ -1533,37 +1543,48 @@
       // Layer 1 — Credibility
       var cred = s.credibility || {};
       layersEl.appendChild(renderLayer(1, 'Credibility Foundation',
-        '<div class="l-text">' + (cred.statement || '') + '</div>' +
-        (cred.evidence ? '<div class="l-sub">' + cred.evidence + '</div>' : '') +
+        '<div class="l-text">' + parasHtml(cred.statement) + '</div>' +
+        (cred.evidence ? '<div class="l-sub">' + parasHtml(cred.evidence) + '</div>' : '') +
         (cred.deliveryNote ? '<div class="l-tactic"><strong>Delivery:</strong> ' + cred.deliveryNote + '</div>' : '')
       ));
 
       // Layer 2 — Data Anchor
       layersEl.appendChild(renderLayer(2, 'Data Anchor',
         '<div class="l-figure">' + (da.figure || '\u2014') + '</div>' +
-        '<div class="l-text">' + (da.context || '') + '</div>' +
+        '<div class="l-text">' + parasHtml(da.context) + '</div>' +
         (da.humacBasis ? '<div class="l-humac-basis"><div class="l-humac-label">Humac basis</div>' + da.humacBasis + '</div>' : '')
       ));
 
       // Layer 3 — Narrative Bridge
       var nb = s.narrativeBridge || {};
       layersEl.appendChild(renderLayer(3, 'Narrative Bridge',
-        '<div class="l-text">' + (nb.story || '') + '</div>' +
-        (nb.connection ? '<div class="l-sub">' + nb.connection + '</div>' : '') +
+        '<div class="l-text">' + parasHtml(nb.story) + '</div>' +
+        (nb.connection ? '<div class="l-sub">' + parasHtml(nb.connection) + '</div>' : '') +
         (nb.emotionalHook ? '<div class="l-tactic"><strong>The human fact inside the financial case:</strong> ' + nb.emotionalHook + '</div>' : '')
       ));
 
       // Layer 4 — Risk Mirror
       var rm = s.riskMirror || {};
-      var probText = rm.probability ? rm.probability.split(' — ')[0].split('.')[0] : '';
+      // The model sometimes returns "High, <reasoning>" instead of a bare level, so split level from reasoning.
+      var probRaw = String(rm.probability || '').trim();
+      var pm = probRaw.match(/^\s*(high|medium|moderate|low)\b/i);
+      var probText = pm ? (pm[1].charAt(0).toUpperCase() + pm[1].slice(1).toLowerCase()) : '';
+      if (probText === 'Moderate') probText = 'Medium';
+      var probNote = probText ? probRaw.replace(/^\s*(high|medium|moderate|low)\b[\s,.:;\u2013\u2014-]*/i, '') : probRaw;
+      probNote = probNote.replace(/\s*\bmodelled likelihood\b\.?\s*$/i, '').trim();
+      if (probNote) {
+        probNote = probNote.charAt(0).toUpperCase() + probNote.slice(1);
+        if (!/[.!?]$/.test(probNote)) probNote += '.';
+      }
       var probClass = getProbClass(probText);
       layersEl.appendChild(renderLayer(4, 'Risk Mirror — Revenue at Risk',
         '<div class="l-rar">' +
           '<div class="l-rar-figure">' + (rm.revenueAtRisk || '\u2014') + '</div>' +
           (probText ? '<span class="l-prob-badge ' + probClass + '">' + probText + ' modelled likelihood</span>' : '') +
         '</div>' +
-        (rm.revenueAtRiskBasis ? '<div class="l-sub">' + rm.revenueAtRiskBasis + '</div>' : '') +
-        '<div class="l-text">' + (rm.scenario || '') + '</div>' +
+        (probNote ? '<div class="l-prob-note">' + escHtml(probNote) + '</div>' : '') +
+        (rm.revenueAtRiskBasis ? '<div class="l-sub">' + parasHtml(rm.revenueAtRiskBasis) + '</div>' : '') +
+        '<div class="l-text">' + parasHtml(rm.scenario) + '</div>' +
         (rm.timeline ? '<div class="l-tactic"><strong>Timeline:</strong> ' + rm.timeline + '</div>' : '')
       ));
 
@@ -1578,7 +1599,7 @@
         '</div>';
       }
       layersEl.appendChild(renderLayer(5, 'Decision Runway',
-        '<div class="l-text">' + (dr.ask || '') + '</div>' +
+        '<div class="l-text">' + parasHtml(dr.ask) + '</div>' +
         (dr.deadline ? '<div class="l-sub"><strong>Deadline:</strong> ' + dr.deadline + '</div>' : '') +
         altsHtml +
         (dr.successMetric ? '<div class="l-success"><div class="l-success-label">What you commit to report in 90 days</div>' + dr.successMetric + '</div>' : '')

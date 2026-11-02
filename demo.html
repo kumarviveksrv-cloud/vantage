@@ -6,20 +6,20 @@
   <link rel="shortcut icon" href="favicon.png"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Live Demo | Vantage by Virorah</title>
+  <title>Interactive Demo | Vantage by Virorah</title>
   <meta name="description" content="See Vantage in action: your private HR business partner. Try the live demo for free, no sign-up required.">
   <link rel="canonical" href="https://vantage.virorah.com/demo.html">
   <meta property="og:type"        content="website">
   <meta property="og:url"         content="https://vantage.virorah.com/demo.html">
   <meta property="og:site_name"   content="Virorah Vantage">
-  <meta property="og:title"       content="Live Demo | Vantage by Virorah">
+  <meta property="og:title"       content="Interactive Demo | Vantage by Virorah">
   <meta property="og:description" content="See Vantage in action: your private HR business partner. Try the live demo for free, no sign-up required.">
   <meta property="og:image"       content="https://vantage.virorah.com/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="627">
   <meta property="og:locale"      content="en_IN">
   <meta name="twitter:card"       content="summary_large_image">
-  <meta name="twitter:title"      content="Live Demo | Vantage by Virorah">
+  <meta name="twitter:title"      content="Interactive Demo | Vantage by Virorah">
   <meta name="twitter:description" content="See Vantage in action: your private HR business partner. Try the live demo for free, no sign-up required.">
   <meta name="twitter:image"      content="https://vantage.virorah.com/og-image.png">
   <link href="/fonts/fonts.css" rel="stylesheet"/>
@@ -131,6 +131,7 @@
     .step-num{width:22px;height:22px;border-radius:50%;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);flex-shrink:0;font-weight:700}
     .step-text{font-size:13px;color:var(--grey);line-height:1.5;padding-top:2px}
     .demo-cta{background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.22);border-radius:14px;padding:28px;text-align:center;margin-top:24px}
+    .demo-sample-note{font-size:12px;font-style:italic;color:rgba(244,243,255,0.62);line-height:1.6;margin-top:16px;text-align:left}
     .demo-cta-title{font-family:var(--font), sans-serif;font-size:20px;font-weight:700;margin-bottom:8px;color:#f4f3ff}
     .demo-cta-sub{font-size:13px;color:var(--grey);margin-bottom:22px;line-height:1.65}
     .cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
@@ -235,7 +236,7 @@
   </a>
   <div class="nav-right">
     <a href="#" onclick="return vantageGoHome()" class="nav-back-btn" style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;color:#c4b5fd;text-decoration:none;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.5);padding:8px 16px;border-radius:8px;transition:all .25s;box-shadow:0 0 14px rgba(99,102,241,0.35),0 0 36px rgba(99,102,241,0.12);white-space:nowrap" onmouseover="this.style.background='rgba(99,102,241,0.26)';this.style.boxShadow='0 0 22px rgba(99,102,241,0.55),0 0 56px rgba(99,102,241,0.22)';this.style.borderColor='rgba(99,102,241,0.75)'" onmouseout="this.style.background='rgba(99,102,241,0.15)';this.style.boxShadow='0 0 14px rgba(99,102,241,0.35),0 0 36px rgba(99,102,241,0.12)';this.style.borderColor='rgba(99,102,241,0.5)'">&larr; Back to Vantage</a>
-    <div class="demo-badge">&#x1F1EE;&#x1F1F3; India Edition &middot; Live Demo</div>
+    <div class="demo-badge">&#x1F1EE;&#x1F1F3; India Edition &middot; Interactive Demo</div>
   </div>
 </nav>
 
@@ -786,7 +787,7 @@
     if (btn) btn.style.display = 'none';
     var inner = document.getElementById('demoResultInner' + room);
     if (inner) {
-      inner.innerHTML = '<div class="cor-verdict ' + result.verdict + '">' + (result.verdict === 'ok' ? 'DEFENSIBLE' : result.verdict === 'risk' ? 'HIGH RISK' : 'CAUTION') + '</div>' + (result.exposure ? '<span class="cor-exposure">' + result.exposure + '</span>' : '') + '<p class="cor-explanation">' + result.text + '</p><p class="cor-aria-note">\u2736 ARIA: ' + result.aria + '</p>';
+      inner.innerHTML = '<div class="cor-verdict ' + result.verdict + '">' + (result.verdict === 'ok' ? 'DEFENSIBLE' : result.verdict === 'risk' ? 'HIGH RISK' : 'CAUTION') + '</div>' + (result.exposure ? '<span class="cor-exposure">' + result.exposure + '</span>' : '') + '<p class="cor-explanation">' + result.text + '</p><p class="cor-aria-note">\u2736 ARIA: ' + result.aria + '</p><p class="demo-sample-note">Sample output for this scenario. Your own cases are analysed live in Vantage.</p>';
     }
     var panel = document.getElementById('demoResult' + room);
     if (panel) { setTimeout(function() { panel.classList.add('open'); }, 80); }
@@ -1172,7 +1173,7 @@
     var signalCards = dimKeys.map(function(k,i){ return '<div class="signal-card"><div class="sig-dim '+dimClasses[i]+'">'+dimLabels[i]+'</div><div class="sig-content">'+(dimText[k]||'')+'</div></div>'; }).join('');
     var immediateActions = (signal.action && signal.action.immediate) ? signal.action.immediate : [];
     var talkingPts = immediateActions.slice(0,3).map(function(tp,i){ return '<div class="step-item"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+tp+'</div></div>'; }).join('');
-    document.getElementById('signal-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : '')+'</div><div class="anchor-ctx">'+(r.headline || 'The number that opens the room.')+'</div></div><div class="signal-grid">'+signalCards+'</div><div class="steps-card"><div class="steps-title">Immediate Actions: This Week</div>'+talkingPts+'</div><div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(signal.narrative ? signal.narrative.cfoVersion : '')+'</div></div><div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. The Business Case builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g" onclick="return vantageGoHome()">See all five tools</a></div></div>';
+    document.getElementById('signal-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(r.revenueAtRisk ? r.revenueAtRisk.figure : '')+'</div><div class="anchor-ctx">'+(r.headline || 'The number that opens the room.')+'</div></div><div class="signal-grid">'+signalCards+'</div><div class="steps-card"><div class="steps-title">Immediate Actions: This Week</div>'+talkingPts+'</div><div class="steps-card"><div class="steps-title">CFO Narrative</div><div style="font-size:13px;color:rgba(244,243,255,0.65);line-height:1.85;white-space:pre-wrap">'+(signal.narrative ? signal.narrative.cfoVersion : '')+'</div></div><p class="demo-sample-note">Sample output for this scenario. Your own cases are analysed live in Vantage.</p><div class="demo-cta"><div class="demo-cta-title">Your data has a story that will move rooms.</div><div class="demo-cta-sub">On the full platform, you enter your own metrics and business context. The Business Case builds a CFO-ready narrative calibrated to your audience, your ask, and your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a><a href="index.html" class="btn-g" onclick="return vantageGoHome()">See all five tools</a></div></div>';
     document.getElementById('signal-output').style.display = 'block';
   }
 
@@ -1191,7 +1192,7 @@
   }
   function renderInfluence(r) {
     var s = r.stack || {};
-    document.getElementById('influence-output').innerHTML = '<div class="influence-line">\u201c'+(r.openingLine||'')+'\u201d</div><div class="stack-layer"><div class="stack-layer-label">Data Anchor</div><div class="stack-layer-figure">'+(s.dataAnchor?s.dataAnchor.figure:'')+'</div><div class="stack-layer-body">'+(s.dataAnchor?s.dataAnchor.context:'')+'</div></div><div class="stack-layer"><div class="stack-layer-label">Risk Mirror</div><div class="stack-layer-figure">'+(s.riskMirror?s.riskMirror.revenueAtRisk:'')+'</div><div class="stack-layer-body">'+(s.riskMirror?s.riskMirror.scenario:'')+'</div></div><div class="stack-layer"><div class="stack-layer-label">Decision Runway</div><div class="stack-layer-body"><b style="color:#f4f3ff">Ask:</b> '+(s.decisionRunway?s.decisionRunway.ask:'')+'<br><b style="color:#f4f3ff">Deadline:</b> '+(s.decisionRunway?s.decisionRunway.deadline:'')+'</div></div><div class="influence-line" style="border-color:var(--lavender)">\u201c'+(r.closingLine||'')+'\u201d</div><div class="demo-cta"><div class="demo-cta-title">Build your own influence stack.</div><div class="demo-cta-sub">On the full platform, you describe your real stakeholder and situation, and get a full five-layer stack calibrated to your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
+    document.getElementById('influence-output').innerHTML = '<div class="influence-line">\u201c'+(r.openingLine||'')+'\u201d</div><div class="stack-layer"><div class="stack-layer-label">Data Anchor</div><div class="stack-layer-figure">'+(s.dataAnchor?s.dataAnchor.figure:'')+'</div><div class="stack-layer-body">'+(s.dataAnchor?s.dataAnchor.context:'')+'</div></div><div class="stack-layer"><div class="stack-layer-label">Risk Mirror</div><div class="stack-layer-figure">'+(s.riskMirror?s.riskMirror.revenueAtRisk:'')+'</div><div class="stack-layer-body">'+(s.riskMirror?s.riskMirror.scenario:'')+'</div></div><div class="stack-layer"><div class="stack-layer-label">Decision Runway</div><div class="stack-layer-body"><b style="color:#f4f3ff">Ask:</b> '+(s.decisionRunway?s.decisionRunway.ask:'')+'<br><b style="color:#f4f3ff">Deadline:</b> '+(s.decisionRunway?s.decisionRunway.deadline:'')+'</div></div><div class="influence-line" style="border-color:var(--lavender)">\u201c'+(r.closingLine||'')+'\u201d</div><p class="demo-sample-note">Sample output for this scenario. Your own cases are analysed live in Vantage.</p><div class="demo-cta"><div class="demo-cta-title">Build your own influence stack.</div><div class="demo-cta-sub">On the full platform, you describe your real stakeholder and situation, and get a full five-layer stack calibrated to your MERIDIAN profile.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
     document.getElementById('influence-output').style.display = 'block';
   }
 
@@ -1209,7 +1210,7 @@
     } catch(err) { document.getElementById('policy-loading').style.display = 'none'; document.getElementById('policy-run-btn').disabled = false; alert('Connection error. Try again.'); }
   }
   function renderPolicy(r) {
-    document.getElementById('policy-output').innerHTML = '<div class="policy-output">'+(r.response||'').replace(/\\n/g,'<br>')+'</div><div class="demo-cta"><div class="demo-cta-title">Ask your own policy question.</div><div class="demo-cta-sub">On the full platform, Policy Advisor answers calibrated to your MERIDIAN profile and your company\'s own policy guardrails.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
+    document.getElementById('policy-output').innerHTML = '<div class="policy-output">'+(r.response||'').replace(/\\n/g,'<br>')+'</div><p class="demo-sample-note">Sample output for this scenario. Your own cases are analysed live in Vantage.</p><div class="demo-cta"><div class="demo-cta-title">Ask your own policy question.</div><div class="demo-cta-sub">On the full platform, Policy Advisor answers calibrated to your MERIDIAN profile and your company\'s own policy guardrails.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
     document.getElementById('policy-output').style.display = 'block';
   }
 
@@ -1228,7 +1229,7 @@
   }
   function renderOffer(r) {
     var rc = r.financialModel ? r.financialModel.replacementCost : {}, rec = r.recommendation || {};
-    document.getElementById('offer-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(rc.total||'')+'</div><div class="anchor-ctx">Projected replacement cost if this employee leaves</div></div><div class="steps-card"><div class="steps-title">Recommendation: '+(rec.primary||'')+' at '+(rec.figure||'')+'</div><div class="step-text" style="padding-left:0">'+(rec.rationale||'')+'</div></div><div class="humacity-card"><div class="hc-header"><div class="hc-badge">HUMACITY</div><div class="hc-title">Break-Even Ceiling</div></div><div class="hc-exposure"><div class="hc-label">Two-Year Cumulative Ceiling</div><div class="hc-val">'+(r.financialModel?r.financialModel.breakEvenCeiling:'')+'</div></div></div><div class="demo-cta"><div class="demo-cta-title">Model your own retention decision.</div><div class="demo-cta-sub">On the full platform, you enter your own employee\'s numbers and get the full break-even model, scenarios, and both conversation scripts.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
+    document.getElementById('offer-output').innerHTML = '<div class="anchor-block"><div class="anchor-num">'+(rc.total||'')+'</div><div class="anchor-ctx">Projected replacement cost if this employee leaves</div></div><div class="steps-card"><div class="steps-title">Recommendation: '+(rec.primary||'')+' at '+(rec.figure||'')+'</div><div class="step-text" style="padding-left:0">'+(rec.rationale||'')+'</div></div><div class="humacity-card"><div class="hc-header"><div class="hc-badge">HUMACITY</div><div class="hc-title">Break-Even Ceiling</div></div><div class="hc-exposure"><div class="hc-label">Two-Year Cumulative Ceiling</div><div class="hc-val">'+(r.financialModel?r.financialModel.breakEvenCeiling:'')+'</div></div></div><p class="demo-sample-note">Sample output for this scenario. Your own cases are analysed live in Vantage.</p><div class="demo-cta"><div class="demo-cta-title">Model your own retention decision.</div><div class="demo-cta-sub">On the full platform, you enter your own employee\'s numbers and get the full break-even model, scenarios, and both conversation scripts.</div><div class="cta-btns"><a href="access.html" class="btn-p">Get Started &rarr;</a></div></div>';
     document.getElementById('offer-output').style.display = 'block';
   }
 </script>
