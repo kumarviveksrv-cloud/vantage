@@ -116,6 +116,15 @@
       }
     }
 
+    // A slow or hung Worker must never trap someone on this page: every call
+    // here has a time limit, and the whole restore has an overall deadline.
+    function fetchT(url, opts, ms) {
+      var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      var t = setTimeout(function () { if (ctrl) ctrl.abort(); }, ms || 6000);
+      opts = Object.assign({}, opts || {}); if (ctrl) opts.signal = ctrl.signal;
+      return fetch(url, opts).then(function (r) { clearTimeout(t); return r; }, function (e) { clearTimeout(t); throw e; });
+    }
+
     // Fire-and-forget: ensures the Airtable Users row exists on day zero,
     // not only on the first TRIAL_GATED tool call. Non-blocking — never
     // gates the redirect. Errors are silently swallowed.
@@ -132,7 +141,7 @@
     async function restoreUserData(token) {
       try {
         var h = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
-        var humacRes = await fetch(WORKER_URL, {
+        var humacRes = await fetchT(WORKER_URL, {
           method: 'POST', headers: h,
           body: JSON.stringify({ tool: 'get_humac' })
         });
@@ -140,7 +149,7 @@
           var hd = await humacRes.json();
           if (hd.success && hd.data) sessionStorage.setItem('vantage_humac', JSON.stringify(hd.data));
         }
-        var meridianRes = await fetch(WORKER_URL, {
+        var meridianRes = await fetchT(WORKER_URL, {
           method: 'POST', headers: h,
           body: JSON.stringify({ tool: 'get_meridian' })
         });
@@ -159,7 +168,7 @@
     // Any failure falls back to the normal destination, so nobody gets stuck.
     async function checkProfileDestination(token, fallbackUrl) {
       try {
-        var res = await fetch(WORKER_URL, {
+        var res = await fetchT(WORKER_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify({ tool: 'get_profile' })
@@ -208,14 +217,18 @@
           setStatus('Welcome back!', 'Restoring your workspace\u2026');
           syncUser(window.Clerk.user);
           var redirectTo = getRedirectUrl();
+          var _went = false;
+          var _deadline = setTimeout(function () { if (!_went) { _went = true; window.location.replace(redirectTo); } }, 12000);
             window.Clerk.session.getToken().then(function(token) {
             pingProfile(token); // day-zero Airtable capture — fire and forget
             return restoreUserData(token).then(function() {
               return checkProfileDestination(token, redirectTo);
             });
           }).then(function(dest) {
+            if (_went) return; _went = true; clearTimeout(_deadline);
             window.location.replace(dest);
           }).catch(function() {
+            if (_went) return; _went = true; clearTimeout(_deadline);
             window.location.replace(redirectTo);
           });
           return;
