@@ -6,6 +6,7 @@
  * Ask ARIA: share ONE panel's text with ARIA after an explicit consent step (sessionStorage hand-off, aria.html does the rest).
  * Quick compare: opts.presets = [{label, a, b, hint}] (panel ids) become one-click side-by-side comparisons; presets whose panels are missing are skipped.
  * Save + Then vs now: Save keeps the briefed panels on this device only (localStorage, per signed-in email, last 10, cleared on sign-out); Quick compare can then compare a saved panel with the same panel in the current analysis.
+ * Hold time: Careful / Normal / Fast (button in the top bar while tracking, remembered on this device); default Normal.
  * Setup check: while tracking, a small card reads the camera image (brightness only, on device) and the hand size and says plainly what to fix: too dark, light behind you, show your palm, too far, too close.
  * Present: walk the brief full screen, one panel per slide, in tray order (keys, buttons, or hold a fingertip on Next/Back; the fingertip is a laser pointer).
  * Leadership Brief: drag panels into the tray to build an ordered briefing; export as PDF (print) or copy as text.
@@ -722,7 +723,19 @@
   function elOf(t) { return t && (t.el || t); }
 
   /* ---------- hand tracking (index finger only) ---------- */
-  var DWELL_GRAB = 700, DWELL_DROP = 800, STILL_PX = 28, ACTIVE = 0.7; /* ACTIVE: central share of camera frame mapped to the full screen */
+  /* Hold times for the fingertip. 'careful' is the original (700/800ms); 'normal' and 'fast' trade a little accidental-grab risk for speed.
+     Buttons need slightly longer than grabbing a panel, because a wrong button (Exit, Delete) costs more than a wrong grab. */
+  var SPEEDS = { careful: { label: 'Careful', grab: 700, drop: 800 }, normal: { label: 'Normal', grab: 500, drop: 550 }, fast: { label: 'Fast', grab: 350, drop: 400 } };
+  var SPEED_KEY = 'sr_sm_speed', speedName = 'normal';
+  try { var sv = localStorage.getItem(SPEED_KEY); if (sv && SPEEDS[sv]) speedName = sv; } catch (e) {}
+  var DWELL_GRAB = SPEEDS[speedName].grab, DWELL_DROP = SPEEDS[speedName].drop, DWELL_BTN = DWELL_GRAB + 150, STILL_PX = 28, ACTIVE = 0.7;
+  function setSpeed(n) {
+    if (!SPEEDS[n]) return; speedName = n; DWELL_GRAB = SPEEDS[n].grab; DWELL_DROP = SPEEDS[n].drop; DWELL_BTN = DWELL_GRAB + 150;
+    try { localStorage.setItem(SPEED_KEY, n); } catch (e) {}
+    var b = st.root && st.root.querySelector('#sm-speed'); if (b) b.textContent = 'Hold time: ' + SPEEDS[n].label;
+  }
+  function cycleSpeed() { var order = ['careful', 'normal', 'fast']; setSpeed(order[(order.indexOf(speedName) + 1) % 3]); trayMsg('Hold time: ' + SPEEDS[speedName].label + '. Grab ' + DWELL_GRAB + ' ms, drop ' + DWELL_DROP + ' ms.'); }
+  /* ACTIVE: central share of camera frame mapped to the full screen */ /* ACTIVE: central share of camera frame mapped to the full screen */
   var grabOff = { x: 0, y: 0 };
   var dwell = { panel: null, t0: 0, ax: 0, ay: 0 };
   var fl = { x: null, y: null };
@@ -793,7 +806,7 @@
       if (tgt !== st.hover) { if (st.hover) elOf(st.hover).classList.remove('hover'); if (tgt) elOf(tgt).classList.add('hover'); st.hover = tgt; }
       if (!tgt) { dwell.panel = null; setRing(0); setStatus('Hand tracking: <b>live</b>'); return; }
       if (tgt !== dwell.panel || Math.hypot(px - dwell.ax, py - dwell.ay) > STILL_PX) resetDwell(tgt, px, py, now);
-      var p = (now - dwell.t0) / DWELL_GRAB; setRing(p);
+      var p = (now - dwell.t0) / (btn ? DWELL_BTN : DWELL_GRAB); setRing(p);
       setStatus('Hand tracking: <b>' + (btn ? 'hold to press' : 'hold to grab') + '</b>');
       if (p >= 1) {
         if (btn) { dwell.panel = null; st.cool = now + 1200; setRing(0); btn.click(); return; }
@@ -834,7 +847,7 @@
         })();
         var pv = document.getElementById('sm-preview'); if (pv) pv.style.display = 'block';
         setStatus('Hand tracking: <b>show an open palm to lock on, then point</b>');
-        var cb = document.getElementById('sm-chk-btn'); if (cb) cb.style.display = '';
+        var cb = document.getElementById('sm-chk-btn'); if (cb) cb.style.display = ''; var sb = document.getElementById('sm-speed'); if (sb) sb.style.display = '';
         openCheck();
         document.getElementById('sm-hint').textContent = 'Hold your index finger on a panel to grab it · Focus enlarges one, Compare puts two side by side · drag into the Leadership Brief tray · Esc to exit';
       })
@@ -855,7 +868,7 @@
     var root = document.createElement('div'); root.id = 'sm-root';
     root.innerHTML = '<video id="sm-video" playsinline muted></video><div id="sm-grid"></div>' +
       '<div id="sm-bar"><div><div id="sm-title">Spatial Mode · ' + esc((opts && opts.tool) || 'Vantage') + '</div><div id="sm-status">Initialising…</div></div>' +
-      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-chk-btn" style="display:none">Setup check</button><button class="sm-btn" id="sm-qc" data-dwell aria-haspopup="menu" style="display:none">Quick compare</button><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
+      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-speed" data-dwell style="display:none"></button><button class="sm-btn" id="sm-chk-btn" style="display:none">Setup check</button><button class="sm-btn" id="sm-qc" data-dwell aria-haspopup="menu" style="display:none">Quick compare</button><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
       '<div id="sm-tray"><div id="sm-tray-head"><div id="sm-tray-title">Leadership Brief</div><div id="sm-tray-sub"></div></div>' +
       '<div id="sm-tray-foot"><button class="sm-btn" id="sm-mode" data-dwell></button><button class="sm-btn primary" id="sm-present" data-dwell disabled>Present this brief</button><div id="sm-tray-btns"><button class="sm-btn" id="sm-dl" data-dwell disabled>Download</button><button class="sm-btn" id="sm-copy" data-dwell disabled>Copy text</button><button class="sm-btn" id="sm-save" data-dwell disabled title="Keep this brief on this device so you can compare it with a later analysis">Save</button></div><div id="sm-tray-msg"></div></div></div>' +
       '<canvas id="sm-preview" width="224" height="168"></canvas><div id="sm-cursor"></div><div id="sm-hint">Starting…</div>';
@@ -869,6 +882,7 @@
     refreshQcBtn();
     root.addEventListener('pointerdown', function (e) { if (st.qcEl && !(e.target.closest && e.target.closest('#sm-qc-menu, #sm-qc'))) closeQc(); });
     root.querySelector('#sm-present').onclick = openPresent;
+    root.querySelector('#sm-speed').onclick = cycleSpeed; root.querySelector('#sm-speed').textContent = 'Hold time: ' + SPEEDS[speedName].label;
     root.querySelector('#sm-chk-btn').onclick = function () { if (st.chkEl) closeCheck(); else openCheck(); };
     root.querySelector('#sm-save').onclick = saveBrief;
     root.querySelector('#sm-dl').onclick = printBrief;
@@ -910,5 +924,5 @@
     st.root = null; st.cursor = null; st.hover = null; st.panels = []; st.brief = []; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = []; st.thenEl = null; st.then = null; st.saved = [];
   }
 
-  window.SpatialMode = { open: open, _evalCheck: evalCheck, _renderCheck: function (rows) { if (!st.chkEl) { st.tracking = true; openCheck(); } renderCheck(rows); }, _chk: CHK, _saveBrief: saveBrief, _presets: function () { return st.presets.map(function (x) { return x.label; }); }, _present: openPresent, _presStep: presStep, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
+  window.SpatialMode = { open: open, _setSpeed: setSpeed, _speed: function () { return { name: speedName, grab: DWELL_GRAB, drop: DWELL_DROP, btn: DWELL_BTN }; }, _evalCheck: evalCheck, _renderCheck: function (rows) { if (!st.chkEl) { st.tracking = true; openCheck(); } renderCheck(rows); }, _chk: CHK, _saveBrief: saveBrief, _presets: function () { return st.presets.map(function (x) { return x.label; }); }, _present: openPresent, _presStep: presStep, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
 })();
