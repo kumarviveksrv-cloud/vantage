@@ -196,10 +196,10 @@
     }
 
     /* ── Imported from Stakeholder Influence for the merged stakeholder flow ── */
-.anchor-headline{font-size:12px;color:var(--grey);text-align:right;margin-top:4px;max-width:240px;line-height:1.4}
-.anchor-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;text-align:right;margin-top:4px}
-.anchor-number{font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:var(--lavender);letter-spacing:-0.5px;white-space:nowrap}
-.anchor-wrap{text-align:right;flex-shrink:0}
+.anchor-headline{font-size:13px;color:rgba(244,243,255,0.78);text-align:left;margin-top:10px;line-height:1.6}
+.anchor-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;text-align:left;margin-bottom:8px}
+.anchor-number{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;color:var(--lavender);letter-spacing:-0.5px;line-height:1.15}
+.anchor-wrap{text-align:left;background:rgba(5,4,16,0.45);border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:18px 20px}
 .closing-card{border-left-color:var(--violet);background:rgba(124,58,237,0.06)}
 .hi-item{background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.1);border-radius:8px;padding:12px 14px}
 .hi-k{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.45);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
@@ -213,9 +213,13 @@
 .humac-traj-note{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.12);border-radius:7px;padding:9px 12px}
 .humac-traj-text{font-size:12px;color:var(--grey);line-height:1.5}
 .ih-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
-.ih-profile{font-size:13px;color:var(--grey);line-height:1.6;max-width:520px}
+.ih-profile{font-size:14px;color:rgba(244,243,255,0.82);line-height:1.75;max-width:74ch}
+.ih-profile p{margin:0 0 12px}
+.ih-profile p:last-child{margin-bottom:0}
 /* STAKEHOLDER PROFILE + DATA ANCHOR HEADER */
-    .influence-header{background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.22);border-radius:16px;padding:24px 28px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+    .influence-header{background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.22);border-radius:16px;padding:26px 30px;margin-bottom:20px;display:grid;grid-template-columns:minmax(0,1.7fr) minmax(250px,1fr);align-items:start;gap:32px}
+.influence-header>div{min-width:0}
+@media(max-width:900px){.influence-header{grid-template-columns:minmax(0,1fr);gap:20px;padding:20px 18px}}
 /* INFLUENCE STACK — 5 LAYERS */
     .influence-stack{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
 .l-alt-item{display:flex;gap:8px;font-size:12px;color:var(--dim);line-height:1.5}
@@ -1486,6 +1490,21 @@
       return card;
     }
 
+    // Long AI paragraphs are split at sentence ends into 2-3 shorter ones so they can be read, not decoded.
+    function fillParas(el, text) {
+      el.innerHTML = '';
+      text = String(text || '').trim();
+      if (!text) return;
+      var sents = [text];
+      try { sents = text.split(new RegExp('(?<=[.!?])\\s+(?=[A-Z\'\u2018\u201C"])')); } catch (e) { sents = [text]; }
+      var per = sents.length >= 4 ? Math.ceil(sents.length / 3) : 2;
+      for (var i = 0; i < sents.length; i += per) {
+        var para = document.createElement('p');
+        para.textContent = sents.slice(i, i + per).join(' ');
+        el.appendChild(para);
+      }
+    }
+
     function renderOutputStakeholder() {
       var r = currentResult;
       if (!r) return;
@@ -1494,7 +1513,7 @@
 
       document.getElementById('output-stakeholder-label').innerText = 'Built for ' + selectedStakeholder;
       document.getElementById('ih-stakeholder').innerText = selectedStakeholder;
-      document.getElementById('ih-profile').innerText = r.stakeholderProfile || '';
+      fillParas(document.getElementById('ih-profile'), r.stakeholderProfile);
 
       // Data Anchor header
       var da = s.dataAnchor || {};
