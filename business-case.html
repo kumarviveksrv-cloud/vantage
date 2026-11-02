@@ -229,14 +229,16 @@
 .l-humac-basis{background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.12);border-radius:7px;padding:9px 12px;font-size:12px;color:var(--grey);line-height:1.5;margin-top:10px}
 .l-humac-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(165,180,252,0.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
 .l-prob-badge{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase}
-.l-rar-figure{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#FF4D6D;letter-spacing:-0.3px}
-.l-rar{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
-.l-sub{font-size:12px;color:var(--dim);line-height:1.6}
+.l-rar-figure{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;line-height:1.2;color:#FF4D6D;letter-spacing:-0.3px}
+.l-rar{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 14px;margin-bottom:18px}
+.l-sub{font-size:13px;color:rgba(244,243,255,0.76);line-height:1.75;margin-bottom:16px;padding-left:14px;border-left:2px solid rgba(99,102,241,0.38)}
 .l-success-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(34,197,94,0.5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
 .l-success{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:7px;padding:9px 12px;font-size:12px;color:rgba(244,243,255,0.6);line-height:1.5;margin-top:10px}
-.l-tactic{font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace;letter-spacing:.03em;margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
+.l-tactic{font-size:12.5px;color:rgba(244,243,255,0.8);font-family:'JetBrains Mono',monospace;letter-spacing:.02em;line-height:1.75;margin-top:8px;border-top:1px solid var(--border);padding-top:14px}
+.l-tactic strong{color:#c4b5fd;font-weight:600}
 /* Layer content styles */
-    .l-text{font-size:13px;color:var(--grey);line-height:1.7;margin-bottom:10px}
+    .l-text{font-size:14px;color:rgba(244,243,255,0.92);line-height:1.8;margin-bottom:16px}
+    .layer-card > :last-child{margin-bottom:0}
 .layer-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 26px;transition:border-color .2s}
 .layer-header{display:flex;align-items:center;gap:14px;margin-bottom:14px}
 .layer-name{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
@@ -1547,7 +1549,7 @@
       var nb = s.narrativeBridge || {};
       layersEl.appendChild(renderLayer(3, 'Narrative Bridge',
         '<div class="l-text">' + (nb.story || '') + '</div>' +
-        (nb.connection ? '<div class="l-sub" style="margin-bottom:8px">' + nb.connection + '</div>' : '') +
+        (nb.connection ? '<div class="l-sub">' + nb.connection + '</div>' : '') +
         (nb.emotionalHook ? '<div class="l-tactic"><strong>The human fact inside the financial case:</strong> ' + nb.emotionalHook + '</div>' : '')
       ));
 
@@ -1560,7 +1562,7 @@
           '<div class="l-rar-figure">' + (rm.revenueAtRisk || '\u2014') + '</div>' +
           (probText ? '<span class="l-prob-badge ' + probClass + '">' + probText + ' modelled likelihood</span>' : '') +
         '</div>' +
-        (rm.revenueAtRiskBasis ? '<div class="l-sub" style="margin-bottom:8px">' + rm.revenueAtRiskBasis + '</div>' : '') +
+        (rm.revenueAtRiskBasis ? '<div class="l-sub">' + rm.revenueAtRiskBasis + '</div>' : '') +
         '<div class="l-text">' + (rm.scenario || '') + '</div>' +
         (rm.timeline ? '<div class="l-tactic"><strong>Timeline:</strong> ' + rm.timeline + '</div>' : '')
       ));
@@ -1577,7 +1579,7 @@
       }
       layersEl.appendChild(renderLayer(5, 'Decision Runway',
         '<div class="l-text">' + (dr.ask || '') + '</div>' +
-        (dr.deadline ? '<div class="l-sub" style="margin-bottom:10px"><strong>Deadline:</strong> ' + dr.deadline + '</div>' : '') +
+        (dr.deadline ? '<div class="l-sub"><strong>Deadline:</strong> ' + dr.deadline + '</div>' : '') +
         altsHtml +
         (dr.successMetric ? '<div class="l-success"><div class="l-success-label">What you commit to report in 90 days</div>' + dr.successMetric + '</div>' : '')
       ));
