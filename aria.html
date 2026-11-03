@@ -67,6 +67,11 @@
     .pill:hover{border-color:rgba(99,102,241,.3);color:#fff}
     .pill.on{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.45);color:#a5b4fc;font-weight:600}
     .endb{padding:8px 14px;background:rgba(124,58,237,.1);color:#c4b5fd;border:1px solid rgba(124,58,237,.25);border-radius:8px;font-size:12px;cursor:pointer}
+    .top-actions{display:flex;align-items:center;gap:8px}
+    .fsb{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;background:rgba(5,4,16,.8);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.12);border-radius:8px;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .2s}
+    .fsb:hover{border-color:rgba(99,102,241,.4);color:#fff}
+    .fsb svg{flex-shrink:0}
+    body.aria-fs .sb{display:none}
 
     /* Status strip */
     .status-strip{position:absolute;bottom:110px;left:0;right:0;z-index:9;text-align:center;pointer-events:none}
@@ -282,7 +287,10 @@
           <div class="pill" onclick="setMode(this,'reflection')">Reflection</div>
           <div class="pill" onclick="setMode(this,'rehearse')">Rehearse</div>
         </div>
-        <button class="endb" id="end-btn" onclick="endSession()">End Session</button>
+        <div class="top-actions">
+          <button class="fsb" id="fs-btn" type="button" onclick="toggleFullscreen()" title="Full screen (press Esc to exit)" aria-label="Full screen"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span id="fs-label">Full screen</span></button>
+          <button class="endb" id="end-btn" onclick="endSession()">End Session</button>
+        </div>
       </div>
 
       <!-- Wave bars + status -->
@@ -978,7 +986,8 @@
       }
       var html = '<option value="auto">Auto (on-device)</option>';
       en.forEach(function(v) {
-        html += '<option value="' + v.name.replace(/"/g, '') + '">' + v.name.substring(0, 28) + '</option>';
+        var label = String(v.name).replace(/^Microsoft\s+/i, '').substring(0, 70);
+        html += '<option value="' + v.name.replace(/"/g, '') + '" title="' + String(v.name).replace(/[&<>"]/g, '') + '">' + label.replace(/[&<>]/g, '') + '</option>';
       });
       sel.innerHTML = html;
       var saved = null; try { saved = localStorage.getItem('aria_voice'); } catch (e) {}
@@ -1011,6 +1020,34 @@
         btn.style.borderColor = 'rgba(255,255,255,.1)';
       }
     };
+
+    // Full screen. The browser owns the Escape key while a page is full screen: it exits full screen
+    // and fires fullscreenchange, which is where the page restores its own layout.
+    function ariaFsActive() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+    function syncAriaFs() {
+      var on = ariaFsActive();
+      document.body.classList.toggle('aria-fs', on);
+      var lbl = document.getElementById('fs-label'), btn = document.getElementById('fs-btn');
+      if (lbl) lbl.textContent = on ? 'Exit full screen (Esc)' : 'Full screen';
+      if (btn) { btn.setAttribute('aria-label', on ? 'Exit full screen' : 'Full screen'); }
+    }
+    window.toggleFullscreen = function() {
+      try {
+        if (ariaFsActive()) {
+          var ex = document.exitFullscreen || document.webkitExitFullscreen;
+          if (ex) { var p1 = ex.call(document); if (p1 && p1.catch) p1.catch(function () {}); }
+        } else {
+          var el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
+          if (req) { var p2 = req.call(el); if (p2 && p2.catch) p2.catch(function () {}); }
+        }
+      } catch (e) {}
+    };
+    document.addEventListener('fullscreenchange', syncAriaFs);
+    document.addEventListener('webkitfullscreenchange', syncAriaFs);
+    (function () {
+      var el = document.documentElement, btn = document.getElementById('fs-btn');
+      if (btn && !(el.requestFullscreen || el.webkitRequestFullscreen)) { btn.style.display = 'none'; } // e.g. iPhone Safari has no page full screen
+    })();
 
     // Override speak to use selected voice and speed
     speak = function(text) {
