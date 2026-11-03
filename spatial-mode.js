@@ -57,6 +57,7 @@
 #sm-preview{display:none;position:absolute;left:16px;bottom:60px;width:224px;height:168px;border-radius:12px;border:2px solid rgba(255,181,71,.7);z-index:30;background:#000;opacity:.92;pointer-events:none}\
 #sm-preview.ok{border-color:rgba(124,58,237,.95)}\
 #sm-cursor{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #a5b4fc;background:conic-gradient(rgba(196,181,253,.85) calc(var(--p)*1turn),rgba(99,102,241,.16) 0);pointer-events:none;z-index:100002;display:none;box-shadow:0 0 18px rgba(99,102,241,.6)}\
+#sm-cursor.pinch,#sm-cursor2.pinch{transform:scale(.7);background:rgba(196,181,253,.95)}\
 #sm-cursor.held-cur{border-color:#fff;background:conic-gradient(#fb923c calc(var(--p)*1turn),rgba(255,255,255,.92) 0);box-shadow:0 0 26px rgba(255,255,255,.75)}\
 #sm-cursor2{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #67e8f9;background:conic-gradient(rgba(103,232,249,.85) calc(var(--p)*1turn),rgba(34,211,238,.14) 0);pointer-events:none;z-index:100002;display:none;box-shadow:0 0 18px rgba(34,211,238,.55)}\
 #sm-cursor2.held-cur{border-color:#fff;background:conic-gradient(#fb923c calc(var(--p)*1turn),rgba(255,255,255,.92) 0);box-shadow:0 0 26px rgba(255,255,255,.75)}\
@@ -737,7 +738,9 @@
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { trayMsg('Copied. Paste into email or chat.'); }, fallback);
     else fallback();
   }
-  function btnAt(x, y) {
+  /* 'sticky' is the button this pointer is already pressing: it keeps the press while the fingertip stays within a margin around it,
+     so a shaky fingertip near the screen edge does not restart the hold every time it slips off the edge of the button */
+  function btnAt(x, y, sticky) {
     if (!st.root) return null;
     var bs = st.root.querySelectorAll('[data-dwell]');
     for (var i = 0; i < bs.length; i++) {
@@ -747,6 +750,13 @@
         var top = document.elementFromPoint(x, y);
         if (top && !bs[i].contains(top)) continue; /* covered by another panel or overlay */
         return bs[i];
+      }
+    }
+    if (sticky && sticky.isConnected && !sticky.disabled && st.root.contains(sticky)) {
+      var q = sticky.getBoundingClientRect(), pad = 22;
+      if (x >= q.left - pad && x <= q.right + pad && y >= q.top - pad && y <= q.bottom + pad) {
+        var t2 = document.elementFromPoint(q.left + q.width / 2, q.top + q.height / 2);
+        if (!t2 || sticky.contains(t2)) return sticky;
       }
     }
     return null;
@@ -760,6 +770,11 @@
   var SPEED_KEY = 'sr_sm_speed', speedName = 'normal';
   try { var sv = localStorage.getItem(SPEED_KEY); if (sv && SPEEDS[sv]) speedName = sv; } catch (e) {}
   var DWELL_GRAB = SPEEDS[speedName].grab, DWELL_DROP = SPEEDS[speedName].drop, DWELL_BTN = DWELL_GRAB + 150, STILL_PX = 28, ACTIVE = 0.7, HOLD_IDLE = 2500;
+  /* Vertical range of the camera frame that maps to the screen. The bottom of a webcam frame is where a hand is half out of view and
+     the model's fingertip wobbles most, so the screen bottom is reached at 74% of the frame height, not 85%. */
+  var YMIN = 0.10, YSPAN = 0.64;
+  /* Pinch: ratio of thumb-to-index gap over palm size. Closed below PINCH_CLOSE, open above PINCH_OPEN (the gap between them stops flicker). */
+  var PINCH_CLOSE = 0.32, PINCH_OPEN = 0.50, PINCH_FREE = 0.95;
   function setSpeed(n) {
     if (!SPEEDS[n]) return; speedName = n; DWELL_GRAB = SPEEDS[n].grab; DWELL_DROP = SPEEDS[n].drop; DWELL_BTN = DWELL_GRAB + 150;
     try { localStorage.setItem(SPEED_KEY, n); } catch (e) {}
@@ -776,7 +791,25 @@
     try { if (st.hands) st.hands.setOptions({ maxNumHands: n }); } catch (e) {}
   }
   function cycleHands() { setHands(handsWanted === 2 ? 1 : 2); trayMsg(handsWanted === 2 ? 'Two hands: each index finger works on its own.' : 'One hand: lighter on a slower computer.'); }
-  /* ACTIVE: central share of camera frame mapped to the full screen */
+  /* how a card is picked up: 'pinch' (thumb and index together, instant) or 'hold' (rest a fingertip on it) */
+  var GRAB_KEY = 'sr_sm_grab', grabMode = 'pinch';
+  try { var gm = localStorage.getItem(GRAB_KEY); if (gm === 'pinch' || gm === 'hold') grabMode = gm; } catch (e) {}
+  function hintText() {
+    return grabMode === 'pinch'
+      ? 'Pinch thumb and index over a card to grab it, move it, open your fingers to drop · slide a fingertip along the bar on a card\'s right edge to read it · both hands work · Esc to exit'
+      : 'Hold a fingertip on a card to grab it, move it, pause to drop · slide along the bar on a card\'s right edge to read it · both hands work · Esc to exit';
+  }
+  function setGrab(m) {
+    if (m !== 'pinch' && m !== 'hold') return; grabMode = m;
+    try { localStorage.setItem(GRAB_KEY, m); } catch (e) {}
+    var b = st.root && st.root.querySelector('#sm-grab'); if (b) b.textContent = 'Grab: ' + (m === 'pinch' ? 'Pinch' : 'Hold');
+    if (st.hp) st.hp.forEach(function (S) {
+      if (S.held) { S.moved = false; release(S.held, S); }
+      S.pinch = false; S.pc = 0; S.po = 0; S.edge = null; S.hist = []; S.pp = null; S.dwell.panel = null; S.ring(0); S.cool = performance.now() + 600;
+    });
+    if (st.tracking) { var h = document.getElementById('sm-hint'); if (h) h.textContent = hintText(); }
+  }
+  function cycleGrab() { setGrab(grabMode === 'pinch' ? 'hold' : 'pinch'); trayMsg(grabMode === 'pinch' ? 'Pinch to grab: touch thumb and index together on a card, open to drop.' : 'Hold to grab: rest a fingertip on a card, pause to drop.'); }
 
   /* One Euro filter: heavy smoothing when slow (kills jitter), light when fast (keeps it responsive) */
   function LP() { this.y = null; }
@@ -800,6 +833,7 @@
     this.off = { x: 0, y: 0 }; this.sx = 0; this.sy = 0;
     this.fx = new OneEuro(0.5, 10, 1); this.fy = new OneEuro(0.5, 10, 1);
     this.on = false; this.lastSeen = 0; this.raw = null; this.label = null; this.cur = null; this.gt = 0;
+    this.rho = 9; this.pinch = false; this.pc = 0; this.po = 0; this.edge = null; this.pp = null; this.hist = []; this.hx = []; this.hy = [];
   }
   Pointer.prototype.ring = function (v) { if (this.cur) this.cur.style.setProperty('--p', Math.max(0, Math.min(1, v))); };
   function clamp01(v) { return Math.max(0, Math.min(1, v)); }
@@ -840,6 +874,17 @@
     c.className = dets && dets.length ? 'ok' : '';
   }
 
+  /* live pinch readout on the camera preview, so thresholds can be tuned against a real hand */
+  function drawHud() {
+    var c = st.root && st.root.querySelector('#sm-preview'); if (!c || grabMode !== 'pinch') return;
+    var g = c.getContext('2d'), y = c.height - 6;
+    for (var j = st.hp.length - 1; j >= 0; j--) {
+      var S = st.hp[j]; if (!S.on) continue;
+      var t = 'H' + (j + 1) + '  pinch ' + (S.rho > 5 ? '-' : S.rho.toFixed(2)) + (S.pinch ? '  CLOSED' : '');
+      g.font = '11px monospace'; g.fillStyle = 'rgba(5,4,16,.75)'; g.fillRect(2, y - 11, g.measureText(t).width + 8, 14);
+      g.fillStyle = S.pinch ? '#c4b5fd' : '#e5e7eb'; g.fillText(t, 6, y); y -= 15;
+    }
+  }
   /* The model gives hands in any order from frame to frame. Keep each hand on the same pointer by matching each
      fingertip to the nearest pointer it was last seen at (handedness only breaks ties). */
   function assignHands(dets, labs, now) {
@@ -857,25 +902,64 @@
     return out;
   }
 
+  /* how close to a screen edge the pointer is: 0 in the middle, 1 right at the edge (input is noisiest there) */
+  function edgeK(nx, ny) {
+    var z = function (d, w) { return clamp01((w - d) / w); };
+    return Math.max(z(nx, 0.18), z(1 - nx, 0.18), z(ny, 0.18), z(1 - ny, 0.38)); /* the bottom zone is wider: the tray buttons live there and the hand is least clear there */
+  }
+  function median3(a) { var b = a.slice().sort(function (x, y) { return x - y; }); return b[1]; }
+
   /* one frame for one hand: returns what it is doing, for the status line */
   function drive(S, lm, now) {
     S.on = true; S.lastSeen = now; S.raw = { x: lm[8].x, y: lm[8].y };
-    var W = window.innerWidth, H = window.innerHeight, m = (1 - ACTIVE) / 2;
-    var nx = clamp01(((1 - lm[8].x) - m) / ACTIVE), ny = clamp01((lm[8].y - m) / ACTIVE); /* index fingertip, mirrored */
+    var W = window.innerWidth, H = window.innerHeight, m = (1 - ACTIVE) / 2, pm = grabMode === 'pinch';
+    /* pinch measure: thumb-index gap relative to palm size, in camera pixels so the 16:9 frame does not skew it */
+    var vw = st.video && st.video.videoWidth, vh = st.video && st.video.videoHeight, ar = (vw && vh) ? vw / vh : 1.78;
+    var palm = Math.hypot((lm[0].x - lm[9].x) * ar, lm[0].y - lm[9].y);
+    var rho = palm < 0.02 ? 9 : Math.hypot((lm[4].x - lm[8].x) * ar, lm[4].y - lm[8].y) / palm;
+    S.rho = rho;
+    if (pm) {
+      if (!S.pinch) { S.po = 0; if (rho < PINCH_CLOSE) { if (++S.pc >= 2) { S.pinch = true; S.pc = 0; S.edge = 'down'; } } else S.pc = 0; }
+      else { S.pc = 0; if (rho > PINCH_OPEN) { if (++S.po >= 2) { S.pinch = false; S.po = 0; } } else S.po = 0; }
+    } else { S.pinch = false; S.pc = 0; S.po = 0; }
+    /* pointer position: the index tip, sliding to the thumb-index midpoint as the fingers close so the pointer does not jump while pinching */
+    var wgt = pm ? clamp01((PINCH_FREE - rho) / (PINCH_FREE - 0.35)) : 0;
+    var ax = lm[8].x + ((lm[4].x + lm[8].x) / 2 - lm[8].x) * wgt, ay = lm[8].y + ((lm[4].y + lm[8].y) / 2 - lm[8].y) * wgt;
+    var nx = clamp01(((1 - ax) - m) / ACTIVE), ny = clamp01((ay - YMIN) / YSPAN); /* mirrored */
+    S.hx.push(nx); S.hy.push(ny); if (S.hx.length > 3) { S.hx.shift(); S.hy.shift(); }
+    if (S.hx.length === 3) {
+      var kk = 0; for (var ki = 0; ki < 3; ki++) kk = Math.max(kk, edgeK(S.hx[ki], S.hy[ki]));
+      if (kk > 0.05) { nx = median3(S.hx); ny = median3(S.hy); } /* near an edge, one wild frame is thrown away (looks at the last 3 frames, so the wild frame itself can be far from the edge) */
+    }
+    var k = edgeK(nx, ny);
+    S.fx.minCut = S.fy.minCut = 0.5 - 0.38 * k; S.fx.beta = S.fy.beta = 10 - 9 * k; /* steadier near the edges, quick in the middle */
     var px = S.fx.filter(nx, now) * W, py = S.fy.filter(ny, now) * H;
     S.ptr = { x: px, y: py };
     var cur = S.cur; cur.style.display = 'block'; cur.style.left = px + 'px'; cur.style.top = py + 'px';
-    cur.classList.toggle('held-cur', !!S.held);
+    cur.classList.toggle('held-cur', !!S.held); cur.classList.toggle('pinch', pm && S.pinch && !S.held);
+    var edge = S.edge; S.edge = null;
     if (S.cool && now < S.cool) { S.ring(0); return 'live'; }
     var dw = S.dwell;
     if (!S.held) {
-      var rp = railAt(px, py);
+      var rp = (pm && S.pinch) ? null : railAt(px, py);
       if (rp) { setHover(S, null); setRailLive(S, rp); railScroll(rp, py); dw.panel = null; S.ring(0); return 'scroll'; }
       setRailLive(S, null);
-      var btn = btnAt(px, py), h = btn ? null : panelAt(px, py), tgt = btn || h;
+      var btn = btnAt(px, py, dw.panel instanceof Element ? dw.panel : null), h = btn ? null : panelAt(px, py), tgt = btn || h;
+      var under = (btn && btn.closest && btn.closest('.sm-panel')) ? panelAt(px, py) : h; /* a card's own button does not stop a pinch from grabbing that card */
+      if (pm) { S.hist.push({ t: now, p: under }); while (S.hist.length && now - S.hist[0].t > 300) S.hist.shift(); }
       setHover(S, tgt);
+      if (pm && edge === 'down' && (!btn || under)) {
+        /* grab what the fingertip is on, or what it was on a moment ago (closing the fingers moves the tip a little) */
+        var gp = under; for (var hi = S.hist.length - 1; !gp && hi >= 0; hi--) { var hq = S.hist[hi].p; if (hq && !hq.heldBy) gp = hq; }
+        if (gp) {
+          var gr = gp.el.getBoundingClientRect(); S.off.x = px - gr.left; S.off.y = py - gr.top;
+          grab(gp, S); S.sx = px; S.sy = py; S.gt = now; S.pp = { x: px, y: py }; S.hist = []; resetDwell(S, gp, px, py, now); setHover(S, null);
+          return 'phold';
+        }
+      }
       if (!tgt) { dw.panel = null; S.ring(0); return 'live'; }
-      if (tgt !== dw.panel || Math.hypot(px - dw.ax, py - dw.ay) > STILL_PX) resetDwell(S, tgt, px, py, now);
+      if (pm && !btn) { dw.panel = null; S.ring(0); return S.pinch ? 'live' : 'pgrab'; } /* in pinch mode a card needs no hold, only a pinch */
+      if (tgt !== dw.panel || (!btn && Math.hypot(px - dw.ax, py - dw.ay) > STILL_PX)) resetDwell(S, tgt, px, py, now);
       var p = (now - dw.t0) / (btn ? DWELL_BTN : DWELL_GRAB); S.ring(p);
       if (p >= 1) {
         if (btn) { dw.panel = null; st.ptrs.forEach(function (Q) { Q.cool = now + 1200; }); S.ring(0); btn.click(); return 'live'; }
@@ -884,6 +968,19 @@
         return 'drop';
       }
       return btn ? 'press' : 'grab';
+    }
+    if (pm) {
+      /* Holding by pinch: the card follows the pinch; opening the fingers drops it exactly where the pinch last was closed. */
+      if (S.pinch && rho < PINCH_CLOSE) S.pp = { x: px, y: py };
+      if (!S.pinch) {
+        var pp = S.pp || S.ptr; S.ptr = pp;
+        if (S.moved) place(S.held, pp.x - S.off.x, pp.y - S.off.y);
+        release(S.held, S); dw.panel = null; S.cool = now + 300; S.ring(0);
+        return 'live';
+      }
+      if (!S.moved && Math.hypot(px - S.sx, py - S.sy) > 12) S.moved = true;
+      place(S.held, px - S.off.x, py - S.off.y);
+      return 'phold';
     }
     /* Holding a card. There is no drop timer until the card has moved, so a fresh grab can never be lost before you start
        moving it. After it has moved, pausing for the hold time drops it. A grab you never move is let go of after HOLD_IDLE. */
@@ -900,12 +997,13 @@
     return 'drop';
   }
   function loseHand(S) {
-    if (S.cur) S.cur.style.display = 'none';
+    if (S.cur) { S.cur.style.display = 'none'; S.cur.classList.remove('pinch'); }
     S.fx.reset(); S.fy.reset(); S.ring(0);
     if (S.held) { S.moved = true; release(S.held, S); }
+    S.pinch = false; S.pc = 0; S.po = 0; S.edge = null; S.pp = null; S.hist = []; S.hx = []; S.hy = []; S.rho = 9;
     S.dwell.panel = null; setHover(S, null); setRailLive(S, null); S.on = false; S.raw = null; S.ptr = null;
   }
-  var STATUS = { grab: 'hold to grab', press: 'hold to press', drop: 'holding. Pause to drop', let: 'holding. Move the card', scroll: 'sliding to scroll' };
+  var STATUS = { grab: 'hold to grab', press: 'hold to press', drop: 'holding. Pause to drop', let: 'holding. Move the card', scroll: 'sliding to scroll', pgrab: 'pinch to grab', phold: 'holding. Open your fingers to drop' };
 
   function onResults(res) {
     if (!st.hp) return;
@@ -922,6 +1020,7 @@
         if (!act && a !== 'live') act = a;
       } else if (S.on && now - S.lastSeen > 900) loseHand(S);
     }
+    drawHud();
     if (live) { st.lastSeen = now; setStatus('Hand tracking: <b>' + (act ? STATUS[act] : (live > 1 ? 'two hands live' : 'live')) + '</b>'); }
     else if (!st.hp.some(function (S) { return S.on; }) && now - st.lastSeen > 900) {
       setStatus('Hand tracking: <b>' + (now - st.lastSeen > 2500 ? 'no hand found. Move closer, add light, or show an open palm to lock on' : 'lost. Show an open palm to lock on') + '</b>');
@@ -952,9 +1051,9 @@
         })();
         var pv = document.getElementById('sm-preview'); if (pv) pv.style.display = 'block';
         setStatus('Hand tracking: <b>show an open palm to lock on, then point</b>');
-        var cb = document.getElementById('sm-chk-btn'); if (cb) cb.style.display = ''; var sb = document.getElementById('sm-speed'); if (sb) sb.style.display = ''; var hb = document.getElementById('sm-hands'); if (hb) hb.style.display = '';
+        var cb = document.getElementById('sm-chk-btn'); if (cb) cb.style.display = ''; var sb = document.getElementById('sm-speed'); if (sb) sb.style.display = ''; var hb = document.getElementById('sm-hands'); if (hb) hb.style.display = ''; var gb = document.getElementById('sm-grab'); if (gb) gb.style.display = '';
         openCheck();
-        document.getElementById('sm-hint').textContent = 'Hold a fingertip on a card to grab it, move it, pause to drop · slide along the bar on a card\'s right edge to read it · both hands work · Esc to exit';
+        document.getElementById('sm-hint').textContent = hintText();
       })
       .catch(function (e) {
         st.tracking = false;
@@ -973,7 +1072,7 @@
     var root = document.createElement('div'); root.id = 'sm-root';
     root.innerHTML = '<video id="sm-video" playsinline muted></video><div id="sm-grid"></div>' +
       '<div id="sm-bar"><div><div id="sm-title">Spatial Mode · ' + esc((opts && opts.tool) || 'Vantage') + '</div><div id="sm-status">Initialising…</div></div>' +
-      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-hands" data-dwell style="display:none"></button><button class="sm-btn" id="sm-speed" data-dwell style="display:none"></button><button class="sm-btn" id="sm-chk-btn" style="display:none">Setup check</button><button class="sm-btn" id="sm-qc" data-dwell aria-haspopup="menu" style="display:none">Quick compare</button><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
+      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-grab" data-dwell style="display:none"></button><button class="sm-btn" id="sm-hands" data-dwell style="display:none"></button><button class="sm-btn" id="sm-speed" data-dwell style="display:none"></button><button class="sm-btn" id="sm-chk-btn" style="display:none">Setup check</button><button class="sm-btn" id="sm-qc" data-dwell aria-haspopup="menu" style="display:none">Quick compare</button><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
       '<div id="sm-tray"><div id="sm-tray-head"><div id="sm-tray-title">Leadership Brief</div><div id="sm-tray-sub"></div></div>' +
       '<div id="sm-tray-foot"><button class="sm-btn" id="sm-mode" data-dwell></button><button class="sm-btn primary" id="sm-present" data-dwell disabled>Present this brief</button><div id="sm-tray-btns"><button class="sm-btn" id="sm-dl" data-dwell disabled>Download</button><button class="sm-btn" id="sm-copy" data-dwell disabled>Copy text</button><button class="sm-btn" id="sm-save" data-dwell disabled title="Keep this brief on this device so you can compare it with a later analysis">Save</button></div><div id="sm-tray-msg"></div></div></div>' +
       '<canvas id="sm-preview" width="224" height="168"></canvas><div id="sm-cursor"></div><div id="sm-cursor2"></div><div id="sm-hint">Starting…</div>';
@@ -989,6 +1088,7 @@
     refreshQcBtn();
     root.addEventListener('pointerdown', function (e) { if (st.qcEl && !(e.target.closest && e.target.closest('#sm-qc-menu, #sm-qc'))) closeQc(); });
     root.querySelector('#sm-present').onclick = openPresent;
+    root.querySelector('#sm-grab').onclick = cycleGrab; root.querySelector('#sm-grab').textContent = 'Grab: ' + (grabMode === 'pinch' ? 'Pinch' : 'Hold');
     root.querySelector('#sm-hands').onclick = cycleHands; root.querySelector('#sm-hands').textContent = 'Hands: ' + handsWanted;
     root.querySelector('#sm-speed').onclick = cycleSpeed; root.querySelector('#sm-speed').textContent = 'Hold time: ' + SPEEDS[speedName].label;
     root.querySelector('#sm-chk-btn').onclick = function () { if (st.chkEl) closeCheck(); else openCheck(); };
@@ -1033,5 +1133,5 @@
     st.root = null; st.hp = null; st.mp = null; st.ptrs = null; st.panels = []; st.brief = []; st.sel = []; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = []; st.thenEl = null; st.then = null; st.saved = [];
   }
 
-  window.SpatialMode = { open: open, _setSpeed: setSpeed, _setHands: setHands, _hands: function () { return handsWanted; }, _ptrs: function () { return st.ptrs; }, _railAt: function (x, y) { return railAt(x, y); }, _speed: function () { return { name: speedName, grab: DWELL_GRAB, drop: DWELL_DROP, btn: DWELL_BTN }; }, _evalCheck: evalCheck, _renderCheck: function (rows) { if (!st.chkEl) { st.tracking = true; openCheck(); } renderCheck(rows); }, _chk: CHK, _saveBrief: saveBrief, _presets: function () { return st.presets.map(function (x) { return x.label; }); }, _present: openPresent, _presStep: presStep, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
+  window.SpatialMode = { open: open, _setSpeed: setSpeed, _setHands: setHands, _setGrab: setGrab, _grab: function () { return grabMode; }, _hands: function () { return handsWanted; }, _ptrs: function () { return st.ptrs; }, _railAt: function (x, y) { return railAt(x, y); }, _speed: function () { return { name: speedName, grab: DWELL_GRAB, drop: DWELL_DROP, btn: DWELL_BTN }; }, _evalCheck: evalCheck, _renderCheck: function (rows) { if (!st.chkEl) { st.tracking = true; openCheck(); } renderCheck(rows); }, _chk: CHK, _saveBrief: saveBrief, _presets: function () { return st.presets.map(function (x) { return x.label; }); }, _present: openPresent, _presStep: presStep, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
 })();
