@@ -375,6 +375,7 @@
             <div class="case-type-btn" onclick="selectCase(this,'POSH Complaint')"><span class="case-type-icon">&#x1F6E1;&#xFE0F;</span>POSH / Harassment</div>
             <div class="case-type-btn" onclick="selectCase(this,'Absence Management')"><span class="case-type-icon">&#x1F4C5;</span>Absence</div>
             <div class="case-type-btn" onclick="selectCase(this,'Retrenchment')"><span class="case-type-icon">&#x1F4CA;</span>Retrenchment</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Other')" title="Use this when none of the eight fits. Vantage will label it for you."><span class="case-type-icon">&#x1F9ED;</span>Something else</div>
           </div>
         </div>
         <div class="form-section">
@@ -664,6 +665,8 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     }
     var BASE = 'https://vantage.virorah.com/';
     var selectedCaseType = '';
+    var selectedCaseLabel = ''; /* short label when the case is classified as Other */
+    function caseTypeText() { return selectedCaseType === 'Other' && selectedCaseLabel ? 'Other: ' + selectedCaseLabel : selectedCaseType; }
     var currentResult = null;
     var currentNarrative = '';
     var currentARIAScenario = '';
@@ -674,9 +677,9 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       var el = document.getElementById('print-date');
       if (el) el.textContent = 'Generated: ' + dateStr;
       var ct = document.getElementById('print-case-type');
-      if (ct) ct.textContent = selectedCaseType ? 'Case Type: ' + selectedCaseType : '';
+      if (ct) ct.textContent = selectedCaseType ? 'Case Type: ' + caseTypeText() : '';
       var orig = document.title;
-      document.title = 'Vantage — Employee Case' + (selectedCaseType ? ' — ' + selectedCaseType : '') + ' — ' + dateStr;
+      document.title = 'Vantage — Employee Case' + (selectedCaseType ? ' — ' + caseTypeText() : '') + ' — ' + dateStr;
       window.print();
       document.title = orig;
     }
@@ -711,7 +714,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     function selectCase(el, type) {
       document.querySelectorAll('.case-type-btn').forEach(function(b){ b.classList.remove('selected'); });
       el.classList.add('selected');
-      selectedCaseType = type;
+      selectedCaseType = type; selectedCaseLabel = '';
       checkSubmit();
     }
 
@@ -820,7 +823,20 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
 
       var ps = r.pact_scores || {};
       var pr = r.protocol || {};
-      var fin = pr.financial || {};        /* Case type check: if the facts point to a different type than the tile, show a note and use the detected type. */       var _validTypes = ['Disciplinary', 'Grievance', 'PIP', 'Termination', 'Redundancy', 'POSH Complaint', 'Absence Management', 'Retrenchment'];       var _noteEl = document.getElementById('case-type-note');       if (!_noteEl) {         _noteEl = document.createElement('div');         _noteEl.id = 'case-type-note';         _noteEl.style.cssText = 'margin-top:10px;max-width:760px;padding:10px 14px;background:rgba(124,58,237,0.10);border:1px solid rgba(167,139,250,0.30);border-radius:8px;font-size:12px;line-height:1.6;color:#c4b5fd;display:none';         var _anchorEl = document.getElementById('output-case-type');         if (_anchorEl && _anchorEl.parentNode) { _anchorEl.parentNode.appendChild(_noteEl); }       }       _noteEl.style.display = 'none';       if (r.detectedCaseType && _validTypes.indexOf(r.detectedCaseType) !== -1 && r.detectedCaseType !== selectedCaseType) {         _noteEl.textContent = 'You selected ' + selectedCaseType + '. The facts read as ' + r.detectedCaseType + ', so this was analysed as ' + r.detectedCaseType + '.';         _noteEl.style.display = 'block';         selectedCaseType = r.detectedCaseType;       }
+      var fin = pr.financial || {};        /* Case type check: if the facts point to a different type than the tile, show a note and use the detected type. */       var _validTypes = ['Disciplinary', 'Grievance', 'PIP', 'Termination', 'Redundancy', 'POSH Complaint', 'Absence Management', 'Retrenchment', 'Other'];       var _noteEl = document.getElementById('case-type-note');       if (!_noteEl) {         _noteEl = document.createElement('div');         _noteEl.id = 'case-type-note';         _noteEl.style.cssText = 'margin-top:10px;max-width:760px;padding:10px 14px;background:rgba(124,58,237,0.10);border:1px solid rgba(167,139,250,0.30);border-radius:8px;font-size:12px;line-height:1.6;color:#c4b5fd;display:none';         var _anchorEl = document.getElementById('output-case-type');         if (_anchorEl && _anchorEl.parentNode) { _anchorEl.parentNode.appendChild(_noteEl); }       }       _noteEl.style.display = 'none';       var _std = _validTypes.slice(0, 8), _msg = '';
+       selectedCaseLabel = '';
+       if (r.detectedCaseType && _validTypes.indexOf(r.detectedCaseType) !== -1) {
+         if (r.detectedCaseType === 'Other') {
+           selectedCaseLabel = String(r.otherLabel || '').replace(/[<>]/g, '').trim().slice(0, 40);
+           if (selectedCaseType !== 'Other') { _msg = 'You selected ' + selectedCaseType + '. None of our standard case types fit these facts, so this was classified as Other' + (selectedCaseLabel ? ': ' + selectedCaseLabel : '') + ' and analysed on its own terms.'; }
+           selectedCaseType = 'Other';
+         } else if (r.detectedCaseType !== selectedCaseType) {
+           _msg = 'You selected ' + (selectedCaseType === 'Other' ? 'Something else' : selectedCaseType) + '. The facts read as ' + r.detectedCaseType + ', so this was analysed as ' + r.detectedCaseType + '.';
+           selectedCaseType = r.detectedCaseType;
+         }
+       }
+       if (r.secondaryCaseType && _std.indexOf(r.secondaryCaseType) !== -1 && r.secondaryCaseType !== selectedCaseType) { _msg += (_msg ? ' ' : '') + 'This case also touches ' + r.secondaryCaseType + '.'; }
+       if (_msg) { _noteEl.textContent = _msg; _noteEl.style.display = 'block'; }
 
       // Quick Take summary card
       var qtCard = document.getElementById('quick-take-card');
@@ -841,13 +857,13 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       // Risk banner
       var riskClass = getRiskClass(ps.overallRisk);
       document.getElementById('risk-banner').className = 'risk-banner risk-' + riskClass;
-      document.getElementById('risk-label').innerText = selectedCaseType + ' · PACT Diagnostic';
+      document.getElementById('risk-label').innerText = caseTypeText() + ' · PACT Diagnostic';
       document.getElementById('risk-title').innerText = (ps.overallRisk || '') + ' Risk';
       document.getElementById('risk-narrative').innerText = ps.overallNarrative || '';
       var badge = document.getElementById('risk-badge');
       badge.className = 'risk-badge-lg badge-' + riskClass;
       badge.innerText = (ps.overallRisk || '').toUpperCase();
-      document.getElementById('output-case-type').innerText = selectedCaseType + ' · Assessment + Protocol complete';
+      document.getElementById('output-case-type').innerText = caseTypeText() + ' · Assessment + Protocol complete';
 
       // PACT cards
       renderPACTCard('process', ps.process);
@@ -999,7 +1015,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           { label: 'Process vs Trust', hint: 'A fair process vs the relationship afterwards', a: 'p', b: 't' },
           { label: 'Consequence vs Accountability', hint: 'What follows vs who owns it', a: 'c', b: 'a' }
         ],
-        caseType: selectedCaseType,
+        caseType: caseTypeText(),
         footer: 'Prepared with Virorah Vantage. The legal position is a reading of the process against the Codes, not a formal legal opinion. Financial figures are modelled ranges, not measured figures.'
       });
     }
@@ -1077,6 +1093,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           tool: 'save_case',
           userId: userId,
           caseType: selectedCaseType,
+          caseTypeDetail: selectedCaseType === 'Other' ? selectedCaseLabel : '',
           narrative: currentNarrative.substring(0, 900),
           result: currentResult,
           status: 'Open'
@@ -1113,7 +1130,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       sessionStorage.setItem('sr_aria_context', JSON.stringify({
         mode: 'conversation_coach',
         scenario: currentARIAScenario,
-        caseType: selectedCaseType
+        caseType: caseTypeText()
       }));
       window.location.href = BASE + 'aria.html';
     }
@@ -1146,7 +1163,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     }
 
     function startNew() {       window._stakeholderNudged = false;
-      selectedCaseType = '';
+      selectedCaseType = ''; selectedCaseLabel = '';
       currentResult = null;
       currentARIAScenario = '';
       document.getElementById('narrative').value = '';

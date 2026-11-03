@@ -285,6 +285,7 @@
         <div class="filter-btn" onclick="filterCases('High',this)">High risk</div>
         <div class="filter-btn" onclick="filterCases('Termination',this)">Termination</div>
         <div class="filter-btn" onclick="filterCases('Disciplinary',this)">Disciplinary</div>
+        <div class="filter-btn" onclick="filterCases('Other',this)">Other</div>
       </div>
       <div class="cases-grid" id="cases-grid"></div>
     </div>
@@ -356,6 +357,7 @@
         var risk      = fields['overall_risk'] || '';
         var status    = fields['status'] || 'Open';
         var caseType  = fields['case_type'] || '';
+        var caseDetail = String(fields['case_type_detail'] || '').replace(/[<>&"']/g, '');
         var narrative = fields['narrative'] || '';
         var createdAt = fields['date_created'] || '';
         var exposure  = fields['financial_exposure'] || '';
@@ -364,7 +366,7 @@
         var isClosed  = status.toLowerCase() === 'closed';
         return '<div class="case-card" onclick="openCase(' + idx + ')">' +
           '<div class="case-card-top">' +
-            '<div class="case-type-tag">' + (caseType || 'ER Case') + '</div>' +
+            '<div class="case-type-tag">' + (caseType || 'ER Case') + (caseType === 'Other' && caseDetail ? ': ' + caseDetail : '') + '</div>' +
             '<div class="case-badges">' + getRiskBadge(risk) + getStatusBadge(status) + '</div>' +
           '</div>' +
           '<div class="case-narrative">' + (narrative || 'No details recorded.') + '</div>' +
@@ -397,6 +399,7 @@
           if (filter === 'Closed')   return status === 'closed';
           if (filter === 'Critical') return risk === 'critical';
           if (filter === 'High')     return risk === 'high';
+          if (filter === 'Other') return caseType === 'other';
           return caseType.includes(filter.toLowerCase());
         });
       }
