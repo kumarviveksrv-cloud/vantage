@@ -39,7 +39,9 @@
     renderer.setSize(w,h);
     camera.aspect=w/h;
     camera.updateProjectionMatrix();
+    if(field)field.material.uniforms.uAspect.value=w/h;
   }
+  let field;
   resize();
   addEventListener('resize',resize);
 
@@ -161,13 +163,14 @@
           p+=dir*scatter*0.55;
           vec4 mv=modelViewMatrix*vec4(p,1.);
           gl_Position=projectionMatrix*mv;
-          gl_PointSize=(1.75+2.6*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
+          gl_PointSize=1.25*(1.75+2.6*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
           vColor=mix(color,uStateColor,uStateMix);}`,
       fragmentShader:`varying vec3 vColor;
         void main(){
           float d=length(gl_PointCoord-.5);
-          float a=smoothstep(.5,.02,d);
-          gl_FragColor=vec4(vColor,a*.94);}`
+          float core=smoothstep(.36,.02,d);
+          float glow=smoothstep(.5,.0,d)*.2;
+          gl_FragColor=vec4(vColor,(core+glow)*.94);}`
     });
 
     facePoints=new THREE.Points(geo,mat);
@@ -195,6 +198,54 @@
 
     canvas.style.opacity='1'; // fade in
   }
+
+  // ── AMBIENT FIELD ────────────────────────────────────────
+  // Small glowing particles that fill the whole canvas box and drift
+  // slowly toward the viewer, fading in at the back and out at the front.
+  (function buildField(){
+    const N=2400, pos=new Float32Array(N*3), sd=new Float32Array(N*2), col=new Float32Array(N*3);
+    for(let i=0;i<N;i++){
+      pos[i*3]=Math.random()*2-1;            // ndc x
+      pos[i*3+1]=Math.random()*2-1;          // ndc y
+      pos[i*3+2]=Math.random();              // depth phase 0..1
+      sd[i*2]=Math.random()*6.283; sd[i*2+1]=.6+Math.random()*.8;
+      col[i*3]=.62+Math.random()*.2; col[i*3+1]=.5+Math.random()*.2; col[i*3+2]=.95+Math.random()*.05;
+    }
+    const g=new THREE.BufferGeometry();
+    g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    g.setAttribute('aSeed',new THREE.BufferAttribute(sd,2));
+    g.setAttribute('color',new THREE.BufferAttribute(col,3));
+    const m=new THREE.ShaderMaterial({
+      transparent:true,depthWrite:false,depthTest:false,vertexColors:true,
+      blending:THREE.AdditiveBlending,
+      uniforms:{uTime:{value:0},uAspect:{value:(figure.clientWidth||560)/(figure.clientHeight||650)},
+                uPR:{value:renderer.getPixelRatio()}},
+      vertexShader:`attribute vec2 aSeed;varying vec3 vColor;varying float vA;
+        uniform float uTime;uniform float uAspect;uniform float uPR;
+        void main(){
+          float d=fract(position.z+uTime*0.035*aSeed.y);
+          float z=mix(-4.0,5.6,d);
+          float halfH=0.3057*(6.9-z);
+          vec3 p=vec3(position.x*halfH*uAspect,position.y*halfH,z);
+          p.x+=sin(uTime*0.6+aSeed.x)*0.06;
+          p.y+=cos(uTime*0.5+aSeed.x*1.3)*0.06;
+          vec4 mv=viewMatrix*vec4(p,1.);
+          gl_Position=projectionMatrix*mv;
+          float near=1.0/max(0.6,-mv.z);
+          gl_PointSize=min(7.0,(1.6+7.0*near))*uPR;
+          vA=smoothstep(0.0,0.18,d)*(1.0-smoothstep(0.82,1.0,d))*(0.45+0.25*sin(uTime*1.3+aSeed.x));
+          vColor=color;}`,
+      fragmentShader:`varying vec3 vColor;varying float vA;
+        void main(){
+          float d=length(gl_PointCoord-.5);
+          float a=smoothstep(.5,.0,d);
+          a=a*a*.55+smoothstep(.2,.0,d)*.45;
+          gl_FragColor=vec4(vColor,a*vA*.55);}`
+    });
+    field=new THREE.Points(g,m);
+    field.frustumCulled=false;
+    scene.add(field);
+  })();
 
   // ── CURSOR / TOUCH INPUT ─────────────────────────────────
   let lastMoveAt=performance.now();
@@ -249,6 +300,7 @@
       u.uStateMix.value=cStateMix;
       u.uStateColor.value.copy(cStateColor);
     }
+    if(field)field.material.uniforms.uTime.value=t;
     if(haloPoints){
       haloPoints.rotation.y=t*.035*(1+cAgitation*1.4);
       haloPoints.rotation.z=Math.sin(t*.2*(1+cAgitation))*.025;
