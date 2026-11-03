@@ -57,9 +57,10 @@
 #sm-preview{display:none;position:absolute;left:16px;bottom:60px;width:224px;height:168px;border-radius:12px;border:2px solid rgba(255,181,71,.7);z-index:30;background:#000;opacity:.92;pointer-events:none}\
 #sm-preview.ok{border-color:rgba(124,58,237,.95)}\
 #sm-cursor{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #a5b4fc;background:conic-gradient(rgba(196,181,253,.85) calc(var(--p)*1turn),rgba(99,102,241,.16) 0);pointer-events:none;z-index:100002;display:none;box-shadow:0 0 18px rgba(99,102,241,.6)}\
-#sm-cursor.held-cur{border-color:#fff;box-shadow:0 0 24px rgba(196,181,253,.9)}\
+#sm-cursor.held-cur{border-color:#fff;background:conic-gradient(#fb923c calc(var(--p)*1turn),rgba(255,255,255,.92) 0);box-shadow:0 0 26px rgba(255,255,255,.75)}\
 #sm-cursor2{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #67e8f9;background:conic-gradient(rgba(103,232,249,.85) calc(var(--p)*1turn),rgba(34,211,238,.14) 0);pointer-events:none;z-index:100002;display:none;box-shadow:0 0 18px rgba(34,211,238,.55)}\
-#sm-cursor2.held-cur{border-color:#fff;box-shadow:0 0 24px rgba(103,232,249,.9)}\
+#sm-cursor2.held-cur{border-color:#fff;background:conic-gradient(#fb923c calc(var(--p)*1turn),rgba(255,255,255,.92) 0);box-shadow:0 0 26px rgba(255,255,255,.75)}\
+.sm-panel.held::after{content:"HOLDING";position:absolute;right:22px;bottom:9px;z-index:3;font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:.12em;font-weight:700;padding:3px 8px;border-radius:10px;background:#c4b5fd;color:#1a1033}\
 #sm-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.05em;color:rgba(165,180,252,.7);background:rgba(13,11,30,.7);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:8px 16px;text-align:center;max-width:92vw}\
 #sm-tray{position:absolute;top:76px;right:16px;width:360px;bottom:64px;z-index:5;border-radius:18px;border:1.5px dashed rgba(124,58,237,.4);background:rgba(124,58,237,.05);transition:border-color .2s,background .2s}\
 #sm-tray.over{border-color:#c4b5fd;background:rgba(124,58,237,.14)}\
@@ -758,7 +759,7 @@
   var SPEEDS = { careful: { label: 'Careful', grab: 700, drop: 800 }, normal: { label: 'Normal', grab: 500, drop: 550 }, fast: { label: 'Fast', grab: 350, drop: 400 } };
   var SPEED_KEY = 'sr_sm_speed', speedName = 'normal';
   try { var sv = localStorage.getItem(SPEED_KEY); if (sv && SPEEDS[sv]) speedName = sv; } catch (e) {}
-  var DWELL_GRAB = SPEEDS[speedName].grab, DWELL_DROP = SPEEDS[speedName].drop, DWELL_BTN = DWELL_GRAB + 150, STILL_PX = 28, ACTIVE = 0.7;
+  var DWELL_GRAB = SPEEDS[speedName].grab, DWELL_DROP = SPEEDS[speedName].drop, DWELL_BTN = DWELL_GRAB + 150, STILL_PX = 28, ACTIVE = 0.7, HOLD_IDLE = 2500;
   function setSpeed(n) {
     if (!SPEEDS[n]) return; speedName = n; DWELL_GRAB = SPEEDS[n].grab; DWELL_DROP = SPEEDS[n].drop; DWELL_BTN = DWELL_GRAB + 150;
     try { localStorage.setItem(SPEED_KEY, n); } catch (e) {}
@@ -798,7 +799,7 @@
     this.dwell = { panel: null, t0: 0, ax: 0, ay: 0 };
     this.off = { x: 0, y: 0 }; this.sx = 0; this.sy = 0;
     this.fx = new OneEuro(0.5, 10, 1); this.fy = new OneEuro(0.5, 10, 1);
-    this.on = false; this.lastSeen = 0; this.raw = null; this.label = null; this.cur = null;
+    this.on = false; this.lastSeen = 0; this.raw = null; this.label = null; this.cur = null; this.gt = 0;
   }
   Pointer.prototype.ring = function (v) { if (this.cur) this.cur.style.setProperty('--p', Math.max(0, Math.min(1, v))); };
   function clamp01(v) { return Math.max(0, Math.min(1, v)); }
@@ -831,8 +832,8 @@
     if (res.image) { try { g.drawImage(res.image, 0, 0, w, h); } catch (e) {} } else { g.clearRect(0, 0, w, h); }
     (dets || []).forEach(function (lm, k) {
       for (var i = 0; i < lm.length; i++) {
-        g.beginPath(); g.arc(lm[i].x * w, lm[i].y * h, i === 8 ? 6 : 2.5, 0, 6.3);
-        g.fillStyle = i === 8 ? (k ? '#67e8f9' : '#ffffff') : 'rgba(196,181,253,.85)'; g.fill();
+        g.beginPath(); g.arc(lm[i].x * w, lm[i].y * h, i === 8 ? 6 : (i === 4 ? 5 : 2.5), 0, 6.3);
+        g.fillStyle = i === 8 ? (k ? '#67e8f9' : '#ffffff') : (i === 4 ? '#fbbf24' : 'rgba(196,181,253,.85)'); g.fill();
       }
     });
     g.restore();
@@ -879,17 +880,24 @@
       if (p >= 1) {
         if (btn) { dw.panel = null; st.ptrs.forEach(function (Q) { Q.cool = now + 1200; }); S.ring(0); btn.click(); return 'live'; }
         var r = h.el.getBoundingClientRect(); S.off.x = px - r.left; S.off.y = py - r.top;
-        grab(h, S); S.sx = px; S.sy = py; resetDwell(S, h, px, py, now); setHover(S, null);
+        grab(h, S); S.sx = px; S.sy = py; S.gt = now; resetDwell(S, h, px, py, now); setHover(S, null);
         return 'drop';
       }
       return btn ? 'press' : 'grab';
     }
-    if (!S.moved && Math.hypot(px - S.sx, py - S.sy) > 40) S.moved = true;
-    if (S.moved) place(S.held, px - S.off.x, py - S.off.y);
+    /* Holding a card. There is no drop timer until the card has moved, so a fresh grab can never be lost before you start
+       moving it. After it has moved, pausing for the hold time drops it. A grab you never move is let go of after HOLD_IDLE. */
+    if (!S.moved && Math.hypot(px - S.sx, py - S.sy) > 40) { S.moved = true; dw.ax = px; dw.ay = py; dw.t0 = now; }
+    if (!S.moved) {
+      S.ring(0);
+      if (now - S.gt > HOLD_IDLE) { release(S.held, S); dw.panel = null; S.cool = now + 900; return 'live'; }
+      return 'let';
+    }
+    place(S.held, px - S.off.x, py - S.off.y);
     if (Math.hypot(px - dw.ax, py - dw.ay) > STILL_PX) { dw.ax = px; dw.ay = py; dw.t0 = now; }
     var q = (now - dw.t0) / DWELL_DROP; S.ring(q);
     if (q >= 1) { var done = S.held; release(done, S); dw.panel = null; S.cool = now + 900; S.ring(0); return 'live'; }
-    return S.moved ? 'drop' : 'let';
+    return 'drop';
   }
   function loseHand(S) {
     if (S.cur) S.cur.style.display = 'none';
@@ -897,7 +905,7 @@
     if (S.held) { S.moved = true; release(S.held, S); }
     S.dwell.panel = null; setHover(S, null); setRailLive(S, null); S.on = false; S.raw = null; S.ptr = null;
   }
-  var STATUS = { grab: 'hold to grab', press: 'hold to press', drop: 'hold still to drop', let: 'hold still to let go', scroll: 'sliding to scroll' };
+  var STATUS = { grab: 'hold to grab', press: 'hold to press', drop: 'holding. Pause to drop', let: 'holding. Move the card', scroll: 'sliding to scroll' };
 
   function onResults(res) {
     if (!st.hp) return;
@@ -946,7 +954,7 @@
         setStatus('Hand tracking: <b>show an open palm to lock on, then point</b>');
         var cb = document.getElementById('sm-chk-btn'); if (cb) cb.style.display = ''; var sb = document.getElementById('sm-speed'); if (sb) sb.style.display = ''; var hb = document.getElementById('sm-hands'); if (hb) hb.style.display = '';
         openCheck();
-        document.getElementById('sm-hint').textContent = 'Hold a fingertip on a card to grab it · slide along the bar on a card\'s right edge to read it · both hands work at once · drop cards on the Leadership Brief · Esc to exit';
+        document.getElementById('sm-hint').textContent = 'Hold a fingertip on a card to grab it, move it, pause to drop · slide along the bar on a card\'s right edge to read it · both hands work · Esc to exit';
       })
       .catch(function (e) {
         st.tracking = false;
