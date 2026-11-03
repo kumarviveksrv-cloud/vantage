@@ -71,6 +71,11 @@
     input[type=text]{width:100%;padding:14px 16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:12px;color:#f4f3ff;font-family:var(--font), sans-serif;font-size:13px;outline:none;transition:border .2s}
     input[type=text]:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
     input[type=text]::placeholder{color:rgba(165,180,252,0.25)}
+    .ctc-row{display:flex;gap:10px;flex-wrap:wrap}
+    .ctc-row select,.ctc-row input[type=number]{flex:1 1 200px;min-width:0;padding:14px 16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:12px;color:#f4f3ff;font-family:var(--font), sans-serif;font-size:13px;outline:none;transition:border .2s}
+    .ctc-row select:focus,.ctc-row input[type=number]:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
+    .ctc-row select option{background:#0b0a1c;color:#f4f3ff}
+    .ctc-row input[type=number]::placeholder{color:rgba(165,180,252,0.25)}
     .privacy-note{font-size:11px;color:var(--dim);margin-top:8px;display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace}
     .submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:var(--font), sans-serif;font-weight:800;font-size:15px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.35)}
     .submit-btn:hover{opacity:.88}
@@ -420,6 +425,24 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
                    <input type="text" id="stakeholders" placeholder="Roles only. e.g. the employee (role, years of service), their manager, who can approve the decision, whether HR or legal is involved" />
           <div id="stakeholder-nudge" style="display:none;margin-top:8px;font-size:12px;line-height:1.6;color:#c4b5fd;font-family:'JetBrains Mono',monospace">Your Accountability read will be thin without roles. Add who is involved (roles only, no names needed), or click Run again to continue without.</div>
         </div>
+        <div class="form-section">
+          <label class="form-label" for="ctc-band">The employee's annual CTC (optional, sharpens the cost model)</label>
+          <div class="ctc-row">
+            <select id="ctc-band" aria-label="Annual CTC band">
+              <option value="">Not sure</option>
+              <option value="Under 3L">Under Rs.3L</option>
+              <option value="3L to 6L">Rs.3L to 6L</option>
+              <option value="6L to 9L">Rs.6L to 9L</option>
+              <option value="9L to 12L">Rs.9L to 12L</option>
+              <option value="12L to 18L">Rs.12L to 18L</option>
+              <option value="18L to 25L">Rs.18L to 25L</option>
+              <option value="25L to 40L">Rs.25L to 40L</option>
+              <option value="40L and above">Rs.40L and above</option>
+            </select>
+            <input type="number" id="ctc-exact" min="0.5" max="1000" step="0.1" inputmode="decimal" placeholder="Exact figure in lakh (optional)" aria-label="Exact annual CTC in lakh" />
+          </div>
+          <div class="privacy-note">&#x1F512; A band is enough. It goes to the AI with your case only to model the cost, never with a name. Leave it on Not sure and the cost model assumes a figure and labels it assumed.</div>
+        </div>
         <button class="submit-btn" id="submit-btn" onclick="runPACT()" disabled>Run PACT Assessment + Decision Protocol &rarr;</button>         <div id="submit-hint" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#c4b5fd;text-align:center;font-weight:600"></div>
       </div>
     </div>
@@ -758,6 +781,9 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     async function runPACT() {
       var narrativeVal = document.getElementById('narrative').value.trim();
       var stakeholders = document.getElementById('stakeholders').value.trim();
+      var _ctcBandEl = document.getElementById('ctc-band'), _ctcExactEl = document.getElementById('ctc-exact');
+      var ctcBand = _ctcBandEl ? _ctcBandEl.value : '';
+      var ctcExact = _ctcExactEl ? _ctcExactEl.value.trim() : '';
       if (!selectedCaseType || !narrativeVal) return;
       /* Soft nudge: first click with an empty Who's involved box asks for roles; second click runs anyway. */       if (!stakeholders && !window._stakeholderNudged) {         window._stakeholderNudged = true;         var _nudge = document.getElementById('stakeholder-nudge');         if (_nudge) _nudge.style.display = 'block';         var _sh = document.getElementById('stakeholders');         if (_sh) { _sh.scrollIntoView({behavior:'smooth',block:'center'}); _sh.focus(); }         return;       }       currentNarrative = narrativeVal;       var _hideNudge = document.getElementById('stakeholder-nudge'); if (_hideNudge) { _hideNudge.style.display = 'none'; }
       showView('loading-view');
@@ -772,6 +798,8 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
             narrative: narrativeVal,
             caseType: selectedCaseType,
             stakeholders: stakeholders,
+            ctcBand: ctcBand,
+            ctcExact: ctcExact,
             meridian: meridian
           })
         });
@@ -1168,6 +1196,8 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       currentARIAScenario = '';
       document.getElementById('narrative').value = '';
       document.getElementById('stakeholders').value = '';
+      var _cb = document.getElementById('ctc-band'); if (_cb) { _cb.value = ''; }
+      var _ce = document.getElementById('ctc-exact'); if (_ce) { _ce.value = ''; }
       document.querySelectorAll('.case-type-btn').forEach(function(b){ b.classList.remove('selected'); });
       document.getElementById('submit-btn').disabled = true;
       var qtCard = document.getElementById('quick-take-card');
