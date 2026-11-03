@@ -10,7 +10,7 @@ the actual statutory text when answering PACT and Policy Advisor questions.
 | `ir-code-2020.txt` | Industrial Relations Code 2020 | Key sections (Ch I, IV, IX, X, XII, XIII) |
 | `posh-act-2013.txt` | POSH Act 2013 | Full text (all operative sections) |
 | `wages-code-2019.txt` | Code on Wages 2019 | Key sections (definitions, minimum wages, payment, bonus) |
-| `indian-contract-act-1872.txt` | Indian Contract Act 1872 | NOT ADDED YET. Optional: the Worker loads it for notice, bond, restraint, recovery and poaching cases once the file exists, and skips it silently until then |
+| `indian-contract-act-1872.txt` | Indian Contract Act 1872 | ADDED 3 Nov 2026. Selected sections only (15, 16, 23, 27, 73, 74), text from India Code. Optional: the Worker loads it for notice, bond, restraint, recovery and poaching cases, and skips it silently if the file is ever removed |
 
 ## How the Worker uses these
 
@@ -49,10 +49,8 @@ full official text:
 Extract text from the PDF, clean (remove page numbers, headers),
 and replace the file contents. The Worker infrastructure handles the rest.
 
-## Adding the Indian Contract Act (selected sections)
+## The Indian Contract Act file (selected sections)
 
-Create `indian-contract-act-1872.txt` with the official text of ss. 15, 16, 23, 27, 73 and 74 (coercion, undue influence,
-lawful object, restraint of trade, damages, penalty), copied from India Code
-(https://www.indiacode.nic.in/handle/123456789/2187). Do not add the full Act: it is long and is sent to Claude on every matching case.
-Statute text carries no case law, so add a short lawyer-written note on s.27 and service-bond decisions at the end of the same file,
-clearly headed as a note and not as statute text.
+`indian-contract-act-1872.txt` holds ss. 15, 16, 23, 27, 73 and 74 only (coercion, undue influence, lawful object, restraint of trade, damages, penalty),
+copied word for word from India Code (https://www.indiacode.nic.in/handle/123456789/2187). The full Act is deliberately not added: it is long and is sent to Claude on every matching case.
+Statute text carries no case law. If a note on s.27 and service-bond decisions is ever added, it must be written and verified by a lawyer and headed clearly as a note, not statute text.
