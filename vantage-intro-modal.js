@@ -149,19 +149,19 @@ function injectCSS(){
 #vip-backdrop{position:fixed;inset:0;z-index:99990;background:rgba(5,4,16,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:20px;animation:vipIn .22s ease}
 @keyframes vipIn{from{opacity:0}to{opacity:1}}
 @keyframes vipUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-#vip-modal{width:100%;max-width:500px;background:#0c0b1d;border:1px solid rgba(99,102,241,.3);border-radius:18px;padding:34px 34px 26px;position:relative;animation:vipUp .28s ease;box-shadow:0 32px 80px rgba(0,0,0,.65),0 0 0 1px rgba(99,102,241,.06) inset}
+#vip-modal{box-sizing:border-box;display:flex;flex-direction:column;max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);width:100%;max-width:500px;background:#0c0b1d;border:1px solid rgba(99,102,241,.3);border-radius:18px;padding:34px 34px 26px;position:relative;animation:vipUp .28s ease;box-shadow:0 32px 80px rgba(0,0,0,.65),0 0 0 1px rgba(99,102,241,.06) inset}
 #vip-close{position:absolute;top:14px;right:16px;background:none;border:none;cursor:pointer;color:rgba(196,181,253,.3);font-size:20px;line-height:1;padding:4px 7px;border-radius:5px;transition:color .15s}
 #vip-close:hover{color:rgba(196,181,253,.65)}
 .vip-icon{font-size:20px;color:#a78bfa;margin-bottom:8px;display:block;font-family:'JetBrains Mono',monospace}
 .vip-feature-label{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(167,139,250,.5);margin-bottom:5px;display:block}
 .vip-tagline{font-family:'Space Grotesk',sans-serif;font-size:clamp(17px,2.4vw,22px);font-weight:700;color:#f4f3ff;line-height:1.22;margin-bottom:22px}
-.vip-sections{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.vip-sections{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;flex:1 1 auto;min-height:0;overflow-y:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:rgba(99,102,241,.35) transparent}
 .vip-section{background:rgba(99,102,241,.045);border:1px solid rgba(99,102,241,.1);border-radius:10px;padding:13px 15px}
 .vip-section-label{font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(167,139,250,.42);margin-bottom:5px;display:block}
 .vip-section-text{font-size:12.5px;color:rgba(244,243,255,.68);line-height:1.68;font-family:'DM Sans',sans-serif;overflow-wrap:break-word}
 .vip-start{border-color:rgba(99,102,241,.2);background:rgba(99,102,241,.08)}
 .vip-start .vip-section-text{color:rgba(244,243,255,.82)}
-.vip-btns{display:flex;gap:10px}
+.vip-btns{display:flex;gap:10px;flex-shrink:0}
 .vip-cta{flex:1;padding:13px 24px;background:linear-gradient(135deg,#6366f1,#7c3aed);border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;letter-spacing:.01em;transition:opacity .18s;white-space:nowrap}
 .vip-cta:hover{opacity:.88}
 .vip-cta-ghost{flex:0 0 auto;padding:13px 18px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:rgba(196,181,253,.7);letter-spacing:.01em;transition:all .18s;white-space:nowrap}
@@ -213,6 +213,7 @@ function navigateTo(key){
 
 function injectTrigger(key){
   if(document.getElementById('vip-trigger'))return;
+  injectCSS(); // the button is styled by this sheet; a returning visitor never builds the modal, so load it here too
   var btn=document.createElement('button');
   btn.id='vip-trigger';btn.textContent='?';
   btn.setAttribute('aria-label','About this feature');

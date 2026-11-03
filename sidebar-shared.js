@@ -1575,7 +1575,7 @@
       return;
     }
     var s = document.createElement('script');
-    s.src = '/vantage-intro-modal.js?v=20261103a';
+    s.src = '/vantage-intro-modal.js?v=20261103b';
     s.onload = function(){ setTimeout(function(){ window.VantageIntro.show(key); }, 800); };
     document.head.appendChild(s);
   }
