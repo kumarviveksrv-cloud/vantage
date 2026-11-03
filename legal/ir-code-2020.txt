@@ -95,9 +95,24 @@ CHAPTER XII — UNFAIR LABOUR PRACTICES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Section 84 — Prohibition of unfair labour practice
-No employer or worker or a trade union, as the case may be, shall commit any unfair labour practice specified in the First Schedule or the Second Schedule.
+84. No employer or worker or a Trade Union, whether registered under this Code, or not, shall commit any unfair labour practice specified in the Second Schedule.
 
-[First Schedule contains unfair labour practices on the part of employers; Second Schedule on the part of workers/trade unions. Key employer ULPs include: interfering with union activities, discriminating against union members, refusing to bargain in good faith, engaging in victimisation.]
+Section 2(zo) — Definition
+"unfair labour practice" means any of the practices specified in the Second Schedule;
+
+THE SECOND SCHEDULE — UNFAIR LABOUR PRACTICES (Part I, item 5 only; text as printed in the Gazette of India)
+[See sections 2 (zo), 84, 86 (5) and 101(1)]
+I. ON THE PART OF EMPLOYERS AND TRADE UNIONS OF EMPLOYERS
+(5) To discharge or dismiss workers,—
+   (a) by way of victimisation;
+   (b) not in good faith, but in the colourable exercise of the employer's rights;
+   (c) by falsely implicating a worker in a criminal case on false evidence or on concocted evidence;
+   (d) for patently false reasons;
+   (e) on untrue or trumped up allegations of absence without leave;
+   (f) in utter disregard of the principles of natural justice in the conduct of domestic enquiry or with undue haste;
+   (g) for misconduct of a minor or technical character, without having any regard to the nature of the particular misconduct or the past record or service of the worker, thereby leading to a disproportionate punishment.
+
+[The Second Schedule lists the unfair labour practices. The First Schedule is a different list: the matters on which standing orders are made (section 2(zj)). Items (1) to (4) and (6) to (8) of Part I are not reproduced here.]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CHAPTER XIII — OFFENCES AND PENALTIES (selected)

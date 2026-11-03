@@ -7,7 +7,7 @@ the actual statutory text when answering PACT and Policy Advisor questions.
 
 | File | Act | Status |
 |---|---|---|
-| `ir-code-2020.txt` | Industrial Relations Code 2020 | Key sections (Ch I, IV, IX, X, XII, XIII). s.2(zr)(iv) corrected to Rs 18,000 against the India Code PDF on 3 Nov 2026. Other sections were condensed by hand and are not yet checked word for word. |
+| `ir-code-2020.txt` | Industrial Relations Code 2020 | Key sections (Ch I, IV, IX, X, XII, XIII). s.2(zr)(iv) corrected to Rs 18,000 and s.84 with Second Schedule Part I item 5 rebuilt verbatim (the old note wrongly put unfair labour practices in the First Schedule), both against the India Code PDF on 3 Nov 2026. Other sections were condensed by hand and are not yet checked word for word. |
 | `posh-act-2013.txt` | POSH Act 2013 | Full text (all operative sections) |
 | `wages-code-2019.txt` | Code on Wages 2019 | REBUILT 3 Nov 2026. Selected sections only (2(k), 2(y), 3, 4, 5, 16 to 25, 26 to 29, 43, 54, 57, 59, 60, 61, 69), verbatim from the India Code Gazette PDF and checked word by word. The earlier hand-written version had wrong section numbers and was replaced. |
 | `social-security-maternity-2020.txt` | Code on Social Security 2020, Chapter VI (maternity benefit) | ADDED 3 Nov 2026. Sections 59 to 72 plus 1(4), First Schedule entry, 2(43), 41(7) and 164, verbatim from the India Code PDF. Replaces the Maternity Benefit Act 1961 (repealed from 21 Nov 2025). |
