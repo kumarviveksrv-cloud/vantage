@@ -163,13 +163,13 @@
           p+=dir*scatter*0.55;
           vec4 mv=modelViewMatrix*vec4(p,1.);
           gl_Position=projectionMatrix*mv;
-          gl_PointSize=1.25*(1.75+2.6*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
+          gl_PointSize=1.5*(1.75+2.6*(1.0/(1.0+abs(mv.z)))*(0.7+0.3*sin(aSeed.x+uTime*1.7)))*(0.85+0.15*uCoherence);
           vColor=mix(color,uStateColor,uStateMix);}`,
       fragmentShader:`varying vec3 vColor;
         void main(){
           float d=length(gl_PointCoord-.5);
           float core=smoothstep(.36,.02,d);
-          float glow=smoothstep(.5,.0,d)*.2;
+          float glow=smoothstep(.5,.0,d)*.4;
           gl_FragColor=vec4(vColor,(core+glow)*.94);}`
     });
 
@@ -223,7 +223,7 @@
       vertexShader:`attribute vec2 aSeed;varying vec3 vColor;varying float vA;
         uniform float uTime;uniform float uAspect;uniform float uPR;
         void main(){
-          float d=fract(position.z+uTime*0.035*aSeed.y);
+          float d=fract(position.z+uTime*0.055*aSeed.y);
           float z=mix(-4.0,5.6,d);
           float halfH=0.3057*(6.9-z);
           vec3 p=vec3(position.x*halfH*uAspect,position.y*halfH,z);
@@ -232,15 +232,15 @@
           vec4 mv=viewMatrix*vec4(p,1.);
           gl_Position=projectionMatrix*mv;
           float near=1.0/max(0.6,-mv.z);
-          gl_PointSize=min(7.0,(1.6+7.0*near))*uPR;
-          vA=smoothstep(0.0,0.18,d)*(1.0-smoothstep(0.82,1.0,d))*(0.45+0.25*sin(uTime*1.3+aSeed.x));
+          gl_PointSize=min(11.0,(2.4+10.0*near))*uPR;
+          vA=smoothstep(0.0,0.18,d)*(1.0-smoothstep(0.82,1.0,d))*(0.65+0.3*sin(uTime*1.3+aSeed.x));
           vColor=color;}`,
       fragmentShader:`varying vec3 vColor;varying float vA;
         void main(){
           float d=length(gl_PointCoord-.5);
           float a=smoothstep(.5,.0,d);
           a=a*a*.55+smoothstep(.2,.0,d)*.45;
-          gl_FragColor=vec4(vColor,a*vA*.55);}`
+          gl_FragColor=vec4(vColor,a*vA*1.0);}`
     });
     field=new THREE.Points(g,m);
     field.frustumCulled=false;
