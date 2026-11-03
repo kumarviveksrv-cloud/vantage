@@ -1,49 +1,49 @@
 THE CODE ON WAGES, 2019
 ACT NO. 29 OF 2019
-Central rules notified; state rules vary — confirm state applicability before advising.
-Replaces: Payment of Wages Act 1936, Minimum Wages Act 1948, Payment of Bonus Act 1965, Equal Remuneration Act 1976
+SELECTED SECTIONS ONLY: 2(k), 2(y), 3, 4, 5, 16 to 25, 26 to 29, 43, 54, 57, 59, 60, 61 and 69. This is NOT the whole Code. Do not state or guess what any other section says. In particular the sections on fixing minimum wages (6 to 14) and on computing bonus (30 to 41) are not included.
+Source: Gazette of India Extraordinary, 8 August 2019 (India Code PDF), supplied by the founder. Section text unchanged; page headers, margin headings and footnote lines removed.
+Status: one of the four Labour Codes brought into force together on 21 November 2025. Section 69 repeals the Payment of Wages Act 1936, the Minimum Wages Act 1948, the Payment of Bonus Act 1965 and the Equal Remuneration Act 1976. State rules vary, so confirm state applicability before advising.
+READING RULE: Apply these sections exactly as the words are written. Do not add court judgments or case-law readings of them. Where the text answers the point, state what the text says. Where it does not, say so plainly.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CHAPTER I — PRELIMINARY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Section 2 — Key Definitions
+Section 2 — Definitions (selected: "employee" and "wages")
+(k) "employee" means, any person (other than an apprentice engaged under the Apprentices Act, 1961), employed on wages by an establishment to do any skilled, semi-skilled or unskilled, manual, operational, supervisory, managerial, administrative, technical or clerical work for hire or reward, whether the terms of employment be express or implied, and also includes a person declared to be an employee by the appropriate Government, but does not include any member of the Armed Forces of the Union;
+(y) "wages" means all remuneration whether by way of salaries, allowances or otherwise, expressed in terms of money or capable of being so expressed which would, if the terms of employment, express or implied, were fulfilled, be payable to a person employed in respect of his employment or of work done in such employment, and includes,—
+(i) basic pay;
+(ii) dearness allowance; and
+(iii) retaining allowance, if any, but does not include––
+(a) any bonus payable under any law for the time being in force, which does not form part of the remuneration payable under the terms of employment;
+(b) the value of any house-accommodation, or of the supply of light, water, medical attendance or other amenity or of any service excluded from the computation of wages by a general or special order of the appropriate Government;
+(c) any contribution paid by the employer to any pension or provident fund, and the interest which may have accrued thereon;
+(d) any conveyance allowance or the value of any travelling concession;
+(e) any sum paid to the employed person to defray special expenses entailed on him by the nature of his employment;
+(f) house rent allowance;
+(g) remuneration payable under any award or settlement between the parties or order of a court or Tribunal;
+(h) any overtime allowance;
+(i) any commission payable to the employee;
+(j) any gratuity payable on the termination of employment;
+(k) any retrenchment compensation or other retirement benefit payable to the employee or any ex gratia payment made to him on the termination of employment:
+Provided that, for calculating the wages under this clause, if payments made by the employer to the employee under clauses (a) to (i) exceeds one-half, or such other per cent. as may be notified by the Central Government, of the all remuneration calculated under this clause, the amount which exceeds such one-half, or the per cent. so notified, shall be deemed as remuneration and shall be accordingly added in wages under this clause:
+Provided further that for the purpose of equal wages to all genders and for the purpose of payment of wages, the emoluments specified in clauses (d), (f),
+(g) and (h) shall be taken for computation of wage.
+Explanation.––Where an employee is given in lieu of the whole or part of the wages payable to him, any remuneration in kind by his employer, the value of such remuneration in kind which does not exceed fifteen per cent. of the total wages payable to him, shall be deemed to form part of the wages of such employee;
 
-2(y) "wages" means all remuneration whether by way of salaries, allowances or otherwise, expressed in terms of money or capable of being so expressed which would, if the terms of employment, express or implied, were fulfilled, be payable to a person employed in respect of his employment or of work done in such employment, and includes,—
-  (i) basic pay;
-  (ii) dearness allowance; and
-  (iii) retaining allowance, if any,
-
-but does not include—
-  (a) any bonus payable under any law for the time being in force, which does not form part of the remuneration payable under the terms of employment;
-  (b) the value of any house-accommodation, or of the supply of light, water, medical attendance or other amenity or of any service excluded from the computation of wages by a general or special order of the appropriate Government;
-  (c) any contribution paid by the employer to any pension or provident fund, and the interest which may have accrued thereon;
-  (d) any conveyance allowance or the value of any travelling concession;
-  (e) any sum paid to the employed person to defray special expenses entailed on him by the nature of his employment;
-  (f) house rent allowance;
-  (g) remuneration payable under any award or settlement between the parties or order of a court or Tribunal;
-  (h) any overtime allowance;
-  (i) any commission payable to the employee;
-  (j) any gratuity payable on the termination of employment;
-  (k) any retrenchment compensation or other retirement benefit payable to the employee or any ex gratia payment made to him on the termination of employment.
-
-[KEY IMPLICATION: House rent allowance, conveyance allowance, overtime, and certain other components are EXCLUDED from "wages" for purposes of minimum wage calculation and bonus computation.]
+Sections 3 and 4 — Prohibition of discrimination on ground of gender
+3. (1) There shall be no discrimination in an establishment or any unit thereof among employees on the ground of gender in matters relating to wages by the same employer, in respect of the same work or work of a similar nature done by any employee.
+(2) No employer shall,—
+(i) for the purposes of complying with the provisions of sub-section (1), reduce the rate of wages of any employee; and
+(ii) make any discrimination on the ground of sex while recruiting any employee for the same work or work of similar nature and in the conditions of employment, except where the employment of women in such work is prohibited or restricted by or under any law for the time being in force.
+4. Where there is any dispute as to whether a work is of same or similar nature for the purposes of section 3, the dispute shall be decided by such authority as may be notified by the appropriate Government.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CHAPTER II — MINIMUM WAGES
+CHAPTER II — MINIMUM WAGES (Section 5 only)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Section 6 — Fixation of minimum rate of wages
-(1) The appropriate Government shall fix the minimum rate of wages payable to the employees:
-Provided that the appropriate Government may not fix minimum rates of wages in respect of any scheduled employment in which there are throughout the year less than one thousand employees in the whole of the State.
-
-(2) The appropriate Government shall review or revise the minimum rates of wages fixed under sub-section (1) at an interval not exceeding five years.
-
-Section 8 — Composition of minimum wages
-Any minimum rate of wages fixed or revised under this Chapter may consist of—
-  (a) a basic rate of wages and an allowance at a rate to be adjusted, at such intervals and in such manner as the appropriate Government may direct, to accord as nearly as practicable with the variation in the cost of living index number applicable to the workers of the scheduled employment; or
-  (b) a basic rate of wages with or without the cost of living allowance, and the cash value of the concessions in respect of essential commodities supplied at concessional rates; or
-  (c) an all-inclusive rate allowing for the basic rate, the cost of living allowance and the cash value of the concessions, if any.
+Section 5 — Payment of minimum rate of wages
+5. No employer shall pay to any employee wages less than the minimum rate of wages notified by the appropriate Government.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CHAPTER III — PAYMENT OF WAGES (Sections 16 to 25, text as printed in the Gazette of India, India Code)
@@ -137,42 +137,86 @@ Section 25 — Chapter not to apply to Government establishments
 25. The provisions of this Chapter shall not apply to the Government establishments unless the appropriate Government, by notification, applies such provisions to the Government establishments specified in the said notification.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CHAPTER IV — PAYMENT OF BONUS
+CHAPTER IV — PAYMENT OF BONUS (Sections 26 to 29)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Section 26 — Eligibility for bonus
-Every employee who has worked in an establishment for not less than thirty working days in a year shall be eligible for bonus.
+Section 26 — Eligibility for bonus, etc.
+26. (1) There shall be paid to every employee, drawing wages not exceeding such amount per mensem, as determined by notification, by the appropriate Government, by his employer, who has put in at least thirty days work in an accounting year, an annual minimum bonus calculated at the rate of eight and one-third per cent. of the wages earned by the employee or one hundred rupees, whichever is higher whether or not the employer has any allocable surplus during the previous accounting year.
+(2) For the purpose of calculation of the bonus where the wages of the employee exceeds such amount per mensem, as determined by notification by the appropriate Government, the bonus payable to such employee under sub-sections (1) and (3) shall be calculated as if his wage were such amount, so determined by the appropriate Government or the minimum wage fixed by the appropriate Government, whichever is higher.
+(3) Where in respect of any accounting year referred to in sub-section (1), the allocable surplus exceeds the amount of minimum bonus payable to the employees under that sub-section, the employer shall, in lieu of such minimum bonus, be bound to pay to every employee in respect of that accounting year, bonus which shall be an amount in proportion to the wages earned by the employee during the accounting year, subject to a maximum of twenty per cent. of such wages.
+(4) In computing the allocable surplus under this section, the amount set on or the amount set off under the provisions of section 36 shall be taken into account in accordance with the provisions of that section.
+(5) Any demand for bonus in excess of the bonus referred to in sub-section (1), either on the basis of production or productivity in an accounting year for which the bonus is payable shall be determined by an agreement or settlement between the employer and the employees, subject to the condition that the total bonus including the annual minimum bonus referred to in sub-section (1) shall not exceed twenty per cent. of the wages earned by the employee in the accounting year.
+(6) In the first five accounting years following the accounting year in which the employer sells the goods produced or manufactured by him or renders services, as the case may be, from such establishment, bonus shall be payable only in respect of the accounting year in which the employer derives profit from such establishment and such bonus shall be calculated in accordance with the provisions of this Code in relation to that year, but without applying the provisions of section 36.
+(7) For the sixth and seventh accounting years following the accounting year in which the employer sells the goods produced or manufactured by him or renders services, as the case may be, from such establishment, the provisions of section 36 shall apply subject to the following modifications, namely:—
+(i) for the sixth accounting year set on or set off, as the case may be, shall be made, in the manner as may be prescribed by the Central Government, taking into account the excess or deficiency, if any, as the case may be, of the allocable surplus set on or set off in respect of the fifth and sixth accounting years;
+(ii) for the seventh accounting year set on or set off, as the case may be, shall be made, in the manner as may be prescribed by the Central Government, taking into account the excess or deficiency, if any, as the case may be, of the allocable surplus set on or set off in respect of the fifth, sixth and seventh accounting years.
+(8) From the eighth accounting year following the accounting year in which the employer sells the goods produced or manufactured by him or renders services, as the case may be, from such establishment, the provisions of section 36 shall apply in relation to such establishment as they apply in relation to any other establishment.
+Explanation 1.––For the purpose of sub-section (6), an employer shall not be deemed to have derived profit in any accounting year, unless––
+(a) he has made provision for depreciation of that year to which he is entitled under the Income-tax Act or, as the case may be, under the agricultural income tax law; and
+(b) the arrears of such depreciation and losses incurred by him in respect of the establishment for the previous accounting years have been fully set off against his profits.
+Explanation 2.––For the purposes of sub-sections (6), (7) and (8), sale of the goods produced or manufactured during the course of the trial running of any factory or of the prospecting stage of any mine or an oil-field shall not be taken into consideration and where any question arises with regard to such production or manufacture, the appropriate Government may, after giving the parties a reasonable opportunity of representing the case, decide upon the issue.
+(9) The provisions of sub-sections (6), (7) and (8) shall, so far as may be, apply to new departments or undertakings or branches set up by existing establishments.
 
-Section 27 — Disqualification for bonus
-Notwithstanding anything contained in this Code, an employee shall be disqualified from receiving bonus under this Code, if he is dismissed from service for—
-  (a) fraud; or
-  (b) riotous or violent behaviour while on the premises of the establishment; or
-  (c) theft, misappropriation or sabotage of any property of the establishment; or
-  (d) conviction for sexual harassment.
+Section 27 — Proportionate reduction in bonus in certain cases
+27. Where an employee has not worked for all the working days in an accounting year, the minimum bonus under sub-section (1) of section 26, if such bonus is higher than eight and one third per cent. of the salary or wage of the days such employee has worked in that accounting year, shall be proportionately reduced.
 
-Section 28 — Payment of minimum bonus
-Subject to the other provisions of this Code, every employer shall be bound to pay to every employee in respect of the accounting year, a minimum bonus which shall be 8.33 per cent of the wages earned by the employee during the accounting year or one hundred rupees, whichever is higher, whether or not the employer has any allocable surplus in the accounting year.
+Section 28 — Computation of number of working days
+28. For the purposes of section 27, an employee shall be deemed to have worked in an establishment in any accounting year also on the days on which,––
+(a) he has been laid off under an agreement or as permitted by standing orders under the Industrial Employment (Standing Orders) Act, 1946, or under the Industrial Disputes Act, 1947, or under any other law applicable to the establishment;
+(b) he has been on leave with salary or wages;
+(c) he has been absent due to temporary disablement caused by accident arising out of and in the course of his employment; and
+(d) the employee has been on maternity leave with salary or wages, during the accounting year.
 
-[NOTE: Minimum bonus of 8.33% applies regardless of profit/loss. Maximum bonus (if allocable surplus allows) is 20% of annual wages.]
-
-Section 29 — Eligibility wage ceiling for bonus
-An employee drawing wages exceeding a threshold amount notified by the Central Government shall not be eligible to receive bonus under this Code.
-[As notified: employees drawing wages above ₹21,000 per month are not entitled to statutory bonus. The eligible wage for bonus calculation is capped at ₹7,000 per month or the notified minimum wage for scheduled employment, whichever is higher.]
+Section 29 — Disqualification for bonus
+29. Notwithstanding anything contained in this Code, an employee shall be disqualified from receiving bonus under this Code, if he is dismissed from service for––
+(a) fraud; or
+(b) riotous or violent behaviour while on the premises of the establishment; or
+(c) theft, misappropriation or sabotage of any property of the establishment; or
+(d) conviction for sexual harassment.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-EQUAL REMUNERATION
+CHAPTER VI — PAYMENT OF DUES, CLAIMS AND AUDIT (Section 43 only)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Section 3 — Equal remuneration
-(1) No employer shall pay to any employee wages at a rate less than the rate at which wages are paid by him to an employee of another gender for performance of the same work or work of a similar nature.
-
-(2) For the purposes of this section, the expression "work of a similar nature" means work in respect of which the skill, effort, experience, responsibility, working conditions and time of work required are the same.
+Section 43 — Responsibility for payment of various dues
+43. Every employer shall pay all amounts required to be paid under this Code to every employee employed by him:
+Provided that where such employer fails to make such payment in accordance with this Code, then, the company or firm or association or any other person who is the proprietor of the establishment, in which the employee is employed, shall be responsible for such payment.
+Explanation.––For the purposes of this section the expression "firm" shall have the same meaning as assigned to it in the Indian Partnership Act, 1932.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PENALTIES (Key provisions)
+CHAPTER VIII — OFFENCES AND PENALTIES (Section 54 only)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Section 51 — Penalties for non-payment/underpayment of wages:
-- Failure to pay minimum wages: fine up to ₹50,000 (first offence); imprisonment up to 3 months or fine up to ₹1,00,000 or both (repeat offence)
-- Failure to pay bonus: fine up to ₹50,000
-- Failure to maintain records: fine up to ₹10,000
+Section 54 — Penalties for offences
+54. (1) Any employer who—
+(a) pays to any employee less than the amount due to such employee under the provisions of this Code shall be punishable with fine which may extend to fifty thousand rupees;
+(b) having been convicted of an offence under clause (a) is again found guilty of similar offence under this clause, within five years from the date of the commission of the first or subsequent offence, he shall, on the second and the subsequent commission of the offence, be punishable with imprisonment for a term which may extend to three months or with fine which may extend to one lakh rupees, or with both;
+(c) contravenes any other provision of this Code or any rule made or order made or issued thereunder shall be punishable with fine which may extend to twenty thousand rupees;
+(d) having been convicted of an offence under clause (c) is again found guilty of similar offence under this clause, within five years from the date of the commission of the first or subsequent offence, he shall, on the second and the subsequent commission of the offence under this clause, be punishable with imprisonment for a term which may extend to one month or with fine which may extend to forty thousand rupees, or with both.
+(2) Notwithstanding anything contained in sub-section (1), for the offences of non-maintenance or improper maintenance of records in the establishment, the employer shall be punishable with fine which may extend to ten thousand rupees.
+(3) Notwithstanding anything contained in clause (c) of sub-section (1) or sub-section (2), the Inspector-cum-Facilitator shall, before initiation of prosecution proceeding for the offences under the said clause or sub-section, give an opportunity to the employer to comply with the provisions of this Code by way of a written direction, which shall lay down a time period for such compliance, and, if the employer complies with the direction within such period, the Inspector-cum-Facilitator shall not initiate such prosecution proceeding and, no such opportunity shall be accorded to an employer, if the violation of the same nature of the provisions under this Code is repeated within a period of five years from the date on which such first violation was committed and in such case the prosecution shall be initiated in accordance with the provisions of this Code.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHAPTER IX — MISCELLANEOUS (Sections 57 to 61 and 69)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Section 57 — Bar of suits
+57. No court shall entertain any suit for the recovery of minimum wages, any deduction from wages, discrimination in wages and payment of bonus, in so far as the sum so claimed—
+(a) forms the subject of claims under section 45;
+(b) has formed the subject of a direction under this Code;
+(c) has been adjudged in any proceeding under this Code;
+(d) could have been recovered under this Code.
+
+Section 59 — Burden of proof
+59. Where a claim has been filed on account of non-payment of remuneration or bonus or less payment of wages or bonus or on account of making deductions not authorised by this Code from the wages of an employee, the burden to prove that the said dues have been paid shall be on the employer.
+
+Section 60 — Contracting out
+60. Any contract or agreement whereby an employee relinquishes the right to any amount or the right to bonus due to him under this Code shall be null and void in so far as it purports to remove or reduce the liability of any person to pay such amount under this Code.
+
+Section 61 — Effect of laws, agreements, etc., inconsistent with this Code
+61. The provisions of this Code shall have effect notwithstanding anything inconsistent therewith contained in any other law for the time being in force or in the terms of any award, agreement, settlement or contract of service.
+
+Section 69 — Repeal and savings
+69. (1) The Payment of Wages Act, 1936, the Minimum Wages Act, 1948, the Payment of Bonus Act, 1965 and the Equal Remuneration Act, 1976 are hereby repealed.
+(2) Notwithstanding such repeal, anything done or any action taken under the enactments so repealed including any notification, nomination, appointment, order or direction made thereunder or any amount of wages provided in any provision of such enactments for any purpose shall be deemed to have been done or taken or provided for such purpose under the corresponding provisions of this Code and shall be in force to the extent they are not contrary to the provisions of this Code till they are repealed under the corresponding provisions of this Code or by the notification to that effect by the Central Government.
+(3) Without prejudice to the provisions of sub-section (2), the provisions of section 6 of the General Clauses Act, 1897 shall apply to the repeal of such enactments.
