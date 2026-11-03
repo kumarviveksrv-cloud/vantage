@@ -46,23 +46,95 @@ Any minimum rate of wages fixed or revised under this Chapter may consist of—
   (c) an all-inclusive rate allowing for the basic rate, the cost of living allowance and the cash value of the concessions, if any.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CHAPTER III — PAYMENT OF WAGES
+CHAPTER III — PAYMENT OF WAGES (Sections 16 to 25, text as printed in the Gazette of India, India Code)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Section 17 — Responsibility for payment of wages
-Every employer shall be responsible for the payment of all wages required to be paid under this Code to persons employed by him and in case of persons employed,—
-  (a) in factories, by the person named as the manager of the factory;
-  (b) in industrial or other establishments, by the person responsible to the employer for the supervision and control of the industrial or other establishment;
-  (c) upon railways (other than in factories), by the person nominated by the railway administration for the specified area;
-  (d) in the case of contractor, a person designated by such contractor.
+Section 16 — Fixation of wage period
+16. The employer shall fix the wage period for employees either as daily or weekly or fortnightly or monthly subject to the condition that no wage period in respect of any employee shall be more than a month:
+Provided that different wage periods may be fixed for different establishments.
 
-Section 28 — Time of payment of wages
-(1) The wages of every employee shall be paid—
-  (a) before the expiry of the seventh day after the last day of the wage period in respect of which the wages are payable, where the employment of less than one thousand employees; and
-  (b) before the expiry of the tenth day after the last day of the wage period, in any other case.
-(2) Where the employment of any employee is terminated by or on behalf of the employer, the wages earned by him shall be paid before the expiry of the second working day from the date of such termination.
+Section 17 — Time limit for payment of wages
+17. (1) The employer shall pay or cause to be paid wages to the employees, engaged on —
+  (i) daily basis, at the end of the shift;
+  (ii) weekly basis, on the last working day of the week, that is to say, before the weekly holiday;
+  (iii) fortnightly basis, before the end of the second day after the end of the fortnight;
+  (iv) monthly basis, before the expiry of the seventh day of the succeeding month.
+(2) Where an employee has been—
+  (i) removed or dismissed from service; or
+  (ii) retrenched or has resigned from service, or became unemployed due to closure of the establishment,
+the wages payable to him shall be paid within two working days of his removal, dismissal, retrenchment or, as the case may be, his resignation.
+(3) Notwithstanding anything contained in sub-section (1) or sub-section (2), the appropriate Government may, provide any other time limit for payment of wages where it considers reasonable having regard to the circumstances under which the wages are to be paid.
+(4) Nothing contained in sub-section (1) or sub-section (2) shall affect any time limit for payment of wages provided in any other law for the time being in force.
 
-[CRITICAL: Final settlement wages on termination must be paid within 2 working days of termination date — not the next salary cycle.]
+[KEY IMPLICATION: Wages on resignation, dismissal, removal or retrenchment are due within two working days, not at the next salary cycle.]
+
+Section 18 — Deductions which may be made from wages
+18. (1) Notwithstanding anything contained in any other law for the time being in force, there shall be no deductions from the wages of the employee, except those as are authorised under this Code.
+Explanation.––For the purposes of this sub-section,—
+  (a) any payment made by an employee to the employer or his agent shall be deemed to be a deduction from his wages;
+  (b) any loss of wages to an employee, for a good and sufficient cause, resulting from—
+    (i) the withholding of increment or promotion, including the stoppage of an increment; or
+    (ii) the reduction to a lower post or time-scale; or
+    (iii) the suspension,
+  shall not be deemed to be a deduction from wages in a case where the provisions made by the employer for such purposes are satisfying the requirements specified in the notification issued by the appropriate Government in this behalf.
+(2) Deductions from the wages of an employee shall be made in accordance with the provisions of this Code, and may be made only for the following purposes, namely:—
+  (a) fines imposed on him;
+  (b) deductions for his absence from duty;
+  (c) deductions for damage to or loss of goods expressly entrusted to the employee for custody; or for loss of money for which he is required to account, where such damage or loss is directly attributable to his neglect or default;
+  (d) deductions for house-accommodation supplied by the employer or by appropriate Government or any housing board set up under any law for the time being in force, whether the Government or such board is the employer or not, or any other authority engaged in the business of subsidising house-accommodation which may be specified in this behalf by the appropriate Government by notification;
+  (e) deductions for such amenities and services supplied by the employer as the appropriate Government or any officer specified by it in this behalf may, by general or special order, authorise and such deduction shall not exceed an amount equivalent to the value of such amenities and services.
+  Explanation.––For the purposes of this clause, the expression "services" does not include the supply of tools and raw materials required for the purposes of employment;
+  (f) deductions for recovery of —
+    (i) advances of whatever nature (including advances for travelling allowance or conveyance allowance), and the interest due in respect thereof, or for adjustment of overpayment of wages;
+    (ii) loans made from any fund constituted for the welfare of labour, as may be prescribed by the appropriate Government, and the interest due in respect thereof;
+  (g) deductions for recovery of loans granted for house-building or other purposes approved by the appropriate Government and the interest due in respect thereof;
+  (h) deductions of income-tax or any other statutory levy levied by the Central Government or State Government and payable by the employee or deductions required to be made by order of a court or other authority competent to make such order;
+  (i) deductions for subscription to, and for repayment of advances from any social security fund or scheme constituted by law including provident fund or pension fund or health insurance scheme or fund known by any other name;
+  (j) deductions for payment of co-operative society subject to such conditions as the appropriate Government may impose;
+  (k) deductions made, with the written authorisation of the employee, for payment of the fees and contribution payable by him for the membership of any Trade Union registered under the Trade Unions Act, 1926;
+  (l) deductions for recovery of losses sustained by the railway administration on account of acceptance by the employee of counterfeit or base coins or mutilated or forged currency notes;
+  (m) deductions for recovery of losses sustained by the railway administration on account of the failure of the employee to invoice, to bill, to collect or to account for the appropriate charges due to the railway administration whether in respect of fares, freight, demurrage, wharfage and cranage or in respect of sale of food in catering establishments or in respect of commodities in grain shops or otherwise;
+  (n) deductions for recovery of losses sustained by the railway administration on account of any rebates or refunds incorrectly granted by the employee where such loss is directly attributable to his neglect or default;
+  (o) deductions, made with the written authorisation of the employee, for contribution to the Prime Minister's National Relief Fund or to such other fund as the Central Government may, by notification, specify.
+(3) Notwithstanding anything contained in this Code and subject to the provisions of any other law for the time being in force, the total amount of deductions which may be made under sub-section (2) in any wage period from the wages of an employee shall not exceed fifty per cent. of such wages.
+(4) Where the total deductions authorised under sub-section (2) exceed fifty per cent. of the wages, the excess may be recovered in such manner, as may be prescribed.
+(5) Where any deduction is made by the employer from the wages of an employee under this section but not deposited in the account of the trust or Government fund or any other account, as required under the provisions of the law for the time being in force, such employee shall not be held responsible for such default of the employer.
+
+Section 19 — Fines
+19. (1) No fine shall be imposed on any employee save in respect of those acts and omissions on his part as the employer, with the previous approval of the appropriate Government or of such authority as may be prescribed, may have specified by notice under sub-section (2).
+(2) A notice specifying such acts and omissions shall be exhibited in such manner as may be prescribed, on the premises in which the employment is carried on.
+(3) No fine shall be imposed on any employee until such employee has been given an opportunity of showing cause against the fine or otherwise than in accordance with such procedure as may be prescribed for the imposition of fines.
+(4) The total amount of fine which may be imposed in any one wage-period on any employee shall not exceed an amount equal to three per cent. of the wages payable to him in respect of that wage-period.
+(5) No fine shall be imposed on any employee who is under the age of fifteen years.
+(6) No fine imposed on any employee shall be recovered from him by instalments or after the expiry of ninety days from the day on which it was imposed.
+(7) Every fine shall be deemed to have been imposed on the day of the act or omission in respect of which it was imposed.
+(8) All fines and all realisations thereof shall be recorded in a register to be kept in such manner and form as may be prescribed; and all such realisations shall be applied only to such purposes beneficial to the persons employed in the establishment as are approved by the prescribed authority.
+
+Section 20 — Deductions for absence from duty
+20. (1) Deductions may be made under clause (b) of sub-section (2) of section 18 only on account of the absence of an employee from the place or places where by the terms of his employment, he is required to work, such absence being for the whole or any part of the period during which he is so required to work.
+(2) The amount of such deduction shall in no case bear to the wages payable to the employed person in respect of the wage-period for which the deduction is made in a larger proportion than the period for which he was absent bears to the total period within such wage-period during which by the terms of his employment he was required to work:
+Provided that, subject to any rules made in this behalf by the appropriate Government, if ten or more employed persons acting in concert absent themselves without due notice (that is to say without giving the notice which is required under the terms of their contracts of employment) and without reasonable cause, such deduction from any such person may include such amount not exceeding his wages for eight days as may by any such terms be due to the employer in lieu of due notice.
+Explanation.––For the purposes of this section, an employee shall be deemed to be absent from the place where he is required to work if, although present in such place, he refuses, in pursuance of a stay-in strike or for any other cause which is not reasonable in the circumstances, to carry out his work.
+
+Section 21 — Deductions for damage or loss
+21. (1) A deduction under clause (c) or clause (n) of sub-section (2) of section 18 for damage or loss shall not exceed the amount of the damage or loss caused to the employer by negligence or default of the employee.
+(2) A deduction shall not be made under sub-section (1) until the employee has been given an opportunity of showing cause against the deduction or otherwise than in accordance with such procedure as may be prescribed for the making of such deductions.
+(3) All such deductions and all realisations thereof shall be recorded in a register to be kept in such form as may be prescribed.
+
+Section 22 — Deductions for services rendered
+22. A deduction under clause (d) or clause (e) of sub-section (2) of section 18 shall not be made from the wages of an employee, unless the house-accommodation amenity or service has been accepted by him as a term of employment or otherwise and such deduction shall not exceed an amount equivalent to the value of the house-accommodation amenity or service supplied and shall be subject to such conditions as the appropriate Government may impose.
+
+Section 23 — Deductions for recovery of advances
+23. Deductions under clause (f) of sub-section (2) of section 18 for recovery of advances given to an employee shall be subject to the following conditions, namely:––
+  (a) recovery of advance of money given to an employee before the employment began shall be made from the first payment of wages to him in respect of a complete wage-period but no recovery shall be made of such advances given for travelling expenses;
+  (b) recovery of advance of money given to an employee after the employment began shall be subject to such conditions as may be prescribed;
+  (c) recovery of advances of wages to an employee not already earned shall be subject to such conditions as may be prescribed.
+
+Section 24 — Deductions for recovery of loans
+24. Deductions under clause (g) of sub-section (2) of section 18 for recovery of loans granted to an employee, regulating the extent to which such loans may be granted and the rate of interest payable thereon, shall be such as may be prescribed.
+
+Section 25 — Chapter not to apply to Government establishments
+25. The provisions of this Chapter shall not apply to the Government establishments unless the appropriate Government, by notification, applies such provisions to the Government establishments specified in the said notification.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CHAPTER IV — PAYMENT OF BONUS

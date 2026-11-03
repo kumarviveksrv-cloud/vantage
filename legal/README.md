@@ -7,9 +7,9 @@ the actual statutory text when answering PACT and Policy Advisor questions.
 
 | File | Act | Status |
 |---|---|---|
-| `ir-code-2020.txt` | Industrial Relations Code 2020 | Key sections (Ch I, IV, IX, X, XII, XIII) |
+| `ir-code-2020.txt` | Industrial Relations Code 2020 | Key sections (Ch I, IV, IX, X, XII, XIII). s.2(zr)(iv) corrected to Rs 18,000 against the India Code PDF on 3 Nov 2026. Other sections were condensed by hand and are not yet checked word for word. |
 | `posh-act-2013.txt` | POSH Act 2013 | Full text (all operative sections) |
-| `wages-code-2019.txt` | Code on Wages 2019 | Key sections (definitions, minimum wages, payment, bonus) |
+| `wages-code-2019.txt` | Code on Wages 2019 | Chapter III (ss.16 to 25, including s.18 deductions) is the verbatim Gazette text, checked against the India Code PDF on 3 Nov 2026. Other sections (definitions, minimum wages, bonus, penalties) were condensed by hand and are NOT yet verified; several section numbers there are known to be wrong. |
 | `indian-contract-act-1872.txt` | Indian Contract Act 1872 | ADDED 3 Nov 2026. Selected sections only (15, 16, 23, 27, 73, 74), text from India Code. Optional: the Worker loads it for notice, bond, restraint, recovery and poaching cases, and skips it silently if the file is ever removed |
 
 ## How the Worker uses these
