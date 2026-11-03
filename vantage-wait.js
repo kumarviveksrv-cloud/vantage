@@ -1,5 +1,5 @@
 /* Virorah Vantage: wait-time notice for AI tools.
- * Watches #loading-view. While it is visible it shows "usually 90 to 120 seconds",
+ * Watches #loading-view. While it is visible it shows "usually 60 to 90 seconds" (set per page with data-range and data-est),
  * an elapsed timer and an estimated progress bar, and asks the browser to confirm
  * before the tab is refreshed or closed. The leave-guard is released as soon as the
  * server responds, so the app's own redirects (for example the trial gate) are never blocked.
@@ -10,7 +10,9 @@
  * deploy, or any other server), the plain JSON response is passed through untouched.
  */
 (function () {
-  var EST = 120, t0 = 0, timer = 0, box = null, guarding = false, live = false;
+  /* Per-page range: <script src="vantage-wait.js" data-range="90 to 120" data-est="120">. Default is 60 to 90. */
+  var me = document.currentScript, RANGE = (me && me.getAttribute('data-range')) || '60 to 90';
+  var EST = parseInt((me && me.getAttribute('data-est')) || '90', 10) || 90, t0 = 0, timer = 0, box = null, guarding = false, live = false;
   function guard(e) { e.preventDefault(); e.returnValue = ''; return ''; }
   function fmt(s) { return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
 
@@ -42,7 +44,7 @@
     injectCss();
     var host = view.querySelector('.loading-state') || view;
     box = document.createElement('div'); box.className = 'vw-box'; box.setAttribute('role', 'status'); box.setAttribute('aria-live', 'polite');
-    box.innerHTML = '<div class="vw-head">This usually takes 90 to 120 seconds</div><div class="vw-bar"><i></i></div>' +
+    box.innerHTML = '<div class="vw-head">This usually takes ' + RANGE + ' seconds</div><div class="vw-bar"><i></i></div>' +
       '<div class="vw-line"><span class="vw-msg">Please keep this tab open. Refreshing or closing it can lose this run.</span><span class="vw-time">0:00</span></div>';
     host.appendChild(box);
     t0 = Date.now(); timer = setInterval(tick, 1000); tick();
