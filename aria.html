@@ -668,18 +668,36 @@
     // Replies are read aloud only with voices installed on the device (localService).
     // Network voices such as "Google UK English Female" send the reply text to Google, so they are never used.
     function localVoices(){ return (voices||[]).filter(function(v){ return v.localService; }); }
-    function getBestVoice() {
-      var loc=localVoices();
-      var en=loc.filter(function(v){return /^en/i.test(v.lang);});
-      if(!en.length) return null;
-      var femaleHint=/(female|zira|heera|veena|samantha|karen|moira|victoria|tessa|priya|neerja|aditi|swara)/i;
+    // ARIA is female. Only female on-device English voices are offered, shown under ARIA's own names:
+    // Indian English voices are Mira then Maya; other English voices get modern names from a fixed list.
+    var FEMALE_VOICE_RE=/(female|zira|heera|veena|neerja|aditi|swara|priya|samantha|karen|moira|victoria|tessa|susan|hazel|libby|sonia|jenny|michelle|emma|natasha|clara|olivia|fiona|serena|allison|ava|kate|catherine|zoe|nicky|joanna|salli|kendra|kimberly|ivy|amy|ana|aria|linda|catherine|heather|isha|shreya|ayanna|jane|sara|sonya)/i;
+    var MALE_VOICE_RE=/\b(david|mark|ravi|hemant|prabhat|george|james|richard|guy|ryan|thomas|daniel|alex|fred|oliver|male|rishi|sean|william|eric|brian|christopher|liam|connor|steffan)\b/i;
+    var ARIA_IN_NAMES=['Mira','Maya'], ARIA_EN_NAMES=['Nova','Ivy','Elara','Skye','Luna','Zara'];
+    var ARIA_REGION={'en-IN':'India','en-GB':'UK','en-US':'US','en-AU':'Australia','en-CA':'Canada','en-IE':'Ireland','en-ZA':'South Africa'};
+    function ariaVoiceList(){
       var order=['en-IN','en-GB','en-US'];
-      for(var i=0;i<order.length;i++){
-        var inLang=en.filter(function(v){return v.lang.replace('_','-')===order[i];});
-        var f=inLang.find(function(v){return femaleHint.test(v.name);});
-        if(f) return f;
-        if(inLang.length) return inLang[0];
-      }
+      var rank=function(v){var i=order.indexOf(String(v.lang).replace('_','-'));return i<0?order.length:i;};
+      var fem=localVoices().filter(function(v){return /^en/i.test(v.lang)&&FEMALE_VOICE_RE.test(v.name)&&!MALE_VOICE_RE.test(v.name);});
+      fem.sort(function(x,y){return rank(x)-rank(y)||(x.name<y.name?-1:1);});
+      var inN=0,enN=0,out=[];
+      fem.forEach(function(v){
+        var lang=String(v.lang).replace('_','-'), nm;
+        if(lang==='en-IN'&&inN<ARIA_IN_NAMES.length) nm=ARIA_IN_NAMES[inN++];
+        else if(enN<ARIA_EN_NAMES.length) nm=ARIA_EN_NAMES[enN++];
+        else return;
+        out.push({voice:v,label:nm+' \u00B7 '+(ARIA_REGION[lang]||lang)});
+      });
+      return out.slice(0,8);
+    }
+    var ariaVoicePitch=1.0;
+    function getBestVoice() {
+      var list=ariaVoiceList();
+      ariaVoicePitch=1.0;
+      if(list.length) return list[0].voice;
+      // No female voice installed: fall back to any on-device English voice, pitched up a little
+      var en=localVoices().filter(function(v){return /^en/i.test(v.lang);});
+      if(!en.length) return null;
+      ariaVoicePitch=1.2;
       return en[0];
     }
 
@@ -978,20 +996,24 @@
       voices = window.speechSynthesis.getVoices();
       var sel = document.getElementById('voice-select');
       if (!sel || !voices.length) return;
-      var en = localVoices().filter(function(v) { return /^en/i.test(v.lang); }).slice(0, 8);
-      if (!en.length) {
+      var list = ariaVoiceList();
+      if (!localVoices().some(function(v) { return /^en/i.test(v.lang); })) {
         sel.innerHTML = '<option value="auto">No on-device voice: text only</option>';
         selectedVoiceName = 'auto';
         return;
       }
-      var html = '<option value="auto">Auto (on-device)</option>';
-      en.forEach(function(v) {
-        var label = String(v.name).replace(/^Microsoft\s+/i, '').substring(0, 70);
-        html += '<option value="' + v.name.replace(/"/g, '') + '" title="' + String(v.name).replace(/[&<>"]/g, '') + '">' + label.replace(/[&<>]/g, '') + '</option>';
+      if (!list.length) {
+        sel.innerHTML = '<option value="auto">No female voice on this device (pitched fallback)</option>';
+        selectedVoiceName = 'auto';
+        return;
+      }
+      var html = '<option value="auto">Auto (' + list[0].label.split(' \u00B7 ')[0] + ')</option>';
+      list.forEach(function(it) {
+        html += '<option value="' + it.voice.name.replace(/"/g, '') + '" title="' + String(it.voice.name).replace(/[&<>"]/g, '') + '">' + it.label + '</option>';
       });
       sel.innerHTML = html;
       var saved = null; try { saved = localStorage.getItem('aria_voice'); } catch (e) {}
-      if (saved && en.some(function(v) { return v.name === saved; })) { sel.value = saved; selectedVoiceName = saved; }
+      if (saved && list.some(function(it) { return it.voice.name === saved; })) { sel.value = saved; selectedVoiceName = saved; }
       else { sel.value = 'auto'; selectedVoiceName = 'auto'; }
     }
 
@@ -1053,7 +1075,8 @@
     speak = function(text) {
       var v = null;
       if (selectedVoiceName !== 'auto') {
-        v = localVoices().find(function(x) { return x.name === selectedVoiceName; }) || null;
+        var hit = ariaVoiceList().find(function(it) { return it.voice.name === selectedVoiceName; });
+        v = hit ? hit.voice : null; ariaVoicePitch = 1.0;
       }
       if (!v) v = getBestVoice();
       if (!v) { isSpeak = false; setState('idle'); voiceHint('No on-device voice on this device, so ARIA replies stay in text.'); return; }
@@ -1061,7 +1084,7 @@
       var clean = (text || '').replace(/\*{1,3}/g, '').replace(/#{1,6}\s?/g, '').replace(/`/g, '').replace(/_/g, ' ').replace(/\n+/g, '. ').replace(/ +/g, ' ').trim();
       var u=new SpeechSynthesisUtterance(clean);
       u.voice = v; u.lang = v.lang;
-      u.rate=speechRate * 0.88; u.pitch=1.0; u.volume=1.0;
+      u.rate=speechRate * 0.88; u.pitch=ariaVoicePitch; u.volume=1.0;
       u.onend=function(){isSpeak=false;setState('idle');};
       u.onerror=function(){isSpeak=false;setState('idle');};
       window.speechSynthesis.speak(u);
