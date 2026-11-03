@@ -36,7 +36,7 @@
 
   function resize(){
     const w=figure.clientWidth||560, h=figure.clientHeight||650;
-    renderer.setSize(w,h);
+    renderer.setSize(w,h,false); // CSS (100%) owns the display size
     camera.aspect=w/h;
     camera.updateProjectionMatrix();
     if(field)field.material.uniforms.uAspect.value=w/h;
@@ -44,6 +44,8 @@
   let field;
   resize();
   addEventListener('resize',resize);
+  if(window.ResizeObserver)new ResizeObserver(resize).observe(figure); // full screen, sidebar hide, etc.
+  document.addEventListener('fullscreenchange',()=>setTimeout(resize,60));
 
   const mouse  = new THREE.Vector2();
   const tgt    = new THREE.Vector2();
@@ -203,10 +205,11 @@
   // Small glowing particles that fill the whole canvas box and drift
   // slowly toward the viewer, fading in at the back and out at the front.
   (function buildField(){
-    const N=2400, pos=new Float32Array(N*3), sd=new Float32Array(N*2), col=new Float32Array(N*3);
+    const N=3600, pos=new Float32Array(N*3), sd=new Float32Array(N*2), col=new Float32Array(N*3);
     for(let i=0;i<N;i++){
-      pos[i*3]=Math.random()*2-1;            // ndc x
-      pos[i*3+1]=Math.random()*2-1;          // ndc y
+      const ang=Math.random()*6.2832, rad=.18+Math.pow(Math.random(),.65)*4.2;
+      pos[i*3]=Math.cos(ang)*rad;            // world x (scaled by aspect in shader)
+      pos[i*3+1]=Math.sin(ang)*rad;          // world y
       pos[i*3+2]=Math.random();              // depth phase 0..1
       sd[i*2]=Math.random()*6.283; sd[i*2+1]=.6+Math.random()*.8;
       col[i*3]=.62+Math.random()*.2; col[i*3+1]=.5+Math.random()*.2; col[i*3+2]=.95+Math.random()*.05;
@@ -223,17 +226,15 @@
       vertexShader:`attribute vec2 aSeed;varying vec3 vColor;varying float vA;
         uniform float uTime;uniform float uAspect;uniform float uPR;
         void main(){
-          float d=fract(position.z+uTime*0.055*aSeed.y);
-          float z=mix(-4.0,5.6,d);
-          float halfH=0.3057*(6.9-z);
-          vec3 p=vec3(position.x*halfH*uAspect,position.y*halfH,z);
-          p.x+=sin(uTime*0.6+aSeed.x)*0.06;
-          p.y+=cos(uTime*0.5+aSeed.x*1.3)*0.06;
+          float d=fract(position.z+uTime*0.042*aSeed.y);
+          float z=mix(-13.0,5.7,d);
+          vec3 p=vec3(position.x*max(uAspect,1.0),position.y,z);
+          
           vec4 mv=viewMatrix*vec4(p,1.);
           gl_Position=projectionMatrix*mv;
           float near=1.0/max(0.6,-mv.z);
           gl_PointSize=min(11.0,(2.4+10.0*near))*uPR;
-          vA=smoothstep(0.0,0.18,d)*(1.0-smoothstep(0.82,1.0,d))*(0.65+0.3*sin(uTime*1.3+aSeed.x));
+          vA=smoothstep(0.0,0.25,d)*(1.0-smoothstep(0.9,1.0,d))*(0.65+0.3*sin(uTime*1.3+aSeed.x));
           vColor=color;}`,
       fragmentShader:`varying vec3 vColor;varying float vA;
         void main(){
