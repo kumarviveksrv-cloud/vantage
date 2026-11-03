@@ -32,11 +32,9 @@
 .sm-btn{padding:8px 16px;border-radius:8px;border:1px solid rgba(99,102,241,.4);background:rgba(99,102,241,.1);color:#c7d2fe;font-family:"DM Sans",sans-serif;font-size:12px;cursor:pointer}\
 .sm-btn:hover{background:rgba(99,102,241,.22)}\
 .sm-btn.primary{background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;border:none;font-weight:700}\
-.sm-panel{position:absolute;width:300px;max-height:60vh;overflow:hidden;border-radius:16px;padding:16px 18px;background:rgba(13,11,30,.62);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border:1px solid rgba(99,102,241,.28);box-shadow:0 18px 50px rgba(0,0,0,.55),inset 0 1px 0 rgba(165,180,252,.15);cursor:grab;touch-action:none;user-select:none;transition:box-shadow .2s,border-color .2s,width .25s,transform .2s}\
+.sm-panel{position:absolute;box-sizing:border-box;width:300px;overflow:hidden;border-radius:16px;padding:16px 18px;background:rgba(13,11,30,.62);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border:1px solid rgba(99,102,241,.28);box-shadow:0 18px 50px rgba(0,0,0,.55),inset 0 1px 0 rgba(165,180,252,.15);cursor:grab;touch-action:none;user-select:none;transition:box-shadow .2s,border-color .2s,width .25s,transform .2s}\
 .sm-panel.hover{border-color:rgba(165,180,252,.7)}\
 .sm-panel.held{cursor:grabbing;border-color:#a5b4fc;box-shadow:0 28px 70px rgba(99,102,241,.35),inset 0 1px 0 rgba(165,180,252,.3);transform:scale(1.02)}\
-.sm-panel.open{width:440px;max-height:78vh;overflow-y:auto}\
-.sm-panel.briefed.open{width:272px;max-height:50px}\
 .sm-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}\
 .sm-label{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#a5b4fc}\
 .sm-tag{font-family:"JetBrains Mono",monospace;font-size:9px;padding:2px 8px;border-radius:4px;border:1px solid rgba(99,102,241,.3);background:rgba(99,102,241,.12);color:#a5b4fc;white-space:nowrap}\
@@ -46,14 +44,24 @@
 .sm-body p{margin:0 0 8px}\
 .sm-big{font-family:"Space Grotesk",sans-serif;font-size:26px;font-weight:700;color:#f4f3ff;margin-bottom:6px}\
 .sm-clamp{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}\
-.sm-panel.open .sm-clamp{-webkit-line-clamp:unset;display:block}\
+.sm-panel .sm-clamp{-webkit-line-clamp:unset;display:block}\
+.sm-scroll{max-height:clamp(100px,22vh,170px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;-ms-overflow-style:none}\
+.sm-scroll::-webkit-scrollbar{display:none}\
+.sm-rail{position:absolute;right:5px;top:0;width:11px;border-radius:7px;background:rgba(99,102,241,.14);z-index:2;cursor:ns-resize;touch-action:none}\
+.sm-rail.off{display:none}\
+.sm-rail i{display:block;width:100%;min-height:30px;border-radius:7px;background:rgba(165,180,252,.5)}\
+.sm-rail.live{background:rgba(124,58,237,.32)}\
+.sm-rail.live i{background:#c4b5fd;box-shadow:0 0 10px rgba(196,181,253,.75)}\
+.sm-panel.briefed .sm-scroll,.sm-panel.briefed .sm-rail{display:none}\
 .sm-pt{display:flex;gap:7px;margin-bottom:5px}.sm-pt:before{content:"";width:4px;height:4px;border-radius:50%;background:#6366f1;margin-top:7px;flex-shrink:0}\
 #sm-preview{display:none;position:absolute;left:16px;bottom:60px;width:224px;height:168px;border-radius:12px;border:2px solid rgba(255,181,71,.7);z-index:30;background:#000;opacity:.92;pointer-events:none}\
 #sm-preview.ok{border-color:rgba(124,58,237,.95)}\
 #sm-cursor{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #a5b4fc;background:conic-gradient(rgba(196,181,253,.85) calc(var(--p)*1turn),rgba(99,102,241,.16) 0);pointer-events:none;z-index:100002;display:none;box-shadow:0 0 18px rgba(99,102,241,.6)}\
 #sm-cursor.held-cur{border-color:#fff;box-shadow:0 0 24px rgba(196,181,253,.9)}\
+#sm-cursor2{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #67e8f9;background:conic-gradient(rgba(103,232,249,.85) calc(var(--p)*1turn),rgba(34,211,238,.14) 0);pointer-events:none;z-index:100002;display:none;box-shadow:0 0 18px rgba(34,211,238,.55)}\
+#sm-cursor2.held-cur{border-color:#fff;box-shadow:0 0 24px rgba(103,232,249,.9)}\
 #sm-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.05em;color:rgba(165,180,252,.7);background:rgba(13,11,30,.7);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:8px 16px;text-align:center;max-width:92vw}\
-#sm-tray{position:absolute;top:76px;right:16px;width:300px;bottom:64px;z-index:5;border-radius:18px;border:1.5px dashed rgba(124,58,237,.4);background:rgba(124,58,237,.05);transition:border-color .2s,background .2s}\
+#sm-tray{position:absolute;top:76px;right:16px;width:360px;bottom:64px;z-index:5;border-radius:18px;border:1.5px dashed rgba(124,58,237,.4);background:rgba(124,58,237,.05);transition:border-color .2s,background .2s}\
 #sm-tray.over{border-color:#c4b5fd;background:rgba(124,58,237,.14)}\
 #sm-tray-head{padding:12px 16px 0}\
 #sm-tray-title{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#c4b5fd}\
@@ -67,7 +75,7 @@
 .sm-btn.hover{background:rgba(99,102,241,.35);border-color:#a5b4fc}\
 #sm-tray-msg{font-family:"JetBrains Mono",monospace;font-size:9px;color:rgba(196,181,253,.8);min-height:12px;letter-spacing:.04em}\
 .sm-panel.snap{transition:left .28s ease,top .28s ease,width .25s,box-shadow .2s,border-color .2s}\
-.sm-panel.briefed{box-sizing:border-box;width:272px;max-height:50px;padding:11px 14px;overflow:hidden;border-radius:12px;border-color:rgba(196,181,253,.45)}\
+.sm-panel.briefed{box-sizing:border-box;width:332px;max-height:50px;padding:11px 14px;overflow:hidden;border-radius:12px;border-color:rgba(196,181,253,.45)}\
 .sm-panel.briefed .sm-body{display:none}\
 .sm-panel.briefed .sm-head{margin:0}\
 .sm-num{display:none;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:13px;color:#c4b5fd;margin-right:8px}\
@@ -78,12 +86,6 @@
 .sm-act.on{background:rgba(124,58,237,.38);border-color:#c4b5fd;color:#fff}\
 .sm-panel.briefed .sm-acts{display:none}\
 .sm-panel.cmp-sel{border-color:#c4b5fd;box-shadow:0 0 0 1px rgba(196,181,253,.5),0 18px 50px rgba(124,58,237,.3)}\
-.sm-panel.focus{width:min(760px,58vw);max-height:calc(100vh - 150px);overflow-y:auto;cursor:default;border-color:#a5b4fc;box-shadow:0 30px 90px rgba(99,102,241,.4),inset 0 1px 0 rgba(165,180,252,.3)}\
-.sm-panel.focus .sm-clamp{display:block;-webkit-line-clamp:unset}\
-.sm-panel.focus .sm-body{font-size:14px;line-height:1.75}\
-.sm-panel.focus .sm-body p{margin:0 0 12px}\
-.sm-panel.sm-dim{opacity:.26;filter:blur(1.5px);pointer-events:none}\
-#sm-focus-bg{position:absolute;inset:0;background:rgba(5,4,16,.5)}\
 #sm-cmp{position:absolute;inset:0;z-index:100000;background:rgba(5,4,16,.93);backdrop-filter:blur(6px);display:flex;flex-direction:column;padding:16px 24px 24px}\
 .sm-cmp-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}\
 .sm-cmp-title{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd}\
@@ -148,8 +150,8 @@
 @media(max-width:900px){.sm-cmp-cols{grid-template-columns:minmax(0,1fr);grid-auto-rows:minmax(0,1fr)}}\
 @media(max-width:768px){.sm-panel{width:240px}.sm-panel.open{width:88vw}#sm-title{display:none}}';
 
-  var st = { root: null, video: null, cursor: null, hands: null, running: false, stream: null, raf: 0,
-             panels: [], brief: [], briefMode: 'summary', opts: {}, cool: 0, z: 10, held: null, hover: null, pinching: false, tracking: false, moved: false, lastSeen: 0, sel: [], focus: null, cmp: null, cmpEl: null, consentEl: null, presEl: null, presI: 0, presFull: false, ariaOk: true, qcEl: null, presets: [], thenEl: null, then: null, saved: [], chkEl: null, chkT: 0, chkOk: 0, hand: null, lc: null };
+  var st = { root: null, video: null, hands: null, running: false, stream: null, raf: 0, hp: null, mp: null, ptrs: null,
+             panels: [], brief: [], briefMode: 'summary', opts: {}, z: 10, tracking: false, lastSeen: 0, sel: [], cmp: null, cmpEl: null, consentEl: null, presEl: null, presI: 0, presFull: false, ariaOk: true, qcEl: null, presets: [], thenEl: null, then: null, saved: [], chkEl: null, chkT: 0, chkOk: 0, hand: null, lc: null };
 
   /* ARIA is paid-plan only. Hide Ask ARIA when we positively know the plan is not active:
      get_plan (run on every page load) stores trial_calls_used as a number, so its presence means the
@@ -180,10 +182,10 @@
   function layout(all) {
     var list = all.filter(function (p) { return !p.inBrief; });
     var W = window.innerWidth, H = window.innerHeight, n = list.length;
-    var free = W < 768 ? W : W - 340, pw = W < 768 ? 240 : 300;
+    var free = W < 768 ? W : W - 400, pw = W < 768 ? 240 : 300;
     var cols = W < 768 ? 1 : Math.max(1, Math.min(4, Math.ceil(Math.sqrt(n * 1.6)), Math.floor((free - 20) / (pw + 14))));
     var gx = (free - cols * pw) / (cols + 1);
-    var rows = Math.max(1, Math.ceil(n / cols)), pitch = Math.max(150, Math.min(230, (H - 84 - 150) / rows));
+    var rows = Math.max(1, Math.ceil(n / cols)), pitch = Math.max(150, Math.min(270, (H - 84 - 150) / rows));
     list.forEach(function (p, i) {
       var c = i % cols, r = Math.floor(i / cols);
       var jitter = ((i * 37) % 24) - 12;
@@ -199,82 +201,97 @@
       el.className = 'sm-panel'; el.setAttribute('data-id', d.id); el.style.zIndex = ++st.z;
       el.innerHTML = '<div class="sm-head"><span class="sm-label"><span class="sm-num"></span>' + esc(d.title) + '</span>' +
         (d.tag ? '<span class="sm-tag ' + esc((d.level || '').toLowerCase()) + '">' + esc(d.tag) + '</span>' : '') +
-        '</div><div class="sm-acts"><button class="sm-act" data-act="focus" data-dwell>Focus</button><button class="sm-act" data-act="cmp" data-dwell>Compare</button>' + (st.ariaOk ? '<button class="sm-act" data-act="aria" data-dwell>Ask ARIA</button>' : '') + '</div>' +
-        '<div class="sm-body">' + (d.html || (d.summary ? '<p>' + esc(d.summary) + '</p>' : '')) + '</div>';
+        '</div><div class="sm-acts"><button class="sm-act" data-act="cmp" data-dwell>Compare</button>' + (st.ariaOk ? '<button class="sm-act" data-act="aria" data-dwell>Ask ARIA</button>' : '') + '</div>' +
+        '<div class="sm-scroll"><div class="sm-body">' + (d.html || (d.summary ? '<p>' + esc(d.summary) + '</p>' : '')) + '</div></div>' +
+        '<div class="sm-rail" aria-hidden="true"><i></i></div>';
       st.root.appendChild(el);
-      var p = { id: d.id, el: el, data: d, inBrief: false };
+      var p = { id: d.id, el: el, data: d, inBrief: false, canScroll: false, heldBy: null };
       st.panels.push(p);
-      el.querySelector('[data-act="focus"]').addEventListener('click', function (e) { e.stopPropagation(); toggleFocus(p); });
       el.querySelector('[data-act="cmp"]').addEventListener('click', function (e) { e.stopPropagation(); toggleSel(p); });
       var ab = el.querySelector('[data-act="aria"]');
       if (ab) ab.addEventListener('click', function (e) { e.stopPropagation(); askAria(p); });
-      /* mouse / touch fallback */
+      var sc = el.querySelector('.sm-scroll'), rl = el.querySelector('.sm-rail');
+      sc.addEventListener('scroll', function () { updateRail(p); }, { passive: true });
+      /* mouse: drag the bar to scroll the card */
+      rl.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); e.stopPropagation(); updateRail(p); if (!p.canScroll) return;
+        railScroll(p, e.clientY); rl.classList.add('live');
+        function mv(ev) { railScroll(p, ev.clientY); }
+        function up() { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); rl.classList.remove('live'); }
+        window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up);
+      });
+      /* mouse / touch fallback: drag the card */
       el.addEventListener('pointerdown', function (e) {
-        if (e.target.closest && e.target.closest('.sm-act')) return; /* let the buttons click normally */
-        if (st.focus === p) return; /* focused panel is read in place, not dragged */
-        e.preventDefault(); st.moved = false;
+        if (e.target.closest && e.target.closest('.sm-act, .sm-rail')) return; /* let the buttons click normally */
+        var P = st.mp; if (!P || P.held || p.heldBy) return;
+        e.preventDefault(); P.moved = false;
         var r = el.getBoundingClientRect(), ox = e.clientX - r.left, oy = e.clientY - r.top;
-        grab(p);
-        function mv(ev) { st.moved = true; st.ptr = { x: ev.clientX, y: ev.clientY }; place(p, ev.clientX - ox, ev.clientY - oy); }
-        function up() { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); release(p); }
+        grab(p, P);
+        function mv(ev) { P.moved = true; P.ptr = { x: ev.clientX, y: ev.clientY }; place(p, ev.clientX - ox, ev.clientY - oy); }
+        function up() { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', up); release(p, P); }
         window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up);
       });
     });
     layout(st.panels);
   }
-  function grab(p) { p.el.style.zIndex = ++st.z; p.el.classList.remove('snap'); p.el.classList.add('held'); st.held = p; st.moved = false; st.ptr = null; }
-  function release(p) {
-    p.el.classList.remove('held'); st.held = null;
-    var tr = st.root && st.root.querySelector('#sm-tray'); if (tr) tr.classList.remove('over');
-    if (st.moved) settle(p);
-    else if (!p.inBrief && st.focus !== p) p.el.classList.toggle('open'); /* click / hold-still without moving = expand */
+  /* P is the pointer doing it: one per hand, plus the mouse. Two hands can hold two different cards at once. */
+  function grab(p, P) {
+    p.el.style.zIndex = ++st.z; p.el.classList.remove('snap'); p.el.classList.add('held');
+    p.heldBy = P; P.held = p; P.moved = false; if (P.kind === 'mouse') P.ptr = null;
+  }
+  function release(p, P) {
+    p.el.classList.remove('held'); p.heldBy = null; if (P.held === p) P.held = null;
+    if (P.moved) settle(p, P);
+    updateOver();
   }
   function place(p, x, y) {
     var W = window.innerWidth, H = window.innerHeight;
     p.el.style.left = Math.max(0, Math.min(W - 120, x)) + 'px';
     p.el.style.top = Math.max(56, Math.min(H - 80, y)) + 'px';
-    var tr = trayRect(), box = st.root && st.root.querySelector('#sm-tray');
-    if (tr && box) { var pt = dropPoint(p); box.classList.toggle('over', pt.x >= tr.left && pt.x <= tr.right && pt.y >= tr.top && pt.y <= tr.bottom); }
+    updateOver();
   }
   function panelAt(x, y) {
-    if (st.cmpEl || st.focus || st.consentEl || st.presEl || st.qcEl) return null; /* an overlay is up: only its own buttons are live */
+    if (st.cmpEl || st.consentEl || st.presEl || st.qcEl) return null; /* an overlay is up: only its own buttons are live */
     for (var i = st.panels.length - 1, best = null; i >= 0; i--) {
-      var r = st.panels[i].el.getBoundingClientRect();
+      var q = st.panels[i]; if (q.heldBy) continue; /* a card in someone's fingers is not a target */
+      var r = q.el.getBoundingClientRect();
       if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
-        if (!best || +st.panels[i].el.style.zIndex > +best.el.style.zIndex) best = st.panels[i];
+        if (!best || +q.el.style.zIndex > +best.el.style.zIndex) best = q;
       }
     }
     return best;
   }
 
-  /* ---------- focus + compare ---------- */
+  /* ---------- scroll bar on each card: slide a fingertip along it (or wheel / drag with a mouse) ---------- */
+  function updateRail(p) {
+    var sc = p.el.querySelector('.sm-scroll'), rl = p.el.querySelector('.sm-rail'); if (!sc || !rl) return;
+    var over = sc.scrollHeight - sc.clientHeight, h = sc.offsetHeight;
+    p.canScroll = !p.inBrief && h > 0 && over > 6;
+    rl.classList.toggle('off', !p.canScroll);
+    if (!p.canScroll) return;
+    var th = Math.max(30, Math.min(h, h * sc.clientHeight / sc.scrollHeight)), t = rl.firstChild;
+    rl.style.top = sc.offsetTop + 'px'; rl.style.height = h + 'px';
+    t.style.height = th + 'px'; t.style.transform = 'translateY(' + ((sc.scrollTop / over) * (h - th)) + 'px)';
+  }
+  function refreshRails() { st.panels.forEach(updateRail); }
+  function railScroll(p, y) {
+    var sc = p.el.querySelector('.sm-scroll'), rl = p.el.querySelector('.sm-rail'), r = rl.getBoundingClientRect();
+    var th = rl.firstChild.offsetHeight, span = Math.max(1, r.height - th);
+    var t = clamp01(((y - r.top - th / 2) / span - 0.03) / 0.94); /* a little slack at both ends so the top and bottom are easy to reach */
+    sc.scrollTop = t * (sc.scrollHeight - sc.clientHeight);
+  }
+  /* the card whose bar a fingertip is on (only the top card at that point, and only if it has more to read) */
+  function railAt(x, y) {
+    var p = panelAt(x, y); if (!p || p.inBrief) return null;
+    updateRail(p); if (!p.canScroll) return null;
+    var r = p.el.querySelector('.sm-rail').getBoundingClientRect();
+    return (x >= r.left - 16 && x <= r.right + 10 && y >= r.top - 6 && y <= r.bottom + 6) ? p : null;
+  }
+
+  /* ---------- compare ---------- */
   function setActLabel(p, act, text, on) {
     var b = p.el.querySelector('[data-act="' + act + '"]'); if (!b) return; b.textContent = text; b.classList.toggle('on', !!on);
   }
-  function enterFocus(p) {
-    if (p.inBrief || st.cmpEl || st.presEl) return;
-    if (st.focus) exitFocus();
-    var W = window.innerWidth, w = Math.min(760, W * 0.58), free = W < 768 ? W : W - 340;
-    p.sv = { left: p.el.style.left, top: p.el.style.top, open: p.el.classList.contains('open') };
-    var bg = document.createElement('div'); bg.id = 'sm-focus-bg'; bg.style.zIndex = ++st.z; bg.addEventListener('click', exitFocus);
-    st.root.appendChild(bg);
-    p.el.style.zIndex = ++st.z; p.el.classList.remove('open', 'held'); p.el.classList.add('focus');
-    p.el.style.left = Math.max(12, (free - w) / 2) + 'px'; p.el.style.top = '76px';
-    st.panels.forEach(function (q) { if (q !== p) q.el.classList.add('sm-dim'); });
-    setActLabel(p, 'focus', 'Back', true);
-    st.focus = p;
-    trayMsg('Focus on. Esc or Back returns to your layout.');
-  }
-  function exitFocus() {
-    var p = st.focus; if (!p) return;
-    p.el.classList.remove('focus'); p.el.classList.add('snap');
-    if (p.sv) { p.el.style.left = p.sv.left; p.el.style.top = p.sv.top; if (p.sv.open) p.el.classList.add('open'); }
-    var bg = st.root && st.root.querySelector('#sm-focus-bg'); if (bg) bg.remove();
-    st.panels.forEach(function (q) { q.el.classList.remove('sm-dim'); });
-    setActLabel(p, 'focus', 'Focus', false);
-    st.focus = null;
-  }
-  function toggleFocus(p) { if (st.focus === p) exitFocus(); else enterFocus(p); }
 
   function refreshSel() {
     st.panels.forEach(function (q) {
@@ -284,7 +301,6 @@
   }
   function toggleSel(p) {
     if (p.inBrief || st.cmpEl || st.presEl) return;
-    if (st.focus) exitFocus();
     var i = st.sel.indexOf(p);
     if (i >= 0) { st.sel.splice(i, 1); refreshSel(); trayMsg(''); return; }
     st.sel.push(p); refreshSel();
@@ -312,11 +328,11 @@
     o.querySelector('#sm-cmp-close').addEventListener('click', closeCompare);
     o.querySelector('#sm-cmp-swap').addEventListener('click', function () { st.cmp.reverse(); renderCmp(); });
     renderCmp();
-    st.hover = null; dwell.panel = null; setRing(0);
+    resetPtrs(0);
   }
   function closeCompare() {
     if (!st.cmpEl) return;
-    st.cmpEl.remove(); st.cmpEl = null; st.thenEl = null; st.then = null; st.cmp = null; st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
+    st.cmpEl.remove(); st.cmpEl = null; st.thenEl = null; st.then = null; st.cmp = null; resetPtrs(900);
     st.sel = []; refreshSel(); trayMsg('');
   }
 
@@ -338,7 +354,7 @@
       '<details><summary>Show exactly what is shared</summary><pre>' + esc(txt) + '</pre></details>' +
       '<div class="sm-consent-btns"><button class="sm-btn" id="sm-consent-no" data-dwell>Cancel</button><button class="sm-btn primary" id="sm-consent-yes" data-dwell>Share and open ARIA</button></div></div>';
     st.root.appendChild(o); st.consentEl = o;
-    st.hover = null; dwell.panel = null; setRing(0);
+    resetPtrs(0);
     o.querySelector('#sm-consent-no').addEventListener('click', closeConsent);
     o.addEventListener('click', function (e) { if (e.target === o) closeConsent(); });
     o.querySelector('#sm-consent-yes').addEventListener('click', function () {
@@ -351,7 +367,7 @@
   }
   function closeConsent() {
     if (!st.consentEl) return;
-    st.consentEl.remove(); st.consentEl = null; st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
+    st.consentEl.remove(); st.consentEl = null; resetPtrs(900);
   }
 
   /* ---------- setup check: is the light and distance good enough for hand tracking? ---------- */
@@ -487,7 +503,7 @@
       '<div class="sm-chips"></div><div class="sm-cmp-cols"></div>';
     st.root.appendChild(o); st.cmpEl = o; st.thenEl = o; st.cmp = null;
     o.querySelector('#sm-cmp-close').addEventListener('click', closeCompare);
-    st.hover = null; dwell.panel = null; setRing(0);
+    resetPtrs(0);
     renderThen();
   }
 
@@ -504,13 +520,12 @@
   }
   function closeQc() {
     if (!st.qcEl) return;
-    st.qcEl.remove(); st.qcEl = null; st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
+    st.qcEl.remove(); st.qcEl = null; resetPtrs(900);
     var qb = st.root && st.root.querySelector('#sm-qc'); if (qb) qb.classList.remove('on');
   }
   function openQc() {
     st.saved = matchingSaved();
     if (st.qcEl || st.cmpEl || st.consentEl || st.presEl || !(st.presets.length || st.saved.length)) return;
-    exitFocus();
     var m = document.createElement('div'); m.id = 'sm-qc-menu'; m.setAttribute('role', 'menu');
     m.innerHTML = st.presets.map(function (x, i) {
       return '<button class="sm-qc-item" data-dwell data-qc="' + i + '" role="menuitem"><b>' + esc(x.label) + '</b>' + (x.hint ? '<span>' + esc(x.hint) + '</span>' : '') + '</button>';
@@ -524,7 +539,7 @@
     var qb = st.root.querySelector('#sm-qc'), r = qb.getBoundingClientRect();
     qb.classList.add('on');
     m.style.top = (r.bottom + 8) + 'px'; m.style.left = Math.max(8, Math.min(window.innerWidth - m.offsetWidth - 8, r.right - m.offsetWidth)) + 'px';
-    st.hover = null; dwell.panel = null; setRing(0);
+    resetPtrs(0);
     m.querySelector('#sm-qc-cancel').addEventListener('click', closeQc);
     m.querySelectorAll('.sm-qc-item[data-qc]').forEach(function (b) {
       b.addEventListener('click', function () {
@@ -575,7 +590,6 @@
   }
   function openPresent() {
     if (!st.brief.length || st.presEl || st.cmpEl || st.consentEl) return;
-    exitFocus();
     st.presI = 0; st.presFull = false;
     var o = document.createElement('div'); o.id = 'sm-pres'; o.setAttribute('role', 'dialog'); o.setAttribute('aria-modal', 'true'); o.setAttribute('aria-label', 'Presenting the brief');
     o.innerHTML = '<div class="sm-pres-top"><div class="sm-pres-meta"></div><div class="sm-pres-top-btns">' +
@@ -585,7 +599,7 @@
       '<div class="sm-pres-stage"></div>' +
       '<div class="sm-pres-nav"><button class="sm-btn sm-pres-nb" id="sm-pres-prev" data-dwell>Back</button><div class="sm-pres-dots"></div><button class="sm-btn primary sm-pres-nb" id="sm-pres-next" data-dwell>Next</button></div>';
     st.root.appendChild(o); st.presEl = o; st.root.classList.add('sm-presenting');
-    st.hover = null; dwell.panel = null; setRing(0);
+    resetPtrs(0);
     o.querySelector('#sm-pres-prev').addEventListener('click', function () { presStep(-1, true); });
     o.querySelector('#sm-pres-next').addEventListener('click', function () { presStep(1, true); });
     o.querySelector('#sm-pres-exit').addEventListener('click', closePresent);
@@ -600,7 +614,7 @@
     if (!st.presEl) return;
     st.presEl.remove(); st.presEl = null; if (st.root) st.root.classList.remove('sm-presenting');
     try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
-    st.hover = null; dwell.panel = null; st.cool = performance.now() + 900; setRing(0);
+    resetPtrs(900);
   }
 
   /* ---------- leadership brief tray ---------- */
@@ -629,17 +643,32 @@
     });
     updateTray();
   }
+  /* Where a dropped card counts as "in the tray". Deliberately generous: the target is the tray plus a margin, or any card
+     that is mostly on top of it. A card already in the brief must leave the tray itself to be taken out. */
+  var DROP_PAD_X = 56, DROP_PAD_Y = 40;
   /* where the person is pointing (fingertip or mouse); falls back to the panel centre */
-  function dropPoint(p) {
-    if (st.ptr) return st.ptr;
+  function dropPoint(p, P) {
+    if (P && P.ptr) return P.ptr;
     var r = p.el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
   }
-  function settle(p) {
+  function inDrop(p, pt) {
+    var tr = trayRect(); if (!tr) return false;
+    if (p.inBrief) return pt.x >= tr.left && pt.x <= tr.right && pt.y >= tr.top && pt.y <= tr.bottom;
+    if (pt.x >= tr.left - DROP_PAD_X && pt.x <= window.innerWidth && pt.y >= tr.top - DROP_PAD_Y && pt.y <= tr.bottom + DROP_PAD_Y) return true;
+    var r = p.el.getBoundingClientRect();
+    var ox = Math.min(r.right, tr.right) - Math.max(r.left, tr.left), oy = Math.min(r.bottom, tr.bottom) - Math.max(r.top, tr.top);
+    return ox > 0 && oy > 0 && ox * oy >= 0.35 * r.width * r.height;
+  }
+  /* the tray glows while any held card is in the drop area, so you know before you let go */
+  function updateOver() {
+    var box = st.root && st.root.querySelector('#sm-tray'); if (!box || !st.ptrs) return;
+    box.classList.toggle('over', st.ptrs.some(function (P) { return P.held && inDrop(P.held, dropPoint(P.held, P)); }));
+  }
+  function settle(p, P) {
     var tr = trayRect(); if (!tr) return;
-    var pt = dropPoint(p), cx = pt.x, cy = pt.y;
-    var inside = cx >= tr.left && cx <= tr.right && cy >= tr.top && cy <= tr.bottom;
+    var pt = dropPoint(p, P), cy = pt.y;
     var was = st.brief.indexOf(p);
-    if (inside) {
+    if (inDrop(p, pt)) {
       if (was >= 0) st.brief.splice(was, 1);
       var idx = Math.max(0, Math.min(st.brief.length, Math.round((cy - (tr.top + 64) - 25) / 57)));
       st.brief.splice(idx, 0, p);
@@ -649,10 +678,11 @@
       p.el.classList.remove('briefed', 'snap');
       arrangeTray();
     }
+    refreshRails();
   }
   function clearBrief() {
     st.brief.forEach(function (p) { p.inBrief = false; p.el.classList.remove('briefed', 'snap'); });
-    st.brief = []; updateTray();
+    st.brief = []; updateTray(); refreshRails();
   }
 
   var docCss = 'body{font-family:"DM Sans",Arial,sans-serif;color:#1a1a2e;max-width:760px;margin:24px auto;padding:0 28px;line-height:1.6;font-size:13px}header{border-bottom:2px solid #6366f1;padding-bottom:12px;margin-bottom:18px}.brand{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#6366f1;font-weight:700}h1{font-size:22px;margin:4px 0}.meta{font-size:11px;color:#666}section{margin-bottom:16px;page-break-inside:avoid}h2{font-size:14px;margin:0 0 6px;display:flex;gap:8px;align-items:baseline}h2 span{color:#6366f1}h2 em{font-style:normal;font-size:10px;border:1px solid #bbb;border-radius:4px;padding:1px 7px;color:#555;margin-left:auto}.b p{margin:0 0 6px}.sum{font-weight:600;margin:0 0 6px;font-size:13.5px}.sm-big{font-size:22px;font-weight:700;margin-bottom:4px}.sm-pt{display:flex;gap:7px;margin-bottom:3px}.sm-pt:before{content:"\\2022";color:#6366f1}footer{margin-top:22px;padding-top:10px;border-top:1px solid #ddd;font-size:10px;color:#777}';
@@ -722,7 +752,7 @@
   }
   function elOf(t) { return t && (t.el || t); }
 
-  /* ---------- hand tracking (index finger only) ---------- */
+  /* ---------- hand tracking: one pointer per hand (index fingertip), up to two hands at once ---------- */
   /* Hold times for the fingertip. 'careful' is the original (700/800ms); 'normal' and 'fast' trade a little accidental-grab risk for speed.
      Buttons need slightly longer than grabbing a panel, because a wrong button (Exit, Delete) costs more than a wrong grab. */
   var SPEEDS = { careful: { label: 'Careful', grab: 700, drop: 800 }, normal: { label: 'Normal', grab: 500, drop: 550 }, fast: { label: 'Fast', grab: 350, drop: 400 } };
@@ -735,10 +765,17 @@
     var b = st.root && st.root.querySelector('#sm-speed'); if (b) b.textContent = 'Hold time: ' + SPEEDS[n].label;
   }
   function cycleSpeed() { var order = ['careful', 'normal', 'fast']; setSpeed(order[(order.indexOf(speedName) + 1) % 3]); trayMsg('Hold time: ' + SPEEDS[speedName].label + '. Grab ' + DWELL_GRAB + ' ms, drop ' + DWELL_DROP + ' ms.'); }
-  /* ACTIVE: central share of camera frame mapped to the full screen */ /* ACTIVE: central share of camera frame mapped to the full screen */
-  var grabOff = { x: 0, y: 0 };
-  var dwell = { panel: null, t0: 0, ax: 0, ay: 0 };
-  var fl = { x: null, y: null };
+  /* two hands is the default; one hand is lighter on a slower computer */
+  var HANDS_KEY = 'sr_sm_hands', handsWanted = 2;
+  try { var hw = localStorage.getItem(HANDS_KEY); if (hw === '1' || hw === '2') handsWanted = +hw; } catch (e) {}
+  function setHands(n) {
+    if (n !== 1 && n !== 2) return; handsWanted = n;
+    try { localStorage.setItem(HANDS_KEY, String(n)); } catch (e) {}
+    var b = st.root && st.root.querySelector('#sm-hands'); if (b) b.textContent = 'Hands: ' + n;
+    try { if (st.hands) st.hands.setOptions({ maxNumHands: n }); } catch (e) {}
+  }
+  function cycleHands() { setHands(handsWanted === 2 ? 1 : 2); trayMsg(handsWanted === 2 ? 'Two hands: each index finger works on its own.' : 'One hand: lighter on a slower computer.'); }
+  /* ACTIVE: central share of camera frame mapped to the full screen */
 
   /* One Euro filter: heavy smoothing when slow (kills jitter), light when fast (keeps it responsive) */
   function LP() { this.y = null; }
@@ -753,73 +790,133 @@
     return this.x.f(v, this.alpha(this.minCut + this.beta * Math.abs(ed), dt));
   };
   OneEuro.prototype.reset = function () { this.t = null; this.x.y = null; this.dx.y = null; };
-  var fx = new OneEuro(0.5, 10, 1), fy = new OneEuro(0.5, 10, 1);
 
-  function setRing(p) { if (st.cursor) st.cursor.style.setProperty('--p', Math.max(0, Math.min(1, p))); }
-  function resetDwell(panel, px, py, now) { dwell.panel = panel; dwell.t0 = now; dwell.ax = px; dwell.ay = py; setRing(0); }
+  /* A pointer is one hand (or the mouse) with its own hold timer, held card, hover target and smoothing. */
+  function Pointer(kind, idx) {
+    this.kind = kind; this.idx = idx;
+    this.held = null; this.moved = false; this.ptr = null; this.hover = null; this.rail = null; this.cool = 0;
+    this.dwell = { panel: null, t0: 0, ax: 0, ay: 0 };
+    this.off = { x: 0, y: 0 }; this.sx = 0; this.sy = 0;
+    this.fx = new OneEuro(0.5, 10, 1); this.fy = new OneEuro(0.5, 10, 1);
+    this.on = false; this.lastSeen = 0; this.raw = null; this.label = null; this.cur = null;
+  }
+  Pointer.prototype.ring = function (v) { if (this.cur) this.cur.style.setProperty('--p', Math.max(0, Math.min(1, v))); };
   function clamp01(v) { return Math.max(0, Math.min(1, v)); }
+  function resetDwell(S, panel, px, py, now) { var d = S.dwell; d.panel = panel; d.t0 = now; d.ax = px; d.ay = py; S.ring(0); }
+  /* 'hover' is a class on the target; keep it while any pointer is still on that target */
+  function setHover(S, tgt) {
+    if (S.hover === tgt) return;
+    var old = S.hover; S.hover = tgt;
+    if (old && !st.ptrs.some(function (Q) { return Q.hover === old; })) elOf(old).classList.remove('hover');
+    if (tgt) elOf(tgt).classList.add('hover');
+  }
+  function setRailLive(S, p) {
+    if (S.rail === p) return;
+    var old = S.rail; S.rail = p;
+    if (old && !st.ptrs.some(function (Q) { return Q.rail === old; })) { var r = old.el.querySelector('.sm-rail'); if (r) r.classList.remove('live'); }
+    if (p) { var r2 = p.el.querySelector('.sm-rail'); if (r2) r2.classList.add('live'); }
+  }
+  /* an overlay opened or closed: every pointer forgets its target, and (optionally) sits out for a moment */
+  function resetPtrs(coolMs) {
+    if (!st.ptrs) return;
+    var now = performance.now();
+    st.ptrs.forEach(function (S) { setHover(S, null); setRailLive(S, null); S.dwell.panel = null; S.ring(0); if (coolMs) S.cool = now + coolMs; });
+  }
 
   /* small live camera view with the detected hand points, so the person can see what the model sees */
-  function drawPreview(res, lm) {
+  function drawPreview(res, dets) {
     var c = st.root && st.root.querySelector('#sm-preview'); if (!c) return;
     var g = c.getContext('2d'), w = c.width, h = c.height;
     g.save(); g.translate(w, 0); g.scale(-1, 1);
     if (res.image) { try { g.drawImage(res.image, 0, 0, w, h); } catch (e) {} } else { g.clearRect(0, 0, w, h); }
-    if (lm) {
+    (dets || []).forEach(function (lm, k) {
       for (var i = 0; i < lm.length; i++) {
         g.beginPath(); g.arc(lm[i].x * w, lm[i].y * h, i === 8 ? 6 : 2.5, 0, 6.3);
-        g.fillStyle = i === 8 ? '#ffffff' : 'rgba(196,181,253,.85)'; g.fill();
+        g.fillStyle = i === 8 ? (k ? '#67e8f9' : '#ffffff') : 'rgba(196,181,253,.85)'; g.fill();
       }
-    }
+    });
     g.restore();
-    c.className = lm ? 'ok' : '';
+    c.className = dets && dets.length ? 'ok' : '';
   }
 
-  function onResults(res) {
-    var lm = res.multiHandLandmarks && res.multiHandLandmarks[0];
-    var cur = st.cursor, now = performance.now();
-    if (!cur) return;
-    drawPreview(res, lm);
-    if (!lm) {
-      if (now - st.lastSeen > 900) {
-        cur.style.display = 'none'; fx.reset(); fy.reset(); setRing(0);
-        if (st.held) { st.moved = true; release(st.held); }
-        dwell.panel = null;
-        setStatus('Hand tracking: <b>' + (now - st.lastSeen > 2500 ? 'no hand found. Move closer, add light, or show an open palm to lock on' : 'lost. Show an open palm to lock on') + '</b>');
+  /* The model gives hands in any order from frame to frame. Keep each hand on the same pointer by matching each
+     fingertip to the nearest pointer it was last seen at (handedness only breaks ties). */
+  function assignHands(dets, labs, now) {
+    var slots = st.hp, out = [null, null], pairs = [], usedD = {};
+    for (var i = 0; i < dets.length && i < 2; i++) {
+      var tip = dets[i][8], lab = labs[i] && (labs[i].label || (labs[i].classification && labs[i].classification[0] && labs[i].classification[0].label)) || null;
+      for (var j = 0; j < slots.length; j++) {
+        var S = slots[j], c = (S.raw && now - S.lastSeen < 900) ? Math.hypot(tip.x - S.raw.x, tip.y - S.raw.y) : 0.6;
+        if (lab && S.label && lab !== S.label) c += 0.15;
+        pairs.push({ i: i, j: j, c: c, lab: lab });
       }
-      return;
     }
-    st.lastSeen = now;
-    try { var vw = st.video && st.video.videoWidth, vh = st.video && st.video.videoHeight; if (vw && vh) st.hand = { t: now, palm: Math.hypot((lm[0].x - lm[9].x) * vw, (lm[0].y - lm[9].y) * vh) / vw }; } catch (e) {}
-    var W = window.innerWidth, H = window.innerHeight;
-    var m = (1 - ACTIVE) / 2;
+    pairs.sort(function (a, b) { return a.c - b.c; });
+    pairs.forEach(function (q) { if (out[q.j] == null && !usedD[q.i]) { out[q.j] = { lm: dets[q.i], label: q.lab }; usedD[q.i] = 1; } });
+    return out;
+  }
+
+  /* one frame for one hand: returns what it is doing, for the status line */
+  function drive(S, lm, now) {
+    S.on = true; S.lastSeen = now; S.raw = { x: lm[8].x, y: lm[8].y };
+    var W = window.innerWidth, H = window.innerHeight, m = (1 - ACTIVE) / 2;
     var nx = clamp01(((1 - lm[8].x) - m) / ACTIVE), ny = clamp01((lm[8].y - m) / ACTIVE); /* index fingertip, mirrored */
-    var px = fx.filter(nx, now) * W, py = fy.filter(ny, now) * H;
-    st.ptr = { x: px, y: py };
-    cur.style.display = 'block'; cur.style.left = px + 'px'; cur.style.top = py + 'px';
-    cur.classList.toggle('held-cur', !!st.held);
-
-    if (st.cool && now < st.cool) { setRing(0); return; }
-
-    if (!st.held) {
+    var px = S.fx.filter(nx, now) * W, py = S.fy.filter(ny, now) * H;
+    S.ptr = { x: px, y: py };
+    var cur = S.cur; cur.style.display = 'block'; cur.style.left = px + 'px'; cur.style.top = py + 'px';
+    cur.classList.toggle('held-cur', !!S.held);
+    if (S.cool && now < S.cool) { S.ring(0); return 'live'; }
+    var dw = S.dwell;
+    if (!S.held) {
+      var rp = railAt(px, py);
+      if (rp) { setHover(S, null); setRailLive(S, rp); railScroll(rp, py); dw.panel = null; S.ring(0); return 'scroll'; }
+      setRailLive(S, null);
       var btn = btnAt(px, py), h = btn ? null : panelAt(px, py), tgt = btn || h;
-      if (tgt !== st.hover) { if (st.hover) elOf(st.hover).classList.remove('hover'); if (tgt) elOf(tgt).classList.add('hover'); st.hover = tgt; }
-      if (!tgt) { dwell.panel = null; setRing(0); setStatus('Hand tracking: <b>live</b>'); return; }
-      if (tgt !== dwell.panel || Math.hypot(px - dwell.ax, py - dwell.ay) > STILL_PX) resetDwell(tgt, px, py, now);
-      var p = (now - dwell.t0) / (btn ? DWELL_BTN : DWELL_GRAB); setRing(p);
-      setStatus('Hand tracking: <b>' + (btn ? 'hold to press' : 'hold to grab') + '</b>');
+      setHover(S, tgt);
+      if (!tgt) { dw.panel = null; S.ring(0); return 'live'; }
+      if (tgt !== dw.panel || Math.hypot(px - dw.ax, py - dw.ay) > STILL_PX) resetDwell(S, tgt, px, py, now);
+      var p = (now - dw.t0) / (btn ? DWELL_BTN : DWELL_GRAB); S.ring(p);
       if (p >= 1) {
-        if (btn) { dwell.panel = null; st.cool = now + 1200; setRing(0); btn.click(); return; }
-        var r = h.el.getBoundingClientRect(); grabOff.x = px - r.left; grabOff.y = py - r.top;
-        grab(h); st.startX = px; st.startY = py; resetDwell(h, px, py, now);
+        if (btn) { dw.panel = null; st.ptrs.forEach(function (Q) { Q.cool = now + 1200; }); S.ring(0); btn.click(); return 'live'; }
+        var r = h.el.getBoundingClientRect(); S.off.x = px - r.left; S.off.y = py - r.top;
+        grab(h, S); S.sx = px; S.sy = py; resetDwell(S, h, px, py, now); setHover(S, null);
+        return 'drop';
       }
-    } else {
-      if (!st.moved && Math.hypot(px - st.startX, py - st.startY) > 40) st.moved = true;
-      if (st.moved) place(st.held, px - grabOff.x, py - grabOff.y);
-      if (Math.hypot(px - dwell.ax, py - dwell.ay) > STILL_PX) { dwell.ax = px; dwell.ay = py; dwell.t0 = now; }
-      var q = (now - dwell.t0) / DWELL_DROP; setRing(q);
-      setStatus('Hand tracking: <b>' + (st.moved ? 'hold still to drop' : 'hold still to expand') + '</b>');
-      if (q >= 1) { var done = st.held; release(done); dwell.panel = null; st.cool = now + 900; setRing(0); }
+      return btn ? 'press' : 'grab';
+    }
+    if (!S.moved && Math.hypot(px - S.sx, py - S.sy) > 40) S.moved = true;
+    if (S.moved) place(S.held, px - S.off.x, py - S.off.y);
+    if (Math.hypot(px - dw.ax, py - dw.ay) > STILL_PX) { dw.ax = px; dw.ay = py; dw.t0 = now; }
+    var q = (now - dw.t0) / DWELL_DROP; S.ring(q);
+    if (q >= 1) { var done = S.held; release(done, S); dw.panel = null; S.cool = now + 900; S.ring(0); return 'live'; }
+    return S.moved ? 'drop' : 'let';
+  }
+  function loseHand(S) {
+    if (S.cur) S.cur.style.display = 'none';
+    S.fx.reset(); S.fy.reset(); S.ring(0);
+    if (S.held) { S.moved = true; release(S.held, S); }
+    S.dwell.panel = null; setHover(S, null); setRailLive(S, null); S.on = false; S.raw = null; S.ptr = null;
+  }
+  var STATUS = { grab: 'hold to grab', press: 'hold to press', drop: 'hold still to drop', let: 'hold still to let go', scroll: 'sliding to scroll' };
+
+  function onResults(res) {
+    if (!st.hp) return;
+    var now = performance.now();
+    var dets = (res.multiHandLandmarks || []).slice(0, 2), labs = res.multiHandedness || [];
+    drawPreview(res, dets);
+    try { var vw = st.video && st.video.videoWidth, vh = st.video && st.video.videoHeight, a0 = dets[0]; if (a0 && vw && vh) st.hand = { t: now, palm: Math.hypot((a0[0].x - a0[9].x) * vw, (a0[0].y - a0[9].y) * vh) / vw }; } catch (e) {}
+    var slots = assignHands(dets, labs, now), live = 0, act = '';
+    for (var j = 0; j < st.hp.length; j++) {
+      var S = st.hp[j], d = slots[j];
+      if (d) {
+        if (d.label) S.label = d.label;
+        var a = drive(S, d.lm, now); live++;
+        if (!act && a !== 'live') act = a;
+      } else if (S.on && now - S.lastSeen > 900) loseHand(S);
+    }
+    if (live) { st.lastSeen = now; setStatus('Hand tracking: <b>' + (act ? STATUS[act] : (live > 1 ? 'two hands live' : 'live')) + '</b>'); }
+    else if (!st.hp.some(function (S) { return S.on; }) && now - st.lastSeen > 900) {
+      setStatus('Hand tracking: <b>' + (now - st.lastSeen > 2500 ? 'no hand found. Move closer, add light, or show an open palm to lock on' : 'lost. Show an open palm to lock on') + '</b>');
     }
   }
 
@@ -833,7 +930,7 @@
       .then(function () { setStatus('Loading hand model…'); return loadScript(MP_LOCAL + 'hands.js').then(function () { MP_BASE = MP_LOCAL; }, function () { MP_BASE = MP_CDN; return loadScript(MP_HANDS); }); })
       .then(function () {
         st.hands = new window.Hands({ locateFile: function (f) { return MP_BASE + f; } });
-        st.hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.35, minTrackingConfidence: 0.3 });
+        st.hands.setOptions({ maxNumHands: handsWanted, modelComplexity: 1, minDetectionConfidence: 0.35, minTrackingConfidence: 0.3 });
         st.hands.onResults(onResults);
         st.running = true; st.tracking = true;
         var busy = false;
@@ -847,15 +944,15 @@
         })();
         var pv = document.getElementById('sm-preview'); if (pv) pv.style.display = 'block';
         setStatus('Hand tracking: <b>show an open palm to lock on, then point</b>');
-        var cb = document.getElementById('sm-chk-btn'); if (cb) cb.style.display = ''; var sb = document.getElementById('sm-speed'); if (sb) sb.style.display = '';
+        var cb = document.getElementById('sm-chk-btn'); if (cb) cb.style.display = ''; var sb = document.getElementById('sm-speed'); if (sb) sb.style.display = ''; var hb = document.getElementById('sm-hands'); if (hb) hb.style.display = '';
         openCheck();
-        document.getElementById('sm-hint').textContent = 'Hold your index finger on a panel to grab it · Focus enlarges one, Compare puts two side by side · drag into the Leadership Brief tray · Esc to exit';
+        document.getElementById('sm-hint').textContent = 'Hold a fingertip on a card to grab it · slide along the bar on a card\'s right edge to read it · both hands work at once · drop cards on the Leadership Brief · Esc to exit';
       })
       .catch(function (e) {
         st.tracking = false;
         var denied = e && (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError');
         setStatus(denied ? 'Camera blocked. <b>Mouse mode</b>' : 'Tracking unavailable. <b>Mouse mode</b>');
-        document.getElementById('sm-hint').textContent = 'Drag panels into the Leadership Brief tray · click to expand · Focus or Compare for a closer read · Esc to exit';
+        document.getElementById('sm-hint').textContent = 'Drag cards into the Leadership Brief · scroll a card with the wheel or its bar · Compare puts two side by side · Esc to exit';
       });
   }
 
@@ -863,25 +960,28 @@
   function open(panels, opts) {
     if (st.root) return;
     st.ariaOk = ariaAllowed();
-    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary'; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = []; st.thenEl = null; st.then = null; st.saved = []; st.hand = null; st.chkOk = 0;
+    st.opts = opts || {}; st.brief = []; st.briefMode = 'summary'; st.sel = []; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = []; st.thenEl = null; st.then = null; st.saved = []; st.hand = null; st.chkOk = 0;
     injectCss();
     var root = document.createElement('div'); root.id = 'sm-root';
     root.innerHTML = '<video id="sm-video" playsinline muted></video><div id="sm-grid"></div>' +
       '<div id="sm-bar"><div><div id="sm-title">Spatial Mode · ' + esc((opts && opts.tool) || 'Vantage') + '</div><div id="sm-status">Initialising…</div></div>' +
-      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-speed" data-dwell style="display:none"></button><button class="sm-btn" id="sm-chk-btn" style="display:none">Setup check</button><button class="sm-btn" id="sm-qc" data-dwell aria-haspopup="menu" style="display:none">Quick compare</button><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
+      '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-hands" data-dwell style="display:none"></button><button class="sm-btn" id="sm-speed" data-dwell style="display:none"></button><button class="sm-btn" id="sm-chk-btn" style="display:none">Setup check</button><button class="sm-btn" id="sm-qc" data-dwell aria-haspopup="menu" style="display:none">Quick compare</button><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
       '<div id="sm-tray"><div id="sm-tray-head"><div id="sm-tray-title">Leadership Brief</div><div id="sm-tray-sub"></div></div>' +
       '<div id="sm-tray-foot"><button class="sm-btn" id="sm-mode" data-dwell></button><button class="sm-btn primary" id="sm-present" data-dwell disabled>Present this brief</button><div id="sm-tray-btns"><button class="sm-btn" id="sm-dl" data-dwell disabled>Download</button><button class="sm-btn" id="sm-copy" data-dwell disabled>Copy text</button><button class="sm-btn" id="sm-save" data-dwell disabled title="Keep this brief on this device so you can compare it with a later analysis">Save</button></div><div id="sm-tray-msg"></div></div></div>' +
-      '<canvas id="sm-preview" width="224" height="168"></canvas><div id="sm-cursor"></div><div id="sm-hint">Starting…</div>';
+      '<canvas id="sm-preview" width="224" height="168"></canvas><div id="sm-cursor"></div><div id="sm-cursor2"></div><div id="sm-hint">Starting…</div>';
     document.body.appendChild(root);
-    st.root = root; st.video = root.querySelector('#sm-video'); st.cursor = root.querySelector('#sm-cursor');
-    st.panels = []; st.held = null; st.hover = null; st.cool = 0; dwell.panel = null; fx.reset(); fy.reset();
+    st.root = root; st.video = root.querySelector('#sm-video');
+    st.hp = [new Pointer('hand', 0), new Pointer('hand', 1)]; st.mp = new Pointer('mouse', -1); st.ptrs = st.hp.concat([st.mp]);
+    st.hp[0].cur = root.querySelector('#sm-cursor'); st.hp[1].cur = root.querySelector('#sm-cursor2');
+    st.panels = [];
     build(panels);
     root.querySelector('#sm-exit').onclick = close;
-    root.querySelector('#sm-reset').onclick = function () { closeQc(); closeCompare(); exitFocus(); st.sel = []; clearBrief(); refreshSel(); st.panels.forEach(function (p) { p.el.classList.remove('open'); }); layout(st.panels); };
+    root.querySelector('#sm-reset').onclick = function () { closeQc(); closeCompare(); st.sel = []; clearBrief(); refreshSel(); layout(st.panels); };
     st.presets = resolvePresets(st.opts.presets);
     refreshQcBtn();
     root.addEventListener('pointerdown', function (e) { if (st.qcEl && !(e.target.closest && e.target.closest('#sm-qc-menu, #sm-qc'))) closeQc(); });
     root.querySelector('#sm-present').onclick = openPresent;
+    root.querySelector('#sm-hands').onclick = cycleHands; root.querySelector('#sm-hands').textContent = 'Hands: ' + handsWanted;
     root.querySelector('#sm-speed').onclick = cycleSpeed; root.querySelector('#sm-speed').textContent = 'Hold time: ' + SPEEDS[speedName].label;
     root.querySelector('#sm-chk-btn').onclick = function () { if (st.chkEl) closeCheck(); else openCheck(); };
     root.querySelector('#sm-save').onclick = saveBrief;
@@ -889,10 +989,11 @@
     root.querySelector('#sm-copy').onclick = copyBrief;
     root.querySelector('#sm-mode').onclick = function () { st.briefMode = st.briefMode === 'full' ? 'summary' : 'full'; updateTray(); trayMsg(st.briefMode === 'full' ? 'Brief will include full detail.' : 'Brief will show one summary line per panel.'); };
     updateTray();
+    refreshRails(); setTimeout(refreshRails, 400);
     document.addEventListener('keydown', onKey);
     window.addEventListener('resize', onResize);
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) startTracking();
-    else { setStatus('No camera API. <b>Mouse mode</b>'); document.getElementById('sm-hint').textContent = 'Drag panels into the Leadership Brief tray · click to expand · Focus or Compare for a closer read · Esc to exit'; }
+    else { setStatus('No camera API. <b>Mouse mode</b>'); document.getElementById('sm-hint').textContent = 'Drag cards into the Leadership Brief · scroll a card with the wheel or its bar · Compare puts two side by side · Esc to exit'; }
   }
   function onKey(e) {
     if (st.presEl && !st.consentEl && !st.cmpEl) {
@@ -909,9 +1010,9 @@
       var n = st.then.shared.length; st.then.i = (st.then.i + (e.key === 'ArrowRight' ? 1 : n - 1)) % n; renderThen(); e.preventDefault(); return;
     }
     if (e.key !== 'Escape') return;
-    if (st.consentEl) closeConsent(); else if (st.cmpEl) closeCompare(); else if (st.qcEl) closeQc(); else if (st.focus) exitFocus(); else close();
+    if (st.consentEl) closeConsent(); else if (st.cmpEl) closeCompare(); else if (st.qcEl) closeQc(); else close();
   }
-  function onResize() { exitFocus(); layout(st.panels); arrangeTray(); }
+  function onResize() { layout(st.panels); arrangeTray(); refreshRails(); }
   function close() {
     st.running = false; cancelAnimationFrame(st.raf); closeCheck();
     try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
@@ -921,8 +1022,8 @@
     document.removeEventListener('keydown', onKey); window.removeEventListener('resize', onResize);
     if (st.root) st.root.remove();
     clearTimeout(st.msgT);
-    st.root = null; st.cursor = null; st.hover = null; st.panels = []; st.brief = []; st.sel = []; st.focus = null; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = []; st.thenEl = null; st.then = null; st.saved = [];
+    st.root = null; st.hp = null; st.mp = null; st.ptrs = null; st.panels = []; st.brief = []; st.sel = []; st.cmp = null; st.cmpEl = null; st.consentEl = null; st.presEl = null; st.qcEl = null; st.presets = []; st.thenEl = null; st.then = null; st.saved = [];
   }
 
-  window.SpatialMode = { open: open, _setSpeed: setSpeed, _speed: function () { return { name: speedName, grab: DWELL_GRAB, drop: DWELL_DROP, btn: DWELL_BTN }; }, _evalCheck: evalCheck, _renderCheck: function (rows) { if (!st.chkEl) { st.tracking = true; openCheck(); } renderCheck(rows); }, _chk: CHK, _saveBrief: saveBrief, _presets: function () { return st.presets.map(function (x) { return x.label; }); }, _present: openPresent, _presStep: presStep, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
+  window.SpatialMode = { open: open, _setSpeed: setSpeed, _setHands: setHands, _hands: function () { return handsWanted; }, _ptrs: function () { return st.ptrs; }, _railAt: function (x, y) { return railAt(x, y); }, _speed: function () { return { name: speedName, grab: DWELL_GRAB, drop: DWELL_DROP, btn: DWELL_BTN }; }, _evalCheck: evalCheck, _renderCheck: function (rows) { if (!st.chkEl) { st.tracking = true; openCheck(); } renderCheck(rows); }, _chk: CHK, _saveBrief: saveBrief, _presets: function () { return st.presets.map(function (x) { return x.label; }); }, _present: openPresent, _presStep: presStep, close: close, esc: esc, _feed: onResults, _briefText: briefText, _briefDoc: briefDoc };
 })();
