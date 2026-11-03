@@ -65,5 +65,14 @@ check('resolveCtc rejects 2000', run('resolveCtc({ctcExact:"2000"})') === null);
 const prompt = run('getPactPrompt({})');
 check('prompt has engineFlags', prompt.includes('"engineFlags"') && prompt.includes('Never put a rupee figure in this object'));
 check('no em dash in engine text', !/—/.test(run('JSON.stringify(maternityItems(resolveCtc({ctcBand:"18L to 25L"}), "pressure_to_resign", false, "Medium", null))')));
+// 8. MERIDIAN reaches the PACT call
+globalThis.__m = { state: 'Haryana', industry: 'Insurance', orgType: 'Corporate / Pvt Ltd', orgSize: '51 - 250', unionStatus: 'Non-unionised', policyNoticePeriod: 'SECRET-FREE-TEXT' };
+const blk = run('buildPactMeridianBlock(__m)');
+check('meridian block carries state and industry', blk.includes('State: Haryana') && blk.includes('Industry: Insurance'));
+check('meridian block leaves out free-text policy fields', !blk.includes('SECRET-FREE-TEXT'));
+check('missing meridian says not set', run('buildPactMeridianBlock(null)').includes('not set'));
+check('long value is capped', run('buildPactMeridianBlock({state:"x".repeat(500)})').length < 400);
+check('user message uses the block', fs.readFileSync(__dirname + '/situation-room-api.worker.js', 'utf8').includes('${buildPactMeridianBlock(meridian)}'));
+check('prompt tells model not to infer industry from job title', run('getPactPrompt({})').includes('Never infer the industry or state from a job title'));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);

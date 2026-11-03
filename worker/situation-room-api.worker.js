@@ -865,6 +865,22 @@ function cleanCaseLabel(v) {
   return String(v == null ? '' : v).replace(/[^A-Za-z0-9 &'\/,\-]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 40);
 }
 
+// The PACT call used to receive no MERIDIAN data at all (the profile was sent by
+// the form but never put in the prompt). This builds a minimal, structured block:
+// only organisational facts, each length-capped, no free-text policy fields.
+function buildPactMeridianBlock(meridian) {
+  if (!meridian || typeof meridian !== 'object') {
+    return 'MERIDIAN PROFILE: not set. Say the profile is not set and do not guess the state, industry or size.';
+  }
+  const pick = function (v) { return (typeof v === 'string' ? v.trim().slice(0, 80) : '') || 'Not specified'; };
+  return 'MERIDIAN PROFILE (the organisation\'s own settings; use these for state, industry, organisation type and size band):\n'
+    + '- State: ' + pick(meridian.state) + '\n'
+    + '- Industry: ' + pick(meridian.industry) + '\n'
+    + '- Organisation type: ' + pick(meridian.orgType) + '\n'
+    + '- Organisation size band: ' + pick(meridian.orgSize) + '\n'
+    + '- Union status: ' + pick(meridian.unionStatus);
+}
+
 function getPactPrompt(meridian) {
   return `You are a senior HR risk analyst embedded in Virorah Vantage. You speak in plain, direct language. You never hedge unnecessarily. You understand Indian labour law (the Industrial Disputes Act, the Standing Orders, the POSH Act, relevant Shop & Establishment Acts, and state-specific rules) but you are not a lawyer — you frame legal position as a process-risk reading, not a formal opinion.
 
@@ -874,7 +890,7 @@ You receive:
 - narrative: what the HR professional described in plain language
 - caseType: the employee relations case category
 - stakeholders: the roles involved (no names)
-- meridian: { state, industry } — the organisation's operating context
+- MERIDIAN PROFILE: the organisation's state, industry, type, size band and union status, supplied in the message. Use it as given. Never infer the industry or state from a job title in the narrative. If the narrative states a headcount, that figure is more specific than the size band: use the narrative figure for threshold checks and say if it differs from the band.
 
 ---
 
@@ -3172,7 +3188,7 @@ async function handleRequest(request, env) {
       if (truncatedStakeholders && anonymizedStakeholders === null) { if (trialCharged) { await refundTrialCall(clerkUserId); } return anonymizationFailedResponse(); }
 
       const systemPrompt = getPactPrompt(meridian);
-      const userMessage = `CASE TYPE: ${truncateInput(caseType, 200)}\nNARRATIVE: ${anonymizedNarrative}\n${anonymizedStakeholders ? `STAKEHOLDERS: ${anonymizedStakeholders}` : ''}\n${ctcLine}\nRun the full PACT diagnostic and Unified Decision Protocol. Return the complete JSON response with both pact_scores and protocol fields as specified.`;
+      const userMessage = `${buildPactMeridianBlock(meridian)}\n\nCASE TYPE: ${truncateInput(caseType, 200)}\nNARRATIVE: ${anonymizedNarrative}\n${anonymizedStakeholders ? `STAKEHOLDERS: ${anonymizedStakeholders}` : ''}\n${ctcLine}\nRun the full PACT diagnostic and Unified Decision Protocol. Return the complete JSON response with both pact_scores and protocol fields as specified.`;
       const caseActKeys = selectActsForCase(caseType, anonymizedNarrative);
 const actLoad = await loadActsWithStatus(caseActKeys);
 const actContext = actLoad.text;
