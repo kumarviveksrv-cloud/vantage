@@ -951,7 +951,8 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
       "trajectorySignal": "One sentence that starts with the words Monitor whether and names one thing to check in other cases, based only on facts in the narrative. Do not say what the organisation lacks and do not say what pattern will recur."
     },
     "recommendation": "One clear path. Not a menu of options — a recommendation. Four sentences, 90 words or fewer in total. Sentence one states the path. Sentence two gives the order of the first steps and who owns each. Sentence three says why this path beats the most tempting alternative, naming that alternative. Sentence four names the one thing that would change the recommendation. Use facts and dates from the narrative.",
-    "communication": "What to say, to whom, and in what order. Four sentences, 90 words or fewer in total. First, who to speak to first and why that order. Then two sentences of suggested opening language, in quotation marks, for the most critical conversation (the one with the employee or with leadership), and then one sentence naming what not to say in that conversation and why. Frame it as a starting point to adapt, not a script to read verbatim.",
+    "communication": "What to say, to whom, and in what order. Three sentences, 70 words or fewer in total. First, who to speak to first and why that order. Second, the one point the conversation must land. Third, what not to say in that conversation and why. Do not write the opening language here; it goes in conversationStarter.",
+    "conversationStarter": "The exact words HR can use to open the most critical conversation, written as one or two sentences of spoken language, 45 words or fewer in total, with no quotation marks and no stage directions. It must be usable as it stands: warm, direct and specific to the facts in the narrative. Do not mention legal sections in it.",
     "aria": "One sentence ARIA scenario prompt: describe the conversation ARIA should simulate so the HR professional can practice before the real meeting. e.g. A termination conversation with a senior engineer who has 4 years of service and two documented warnings for repeated absence."
   },
   "detectedCaseType": "Exactly one of: Disciplinary | Grievance | PIP | Termination | Redundancy | POSH Complaint | Absence Management | Retrenchment | Other. The type the facts most closely match. If it matches the submitted caseType, return the same value. Use Other only when none of the eight genuinely fits (for example a resignation or notice-period dispute, recovery of losses after exit, client poaching, a conflict of interest, or a transfer or role change). Do not force a poor fit into one of the eight.",
@@ -2996,12 +2997,16 @@ function sanitiseLegalRows(result) {
 function applyBrevity(result) {
   var pr = result && result.protocol;
   if (!pr) { return; }
-  var caps = { quick_take: 45, assessment: 110, recommendation: 105, communication: 105 };
+  var caps = { quick_take: 45, assessment: 110, recommendation: 105, communication: 80 };
   Object.keys(caps).forEach(function (k) { if (typeof pr[k] === 'string') { pr[k] = trimToWords(pr[k], caps[k]); } });
   if (Array.isArray(pr.immediate_actions)) {
     pr.immediate_actions = pr.immediate_actions.filter(function (a) { return typeof a === 'string' && a.trim(); }).slice(0, 4).map(function (a) { return trimToWords(a, 30); });
   }
   if (result.pact_scores && typeof result.pact_scores.overallNarrative === 'string') { result.pact_scores.overallNarrative = trimToWords(result.pact_scores.overallNarrative, 50); }
+  if (typeof pr.conversationStarter === 'string') {
+    pr.conversationStarter = trimToWords(pr.conversationStarter.replace(/^[\s"'\u201C\u2018]+|[\s"'\u201D\u2019]+$/g, ''), 50);
+    if (!pr.conversationStarter || INTERNAL_NAME.test(pr.conversationStarter)) { delete pr.conversationStarter; }
+  } else { delete pr.conversationStarter; }
   sanitiseLegalRows(result);
   if (typeof pr.legal === 'string') { console.log('PACT legal detail words: ' + wordCount(pr.legal) + ', rows: ' + (pr.legalRows || []).length); }
 }

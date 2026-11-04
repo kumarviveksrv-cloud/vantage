@@ -203,6 +203,10 @@
     /* OUTPUT: COMMUNICATION */
     .communication-card{background:var(--card);border:1px solid rgba(244,243,255,0.07);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:20px 24px;margin-bottom:16px}
     .comm-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+    .comm-starter{margin-top:12px;padding:10px 14px;border-left:2px solid var(--accent);background:rgba(99,102,241,0.08);border-radius:0 8px 8px 0}
+    .comm-starter-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:rgba(165,180,252,0.6);margin-bottom:4px}
+    .comm-starter-text{font-size:14px;line-height:1.6;color:#e5e7ff;font-style:normal}
+    .communication-card.collapsed .comm-starter{display:none}
     .comm-text{font-size:13px;color:rgba(244,243,255,0.7);line-height:1.85;font-style:italic}
 
     /* OUTPUT: ARIA OFFER */
@@ -639,6 +643,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         <div class="communication-card">
           <div class="comm-label">💬 Communication: what to say, to whom</div>
           <div class="comm-text" id="proto-communication"></div>
+          <div class="comm-starter" id="comm-starter" style="display:none"><div class="comm-starter-label">Model opening line</div><div class="comm-starter-text" id="comm-starter-text"></div></div>
         </div>
 
         <!-- ARIA offer -->
@@ -1034,6 +1039,11 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
 
       // Protocol: Communication
       document.getElementById('proto-communication').innerText = pr.communication || '';
+      (function () {
+        var box = document.getElementById('comm-starter'), tx = document.getElementById('comm-starter-text');
+        var t = typeof pr.conversationStarter === 'string' ? pr.conversationStarter.trim() : '';
+        if (box && tx) { tx.textContent = t ? '\u201C' + t + '\u201D' : ''; box.style.display = t ? '' : 'none'; }
+      })();
 
       // ARIA
       currentARIAScenario = pr.aria || '';
@@ -1099,7 +1109,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           html: '<div class="sm-big">' + e(fin.range || 'Not calculated') + '</div>' +
             (fin.breakdown || []).map(function (b) { return '<div class="sm-pt"><span>' + e(String(b).replace(/<[^>]*>/g, '')) + '</span></div>'; }).join('') },
         { id: 'rec', title: 'Recommended Path', summary: lead(pr.recommendation, 260), html: prose(pr.recommendation) },
-        { id: 'comm', title: 'Communication', summary: lead(pr.communication, 260), html: prose(pr.communication) },
+        { id: 'comm', title: 'Communication', summary: lead(pr.communication, 260), html: prose(pr.communication) + (pr.conversationStarter ? '<div class="sm-pt"><span><strong>Model opening line.</strong> \u201C' + e(pr.conversationStarter) + '\u201D</span></div>' : '') },
         { id: 'assess', title: 'Assessment', summary: lead(pr.assessment, 260), html: prose(pr.assessment) }
       ].filter(function (p) { return p.html && p.html.replace(/<[^>]*>/g, '').trim(); });
       window.SpatialMode.open(panels, {

@@ -245,9 +245,17 @@ check('v30: caps are 50 and 110 words', a30.n <= 50 && a30.a <= 110 && a30.a >= 
 // v31: recommendation and communication restored with structure
 const pr31 = run('getPactPrompt({})');
 check('v31: recommendation structure', pr31.includes('Four sentences, 90 words or fewer in total. Sentence one states the path') && pr31.includes('naming that alternative') && pr31.includes('would change the recommendation'));
-check('v31: communication structure', pr31.includes('what not to say in that conversation') && pr31.includes('in quotation marks'));
+check('v31: communication structure', pr31.includes('what not to say in that conversation') && pr31.includes('it goes in conversationStarter'));
 globalThis.__c31 = { protocol: { recommendation: ('A sentence of about eight words goes here. ').repeat(16), communication: ('Another sentence of eight words sits here. ').repeat(16) } };
 const c31 = JSON.parse(run('(function(){ applyBrevity(__c31); return JSON.stringify({ r: wordCount(__c31.protocol.recommendation), c: wordCount(__c31.protocol.communication) }); })()'));
-check('v31: caps are 105 words', c31.r <= 105 && c31.c <= 105 && c31.r >= 80 && c31.c >= 80, JSON.stringify(c31));
+check('v31: caps are 105 and 80 words', c31.r <= 105 && c31.c <= 80 && c31.r >= 80 && c31.c >= 60, JSON.stringify(c31));
+
+// v32: separate conversation starter field
+check('v32: prompt has conversationStarter field', run('getPactPrompt({})').includes('"conversationStarter"') && run('getPactPrompt({})').includes('with no quotation marks'));
+globalThis.__cs = { protocol: { conversationStarter: '\u201C' + 'Thanks for telling me. I want you to hear from me first that nothing about your role has changed, and I would like to understand how you are doing. ' + 'filler '.repeat(40) + '\u201D' } };
+const cs = JSON.parse(run('(function(){ applyBrevity(__cs); return JSON.stringify({ t: __cs.protocol.conversationStarter }); })()'));
+check('v32: starter stripped of quotes and capped at 50 words', cs.t && !/^[\u201C"]/.test(cs.t) && cs.t.trim().split(/\s+/).length <= 50 && /^Thanks for telling me\./.test(cs.t), JSON.stringify(cs).slice(0, 120));
+globalThis.__cs2 = { protocol: { conversationStarter: 42 } };
+check('v32: bad starter removed', run('(function(){ applyBrevity(__cs2); return "conversationStarter" in __cs2.protocol; })()') === false);
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
