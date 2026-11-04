@@ -2,7 +2,7 @@ THE INDUSTRIAL RELATIONS CODE, 2020
 ACT NO. 35 OF 2020
 In force from 21 November 2025. The Industrial Relations Code (Amendment) Act, 2026 (Act No. 1 of 2026, assented 16 February 2026, deemed in force from 21 November 2025) amends only section 104 of the Code (repeals and savings), so it does not change any section reproduced below.
 
-SOURCE AND FORM: The text below is copied from the Gazette of India Extraordinary (Part II, Section 1) copy of the Code. Nothing in this file is a summary or a paraphrase. Sections not reproduced are omitted, not summarised: if a section is not here, the Acts provided do not cover it. Marginal headings of the printed Act may appear as short separate lines near the section they belong to.
+SOURCE AND FORM: The text below follows the Gazette of India Extraordinary (Part II, Section 1) copy of the Code. It is not a summary or a paraphrase. Two small departures: bracketed Act numbers such as "(63 of 1948)" are left out, and marginal headings may sit a line away from their section. Sections not reproduced are omitted, not summarised: if a section is not here, the Acts provided do not cover it. Marginal headings of the printed Act may appear as short separate lines near the section they belong to.
 
 Sections reproduced: section 2 (definitions of employer, industry, retrenchment, unfair labour practice, wages, worker), Chapter IV (sections 28 to 38), Chapters IX and X (sections 65 to 82), sections 84 to 86, and the Second Schedule.
 Full text: https://www.indiacode.nic.in/handle/123456789/22040
@@ -124,7 +124,7 @@ include any such person—
 (i) who is subject to the Air Force Act, 1950, or the Army Act, 1950, or the
 Navy Act, 1957; or
 (ii) who is employed in the police service or as an officer or other employee
-of a prison; or
+of a prison;
 (iii) who is employed mainly in a managerial or administrative
 capacity; or
 (iv) who is employed in a supervisory capacity drawing wages exceeding
