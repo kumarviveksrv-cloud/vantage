@@ -137,6 +137,10 @@
     .legal-chip.not_yet{color:#cbd5e1;border-color:rgba(148,163,184,0.45);background:rgba(148,163,184,0.1)}
     .legal-ref{font-size:12.5px;font-weight:600;color:#e5e7ff;line-height:1.35}
     .legal-point{font-size:12.5px;color:rgba(229,231,255,0.78);line-height:1.5;margin-top:2px}
+    .legal-costly{margin:6px 0 10px;padding:10px 14px;border-left:2px solid rgba(248,113,113,0.7);background:rgba(248,113,113,0.07);border-radius:0 8px 8px 0}
+    .legal-costly-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#fca5a5;margin-bottom:4px}
+    .legal-costly-text{font-size:13px;line-height:1.55;color:#e5e7ff}
+    .legal-section.has-rows.collapsed .legal-costly{display:block}
     .legal-notengaged{font-size:11.5px;color:var(--dim);margin:4px 0 12px;line-height:1.5}
     .legal-full-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:rgba(165,180,252,0.55);margin:6px 0 6px}
     .legal-section.has-rows.collapsed .proto-text,.legal-section.has-rows.collapsed .legal-full-label{display:none}
@@ -589,6 +593,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
             <div class="proto-label"><span class="proto-icon">⚖️</span> Legal Position</div>
             <div style="font-size:11px;color:var(--dim);margin-bottom:8px">A reading of the process against the Codes, not a formal legal opinion.</div>
             <div class="legal-rows" id="legal-rows"></div>
+            <div class="legal-costly" id="legal-costly" style="display:none"><div class="legal-costly-label">Most costly mistake</div><div class="legal-costly-text" id="legal-costly-text"></div></div>
             <div class="legal-notengaged" id="legal-notengaged" style="display:none"></div>
             <div class="legal-full-label" id="legal-full-label" style="display:none">Full reading</div>
             <div class="proto-text" id="proto-legal"></div>
@@ -1187,7 +1192,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     });
 
     /* Legal Position: one row per provision the facts bring into question, with the full reading as the detail underneath */
-    var LEGAL_CHIP = { live: 'Applies now', unclear: 'Needs a fact', not_yet: 'Not triggered' };
+    var LEGAL_CHIP = { live: 'Applies now', unclear: 'Open point', not_yet: 'Not triggered' };
     function renderLegalRows(pr) {
       var box = document.getElementById('legal-rows');
       var ne = document.getElementById('legal-notengaged');
@@ -1209,6 +1214,9 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         row.appendChild(chip); row.appendChild(body); box.appendChild(row);
       });
       var has = box.children.length > 0;
+      var cb = document.getElementById('legal-costly'), ct = document.getElementById('legal-costly-text');
+      var cst = typeof (pr && pr.costliestStep) === 'string' ? pr.costliestStep.trim() : '';
+      if (cb && ct) { ct.textContent = has ? cst : ''; cb.style.display = has && cst ? '' : 'none'; }
       if (card) { card.classList.toggle('has-rows', has); }
       if (lab) { lab.style.display = has ? '' : 'none'; }
       var list = Array.isArray(pr && pr.notEngaged) ? pr.notEngaged.filter(function (x) { return typeof x === 'string' && x.trim(); }) : [];

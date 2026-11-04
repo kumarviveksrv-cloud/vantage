@@ -207,7 +207,7 @@ check('v28: quick take within 45 words', brOut.quick_take.trim().split(/\s+/).le
 check('v28: rows sorted live, unclear, not_yet; bad rows dropped', brOut.legalRows.map(r => r.verdict).join(',') === 'live,unclear,unclear,not_yet' || brOut.legalRows.map(r => r.verdict).join(',') === 'live,unclear,not_yet,unclear' || /live/.test(brOut.legalRows[0].verdict), JSON.stringify(brOut.legalRows.map(r => r.ref + ':' + r.verdict)));
 check('v28: generalisation, duplicate and leaked-field rows removed', !brOut.legalRows.some(r => /Odd row|Leak|Duplicate/.test(r.ref + r.point)) && brOut.legalRows.filter(r => r.ref === 'Social Security Code s.64').length === 1);
 check('v28: unknown verdict becomes unclear', brOut.legalRows.find(r => r.ref === 'Bad verdict').verdict === 'unclear');
-check('v28: every row point is 25 words or fewer', brOut.legalRows.every(r => r.point.trim().split(/\s+/).length <= 25));
+check('v28: every row point is 45 words or fewer', brOut.legalRows.every(r => r.point.trim().split(/\s+/).length <= 45));
 check('v28: notEngaged deduped and trimmed, non-strings dropped', brOut.notEngaged.length === 2 && brOut.notEngaged[1] === 'Section 2(zr) definition of worker', JSON.stringify(brOut.notEngaged));
 globalThis.__fl2 = { dates: { joiningDate: '2026-06-01', expectedDeliveryDate: '2027-03-15', decisionDate: '2026-11-30' } };
 globalThis.__rw = { protocol: { legalRows: [{ ref: 'Social Security Code s.60(2)', verdict: 'live', point: 'Model count.' }, { ref: 'Contract Act s.16', verdict: 'not_yet', point: 'Applies only if she resigns.' }] } };
@@ -261,7 +261,7 @@ check('v32: bad starter removed', run('(function(){ applyBrevity(__cs2); return 
 // v33: pinned s.68(1) proviso row
 globalThis.__pv = { protocol: { legalRows: [{ ref: 'Social Security Code s.68(1) proviso', verdict: 'live', point: 'Model wording that should be replaced.' }, { ref: 'Contract Act s.16', verdict: 'not_yet', point: 'Applies only if she resigns.' }] } };
 const pv = JSON.parse(run('(function(){ addProvisoRow(__pv, "pressure_to_resign"); return JSON.stringify(__pv.protocol.legalRows); })()'));
-check('v33: one proviso row, replaced, marked unclear for a non-dismissal case', pv.filter(r => /proviso/.test(r.ref)).length === 1 && pv.find(r => /proviso/.test(r.ref)).verdict === 'unclear' && /confirm with counsel/.test(pv.find(r => /proviso/.test(r.ref)).point) && !/Model wording/.test(JSON.stringify(pv)), JSON.stringify(pv).slice(0, 200));
+check('v33: one proviso row, replaced, marked unclear for a non-dismissal case', pv.filter(r => /proviso/.test(r.ref)).length === 1 && pv.find(r => /proviso/.test(r.ref)).verdict === 'unclear' && /confirm with counsel/i.test(pv.find(r => /proviso/.test(r.ref)).point) && !/Model wording/.test(JSON.stringify(pv)), JSON.stringify(pv).slice(0, 200));
 globalThis.__pv2 = { protocol: {} };
 const pv2 = JSON.parse(run('(function(){ addProvisoRow(__pv2, "dismissal_or_resignation_occurred"); return JSON.stringify(__pv2.protocol.legalRows); })()'));
 check('v33: dismissal scenario marks proviso live', pv2.length === 1 && pv2[0].verdict === 'live' && /gross misconduct/.test(pv2[0].point));
@@ -286,6 +286,20 @@ globalThis.__f71 = { dates: { joiningDate: '2024-01-10', decisionDate: '2026-11-
 globalThis.__s71 = { protocol: { legalRows: [{ ref: 'IR Code s.70', verdict: 'live', point: 'Applies.' }], notEngaged: [] } };
 check('v34: long service leaves s.70 alone', run('(function(){ return applyShortServiceRule(__s71, __f71); })()') === 0 && JSON.parse(run('JSON.stringify(__s71.protocol.legalRows)')).length === 1);
 check('v34: prompt limits rows to five and bars manager mention in the opening line', run('getPactPrompt({})').includes('Array of 3 to 5 objects') && run('getPactPrompt({})').includes('do not refer to her manager'));
-check('v34: unclear defined as one missing fact', run('getPactPrompt({})').includes('one specific fact missing from the narrative decides it'));
+check('v34: unclear defined as a missing fact or an unsettled question', run('getPactPrompt({})').includes('depends on one fact the narrative does not give or on a question the Acts do not settle'));
+
+// v35: plain chip wording, fuller rows, most costly step
+const pr35 = run('getPactPrompt({})');
+check('v35: rows ask for condition plus why it matters, Depends on for unclear', pr35.includes('two sentences, 40 words or fewer in total: first the condition') && pr35.includes('must start with the words Depends on'));
+check('v35: costliestStep field in prompt', pr35.includes('"costliestStep"') && pr35.includes('most costly if missed'));
+globalThis.__co = { protocol: { costliestStep: 'Letting the extension go out in writing before HR has reviewed the performance record would expose the organisation to a complaint under section 72, and that is ' + 'very '.repeat(30) + 'costly.', legalRows: [] } };
+const co = JSON.parse(run('(function(){ applyBrevity(__co); return JSON.stringify({ c: __co.protocol.costliestStep }); })()'));
+check('v35: costliest step capped at 40 words', co.c && co.c.trim().split(/\s+/).length <= 40, JSON.stringify(co).slice(0, 140));
+globalThis.__co2 = { protocol: { costliestStep: 'Firms usually miss this step.', legalRows: [] } };
+check('v35: generalising costliest step removed', run('(function(){ applyBrevity(__co2); return "costliestStep" in __co2.protocol; })()') === false);
+const pv35 = JSON.parse(run('(function(){ var r = { protocol: {} }; addProvisoRow(r, "pressure_to_resign"); return JSON.stringify(r.protocol.legalRows[0]); })()'));
+check('v35: proviso row starts with Depends on', /^Depends on whether a non-confirmation/.test(pv35.point) && pv35.verdict === 'unclear', pv35.point);
+const dc35 = JSON.parse(run('(function(){ var r = { protocol: {} }; addDayCountRow(r, { dates: { joiningDate: "2026-06-01", expectedDeliveryDate: "2027-03-15", decisionDate: "2026-11-30" } }); return JSON.stringify(r.protocol.legalRows[0]); })()'));
+check('v35: day count row starts with Depends on and keeps Vantage counts', /^Depends on attendance records\. Vantage counts 131 weekdays/.test(dc35.point), dc35.point);
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
