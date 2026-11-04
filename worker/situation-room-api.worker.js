@@ -2789,9 +2789,9 @@ function buildMeridianContext(meridian, headcountStated) {
     var hi = n !== null ? n : band.hi;
     var lines = SIZE_THRESHOLDS.map(function (t) {
       var verdict = lo >= t.min ? 'met' : (hi < t.min ? 'not met' : 'depends on the exact headcount');
-      return '- ' + t.text + ' Size condition: ' + verdict + '.';
+      return t.text + ' Size condition: ' + verdict + '.';
     });
-    out.push('Size thresholds in the Acts held by Vantage (headcount only; whether the other conditions are met is a separate question):\n' + lines.join('\n'));
+    out.push('Size thresholds in the Acts held by Vantage (headcount only; whether the other conditions are met is a separate question):\n\n' + lines.join('\n\n'));
   }
   out.push('This section restates your saved profile and applies the size thresholds above. It does not describe sector or state practice.');
   return out.join('\n\n');
@@ -2878,6 +2878,16 @@ function appendDayCount(result, flags) {
   pr.legal = paras.join('\n\n');
 }
 
+// A hint to resign is the one fact the replacement-cost scenario turns on, and the model once read the same narrative as
+// "confirmation decision only". If one sentence of the narrative carries both a resign word and a suggestion word, the
+// scenario is raised to pressure_to_resign. It only ever raises non_confirmation_only; it never lowers a scenario.
+const RESIGN_WORDS = /\b(resign|resigns|resigned|resigning|resignation|quit|quits|step down|leave the (job|company|organi[sz]ation))\b/i;
+const SUGGEST_WORDS = /\b(easier|suggest\w*|hint\w*|told (her|him)|told by|asked (her|him)|pressur\w*|better (if|for her)|encourag\w*|nudg\w*|persuad\w*)\b/i;
+function resignationPressureNet(narrative, scenario) {
+  if (scenario !== 'non_confirmation_only' || typeof narrative !== 'string') { return false; }
+  return narrative.split(/(?<=[.!?])\s+|\n+/).some(function (sen) { return RESIGN_WORDS.test(sen) && SUGGEST_WORDS.test(sen); });
+}
+
 // Replaces the model's own financial figures with the engine's, when the model flagged a pregnancy or maternity case.
 function applyDeterministicFinancial(result, reqBody) {
   try {
@@ -2899,6 +2909,7 @@ function applyDeterministicFinancial(result, reqBody) {
     var E = MATERNITY_ENGINE;
     var scenarioDefaulted = E.scenarios.indexOf(flags.scenario) === -1;
     var scenario = scenarioDefaulted ? E.defaultScenario : flags.scenario;
+    if (resignationPressureNet(reqBody && reqBody.narrative, scenario)) { scenario = 'pressure_to_resign'; console.log('PACT: scenario raised to pressure_to_resign by narrative check'); }
     var crit = resolveCriticality(reqBody && reqBody.roleCriticality);
     var freeCare = flags.freePrenatalCareStated === true ? true : (flags.freePrenatalCareStated === false ? false : null);
     var built = maternityItems(ctcInfo, scenario, scenarioDefaulted, crit, freeCare);

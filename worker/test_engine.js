@@ -136,5 +136,15 @@ const sc = JSON.parse(scOut);
 check('scrub removes sentences naming internal fields', !/engineFlags|freePrenatalCareStated/.test(sc.legal + sc.nested) && /Section 64 gives a bonus\./.test(sc.legal) && /Next sentence stays/.test(sc.legal) && /Kept\./.test(sc.nested), sc.legal);
 check('scrub leaves engineFlags itself untouched', sc.flags && sc.flags.scenario === 'x' && sc.n === 2);
 check('prompt forbids internal field names', run('getPactPrompt({})').includes('Never mention engineFlags'));
+// v24: resignation-pressure safety net and paragraph-per-threshold context
+check('net: raises hint to resign', run('resignationPressureNet("Her manager told her it might be easier if she resigned. Confirmation is due.", "non_confirmation_only")') === true);
+check('net: no hint, no raise', run('resignationPressureNet("Confirmation is due on 30 November. She missed a deadline.", "non_confirmation_only")') === false);
+check('net: never lowers or touches other scenarios', run('resignationPressureNet("easier if she resigned", "dismissal_or_resignation_occurred")') === false);
+check('net: words in different sentences do not raise', run('resignationPressureNet("Another employee resigned last year. The manager suggested a review.", "non_confirmation_only")') === false);
+globalThis.__b3 = { ctcBand: '18L to 25L', roleCriticality: 'Medium', narrative: 'The manager told her it might be easier if she resigned.' };
+const o24 = run('(function(){ var r = __fake(0); r.engineFlags.scenario = "non_confirmation_only"; normaliseFinancial(r); applyDeterministicFinancial(r, __b3); return JSON.stringify({ s: r.engineInputs.scenario, hasSplit: !!r.protocol.financial.split }); })()');
+check('net: apply raises scenario and split appears', JSON.parse(o24).s === 'pressure_to_resign' && JSON.parse(o24).hasSplit === true, o24);
+const c24 = run('buildMeridianContext(__m, 140)');
+check('v24: each threshold is its own paragraph', c24.split('\n\n').length >= 9 && !/\n- /.test(c24));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
