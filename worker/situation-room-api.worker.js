@@ -4724,7 +4724,12 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
     if (tool === 'archive_case') {
       const { recordId } = body;
       if (!recordId) return new Response(JSON.stringify({ success: false, error: 'No recordId' }), { status: 400, headers: CORS_HEADERS });
-      const patchRes = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Cases/${recordId}`, {
+      // Ownership check: a record ID alone does not prove the case is the caller's.
+      const ownedCase = await getAirtableRecordById('Cases', recordId);
+      if (!ownedCase || !ownedCase.fields || ownedCase.fields.clerk_user_id !== clerkUserId) {
+        return new Response(JSON.stringify({ success: false, error: 'Record not found.' }), { status: 404, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+      }
+      const patchRes = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Cases/${encodeURIComponent(recordId)}`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${AIRTABLE_API_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ fields: { archived: true } })
@@ -4739,7 +4744,15 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
     if (tool === 'update_case_status') {
       const { recordId, status } = body;
       if (!recordId || !status) return new Response(JSON.stringify({ success: false, error: 'Missing params' }), { status: 400, headers: CORS_HEADERS });
-      const patchRes = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Cases/${recordId}`, {
+      // Only the statuses the product uses, and only on the caller's own case.
+      if (['Open', 'Closed', 'Resolved'].indexOf(status) === -1) {
+        return new Response(JSON.stringify({ success: false, error: 'Invalid status' }), { status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+      }
+      const ownedCase = await getAirtableRecordById('Cases', recordId);
+      if (!ownedCase || !ownedCase.fields || ownedCase.fields.clerk_user_id !== clerkUserId) {
+        return new Response(JSON.stringify({ success: false, error: 'Record not found.' }), { status: 404, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+      }
+      const patchRes = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Cases/${encodeURIComponent(recordId)}`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${AIRTABLE_API_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ fields: { status: status } })
