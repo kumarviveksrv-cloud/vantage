@@ -929,7 +929,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
   },
   "protocol": {
     "legal": "Full reading, for the reader who opens the detail. About 250 words in total. Cover only the provisions that are live or unclear and the one step that would be most costly if missed; leave out provisions that do not apply and headcount threshold checks such as Standing Orders or Chapter X. Legal position reading. What does the process look like against the relevant Codes and Acts given the state and industry in meridian? Where is the organisation exposed? Where is it protected? What one procedural step, if missed, would be the most costly? This is a process-risk reading, not a formal legal opinion. Base it on the wording of the Acts provided to you. Do not cite court judgments or case-law readings. Every statement about what an Act section requires or allows must be traceable to its exact wording. Do not add tests, conditions or doctrines the wording does not contain (for example penalty versus genuine pre-estimate, or a duty to prove actual loss, unless the wording itself says so), and keep the Act's own verbs: if it says entitled, do not write may. Where an Act section plainly says something, state what it says, and where the Acts provided do not cover a point, say so instead of filling the gap from memory. Keep the wording apart from your inference: state what the wording says first, citing the section, and mark any inference or risk judgement with the words Risk reading. Never say an Act prohibits or requires something unless its wording does. If a section applies only on a condition (for example a request by the employee, or a leave that has already begun), state that condition and check it against the facts. If the narrative does not say the condition has happened, say plainly that it has not been met on the facts given, and do not argue that something else (such as a verbal disclosure, an intention or a plan) satisfies it; put what follows from that under Risk reading. Write the legal field as finished prose: never include a sentence that instructs yourself or describes a check you are about to make, and do not use doctrine labels (such as constructive dismissal or general principles) unless a provided Act uses them. When you mention a threshold, name the section that sets it and say what it covers (for example the section that applies a Chapter, and which sections it applies). When you apply a time window or period to the facts, work it out from the dates in the narrative before saying whether it has begun. In a case about a pregnant employee, do not calculate or state any count of days between dates: put the dates in engineFlags.dates, and Vantage adds a day-count paragraph to the end of this section, which you may refer to as the day count below. In any other case, when you compare a count of days with a number of days in an Act, say whether you are counting calendar days or days actually worked, and convert (about five working days a week) before comparing. Before applying a Chapter or Act, check the establishment size in the meridian against its stated threshold, and do not apply it to an establishment below that threshold. Do not describe what a document made under an Act contains (such as model standing orders) unless the Acts provided say so. Never state a fine, penalty, imprisonment term or compensation amount unless the exact figure appears in the Acts provided to you, and copy it as the Act words it; if a penalty matters and the figure is not in the Acts provided, say that the Code provides a penalty and name the section only. Never refer to a section by a number the Acts provided do not give to that provision. Close this section with one sentence: this reads the statute wording only, and courts may apply it differently, so confirm with counsel before acting.",
-    "legalRows": "Array of 3 to 7 objects, one per provision the facts actually bring into question. Each object has ref (only the Act and section, for example Social Security Code s.68(1) or Contract Act s.16, with no description and no abbreviations; put the explanation in point), verdict (exactly one of live, not_yet, unclear: live means its condition is met on the facts, not_yet means its condition is not met yet or only applies later, unclear means the narrative does not give the fact that decides it) and point (one sentence of 25 words or fewer stating the condition and how the facts stand against it). Do not make a row for a provision that is only a headcount threshold check, because the MERIDIAN section covers those. Do not make a row for the eighty-day count, because Vantage adds it. Never put a fine, penalty or compensation amount in a row.",
+    "legalRows": "Array of 3 to 5 objects, one per provision the facts actually bring into question. Each object has ref (only the Act and section, for example Social Security Code s.68(1) or Contract Act s.16, with no description and no abbreviations; put the explanation in point), verdict (exactly one of live, not_yet, unclear: live means its condition is met on the facts, not_yet means its condition is not met yet or only applies later, unclear means one specific fact missing from the narrative decides it, and the point must name that fact; if the facts show the condition is not met, use not_yet and not unclear) and point (one sentence of 25 words or fewer stating the condition and how the facts stand against it). Do not make a row for a provision that is only a headcount threshold check, because the MERIDIAN section covers those. Do not make a row for the eighty-day count, because Vantage adds it. Never put a fine, penalty or compensation amount in a row.",
     "notEngaged": "Array of up to 6 strings, each only an Act and section that you checked and that does not apply on the facts, for example Social Security Code s.65. No explanation, no brackets, no commas.",
     "quick_take": "Two sentences, each 20 words or fewer, with no comma splices. What is happening, what is the single biggest risk, and what that means for the decision in front of this HR professional. Write for someone reading on a phone in 10 seconds. Do not say that an Act prohibits, blocks or makes unlawful an action unless its wording does, and use the wording's own conditions (for example a section that applies only once a leave has begun, or only on the employee's request); where it is a risk rather than a prohibition, say risk. Do not state as fact anything the narrative does not say; write if or check whether instead. Write this after, and consistent with, the legal field above: never say a protection is engaged or a section is triggered when the legal field says its condition has not yet been met (for example a request not yet made, or a leave not yet begun).",
     "immediate_actions": [
@@ -952,7 +952,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
     },
     "recommendation": "One clear path. Not a menu of options — a recommendation. Four sentences, 90 words or fewer in total. Sentence one states the path. Sentence two gives the order of the first steps and who owns each. Sentence three says why this path beats the most tempting alternative, naming that alternative. Sentence four names the one thing that would change the recommendation. Use facts and dates from the narrative.",
     "communication": "What to say, to whom, and in what order. Three sentences, 70 words or fewer in total. First, who to speak to first and why that order. Second, the one point the conversation must land. Third, what not to say in that conversation and why. Do not write the opening language here; it goes in conversationStarter.",
-    "conversationStarter": "The exact words HR can use to open the most critical conversation, written as one or two sentences of spoken language, 45 words or fewer in total, with no quotation marks and no stage directions. It must be usable as it stands: warm, direct and specific to the facts in the narrative. Do not mention legal sections in it.",
+    "conversationStarter": "The exact words HR can use to open the most critical conversation, written as one or two sentences of spoken language, 45 words or fewer in total, with no quotation marks and no stage directions. It must be usable as it stands: warm, direct and specific to the facts in the narrative. Do not mention legal sections in it, and do not refer to her manager or anyone else in the case.",
     "aria": "One sentence ARIA scenario prompt: describe the conversation ARIA should simulate so the HR professional can practice before the real meeting. e.g. A termination conversation with a senior engineer who has 4 years of service and two documented warnings for repeated absence."
   },
   "detectedCaseType": "Exactly one of: Disciplinary | Grievance | PIP | Termination | Redundancy | POSH Complaint | Absence Management | Retrenchment | Other. The type the facts most closely match. If it matches the submitted caseType, return the same value. Use Other only when none of the eight genuinely fits (for example a resignation or notice-period dispute, recovery of losses after exit, client poaching, a conflict of interest, or a transfer or role change). Do not force a poor fit into one of the eight.",
@@ -2985,7 +2985,7 @@ function sanitiseLegalRows(result) {
     out.push({ ref: ref, verdict: LEGAL_VERDICTS.indexOf(r.verdict) >= 0 ? r.verdict : 'unclear', point: trimToWords(point, 25) });
   });
   out.sort(function (a, b) { return LEGAL_VERDICTS.indexOf(a.verdict) - LEGAL_VERDICTS.indexOf(b.verdict); });
-  pr.legalRows = out.slice(0, 7);
+  pr.legalRows = out.slice(0, 5);
   var ne = [], neSeen = {};
   (Array.isArray(pr.notEngaged) ? pr.notEngaged : []).forEach(function (x) {
     var t = typeof x === 'string' ? cleanLegalRef(x, 36) : '';
@@ -3048,6 +3048,54 @@ function addProvisoRow(result, scenario) {
   pr.legalRows = rows.slice(0, 8);
 }
 
+// 6. Section 70 (retrenchment compensation) needs one year of continuous service. When the dates in the narrative show less than a year
+//    of service at the decision, any text that raises section 70 is removed from the reply, and it is listed as not engaged.
+const SECTION_70 = /\b(?:s\.?\s?70|section 70)\b|retrenchment (?:compensation|condition)/i;
+function shortServiceBeforeDecision(dates) {
+  if (!dates || typeof dates !== 'object') { return false; }
+  var j = parseIsoDate(dates.joiningDate), a = parseIsoDate(dates.decisionDate) || parseIsoDate(dates.expectedDeliveryDate);
+  return !!(j && a && a.getTime() > j.getTime() && (a.getTime() - j.getTime()) < 365 * 86400000);
+}
+function stripSection70(node, depth) {
+  if (!node || typeof node !== 'object' || depth > 8) { return 0; }
+  var removed = 0;
+  Object.keys(node).forEach(function (k) {
+    if (k === 'engineFlags' || k === 'engineInputs' || k === 'legalRows' || k === 'notEngaged') { return; }
+    var v = node[k];
+    if (typeof v === 'string') {
+      if (SECTION_70.test(v)) {
+        var kept = v.split(/(?<=[.!?])\s+/).filter(function (sen) { return !SECTION_70.test(sen); }).join(' ');
+        node[k] = kept; removed++;
+      }
+    } else if (Array.isArray(v)) {
+      var before = v.length;
+      for (var i = 0; i < v.length; i++) {
+        if (typeof v[i] === 'string') {
+          if (SECTION_70.test(v[i])) { v[i] = v[i].split(/(?<=[.!?])\s+/).filter(function (sen) { return !SECTION_70.test(sen); }).join(' '); }
+        } else { removed += stripSection70(v[i], depth + 1); }
+      }
+      var cleaned = v.filter(function (x) { return !(typeof x === 'string' && !x.trim()); });
+      if (cleaned.length !== before) { node[k] = cleaned; removed += before - cleaned.length; }
+    } else if (v && typeof v === 'object') { removed += stripSection70(v, depth + 1); }
+  });
+  return removed;
+}
+function applyShortServiceRule(result, flags) {
+  if (!result || !shortServiceBeforeDecision(flags && flags.dates)) { return 0; }
+  var n = stripSection70(result, 0);
+  var pr = result.protocol;
+  if (pr) {
+    if (Array.isArray(pr.legalRows)) {
+      var before = pr.legalRows.length;
+      pr.legalRows = pr.legalRows.filter(function (r) { return !SECTION_70.test((r.ref || '') + ' ' + (r.point || '')); });
+      n += before - pr.legalRows.length;
+    }
+    if (!Array.isArray(pr.notEngaged)) { pr.notEngaged = []; }
+    if (!pr.notEngaged.some(function (x) { return SECTION_70.test(x); })) { pr.notEngaged.push('IR Code s.70'); pr.notEngaged = pr.notEngaged.slice(0, 6); }
+  }
+  return n;
+}
+
 // A hint to resign is the one fact the replacement-cost scenario turns on, and the model once read the same narrative as
 // "confirmation decision only". If one sentence of the narrative carries both a resign word and a suggestion word, the
 // scenario is raised to pressure_to_resign. It only ever raises non_confirmation_only; it never lowers a scenario.
@@ -3078,6 +3126,7 @@ function applyDeterministicFinancial(result, reqBody) {
     if (!flags || typeof flags !== 'object') { return; }
     try { var _dc = stripModelDayCounts(result); if (_dc) { console.log('PACT: removed ' + _dc + ' model-written day-count sentence(s)'); } } catch (e) { console.error('stripModelDayCounts failed: ' + e.message); }
     appendDayCount(result, flags);
+    try { var _s70 = applyShortServiceRule(result, flags); if (_s70) { console.log('PACT: removed ' + _s70 + ' section 70 item(s), service under one year'); } } catch (e) { console.error('applyShortServiceRule failed: ' + e.message); }
     try { addDayCountRow(result, flags); } catch (e) { console.error('addDayCountRow failed: ' + e.message); }
     try { addProvisoRow(result, flags.scenario); } catch (e) { console.error('addProvisoRow failed: ' + e.message); }
     var ctcInfo = resolveCtc(reqBody);

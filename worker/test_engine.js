@@ -270,5 +270,22 @@ const pv3 = run('(function(){ applyDeterministicFinancial({ engineFlags: { scena
 check('v33: apply runs without error', pv3 === 'ran');
 const e2e = JSON.parse(run('(function(){ var r = { engineFlags: { scenario: "pressure_to_resign", freePrenatalCareStated: null, dates: { joiningDate: "2026-06-01", expectedDeliveryDate: "2027-03-15", decisionDate: "2026-11-30" } }, protocol: { financial: { items: [] }, legal: "x", legalRows: [] } }; applyDeterministicFinancial(r, { ctcBand: "18L to 25L", roleCriticality: "Medium" }); return JSON.stringify(r.protocol.legalRows.map(function(x){ return x.ref; })); })()'));
 check('v33: end to end, proviso and day-count rows both present', e2e.some(x => /proviso/.test(x)) && e2e.some(x => /60\(2\)/.test(x)), JSON.stringify(e2e));
+
+// v34: short-service section 70 rule, five model rows, opening line rule
+globalThis.__s70 = { protocol: {
+  legalRows: [{ ref: 'IR Code s.70', verdict: 'unclear', point: 'Retrenchment compensation applies only if she is a worker.' }, { ref: 'Contract Act s.16', verdict: 'unclear', point: 'Undue influence if she resigns after the hint.' }],
+  notEngaged: ['IR Code s.28'] },
+  pact_scores: { consequence: { points: ['Varying conditions after disclosure risks s.68(1).', 'Non-confirmation treated as termination could trigger retrenchment compensation obligations under IR Code s.70.', 'A complaint under s.72 is low cost.'] } },
+  note: 'Section 70 does not apply. The rest stays.' };
+globalThis.__f70 = { dates: { joiningDate: '2026-06-01', expectedDeliveryDate: '2027-03-15', decisionDate: '2026-11-30' } };
+const s70 = JSON.parse(run('(function(){ var n = applyShortServiceRule(__s70, __f70); return JSON.stringify({ n: n, r: __s70 }); })()'));
+check('v34: s.70 removed from points, rows and prose when service is under a year', s70.r.pact_scores.consequence.points.length === 2 && s70.r.protocol.legalRows.length === 1 && s70.r.note === 'The rest stays.', JSON.stringify(s70.r).slice(0, 300));
+check('v34: s.70 listed as not engaged', s70.r.protocol.notEngaged.includes('IR Code s.70'));
+check('v34: other points kept', s70.r.pact_scores.consequence.points.join('|').includes('s.68(1)') && s70.r.pact_scores.consequence.points.join('|').includes('s.72'));
+globalThis.__f71 = { dates: { joiningDate: '2024-01-10', decisionDate: '2026-11-30' } };
+globalThis.__s71 = { protocol: { legalRows: [{ ref: 'IR Code s.70', verdict: 'live', point: 'Applies.' }], notEngaged: [] } };
+check('v34: long service leaves s.70 alone', run('(function(){ return applyShortServiceRule(__s71, __f71); })()') === 0 && JSON.parse(run('JSON.stringify(__s71.protocol.legalRows)')).length === 1);
+check('v34: prompt limits rows to five and bars manager mention in the opening line', run('getPactPrompt({})').includes('Array of 3 to 5 objects') && run('getPactPrompt({})').includes('do not refer to her manager'));
+check('v34: unclear defined as one missing fact', run('getPactPrompt({})').includes('one specific fact missing from the narrative decides it'));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
