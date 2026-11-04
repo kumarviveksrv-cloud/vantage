@@ -946,8 +946,8 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
       "range": "Your own summary, for example Rs.4L to Rs.9L. The system replaces it with the sum of the exposure items, so make it match.",
       "confidence": "High | Medium | Low. Never High unless a CTC is supplied in the message or stated in the narrative.",
       "pillar": "The Humac pillar most affected: Talent Acquisition | Talent Development | Performance Management | Compensation | Culture & Engagement | Compliance & Risk",
-      "pillarRationale": "One paragraph on how this case affects the stated Humac pillar and what the downstream cost is if unresolved. Use plain words; do not say that a pillar, section or protection is engaged or triggered.",
-      "trajectorySignal": "One sentence planning signal: what this case signals about a broader workforce pattern the HR professional should monitor."
+      "pillarRationale": "Two sentences at most. First, why this case sits in that pillar, using only facts in the narrative and the Acts provided. Second, the exposure if unresolved, limited to legal outcomes the Acts provided allow. Do not predict effects on hiring, retention, attrition, culture, reputation or regulators. Do not say what the organisation lacks. Use plain words; do not say that a pillar, section or protection is engaged or triggered.",
+      "trajectorySignal": "One sentence that starts with the words Monitor whether and names one thing to check in other cases, based only on facts in the narrative. Do not say what the organisation lacks and do not say what pattern will recur."
     },
     "recommendation": "One clear path. Not a menu of options — a recommendation. 2-4 sentences. What should the HR professional do, in what sequence, and why this path over the alternatives.",
     "communication": "What to say, to whom, and in what order. 2-3 sentences of suggested language for the most critical conversation (the one with the employee or with leadership). Frame it as a starting point to adapt, not a script to read verbatim.",
@@ -2872,10 +2872,26 @@ function appendDayCount(result, flags) {
   var para = dayCountParagraph(flags && flags.dates);
   var pr = result && result.protocol;
   if (!para || !pr || typeof pr.legal !== 'string') { return; }
-  var paras = pr.legal.split(/\n{2,}/);
-  var last = paras.length - 1;
-  if (last >= 0 && /confirm with counsel/i.test(paras[last])) { paras.splice(last, 0, para); } else { paras.push(para); }
+  // Pull the "confirm with counsel" sentence out wherever it sits, put the day count after the rest, then the counsel sentence last.
+  var counsel = [];
+  var paras = pr.legal.split(/\n{2,}/).map(function (p) {
+    return p.split(/(?<=[.!?])\s+/).filter(function (sen) {
+      if (/confirm with counsel/i.test(sen)) { counsel.push(sen); return false; }
+      return true;
+    }).join(' ');
+  }).filter(function (p) { return p.trim().length > 0; });
+  paras.push(para);
+  if (counsel.length) { paras.push(counsel.join(' ')); }
   pr.legal = paras.join('\n\n');
+}
+
+// The model sometimes returns the whole legal text as one block. Break it before sentences that open a new provision.
+const LEGAL_BREAK_BEFORE = /(?<=[.!?])\s+(?=(?:Section \d|Under the |Turning to |Chapter [IVX]+ |Regarding |The Second Schedule|The definition of|The governing statute|The most costly|The single procedural|This reads the statute|Manager A's hint|The manager's hint))/g;
+function normaliseLegalParagraphs(result) {
+  var pr = result && result.protocol;
+  if (!pr || typeof pr.legal !== 'string') { return; }
+  if (pr.legal.split(/\n{2,}/).length >= 3 || pr.legal.length < 1000) { return; }
+  pr.legal = pr.legal.replace(LEGAL_BREAK_BEFORE, '\n\n');
 }
 
 // 4. In a pregnancy case the Worker supplies the only day count. A sentence in the legal text that states its own
@@ -2897,7 +2913,7 @@ function stripModelDayCounts(result) {
 // 5. The Humac pillar paragraph and the planning signal drifted into claims nothing in the narrative or the Acts supports
 //    (staff training gaps, effects on hiring and retention, regulator attention, age bands). Sentences with the generalisation
 //    words used for the context field, or with these specific patterns, are removed.
-const UNSUPPORTED_PILLAR = /\b(attract and retain|every future (case|woman|employee|manager)|lacks? (\w+ )?training|training (gap|gaps)|attrition among|age band|signals? to (the )?(workforce|every|all)|regulatory (interactions?|attention|scrutiny)|media attention|MNC (insurer|company|employer|organisation))\b/i;
+const UNSUPPORTED_PILLAR = /\b(attract and retain|every future (case|woman|employee|manager)|lacks?|lacking|training (gap|gaps)|attrition|age band|signals? to (the )?(workforce|every|all)|regulatory (interactions?|attention|scrutiny)|media attention|MNC (insurer|company|employer|organisation)|retention of|will (recur|escalate|affect|compound|damage|deter|suppress)|reputational (and \w+ )?(cost|damage|harm)|cultural cost|as the workforce grows)\b/i;
 function sanitisePillarText(result) {
   var f = result && result.protocol && result.protocol.financial;
   if (!f || typeof f !== 'object') { return 0; }
@@ -2935,6 +2951,7 @@ function applyDeterministicFinancial(result, reqBody) {
     }
     if (result) { delete result.headcountStated; }
   } catch (e) { console.error('buildMeridianContext failed: ' + e.message); }
+  try { normaliseLegalParagraphs(result); } catch (e) { console.error('normaliseLegalParagraphs failed: ' + e.message); }
   try { var _pd = sanitisePillarText(result); if (_pd) { console.log('PACT: removed ' + _pd + ' unsupported pillar/planning sentence(s)'); } } catch (e) { console.error('sanitisePillarText failed: ' + e.message); }
   try { sanitiseMeridianContext(result); } catch (e) { console.error('sanitiseMeridianContext failed: ' + e.message); }
   try { var _scrubbed = scrubInternalNames(result, 0); if (_scrubbed) { console.log('PACT: removed internal field names from ' + _scrubbed + ' text field(s)'); } } catch (e) { console.error('scrubInternalNames failed: ' + e.message); }

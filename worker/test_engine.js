@@ -163,5 +163,22 @@ check('v26: all-unsupported planning signal gets plain fallback', /No wider work
 globalThis.__pl2 = { protocol: { financial: { pillarRationale: 'Firms usually mishandle this. The notice was verbal.', trajectorySignal: 'Monitor whether similar confirmation decisions are taken without a written record.' } } };
 const pl2 = JSON.parse(run('(function(){ sanitisePillarText(__pl2); return JSON.stringify(__pl2.protocol.financial); })()'));
 check('v26: generalisation word removed, clean signal untouched', pl2.pillarRationale === 'The notice was verbal.' && /Monitor whether similar/.test(pl2.trajectorySignal));
+
+// v27: legal paragraphing, day-count placement, wider pillar guard, structured prompts
+const oneBlock = 'The governing statute is Chapter VI. The narrative states 140 employees. Section 60(1) gives benefit. Risk reading: it applies. Section 62(1) allows notice. Section 64 gives a bonus. ' + 'x'.repeat(900) + ' Under the Industrial Relations Code, Chapter IV applies at 300. The most costly step is X. The day count below is added by the system. This reads the statute wording only, and courts may apply it differently, so confirm with counsel before acting.';
+globalThis.__ob = { protocol: { legal: oneBlock } };
+globalThis.__fl = { dates: { joiningDate: '2026-06-01', expectedDeliveryDate: '2027-03-15', decisionDate: '2026-11-30' } };
+const ob = run('(function(){ normaliseLegalParagraphs(__ob); appendDayCount(__ob, __fl); return __ob.protocol.legal; })()');
+const obp = ob.split('\n\n');
+check('v27: single block is split into paragraphs', obp.length >= 7, String(obp.length));
+check('v27: day count sits before the counsel line, not at the top', /^Day count/.test(obp[obp.length - 2]) && /confirm with counsel/.test(obp[obp.length - 1]) && !/^Day count/.test(obp[0]));
+check('v27: Risk reading stays with its section', /Section 60\(1\) gives benefit\. Risk reading/.test(obp.join('|')));
+globalThis.__pl3 = { protocol: { financial: {
+  pillarRationale: 'This case sits in Compliance and Risk. The cost will affect hiring, retention of women, and the ability to defend future claims. A manager formed a view within weeks of the disclosure.',
+  trajectorySignal: 'The manager acting alone suggests the organisation lacks a clear escalation protocol, a pattern that will recur.' } } };
+const pl3 = JSON.parse(run('(function(){ sanitisePillarText(__pl3); return JSON.stringify(__pl3.protocol.financial); })()'));
+check('v27: widened guard removes retention and lacks claims', !/retention|lacks|recur/.test(JSON.stringify(pl3)) && /within weeks of the disclosure/.test(pl3.pillarRationale) && /No wider workforce pattern/.test(pl3.trajectorySignal), JSON.stringify(pl3).slice(0, 200));
+const pr27 = run('getPactPrompt({})');
+check('v27: prompt structures pillar and planning signal', pr27.includes('Two sentences at most. First, why this case sits in that pillar') && pr27.includes('starts with the words Monitor whether'));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
