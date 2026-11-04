@@ -108,7 +108,7 @@
 
     <div class="doc-eyebrow">Legal</div>
     <h1 class="doc-title">Privacy Policy</h1>
-    <div class="doc-meta">Virorah Private Limited &nbsp;&middot;&nbsp; Last updated: 3 November 2026 &nbsp;&middot;&nbsp; Effective: 3 November 2026</div>
+    <div class="doc-meta">Virorah Private Limited &nbsp;&middot;&nbsp; Last updated: 4 November 2026 &nbsp;&middot;&nbsp; Effective: 4 November 2026</div>
 
     <div class="commitment-banner">
       <strong>Our Privacy Commitment</strong>
@@ -174,6 +174,12 @@
           <td>Case narratives as you type them, case type, PACT assessment results, status, retrospective notes</td>
           <td>Provided by you when using the Employee Case Advisor</td>
           <td>To build your Case Library and generate your monthly Debrief</td>
+        </tr>
+        <tr>
+          <td><strong>Employee CTC</strong></td>
+          <td>The employee's annual CTC, as a band, plus an optional exact figure in lakh, entered on the Employee Case Advisor form</td>
+          <td>Provided by you when using the Employee Case Advisor</td>
+          <td>To build the modelled cost range for that case</td>
         </tr>
         <tr>
           <td><strong>Humac Score &amp; Standpoint</strong></td>
@@ -246,6 +252,7 @@
     <p>There is one fallback. If the Platform cannot confirm that earlier messages were already anonymised (for example after an interrupted request, or when a session saved by an older version is reopened), it anonymises every earlier message again before the conversation goes to Claude for analysis. An earlier message that cannot be anonymised is left out rather than sent unredacted.</p>
     <p><strong>Sharing a panel with ARIA.</strong> In Spatial Mode you can choose to discuss one panel of an analysis with ARIA. This only happens after you confirm a message showing exactly what will be shared. Only the text of that one panel is shared, not the rest of your case. That text is anonymised again, in the same way as anything you type, before it reaches Claude, and it is used only to answer within that conversation. Virorah does not store it, your browser holds it only for that conversation, and it is not added to your saved ARIA sessions.</p>
     <p>Separately: your original text, exactly as you typed it, is stored in your own Airtable record and is not shared with any third party beyond what is described in Section 7. As described above, the original text reaches Anthropic's Claude Haiku model, in the normal course once, for the anonymisation step only. The anonymised version then reaches Anthropic's Claude model for analysis. Neither step uses your data to train AI models.</p>
+    <p><strong>The CTC you enter.</strong> The CTC is a number, not free text, so it is not passed through anonymisation. It is sent to Anthropic's Claude model together with the anonymised case text to calculate the modelled cost range. Virorah's code does not write it to logs. If you save the case, the workings, which state the CTC figure or band used, are stored in your Airtable record with the rest of the case.</p>
     <div class="highlight">
       <strong style="display:block;margin-bottom:6px;color:#6366f1;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase">Voice input is different</strong>
       If you use a microphone button, your audio is sent to OpenAI to be turned into text. Anonymisation can only work on text, so it cannot happen before that step: any name you say aloud is heard by the transcription service. Please do not speak real names. The transcribed text is then anonymised before AI processing, like anything you type. Virorah does not store your audio. Voice mode in Difficult Conversations uses your browser's own speech recognition, which in some browsers (Chrome, for example) is processed by the browser's maker under its own terms, outside Virorah's control.
@@ -320,7 +327,7 @@
         </tr>
         <tr>
           <td><strong>Cloudflare, Inc.</strong></td>
-          <td>Your requests to the Platform, in transit, including technical data such as your IP address. Cloudflare does not store your case content.</td>
+          <td>Your requests to the Platform, in transit, including technical data such as your IP address. Cloudflare does not keep your case content from the requests it carries. Separately, Virorah keeps a daily backup of its database in Cloudflare R2 storage, which includes saved case records, for 30 days (see Section 8).</td>
           <td>Hosting and request processing</td>
           <td>Global network</td>
         </tr>
@@ -336,6 +343,7 @@
       <li><strong>Debrief Records:</strong> Retained until you delete your account</li>
       <li><strong>Voice Recordings:</strong> Not stored by Virorah. Audio is sent to OpenAI for transcription as described in Sections 4 and 7, and is retained by OpenAI only as its own terms provide.</li>
       <li><strong>Feedback:</strong> Anonymous feedback (submitted without linking to an account) is retained for product improvement indefinitely and is not included in account export or purge requests. Non-anonymous feedback is retained until you delete your account.</li>
+      <li><strong>Backups:</strong> Virorah keeps a daily backup of its database in Cloudflare R2 storage, including saved case records, for 30 days, then removes it. A record you delete remains in these backups until they age out, so permanent deletion can take up to 30 days longer than the Airtable timeline below.</li>
       <li><strong>Post-deletion:</strong> After you delete your account or all data, records are permanently deleted from Airtable within 30 days. When you schedule deletion, the saved ARIA sessions, saved briefs, stored name and email, and cached profile and plan are cleared from the browser you used; on other devices, they are cleared when you sign out there or clear your browser data.</li>
       <li><strong>Legal Hold:</strong> Where Virorah is required by law to retain certain data, it will be retained for the legally required period and then deleted.</li>
     </ul>
