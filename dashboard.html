@@ -773,8 +773,11 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
     ];
 
     function renderSetupCard() {
-      if (SETUP_STEPS.every(function(s){return s.done;}) || setupDismissed) return;
       var card=document.getElementById('setup-card'), list=document.getElementById('setup-steps-list');
+      if (SETUP_STEPS.every(function(s){return s.done;}) || setupDismissed) {
+        if (card) card.style.display = 'none';
+        return;
+      }
       if (!card||!list) return;
       list.innerHTML = SETUP_STEPS.map(function(s){
         var cls=s.done?'done':'pending', tag=s.done?'div':'a', href=s.done?'':' href="'+s.href+'"';
@@ -1091,6 +1094,15 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
     // Writes live case data to every dashboard element that depends on it
     function updateDashboardFromCases(cases) {
       if (!Array.isArray(cases) || cases.length === 0) return;
+      // FIX (4 Nov 2026): the "Navigate your first case" setup step relied only on a
+      // per-device localStorage flag, so a user whose cases were run on another device
+      // (or after clearing site data) was still told to start their first case. Saved
+      // cases on the server are the truth: mark the step done and refresh the card.
+      try { localStorage.setItem('sr_last_case_id', 'server'); } catch(e) {}
+      if (typeof SETUP_STEPS !== 'undefined') {
+        SETUP_STEPS.forEach(function(st){ if (st.key === 'case') st.done = true; });
+        renderSetupCard();
+      }
       var now = new Date();
       var thisMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
 
