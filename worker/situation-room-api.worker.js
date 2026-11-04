@@ -2878,6 +2878,22 @@ function appendDayCount(result, flags) {
   pr.legal = paras.join('\n\n');
 }
 
+// 4. In a pregnancy case the Worker supplies the only day count. A sentence in the legal text that states its own
+//    "N calendar days", "N working days" or "N weekdays" is the model's arithmetic and can disagree with Vantage's, so it is removed.
+const MODEL_DAY_COUNT = /\b\d+\s+(?:calendar|working|business)\s+days\b|\b\d+\s+weekdays\b/i;
+function stripModelDayCounts(result) {
+  var pr = result && result.protocol;
+  if (!pr || typeof pr.legal !== 'string') { return 0; }
+  var dropped = 0;
+  pr.legal = pr.legal.split(/\n{2,}/).map(function (para) {
+    return para.split(/(?<=[.!?])\s+/).filter(function (sen) {
+      if (MODEL_DAY_COUNT.test(sen)) { dropped++; return false; }
+      return true;
+    }).join(' ');
+  }).filter(function (para) { return para.trim().length > 0; }).join('\n\n');
+  return dropped;
+}
+
 // A hint to resign is the one fact the replacement-cost scenario turns on, and the model once read the same narrative as
 // "confirmation decision only". If one sentence of the narrative carries both a resign word and a suggestion word, the
 // scenario is raised to pressure_to_resign. It only ever raises non_confirmation_only; it never lowers a scenario.
@@ -2903,6 +2919,7 @@ function applyDeterministicFinancial(result, reqBody) {
     var flags = result.engineFlags;
     delete result.engineFlags;
     if (!flags || typeof flags !== 'object') { return; }
+    try { var _dc = stripModelDayCounts(result); if (_dc) { console.log('PACT: removed ' + _dc + ' model-written day-count sentence(s)'); } } catch (e) { console.error('stripModelDayCounts failed: ' + e.message); }
     appendDayCount(result, flags);
     var ctcInfo = resolveCtc(reqBody);
     if (!ctcInfo) { return; }

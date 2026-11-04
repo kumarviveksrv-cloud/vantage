@@ -146,5 +146,11 @@ const o24 = run('(function(){ var r = __fake(0); r.engineFlags.scenario = "non_c
 check('net: apply raises scenario and split appears', JSON.parse(o24).s === 'pressure_to_resign' && JSON.parse(o24).hasSplit === true, o24);
 const c24 = run('buildMeridianContext(__m, 140)');
 check('v24: each threshold is its own paragraph', c24.split('\n\n').length >= 9 && !/\n- /.test(c24));
+
+// v25: model-written day counts are removed, statutory wording is kept
+globalThis.__dc = { protocol: { legal: 'Section 60(2) needs eighty days. From 1 June 2026 to 18 January 2027 is approximately 231 calendar days, which is approximately 165 working days. An appeal lies within thirty days under s.72.\n\nSection 64 gives a bonus.' } };
+const dcOut = run('(function(){ var n = stripModelDayCounts(__dc); return JSON.stringify({ n: n, t: __dc.protocol.legal }); })()');
+const dcj = JSON.parse(dcOut);
+check('v25: model day count removed, statute wording kept', dcj.n === 1 && !/231/.test(dcj.t) && /eighty days/.test(dcj.t) && /thirty days/.test(dcj.t) && /Section 64/.test(dcj.t), dcOut.slice(0, 160));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
