@@ -111,5 +111,12 @@ const lgParts = lg.split('\n\n');
 check('day count inserted before the counsel sentence', lgParts.length === 3 && /^Day count/.test(lgParts[1]) && /confirm with counsel/.test(lgParts[2]));
 check('prompt asks for dates and bans model day counts', run('getPactPrompt({})').includes('engineFlags.dates') && run('getPactPrompt({})').includes('do not calculate or state any count of days between dates'));
 check('no em dash in day count text', !/\u2014/.test(dc));
+// 11. v22: internal field names never reach the reader
+globalThis.__sc = { protocol: { legal: 'Section 64 gives a bonus. The narrative does not say if care is free; this is recorded in engineFlags.freePrenatalCareStated as null. Next sentence stays.', context: 'Clean text.' }, engineFlags: { scenario: 'x' }, other: { nested: 'The count is set out in the engineFlags.dates object. Kept.' } };
+const scOut = run('(function(){ var n = scrubInternalNames(__sc, 0); return JSON.stringify({ n: n, legal: __sc.protocol.legal, nested: __sc.other.nested, flags: __sc.engineFlags }); })()');
+const sc = JSON.parse(scOut);
+check('scrub removes sentences naming internal fields', !/engineFlags|freePrenatalCareStated/.test(sc.legal + sc.nested) && /Section 64 gives a bonus\./.test(sc.legal) && /Next sentence stays/.test(sc.legal) && /Kept\./.test(sc.nested), sc.legal);
+check('scrub leaves engineFlags itself untouched', sc.flags && sc.flags.scenario === 'x' && sc.n === 2);
+check('prompt forbids internal field names', run('getPactPrompt({})').includes('Never mention engineFlags'));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
