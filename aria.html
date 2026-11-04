@@ -312,10 +312,10 @@
         <div class="panel-title" id="panel-title">Explore</div>
         <div class="panel-sub">ARIA · Adaptive Reflective Intelligence for Advancement</div>
         <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
-          <select id="voice-select" onchange="changeVoice(this.value)" style="padding:5px 8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;cursor:pointer;flex:1;min-width:0;-webkit-appearance:none">
+          <select id="voice-select" onchange="changeVoice(this.value)" style="padding:5px 22px 5px 8px;background-color:rgba(255,255,255,.04);background-image:url(&quot;data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='rgba(255,255,255,0.6)' d='M0 0l5 6 5-6z'/></svg>&quot;);background-repeat:no-repeat;background-position:right 8px center;border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;cursor:pointer;flex:1 1 auto;min-width:0;max-width:calc(100% - 60px);text-overflow:ellipsis;-webkit-appearance:none;appearance:none">
             <option value="auto">Auto (Female)</option>
           </select>
-          <button id="speed-btn" onclick="toggleSpeed()" style="padding:5px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;white-space:nowrap;transition:all .2s">1.0x</button>
+          <button id="speed-btn" onclick="toggleSpeed()" style="padding:5px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:rgba(255,255,255,.5);font-family:'JetBrains Mono',monospace;font-size:10px;cursor:pointer;white-space:nowrap;min-width:44px;flex-shrink:0;transition:all .2s">1.0x</button>
         </div>
       </div>
       <div class="panel-tabs">
@@ -998,12 +998,12 @@
       if (!sel || !voices.length) return;
       var list = ariaVoiceList();
       if (!localVoices().some(function(v) { return /^en/i.test(v.lang); })) {
-        sel.innerHTML = '<option value="auto">No on-device voice: text only</option>';
+        sel.innerHTML = '<option value="auto">Text only (no voice on device)</option>';
         selectedVoiceName = 'auto';
         return;
       }
       if (!list.length) {
-        sel.innerHTML = '<option value="auto">No female voice on this device (pitched fallback)</option>';
+        sel.innerHTML = '<option value="auto">Default voice (female not available)</option>';
         selectedVoiceName = 'auto';
         return;
       }
