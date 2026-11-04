@@ -129,7 +129,7 @@
     .protocol-section.collapsed .proto-text,.communication-card.collapsed .comm-text{max-height:48px;overflow:hidden;-webkit-mask-image:linear-gradient(#000 30%,transparent);mask-image:linear-gradient(#000 30%,transparent)}
     .fin-card.collapsed .fin-breakdown,.fin-card.collapsed .fin-divider,.fin-card.collapsed .fin-pillar-row,.fin-card.collapsed .fin-trajectory{display:none !important}
     .legal-rows{margin:2px 0 10px}
-    .legal-row{display:grid;grid-template-columns:76px 1fr;gap:4px 12px;align-items:start;padding:9px 0;border-top:1px solid rgba(165,180,252,0.14)}
+    .legal-row{display:grid;grid-template-columns:92px 1fr;gap:4px 12px;align-items:start;padding:9px 0;border-top:1px solid rgba(165,180,252,0.14)}
     .legal-row:first-child{border-top:0}
     .legal-chip{display:inline-block;text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:999px;border:1px solid}
     .legal-chip.live{color:#fca5a5;border-color:rgba(248,113,113,0.5);background:rgba(248,113,113,0.1)}
@@ -1187,7 +1187,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     });
 
     /* Legal Position: one row per provision the facts bring into question, with the full reading as the detail underneath */
-    var LEGAL_CHIP = { live: 'Live', unclear: 'Unclear', not_yet: 'Not yet' };
+    var LEGAL_CHIP = { live: 'Live', unclear: 'Unclear', not_yet: 'Not triggered' };
     function renderLegalRows(pr) {
       var box = document.getElementById('legal-rows');
       var ne = document.getElementById('legal-notengaged');

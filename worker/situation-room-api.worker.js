@@ -3034,6 +3034,20 @@ function addDayCountRow(result, flags) {
   pr.legalRows = rows.slice(0, 8);
 }
 
+// Pinned row for pregnancy cases: the proviso to s.68(1) applies during pregnancy, so the model must not be allowed to drop it.
+// Wording follows legal/social-security-maternity-2020.txt. Whether a non-confirmation is a dismissal is not settled by the Act text.
+function addProvisoRow(result, scenario) {
+  var pr = result && result.protocol;
+  if (!pr) { return; }
+  var rows = (Array.isArray(pr.legalRows) ? pr.legalRows : []).filter(function (r) { return !/68\(1\)[^|]*proviso/i.test(r.ref); });
+  var point = scenario === 'dismissal_or_resignation_occurred'
+    ? 'A dismissal during pregnancy does not take away her maternity benefit or medical bonus. A gross misconduct exception exists as prescribed.'
+    : 'A dismissal during pregnancy does not take away her maternity benefit or medical bonus. The Act does not say whether a non-confirmation counts as a dismissal; confirm with counsel.';
+  rows.push({ ref: 'Social Security Code s.68(1) proviso', verdict: scenario === 'dismissal_or_resignation_occurred' ? 'live' : 'unclear', point: point });
+  rows.sort(function (a, b) { return LEGAL_VERDICTS.indexOf(a.verdict) - LEGAL_VERDICTS.indexOf(b.verdict); });
+  pr.legalRows = rows.slice(0, 8);
+}
+
 // A hint to resign is the one fact the replacement-cost scenario turns on, and the model once read the same narrative as
 // "confirmation decision only". If one sentence of the narrative carries both a resign word and a suggestion word, the
 // scenario is raised to pressure_to_resign. It only ever raises non_confirmation_only; it never lowers a scenario.
@@ -3065,6 +3079,7 @@ function applyDeterministicFinancial(result, reqBody) {
     try { var _dc = stripModelDayCounts(result); if (_dc) { console.log('PACT: removed ' + _dc + ' model-written day-count sentence(s)'); } } catch (e) { console.error('stripModelDayCounts failed: ' + e.message); }
     appendDayCount(result, flags);
     try { addDayCountRow(result, flags); } catch (e) { console.error('addDayCountRow failed: ' + e.message); }
+    try { addProvisoRow(result, flags.scenario); } catch (e) { console.error('addProvisoRow failed: ' + e.message); }
     var ctcInfo = resolveCtc(reqBody);
     if (!ctcInfo) { return; }
     var E = MATERNITY_ENGINE;

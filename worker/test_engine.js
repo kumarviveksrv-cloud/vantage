@@ -257,5 +257,18 @@ const cs = JSON.parse(run('(function(){ applyBrevity(__cs); return JSON.stringif
 check('v32: starter stripped of quotes and capped at 50 words', cs.t && !/^[\u201C"]/.test(cs.t) && cs.t.trim().split(/\s+/).length <= 50 && /^Thanks for telling me\./.test(cs.t), JSON.stringify(cs).slice(0, 120));
 globalThis.__cs2 = { protocol: { conversationStarter: 42 } };
 check('v32: bad starter removed', run('(function(){ applyBrevity(__cs2); return "conversationStarter" in __cs2.protocol; })()') === false);
+
+// v33: pinned s.68(1) proviso row
+globalThis.__pv = { protocol: { legalRows: [{ ref: 'Social Security Code s.68(1) proviso', verdict: 'live', point: 'Model wording that should be replaced.' }, { ref: 'Contract Act s.16', verdict: 'not_yet', point: 'Applies only if she resigns.' }] } };
+const pv = JSON.parse(run('(function(){ addProvisoRow(__pv, "pressure_to_resign"); return JSON.stringify(__pv.protocol.legalRows); })()'));
+check('v33: one proviso row, replaced, marked unclear for a non-dismissal case', pv.filter(r => /proviso/.test(r.ref)).length === 1 && pv.find(r => /proviso/.test(r.ref)).verdict === 'unclear' && /confirm with counsel/.test(pv.find(r => /proviso/.test(r.ref)).point) && !/Model wording/.test(JSON.stringify(pv)), JSON.stringify(pv).slice(0, 200));
+globalThis.__pv2 = { protocol: {} };
+const pv2 = JSON.parse(run('(function(){ addProvisoRow(__pv2, "dismissal_or_resignation_occurred"); return JSON.stringify(__pv2.protocol.legalRows); })()'));
+check('v33: dismissal scenario marks proviso live', pv2.length === 1 && pv2[0].verdict === 'live' && /gross misconduct/.test(pv2[0].point));
+globalThis.__pv3 = { protocol: { legal: 'x', legalRows: [] } };
+const pv3 = run('(function(){ applyDeterministicFinancial({ engineFlags: { scenario: "pressure_to_resign", dates: null }, protocol: { financial: { items: [] }, legalRows: [] } }, { ctcBand: "18L to 25L" }); return "ran"; })()');
+check('v33: apply runs without error', pv3 === 'ran');
+const e2e = JSON.parse(run('(function(){ var r = { engineFlags: { scenario: "pressure_to_resign", freePrenatalCareStated: null, dates: { joiningDate: "2026-06-01", expectedDeliveryDate: "2027-03-15", decisionDate: "2026-11-30" } }, protocol: { financial: { items: [] }, legal: "x", legalRows: [] } }; applyDeterministicFinancial(r, { ctcBand: "18L to 25L", roleCriticality: "Medium" }); return JSON.stringify(r.protocol.legalRows.map(function(x){ return x.ref; })); })()'));
+check('v33: end to end, proviso and day-count rows both present', e2e.some(x => /proviso/.test(x)) && e2e.some(x => /60\(2\)/.test(x)), JSON.stringify(e2e));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
