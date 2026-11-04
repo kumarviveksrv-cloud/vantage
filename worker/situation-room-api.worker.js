@@ -4986,25 +4986,43 @@ offset = data.offset || null;
 } while (offset);
 return records;
 }
+// A backup counts as complete only when every table was read. A table that fails is retried. If any table still fails, the file is saved under
+// a ".incomplete" name (so it never replaces a complete backup for that day), and an alert email is sent. Pruning treats both names alike.
+const BACKUP_FILE_PATTERN = /airtable-backups\/(\d{4}-\d{2}-\d{2})(?:\.incomplete)?\.json$/;
+async function backupTableWithRetry(tableName, delayMs) {
+let lastErr = null;
+for (let attempt = 1; attempt <= 3; attempt++) {
+try { return { records: await fetchAllRecordsPaginated(tableName), error: null }; }
+catch (e) { lastErr = e; console.error(`Backup attempt ${attempt} failed on ${tableName}:`, e.message); if (attempt < 3 && delayMs > 0) { await new Promise(function (r) { setTimeout(r, delayMs * attempt); }); } }
+}
+return { records: null, error: lastErr ? lastErr.message : 'unknown error' };
+}
 async function runAirtableBackup(env) {
 AIRTABLE_API_KEY = env.AIRTABLE_API_KEY;
 AIRTABLE_BASE_ID = env.AIRTABLE_BASE_ID;
+RESEND_API_KEY = env.RESEND_API_KEY;
+const delayMs = env.BACKUP_RETRY_DELAY_MS == null ? 2000 : Number(env.BACKUP_RETRY_DELAY_MS);
 const dateStr = new Date().toISOString().split('T')[0];
 const snapshot = { taken_at: new Date().toISOString(), base_id: AIRTABLE_BASE_ID, tables: {} };
+const failed = [];
 for (const tableName of BACKUP_TABLES) {
-try {
-snapshot.tables[tableName] = await fetchAllRecordsPaginated(tableName);
-} catch (e) {
-console.error(`Backup error on table ${tableName}:`, e.message);
-snapshot.tables[tableName] = { error: e.message };
+const r = await backupTableWithRetry(tableName, delayMs);
+if (r.error) { snapshot.tables[tableName] = { error: r.error }; failed.push(tableName + ' (' + r.error + ')'); }
+else { snapshot.tables[tableName] = r.records; }
 }
-}
+if (failed.length === 0) {
 await env.BACKUPS_BUCKET.put(`airtable-backups/${dateStr}.json`, JSON.stringify(snapshot));
+} else {
+await env.BACKUPS_BUCKET.put(`airtable-backups/${dateStr}.incomplete.json`, JSON.stringify(snapshot));
+try {
+await sendResendEmail({ to: ALERT_EMAIL, subject: 'Vantage: daily backup incomplete', html: `<p>The Airtable backup for ${dateStr} did not read every table, so it was saved as an incomplete file and did not replace a complete one.</p><p>Failed: ${failed.join('; ')}</p><p>Check Airtable and the API key, then rerun the backup.</p>` });
+} catch (e) { console.error('Backup alert email failed:', e.message); }
+}
 try {
 const cutoff = Date.now() - BACKUP_RETENTION_DAYS * 86400000;
 const listed = await env.BACKUPS_BUCKET.list({ prefix: 'airtable-backups/' });
 for (const obj of listed.objects) {
-const m = obj.key.match(/airtable-backups\/(\d{4}-\d{2}-\d{2})\.json$/);
+const m = obj.key.match(BACKUP_FILE_PATTERN);
 if (m && new Date(m[1] + 'T00:00:00Z').getTime() < cutoff) {
 await env.BACKUPS_BUCKET.delete(obj.key);
 }

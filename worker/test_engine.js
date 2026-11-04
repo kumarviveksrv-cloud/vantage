@@ -321,5 +321,37 @@ check('v38: legal prose keeps other sentences', rm.r.protocol.legal === 'The Ins
 check('v38: financial block left alone', rm.r.protocol.financial.items[0].label === 'Back wages and relief' && /back wages/.test(rm.r.protocol.financial.items[0].note));
 const rm2 = JSON.parse(run('(function(){ var r = { engineFlags: { scenario: "pressure_to_resign", freePrenatalCareStated: null, dates: null }, protocol: { financial: { items: [] }, legal: "x", legalRows: [] }, pact_scores: { consequence: { points: ["Orders may include reinstatement and back wages.", "Keep the record clean."] } } }; applyDeterministicFinancial(r, { ctcBand: "18L to 25L", roleCriticality: "Medium" }); return JSON.stringify(r.pact_scores.consequence.points); })()'));
 check('v38: guard runs inside applyDeterministicFinancial', rm2.length === 1 && rm2[0] === 'Keep the record clean.', JSON.stringify(rm2));
-console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
-process.exit(fails ? 1 : 0);
+// v39: backup never saves a failed read as a complete file, retries, alerts, and prunes both names
+globalThis.__mkEnv = function () { var store = {}; var deleted = []; return { store: store, deleted: deleted, AIRTABLE_API_KEY: 'k', AIRTABLE_BASE_ID: 'b', RESEND_API_KEY: 'r', BACKUP_RETRY_DELAY_MS: 0,
+  BACKUPS_BUCKET: { put: async function (k, v) { store[k] = v; }, list: async function () { return { objects: Object.keys(store).map(function (k) { return { key: k }; }) }; }, delete: async function (k) { deleted.push(k); delete store[k]; } } }; };
+globalThis.__calls = [];
+function mockFetch(plan) { globalThis.fetch = async function (url) { globalThis.__calls.push(String(url)); if (/resend/.test(url)) { return { ok: true, json: async function () { return {}; } }; } return plan(String(url)); }; }
+const okResp = { ok: true, status: 200, json: async function () { return { records: [{ id: 'rec1' }] }; } };
+const badResp = { ok: false, status: 500, json: async function () { return {}; } };
+(async () => {
+  const today = new Date().toISOString().split('T')[0];
+  // all tables fine
+  globalThis.__calls = []; mockFetch(() => okResp);
+  let env = globalThis.__mkEnv(); await run('runAirtableBackup')(env);
+  check('v39: complete backup saved under the plain name, no email', Object.keys(env.store).join() === 'airtable-backups/' + today + '.json' && !globalThis.__calls.some(u => /resend/.test(u)), Object.keys(env.store).join());
+  // one table fails every time
+  globalThis.__calls = []; mockFetch((u) => /\/Cases\?/.test(u) ? badResp : okResp);
+  env = globalThis.__mkEnv(); await run('runAirtableBackup')(env);
+  const casesTries = globalThis.__calls.filter(u => /\/Cases\?/.test(u)).length;
+  check('v39: failed table is retried three times', casesTries === 3, String(casesTries));
+  check('v39: failed read saved as incomplete, never as a complete file', Object.keys(env.store).join() === 'airtable-backups/' + today + '.incomplete.json', Object.keys(env.store).join());
+  check('v39: alert email sent once', globalThis.__calls.filter(u => /resend/.test(u)).length === 1);
+  check('v39: other tables still captured in the incomplete file', JSON.parse(env.store['airtable-backups/' + today + '.incomplete.json']).tables.Profiles.length === 1);
+  // fails once, then recovers
+  let n = 0; globalThis.__calls = []; mockFetch((u) => { if (/\/Cases\?/.test(u) && n++ === 0) { return badResp; } return okResp; });
+  env = globalThis.__mkEnv(); await run('runAirtableBackup')(env);
+  check('v39: a single failure recovers on retry and saves a complete file', Object.keys(env.store).join() === 'airtable-backups/' + today + '.json' && !globalThis.__calls.some(u => /resend/.test(u)));
+  // pruning treats both names alike
+  mockFetch(() => okResp); env = globalThis.__mkEnv();
+  env.store['airtable-backups/2026-01-01.json'] = '{}'; env.store['airtable-backups/2026-01-02.incomplete.json'] = '{}';
+  await run('runAirtableBackup')(env);
+  check('v39: old complete and incomplete files are both pruned', env.deleted.includes('airtable-backups/2026-01-01.json') && env.deleted.includes('airtable-backups/2026-01-02.incomplete.json') && !env.deleted.some(k => k.indexOf(today) >= 0), env.deleted.join());
+  console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
+  process.exit(fails ? 1 : 0);
+})();
+
