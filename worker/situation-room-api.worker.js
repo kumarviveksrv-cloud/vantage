@@ -928,16 +928,17 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
     }
   },
   "protocol": {
-    "legal": "Legal position reading. What does the process look like against the relevant Codes and Acts given the state and industry in meridian? Where is the organisation exposed? Where is it protected? What one procedural step, if missed, would be the most costly? This is a process-risk reading, not a formal legal opinion. Base it on the wording of the Acts provided to you. Do not cite court judgments or case-law readings. Every statement about what an Act section requires or allows must be traceable to its exact wording. Do not add tests, conditions or doctrines the wording does not contain (for example penalty versus genuine pre-estimate, or a duty to prove actual loss, unless the wording itself says so), and keep the Act's own verbs: if it says entitled, do not write may. Where an Act section plainly says something, state what it says, and where the Acts provided do not cover a point, say so instead of filling the gap from memory. Keep the wording apart from your inference: state what the wording says first, citing the section, and mark any inference or risk judgement with the words Risk reading. Never say an Act prohibits or requires something unless its wording does. If a section applies only on a condition (for example a request by the employee, or a leave that has already begun), state that condition and check it against the facts. If the narrative does not say the condition has happened, say plainly that it has not been met on the facts given, and do not argue that something else (such as a verbal disclosure, an intention or a plan) satisfies it; put what follows from that under Risk reading. Write the legal field as finished prose: never include a sentence that instructs yourself or describes a check you are about to make, and do not use doctrine labels (such as constructive dismissal or general principles) unless a provided Act uses them. When you mention a threshold, name the section that sets it and say what it covers (for example the section that applies a Chapter, and which sections it applies). When you apply a time window or period to the facts, work it out from the dates in the narrative before saying whether it has begun. In a case about a pregnant employee, do not calculate or state any count of days between dates: put the dates in engineFlags.dates, and Vantage adds a day-count paragraph to the end of this section, which you may refer to as the day count below. In any other case, when you compare a count of days with a number of days in an Act, say whether you are counting calendar days or days actually worked, and convert (about five working days a week) before comparing. Before applying a Chapter or Act, check the establishment size in the meridian against its stated threshold, and do not apply it to an establishment below that threshold. Do not describe what a document made under an Act contains (such as model standing orders) unless the Acts provided say so. Never state a fine, penalty, imprisonment term or compensation amount unless the exact figure appears in the Acts provided to you, and copy it as the Act words it; if a penalty matters and the figure is not in the Acts provided, say that the Code provides a penalty and name the section only. Never refer to a section by a number the Acts provided do not give to that provision. Close this section with one sentence: this reads the statute wording only, and courts may apply it differently, so confirm with counsel before acting.",
-    "quick_take": "2-3 sentences MAXIMUM. What is happening, what is the single biggest risk, and what that means for the decision in front of this HR professional. Write for someone reading on a phone in 10 seconds. Do not say that an Act prohibits, blocks or makes unlawful an action unless its wording does, and use the wording's own conditions (for example a section that applies only once a leave has begun, or only on the employee's request); where it is a risk rather than a prohibition, say risk. Do not state as fact anything the narrative does not say; write if or check whether instead. Write this after, and consistent with, the legal field above: never say a protection is engaged or a section is triggered when the legal field says its condition has not yet been met (for example a request not yet made, or a leave not yet begun).",
+    "legal": "Full reading, for the reader who opens the detail. About 250 words in total. Cover only the provisions that are live or unclear and the one step that would be most costly if missed; leave out provisions that do not apply and headcount threshold checks such as Standing Orders or Chapter X. Legal position reading. What does the process look like against the relevant Codes and Acts given the state and industry in meridian? Where is the organisation exposed? Where is it protected? What one procedural step, if missed, would be the most costly? This is a process-risk reading, not a formal legal opinion. Base it on the wording of the Acts provided to you. Do not cite court judgments or case-law readings. Every statement about what an Act section requires or allows must be traceable to its exact wording. Do not add tests, conditions or doctrines the wording does not contain (for example penalty versus genuine pre-estimate, or a duty to prove actual loss, unless the wording itself says so), and keep the Act's own verbs: if it says entitled, do not write may. Where an Act section plainly says something, state what it says, and where the Acts provided do not cover a point, say so instead of filling the gap from memory. Keep the wording apart from your inference: state what the wording says first, citing the section, and mark any inference or risk judgement with the words Risk reading. Never say an Act prohibits or requires something unless its wording does. If a section applies only on a condition (for example a request by the employee, or a leave that has already begun), state that condition and check it against the facts. If the narrative does not say the condition has happened, say plainly that it has not been met on the facts given, and do not argue that something else (such as a verbal disclosure, an intention or a plan) satisfies it; put what follows from that under Risk reading. Write the legal field as finished prose: never include a sentence that instructs yourself or describes a check you are about to make, and do not use doctrine labels (such as constructive dismissal or general principles) unless a provided Act uses them. When you mention a threshold, name the section that sets it and say what it covers (for example the section that applies a Chapter, and which sections it applies). When you apply a time window or period to the facts, work it out from the dates in the narrative before saying whether it has begun. In a case about a pregnant employee, do not calculate or state any count of days between dates: put the dates in engineFlags.dates, and Vantage adds a day-count paragraph to the end of this section, which you may refer to as the day count below. In any other case, when you compare a count of days with a number of days in an Act, say whether you are counting calendar days or days actually worked, and convert (about five working days a week) before comparing. Before applying a Chapter or Act, check the establishment size in the meridian against its stated threshold, and do not apply it to an establishment below that threshold. Do not describe what a document made under an Act contains (such as model standing orders) unless the Acts provided say so. Never state a fine, penalty, imprisonment term or compensation amount unless the exact figure appears in the Acts provided to you, and copy it as the Act words it; if a penalty matters and the figure is not in the Acts provided, say that the Code provides a penalty and name the section only. Never refer to a section by a number the Acts provided do not give to that provision. Close this section with one sentence: this reads the statute wording only, and courts may apply it differently, so confirm with counsel before acting.",
+    "legalRows": "Array of 3 to 7 objects, one per provision the facts actually bring into question. Each object has ref (the provision, for example Code on Social Security s.68(1), 40 characters or fewer), verdict (exactly one of live, not_yet, unclear: live means its condition is met on the facts, not_yet means its condition is not met yet or only applies later, unclear means the narrative does not give the fact that decides it) and point (one sentence of 25 words or fewer stating the condition and how the facts stand against it). Do not make a row for a provision that is only a headcount threshold check, because the MERIDIAN section covers those. Do not make a row for the eighty-day count, because Vantage adds it. Never put a fine, penalty or compensation amount in a row.",
+    "notEngaged": "Array of up to 6 strings, each the bare name of a provision you checked that does not apply on the facts, for example Section 59(3). No explanation.",
+    "quick_take": "Two sentences, 40 words or fewer in total. What is happening, what is the single biggest risk, and what that means for the decision in front of this HR professional. Write for someone reading on a phone in 10 seconds. Do not say that an Act prohibits, blocks or makes unlawful an action unless its wording does, and use the wording's own conditions (for example a section that applies only once a leave has begun, or only on the employee's request); where it is a risk rather than a prohibition, say risk. Do not state as fact anything the narrative does not say; write if or check whether instead. Write this after, and consistent with, the legal field above: never say a protection is engaged or a section is triggered when the legal field says its condition has not yet been met (for example a request not yet made, or a leave not yet begun).",
     "immediate_actions": [
-      "Action 1 — concrete, sequenced, specific. Start with a verb. Every action must be consistent with the legal field: never recommend as safe or neutral a step the legal field flags as a risk (for example extending probation, changing duties or changing terms for an employee who has just made a protected disclosure), and where the legal field says to pause, do not also recommend a step that changes her position.",
+      "Action 1 — concrete, sequenced, specific. One sentence of 25 words or fewer. Start with a verb. Every action must be consistent with the legal field: never recommend as safe or neutral a step the legal field flags as a risk (for example extending probation, changing duties or changing terms for an employee who has just made a protected disclosure), and where the legal field says to pause, do not also recommend a step that changes her position.",
       "Action 2",
       "Action 3",
-      "Action 4 (optional)",
-      "Action 5 (optional)"
+      "Action 4 (optional)"
     ],
-    "assessment": "Situational assessment. 2 short paragraphs, about 150 words in total. Cover what has happened so far, where the process stands, and the key tension to hold in mind before acting. Do not repeat the legal field or the quick take; refer to them instead.",
+    "assessment": "Situational assessment. Two sentences, 45 words or fewer in total. Cover what has happened so far, where the process stands, and the key tension to hold in mind before acting. Do not repeat the legal field or the quick take; refer to them instead.",
     "context": "Write exactly the word none. Vantage writes this section itself from the MERIDIAN profile and the headcount you report in headcountStated.",
     "financial": {
       "items": [
@@ -949,8 +950,8 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
       "pillarRationale": "Two sentences at most. First, why this case sits in that pillar, using only facts in the narrative and the Acts provided. Second, the exposure if unresolved, limited to legal outcomes the Acts provided allow. Do not predict effects on hiring, retention, attrition, culture, reputation or regulators. Do not say what the organisation lacks. Use plain words; do not say that a pillar, section or protection is engaged or triggered.",
       "trajectorySignal": "One sentence that starts with the words Monitor whether and names one thing to check in other cases, based only on facts in the narrative. Do not say what the organisation lacks and do not say what pattern will recur."
     },
-    "recommendation": "One clear path. Not a menu of options — a recommendation. 2-4 sentences. What should the HR professional do, in what sequence, and why this path over the alternatives.",
-    "communication": "What to say, to whom, and in what order. 2-3 sentences of suggested language for the most critical conversation (the one with the employee or with leadership). Frame it as a starting point to adapt, not a script to read verbatim.",
+    "recommendation": "One clear path. Not a menu of options — a recommendation. Two sentences, 50 words or fewer in total. What should the HR professional do, in what sequence, and why this path over the alternatives.",
+    "communication": "What to say, to whom, and in what order. Two sentences, 45 words or fewer in total, of suggested language for the most critical conversation (the one with the employee or with leadership). Frame it as a starting point to adapt, not a script to read verbatim.",
     "aria": "One sentence ARIA scenario prompt: describe the conversation ARIA should simulate so the HR professional can practice before the real meeting. e.g. A termination conversation with a senior engineer who has 4 years of service and two documented warnings for repeated absence."
   },
   "detectedCaseType": "Exactly one of: Disciplinary | Grievance | PIP | Termination | Redundancy | POSH Complaint | Absence Management | Retrenchment | Other. The type the facts most closely match. If it matches the submitted caseType, return the same value. Use Other only when none of the eight genuinely fits (for example a resignation or notice-period dispute, recovery of losses after exit, client poaching, a conflict of interest, or a transfer or role change). Do not force a poor fit into one of the eight.",
@@ -2933,6 +2934,85 @@ function sanitisePillarText(result) {
   return dropped;
 }
 
+// ── Brevity: legal rows and word caps ───────────────────────────────────────
+// HR readers want the gist and the actions. The prompt asks for short fields; these caps are the backstop.
+function wordCount(s) { return (String(s == null ? '' : s).trim().match(/\S+/g) || []).length; }
+function trimToWords(text, cap) {
+  if (typeof text !== 'string') { return text; }
+  var t = text.trim();
+  if (wordCount(t) <= cap) { return t; }
+  var sents = t.split(/(?<=[.!?])\s+/), out = [], n = 0;
+  for (var i = 0; i < sents.length; i++) {
+    var w = wordCount(sents[i]);
+    if (out.length && n + w > cap) { break; }
+    out.push(sents[i]); n += w;
+  }
+  var joined = out.join(' ');
+  if (wordCount(joined) <= cap) { return joined; }
+  var cut = joined.split(/\s+/).slice(0, cap).join(' ');
+  var at = Math.max(cut.lastIndexOf('; '), cut.lastIndexOf(', '), cut.lastIndexOf(': '));
+  if (at > cut.length * 0.6) { cut = cut.slice(0, at); }
+  cut = cut.replace(/[,;:\s]+$/, '');
+  while (/\s(until|to|the|and|of|a|an|in|that|or|for|with|by|on|at|as|if|is|are|has|have|be|it|its|her|his|their)$/i.test(cut)) { cut = cut.replace(/\s\S+$/, ''); }
+  return cut + '.';
+}
+const LEGAL_VERDICTS = ['live', 'unclear', 'not_yet'];
+function sanitiseLegalRows(result) {
+  var pr = result && result.protocol;
+  if (!pr) { return; }
+  var seen = {}, out = [];
+  (Array.isArray(pr.legalRows) ? pr.legalRows : []).forEach(function (r) {
+    if (!r || typeof r !== 'object') { return; }
+    var ref = String(r.ref == null ? '' : r.ref).replace(/\s+/g, ' ').trim().slice(0, 40);
+    var point = typeof r.point === 'string' ? r.point.trim() : '';
+    if (!ref || !point || GENERALISATION_WORDS.test(point) || INTERNAL_NAME.test(point + ' ' + ref) || seen[ref.toLowerCase()]) { return; }
+    seen[ref.toLowerCase()] = true;
+    out.push({ ref: ref, verdict: LEGAL_VERDICTS.indexOf(r.verdict) >= 0 ? r.verdict : 'unclear', point: trimToWords(point, 25) });
+  });
+  out.sort(function (a, b) { return LEGAL_VERDICTS.indexOf(a.verdict) - LEGAL_VERDICTS.indexOf(b.verdict); });
+  pr.legalRows = out.slice(0, 7);
+  var ne = [], neSeen = {};
+  (Array.isArray(pr.notEngaged) ? pr.notEngaged : []).forEach(function (x) {
+    var t = typeof x === 'string' ? x.replace(/\s+/g, ' ').trim().slice(0, 40) : '';
+    if (t && !neSeen[t.toLowerCase()]) { neSeen[t.toLowerCase()] = true; ne.push(t); }
+  });
+  pr.notEngaged = ne.slice(0, 6);
+}
+function applyBrevity(result) {
+  var pr = result && result.protocol;
+  if (!pr) { return; }
+  var caps = { quick_take: 45, assessment: 60, recommendation: 60, communication: 60 };
+  Object.keys(caps).forEach(function (k) { if (typeof pr[k] === 'string') { pr[k] = trimToWords(pr[k], caps[k]); } });
+  if (Array.isArray(pr.immediate_actions)) {
+    pr.immediate_actions = pr.immediate_actions.filter(function (a) { return typeof a === 'string' && a.trim(); }).slice(0, 4).map(function (a) { return trimToWords(a, 30); });
+  }
+  sanitiseLegalRows(result);
+  if (typeof pr.legal === 'string') { console.log('PACT legal detail words: ' + wordCount(pr.legal) + ', rows: ' + (pr.legalRows || []).length); }
+}
+// The eighty-day check as a row, built from the same dates as the day-count paragraph.
+function dayCountRow(dates) {
+  if (!dates || typeof dates !== 'object') { return null; }
+  var joined = parseIsoDate(dates.joiningDate), delivery = parseIsoDate(dates.expectedDeliveryDate), decision = parseIsoDate(dates.decisionDate);
+  if (!joined || !delivery || joined.getTime() >= delivery.getTime()) { return null; }
+  var ws = new Date(Date.UTC(delivery.getUTCFullYear() - 1, delivery.getUTCMonth(), delivery.getUTCDate()));
+  var start = ws.getTime() > joined.getTime() ? ws : joined;
+  var point = 'Vantage counts ';
+  if (decision && decision.getTime() >= start.getTime() && decision.getTime() < delivery.getTime()) {
+    point += countDaysInclusive(start, decision).weekdays + ' weekdays to ' + fmtDate(decision) + ' and ';
+  }
+  point += countDaysInclusive(start, delivery).weekdays + ' to delivery, against 80 needed. Check attendance records.';
+  return { ref: 's.60(2) eighty-day rule', verdict: 'unclear', point: point };
+}
+function addDayCountRow(result, flags) {
+  var pr = result && result.protocol;
+  var row = dayCountRow(flags && flags.dates);
+  if (!pr || !row) { return; }
+  var rows = (Array.isArray(pr.legalRows) ? pr.legalRows : []).filter(function (r) { return !/60\(2\)/.test(r.ref); });
+  rows.push(row);
+  rows.sort(function (a, b) { return LEGAL_VERDICTS.indexOf(a.verdict) - LEGAL_VERDICTS.indexOf(b.verdict); });
+  pr.legalRows = rows.slice(0, 8);
+}
+
 // A hint to resign is the one fact the replacement-cost scenario turns on, and the model once read the same narrative as
 // "confirmation decision only". If one sentence of the narrative carries both a resign word and a suggestion word, the
 // scenario is raised to pressure_to_resign. It only ever raises non_confirmation_only; it never lowers a scenario.
@@ -2951,6 +3031,7 @@ function applyDeterministicFinancial(result, reqBody) {
     }
     if (result) { delete result.headcountStated; }
   } catch (e) { console.error('buildMeridianContext failed: ' + e.message); }
+  try { applyBrevity(result); } catch (e) { console.error('applyBrevity failed: ' + e.message); }
   try { normaliseLegalParagraphs(result); } catch (e) { console.error('normaliseLegalParagraphs failed: ' + e.message); }
   try { var _pd = sanitisePillarText(result); if (_pd) { console.log('PACT: removed ' + _pd + ' unsupported pillar/planning sentence(s)'); } } catch (e) { console.error('sanitisePillarText failed: ' + e.message); }
   try { sanitiseMeridianContext(result); } catch (e) { console.error('sanitiseMeridianContext failed: ' + e.message); }
@@ -2962,6 +3043,7 @@ function applyDeterministicFinancial(result, reqBody) {
     if (!flags || typeof flags !== 'object') { return; }
     try { var _dc = stripModelDayCounts(result); if (_dc) { console.log('PACT: removed ' + _dc + ' model-written day-count sentence(s)'); } } catch (e) { console.error('stripModelDayCounts failed: ' + e.message); }
     appendDayCount(result, flags);
+    try { addDayCountRow(result, flags); } catch (e) { console.error('addDayCountRow failed: ' + e.message); }
     var ctcInfo = resolveCtc(reqBody);
     if (!ctcInfo) { return; }
     var E = MATERNITY_ENGINE;

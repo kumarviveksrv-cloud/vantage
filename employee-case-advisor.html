@@ -128,6 +128,19 @@
     .pact-card.collapsed .pact-status{margin-bottom:0}
     .protocol-section.collapsed .proto-text,.communication-card.collapsed .comm-text{max-height:48px;overflow:hidden;-webkit-mask-image:linear-gradient(#000 30%,transparent);mask-image:linear-gradient(#000 30%,transparent)}
     .fin-card.collapsed .fin-breakdown,.fin-card.collapsed .fin-divider,.fin-card.collapsed .fin-pillar-row,.fin-card.collapsed .fin-trajectory{display:none !important}
+    .legal-rows{margin:2px 0 10px}
+    .legal-row{display:grid;grid-template-columns:76px 1fr;gap:4px 12px;align-items:start;padding:9px 0;border-top:1px solid rgba(165,180,252,0.14)}
+    .legal-row:first-child{border-top:0}
+    .legal-chip{display:inline-block;text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border-radius:999px;border:1px solid}
+    .legal-chip.live{color:#fca5a5;border-color:rgba(248,113,113,0.5);background:rgba(248,113,113,0.1)}
+    .legal-chip.unclear{color:#fcd34d;border-color:rgba(251,191,36,0.5);background:rgba(251,191,36,0.1)}
+    .legal-chip.not_yet{color:#cbd5e1;border-color:rgba(148,163,184,0.45);background:rgba(148,163,184,0.1)}
+    .legal-ref{font-size:12.5px;font-weight:600;color:#e5e7ff;line-height:1.35}
+    .legal-point{font-size:12.5px;color:rgba(229,231,255,0.78);line-height:1.5;margin-top:2px}
+    .legal-notengaged{font-size:11.5px;color:var(--dim);margin:4px 0 12px;line-height:1.5}
+    .legal-full-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:rgba(165,180,252,0.55);margin:6px 0 6px}
+    .legal-section.has-rows.collapsed .proto-text,.legal-section.has-rows.collapsed .legal-full-label{display:none}
+    @media (max-width:600px){.legal-row{grid-template-columns:1fr}.legal-chip{justify-self:start}}
     @media print{.coll-toggle,.coll-bar{display:none !important}}
 
     /* OUTPUT: PACT GRID */
@@ -571,6 +584,9 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           <div class="protocol-section legal-section">
             <div class="proto-label"><span class="proto-icon">⚖️</span> Legal Position</div>
             <div style="font-size:11px;color:var(--dim);margin-bottom:8px">A reading of the process against the Codes, not a formal legal opinion.</div>
+            <div class="legal-rows" id="legal-rows"></div>
+            <div class="legal-notengaged" id="legal-notengaged" style="display:none"></div>
+            <div class="legal-full-label" id="legal-full-label" style="display:none">Full reading</div>
             <div class="proto-text" id="proto-legal"></div>
             <div class="legal-disclaimer"><strong>Not legal advice.</strong> This is a reading of the statute wording, and courts and authorities may interpret it differently. Consult a qualified attorney before you act on anything generated here.</div>
           </div>
@@ -981,6 +997,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         }
       }
       setProse('proto-legal', pr.legal);
+      renderLegalRows(pr);
       setProse('proto-context', pr.context);
 
       // Protocol: Financial
@@ -1074,7 +1091,9 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         { id: 'a', title: 'Accountability Clarity', tag: ps.accountability && ps.accountability.score, level: ps.accountability && ps.accountability.score, summary: dim(ps.accountability), html: pts(ps.accountability) },
         { id: 'c', title: 'Consequence Mapping', tag: ps.consequence && ps.consequence.score, level: ps.consequence && ps.consequence.score, summary: dim(ps.consequence), html: pts(ps.consequence) },
         { id: 't', title: 'Trust Preservation', tag: ps.trust && ps.trust.score, level: ps.trust && ps.trust.score, summary: dim(ps.trust), html: pts(ps.trust) },
-        { id: 'legal', title: 'Legal Position', summary: lead(pr.legal, 260), html: prose(pr.legal) },
+        { id: 'legal', title: 'Legal Position',
+          summary: (Array.isArray(pr.legalRows) && pr.legalRows.length) ? pr.legalRows.slice(0, 3).map(function (r) { return r.ref + ': ' + r.point; }).join(' ') : lead(pr.legal, 260),
+          html: ((Array.isArray(pr.legalRows) && pr.legalRows.length) ? pr.legalRows.map(function (r) { return '<div class="sm-pt"><span><strong>' + e(r.ref) + '</strong> (' + e(String(r.verdict).replace('_', ' ')) + '). ' + e(r.point) + '</span></div>'; }).join('') : '') + prose(pr.legal) },
         { id: 'fin', title: 'Modelled Financial Exposure', tag: fin.confidence ? fin.confidence + ' coverage' : '',
           summary: fin.range ? 'Modelled exposure ' + fin.range + (fin.confidence ? ' (' + fin.confidence + ' input coverage).' : '.') : '',
           html: '<div class="sm-big">' + e(fin.range || 'Not calculated') + '</div>' +
@@ -1156,6 +1175,38 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       collCards().forEach(function (c, i) { setColl(c.el, _collState[i]); });
       _collState = null; syncCollAll();
     });
+
+    /* Legal Position: one row per provision the facts bring into question, with the full reading as the detail underneath */
+    var LEGAL_CHIP = { live: 'Live', unclear: 'Unclear', not_yet: 'Not yet' };
+    function renderLegalRows(pr) {
+      var box = document.getElementById('legal-rows');
+      var ne = document.getElementById('legal-notengaged');
+      var lab = document.getElementById('legal-full-label');
+      var card = box ? box.closest('.legal-section') : null;
+      if (!box) { return; }
+      box.textContent = '';
+      var rows = Array.isArray(pr && pr.legalRows) ? pr.legalRows : [];
+      rows.forEach(function (r) {
+        if (!r || !r.ref || !r.point) { return; }
+        var row = document.createElement('div'); row.className = 'legal-row';
+        var chip = document.createElement('span');
+        var v = LEGAL_CHIP[r.verdict] ? r.verdict : 'unclear';
+        chip.className = 'legal-chip ' + v; chip.textContent = LEGAL_CHIP[v];
+        var body = document.createElement('div');
+        var ref = document.createElement('div'); ref.className = 'legal-ref'; ref.textContent = r.ref;
+        var pt = document.createElement('div'); pt.className = 'legal-point'; pt.textContent = r.point;
+        body.appendChild(ref); body.appendChild(pt);
+        row.appendChild(chip); row.appendChild(body); box.appendChild(row);
+      });
+      var has = box.children.length > 0;
+      if (card) { card.classList.toggle('has-rows', has); }
+      if (lab) { lab.style.display = has ? '' : 'none'; }
+      var list = Array.isArray(pr && pr.notEngaged) ? pr.notEngaged.filter(function (x) { return typeof x === 'string' && x.trim(); }) : [];
+      if (ne) {
+        ne.textContent = has && list.length ? 'Checked and not engaged: ' + list.join(', ') + '.' : '';
+        ne.style.display = has && list.length ? '' : 'none';
+      }
+    }
 
     function saveCase() {
       var userId = getUserId();

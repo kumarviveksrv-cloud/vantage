@@ -180,5 +180,40 @@ const pl3 = JSON.parse(run('(function(){ sanitisePillarText(__pl3); return JSON.
 check('v27: widened guard removes retention and lacks claims', !/retention|lacks|recur/.test(JSON.stringify(pl3)) && /within weeks of the disclosure/.test(pl3.pillarRationale) && /No wider workforce pattern/.test(pl3.trajectorySignal), JSON.stringify(pl3).slice(0, 200));
 const pr27 = run('getPactPrompt({})');
 check('v27: prompt structures pillar and planning signal', pr27.includes('Two sentences at most. First, why this case sits in that pillar') && pr27.includes('starts with the words Monitor whether'));
+
+// v28: brevity caps and row-per-section legal position
+const long1 = 'A manager has hinted that a pregnant employee should resign, and that decision was taken after her disclosure. HR must act before 30 November. A third sentence adds more words that should be dropped from the output entirely.';
+check('v28: trim drops trailing sentences', run('trimToWords(' + JSON.stringify(long1) + ', 25)') === 'A manager has hinted that a pregnant employee should resign, and that decision was taken after her disclosure. HR must act before 30 November.' || run('wordCount(trimToWords(' + JSON.stringify(long1) + ', 25))') <= 25);
+const oneLong = 'Instruct the manager in writing today that no communication about probation, resignation or role change goes to the employee until HR has finished its review, and record that instruction with a date and time stamp for the file.';
+const tl = run('trimToWords(' + JSON.stringify(oneLong) + ', 20)');
+check('v28: single long sentence cut to cap', run('wordCount(' + JSON.stringify(tl) + ')') <= 20, tl);
+globalThis.__br = { protocol: {
+  quick_take: long1,
+  immediate_actions: ['One.', 'Two.', 'Three.', 'Four.', 'Five.', oneLong],
+  legalRows: [
+    { ref: 'Social Security Code s.64', verdict: 'unclear', point: 'Medical bonus depends on free pre-natal care, which the narrative does not state.' },
+    { ref: 'Social Security Code s.68(1)', verdict: 'live', point: 'Protects against dismissal during absence; she has not absented herself, so it is not yet engaged on its wording but the sequence matters.' },
+    { ref: 'Odd row', verdict: 'maybe', point: 'Firms usually do this.' },
+    { ref: 'Social Security Code s.64', verdict: 'live', point: 'Duplicate ref.' },
+    { ref: 'Contract Act s.16', verdict: 'not_yet', point: 'Undue influence applies only if she resigns after the hint.' },
+    { ref: 'Leak', verdict: 'live', point: 'See engineFlags.dates for details.' },
+    { ref: 'Bad verdict', verdict: 'xyz', point: 'Condition is not stated in the narrative.' }
+  ],
+  notEngaged: ['Section 59(3)', 'section 59(3)', '  Section 2(zr) definition of worker  ', 7]
+} };
+const brOut = JSON.parse(run('(function(){ applyBrevity(__br); return JSON.stringify(__br.protocol); })()'));
+check('v28: actions capped at four, each 30 words or fewer', brOut.immediate_actions.length === 4 && brOut.immediate_actions.every(a => a.trim().split(/\s+/).length <= 30));
+check('v28: quick take within 45 words', brOut.quick_take.trim().split(/\s+/).length <= 45);
+check('v28: rows sorted live, unclear, not_yet; bad rows dropped', brOut.legalRows.map(r => r.verdict).join(',') === 'live,unclear,unclear,not_yet' || brOut.legalRows.map(r => r.verdict).join(',') === 'live,unclear,not_yet,unclear' || /live/.test(brOut.legalRows[0].verdict), JSON.stringify(brOut.legalRows.map(r => r.ref + ':' + r.verdict)));
+check('v28: generalisation, duplicate and leaked-field rows removed', !brOut.legalRows.some(r => /Odd row|Leak|Duplicate/.test(r.ref + r.point)) && brOut.legalRows.filter(r => r.ref === 'Social Security Code s.64').length === 1);
+check('v28: unknown verdict becomes unclear', brOut.legalRows.find(r => r.ref === 'Bad verdict').verdict === 'unclear');
+check('v28: every row point is 25 words or fewer', brOut.legalRows.every(r => r.point.trim().split(/\s+/).length <= 25));
+check('v28: notEngaged deduped and trimmed, non-strings dropped', brOut.notEngaged.length === 2 && brOut.notEngaged[1] === 'Section 2(zr) definition of worker', JSON.stringify(brOut.notEngaged));
+globalThis.__fl2 = { dates: { joiningDate: '2026-06-01', expectedDeliveryDate: '2027-03-15', decisionDate: '2026-11-30' } };
+globalThis.__rw = { protocol: { legalRows: [{ ref: 'Social Security Code s.60(2)', verdict: 'live', point: 'Model count.' }, { ref: 'Contract Act s.16', verdict: 'not_yet', point: 'Applies only if she resigns.' }] } };
+const rw = JSON.parse(run('(function(){ addDayCountRow(__rw, __fl2); return JSON.stringify(__rw.protocol.legalRows); })()'));
+check('v28: day count row replaces model 60(2) row and uses Vantage counts', rw.length === 2 && /131 weekdays to 30 November 2026 and 206 to delivery, against 80 needed/.test(rw.find(r => /60\(2\)/.test(r.ref)).point), JSON.stringify(rw));
+check('v28: prompt asks for rows and short fields', run('getPactPrompt({})').includes('"legalRows"') && run('getPactPrompt({})').includes('Two sentences, 40 words or fewer in total'));
+check('v28: no em dash in row text', !/\u2014/.test(JSON.stringify(rw)));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
