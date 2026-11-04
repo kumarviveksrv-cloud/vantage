@@ -1130,8 +1130,17 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
           .sort(function(a, b) { return String(b.date_created || '').localeCompare(String(a.date_created || '')); });
         if (!open.length) return;
         var rows = open.slice(0, 5).map(function(f) {
-          var title = f.case_type_detail || f.case_type || 'Case';
-          var kind  = f.case_type || 'Case';
+          // Saved case types come in two shapes: plain ("PIP", or "Other" plus a label) from the
+          // Employee Case Advisor, and "Tool: detail" from the other tools. Show the tool or
+          // "Employee case" on the small top line and the specific matter as the title.
+          var ct = String(f.case_type || '').trim(), kind, title;
+          if (ct.indexOf(':') > 0) {
+            kind  = ct.slice(0, ct.indexOf(':')).trim();
+            title = ct.slice(ct.indexOf(':') + 1).trim() || kind;
+          } else {
+            kind  = 'Employee case';
+            title = (ct === 'Other' ? f.case_type_detail : '') || ct || 'Case';
+          }
           var risk  = String(f.overall_risk || '');
           var rcls  = /critical/i.test(risk) ? 'risk-critical' : /high/i.test(risk) ? 'risk-high' : 'risk-medium';
           var d = f.date_created ? new Date(f.date_created) : null;
