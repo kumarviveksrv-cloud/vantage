@@ -87,6 +87,17 @@
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.2);border-radius:2px}
     @media(max-width:600px){.options-grid.col3,.options-grid.col4{grid-template-columns:1fr 1fr}.options-grid.col2{grid-template-columns:1fr}.meridian-summary{grid-template-columns:1fr 1fr}}
+    .mv-card{width:100%;max-width:680px;background:linear-gradient(135deg,rgba(99,102,241,0.09),rgba(99,102,241,0.03));border:1px solid rgba(99,102,241,0.25);border-radius:18px;padding:32px 30px;position:relative;z-index:1}
+    .mv-group{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.6);letter-spacing:.12em;text-transform:uppercase;margin:22px 0 10px}
+    .mv-group:first-of-type{margin-top:0}
+    .mv-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .mv-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+    .mv-item .ms-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+    .mv-item .ms-val{font-size:13px;color:rgba(244,243,255,0.85);line-height:1.45}
+    .mv-item .ms-val.unset{color:rgba(244,243,255,0.35);font-style:italic}
+    .mv-note{font-size:12px;color:var(--grey);line-height:1.7;margin-top:18px}
+    .mv-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+    @media(max-width:600px){.mv-grid{grid-template-columns:1fr}}
     .src-chip{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:rgba(99,102,241,.15);color:#a5b4fc;font-family:var(--mono);font-size:.55rem;text-decoration:none;vertical-align:super;line-height:1;margin-left:3px;border:1px solid rgba(99,102,241,.25);transition:background .15s,color .15s}
     .src-chip:hover{background:rgba(99,102,241,.35);color:#f4f3ff}
   </style>
@@ -354,7 +365,54 @@
         '</div>';
     }
 
-    renderStep();
+
+    /* Returning users see their saved profile first. Editing opens the same steps with the saved choices selected. */
+    var MV_PARAMS = [['state','State'],['industry','Industry'],['orgType','Organisation type'],['orgSize','Organisation size'],['seniority','Role and seniority'],['unionStatus','Union status'],['hrFunction','Primary HR function']];
+    var MV_POLICY = [['policyNoticePeriod','Notice period'],['policyWarningProcess','Warning process'],['policyTerminationAuth','Termination authority'],['policyDomesticEnquiry','Domestic enquiry practice'],['policyStandingOrders','Standing orders status'],['policyAttritionRate','Actual annual attrition rate']];
+    function mvEsc(v) { return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function mvSavedProfile() {
+      var raw = null;
+      try {
+        raw = sessionStorage.getItem('sr_meridian');
+        if (!raw) {
+          var em = sessionStorage.getItem('sr_user_email') || localStorage.getItem('sr_user_email') || '';
+          if (em) { raw = localStorage.getItem('sr_meridian_' + em); }
+        }
+        var p = raw ? JSON.parse(raw) : null;
+        return (p && typeof p === 'object' && (p.state || p.industry || p.orgType || p.orgSize)) ? p : null;
+      } catch (e) { return null; }
+    }
+    function mvCell(p, pair) {
+      var v = p[pair[0]];
+      return '<div class="mv-item"><div class="ms-label">' + pair[1] + '</div><div class="ms-val' + (v ? '' : ' unset') + '">' + (v ? mvEsc(v) : 'Not set') + '</div></div>';
+    }
+    function showSummary(p) {
+      document.getElementById('progress-fill').parentNode.parentNode.style.display = 'none';
+      document.getElementById('nav-btns').style.display = 'none';
+      document.querySelector('.header-title').textContent = 'Your MERIDIAN profile.';
+      document.querySelector('.header-sub').textContent = 'These are the choices saved for your account. Vantage tools use them to calibrate what they tell you.';
+      document.getElementById('step-container').innerHTML =
+        '<div class="mv-card">' +
+          '<div class="mv-group">Your organisation</div>' +
+          '<div class="mv-grid">' + MV_PARAMS.map(function (x) { return mvCell(p, x); }).join('') + '</div>' +
+          '<div class="mv-group">Policy guardrails (optional)</div>' +
+          '<div class="mv-grid">' + MV_POLICY.map(function (x) { return mvCell(p, x); }).join('') + '</div>' +
+          '<div class="mv-note">Out of date? Edit it and every tool will use the new choices from your next run. In the Employee Case Advisor, the Meridian Context panel shows how these choices were applied to your case.</div>' +
+          '<div class="mv-btns"><button class="btn-next" onclick="editSummary()">Edit profile</button><a href="dashboard.html" class="btn-back" style="text-decoration:none;display:inline-flex;align-items:center">Back to dashboard</a></div>' +
+        '</div>';
+    }
+    function editSummary() {
+      var p = mvSavedProfile() || {};
+      profile = JSON.parse(JSON.stringify(p));
+      currentStep = 0;
+      document.getElementById('progress-fill').parentNode.parentNode.style.display = '';
+      document.getElementById('nav-btns').style.display = '';
+      document.querySelector('.header-title').textContent = 'Update your professional context.';
+      document.querySelector('.header-sub').textContent = 'Your saved choices are selected. Change what is out of date, then continue to the end to save.';
+      renderStep();
+    }
+    var _saved = mvSavedProfile();
+    if (_saved) { showSummary(_saved); } else { renderStep(); }
   </script>
   <script src="clerk-auth.js?v=20261103a"></script>
 </body>

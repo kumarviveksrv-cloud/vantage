@@ -732,7 +732,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
         var m = JSON.parse(meridianRaw);
         document.getElementById('meridian-summary').innerText = (m.state || '') + ' \xb7 ' + (m.industry || '');
         badge.innerText = 'Active'; badge.className = 'm-badge complete';
-        document.getElementById('meridian-cta').style.display = 'none';
+        var _cta = document.getElementById('meridian-cta'); _cta.innerHTML = 'View profile &#8594;'; _cta.style.display = 'inline-block';
       } catch(e) {}
     } else {
       chip.classList.add('incomplete');
