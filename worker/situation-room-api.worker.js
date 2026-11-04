@@ -384,6 +384,7 @@ const LEGAL_ACT_OPTIONAL = { 'indian-contract-act-1872': true, 'social-security-
 // Otherwise a changed file shows up within an hour, when the edge copy expires.
 const LEGAL_CACHE_VERSION = '2026-11-04b';
 const LEGAL_CACHE_SECONDS = 3600;
+const LEGAL_FETCH_TIMEOUT_MS = 8000; // GitHub raw: give up after this so a stall cannot hold a whole request
 
 async function loadActText(actKey) {
   const cache = caches.default;
@@ -398,10 +399,12 @@ async function loadActText(actKey) {
   // Fetch from GitHub
   const url = `${LEGAL_ACTS_GITHUB_BASE}${actKey}.txt?v=${LEGAL_CACHE_VERSION}`;
   let resp;
+  const tFetch = Date.now();
   try {
     resp = await fetch(url, {
       headers: { 'User-Agent': 'Vantage-Worker/1.0' },
       cf: { cacheTtl: LEGAL_CACHE_SECONDS, cacheEverything: true },
+      signal: AbortSignal.timeout(LEGAL_FETCH_TIMEOUT_MS),
     });
   } catch (e) {
     console.error(`loadActText: fetch failed for ${actKey}:`, e.message);
@@ -414,6 +417,7 @@ async function loadActText(actKey) {
   }
 
   const text = await resp.text();
+  console.log('loadActText: ' + actKey + ' fetched from GitHub in ' + (Date.now() - tFetch) + 'ms');
 
   // Store in Cloudflare cache (24h)
   await cache.put(
@@ -545,7 +549,9 @@ const LEGAL_ACT_LABELS = {
 
 // Like loadActsForContext, but also reports which Acts could not be loaded.
 async function loadActsWithStatus(actKeys) {
+  const tActs = Date.now();
   const results = await Promise.all(actKeys.map(function (key) { return loadActText(key).catch(function () { return null; }); }));
+  console.log('Acts loaded (' + actKeys.join(', ') + ') in ' + (Date.now() - tActs) + 'ms');
   const parts = [];
   const missing = [];
   results.forEach(function (t, i) {
@@ -1665,6 +1671,7 @@ async function claudeStreamCall(body, extraHeaders, totalMs, onChunk) {
   const arm = function () { clearTimeout(idleTimer); idleTimer = setTimeout(function () { reason = 'went silent for ' + Math.round(idleMs / 1000) + 's'; ctrl.abort(); }, idleMs); };
   const totalTimer = setTimeout(function () { reason = 'hit the ' + Math.round(totalMs / 1000) + 's limit'; ctrl.abort(); }, totalMs);
   arm();
+  console.log('Claude call start: model ' + body.model + ', cap ' + Math.round(totalMs / 1000) + 's, request ' + JSON.stringify(body).length + ' chars');
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -1672,6 +1679,7 @@ async function claudeStreamCall(body, extraHeaders, totalMs, onChunk) {
       body: JSON.stringify(Object.assign({}, body, { stream: true })),
       signal: ctrl.signal,
     });
+    console.log('Claude call first response after ' + Math.round((Date.now() - t0) / 1000) + 's, status ' + resp.status + ' (model ' + body.model + ')');
     if (!resp.ok) {
       const error = await resp.text();
       if (body.temperature !== undefined && /temperature/i.test(error)) {
@@ -1709,6 +1717,7 @@ async function claudeStreamCall(body, extraHeaders, totalMs, onChunk) {
       if (onChunk && Date.now() - lastEmit > 1000) { lastEmit = Date.now(); try { onChunk(text.length); } catch (ce) {} }
     }
     if (onChunk) { try { onChunk(text.length); } catch (ce) {} }
+    console.log('Claude call done in ' + Math.round((Date.now() - t0) / 1000) + 's, stop ' + stop + ', output ' + text.length + ' chars (model ' + body.model + ')');
     return { content: [{ type: 'text', text: text }], stop_reason: stop, usage: usage };
   } catch (e) {
     const took = Math.round((Date.now() - t0) / 1000);
@@ -5315,12 +5324,15 @@ export default {
     };
     _sinks.set(request, send);
     const job = (async function () {
+      const jobT0 = Date.now();
+      console.log('Stream run start');
       send('ping', { t: Date.now() });
       const hb = setInterval(function () { send('ping', { t: Date.now() }); }, 8000);
       let out;
       try {
         const resp = await run();
         out = { status: resp.status, body: await resp.text() };
+        console.log('Stream run finished in ' + Math.round((Date.now() - jobT0) / 1000) + 's, status ' + resp.status);
       } catch (e) {
         console.error('Stream run failed:', e && e.message);
         out = { status: 500, body: JSON.stringify({ success: false, error: 'Something went wrong. Please try again.' }) };
