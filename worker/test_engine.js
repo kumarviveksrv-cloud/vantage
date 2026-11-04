@@ -309,5 +309,7 @@ check('v36: wording starts Depends on, follows the Act, no reclassification or t
 check('v36: point is 45 words or fewer', w36[0].point.trim().split(/\s+/).length <= 48, String(w36[0].point.trim().split(/\s+/).length));
 const e36 = JSON.parse(run('(function(){ var r = { engineFlags: { scenario: "pressure_to_resign", freePrenatalCareStated: null, dates: { joiningDate: "2026-06-01", expectedDeliveryDate: "2027-03-15", decisionDate: "2026-11-30" } }, protocol: { financial: { items: [] }, legal: "x", legalRows: [] } }; applyDeterministicFinancial(r, { ctcBand: "18L to 25L", roleCriticality: "Medium" }); return JSON.stringify(r.protocol.legalRows.map(function(x){ return x.ref; })); })()'));
 check('v36: end to end, worker, proviso and day-count rows all present, 3 rows', e36.some(x => /2\(zr\)/.test(x)) && e36.some(x => /proviso/.test(x)) && e36.some(x => /60\(2\)/.test(x)), JSON.stringify(e36));
+// v37: comma splice example in the quick take prompt
+check('v37: quick take prompt gives a comma splice example', run('getPactPrompt({})').includes('wrong: The notice was late, it is the main risk. Right: The notice was late. That is the main risk.'));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
