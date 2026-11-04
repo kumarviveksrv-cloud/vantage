@@ -928,7 +928,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
     }
   },
   "protocol": {
-    "legal": "Legal position reading. What does the process look like against the relevant Codes and Acts given the state and industry in meridian? Where is the organisation exposed? Where is it protected? What one procedural step, if missed, would be the most costly? This is a process-risk reading, not a formal legal opinion. Base it on the wording of the Acts provided to you. Do not cite court judgments or case-law readings. Every statement about what an Act section requires or allows must be traceable to its exact wording. Do not add tests, conditions or doctrines the wording does not contain (for example penalty versus genuine pre-estimate, or a duty to prove actual loss, unless the wording itself says so), and keep the Act's own verbs: if it says entitled, do not write may. Where an Act section plainly says something, state what it says, and where the Acts provided do not cover a point, say so instead of filling the gap from memory. Keep the wording apart from your inference: state what the wording says first, citing the section, and mark any inference or risk judgement with the words Risk reading. Never say an Act prohibits or requires something unless its wording does. If a section applies only on a condition (for example a request by the employee, or a leave that has already begun), state that condition and check it against the facts. If the narrative does not say the condition has happened, say plainly that it has not been met on the facts given, and do not argue that something else (such as a verbal disclosure, an intention or a plan) satisfies it; put what follows from that under Risk reading. Write the legal field as finished prose: never include a sentence that instructs yourself or describes a check you are about to make, and do not use doctrine labels (such as constructive dismissal or general principles) unless a provided Act uses them. When you mention a threshold, name the section that sets it and say what it covers (for example the section that applies a Chapter, and which sections it applies). When you apply a time window or period to the facts, work it out from the dates in the narrative before saying whether it has begun. When you compare a count of days with a number of days in an Act, say whether you are counting calendar days or days actually worked, and convert (about five working days a week) before comparing. Before applying a Chapter or Act, check the establishment size in the meridian against its stated threshold, and do not apply it to an establishment below that threshold. Do not describe what a document made under an Act contains (such as model standing orders) unless the Acts provided say so. Never state a fine, penalty, imprisonment term or compensation amount unless the exact figure appears in the Acts provided to you, and copy it as the Act words it; if a penalty matters and the figure is not in the Acts provided, say that the Code provides a penalty and name the section only. Never refer to a section by a number the Acts provided do not give to that provision. Close this section with one sentence: this reads the statute wording only, and courts may apply it differently, so confirm with counsel before acting.",
+    "legal": "Legal position reading. What does the process look like against the relevant Codes and Acts given the state and industry in meridian? Where is the organisation exposed? Where is it protected? What one procedural step, if missed, would be the most costly? This is a process-risk reading, not a formal legal opinion. Base it on the wording of the Acts provided to you. Do not cite court judgments or case-law readings. Every statement about what an Act section requires or allows must be traceable to its exact wording. Do not add tests, conditions or doctrines the wording does not contain (for example penalty versus genuine pre-estimate, or a duty to prove actual loss, unless the wording itself says so), and keep the Act's own verbs: if it says entitled, do not write may. Where an Act section plainly says something, state what it says, and where the Acts provided do not cover a point, say so instead of filling the gap from memory. Keep the wording apart from your inference: state what the wording says first, citing the section, and mark any inference or risk judgement with the words Risk reading. Never say an Act prohibits or requires something unless its wording does. If a section applies only on a condition (for example a request by the employee, or a leave that has already begun), state that condition and check it against the facts. If the narrative does not say the condition has happened, say plainly that it has not been met on the facts given, and do not argue that something else (such as a verbal disclosure, an intention or a plan) satisfies it; put what follows from that under Risk reading. Write the legal field as finished prose: never include a sentence that instructs yourself or describes a check you are about to make, and do not use doctrine labels (such as constructive dismissal or general principles) unless a provided Act uses them. When you mention a threshold, name the section that sets it and say what it covers (for example the section that applies a Chapter, and which sections it applies). When you apply a time window or period to the facts, work it out from the dates in the narrative before saying whether it has begun. In a case about a pregnant employee, do not calculate or state any count of days between dates: put the dates in engineFlags.dates, and Vantage adds a day-count paragraph to the end of this section, which you may refer to as the day count below. In any other case, when you compare a count of days with a number of days in an Act, say whether you are counting calendar days or days actually worked, and convert (about five working days a week) before comparing. Before applying a Chapter or Act, check the establishment size in the meridian against its stated threshold, and do not apply it to an establishment below that threshold. Do not describe what a document made under an Act contains (such as model standing orders) unless the Acts provided say so. Never state a fine, penalty, imprisonment term or compensation amount unless the exact figure appears in the Acts provided to you, and copy it as the Act words it; if a penalty matters and the figure is not in the Acts provided, say that the Code provides a penalty and name the section only. Never refer to a section by a number the Acts provided do not give to that provision. Close this section with one sentence: this reads the statute wording only, and courts may apply it differently, so confirm with counsel before acting.",
     "quick_take": "2-3 sentences MAXIMUM. What is happening, what is the single biggest risk, and what that means for the decision in front of this HR professional. Write for someone reading on a phone in 10 seconds. Do not say that an Act prohibits, blocks or makes unlawful an action unless its wording does, and use the wording's own conditions (for example a section that applies only once a leave has begun, or only on the employee's request); where it is a risk rather than a prohibition, say risk. Do not state as fact anything the narrative does not say; write if or check whether instead. Write this after, and consistent with, the legal field above: never say a protection is engaged or a section is triggered when the legal field says its condition has not yet been met (for example a request not yet made, or a leave not yet begun).",
     "immediate_actions": [
       "Action 1 — concrete, sequenced, specific. Start with a verb. Every action must be consistent with the legal field: never recommend as safe or neutral a step the legal field flags as a risk (for example extending probation, changing duties or changing terms for an employee who has just made a protected disclosure), and where the legal field says to pause, do not also recommend a step that changes her position.",
@@ -956,7 +956,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
   "detectedCaseType": "Exactly one of: Disciplinary | Grievance | PIP | Termination | Redundancy | POSH Complaint | Absence Management | Retrenchment | Other. The type the facts most closely match. If it matches the submitted caseType, return the same value. Use Other only when none of the eight genuinely fits (for example a resignation or notice-period dispute, recovery of losses after exit, client poaching, a conflict of interest, or a transfer or role change). Do not force a poor fit into one of the eight.",
   "otherLabel": "Only when detectedCaseType is Other: a 2 to 4 word label in sentence case describing the situation. Existing labels and what each one means: Exit and notice dispute = a resignation, notice period, buyout, last day, exit settlement or constructive dismissal claim; Conflict of interest = an outside business, directorship or relationship that conflicts with the employer's interest while still employed; Competition and confidentiality = working for or diverting clients to a competitor, or misusing confidential information or client data; Transfer and role change = the EMPLOYER moves, demotes, promotes or reassigns the employee or changes the role; Recovery of dues or losses = the employer seeking money back from an employee or ex-employee, such as a bond, advance or loss; Probation issue = confirming, extending or ending probation; Flexible work request = a request made by the employee for remote or flexible work, relocation or leave; Maternity and pregnancy = a pregnant employee, or one on or returning from maternity leave, including benefit, leave, dismissal or role change. Use an existing label only when its meaning matches the facts. A request made BY the employee (such as remote or flexible work, relocation or leave) is not an employer transfer. If no label matches, coin a new 2 to 4 word label that does. A new accurate label is better than a stretched old one. Letters, numbers and spaces only. Otherwise null.",
   "secondaryCaseType": "Return a second type from the eight standard types ONLY when the facts show that second matter is already under way or has been raised (for example a discrimination grievance filed during a PIP, or absence that has already led to a termination notice). A possible or likely next step is NOT a second type: a PIP that may end in termination is still only PIP. A matter that is only proposed, considered or feared by a manager (for example non-confirmation, pressure to resign, a rotation change) has not been raised, so it is not a second type. Return null unless the narrative itself says the second matter has already started. When in doubt return null. Otherwise null.",
-  "engineFlags": "Only when the case involves a pregnant employee, or one on or returning from maternity leave; otherwise null. When present, an object with two keys. scenario is exactly one of non_confirmation_only, pressure_to_resign, dismissal_or_resignation_occurred. Use pressure_to_resign when anyone has suggested, hinted or pressed that she should resign or leave, even informally, and she has not yet left. Use dismissal_or_resignation_occurred only when the narrative says she has already been dismissed, has been given notice, or has resigned. Use non_confirmation_only when the only matter is a decision on confirmation, probation, duties or leave and nobody has suggested she leave. freePrenatalCareStated is true only if the narrative says the employer provides pre-natal and post-natal care free of charge, false only if it says it does not, otherwise null. Never put a rupee figure in this object.",
+  "engineFlags": "Only when the case involves a pregnant employee, or one on or returning from maternity leave; otherwise null. When present, an object with three keys. scenario is exactly one of non_confirmation_only, pressure_to_resign, dismissal_or_resignation_occurred. Use pressure_to_resign when anyone has suggested, hinted or pressed that she should resign or leave, even informally, and she has not yet left. Use dismissal_or_resignation_occurred only when the narrative says she has already been dismissed, has been given notice, or has resigned. Use non_confirmation_only when the only matter is a decision on confirmation, probation, duties or leave and nobody has suggested she leave. freePrenatalCareStated is true only if the narrative says the employer provides pre-natal and post-natal care free of charge, false only if it says it does not, otherwise null. dates is an object with joiningDate, expectedDeliveryDate and decisionDate, each written yyyy-mm-dd and copied from the narrative, or null when the narrative does not give it; decisionDate is the date of the confirmation or other decision the narrative says is coming. Never put a rupee figure in this object.",
   "greenCategory": {
     "primary": "Revenue Growth | Cost Efficiency | Risk Mitigation",
     "secondary": "Revenue Growth | Cost Efficiency | Risk Mitigation | null"
@@ -2741,13 +2741,75 @@ function buildFinancialSplit(c) {
   };
 }
 
+// ── Deterministic post-checks on the PACT reply ─────────────────────────────
+// 1. The MERIDIAN context field must not generalise about what a kind of organisation "typically" does.
+//    Prompt rules did not hold, so sentences with that wording are removed here.
+const GENERALISATION_WORDS = /\b(typically|usually|generally|commonly|often|tend to|tends to|as a rule)\b/i;
+function sanitiseMeridianContext(result) {
+  var pr = result && result.protocol;
+  if (!pr || typeof pr.context !== 'string') { return; }
+  var dropped = 0;
+  var paras = pr.context.split(/\n{2,}/).map(function (para) {
+    return para.split(/(?<=[.!?])\s+/).filter(function (sentence) {
+      if (GENERALISATION_WORDS.test(sentence)) { dropped++; return false; }
+      return true;
+    }).join(' ');
+  }).filter(function (para) { return para.trim().length > 0; });
+  if (dropped === 0) { return; }
+  console.log('PACT context: removed ' + dropped + ' sentence(s) with generalisation wording');
+  pr.context = paras.length ? paras.join('\n\n') : 'No organisation-specific point can be made beyond the profile fields and the facts in your narrative.';
+}
+
+// 2. Day counts for the s.60(2) eligibility check are calculated here from dates the model copied out of the narrative.
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+function parseIsoDate(v) {
+  if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) { return null; }
+  var d = new Date(v + 'T00:00:00Z');
+  return (isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== v) ? null : d;
+}
+function fmtDate(d) { return d.getUTCDate() + ' ' + MONTH_NAMES[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); }
+function countDaysInclusive(a, b) {
+  var calendar = Math.round((b.getTime() - a.getTime()) / 86400000) + 1, weekdays = 0;
+  for (var ms = a.getTime(); ms <= b.getTime(); ms += 86400000) { var dow = new Date(ms).getUTCDay(); if (dow !== 0 && dow !== 6) { weekdays++; } }
+  return { calendar: calendar, weekdays: weekdays };
+}
+function dayCountParagraph(dates) {
+  if (!dates || typeof dates !== 'object') { return null; }
+  var joined = parseIsoDate(dates.joiningDate), delivery = parseIsoDate(dates.expectedDeliveryDate), decision = parseIsoDate(dates.decisionDate);
+  if (!joined || !delivery || joined.getTime() >= delivery.getTime()) { return null; }
+  var windowStart = new Date(Date.UTC(delivery.getUTCFullYear() - 1, delivery.getUTCMonth(), delivery.getUTCDate()));
+  var windowApplied = windowStart.getTime() > joined.getTime();
+  var start = windowApplied ? windowStart : joined;
+  var text = 'Day count, calculated by Vantage from the dates in your narrative and not by the model: ';
+  if (decision && decision.getTime() >= start.getTime() && decision.getTime() < delivery.getTime()) {
+    var d1 = countDaysInclusive(start, decision);
+    text += 'from ' + fmtDate(start) + ' to ' + fmtDate(decision) + ' is ' + d1.calendar + ' calendar days, which is ' + d1.weekdays + ' weekdays (Monday to Friday), against the eighty days of work in section 60(2). ';
+  }
+  var d2 = countDaysInclusive(start, delivery);
+  text += 'From ' + fmtDate(start) + ' to the expected delivery on ' + fmtDate(delivery) + ' it is ' + d2.calendar + ' calendar days, which is ' + d2.weekdays + ' weekdays.';
+  if (windowApplied) { text += ' The start date is the first day of the twelve months before delivery, because she joined before that.'; }
+  text += ' Public holidays and any unpaid leave are not deducted, so treat this as an estimate and check it against attendance records.';
+  return text;
+}
+function appendDayCount(result, flags) {
+  var para = dayCountParagraph(flags && flags.dates);
+  var pr = result && result.protocol;
+  if (!para || !pr || typeof pr.legal !== 'string') { return; }
+  var paras = pr.legal.split(/\n{2,}/);
+  var last = paras.length - 1;
+  if (last >= 0 && /confirm with counsel/i.test(paras[last])) { paras.splice(last, 0, para); } else { paras.push(para); }
+  pr.legal = paras.join('\n\n');
+}
+
 // Replaces the model's own financial figures with the engine's, when the model flagged a pregnancy or maternity case.
 function applyDeterministicFinancial(result, reqBody) {
+  try { sanitiseMeridianContext(result); } catch (e) { console.error('sanitiseMeridianContext failed: ' + e.message); }
   try {
     if (!result || result.wrongTool === true || !result.protocol || !result.protocol.financial) { return; }
     var flags = result.engineFlags;
     delete result.engineFlags;
     if (!flags || typeof flags !== 'object') { return; }
+    appendDayCount(result, flags);
     var ctcInfo = resolveCtc(reqBody);
     if (!ctcInfo) { return; }
     var E = MATERNITY_ENGINE;

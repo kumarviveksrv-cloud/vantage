@@ -92,5 +92,24 @@ check('prompt has penalty guard', pr19.includes('Never state a fine, penalty, im
 check('prompt has context rule', pr19.includes('Do not describe what a type of organisation typically does'));
 check('prompt has wording rule', pr19.includes('WORDING RULE FOR EVERY FIELD OTHER THAN legal'));
 check('no em dash in split text', !/\u2014/.test(JSON.stringify(sp.s)));
+// 10. v21: context sanitiser and day-count engine
+globalThis.__ctx = { protocol: { context: 'Haryana insurance, 140 employees, narrative figure used.\n\nMNCs in this space typically face heightened scrutiny from regulators. The 140 figure is below 300.' } };
+const ctxOut = run('(function(){ sanitiseMeridianContext(__ctx); return __ctx.protocol.context; })()');
+check('context: generalising sentence removed', !/typically/i.test(ctxOut) && /below 300/.test(ctxOut) && /narrative figure used/.test(ctxOut), ctxOut.replace(/\n/g, ' | '));
+globalThis.__ctx2 = { protocol: { context: 'Firms usually do X.' } };
+check('context: all-generic text gets a plain fallback', /No organisation-specific point/.test(run('(function(){ sanitiseMeridianContext(__ctx2); return __ctx2.protocol.context; })()')));
+const dc = run('dayCountParagraph({ joiningDate: "2026-06-01", expectedDeliveryDate: "2027-03-15", decisionDate: "2026-11-30" })');
+check('day count: 1 Jun to 30 Nov 2026 is 183 calendar days and 131 weekdays', /183 calendar days, which is 131 weekdays/.test(dc), dc.slice(0, 200));
+check('day count: 1 Jun 2026 to 15 Mar 2027 is 288 calendar days and 206 weekdays', /288 calendar days, which is 206 weekdays/.test(dc));
+check('day count: no window shift when she joined within twelve months', !/first day of the twelve months/.test(dc));
+const dc2 = run('dayCountParagraph({ joiningDate: "2020-01-06", expectedDeliveryDate: "2027-03-15", decisionDate: null })');
+check('day count: long-serving employee uses the twelve-month window', /15 March 2026/.test(dc2) && /first day of the twelve months/.test(dc2), dc2.slice(0, 160));
+check('day count: bad dates return null', run('dayCountParagraph({ joiningDate: "2026-02-30", expectedDeliveryDate: "2027-03-15" })') === null && run('dayCountParagraph({ joiningDate: "2027-04-01", expectedDeliveryDate: "2027-03-15" })') === null && run('dayCountParagraph(null)') === null);
+globalThis.__lg = { protocol: { legal: 'Para one.\n\nThis reads the statute wording only, and courts may apply it differently, so confirm with counsel before acting.' } };
+const lg = run('(function(){ appendDayCount(__lg, { dates: { joiningDate: "2026-06-01", expectedDeliveryDate: "2027-03-15", decisionDate: "2026-11-30" } }); return __lg.protocol.legal; })()');
+const lgParts = lg.split('\n\n');
+check('day count inserted before the counsel sentence', lgParts.length === 3 && /^Day count/.test(lgParts[1]) && /confirm with counsel/.test(lgParts[2]));
+check('prompt asks for dates and bans model day counts', run('getPactPrompt({})').includes('engineFlags.dates') && run('getPactPrompt({})').includes('do not calculate or state any count of days between dates'));
+check('no em dash in day count text', !/\u2014/.test(dc));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
