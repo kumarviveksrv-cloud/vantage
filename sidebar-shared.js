@@ -1689,3 +1689,84 @@ function vfShowMsg(text, type) {
   el.style.border     = '1px solid ' + (type === 'ok' ? 'rgba(99,102,241,0.2)' : 'rgba(255,77,109,0.2)');
 }
 
+
+// ── PULL TO REFRESH (touch devices) ─────────────────────────────
+// Added 4 Nov 2026. Vantage pages scroll inside an inner container (.main) while
+// html and body are overflow:hidden, so the browser's own pull-to-refresh never
+// fires, in the installed app or in a mobile tab. This restores the gesture.
+// Safety: it never fires when a text box holds an unsent draft, when the touch
+// starts inside an input or a scrolled list, or when the page is not at the top.
+(function vantagePullToRefresh() {
+  try {
+    if (window.__vantagePtr) return;
+    window.__vantagePtr = true;
+    if (!window.matchMedia || !window.matchMedia('(pointer: coarse)').matches) return;
+
+    var THRESHOLD = 100, startY = 0, startX = 0, pulling = false, armed = false, bar = null;
+
+    function scrollerOk(t) {
+      // Walk up from the touch target. Any scrollable ancestor that is not at its top blocks the gesture.
+      for (var el = t; el && el !== document.documentElement; el = el.parentElement) {
+        if (el.nodeType !== 1) continue;
+        var tag = el.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable) return false;
+        if (el.hasAttribute && el.hasAttribute('data-no-ptr')) return false;
+        var cs = window.getComputedStyle(el), oy = cs.overflowY;
+        if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 1 && el.scrollTop > 0) return false;
+      }
+      return true;
+    }
+    function hasDraft() {
+      var tas = document.querySelectorAll('textarea');
+      for (var i = 0; i < tas.length; i++) { if ((tas[i].value || '').trim().length > 20) return true; }
+      return false;
+    }
+    function ensureBar() {
+      if (bar) return bar;
+      bar = document.createElement('div');
+      bar.id = 'vantage-ptr';
+      bar.setAttribute('aria-hidden', 'true');
+      bar.style.cssText = 'position:fixed;top:0;left:50%;transform:translate(-50%,-48px);z-index:99999;' +
+        'padding:8px 16px;border-radius:0 0 12px 12px;background:rgba(18,16,40,0.96);color:#c7c5ff;' +
+        'font:500 12px/1 system-ui,sans-serif;letter-spacing:.04em;border:1px solid rgba(99,102,241,.35);' +
+        'border-top:none;pointer-events:none;transition:transform .12s ease-out;opacity:0';
+      bar.textContent = 'Pull to refresh';
+      document.body.appendChild(bar);
+      return bar;
+    }
+    function hide() { if (bar) { bar.style.opacity = '0'; bar.style.transform = 'translate(-50%,-48px)'; } }
+
+    document.addEventListener('touchstart', function(e) {
+      pulling = false; armed = false;
+      if (e.touches.length !== 1) return;
+      if (!scrollerOk(e.target)) return;
+      startY = e.touches[0].clientY; startX = e.touches[0].clientX;
+      pulling = true;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', function(e) {
+      if (!pulling) return;
+      var dy = e.touches[0].clientY - startY, dx = Math.abs(e.touches[0].clientX - startX);
+      if (dy <= 0 || dx > dy) { pulling = false; hide(); return; }
+      if (!scrollerOk(e.target)) { pulling = false; hide(); return; }
+      var b = ensureBar();
+      var shown = Math.min(dy, THRESHOLD + 20) * 0.45;
+      b.style.opacity = dy > 18 ? '1' : '0';
+      b.style.transform = 'translate(-50%,' + (shown - 48) + 'px)';
+      armed = dy >= THRESHOLD;
+      b.textContent = armed ? 'Release to refresh' : 'Pull to refresh';
+    }, { passive: true });
+
+    document.addEventListener('touchend', function() {
+      if (pulling && armed && !hasDraft()) {
+        if (bar) { bar.textContent = 'Refreshing...'; bar.style.transform = 'translate(-50%,0)'; }
+        window.setTimeout(function() { window.location.reload(); }, 150);
+      } else {
+        if (pulling && armed && bar) bar.textContent = 'Unsent text kept. Not refreshing.';
+        window.setTimeout(hide, pulling && armed ? 1400 : 0);
+      }
+      pulling = false; armed = false;
+    }, { passive: true });
+    document.addEventListener('touchcancel', function() { pulling = false; armed = false; hide(); }, { passive: true });
+  } catch (e) { /* non-fatal */ }
+})();
