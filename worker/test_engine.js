@@ -311,5 +311,15 @@ const e36 = JSON.parse(run('(function(){ var r = { engineFlags: { scenario: "pre
 check('v36: end to end, worker, proviso and day-count rows all present, 3 rows', e36.some(x => /2\(zr\)/.test(x)) && e36.some(x => /proviso/.test(x)) && e36.some(x => /60\(2\)/.test(x)), JSON.stringify(e36));
 // v37: comma splice example in the quick take prompt
 check('v37: quick take prompt gives a comma splice example', run('getPactPrompt({})').includes('wrong: The notice was late, it is the main risk. Right: The notice was late. That is the main risk.'));
+// v38: unsupported remedy wording removed from prose, financial block untouched
+globalThis.__rm = { protocol: { financial: { items: [{ label: 'Back wages and relief', note: 'Assumed back wages for the dispute period.' }] },
+  legal: 'The Inspector may pass orders. Back wages follow automatically. The complaint window is open.' },
+  pact_scores: { consequence: { points: ['A complaint under s.72 could result in reinstatement-equivalent relief and back wages.', 'An extension without a record will be read as pregnancy-linked adverse action.'] } } };
+const rm = JSON.parse(run('(function(){ var n = stripUnsupportedRemedy(__rm, 0); return JSON.stringify({ n: n, r: __rm }); })()'));
+check('v38: remedy bullet removed, other bullet kept', rm.r.pact_scores.consequence.points.length === 1 && /pregnancy-linked/.test(rm.r.pact_scores.consequence.points[0]), JSON.stringify(rm.r.pact_scores));
+check('v38: legal prose keeps other sentences', rm.r.protocol.legal === 'The Inspector may pass orders. The complaint window is open.', rm.r.protocol.legal);
+check('v38: financial block left alone', rm.r.protocol.financial.items[0].label === 'Back wages and relief' && /back wages/.test(rm.r.protocol.financial.items[0].note));
+const rm2 = JSON.parse(run('(function(){ var r = { engineFlags: { scenario: "pressure_to_resign", freePrenatalCareStated: null, dates: null }, protocol: { financial: { items: [] }, legal: "x", legalRows: [] }, pact_scores: { consequence: { points: ["Orders may include reinstatement and back wages.", "Keep the record clean."] } } }; applyDeterministicFinancial(r, { ctcBand: "18L to 25L", roleCriticality: "Medium" }); return JSON.stringify(r.pact_scores.consequence.points); })()'));
+check('v38: guard runs inside applyDeterministicFinancial', rm2.length === 1 && rm2[0] === 'Keep the record clean.', JSON.stringify(rm2));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);

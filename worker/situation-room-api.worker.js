@@ -3113,6 +3113,33 @@ function applyShortServiceRule(result, flags) {
   return n;
 }
 
+// 7. Remedy wording. s.72(2)(b) of the Code on Social Security says the Inspector-cum-Facilitator may pass "such orders as he deems just and
+//    proper". The Act does not name reinstatement or back wages, so prose that promises them is removed. The financial block is left alone,
+//    because its "Back wages and relief" line is a modelled assumption that the Worker computes itself.
+const UNSUPPORTED_REMEDY = /\bback[ -]?wages?\b|\breinstat\w*/i;
+function stripUnsupportedRemedy(node, depth) {
+  if (!node || typeof node !== 'object' || depth > 8) { return 0; }
+  var removed = 0;
+  var skip = { engineFlags: 1, engineInputs: 1, legalRows: 1, notEngaged: 1, financial: 1 };
+  var cut = function (txt) { return txt.split(/(?<=[.!?])\s+/).filter(function (sen) { return !UNSUPPORTED_REMEDY.test(sen); }).join(' '); };
+  Object.keys(node).forEach(function (k) {
+    if (skip[k]) { return; }
+    var v = node[k];
+    if (typeof v === 'string') {
+      if (UNSUPPORTED_REMEDY.test(v)) { node[k] = cut(v); removed++; }
+    } else if (Array.isArray(v)) {
+      var before = v.length;
+      for (var i = 0; i < v.length; i++) {
+        if (typeof v[i] === 'string') { if (UNSUPPORTED_REMEDY.test(v[i])) { v[i] = cut(v[i]); } }
+        else { removed += stripUnsupportedRemedy(v[i], depth + 1); }
+      }
+      var cleaned = v.filter(function (x) { return !(typeof x === 'string' && !x.trim()); });
+      if (cleaned.length !== before) { node[k] = cleaned; removed += before - cleaned.length; }
+    } else if (v && typeof v === 'object') { removed += stripUnsupportedRemedy(v, depth + 1); }
+  });
+  return removed;
+}
+
 // A hint to resign is the one fact the replacement-cost scenario turns on, and the model once read the same narrative as
 // "confirmation decision only". If one sentence of the narrative carries both a resign word and a suggestion word, the
 // scenario is raised to pressure_to_resign. It only ever raises non_confirmation_only; it never lowers a scenario.
@@ -3144,6 +3171,7 @@ function applyDeterministicFinancial(result, reqBody) {
     try { var _dc = stripModelDayCounts(result); if (_dc) { console.log('PACT: removed ' + _dc + ' model-written day-count sentence(s)'); } } catch (e) { console.error('stripModelDayCounts failed: ' + e.message); }
     appendDayCount(result, flags);
     try { var _s70 = applyShortServiceRule(result, flags); if (_s70) { console.log('PACT: removed ' + _s70 + ' section 70 item(s), service under one year'); } } catch (e) { console.error('applyShortServiceRule failed: ' + e.message); }
+    try { var _rem = stripUnsupportedRemedy(result, 0); if (_rem) { console.log('PACT: removed ' + _rem + ' unsupported remedy item(s)'); } } catch (e) { console.error('stripUnsupportedRemedy failed: ' + e.message); }
     try { addDayCountRow(result, flags); } catch (e) { console.error('addDayCountRow failed: ' + e.message); }
     try { addProvisoRow(result, flags.scenario); } catch (e) { console.error('addProvisoRow failed: ' + e.message); }
     try { addWorkerStatusRow(result); } catch (e) { console.error('addWorkerStatusRow failed: ' + e.message); }
