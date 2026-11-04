@@ -2894,6 +2894,29 @@ function stripModelDayCounts(result) {
   return dropped;
 }
 
+// 5. The Humac pillar paragraph and the planning signal drifted into claims nothing in the narrative or the Acts supports
+//    (staff training gaps, effects on hiring and retention, regulator attention, age bands). Sentences with the generalisation
+//    words used for the context field, or with these specific patterns, are removed.
+const UNSUPPORTED_PILLAR = /\b(attract and retain|every future (case|woman|employee|manager)|lacks? (\w+ )?training|training (gap|gaps)|attrition among|age band|signals? to (the )?(workforce|every|all)|regulatory (interactions?|attention|scrutiny)|media attention|MNC (insurer|company|employer|organisation))\b/i;
+function sanitisePillarText(result) {
+  var f = result && result.protocol && result.protocol.financial;
+  if (!f || typeof f !== 'object') { return 0; }
+  var fallbacks = {
+    pillarRationale: 'This case sits in the stated Humac pillar. What it costs if unresolved depends on the facts in your narrative and is not estimated beyond the figures shown.',
+    trajectorySignal: 'No wider workforce pattern can be inferred from this single case.'
+  };
+  var dropped = 0;
+  Object.keys(fallbacks).forEach(function (key) {
+    if (typeof f[key] !== 'string') { return; }
+    var kept = f[key].split(/(?<=[.!?])\s+/).filter(function (sen) {
+      if (GENERALISATION_WORDS.test(sen) || UNSUPPORTED_PILLAR.test(sen)) { dropped++; return false; }
+      return true;
+    }).join(' ').trim();
+    f[key] = kept || fallbacks[key];
+  });
+  return dropped;
+}
+
 // A hint to resign is the one fact the replacement-cost scenario turns on, and the model once read the same narrative as
 // "confirmation decision only". If one sentence of the narrative carries both a resign word and a suggestion word, the
 // scenario is raised to pressure_to_resign. It only ever raises non_confirmation_only; it never lowers a scenario.
@@ -2912,6 +2935,7 @@ function applyDeterministicFinancial(result, reqBody) {
     }
     if (result) { delete result.headcountStated; }
   } catch (e) { console.error('buildMeridianContext failed: ' + e.message); }
+  try { var _pd = sanitisePillarText(result); if (_pd) { console.log('PACT: removed ' + _pd + ' unsupported pillar/planning sentence(s)'); } } catch (e) { console.error('sanitisePillarText failed: ' + e.message); }
   try { sanitiseMeridianContext(result); } catch (e) { console.error('sanitiseMeridianContext failed: ' + e.message); }
   try { var _scrubbed = scrubInternalNames(result, 0); if (_scrubbed) { console.log('PACT: removed internal field names from ' + _scrubbed + ' text field(s)'); } } catch (e) { console.error('scrubInternalNames failed: ' + e.message); }
   try {

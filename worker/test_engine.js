@@ -152,5 +152,16 @@ globalThis.__dc = { protocol: { legal: 'Section 60(2) needs eighty days. From 1 
 const dcOut = run('(function(){ var n = stripModelDayCounts(__dc); return JSON.stringify({ n: n, t: __dc.protocol.legal }); })()');
 const dcj = JSON.parse(dcOut);
 check('v25: model day count removed, statute wording kept', dcj.n === 1 && !/231/.test(dcj.t) && /eighty days/.test(dcj.t) && /thirty days/.test(dcj.t) && /Section 64/.test(dcj.t), dcOut.slice(0, 160));
+
+// v26: pillar and planning signal guard
+globalThis.__pl = { protocol: { financial: {
+  pillarRationale: 'This case sits squarely in Compliance and Risk because the primary exposure is statutory. If unresolved, it affects the organisation\'s ability to attract and retain women in professional roles. A manager formed a view within weeks of the disclosure.',
+  trajectorySignal: 'The organisation lacks manager training on pregnancy and protected disclosure protocols.' } } };
+const plOut = JSON.parse(run('(function(){ var n = sanitisePillarText(__pl); return JSON.stringify({ n: n, p: __pl.protocol.financial.pillarRationale, t: __pl.protocol.financial.trajectorySignal }); })()'));
+check('v26: unsupported pillar sentence removed, facts kept', plOut.n === 2 && !/attract and retain/.test(plOut.p) && /Compliance and Risk/.test(plOut.p) && /within weeks of the disclosure/.test(plOut.p), JSON.stringify(plOut).slice(0, 200));
+check('v26: all-unsupported planning signal gets plain fallback', /No wider workforce pattern/.test(plOut.t));
+globalThis.__pl2 = { protocol: { financial: { pillarRationale: 'Firms usually mishandle this. The notice was verbal.', trajectorySignal: 'Monitor whether similar confirmation decisions are taken without a written record.' } } };
+const pl2 = JSON.parse(run('(function(){ sanitisePillarText(__pl2); return JSON.stringify(__pl2.protocol.financial); })()'));
+check('v26: generalisation word removed, clean signal untouched', pl2.pillarRationale === 'The notice was verbal.' && /Monitor whether similar/.test(pl2.trajectorySignal));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
