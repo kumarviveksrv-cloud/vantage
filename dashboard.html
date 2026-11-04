@@ -537,7 +537,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
         <div class="stat-sub">Practice makes permanent</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Frameworks Applied</div>
+        <div class="stat-label">Total Cases</div>
         <div class="stat-value" id="dash-stat-total">0</div>
         <div class="stat-sub" id="dash-stat-total-sub">Across all Vantage tools</div>
       </div>
@@ -1118,6 +1118,33 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
         if (created === thisMonth) monthCount++;
         if ((f.status || 'Open').toLowerCase() === 'open') openCount++;
       });
+
+      // FIX (4 Nov 2026): the Active Cases list was a static "No active cases yet"
+      // placeholder that nothing ever filled, so it contradicted the Open Cases stat.
+      // Show the five most recent open cases; the rest are one tap away in Vantage Record.
+      (function renderActiveCases() {
+        var box = document.getElementById('cases-container');
+        if (!box) return;
+        function esc(x) { return String(x == null ? '' : x).replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+        var open = cases.filter(function(f) { return (f.status || 'Open').toLowerCase() === 'open'; })
+          .sort(function(a, b) { return String(b.date_created || '').localeCompare(String(a.date_created || '')); });
+        if (!open.length) return;
+        var rows = open.slice(0, 5).map(function(f) {
+          var title = f.case_type_detail || f.case_type || 'Case';
+          var kind  = f.case_type || 'Case';
+          var risk  = String(f.overall_risk || '');
+          var rcls  = /critical/i.test(risk) ? 'risk-critical' : /high/i.test(risk) ? 'risk-high' : 'risk-medium';
+          var d = f.date_created ? new Date(f.date_created) : null;
+          var when = d && !isNaN(d) ? d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : '';
+          return '<a class="case-card" href="vantage-record.html" style="text-decoration:none;color:inherit">' +
+            '<div style="flex:1;min-width:0"><div class="case-type">' + esc(kind) + '</div>' +
+            '<div class="case-title">' + esc(title) + '</div></div>' +
+            '<div class="case-meta">' + (risk ? '<span class="risk-badge ' + rcls + '">' + esc(risk) + '</span>' : '') +
+            '<span class="case-time">' + esc(when) + '</span></div></a>';
+        }).join('');
+        var more = open.length > 5 ? '<div style="text-align:center;margin-top:6px;font-size:12px;color:var(--grey)">+ ' + (open.length - 5) + ' more in Vantage Record</div>' : '';
+        box.innerHTML = rows + more;
+      })();
 
       var mEl   = document.getElementById('dash-stat-month');
       var mSub  = document.getElementById('dash-stat-month-sub');
