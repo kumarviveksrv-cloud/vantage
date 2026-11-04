@@ -1203,7 +1203,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       if (lab) { lab.style.display = has ? '' : 'none'; }
       var list = Array.isArray(pr && pr.notEngaged) ? pr.notEngaged.filter(function (x) { return typeof x === 'string' && x.trim(); }) : [];
       if (ne) {
-        ne.textContent = has && list.length ? 'Checked and not engaged: ' + list.join(', ') + '.' : '';
+        ne.textContent = has && list.length ? 'Checked and not engaged: ' + list.join('; ') + '.' : '';
         ne.style.display = has && list.length ? '' : 'none';
       }
     }

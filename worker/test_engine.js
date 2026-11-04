@@ -213,7 +213,25 @@ globalThis.__fl2 = { dates: { joiningDate: '2026-06-01', expectedDeliveryDate: '
 globalThis.__rw = { protocol: { legalRows: [{ ref: 'Social Security Code s.60(2)', verdict: 'live', point: 'Model count.' }, { ref: 'Contract Act s.16', verdict: 'not_yet', point: 'Applies only if she resigns.' }] } };
 const rw = JSON.parse(run('(function(){ addDayCountRow(__rw, __fl2); return JSON.stringify(__rw.protocol.legalRows); })()'));
 check('v28: day count row replaces model 60(2) row and uses Vantage counts', rw.length === 2 && /131 weekdays to 30 November 2026 and 206 to delivery, against 80 needed/.test(rw.find(r => /60\(2\)/.test(r.ref)).point), JSON.stringify(rw));
-check('v28: prompt asks for rows and short fields', run('getPactPrompt({})').includes('"legalRows"') && run('getPactPrompt({})').includes('Two sentences, 40 words or fewer in total'));
+check('v28: prompt asks for rows and short fields', run('getPactPrompt({})').includes('"legalRows"') && run('getPactPrompt({})').includes('each 20 words or fewer'));
 check('v28: no em dash in row text', !/\u2014/.test(JSON.stringify(rw)));
+
+// v29: clean refs, no threshold rows, no dangling quick take, tidy not-engaged list
+globalThis.__v29 = { protocol: {
+  legalRows: [
+    { ref: 'CSS s.68(1) proviso, benefit on dismissal', verdict: 'live', point: 'The proviso preserves her benefit if she would otherwise qualify.' },
+    { ref: 'ICA s.16, undue influence on resignation', verdict: 'unclear', point: 'A resignation after the hint could be challenged.' },
+    { ref: 'IR Code s.28, Standing Orders threshold', verdict: 'not_yet', point: 'Chapter IV requires 300 or more workers; the establishment has about 140.' },
+    { ref: 'IR Code 2020 Sch.2 I(5)(b), unfair labour practice', verdict: 'unclear', point: 'Depends on whether she is a worker.' }
+  ],
+  notEngaged: ['IR Code Chapter X (s.77), 300-worker threshold', 'IR Code s.70, retrenchment (no retrenchment)', 'CSS s.62, written notice not given by employee', 'CSS s.65, miscarriage or MTP leave', 'ICA s.16, undue influence'] } };
+const v29 = JSON.parse(run('(function(){ sanitiseLegalRows(__v29); return JSON.stringify(__v29.protocol); })()'));
+check('v29: refs cleaned to Act and section', v29.legalRows.map(r => r.ref).join('|') === 'Social Security Code s.68(1) proviso|Contract Act s.16|IR Code Sch.2 I(5)(b)', v29.legalRows.map(r => r.ref).join('|'));
+check('v29: Standing Orders threshold row dropped', !v29.legalRows.some(r => /Standing|s\.28/.test(r.ref)));
+check('v29: not-engaged list tidy, no threshold items, no duplicate of a row', v29.notEngaged.join('|') === 'IR Code s.70|Social Security Code s.62|Social Security Code s.65', v29.notEngaged.join('|'));
+const qt2 = 'A pregnant employee on probation has been verbally told by her manager that she should consider resigning, this creates an undue influence risk under the Indian Contract Act and, once her maternity absence begins, a risk under section 68 of the Code on Social Security.';
+const qt2o = run('trimToWords(' + JSON.stringify(qt2) + ', 30)');
+check('v29: quick take cut at a complete thought, not a dangling clause', run('wordCount(' + JSON.stringify(qt2o) + ')') <= 30 && !/(once|and|which|under)\.$/.test(qt2o) && /Indian Contract Act\.$|resigning\.$/.test(qt2o), qt2o);
+check('v29: prompt asks for bare refs and short sentences', run('getPactPrompt({})').includes('only the Act and section') && run('getPactPrompt({})').includes('each 20 words or fewer'));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
