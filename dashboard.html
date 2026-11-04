@@ -160,6 +160,9 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
     .risk-high{color:#FFB547;background:rgba(255,181,71,0.12);border:1px solid rgba(255,181,71,0.25)}
     .risk-medium{color:var(--muted);background:var(--teal-dim);border:1px solid rgba(99,102,241,0.25)}
     .case-time{font-size:10px;color:var(--grey);font-family:'JetBrains Mono',monospace}
+    .dash-close-btn{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.04em;color:var(--muted);background:transparent;border:1px solid rgba(99,102,241,0.30);border-radius:6px;padding:4px 10px;cursor:pointer;margin-top:2px;transition:all .2s}
+    .dash-close-btn:hover{color:#f4f3ff;border-color:rgba(99,102,241,0.6);background:rgba(99,102,241,0.12)}
+    .dash-close-btn:disabled{opacity:.5;cursor:default}
     .empty-cases{text-align:center;padding:32px 20px;color:var(--grey);font-size:13px}
     .empty-cases .emoji{font-size:28px;margin-bottom:10px}
 
@@ -1096,6 +1099,25 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       return 0;
     }
 
+    // Close a case from the dashboard row. Same call the Vantage Record page uses.
+    // On success the row drops out, the next open case moves up and the stats update.
+    function dashCloseCase(recId, btn) {
+      if (!recId || !window.Clerk || !window.Clerk.session) return;
+      btn.disabled = true; btn.textContent = 'Closing...';
+      window.Clerk.session.getToken().then(function(token) {
+        return fetch(WORKER, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ tool: 'update_case_status', recordId: recId, status: 'Closed' })
+        });
+      }).then(function(r) { return r.json(); }).then(function(d) {
+        if (!d || !d.success) throw new Error('failed');
+        var list = window.__dashCases || [];
+        list.forEach(function(f) { if (String(f._record_id || '').replace(/[^A-Za-z0-9]/g, '') === recId) f.status = 'Closed'; });
+        updateDashboardFromCases(list);
+      }).catch(function() { btn.disabled = false; btn.textContent = 'Failed. Retry'; });
+    }
+
     // Writes live case data to every dashboard element that depends on it
     function updateDashboardFromCases(cases) {
       if (!Array.isArray(cases) || cases.length === 0) return;
@@ -1128,7 +1150,11 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
         function esc(x) { return String(x == null ? '' : x).replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
         var open = cases.filter(function(f) { return (f.status || 'Open').toLowerCase() === 'open'; })
           .sort(function(a, b) { return String(b.date_created || '').localeCompare(String(a.date_created || '')); });
-        if (!open.length) return;
+        window.__dashCases = cases;
+        if (!open.length) {
+          box.innerHTML = '<div class="empty-cases"><div>No open cases.</div><div style="margin-top:6px;font-size:12px">Closed cases stay in <a href="vantage-record.html" style="color:var(--muted)">Vantage Record</a>.</div></div>';
+          return;
+        }
         var rows = open.slice(0, 5).map(function(f) {
           // Saved case types come in two shapes: plain ("PIP", or "Other" plus a label) from the
           // Employee Case Advisor, and "Tool: detail" from the other tools. Show the tool or
@@ -1145,11 +1171,14 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
           var rcls  = /critical/i.test(risk) ? 'risk-critical' : /high/i.test(risk) ? 'risk-high' : 'risk-medium';
           var d = f.date_created ? new Date(f.date_created) : null;
           var when = d && !isNaN(d) ? d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : '';
-          return '<a class="case-card" href="vantage-record.html" style="text-decoration:none;color:inherit">' +
+          var rid = String(f._record_id || '').replace(/[^A-Za-z0-9]/g, '');
+          return '<div class="case-card" onclick="window.location.href=\'vantage-record.html\'">' +
             '<div style="flex:1;min-width:0"><div class="case-type">' + esc(kind) + '</div>' +
             '<div class="case-title">' + esc(title) + '</div></div>' +
             '<div class="case-meta">' + (risk ? '<span class="risk-badge ' + rcls + '">' + esc(risk) + '</span>' : '') +
-            '<span class="case-time">' + esc(when) + '</span></div></a>';
+            '<span class="case-time">' + esc(when) + '</span>' +
+            (rid ? '<button type="button" class="dash-close-btn" onclick="event.stopPropagation();dashCloseCase(\'' + rid + '\',this)">&#x2713; Close</button>' : '') +
+            '</div></div>';
         }).join('');
         var more = open.length > 5 ? '<div style="text-align:center;margin-top:6px;font-size:12px;color:var(--grey)">+ ' + (open.length - 5) + ' more in Vantage Record</div>' : '';
         box.innerHTML = rows + more;
