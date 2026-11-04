@@ -905,7 +905,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
 {
   "pact_scores": {
     "overallRisk": "Critical | High | Medium | Low",
-    "overallNarrative": "One sentence of 20 words or fewer: what the aggregate risk means for this HR professional right now. Do not repeat the quick take.",
+    "overallNarrative": "Two sentences, 45 words or fewer in total. Name the two dimensions that drive the rating, the specific facts from the narrative behind each, and what would lower the rating. Do not repeat the quick take or use generic wording.",
     "process": {
       "score": "Critical | High | Medium | Low",
       "status": "One line: the process integrity verdict.",
@@ -938,7 +938,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
       "Action 3",
       "Action 4 (optional)"
     ],
-    "assessment": "Situational assessment. Two sentences, 45 words or fewer in total. Cover what has happened so far, where the process stands, and the key tension to hold in mind before acting. Do not repeat the legal field or the quick take; refer to them instead.",
+    "assessment": "Situational assessment. Four sentences, 95 words or fewer in total. Cover what has happened so far, where the process stands, the key tension to hold in mind before acting, and one non-obvious insight the HR professional may be missing, such as a sequencing trap, a missing document or a conflict between two stakeholders. Use specific facts and dates from the narrative. Do not repeat the legal field or the quick take; refer to them instead.",
     "context": "Write exactly the word none. Vantage writes this section itself from the MERIDIAN profile and the headcount you report in headcountStated.",
     "financial": {
       "items": [
@@ -2996,11 +2996,12 @@ function sanitiseLegalRows(result) {
 function applyBrevity(result) {
   var pr = result && result.protocol;
   if (!pr) { return; }
-  var caps = { quick_take: 45, assessment: 60, recommendation: 60, communication: 60 };
+  var caps = { quick_take: 45, assessment: 110, recommendation: 60, communication: 60 };
   Object.keys(caps).forEach(function (k) { if (typeof pr[k] === 'string') { pr[k] = trimToWords(pr[k], caps[k]); } });
   if (Array.isArray(pr.immediate_actions)) {
     pr.immediate_actions = pr.immediate_actions.filter(function (a) { return typeof a === 'string' && a.trim(); }).slice(0, 4).map(function (a) { return trimToWords(a, 30); });
   }
+  if (result.pact_scores && typeof result.pact_scores.overallNarrative === 'string') { result.pact_scores.overallNarrative = trimToWords(result.pact_scores.overallNarrative, 50); }
   sanitiseLegalRows(result);
   if (typeof pr.legal === 'string') { console.log('PACT legal detail words: ' + wordCount(pr.legal) + ', rows: ' + (pr.legalRows || []).length); }
 }

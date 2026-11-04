@@ -233,5 +233,13 @@ const qt2 = 'A pregnant employee on probation has been verbally told by her mana
 const qt2o = run('trimToWords(' + JSON.stringify(qt2) + ', 30)');
 check('v29: quick take cut at a complete thought, not a dangling clause', run('wordCount(' + JSON.stringify(qt2o) + ')') <= 30 && !/(once|and|which|under)\.$/.test(qt2o) && /Indian Contract Act\.$|resigning\.$/.test(qt2o), qt2o);
 check('v29: prompt asks for bare refs and short sentences', run('getPactPrompt({})').includes('only the Act and section') && run('getPactPrompt({})').includes('each 20 words or fewer'));
+
+// v30: assessment and overall narrative restored to useful length
+const pr30 = run('getPactPrompt({})');
+check('v30: assessment prompt asks for four sentences with an insight', pr30.includes('Four sentences, 95 words or fewer') && pr30.includes('non-obvious insight'));
+check('v30: overall narrative asks for drivers', pr30.includes('Name the two dimensions that drive the rating'));
+globalThis.__a30 = { pact_scores: { overallNarrative: 'Process and Consequence drive the rating. ' + 'word '.repeat(70) }, protocol: { assessment: ('Sentence one is here with several words. ').repeat(14) } };
+const a30 = JSON.parse(run('(function(){ applyBrevity(__a30); return JSON.stringify({ n: wordCount(__a30.pact_scores.overallNarrative), a: wordCount(__a30.protocol.assessment) }); })()'));
+check('v30: caps are 50 and 110 words', a30.n <= 50 && a30.a <= 110 && a30.a >= 60, JSON.stringify(a30));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
