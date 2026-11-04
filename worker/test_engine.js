@@ -74,5 +74,23 @@ check('missing meridian says not set', run('buildPactMeridianBlock(null)').inclu
 check('long value is capped', run('buildPactMeridianBlock({state:"x".repeat(500)})').length < 400);
 check('user message uses the block', fs.readFileSync(__dirname + '/situation-room-api.worker.js', 'utf8').includes('${buildPactMeridianBlock(meridian)}'));
 check('prompt tells model not to infer industry from job title', run('getPactPrompt({})').includes('Never infer the industry or state from a job title'));
+// 9. v19: two-figure split, prompt rules
+globalThis.__b = { ctcBand: '18L to 25L', roleCriticality: 'Medium' };
+const sp = JSON.parse(run('(function(){ var r = __fake(0); normaliseFinancial(r); applyDeterministicFinancial(r, __b); return JSON.stringify({ s: r.protocol.financial.split, range: r.protocol.financial.range }); })()'));
+check('split legal range', sp.s && sp.s.legal.range === 'Rs.50K to Rs.2L', sp.s && sp.s.legal.range);
+check('split business range', sp.s && sp.s.business.range === 'Rs.17.2L to Rs.27.95L', sp.s && sp.s.business.range);
+check('combined range unchanged for saved cases', sp.range === 'Rs.17.7L to Rs.29.95L' && sp.s.combined === 'Rs.17.7L to Rs.29.95L', sp.range);
+check('split legal note says what it excludes', /Does not include statutory fines/.test(sp.s.legal.note));
+globalThis.__fd = { engineFlags: { scenario: 'dismissal_or_resignation_occurred', freePrenatalCareStated: null }, protocol: { financial: { items: [], range: 'x', confidence: 'Low' } } };
+const sd = JSON.parse(run('(function(){ var r = JSON.parse(JSON.stringify(__fd)); normaliseFinancial(r); applyDeterministicFinancial(r, __b); return JSON.stringify(r.protocol.financial.split); })()'));
+check('dismissal legal figure includes back wages', sd && sd.legal.range === 'Rs.' + '' + sd.legal.range.replace('Rs.','') && /back wages/.test(sd.legal.note), sd && sd.legal.range);
+globalThis.__fn = { engineFlags: { scenario: 'non_confirmation_only', freePrenatalCareStated: null }, protocol: { financial: { items: [], range: 'x', confidence: 'Low' } } };
+const sn = run('(function(){ var r = JSON.parse(JSON.stringify(__fn)); normaliseFinancial(r); applyDeterministicFinancial(r, __b); return r.protocol.financial.split === null; })()');
+check('no split when no replacement cost applies', sn === true);
+const pr19 = run('getPactPrompt({})');
+check('prompt has penalty guard', pr19.includes('Never state a fine, penalty, imprisonment term or compensation amount unless the exact figure appears in the Acts provided'));
+check('prompt has context rule', pr19.includes('Do not describe what a type of organisation typically does'));
+check('prompt has wording rule', pr19.includes('WORDING RULE FOR EVERY FIELD OTHER THAN legal'));
+check('no em dash in split text', !/\u2014/.test(JSON.stringify(sp.s)));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
