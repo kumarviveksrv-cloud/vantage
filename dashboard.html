@@ -1194,7 +1194,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       if (mEl)  mEl.textContent  = monthCount;
       if (mSub) mSub.textContent = monthCount === 0 ? 'Start your first case' : monthCount === 1 ? '1 case this month' : monthCount + ' cases this month';
       if (oEl)  oEl.textContent  = openCount;
-      if (oSub) oSub.textContent = openCount === 0 ? 'Nothing active yet' : openCount === 1 ? '1 case in progress' : openCount + ' cases in progress';
+      if (oSub) oSub.textContent = openCount === 0 ? (total > 0 ? 'All cases closed' : 'Nothing active yet') : openCount === 1 ? '1 case in progress' : openCount + ' cases in progress';
       if (tEl)  tEl.textContent  = total;
       if (tSub) tSub.textContent = total === 0 ? 'Across all Vantage tools' : 'Total across all tools';
 
