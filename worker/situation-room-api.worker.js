@@ -2060,7 +2060,7 @@ async function handleTranscription(request, env) {
       });
     }
     const whisperData = await whisperRes.json();
-    await incrementUsage(clerkUserId, 'transcribe', usageCheck);
+    queueUsage(clerkUserId, 'transcribe', usageCheck);
     return new Response(JSON.stringify({ success: true, text: whisperData.text || '' }), {
       headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
     });
@@ -2329,6 +2329,19 @@ async function incrementUsage(userId, tool, usageCheck) {
     }
   } catch(e) {
     console.error('Usage increment error:', e.message);
+  }
+}
+
+// Fire the usage write in the background so a slow Airtable can never hold up a response.
+// _activeCtx is set at the start of fetch(); if it's missing (should not happen in normal flow)
+// the promise still runs but the Worker may end before it finishes, losing that one count.
+let _activeCtx = null;
+function queueUsage(userId, tool, usageCheck) {
+  const p = incrementUsage(userId, tool, usageCheck).catch(function (e) {
+    console.error('Background usage increment failed:', e && e.message);
+  });
+  if (_activeCtx && typeof _activeCtx.waitUntil === 'function') {
+    try { _activeCtx.waitUntil(p); } catch (e) { /* already settled */ }
   }
 }
 
@@ -3373,7 +3386,7 @@ async function handleRequest(request, env) {
         });
       }
 
-      await incrementUsage(clientIP, 'notify', usageCheck);
+      queueUsage(clientIP, 'notify', usageCheck);
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
@@ -3727,7 +3740,7 @@ if (actContext) {
       if (result && !result.wrongTool && actsMissing.length > 0 && result.protocol) {
         result.protocol.legal = 'Note: the statutory text for ' + actsMissing.join(' and ') + ' could not be loaded for this run, so the section references below come from general knowledge and should be checked against the Act. ' + (result.protocol.legal || '');
       }
-      await incrementUsage(clerkUserId, 'pact', usageCheck);
+      queueUsage(clerkUserId, 'pact', usageCheck);
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
@@ -3823,7 +3836,7 @@ if (actContext) {
         }
       }
       if (result && result.wrongTool === true && trialCharged) { await refundTrialCall(clerkUserId); }
-      await incrementUsage(clerkUserId, 'business_case', usageCheck);
+      queueUsage(clerkUserId, 'business_case', usageCheck);
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
@@ -3861,7 +3874,7 @@ if (actContext) {
         policyText += '\n\nNote: the statutory text for ' + policyActLoad.missing.join(' and ') + ' could not be loaded for this answer, so section references come from general knowledge and should be checked against the Act.';
       }
       result = { response: policyText };
-      await incrementUsage(clerkUserId, 'policy', usageCheck);
+      queueUsage(clerkUserId, 'policy', usageCheck);
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
@@ -3907,7 +3920,7 @@ if (actContext) {
       const response = await callClaudeWithCachedDocument(instructionPrompt, anonymizedDocument, userMessage, MAX_TOKENS, CLAUDE_MODEL_DEFAULT);
       var _tb=(response.content||[]).find(function(b){return b.type==='text';});
 result = { response: _tb ? _tb.text : '' };
-      await incrementUsage(clerkUserId, 'policy_document', usageCheck);
+      queueUsage(clerkUserId, 'policy_document', usageCheck);
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
@@ -3998,7 +4011,7 @@ result = { response: _tb ? _tb.text : '' };
           if (_ps) { result.practiceSession = _ps; }
         }
       }
-      await incrementUsage(clerkUserId, 'practice', usageCheck);
+      queueUsage(clerkUserId, 'practice', usageCheck);
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
@@ -4073,7 +4086,7 @@ result = { response: _tb ? _tb.text : '' };
         } else {
           result = { response: rhBlock.text, anonymizedTurn: rehearseLatest, anonymizedScenario: anonymizedScenario || '', anonymizedObjective: anonymizedObjective || '' };
         }
-        await incrementUsage(clerkUserId, 'aria', usageCheck);
+        queueUsage(clerkUserId, 'aria', usageCheck);
         return new Response(JSON.stringify({ success: true, data: result }), {
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
         });
@@ -4083,7 +4096,7 @@ result = { response: _tb ? _tb.text : '' };
       const response = await callClaude(ariaTurn.systemPrompt, ariaTurn.messages);
       var _tb=(response.content||[]).find(function(b){return b.type==='text';});
 result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anonymizedTurn: ariaTurn.latest };
-      await incrementUsage(clerkUserId, 'aria', usageCheck);
+      queueUsage(clerkUserId, 'aria', usageCheck);
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
@@ -4146,7 +4159,7 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
         }
       }
       if (result && result.wrongTool === true && trialCharged) { await refundTrialCall(clerkUserId); }
-      await incrementUsage(clerkUserId, 'offer_intelligence', usageCheck);
+      queueUsage(clerkUserId, 'offer_intelligence', usageCheck);
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
@@ -4289,7 +4302,7 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
         'status': 'Open',
       };
       result = await saveToAirtable('Ledger', fields);
-      await incrementUsage(clerkUserId, 'file_position', usageCheck);
+      queueUsage(clerkUserId, 'file_position', usageCheck);
       return new Response(JSON.stringify({ success: true, data: { airtableId: result.id } }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
@@ -4494,7 +4507,7 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
       if (forceRegenerate) {
         try {
           const dCheck = await checkUsage(userKey, 'get_debrief', true);
-          await incrementUsage(userKey, 'get_debrief', dCheck);
+          queueUsage(userKey, 'get_debrief', dCheck);
         } catch(e) {}
       }
 
@@ -4697,7 +4710,7 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
       const _detail = caseType === 'Other' ? cleanCaseLabel(caseTypeDetail) : '';
       if (_detail) { fields['case_type_detail'] = _detail; }
       result = await saveToAirtable('Cases', fields);
-      await incrementUsage(clerkUserId, 'save_case', usageCheck);
+      queueUsage(clerkUserId, 'save_case', usageCheck);
       return new Response(JSON.stringify({ success: true, data: { airtableId: result.id } }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
@@ -4961,7 +4974,7 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
         'source': body.source === 'result' ? 'result' : 'button',
         'status': 'New',
       });
-      await incrementUsage(clerkUserId, 'submit_feedback', fbUsage);
+      queueUsage(clerkUserId, 'submit_feedback', fbUsage);
       return new Response(JSON.stringify({ success: true, data: { commentDropped: fbDropped } }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
@@ -5291,6 +5304,7 @@ async function cleanResponseDashes(resp) {
 
 export default {
   async fetch(request, env, ctx) {
+    _activeCtx = ctx;
     ANTHROPIC_API_KEY = env.CLAUDE_API_KEY;
     AIRTABLE_API_KEY = env.AIRTABLE_API_KEY;
     AIRTABLE_BASE_ID = env.AIRTABLE_BASE_ID;
