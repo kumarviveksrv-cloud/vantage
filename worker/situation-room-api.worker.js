@@ -2753,7 +2753,7 @@ const SIZE_THRESHOLDS = [
   { min: 300, text: 'Chapter X of the Industrial Relations Code, 2020 (sections 77 to 82): applies to an industrial establishment with 300 or more workers.' },
   { min: 50, text: 'Sections 67 to 69 of the Industrial Relations Code, 2020: limited by section 65 to factories, mines and plantations with 50 or more workers.' },
   { min: 10, text: 'Chapter VI (maternity benefit) of the Code on Social Security, 2020: applies to a shop or establishment with 10 or more employees. A factory, mine or plantation is covered whatever its size.' },
-  { min: 10, text: 'Gratuity under the Code on Social Security, 2020: applies to a shop or establishment with 10 or more employees.' }
+  { min: 10, text: 'Gratuity under the Code on Social Security, 2020: applies to a shop or establishment with 10 or more employees. A factory, mine, oilfield, plantation, port or railway company is covered whatever its size.' }
 ];
 function parseSizeBand(str) {
   if (typeof str !== 'string') { return null; }
