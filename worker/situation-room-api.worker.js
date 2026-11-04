@@ -3050,6 +3050,21 @@ function addProvisoRow(result, scenario) {
   pr.legalRows = rows.slice(0, 8);
 }
 
+// Pinned row for pregnancy cases: whether she is a "worker" decides which Act applies. Wording follows the Act text only
+// (legal/ir-code-2020.txt s.2(zr)(iii) and legal/social-security-maternity-2020.txt s.60(1)). No view on reclassification.
+function addWorkerStatusRow(result) {
+  var pr = result && result.protocol;
+  if (!pr) { return; }
+  var rows = (Array.isArray(pr.legalRows) ? pr.legalRows : []).filter(function (r) { return !/2\(zr\)|worker status/i.test(r.ref || ''); });
+  rows.push({
+    ref: 'Industrial Relations Code s.2(zr) worker status',
+    verdict: 'unclear',
+    point: 'Depends on the capacity she is mainly employed in. The Code\'s definition of worker leaves out a person employed mainly in a managerial or administrative capacity. Maternity benefit under s.60(1) of the Social Security Code goes to every woman, not only workers.'
+  });
+  rows.sort(function (a, b) { return LEGAL_VERDICTS.indexOf(a.verdict) - LEGAL_VERDICTS.indexOf(b.verdict); });
+  pr.legalRows = rows.slice(0, 8);
+}
+
 // 6. Section 70 (retrenchment compensation) needs one year of continuous service. When the dates in the narrative show less than a year
 //    of service at the decision, any text that raises section 70 is removed from the reply, and it is listed as not engaged.
 const SECTION_70 = /\b(?:s\.?\s?70|section 70)\b|retrenchment (?:compensation|condition)/i;
@@ -3131,6 +3146,7 @@ function applyDeterministicFinancial(result, reqBody) {
     try { var _s70 = applyShortServiceRule(result, flags); if (_s70) { console.log('PACT: removed ' + _s70 + ' section 70 item(s), service under one year'); } } catch (e) { console.error('applyShortServiceRule failed: ' + e.message); }
     try { addDayCountRow(result, flags); } catch (e) { console.error('addDayCountRow failed: ' + e.message); }
     try { addProvisoRow(result, flags.scenario); } catch (e) { console.error('addProvisoRow failed: ' + e.message); }
+    try { addWorkerStatusRow(result); } catch (e) { console.error('addWorkerStatusRow failed: ' + e.message); }
     var ctcInfo = resolveCtc(reqBody);
     if (!ctcInfo) { return; }
     var E = MATERNITY_ENGINE;

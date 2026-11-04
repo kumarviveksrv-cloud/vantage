@@ -301,5 +301,13 @@ const pv35 = JSON.parse(run('(function(){ var r = { protocol: {} }; addProvisoRo
 check('v35: proviso row starts with Depends on', /^Depends on whether a non-confirmation/.test(pv35.point) && pv35.verdict === 'unclear', pv35.point);
 const dc35 = JSON.parse(run('(function(){ var r = { protocol: {} }; addDayCountRow(r, { dates: { joiningDate: "2026-06-01", expectedDeliveryDate: "2027-03-15", decisionDate: "2026-11-30" } }); return JSON.stringify(r.protocol.legalRows[0]); })()'));
 check('v35: day count row starts with Depends on and keeps Vantage counts', /^Depends on attendance records\. Vantage counts 131 weekdays/.test(dc35.point), dc35.point);
+// v36: pinned worker status row, statute wording only
+const ws36 = JSON.parse(run('(function(){ var r = { protocol: { legalRows: [{ ref: "Industrial Relations Code s.2(zr)", verdict: "live", point: "Model wording that should be replaced." }, { ref: "Contract Act s.16", verdict: "not_yet", point: "Applies only if she resigns." }] } }; addWorkerStatusRow(r); return JSON.stringify(r.protocol.legalRows); })()'));
+const w36 = ws36.filter(r => /2\(zr\)/.test(r.ref));
+check('v36: one worker status row, model version replaced, marked unclear', w36.length === 1 && w36[0].verdict === 'unclear' && !/Model wording/.test(JSON.stringify(ws36)) && ws36.length === 2, JSON.stringify(ws36).slice(0, 200));
+check('v36: wording starts Depends on, follows the Act, no reclassification or title advice', /^Depends on the capacity she is mainly employed in\./.test(w36[0].point) && /managerial or administrative/.test(w36[0].point) && /every woman/.test(w36[0].point) && !/reclassif|designation|title|terminate|easy/i.test(w36[0].point), w36[0].point);
+check('v36: point is 45 words or fewer', w36[0].point.trim().split(/\s+/).length <= 48, String(w36[0].point.trim().split(/\s+/).length));
+const e36 = JSON.parse(run('(function(){ var r = { engineFlags: { scenario: "pressure_to_resign", freePrenatalCareStated: null, dates: { joiningDate: "2026-06-01", expectedDeliveryDate: "2027-03-15", decisionDate: "2026-11-30" } }, protocol: { financial: { items: [] }, legal: "x", legalRows: [] } }; applyDeterministicFinancial(r, { ctcBand: "18L to 25L", roleCriticality: "Medium" }); return JSON.stringify(r.protocol.legalRows.map(function(x){ return x.ref; })); })()'));
+check('v36: end to end, worker, proviso and day-count rows all present, 3 rows', e36.some(x => /2\(zr\)/.test(x)) && e36.some(x => /proviso/.test(x)) && e36.some(x => /60\(2\)/.test(x)), JSON.stringify(e36));
 console.log(fails === 0 ? '\nALL PASSED' : '\nFAILURES: ' + fails);
 process.exit(fails ? 1 : 0);
