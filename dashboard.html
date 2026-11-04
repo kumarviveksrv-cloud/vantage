@@ -651,6 +651,11 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
 
   <script>
     var BASE = 'https://vantage.virorah.com/';
+    // FIX (4 Nov 2026): WORKER was declared with var inside checkProfileCompletion() only,
+    // so the Humac restore and the live get_cases load further down threw a
+    // ReferenceError that nothing caught. Stat cards stayed at 0 and the setup card
+    // never learned about saved cases. Declared once here so every block can use it.
+    var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
     if (sessionStorage.getItem('sr_access') !== 'true') {
       window.location.href = BASE + 'access.html';
     }
