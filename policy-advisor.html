@@ -92,6 +92,8 @@
     .question-echo-text{font-size:13px;color:var(--grey);line-height:1.55}
 
     /* Policy section cards */
+    .legal-disclaimer{margin:0 0 16px;padding:12px 14px;border-radius:10px;border:1px solid rgba(245,158,11,0.28);background:rgba(245,158,11,0.06);font-size:12px;line-height:1.65;color:rgba(244,243,255,0.78)}
+    .legal-disclaimer strong{color:#f4f3ff}
     .policy-section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 26px;margin-bottom:16px}
     .policy-section.assessment-section{background:rgba(99,102,241,0.06);border-color:rgba(99,102,241,0.22)}
     .policy-section.legal-section{border-left:3px solid rgba(99,102,241,0.4);border-radius:0 14px 14px 0}
@@ -205,6 +207,8 @@
       .question-echo-label,.policy-section-label,.rec-label{color:#4f46e5 !important}
       .policy-section{page-break-inside:avoid}
       .recommended-card{page-break-inside:avoid}
+      .legal-disclaimer{background:#fff8e6 !important;border-color:#e5b94a !important;color:#333 !important;page-break-inside:avoid}
+      .legal-disclaimer strong{color:#111 !important}
       @page{margin:14mm 12mm}
     }
   </style>
@@ -413,6 +417,9 @@
           <div class="comp-exp-value" id="compliance-exposure-value"></div>
           <div class="comp-exp-sub">Estimated financial liability &middot; Calibrated to your MERIDIAN context</div>
         </div>
+
+        <!-- Disclaimer, shown after the recommendation and any exposure figure -->
+        <div class="legal-disclaimer" id="policy-disclaimer-end"><strong>Before you act:</strong> this output is not formal legal advice. The provisions above could be read differently by a court, a labour authority or counsel, and any figure shown is an estimate. State rules, your own policies and the employment contract can change the answer. Always consult a qualified attorney before acting on the advice generated here.</div>
 
         <!-- ARIA offer -->
         <div class="aria-offer-card">
