@@ -938,7 +938,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
       "Action 5 (optional)"
     ],
     "assessment": "Situational assessment. 2 short paragraphs, about 150 words in total. Cover what has happened so far, where the process stands, and the key tension to hold in mind before acting. Do not repeat the legal field or the quick take; refer to them instead.",
-    "context": "MERIDIAN context. 2-3 sentences maximum. How does the organisation's state, industry, and operating environment shape this case? What workforce norms, sector-specific sensitivities, or regional labour market factors are relevant? Use the state and industry from the MERIDIAN profile. If they are not set, say they are not set in the MERIDIAN profile and give general guidance. Say only what the MERIDIAN profile fields and the narrative say. Do not describe what a type of organisation typically does, do not describe the workforce or how complaints usually escalate, and do not say which law applies unless the Acts provided say so. Never write internal field names such as meridian.state.",
+    "context": "Write exactly the word none. Vantage writes this section itself from the MERIDIAN profile and the headcount you report in headcountStated.",
     "financial": {
       "items": [
         { "label": "Short name of the cost component, with no brackets", "kind": "assumption | exposure | owed_in_any_case | not_included", "workings": "The inputs and arithmetic in words, one or two sentences, stopping before the result. Do not write the final low and high or an equals result in the workings; the system adds them from the low and high fields. For example: 2 months of an assumed Rs.12L CTC at Rs.1L a month, plus an 8 to 10 percent recruiter fee.", "low": "A plain number in lakh, for example 2 or 0.5. null for an assumption or a not_included item.", "high": "A plain number in lakh, not lower than low. null for an assumption or a not_included item.", "basis": "narrative | supplied | statute | assumed" }
@@ -957,6 +957,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
   "otherLabel": "Only when detectedCaseType is Other: a 2 to 4 word label in sentence case describing the situation. Existing labels and what each one means: Exit and notice dispute = a resignation, notice period, buyout, last day, exit settlement or constructive dismissal claim; Conflict of interest = an outside business, directorship or relationship that conflicts with the employer's interest while still employed; Competition and confidentiality = working for or diverting clients to a competitor, or misusing confidential information or client data; Transfer and role change = the EMPLOYER moves, demotes, promotes or reassigns the employee or changes the role; Recovery of dues or losses = the employer seeking money back from an employee or ex-employee, such as a bond, advance or loss; Probation issue = confirming, extending or ending probation; Flexible work request = a request made by the employee for remote or flexible work, relocation or leave; Maternity and pregnancy = a pregnant employee, or one on or returning from maternity leave, including benefit, leave, dismissal or role change. Use an existing label only when its meaning matches the facts. A request made BY the employee (such as remote or flexible work, relocation or leave) is not an employer transfer. If no label matches, coin a new 2 to 4 word label that does. A new accurate label is better than a stretched old one. Letters, numbers and spaces only. Otherwise null.",
   "secondaryCaseType": "Return a second type from the eight standard types ONLY when the facts show that second matter is already under way or has been raised (for example a discrimination grievance filed during a PIP, or absence that has already led to a termination notice). A possible or likely next step is NOT a second type: a PIP that may end in termination is still only PIP. A matter that is only proposed, considered or feared by a manager (for example non-confirmation, pressure to resign, a rotation change) has not been raised, so it is not a second type. Return null unless the narrative itself says the second matter has already started. When in doubt return null. Otherwise null.",
   "engineFlags": "Only when the case involves a pregnant employee, or one on or returning from maternity leave; otherwise null. When present, an object with three keys. scenario is exactly one of non_confirmation_only, pressure_to_resign, dismissal_or_resignation_occurred. Use pressure_to_resign when anyone has suggested, hinted or pressed that she should resign or leave, even informally, and she has not yet left. Use dismissal_or_resignation_occurred only when the narrative says she has already been dismissed, has been given notice, or has resigned. Use non_confirmation_only when the only matter is a decision on confirmation, probation, duties or leave and nobody has suggested she leave. freePrenatalCareStated is true only if the narrative says the employer provides pre-natal and post-natal care free of charge, false only if it says it does not, otherwise null. dates is an object with joiningDate, expectedDeliveryDate and decisionDate, each written yyyy-mm-dd and copied from the narrative, or null when the narrative does not give it; decisionDate is the date of the confirmation or other decision the narrative says is coming. Never put a rupee figure in this object.",
+  "headcountStated": "The number of employees or workers the narrative states for the organisation or establishment, as a whole number, or null if the narrative gives no headcount. Copy the figure; do not estimate it and do not take it from the MERIDIAN size band.",
   "greenCategory": {
     "primary": "Revenue Growth | Cost Efficiency | Risk Mitigation",
     "secondary": "Revenue Growth | Cost Efficiency | Risk Mitigation | null"
@@ -2741,6 +2742,61 @@ function buildFinancialSplit(c) {
   };
 }
 
+// ── Code-built MERIDIAN context ─────────────────────────────────────────────
+// The model-written context drifted into sector generalisations under prompt control, so this paragraph is built in code
+// from the saved profile, the headcount in the narrative and size thresholds read from the Acts in /legal.
+const SIZE_THRESHOLDS = [
+  { min: 300, text: 'Standing Orders under Chapter IV of the Industrial Relations Code, 2020 (section 28(1)): apply to an industrial establishment with 300 or more workers.' },
+  { min: 300, text: 'Chapter X of the Industrial Relations Code, 2020 (sections 77 to 82): applies to an industrial establishment with 300 or more workers.' },
+  { min: 50, text: 'Sections 67 to 69 of the Industrial Relations Code, 2020: limited by section 65 to factories, mines and plantations with 50 or more workers.' },
+  { min: 10, text: 'Chapter VI (maternity benefit) of the Code on Social Security, 2020: applies to a shop or establishment with 10 or more employees. A factory, mine or plantation is covered whatever its size.' },
+  { min: 10, text: 'Gratuity under the Code on Social Security, 2020: applies to a shop or establishment with 10 or more employees.' }
+];
+function parseSizeBand(str) {
+  if (typeof str !== 'string') { return null; }
+  var nums = (str.replace(/,/g, '').match(/\d+/g) || []).map(Number);
+  if (!nums.length) { return null; }
+  if (/\+/.test(str) || /above|more/i.test(str)) { return { lo: nums[0], hi: Infinity }; }
+  if (nums.length === 1) { return { lo: nums[0], hi: nums[0] }; }
+  return { lo: Math.min(nums[0], nums[1]), hi: Math.max(nums[0], nums[1]) };
+}
+function parseHeadcountStated(v) {
+  var n = typeof v === 'number' ? v : (typeof v === 'string' ? Number(v.replace(/,/g, '').trim()) : NaN);
+  return Number.isFinite(n) && n >= 1 && n <= 5000000 && Math.floor(n) === n ? n : null;
+}
+function buildMeridianContext(meridian, headcountStated) {
+  var m = (meridian && typeof meridian === 'object') ? meridian : null;
+  if (!m) {
+    return 'No MERIDIAN profile is set, so Vantage cannot state your state, industry or size from it. Set the profile to get this section.';
+  }
+  var pick = function (v) { return (typeof v === 'string' ? v.trim().slice(0, 80) : '') || 'Not set'; };
+  var out = [];
+  out.push('Profile: state ' + pick(m.state) + '; industry ' + pick(m.industry) + '; organisation type ' + pick(m.orgType) + '; size band ' + pick(m.orgSize) + '; union status ' + pick(m.unionStatus) + '.');
+  var band = parseSizeBand(typeof m.orgSize === 'string' ? m.orgSize : '');
+  var n = parseHeadcountStated(headcountStated);
+  var basis;
+  if (n !== null) {
+    var outside = band && (n < band.lo || n > band.hi);
+    basis = 'Headcount used: ' + n + ', taken from your narrative.' + (outside ? ' This is outside the size band saved in your profile (' + pick(m.orgSize) + '), so the narrative figure is used for the checks below. Update the profile if the band is out of date.' : '');
+  } else if (band) {
+    basis = 'Your narrative gives no headcount, so the checks below use the saved size band (' + pick(m.orgSize) + ').';
+  } else {
+    basis = 'Neither your narrative nor your profile gives a usable headcount, so the size thresholds are not checked.';
+  }
+  out.push(basis);
+  if (n !== null || band) {
+    var lo = n !== null ? n : band.lo;
+    var hi = n !== null ? n : band.hi;
+    var lines = SIZE_THRESHOLDS.map(function (t) {
+      var verdict = lo >= t.min ? 'met' : (hi < t.min ? 'not met' : 'depends on the exact headcount');
+      return '- ' + t.text + ' Size condition: ' + verdict + '.';
+    });
+    out.push('Size thresholds in the Acts held by Vantage (headcount only; whether the other conditions are met is a separate question):\n' + lines.join('\n'));
+  }
+  out.push('This section restates your saved profile and applies the size thresholds above. It does not describe sector or state practice.');
+  return out.join('\n\n');
+}
+
 // ── Deterministic post-checks on the PACT reply ─────────────────────────────
 // 1. The MERIDIAN context field must not generalise about what a kind of organisation "typically" does.
 //    Prompt rules did not hold, so sentences with that wording are removed here.
@@ -2824,6 +2880,12 @@ function appendDayCount(result, flags) {
 
 // Replaces the model's own financial figures with the engine's, when the model flagged a pregnancy or maternity case.
 function applyDeterministicFinancial(result, reqBody) {
+  try {
+    if (result && result.wrongTool !== true && result.protocol) {
+      result.protocol.context = buildMeridianContext(reqBody && reqBody.meridian, result.headcountStated);
+    }
+    if (result) { delete result.headcountStated; }
+  } catch (e) { console.error('buildMeridianContext failed: ' + e.message); }
   try { sanitiseMeridianContext(result); } catch (e) { console.error('sanitiseMeridianContext failed: ' + e.message); }
   try { var _scrubbed = scrubInternalNames(result, 0); if (_scrubbed) { console.log('PACT: removed internal field names from ' + _scrubbed + ' text field(s)'); } } catch (e) { console.error('scrubInternalNames failed: ' + e.message); }
   try {

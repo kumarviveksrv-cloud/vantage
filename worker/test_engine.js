@@ -89,7 +89,25 @@ const sn = run('(function(){ var r = JSON.parse(JSON.stringify(__fn)); normalise
 check('no split when no replacement cost applies', sn === true);
 const pr19 = run('getPactPrompt({})');
 check('prompt has penalty guard', pr19.includes('Never state a fine, penalty, imprisonment term or compensation amount unless the exact figure appears in the Acts provided'));
-check('prompt has context rule', pr19.includes('Do not describe what a type of organisation typically does'));
+check('prompt: context field is "none" and headcountStated exists', pr19.includes('Write exactly the word none') && pr19.includes('"headcountStated"'));
+// v23: code-built Meridian context
+const mer = { state: 'Haryana', industry: 'Insurance', orgType: 'MNC', orgSize: '251 \u2013 500', unionStatus: 'Non-unionised' };
+globalThis.__m = mer;
+const c140 = run('buildMeridianContext(__m, 140)');
+check('v23: lists profile', /Haryana/.test(c140) && /Insurance/.test(c140) && /MNC/.test(c140));
+check('v23: flags headcount outside band', /Headcount used: 140/.test(c140) && /outside the size band/.test(c140));
+check('v23: 300 thresholds not met at 140', (c140.match(/Standing Orders[^\n]*not met/) || []).length === 1 && (c140.match(/Chapter X[^\n]*not met/) || []).length === 1);
+check('v23: maternity threshold met at 140', /Chapter VI[^\n]*Size condition: met/.test(c140));
+check('v23: no banned words or em dash', !/typically|usually|generally/i.test(c140) && !/\u2014/.test(c140));
+const cBand = run('buildMeridianContext(__m, null)');
+check('v23: band straddles 300', /Standing Orders[^\n]*depends on the exact headcount/.test(cBand) && /saved size band/.test(cBand));
+check('v23: no profile', /No MERIDIAN profile is set/.test(run('buildMeridianContext(null, 50)')));
+check('v23: open-ended band', /Standing Orders[^\n]*Size condition: met/.test(run('buildMeridianContext({orgSize:"10,000+"}, null)')));
+check('v23: bad headcount ignored', /saved size band/.test(run('buildMeridianContext(__m, "lots")')));
+globalThis.__r = { headcountStated: 140, protocol: { context: 'none', legal: 'x' } };
+run("applyDeterministicFinancial(__r, { meridian: __m })");
+check('v23: apply overwrites context and drops headcountStated', /Profile: state Haryana/.test(__r.protocol.context) && !('headcountStated' in __r));
+check('v23: survives sanitiser (no generalisation words)', run('(function(){ sanitiseMeridianContext(__r); return __r.protocol.context; })()') === __r.protocol.context);
 check('prompt has wording rule', pr19.includes('WORDING RULE FOR EVERY FIELD OTHER THAN legal'));
 check('no em dash in split text', !/\u2014/.test(JSON.stringify(sp.s)));
 // 10. v21: context sanitiser and day-count engine
