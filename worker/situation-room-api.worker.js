@@ -382,7 +382,7 @@ const LEGAL_ACT_OPTIONAL = { 'indian-contract-act-1872': true, 'social-security-
 // requests on the same edge node are free. Falls back gracefully if unavailable.
 // Bump this whenever a legal/*.txt file is edited and you want the change live at once.
 // Otherwise a changed file shows up within an hour, when the edge copy expires.
-const LEGAL_CACHE_VERSION = '2026-11-03b';
+const LEGAL_CACHE_VERSION = '2026-11-04a';
 const LEGAL_CACHE_SECONDS = 3600;
 
 async function loadActText(actKey) {

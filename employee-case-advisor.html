@@ -86,6 +86,7 @@
     .loading-orb{width:64px;height:64px;margin:0 auto 24px}
     .loading-orb svg{animation:spin 2s linear infinite}
     .loading-text{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.08em}
+    .loading-eta{margin-top:10px;font-size:12px;line-height:1.6;color:rgba(244,243,255,0.72);text-align:center}
     .loading-steps{margin-top:16px;display:flex;flex-direction:column;gap:8px}
     .loading-step{font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace}
     .loading-step.active{color:rgba(244,243,255,0.6)}
@@ -476,6 +477,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           </svg>
         </div>
         <div class="loading-text" id="loading-text">READING YOUR SITUATION...</div>
+        <div class="loading-eta">A full analysis usually takes 90 to 120 seconds. Please keep this tab open.</div>
         <div class="loading-steps">
           <div class="loading-step active" id="ls1">Running PACT diagnostic across 4 dimensions...</div>
           <div class="loading-step" id="ls2">Applying MERIDIAN context and policy guardrails...</div>
@@ -615,7 +617,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           <div class="rec-text" id="proto-recommendation"></div>
         </div>
 
-        <div class="legal-disclaimer" id="legal-disclaimer-end"><strong>Before you act:</strong> this output is not formal legal advice. The legal interpretations above could be read differently by a court, a labour authority or counsel, and the figures are modelled, not measured. Always consult a qualified attorney before acting on the advice generated here.</div>
+        <div class="legal-disclaimer" id="legal-disclaimer-end" style="margin-bottom:16px"><strong>Before you act:</strong> this output is not formal legal advice. The legal interpretations above could be read differently by a court, a labour authority or counsel, and the figures are modelled, not measured. Always consult a qualified attorney before acting on the advice generated here.</div>
 
         <!-- Protocol: Communication -->
         <div class="communication-card">
