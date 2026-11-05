@@ -514,7 +514,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
               <option value="1Cr to 2Cr">Rs.1Cr to 2Cr</option>
               <option value="2Cr and above">Rs.2Cr and above</option>
             </select>
-            <input type="number" id="ctc-exact" min="0.5" max="1000" step="0.1" inputmode="decimal" placeholder="Or an exact figure in lakh (optional)" aria-label="Exact annual CTC in lakh" />
+            <input type="text" id="ctc-exact" autocomplete="off" inputmode="decimal" maxlength="14" placeholder="Or type exact, e.g. 18.5 or 18.5L (optional)" aria-label="Exact annual CTC in lakh" />
           </div>
           <div class="privacy-note">&#x1F512; An approximate band is enough. It is used only to model the cost, never with a name. An exact figure, if you enter one, overrides the band.</div>
           <label class="form-label" for="role-criticality" style="margin-top:14px">How hard is this role to replace? (optional, Medium if you leave it)</label>
@@ -853,12 +853,17 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     document.getElementById('ctc-band').addEventListener('change', checkSubmit);
     document.getElementById('ctc-exact').addEventListener('input', checkSubmit);
 
+    /* Reads '18', '18.5', '18L', '18 lakh', '1,8' style input as a number of lakh; returns NaN when unreadable. */
+    function parseLakh(v) {
+      var t = String(v == null ? '' : v).toLowerCase().replace(/[\s,₹]/g, '').replace(/(lakhs?|lacs?|lpa|l)$/, '');
+      return /^\d+(\.\d+)?$/.test(t) ? parseFloat(t) : NaN;
+    }
     function checkSubmit() {
       var _len = document.getElementById('narrative').value.trim().length;
       var _hasType = true; /* no tile chosen means Vantage reads the type from the text */
       var _hasText = _len > 20;
       var _cbv = document.getElementById('ctc-band'), _cev = document.getElementById('ctc-exact');
-      var _exv = parseFloat(_cev ? _cev.value : '');
+      var _exv = parseLakh(_cev ? _cev.value : '');
       var _hasCtc = !!((_cbv && _cbv.value) || (isFinite(_exv) && _exv >= 0.5 && _exv <= 1000));
       document.getElementById('submit-btn').disabled = !(_hasType && _hasText && _hasCtc);
       var _hint = document.getElementById('submit-hint');
@@ -895,10 +900,11 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       var stakeholders = document.getElementById('stakeholders').value.trim();
       var _ctcBandEl = document.getElementById('ctc-band'), _ctcExactEl = document.getElementById('ctc-exact');
       var ctcBand = _ctcBandEl ? _ctcBandEl.value : '';
-      var ctcExact = _ctcExactEl ? _ctcExactEl.value.trim() : '';
+      var _exParsed = parseLakh(_ctcExactEl ? _ctcExactEl.value : '');
+      var ctcExact = isFinite(_exParsed) ? String(_exParsed) : '';
       var _roleCritEl = document.getElementById('role-criticality');
       var roleCriticality = _roleCritEl ? _roleCritEl.value : 'Medium';
-      var _exNum = parseFloat(ctcExact);
+      var _exNum = _exParsed;
       if (!ctcBand && !(isFinite(_exNum) && _exNum >= 0.5 && _exNum <= 1000)) { checkSubmit(); return; }
       if (!narrativeVal) return; /* no case type chosen is fine: the Worker reads it from the text */
       /* Soft nudge: first click with an empty Who's involved box asks for roles; second click runs anyway. */       if (!stakeholders && !window._stakeholderNudged) {         window._stakeholderNudged = true;         var _nudge = document.getElementById('stakeholder-nudge');         if (_nudge) _nudge.style.display = 'block';         var _sh = document.getElementById('stakeholders');         if (_sh) { _sh.scrollIntoView({behavior:'smooth',block:'center'}); _sh.focus(); }         return;       }       currentNarrative = narrativeVal;       var _hideNudge = document.getElementById('stakeholder-nudge'); if (_hideNudge) { _hideNudge.style.display = 'none'; }
