@@ -252,6 +252,29 @@
   }
 
   // ── LOAD CLERK SDK ─────────────────────────────────────────────────────────
+  // Mandatory profile gate: every protected page, not just the dashboard. A signed-in user whose
+  // profile is incomplete is sent to profile-setup.html wherever they land (back button, bookmark,
+  // direct tool URL). Fails open on network errors so an outage never locks anyone out.
+  function _enforceProfile() {
+    var p = window.location.pathname;
+    if (/(access|profile-setup|subscribe|pricing)(\.html)?$/.test(p)) return;
+    try { if (sessionStorage.getItem('vantage_profile_ok') === '1') return; } catch (e) {}
+    if (!window.Clerk || !window.Clerk.session) return;
+    window.Clerk.session.getToken().then(function (token) {
+      return fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ tool: 'get_profile' })
+      });
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.success && d.data && d.data.profileComplete === false) {
+        window.location.replace('https://vantage.virorah.com/profile-setup.html');
+      } else if (d && d.success) {
+        try { sessionStorage.setItem('vantage_profile_ok', '1'); } catch (e) {}
+      }
+    }).catch(function () {});
+  }
+
   var s = document.createElement('script');
   s.async = true;
   s.crossOrigin = 'anonymous';
@@ -284,6 +307,7 @@
       syncUser(user);
       // Background: refresh plan data (next_billing_date) from Worker
       _fetchPlanData();
+      _enforceProfile();
       // Reveal the page now that auth is confirmed
       _revealPage();
 
