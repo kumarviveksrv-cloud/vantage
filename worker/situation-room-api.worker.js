@@ -3915,6 +3915,7 @@ if (actContext) {
       const truncatedQuestion = truncateInput(question, 3000);
       const truncatedContext = context ? truncateInput(context, 3000) : '';
 
+      _emit('stage', { stage: 'anonymise' });
       const [anonymizedQuestion, anonymizedContext] = await Promise.all([
         anonymizeNarrative(truncatedQuestion),
         truncatedContext ? anonymizeNarrative(truncatedContext) : Promise.resolve(''),
@@ -3927,11 +3928,12 @@ if (actContext) {
       const policyActKeys = selectActsForPolicy(anonymizedQuestion, anonymizedContext || '');
 const policyActLoad = await loadActsWithStatus(policyActKeys);
 const actContext = policyActLoad.text;
+_emit('stage', { stage: 'analyse' });
 let response;
 if (actContext) {
-  response = await callClaudeWithCachedDocument(systemPrompt, actContext, userMessage, MAX_TOKENS, CLAUDE_MODEL_DEFAULT);
+  response = await callClaudeWithCachedDocument(systemPrompt, actContext, userMessage, MAX_TOKENS, CLAUDE_MODEL_DEFAULT, undefined, function (n) { _emit('gen', { chars: n }); });
 } else {
-  response = await callClaude(systemPrompt, [{ role: 'user', content: userMessage }]);
+  response = await callClaude(systemPrompt, [{ role: 'user', content: userMessage }], MAX_TOKENS, CLAUDE_MODEL_DEFAULT, undefined, function (n) { _emit('gen', { chars: n }); });
 }
       let policyText = (response.content||[]).find(b=>b.type==='text')?.text||'';
       if (policyActLoad.missing.length > 0) {
