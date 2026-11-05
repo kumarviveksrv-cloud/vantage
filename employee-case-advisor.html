@@ -658,6 +658,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
               <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(165,180,252,0.5);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">Modelled range, not a measured figure<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s1-value-ledger" target="_blank" rel="noopener">?</a></div>
               <div class="fin-range" id="fin-range">-</div>
               <div class="fin-split" id="fin-split" style="display:none"></div>
+              <div id="fin-range-note" style="display:none;margin:8px 0 2px;font-size:12px;line-height:1.55;color:rgba(255,181,71,0.85)"></div>
               <div class="fin-badges">
                 <span class="fin-badge" id="fin-confidence-badge"></span>
                 <span class="fin-badge pillar-badge" id="fin-pillar-badge"></span>
@@ -1130,6 +1131,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           box.style.display = ''; single.style.display = 'none';
         } else { box.style.display = 'none'; box.innerHTML = ''; single.style.display = ''; }
       })();
+      (function () { var rn = document.getElementById('fin-range-note'); if (!rn) return; if (fin.rangeNote) { rn.textContent = fin.rangeNote; rn.style.display = ''; } else { rn.textContent = ''; rn.style.display = 'none'; } })();
       var confBadge = document.getElementById('fin-confidence-badge');
       confBadge.innerText = (fin.confidence || '') + ' input coverage';
       confBadge.className = 'fin-badge ' + getConfClass(fin.confidence);

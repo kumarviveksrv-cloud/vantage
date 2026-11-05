@@ -70,7 +70,8 @@
 #sm-cursor2{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #67e8f9;background:conic-gradient(rgba(103,232,249,.85) calc(var(--p)*1turn),rgba(34,211,238,.14) 0);pointer-events:none;z-index:100002;display:none;box-shadow:0 0 18px rgba(34,211,238,.55)}\
 #sm-cursor2.held-cur{border-color:#fff;background:conic-gradient(#fb923c calc(var(--p)*1turn),rgba(255,255,255,.92) 0);box-shadow:0 0 26px rgba(255,255,255,.75)}\
 .sm-panel.held::after{content:"HOLDING";position:absolute;right:22px;bottom:9px;z-index:3;font-family:"JetBrains Mono",monospace;font-size:8px;letter-spacing:.12em;font-weight:700;padding:3px 8px;border-radius:10px;background:#c4b5fd;color:#1a1033}\
-#sm-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.05em;color:rgba(165,180,252,.7);background:rgba(13,11,30,.7);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:8px 16px;text-align:center;max-width:92vw}\
+#sm-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:30;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.05em;color:rgba(196,181,253,.95);background:rgba(13,11,30,.97);border:1px solid rgba(99,102,241,.35);border-radius:20px;padding:8px 16px;text-align:center;max-width:min(560px,92vw);pointer-events:none;transition:opacity .5s}\
+#sm-hint.gone{opacity:0}\
 #sm-tray{position:absolute;top:76px;right:16px;width:360px;bottom:64px;z-index:5;border-radius:18px;border:1.5px dashed rgba(124,58,237,.4);background:rgba(124,58,237,.05);transition:border-color .2s,background .2s}\
 #sm-tray.over{border-color:#c4b5fd;background:rgba(124,58,237,.14)}\
 #sm-tray-head{padding:12px 16px 0}\
@@ -812,6 +813,14 @@
   /* how a card is picked up: 'pinch' (thumb and index together, instant) or 'hold' (rest a fingertip on it) */
   var GRAB_KEY = 'sr_sm_grab', grabMode = 'pinch';
   try { var gm = localStorage.getItem(GRAB_KEY); if (gm === 'pinch' || gm === 'hold') grabMode = gm; } catch (e) {}
+  /* The how-to line shows solid for 12s, then fades so it never sits on top of the cards. A change of mode shows it again. */
+  var hintTimer = 0;
+  function showHint(t) {
+    var h = document.getElementById('sm-hint'); if (!h) return;
+    if (t != null) h.textContent = t;
+    h.classList.remove('gone'); clearTimeout(hintTimer);
+    hintTimer = setTimeout(function () { h.classList.add('gone'); }, 12000);
+  }
   function hintText() {
     return grabMode === 'pinch'
       ? 'Pinch thumb and index over a card to grab it, move it, open your fingers to drop · slide a fingertip along the bar on a card\'s right edge to read it · both hands work · Esc to exit'
@@ -825,7 +834,7 @@
       if (S.held) { S.moved = false; release(S.held, S); }
       S.pinch = false; S.pc = 0; S.po = 0; S.edge = null; S.hist = []; S.pp = null; S.dwell.panel = null; S.ring(0); S.cool = performance.now() + 600;
     });
-    if (st.tracking) { var h = document.getElementById('sm-hint'); if (h) h.textContent = hintText(); }
+    if (st.tracking) { showHint(hintText()); }
   }
   function cycleGrab() { setGrab(grabMode === 'pinch' ? 'hold' : 'pinch'); trayMsg(grabMode === 'pinch' ? 'Pinch to grab: touch thumb and index together on a card, open to drop.' : 'Hold to grab: rest a fingertip on a card, pause to drop.'); }
 
@@ -1073,13 +1082,13 @@
         setStatus('Hand tracking: <b>show an open palm to lock on, then point</b>');
         var cb = document.getElementById('sm-chk-btn'); if (cb) cb.style.display = ''; var sb = document.getElementById('sm-speed'); if (sb) sb.style.display = ''; var hb = document.getElementById('sm-hands'); if (hb) hb.style.display = ''; var gb = document.getElementById('sm-grab'); if (gb) gb.style.display = '';
         openCheck();
-        document.getElementById('sm-hint').textContent = hintText();
+        showHint(hintText());
       })
       .catch(function (e) {
         st.tracking = false;
         var denied = e && (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError');
         setStatus(denied ? 'Camera blocked. <b>Mouse mode</b>' : 'Tracking unavailable. <b>Mouse mode</b>');
-        document.getElementById('sm-hint').textContent = 'Drag cards into the Leadership Brief · scroll a card with the wheel or its bar · Compare puts two side by side · Esc to exit';
+        showHint('Drag cards into the Leadership Brief · scroll a card with the wheel or its bar · Compare puts two side by side · Esc to exit');
       });
   }
 
@@ -1124,7 +1133,7 @@
     document.addEventListener('keydown', onKey);
     window.addEventListener('resize', onResize);
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) startTracking();
-    else { setStatus('No camera API. <b>Mouse mode</b>'); document.getElementById('sm-hint').textContent = 'Drag cards into the Leadership Brief · scroll a card with the wheel or its bar · Compare puts two side by side · Esc to exit'; }
+    else { setStatus('No camera API. <b>Mouse mode</b>'); showHint('Drag cards into the Leadership Brief · scroll a card with the wheel or its bar · Compare puts two side by side · Esc to exit'); }
   }
   function onKey(e) {
     if (st.presEl && !st.consentEl && !st.cmpEl) {

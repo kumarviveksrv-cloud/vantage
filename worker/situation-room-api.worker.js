@@ -3250,6 +3250,7 @@ function applyDeterministicFinancial(result, reqBody) {
     normaliseFinancial(result);
     f.confidence = 'Medium';
     f.split = buildFinancialSplit(built.components);
+    f.rangeNote = 'A claim that the decision was linked to her pregnancy can also bring orders and costs beyond this range. The figures here do not price any such order.';
     result.engineInputs = { engine: 'maternity-v1', ctcLakh: ctcInfo.lakh, ctcSource: ctcInfo.source, scenario: scenario, scenarioDefaulted: scenarioDefaulted, roleCriticality: crit, freePrenatalCare: freeCare, rangeLow: built.components.low, rangeHigh: built.components.high };
   } catch (e) {
     console.error('applyDeterministicFinancial failed: ' + e.message);
