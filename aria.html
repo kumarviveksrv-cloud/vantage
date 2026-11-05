@@ -673,7 +673,7 @@
     var FEMALE_VOICE_RE=/(female|zira|heera|veena|neerja|aditi|swara|priya|samantha|karen|moira|victoria|tessa|susan|hazel|libby|sonia|jenny|michelle|emma|natasha|clara|olivia|fiona|serena|allison|ava|kate|catherine|zoe|nicky|joanna|salli|kendra|kimberly|ivy|amy|ana|aria|linda|catherine|heather|isha|shreya|ayanna|jane|sara|sonya)/i;
     var MALE_VOICE_RE=/\b(david|mark|ravi|hemant|prabhat|george|james|richard|guy|ryan|thomas|daniel|alex|fred|oliver|male|rishi|sean|william|eric|brian|christopher|liam|connor|steffan)\b/i;
     var ARIA_IN_NAMES=['Mira','Maya'], ARIA_EN_NAMES=['Nova','Ivy','Elara','Skye','Luna','Zara'];
-    var ARIA_REGION={'en-IN':'India','en-GB':'UK','en-US':'US','en-AU':'Australia','en-CA':'Canada','en-IE':'Ireland','en-ZA':'South Africa'};
+    var ARIA_REGION={'en-IN':'India','en-GB':'UK','en-US':'US','en-AU':'Australia','en-CA':'Canada','en-IE':'Ireland','en-ZA':'South Africa','en-NG':'Nigeria','en-NZ':'New Zealand','en-SG':'Singapore','en-KE':'Kenya','en-PH':'Philippines'};
     function ariaVoiceList(){
       var order=['en-IN','en-GB','en-US'];
       var rank=function(v){var i=order.indexOf(String(v.lang).replace('_','-'));return i<0?order.length:i;};

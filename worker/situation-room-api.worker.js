@@ -1825,6 +1825,7 @@ RULES:
 - Use the exact same placeholder every time that same person is referred to again, including by nickname or partial name.
 - Replace company names with "Company X". If more than one distinct company appears, use "Company X", "Company Y" in order of appearance.
 - Replace specific city or office names with "Location A", "Location B" in order of appearance.
+- NEVER replace the name "ARIA". It is the AI assistant the user is speaking to, not a person in the situation. Leave "ARIA" exactly as written, in any capitalisation.
 - Do NOT replace generic role words that are not attached to a specific name ("the manager", "HR", "the team") — leave those exactly as written.
 - Do NOT change dates, numbers, policy names, legal terms, or anything else about the substance of the situation. Preserve grammar, sentence structure, and meaning exactly — only the identifying names, companies, and locations change.
 
