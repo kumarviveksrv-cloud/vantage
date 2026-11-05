@@ -535,9 +535,9 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
         <div class="stat-sub" id="dash-stat-open-sub">Nothing active yet</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Conversations Practiced</div>
-        <div class="stat-value">0</div>
-        <div class="stat-sub">Practice makes permanent</div>
+        <div class="stat-label">High-Risk Open Cases</div>
+        <div class="stat-value" id="dash-stat-risk" style="color:var(--muted)">0</div>
+        <div class="stat-sub" id="dash-stat-risk-sub">None open at high risk</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Total Cases</div>
@@ -1134,11 +1134,11 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       var thisMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
 
       // ── Stat cards ──────────────────────────────────────────────
-      var monthCount = 0, openCount = 0, total = cases.length;
+      var monthCount = 0, openCount = 0, riskCount = 0, total = cases.length;
       cases.forEach(function(f) {
         var created = (f.date_created || '').substring(0, 7); // "2026-09"
         if (created === thisMonth) monthCount++;
-        if ((f.status || 'Open').toLowerCase() === 'open') openCount++;
+        if ((f.status || 'Open').toLowerCase() === 'open') { openCount++; if (/critical|high/i.test(String(f.overall_risk || ''))) riskCount++; }
       });
 
       // FIX (4 Nov 2026): the Active Cases list was a static "No active cases yet"
@@ -1188,6 +1188,8 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       var mSub  = document.getElementById('dash-stat-month-sub');
       var oEl   = document.getElementById('dash-stat-open');
       var oSub  = document.getElementById('dash-stat-open-sub');
+      var rEl   = document.getElementById('dash-stat-risk');
+      var rSub  = document.getElementById('dash-stat-risk-sub');
       var tEl   = document.getElementById('dash-stat-total');
       var tSub  = document.getElementById('dash-stat-total-sub');
 
@@ -1195,6 +1197,8 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       if (mSub) mSub.textContent = monthCount === 0 ? 'Start your first case' : monthCount === 1 ? '1 case this month' : monthCount + ' cases this month';
       if (oEl)  oEl.textContent  = openCount;
       if (oSub) oSub.textContent = openCount === 0 ? (total > 0 ? 'All cases closed' : 'Nothing active yet') : openCount === 1 ? '1 case in progress' : openCount + ' cases in progress';
+      if (rEl)  { rEl.textContent = riskCount; rEl.style.color = riskCount > 0 ? 'var(--rose, #FF4D6D)' : 'var(--muted)'; }
+      if (rSub) rSub.textContent = riskCount === 0 ? (openCount > 0 ? 'Nothing open at high risk' : 'None open at high risk') : riskCount === 1 ? '1 case needs attention first' : riskCount + ' cases need attention first';
       if (tEl)  tEl.textContent  = total;
       if (tSub) tSub.textContent = total === 0 ? 'Across all Vantage tools' : 'Total across all tools';
 
