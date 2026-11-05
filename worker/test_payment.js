@@ -11,9 +11,9 @@ const check = (name, ok) => { console.log((ok ? 'PASS ' : 'FAIL ') + name); if (
   globalThis.getFromAirtable = async () => ({ id: 'rec1', fields: { email: 'u@x.com', subscription_status: userStatus } });
   globalThis.updateAirtable = async (t, id, f) => { updates.push(f); };
   globalThis.sendResendEmail = async (m) => { sent.push(m); };
-  const fire = async (ev, noSub) => {
+  const fire = async (ev, noSub, paid) => {
     sent.length = 0; updates.length = 0;
-    const payload = noSub ? { payment: { entity: { id: 'pay_1' } } } : { subscription: { entity: { id: 'sub_1', notes: { vantage_user_id: 'user_1' } } } };
+    const payload = noSub ? { payment: { entity: { id: 'pay_1' } } } : { subscription: { entity: { id: 'sub_1', notes: { vantage_user_id: 'user_1' }, paid_count: paid } } };
     const req = { text: async () => JSON.stringify({ event: ev, payload }), headers: { get: () => 'sig' } };
     return (await handleRazorpayWebhook(req, { RAZORPAY_WEBHOOK_SECRET: 'x' })).status;
   };
@@ -38,8 +38,12 @@ const check = (name, ok) => { console.log((ok ? 'PASS ' : 'FAIL ') + name); if (
   userStatus = 'active';
   const st = await fire('payment.failed', true);
   check('payment.failed without a subscription entity: 200, nothing written or sent', st === 200 && sent.length === 0 && updates.length === 0);
-  await fire('subscription.charged');
-  check('charged still sends the payment-received email and sets active', sent.length === 1 && /Payment received/.test(sent[0].subject) && updates[0].subscription_status === 'active');
+  await fire('subscription.charged', false, 3);
+  check('renewal charge (paid_count 3) sends the payment-received email and sets active', sent.length === 1 && /Payment received/.test(sent[0].subject) && updates[0].subscription_status === 'active');
+  await fire('subscription.charged', false, 1);
+  check('first charge (paid_count 1): status set, no duplicate email', sent.length === 0 && updates[0].subscription_status === 'active');
+  await fire('subscription.activated', false, 1);
+  check('activated sends exactly one welcome email', sent.length === 1 && /Welcome/.test(sent[0].subject));
   // ── v51: checkout proof (verify_razorpay_payment) ──
   const nodeCrypto = require('crypto');
   const SECRET = 'test_key_secret';

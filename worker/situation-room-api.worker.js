@@ -2536,7 +2536,9 @@ async function handleRazorpayWebhook(request, env) {
   }
   await updateAirtable('Users', userRecord.id, _wbFields);
 
-  if ((event.event === 'subscription.activated' || event.event === 'subscription.charged') && userRecord.fields.email) {
+  /* First payment fires both activated and charged within seconds. Welcome email goes on activated only; charged emails are for renewals (paid_count > 1). */
+  const _firstChargeDup = event.event === 'subscription.charged' && Number(subEntity.paid_count || 0) <= 1;
+  if ((event.event === 'subscription.activated' || event.event === 'subscription.charged') && !_firstChargeDup && userRecord.fields.email) {
     try {
       const nextBillingDate = subEntity.current_end
         ? new Date(subEntity.current_end * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
