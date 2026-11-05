@@ -94,6 +94,15 @@
       return DASHBOARD_URL;
     }
 
+    /* The destination the visitor asked for (for example subscribe.html), or '' when there was none. */
+    function getExplicitRedirect() {
+      try {
+        var r = new URLSearchParams(window.location.search).get('redirect_url') || '';
+        if (r && r.indexOf('https://vantage.virorah.com/') === 0 && r.indexOf('access.html') === -1) return r;
+      } catch(e) {}
+      return '';
+    }
+
     function syncUser(user) {
       if (!user) return;
       var email  = (user.primaryEmailAddress && user.primaryEmailAddress.emailAddress) || '';
@@ -222,6 +231,8 @@
             window.Clerk.session.getToken().then(function(token) {
             pingProfile(token); // day-zero Airtable capture — fire and forget
             return restoreUserData(token).then(function() {
+              /* Someone who came to subscribe goes straight to payment; profile setup follows from the dashboard. */
+              if (getExplicitRedirect().indexOf('subscribe.html') !== -1) return redirectTo;
               return checkProfileDestination(token, redirectTo);
             });
           }).then(function(dest) {
@@ -237,7 +248,9 @@
         // Not signed in — redirect to Clerk Account Portal
         // Clerk dashboard "After sign-in fallback" must be set to https://vantage.virorah.com/access.html
         setStatus('Redirecting to sign-in\u2026', 'Secured by Clerk');
-        window.location.replace('https://accounts.vantage.virorah.com/sign-in?redirect_url=' + encodeURIComponent('https://vantage.virorah.com/access.html'));
+        var _back = 'https://vantage.virorah.com/access.html', _want = getExplicitRedirect();
+        if (_want) { _back += '?redirect_url=' + encodeURIComponent(_want); }
+        window.location.replace('https://accounts.vantage.virorah.com/sign-in?redirect_url=' + encodeURIComponent(_back));
 
       }).catch(function(err) {
         console.error('[Clerk] Error:', err);
