@@ -61,6 +61,13 @@
     .form-section{margin-bottom:24px}
     .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:block}
     .case-types{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .ct-auto{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:12px 14px;background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:10px}
+    .ct-auto-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(165,180,252,0.7)}
+    .ct-auto-text{flex:1;min-width:200px;font-size:13px;color:var(--grey);line-height:1.5}
+    .ct-auto-text b{color:#c4b5fd;font-weight:500}
+    .ct-toggle{background:none;border:none;padding:0;color:#a5b4fc;cursor:pointer;font-family:inherit;font-size:12px;text-decoration:underline}
+    .ct-panel{margin-top:10px}
+    .ct-group-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:rgba(165,180,252,0.5);margin:12px 0 8px}
     .case-type-btn{background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 10px;cursor:pointer;transition:all .2s;text-align:center;color:var(--grey);font-size:12px;font-family:var(--font), sans-serif}
     .case-type-btn:hover{border-color:rgba(99,102,241,0.35);color:#f4f3ff;background:rgba(99,102,241,0.08)}
     .case-type-btn.selected{background:rgba(99,102,241,0.14);border-color:rgba(99,102,241,0.45);color:#c4b5fd;font-weight:500}
@@ -399,20 +406,6 @@
 
       <div class="intake-card">
         <div class="form-section">
-          <label class="form-label">Case Type</label>
-          <div class="case-types">
-            <div class="case-type-btn" onclick="selectCase(this,'Disciplinary')"><span class="case-type-icon">&#x2696;&#xFE0F;</span>Disciplinary</div>
-            <div class="case-type-btn" onclick="selectCase(this,'Grievance')"><span class="case-type-icon">&#x1F4E2;</span>Grievance</div>
-            <div class="case-type-btn" onclick="selectCase(this,'PIP')"><span class="case-type-icon">&#x1F4C8;</span>PIP</div>
-            <div class="case-type-btn" onclick="selectCase(this,'Termination')"><span class="case-type-icon">&#x1F6AA;</span>Termination</div>
-            <div class="case-type-btn" onclick="selectCase(this,'Redundancy')"><span class="case-type-icon">&#x1F504;</span>Redundancy</div>
-            <div class="case-type-btn" onclick="selectCase(this,'POSH Complaint')"><span class="case-type-icon">&#x1F6E1;&#xFE0F;</span>POSH / Harassment</div>
-            <div class="case-type-btn" onclick="selectCase(this,'Absence Management')"><span class="case-type-icon">&#x1F4C5;</span>Absence</div>
-            <div class="case-type-btn" onclick="selectCase(this,'Retrenchment')"><span class="case-type-icon">&#x1F4CA;</span>Retrenchment</div>
-            <div class="case-type-btn" onclick="selectCase(this,'Other')" title="Use this when none of the eight fits. Vantage will label it for you."><span class="case-type-icon">&#x1F9ED;</span>Something else</div>
-          </div>
-        </div>
-        <div class="form-section">
           <label class="form-label">What's happening? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic to speak</span></label>
           <div class="qb-section">
             <span class="qb-label">Quick start — pick a scenario or describe your own below</span>
@@ -438,8 +431,23 @@
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Manager gave a high appraisal rating to their close associate despite clear performance gaps.</div>
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee placed on PIP has now raised a discrimination grievance midway through the process.</div>
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Want to recover ₹4L from an employee who left mid-project and caused client losses.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Product line is being shut down. 14 people affected, two of them on long-term medical leave. Who can we include?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Plant with 180 workers. Orders are down 40% and management wants to retrench 30. No union.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee wants to work remotely from another city after her family moved. The role is hybrid.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Three employees say 4 months of overtime was never paid. Payroll says it was never approved.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Annual bonus was promised in the offer letter. Management now says it is discretionary.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee runs a consulting firm on the side. One of our vendors is a client of it.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee wants to leave next week and refuses to serve the 90 day notice. Offer letter has a buyout clause.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee resigned after 5 years of service. Finance asks if gratuity is due and how much.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">New joiner's probation ends in 2 weeks. Manager says he is not a fit but gave no feedback so far.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee is 6 months pregnant. Her manager now wants to hold back her confirmation.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee falsified travel claims three times, ₹48,000 in total. Management wants to terminate for cause.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee has been unreachable for 9 days with no leave application. Family says he is unwell.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee says her manager shouts at the team in meetings. Three others have said the same informally.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Branch manager is being moved from Pune to Lucknow. She says it is punishment for raising a complaint.</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('narrative',this)">Employee left owing ₹1.5L under a training bond. He says the bond is unenforceable.</div>
             </div>
-            <button class="qb-more-btn" data-expanded="0" onclick="qbToggleMore(this,'qb-eca-grid')">+ 17 more scenarios &#x25be;</button>
+            <button class="qb-more-btn" data-expanded="0" onclick="qbToggleMore(this,'qb-eca-grid')">+ 32 more scenarios &#x25be;</button>
           </div>
           <div class="voice-wrap">
           <textarea id="narrative" placeholder='e.g. "A senior engineer has been absent without information for 4 days. There were two verbal warnings for attendance in the last 3 months, both documented. His manager wants to terminate but we haven&apos;t done a domestic enquiry yet. I need to know where I stand before I call him in tomorrow."
@@ -448,6 +456,39 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           <button class="voice-btn" id="narrative-mic" onclick="toggleVoiceInput('narrative', this)" title="Tap to speak">&#127908;</button>
           </div>
           <div class="privacy-note">&#x1F512; Anonymised before processing. Your data stays yours.</div>           <div style="margin-top:14px;padding:14px 16px;background:rgba(99,102,241,0.05);border:1px solid rgba(99,102,241,0.14);border-radius:10px">             <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(165,180,252,0.7);margin-bottom:8px">For a sharper answer, include what you can</div>             <ul style="margin:0;padding-left:18px;font-size:12px;line-height:1.75;color:rgba(244,243,255,0.6)">               <li><strong style="color:rgba(244,243,255,0.8)">Who:</strong> the roles involved and the employee's years of service</li>               <li><strong style="color:rgba(244,243,255,0.8)">What happened, and when:</strong> the key events in order, with dates or durations</li>               <li><strong style="color:rgba(244,243,255,0.8)">What is already on paper:</strong> warnings, notices, emails, policy clauses</li>               <li><strong style="color:rgba(244,243,255,0.8)">The decision in front of you:</strong> what you must decide, and by when</li>               <li><strong style="color:rgba(244,243,255,0.8)">What leadership wants:</strong> and where it differs from your read</li>             </ul>           </div>
+        </div>
+        <div class="form-section" id="ct-section">
+          <div class="ct-auto">
+            <span class="ct-auto-label">Case type</span>
+            <span class="ct-auto-text" id="ct-auto-text">Vantage reads it from what you write. <b>No need to choose.</b></span>
+            <button type="button" class="ct-toggle" id="ct-toggle" onclick="toggleCaseTypes()">Choose one yourself (optional) &#x25be;</button>
+          </div>
+          <div class="ct-panel" id="ct-panel" style="display:none">
+            <div class="ct-group-label">Common situations</div>
+            <div class="case-types">
+            <div class="case-type-btn" onclick="selectCase(this,'Disciplinary','')"><span class="case-type-icon">&#x2696;&#xFE0F;</span>Disciplinary</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Grievance','')"><span class="case-type-icon">&#x1F4E2;</span>Grievance</div>
+            <div class="case-type-btn" onclick="selectCase(this,'PIP','')"><span class="case-type-icon">&#x1F4C8;</span>PIP</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Termination','')"><span class="case-type-icon">&#x1F6AA;</span>Termination</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Redundancy','')"><span class="case-type-icon">&#x1F504;</span>Redundancy</div>
+            <div class="case-type-btn" onclick="selectCase(this,'POSH Complaint','')"><span class="case-type-icon">&#x1F6E1;&#xFE0F;</span>POSH / Harassment</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Absence Management','')"><span class="case-type-icon">&#x1F4C5;</span>Absence</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Retrenchment','')"><span class="case-type-icon">&#x1F4CA;</span>Retrenchment</div>
+            </div>
+            <div class="ct-group-label">More situations</div>
+            <div class="case-types">
+            <div class="case-type-btn" onclick="selectCase(this,'Other','Exit and notice dispute')"><span class="case-type-icon">&#x1F9F3;</span>Exit and notice dispute</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Other','Wages and pay dispute')"><span class="case-type-icon">&#x1F4B0;</span>Wages and pay dispute</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Other','Probation issue')"><span class="case-type-icon">&#x23F3;</span>Probation issue</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Other','Maternity and pregnancy')"><span class="case-type-icon">&#x1F476;</span>Maternity and pregnancy</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Other','Transfer and role change')"><span class="case-type-icon">&#x2194;&#xFE0F;</span>Transfer and role change</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Other','Flexible work request')"><span class="case-type-icon">&#x1F3E0;</span>Flexible work request</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Other','Conflict of interest')"><span class="case-type-icon">&#x1F500;</span>Conflict of interest</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Other','Competition and confidentiality')"><span class="case-type-icon">&#x1F510;</span>Competition and confidentiality</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Other','Recovery of dues or losses')"><span class="case-type-icon">&#x1F4B8;</span>Recovery of dues or losses</div>
+            <div class="case-type-btn" onclick="selectCase(this,'Other','')" title="Use this when none of the others fits. Vantage will label it for you."><span class="case-type-icon">&#x1F9ED;</span>Something else</div>
+            </div>
+          </div>
         </div>
         <div class="form-section">
           <label class="form-label">Who's involved? (Roles only, no names needed)</label>
@@ -784,10 +825,25 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       return uid;
     }
 
-    function selectCase(el, type) {
+    var selectedCaseName = ''; /* what the person picked, as shown on the tile */
+    function updateCaseTypeSummary() {
+      var t = document.getElementById('ct-auto-text'); if (!t) return;
+      if (selectedCaseType) { t.innerHTML = 'You chose <b></b>. Tap it again to go back to automatic.'; t.querySelector('b').textContent = selectedCaseName; }
+      else { t.innerHTML = 'Vantage reads it from what you write. <b>No need to choose.</b>'; }
+    }
+    function toggleCaseTypes() {
+      var pn = document.getElementById('ct-panel'), bt = document.getElementById('ct-toggle'); if (!pn || !bt) return;
+      var open = pn.style.display === 'none';
+      pn.style.display = open ? '' : 'none';
+      bt.innerHTML = open ? 'Hide the list &#x25b4;' : 'Choose one yourself (optional) &#x25be;';
+    }
+    /* A tile can be a standard type, or an Other situation with a ready-made label (the labels Vantage already uses). Tapping the chosen tile again goes back to automatic. */
+    function selectCase(el, type, label) {
+      var again = el.classList.contains('selected');
       document.querySelectorAll('.case-type-btn').forEach(function(b){ b.classList.remove('selected'); });
-      el.classList.add('selected');
-      selectedCaseType = type; selectedCaseLabel = '';
+      if (again) { selectedCaseType = ''; selectedCaseLabel = ''; selectedCaseName = ''; }
+      else { el.classList.add('selected'); selectedCaseType = type; selectedCaseLabel = label || ''; selectedCaseName = (el.lastChild && el.lastChild.textContent || '').trim(); }
+      updateCaseTypeSummary();
       checkSubmit();
     }
 
@@ -797,7 +853,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
 
     function checkSubmit() {
       var _len = document.getElementById('narrative').value.trim().length;
-      var _hasType = !!selectedCaseType;
+      var _hasType = true; /* no tile chosen means Vantage reads the type from the text */
       var _hasText = _len > 20;
       var _cbv = document.getElementById('ctc-band'), _cev = document.getElementById('ctc-exact');
       var _exv = parseFloat(_cev ? _cev.value : '');
@@ -807,9 +863,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       if (_hint) {
         if (_hasType && _hasText && !_hasCtc) { _hint.textContent = 'Choose the employee\'s CTC band to continue. An approximate band is enough.'; }
         else if (_hasType && _hasText) { _hint.textContent = ''; }
-        else if (!_hasType && !_hasText) { _hint.textContent = 'Pick a case type above and describe what is happening to continue.'; }
-        else if (!_hasType) { _hint.textContent = 'Choose a case type above to continue.'; }
-        else { _hint.textContent = 'Add a few more words about what is happening to continue.'; }
+        else { _hint.textContent = 'Describe what is happening in a few lines to continue.'; }
       }
     }
 
@@ -844,7 +898,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       var roleCriticality = _roleCritEl ? _roleCritEl.value : 'Medium';
       var _exNum = parseFloat(ctcExact);
       if (!ctcBand && !(isFinite(_exNum) && _exNum >= 0.5 && _exNum <= 1000)) { checkSubmit(); return; }
-      if (!selectedCaseType || !narrativeVal) return;
+      if (!narrativeVal) return; /* no case type chosen is fine: the Worker reads it from the text */
       /* Soft nudge: first click with an empty Who's involved box asks for roles; second click runs anyway. */       if (!stakeholders && !window._stakeholderNudged) {         window._stakeholderNudged = true;         var _nudge = document.getElementById('stakeholder-nudge');         if (_nudge) _nudge.style.display = 'block';         var _sh = document.getElementById('stakeholders');         if (_sh) { _sh.scrollIntoView({behavior:'smooth',block:'center'}); _sh.focus(); }         return;       }       currentNarrative = narrativeVal;       var _hideNudge = document.getElementById('stakeholder-nudge'); if (_hideNudge) { _hideNudge.style.display = 'none'; }
       showView('loading-view');
       var loadInterval = animateLoading();
@@ -856,7 +910,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           body: JSON.stringify({
             tool: 'pact',
             narrative: narrativeVal,
-            caseType: selectedCaseType,
+            caseType: selectedCaseType ? caseTypeText() : 'Auto',
             stakeholders: stakeholders,
             ctcBand: ctcBand,
             ctcExact: ctcExact,
@@ -913,17 +967,19 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       var ps = r.pact_scores || {};
       var pr = r.protocol || {};
       var fin = pr.financial || {};        /* Case type check: if the facts point to a different type than the tile, show a note and use the detected type. */       var _validTypes = ['Disciplinary', 'Grievance', 'PIP', 'Termination', 'Redundancy', 'POSH Complaint', 'Absence Management', 'Retrenchment', 'Other'];       var _noteEl = document.getElementById('case-type-note');       if (!_noteEl) {         _noteEl = document.createElement('div');         _noteEl.id = 'case-type-note';         _noteEl.style.cssText = 'margin-top:10px;max-width:760px;padding:10px 14px;background:rgba(124,58,237,0.10);border:1px solid rgba(167,139,250,0.30);border-radius:8px;font-size:12px;line-height:1.6;color:#c4b5fd;display:none';         var _anchorEl = document.getElementById('output-case-type');         if (_anchorEl && _anchorEl.parentNode) { _anchorEl.parentNode.appendChild(_noteEl); }       }       _noteEl.style.display = 'none';       var _std = _validTypes.slice(0, 8), _msg = '';
+       var _wasAuto = !selectedCaseType, _pickedName = selectedCaseName || (selectedCaseType === 'Other' ? 'Something else' : selectedCaseType);
        selectedCaseLabel = '';
        if (r.detectedCaseType && _validTypes.indexOf(r.detectedCaseType) !== -1) {
          if (r.detectedCaseType === 'Other') {
            selectedCaseLabel = String(r.otherLabel || '').replace(/[<>]/g, '').trim().slice(0, 40);
-           if (selectedCaseType !== 'Other') { _msg = 'You selected ' + selectedCaseType + '. None of our standard case types fit these facts, so this was classified as Other' + (selectedCaseLabel ? ': ' + selectedCaseLabel : '') + ' and analysed on its own terms.'; }
+           if (_wasAuto) { _msg = 'Treated as Other' + (selectedCaseLabel ? ': ' + selectedCaseLabel : '') + '. None of the standard case types fit these facts, so this was analysed on its own terms.'; } else if (selectedCaseType !== 'Other') { _msg = 'You selected ' + _pickedName + '. None of our standard case types fit these facts, so this was classified as Other' + (selectedCaseLabel ? ': ' + selectedCaseLabel : '') + ' and analysed on its own terms.'; }
            selectedCaseType = 'Other';
          } else if (r.detectedCaseType !== selectedCaseType) {
-           _msg = 'You selected ' + (selectedCaseType === 'Other' ? 'Something else' : selectedCaseType) + '. The facts read as ' + r.detectedCaseType + ', so this was analysed as ' + r.detectedCaseType + '.';
+           _msg = _wasAuto ? ('Treated as ' + r.detectedCaseType + ', based on what you described.') : ('You selected ' + _pickedName + '. The facts read as ' + r.detectedCaseType + ', so this was analysed as ' + r.detectedCaseType + '.');
            selectedCaseType = r.detectedCaseType;
          }
        }
+       if (!selectedCaseType) { selectedCaseType = 'Other'; }
        if (r.secondaryCaseType && _std.indexOf(r.secondaryCaseType) !== -1 && r.secondaryCaseType !== selectedCaseType) { _msg += (_msg ? ' ' : '') + 'This case also touches ' + r.secondaryCaseType + '.'; }
        if (_msg) { _noteEl.textContent = _msg; _noteEl.style.display = 'block'; }
 
@@ -1309,7 +1365,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     }
 
     function startNew() {       window._stakeholderNudged = false;
-      selectedCaseType = ''; selectedCaseLabel = '';
+      selectedCaseType = ''; selectedCaseLabel = ''; selectedCaseName = '';
       currentResult = null;
       currentARIAScenario = '';
       document.getElementById('narrative').value = '';
@@ -1318,6 +1374,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       var _ce = document.getElementById('ctc-exact'); if (_ce) { _ce.value = ''; }
       var _rc = document.getElementById('role-criticality'); if (_rc) { _rc.value = 'Medium'; }
       document.querySelectorAll('.case-type-btn').forEach(function(b){ b.classList.remove('selected'); });
+      updateCaseTypeSummary();
       document.getElementById('submit-btn').disabled = true;
       var qtCard = document.getElementById('quick-take-card');
       if (qtCard) qtCard.style.display = 'none';
