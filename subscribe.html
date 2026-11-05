@@ -61,6 +61,17 @@
       color: var(--muted);
     }
 
+    .trial-note {
+      margin-top: 14px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      background: rgba(251,191,36,0.08);
+      border: 1px solid rgba(251,191,36,0.28);
+      color: rgba(253,230,138,0.95);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
     /* ── MAIN CARD ── */
     .subscribe-card {
       width: 100%;
@@ -324,6 +335,7 @@
           <div class="price-period">/ month</div>
         </div>
         <div class="plan-note">Billed monthly. Cancel anytime. No lock-in.</div>
+        <div id="trial-note" class="trial-note" style="display:none" role="note"></div>
 
         <div class="features-divider"></div>
 
@@ -501,6 +513,33 @@
 
       document.getElementById('auth-loading').style.display = 'none';
       document.getElementById('page-content').style.display = 'block';
+
+      // Trial disclosure: a user still inside their free trial must know that subscribing now
+      // charges today and ends the trial. Server is the source of truth (get_plan).
+      (async function showTrialNote() {
+        try {
+          const tk = await Clerk.session.getToken();
+          const pr = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tk },
+            body: JSON.stringify({ tool: 'get_plan' })
+          });
+          const pj = await pr.json();
+          const d = pj && pj.success && pj.data;
+          if (!d || d.subscription_status !== 'trial') return;
+          if ((d.trial_calls_used || 0) >= 10) return;
+          const endMs = new Date(d.effective_trial_end || d.trial_end_date).getTime();
+          const msLeft = endMs - Date.now();
+          if (!isFinite(endMs) || msLeft <= 0) return;
+          const hrs = Math.ceil(msLeft / 3600000);
+          const left = hrs <= 36
+            ? hrs + (hrs === 1 ? ' hour' : ' hours')
+            : Math.ceil(msLeft / 86400000) + ' days';
+          const note = document.getElementById('trial-note');
+          note.textContent = 'You have ' + left + ' left in your free trial. Subscribing now starts your paid plan today, so \u20B9799 is charged now and your trial ends. You can also keep using the trial and subscribe later.';
+          note.style.display = 'block';
+        } catch (e) {}
+      })();
 
       // Subscribe button
       document.getElementById('subscribe-btn').addEventListener('click', async () => {
