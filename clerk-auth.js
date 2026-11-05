@@ -45,6 +45,7 @@
 
   // Shared helper to remove loader
   function _revealPage() {
+    if (window.__vantageProfileHold) return;
     document.documentElement.style.visibility = 'visible';
     var el = document.getElementById('vantage-auth-loader');
     if (el) {
@@ -260,6 +261,15 @@
     if (/(access|profile-setup|subscribe|pricing)(\.html)?$/.test(p)) return;
     try { if (sessionStorage.getItem('vantage_profile_ok') === '1') return; } catch (e) {}
     if (!window.Clerk || !window.Clerk.session) return;
+    /* Keep the page hidden until the answer is in, so an incomplete profile never sees a flash of the dashboard. */
+    window.__vantageProfileHold = true;
+    document.documentElement.style.visibility = 'hidden';
+    var _release = function () {
+      if (!window.__vantageProfileHold) return;
+      window.__vantageProfileHold = false;
+      _revealPage();
+    };
+    setTimeout(_release, 4000);
     window.Clerk.session.getToken().then(function (token) {
       return fetch(WORKER_URL, {
         method: 'POST',
@@ -269,10 +279,12 @@
     }).then(function (r) { return r.json(); }).then(function (d) {
       if (d && d.success && d.data && d.data.profileComplete === false) {
         window.location.replace('https://vantage.virorah.com/profile-setup.html');
+        return;
       } else if (d && d.success) {
         try { sessionStorage.setItem('vantage_profile_ok', '1'); } catch (e) {}
       }
-    }).catch(function () {});
+      _release();
+    }).catch(_release);
   }
 
   var s = document.createElement('script');
