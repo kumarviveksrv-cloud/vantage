@@ -722,6 +722,18 @@
       }
     }
 
+    /* Model output carries markdown. Drop stray rule/heading lines ("---", "##"), then show **bold** as real bold.
+       Escaped first, so nothing from the model can inject HTML. */
+    function cleanPolicyText(t) {
+      return String(t || '').split(/\r?\n/).filter(function (ln) {
+        return !/^\s*(-{3,}|\*{3,}|_{3,}|#{1,6})\s*$/.test(ln);
+      }).join('\n').replace(/^\s*#{1,6}\s+/gm, '').replace(/\n{3,}/g, '\n\n').trim();
+    }
+    function policyHtml(t) {
+      var esc = cleanPolicyText(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return esc.replace(/\*\*([^*\n]+?)\*\*/g, '<strong style="color:rgba(244,243,255,0.95);font-weight:600">$1</strong>').replace(/\*\*/g, '');
+    }
+
     function parsePolicyResponse(text) {
       var sections = { assessment: '', legal: '', recommended: '', meridianNote: '', ariaOffer: '', complianceExposure: '' };
       if (!text) return sections;
@@ -760,17 +772,17 @@
       parsedSections = parsePolicyResponse(responseText);
 
       document.getElementById('question-echo-text').innerText = currentQuery;
-      document.getElementById('section-assessment').innerText   = parsedSections.assessment;
-      document.getElementById('section-legal').innerText        = parsedSections.legal;
-      document.getElementById('section-recommended').innerText  = parsedSections.recommended;
+      document.getElementById('section-assessment').innerHTML   = policyHtml(parsedSections.assessment);
+      document.getElementById('section-legal').innerHTML        = policyHtml(parsedSections.legal);
+      document.getElementById('section-recommended').innerHTML  = policyHtml(parsedSections.recommended);
 
       if (parsedSections.meridianNote) {
-        document.getElementById('meridian-note-text').innerText    = parsedSections.meridianNote;
+        document.getElementById('meridian-note-text').innerText    = cleanPolicyText(parsedSections.meridianNote).replace(/\*\*/g, '');
         document.getElementById('meridian-note-inline').style.display = 'block';
       }
 
       if (parsedSections.ariaOffer) {
-        document.getElementById('aria-offer-text').innerText = parsedSections.ariaOffer;
+        document.getElementById('aria-offer-text').innerText = cleanPolicyText(parsedSections.ariaOffer).replace(/\*\*/g, '');
       }
 
       // Compliance exposure chip
