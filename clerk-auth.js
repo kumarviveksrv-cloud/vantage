@@ -13,6 +13,23 @@
 
   var isAccessPage = window.location.pathname.indexOf('access.html') !== -1;
 
+  // ── PROFILE GATE HOLD (starts immediately, before Clerk even loads) ─────────
+  // Pages that need a profile stay hidden until the profile check answers, so an incomplete
+  // profile never sees even a flash of the dashboard or a tool. Released by _releaseHold().
+  var _profileExempt = /(access|profile-setup|subscribe|pricing)(\.html)?$/.test(window.location.pathname);
+  var _profileKnownOk = false;
+  try { _profileKnownOk = sessionStorage.getItem('vantage_profile_ok') === '1'; } catch (e) {}
+  if (!_profileExempt && !_profileKnownOk) {
+    window.__vantageProfileHold = true;
+    document.documentElement.style.visibility = 'hidden';
+    setTimeout(function () { _releaseHold(); }, 6000);
+  }
+  function _releaseHold() {
+    if (!window.__vantageProfileHold) return;
+    window.__vantageProfileHold = false;
+    _revealPage();
+  }
+
   // ── SMART FLASH PREVENTION ──────────────────────────────────────────────────
   // Two tiers:
   // Returning user (localStorage flag set): show page immediately, verify in background.
@@ -38,7 +55,7 @@
       '</svg>' +
       '<div style="font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:#a5b4fc;margin-top:24px">ARIA</div>' +
       '<div style="font-family:sans-serif;font-size:14px;color:rgba(244,243,255,0.8);margin-top:6px">Preparing Vantage...</div>';
-    _ldr.setAttribute('style','position:fixed;top:0;left:0;width:100%;height:100%;background:#050410;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .35s ease');
+    _ldr.setAttribute('style','position:fixed;top:0;left:0;width:100%;height:100%;background:#050410;z-index:99999;visibility:visible;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .35s ease');
     document.documentElement.appendChild(_ldr);
   }
   // Returning user: no hiding, no loader. Page renders immediately.
@@ -257,19 +274,9 @@
   // profile is incomplete is sent to profile-setup.html wherever they land (back button, bookmark,
   // direct tool URL). Fails open on network errors so an outage never locks anyone out.
   function _enforceProfile() {
-    var p = window.location.pathname;
-    if (/(access|profile-setup|subscribe|pricing)(\.html)?$/.test(p)) return;
-    try { if (sessionStorage.getItem('vantage_profile_ok') === '1') return; } catch (e) {}
-    if (!window.Clerk || !window.Clerk.session) return;
-    /* Keep the page hidden until the answer is in, so an incomplete profile never sees a flash of the dashboard. */
-    window.__vantageProfileHold = true;
-    document.documentElement.style.visibility = 'hidden';
-    var _release = function () {
-      if (!window.__vantageProfileHold) return;
-      window.__vantageProfileHold = false;
-      _revealPage();
-    };
-    setTimeout(_release, 4000);
+    if (_profileExempt || _profileKnownOk) { _releaseHold(); return; }
+    if (!window.Clerk || !window.Clerk.session) { _releaseHold(); return; }
+    var _release = _releaseHold;
     window.Clerk.session.getToken().then(function (token) {
       return fetch(WORKER_URL, {
         method: 'POST',
@@ -334,6 +341,7 @@
 
   s.addEventListener('error', function () {
     console.error('[Clerk] SDK failed to load — auth unavailable');
+    _releaseHold();
     if (isAccessPage) {
       // access.html handles its own UI for a failed Clerk load; just unblock it.
       _revealPage();
