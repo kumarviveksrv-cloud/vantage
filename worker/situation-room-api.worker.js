@@ -520,6 +520,7 @@ function healthResponse(body) {
     headers: { ...CORS_HEADERS, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
   });
 }
+const HEALTH_FETCH_TIMEOUT_MS = 5000;
 async function handleHealth() {
   const nowMs = Date.now();
   if (_healthCache && nowMs - _healthCache.at < 60000) { return healthResponse(_healthCache.body); }
@@ -527,13 +528,14 @@ async function handleHealth() {
   try {
     const r = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Users?maxRecords=1&fields%5B%5D=user_id`, {
       headers: { 'Authorization': `Bearer ${AIRTABLE_API_KEY}` },
+      signal: AbortSignal.timeout(HEALTH_FETCH_TIMEOUT_MS),
     });
     if (!r.ok) { body.airtable = 'fail ' + r.status; body.ok = false; }
-  } catch (e) { body.airtable = 'fail'; body.ok = false; }
+  } catch (e) { body.airtable = (e && e.name === 'TimeoutError') ? 'fail timeout' : 'fail'; body.ok = false; }
   try {
-    const r2 = await fetch(JWKS_URL);
+    const r2 = await fetch(JWKS_URL, { signal: AbortSignal.timeout(HEALTH_FETCH_TIMEOUT_MS) });
     if (!r2.ok) { body.clerk = 'fail ' + r2.status; body.ok = false; }
-  } catch (e) { body.clerk = 'fail'; body.ok = false; }
+  } catch (e) { body.clerk = (e && e.name === 'TimeoutError') ? 'fail timeout' : 'fail'; body.ok = false; }
   _healthCache = { at: nowMs, body: body };
   return healthResponse(body);
 }
@@ -2775,8 +2777,8 @@ const SIZE_THRESHOLDS = [
   { min: 300, text: 'Standing Orders under Chapter IV of the Industrial Relations Code, 2020 (section 28(1)): apply to an industrial establishment with 300 or more workers.' },
   { min: 300, text: 'Chapter X of the Industrial Relations Code, 2020 (sections 77 to 82): applies to an industrial establishment with 300 or more workers.' },
   { min: 50, text: 'Sections 67 to 69 of the Industrial Relations Code, 2020: limited by section 65 to factories, mines and plantations with 50 or more workers.' },
-  { min: 10, text: 'Chapter VI (maternity benefit) of the Code on Social Security, 2020: applies to a shop or establishment with 10 or more employees. A factory, mine or plantation is covered whatever its size.' },
-  { min: 10, text: 'Gratuity under the Code on Social Security, 2020: applies to a shop or establishment with 10 or more employees. A factory, mine, oilfield, plantation, port or railway company is covered whatever its size.' }
+  { min: 10, exception: true, text: 'Chapter VI (maternity benefit) of the Code on Social Security, 2020: applies to a shop or establishment with 10 or more employees. A factory, mine or plantation is covered whatever its size.' },
+  { min: 10, exception: true, text: 'Gratuity under the Code on Social Security, 2020: applies to a shop or establishment with 10 or more employees. A factory, mine, oilfield, plantation, port or railway company is covered whatever its size.' }
 ];
 function parseSizeBand(str) {
   if (typeof str !== 'string') { return null; }
@@ -2814,7 +2816,7 @@ function buildMeridianContext(meridian, headcountStated) {
     var lo = n !== null ? n : band.lo;
     var hi = n !== null ? n : band.hi;
     var lines = SIZE_THRESHOLDS.map(function (t) {
-      var verdict = lo >= t.min ? 'met' : (hi < t.min ? 'not met' : 'depends on the exact headcount');
+      var verdict = lo >= t.min ? 'met' : (hi < t.min ? (t.exception ? 'not met for a shop or establishment; the exception above may still apply' : 'not met') : 'depends on the exact headcount');
       return t.text + ' Size condition: ' + verdict + '.';
     });
     out.push('Size thresholds in the Acts held by Vantage (headcount only; whether the other conditions are met is a separate question):\n\n' + lines.join('\n\n'));
