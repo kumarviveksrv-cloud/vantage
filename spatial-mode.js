@@ -54,8 +54,16 @@
 .sm-rail.live i{background:#c4b5fd;box-shadow:0 0 10px rgba(196,181,253,.75)}\
 .sm-panel.briefed .sm-scroll,.sm-panel.briefed .sm-rail{display:none}\
 .sm-pt{display:flex;gap:7px;margin-bottom:5px}.sm-pt:before{content:"";width:4px;height:4px;border-radius:50%;background:#6366f1;margin-top:7px;flex-shrink:0}\
-#sm-preview{display:none;position:absolute;left:16px;bottom:60px;width:224px;height:168px;border-radius:12px;border:2px solid rgba(255,181,71,.7);z-index:30;background:#000;opacity:.92;pointer-events:none}\
+#sm-preview{display:none;position:absolute;left:16px;bottom:60px;width:140px;height:105px;border-radius:12px;border:2px solid rgba(255,181,71,.7);z-index:30;background:#000;opacity:.92;pointer-events:none}\
 #sm-preview.ok{border-color:rgba(124,58,237,.95)}\
+.sm-nocam #sm-preview{display:none!important}\
+#sm-camx{display:none;position:absolute;left:112px;bottom:139px;z-index:31;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.05em;color:rgba(196,181,253,.9);background:rgba(5,4,16,.78);border:1px solid rgba(99,102,241,.35);border-radius:6px;padding:3px 7px;cursor:pointer}\
+#sm-camx[data-live]{display:block}\
+.sm-nocam #sm-camx{display:none!important}\
+#sm-camdot{display:none;position:absolute;left:16px;bottom:60px;z-index:30;align-items:center;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.05em;color:rgba(165,180,252,.8);background:rgba(5,4,16,.78);border:1px solid rgba(255,181,71,.45);border-radius:999px;padding:5px 11px;cursor:pointer}\
+#sm-camdot:before{content:"";width:7px;height:7px;border-radius:50%;background:#ffb547;margin-right:7px}\
+#sm-camdot.ok{border-color:rgba(124,58,237,.7)}#sm-camdot.ok:before{background:#7c3aed}\
+.sm-nocam #sm-camdot[data-live]{display:flex}\
 #sm-cursor{--p:0;position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #a5b4fc;background:conic-gradient(rgba(196,181,253,.85) calc(var(--p)*1turn),rgba(99,102,241,.16) 0);pointer-events:none;z-index:100002;display:none;box-shadow:0 0 18px rgba(99,102,241,.6)}\
 #sm-cursor.pinch,#sm-cursor2.pinch{transform:scale(.7);background:rgba(196,181,253,.95)}\
 #sm-cursor.held-cur{border-color:#fff;background:conic-gradient(#fb923c calc(var(--p)*1turn),rgba(255,255,255,.92) 0);box-shadow:0 0 26px rgba(255,255,255,.75)}\
@@ -791,6 +799,14 @@
     try { if (st.hands) st.hands.setOptions({ maxNumHands: n }); } catch (e) {}
   }
   function cycleHands() { setHands(handsWanted === 2 ? 1 : 2); trayMsg(handsWanted === 2 ? 'Two hands: each index finger works on its own.' : 'One hand: lighter on a slower computer.'); }
+  /* camera view: a small self-view by default; it can be hidden down to a "Camera on" pill. The camera keeps running either way. */
+  var CAM_KEY = 'sr_sm_cam', camHidden = false;
+  try { camHidden = localStorage.getItem(CAM_KEY) === 'hidden'; } catch (e) {}
+  function setCamHidden(h) {
+    camHidden = !!h;
+    try { localStorage.setItem(CAM_KEY, camHidden ? 'hidden' : 'small'); } catch (e) {}
+    if (st.root) st.root.classList.toggle('sm-nocam', camHidden);
+  }
   /* how a card is picked up: 'pinch' (thumb and index together, instant) or 'hold' (rest a fingertip on it) */
   var GRAB_KEY = 'sr_sm_grab', grabMode = 'pinch';
   try { var gm = localStorage.getItem(GRAB_KEY); if (gm === 'pinch' || gm === 'hold') grabMode = gm; } catch (e) {}
@@ -861,6 +877,8 @@
   /* small live camera view with the detected hand points, so the person can see what the model sees */
   function drawPreview(res, dets) {
     var c = st.root && st.root.querySelector('#sm-preview'); if (!c) return;
+    var lock = !!(dets && dets.length), dot = st.root.querySelector('#sm-camdot'); if (dot) dot.className = lock ? 'ok' : '';
+    if (camHidden) return;
     var g = c.getContext('2d'), w = c.width, h = c.height;
     g.save(); g.translate(w, 0); g.scale(-1, 1);
     if (res.image) { try { g.drawImage(res.image, 0, 0, w, h); } catch (e) {} } else { g.clearRect(0, 0, w, h); }
@@ -871,7 +889,7 @@
       }
     });
     g.restore();
-    c.className = dets && dets.length ? 'ok' : '';
+    c.className = lock ? 'ok' : '';
   }
 
   /* live pinch readout on the camera preview, so thresholds can be tuned against a real hand */
@@ -1049,7 +1067,7 @@
           }
           st.raf = requestAnimationFrame(loop);
         })();
-        var pv = document.getElementById('sm-preview'); if (pv) pv.style.display = 'block';
+        var pv = document.getElementById('sm-preview'); if (pv) pv.style.display = 'block'; var cx = document.getElementById('sm-camx'); if (cx) cx.setAttribute('data-live', '1'); var cd = document.getElementById('sm-camdot'); if (cd) cd.setAttribute('data-live', '1');
         setStatus('Hand tracking: <b>show an open palm to lock on, then point</b>');
         var cb = document.getElementById('sm-chk-btn'); if (cb) cb.style.display = ''; var sb = document.getElementById('sm-speed'); if (sb) sb.style.display = ''; var hb = document.getElementById('sm-hands'); if (hb) hb.style.display = ''; var gb = document.getElementById('sm-grab'); if (gb) gb.style.display = '';
         openCheck();
@@ -1075,7 +1093,7 @@
       '<div style="display:flex;gap:8px"><button class="sm-btn" id="sm-grab" data-dwell style="display:none"></button><button class="sm-btn" id="sm-hands" data-dwell style="display:none"></button><button class="sm-btn" id="sm-speed" data-dwell style="display:none"></button><button class="sm-btn" id="sm-chk-btn" style="display:none">Setup check</button><button class="sm-btn" id="sm-qc" data-dwell aria-haspopup="menu" style="display:none">Quick compare</button><button class="sm-btn" id="sm-reset" data-dwell>Reset layout</button><button class="sm-btn primary" id="sm-exit" data-dwell>Exit Spatial Mode</button></div></div>' +
       '<div id="sm-tray"><div id="sm-tray-head"><div id="sm-tray-title">Leadership Brief</div><div id="sm-tray-sub"></div></div>' +
       '<div id="sm-tray-foot"><button class="sm-btn" id="sm-mode" data-dwell></button><button class="sm-btn primary" id="sm-present" data-dwell disabled>Present this brief</button><div id="sm-tray-btns"><button class="sm-btn" id="sm-dl" data-dwell disabled>Download</button><button class="sm-btn" id="sm-copy" data-dwell disabled>Copy text</button><button class="sm-btn" id="sm-save" data-dwell disabled title="Keep this brief on this device so you can compare it with a later analysis">Save</button></div><div id="sm-tray-msg"></div></div></div>' +
-      '<canvas id="sm-preview" width="224" height="168"></canvas><div id="sm-cursor"></div><div id="sm-cursor2"></div><div id="sm-hint">Starting…</div>';
+      '<canvas id="sm-preview" width="224" height="168"></canvas><button id="sm-camx" data-dwell title="Hide the camera view. The camera stays on.">Hide</button><button id="sm-camdot" data-dwell title="Show the camera view">Camera on</button><div id="sm-cursor"></div><div id="sm-cursor2"></div><div id="sm-hint">Starting…</div>';
     document.body.appendChild(root);
     st.root = root; st.video = root.querySelector('#sm-video');
     st.hp = [new Pointer('hand', 0), new Pointer('hand', 1)]; st.mp = new Pointer('mouse', -1); st.ptrs = st.hp.concat([st.mp]);
@@ -1090,6 +1108,9 @@
     root.querySelector('#sm-present').onclick = openPresent;
     root.querySelector('#sm-grab').onclick = cycleGrab; root.querySelector('#sm-grab').textContent = 'Grab: ' + (grabMode === 'pinch' ? 'Pinch' : 'Hold');
     root.querySelector('#sm-hands').onclick = cycleHands; root.querySelector('#sm-hands').textContent = 'Hands: ' + handsWanted;
+    root.querySelector('#sm-camx').onclick = function () { setCamHidden(true); };
+    root.querySelector('#sm-camdot').onclick = function () { setCamHidden(false); };
+    root.classList.toggle('sm-nocam', camHidden);
     root.querySelector('#sm-speed').onclick = cycleSpeed; root.querySelector('#sm-speed').textContent = 'Hold time: ' + SPEEDS[speedName].label;
     root.querySelector('#sm-chk-btn').onclick = function () { if (st.chkEl) closeCheck(); else openCheck(); };
     root.querySelector('#sm-save').onclick = saveBrief;
