@@ -2270,7 +2270,6 @@ const USAGE_LIMITS = {
   business_case: { limit: 15, period: 'daily', label: 'The Business Case (15/day)' },
   policy:      { limit: 20, period: 'daily',   label: 'Policy Advisor (20/day)' },
   aria:        { limit: 50, period: 'daily',   label: 'ARIA (50 messages/day)' },
-  practice:    { limit: 30, period: 'daily',   label: 'Difficult Conversations (30 turns/day)' },
   get_debrief:         { limit: 3,  period: 'monthly', label: 'Debrief Regeneration (3/month)' },
   offer_intelligence:  { limit: 10, period: 'daily',   label: 'Retention Advisor (10/day)' },
   transcribe:          { limit: 100, period: 'daily',   label: 'Voice Transcription (100/day)' },
@@ -3351,27 +3350,6 @@ function practiceDebriefIsComplete(r) {
   }
 }
 
-async function practiceScenarioKey(body) {
-  const raw = String(body.scenario || '') + '|' + String(body.objective || '') + '|' + String(body.stakeholderRole || '');
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
-  return Array.from(new Uint8Array(buf)).slice(0, 8).map(function(b){ return b.toString(16).padStart(2, '0'); }).join('');
-}
-
-async function issuePracticeSession(userId, body, secret) {
-  if (!secret) { return null; }
-  const key = await practiceScenarioKey(body);
-  return generateToken('practice:' + userId + ':' + key, secret);
-}
-
-async function practiceSessionValid(token, userId, body, secret) {
-  if (!token || !secret || typeof token !== 'string') { return false; }
-  const payload = await verifyToken(token, secret);
-  if (!payload || typeof payload.email !== 'string') { return false; }
-  if (Date.now() - payload.iat > 6 * 3600 * 1000) { return false; }
-  const key = await practiceScenarioKey(body);
-  return payload.email === 'practice:' + userId + ':' + key;
-}
-
 const _trialState = new WeakMap();
 const _sinks = new WeakMap(); // request -> function(event, data) that writes a progress event to a streaming client
 
@@ -3644,15 +3622,11 @@ async function handleRequest(request, env) {
   }
 
   // ── TRIAL ACCESS GATE ─────────────────────────────────────────────────────
-  const TRIAL_GATED_TOOLS = ['pact', 'business_case', 'policy', 'policy_document', 'offer_intelligence', 'practice'];
+  const TRIAL_GATED_TOOLS = ['pact', 'business_case', 'policy', 'policy_document', 'offer_intelligence'];
   let trialCharged = false;
   let _trialLastCall = false;
   if (TRIAL_GATED_TOOLS.includes(tool)) {
-    const _practiceSecret = env.VANTAGE_SECRET || env.CLERK_SECRET_KEY;
-    const _practiceContinuation = tool === 'practice'
-      && ((Array.isArray(body.history) && body.history.length > 0) || body.requestDebrief === true)
-      && await practiceSessionValid(body.practiceSession, clerkUserId, body, _practiceSecret);
-    const gate = await checkTrialAccess(clerkUserId, !_practiceContinuation);
+    const gate = await checkTrialAccess(clerkUserId, true);
     if (!gate.allowed) return trialBlockedResponse(gate);
     trialCharged = typeof gate.used === 'number';
     _trialLastCall = trialCharged && gate.callsRemaining === 0;
@@ -3961,97 +3935,6 @@ if (actContext) {
       var _tb=(response.content||[]).find(function(b){return b.type==='text';});
 result = { response: _tb ? _tb.text : '' };
       queueUsage(clerkUserId, 'policy_document', usageCheck);
-      return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
-    }
-
-    // ── PRACTICE ──────────────────────────────────────────────────────────────
-    if (tool === 'practice') {
-      const usageCheck = await checkUsage(clerkUserId, 'practice', false);
-      if (!usageCheck.allowed) return usageLimitResponse(usageCheck);
-      const { scenario, objective, stakeholderRole, difficulty, history, requestDebrief } = body;
-
-      const truncatedScenario = truncateInput(scenario, 2000);
-      const truncatedObjective = truncateInput(objective, 1000);
-
-      const [anonymizedScenario, anonymizedObjective] = await Promise.all([
-        anonymizeNarrative(truncatedScenario),
-        anonymizeNarrative(truncatedObjective),
-      ]);
-      if (truncatedScenario && anonymizedScenario === null) return anonymizationFailedResponse();
-      if (truncatedObjective && anonymizedObjective === null) return anonymizationFailedResponse();
-
-      const systemPrompt = getPracticePrompt(meridian);
-      let userMessage;
-      if (requestDebrief) {
-        userMessage = `[DEBRIEF REQUEST]\nSCENARIO: ${anonymizedScenario}\nOBJECTIVE: ${anonymizedObjective}\nSTAKEHOLDER: ${truncateInput(stakeholderRole, 200)}\nDIFFICULTY: ${truncateInput(difficulty, 100)}\n\nReview the full conversation history and produce the complete debrief JSON including the financialContext block.`;
-      } else {
-        const isFirstTurn = !history || history.length === 0;
-        userMessage = `SCENARIO: ${anonymizedScenario}\nOBJECTIVE: ${anonymizedObjective}\nSTAKEHOLDER ROLE: ${truncateInput(stakeholderRole, 200)}\nDIFFICULTY: ${truncateInput(difficulty, 100)}\n\n${isFirstTurn ? 'This is the first turn. Produce the Stakes Briefing, then immediately begin playing the stakeholder character.' : 'Continue the simulation as the stakeholder character. Stay in character. No commentary.'}`;
-      }
-      let messages;
-      if (history && history.length > 0) {
-        const anonymizedConvo = await anonymizeConversation(sanitizeHistory(history, 40, 4000), false);
-        if (anonymizedConvo === null) return anonymizationFailedResponse();
-        messages = [...anonymizedConvo.messages, { role: 'user', content: userMessage }];
-      } else {
-        messages = [{ role: 'user', content: userMessage }];
-      }
-      const response = await callClaude(systemPrompt, messages);
-      const prBlock = (response.content || []).find(function(b){ return b.type === 'text'; });
-      if (!prBlock) {
-        console.error('PRACTICE: no text block in model response. stop_reason=' + response.stop_reason);
-        throw new Error('PRACTICE: model returned no text block');
-      }
-      const raw = prBlock.text;
-      if (requestDebrief) {
-        try {
-          result = JSON.parse(raw.split('```json').join('').split('```').join('').trim());
-        } catch (prParseErr) {
-          console.error('PRACTICE: debrief reply was not valid JSON: ' + prParseErr.message);
-          result = null;
-        }
-        if (!practiceDebriefIsComplete(result)) {
-          console.error('PRACTICE: debrief incomplete, retrying once');
-          const prRetryMessages = messages.slice(0, -1).concat([{ role: 'user', content: userMessage + ' IMPORTANT: your previous reply was incomplete. Return the full debrief JSON again with every field filled in.' }]);
-          const prRetry = await callClaude(systemPrompt, prRetryMessages);
-          const prRetryBlock = (prRetry.content || []).find(function(b){ return b.type === 'text'; });
-          let prRetryResult = null;
-          if (prRetryBlock) {
-            try {
-              prRetryResult = JSON.parse(prRetryBlock.text.split('```json').join('').split('```').join('').trim());
-            } catch (prRetryErr) {
-              console.error('PRACTICE: retry debrief was not valid JSON: ' + prRetryErr.message);
-            }
-          }
-          if (prRetryResult && practiceDebriefIsComplete(prRetryResult)) {
-            result = prRetryResult;
-          } else {
-            return new Response(JSON.stringify({ success: false, error: 'We could not complete this debrief. Please try again.' }), {
-              status: 502, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-            });
-          }
-        }
-      } else {
-        result = { response: raw };
-        const prTrim = raw.trim();
-        if (prTrim.indexOf('"wrongTool"') !== -1 && (prTrim.charAt(0) === '{' || prTrim.charAt(0) === '`')) {
-          let prWrong = null;
-          try { prWrong = JSON.parse(prTrim.split('```json').join('').split('```').join('').trim()); } catch (prWrongErr) {}
-          if (prWrong && prWrong.wrongTool === true) {
-            if (trialCharged) { await refundTrialCall(clerkUserId); }
-            return new Response(JSON.stringify({ success: true, data: prWrong }), {
-              headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-            });
-          }
-        }
-        if (trialCharged) {
-          const _ps = await issuePracticeSession(clerkUserId, body, env.VANTAGE_SECRET || env.CLERK_SECRET_KEY);
-          if (_ps) { result.practiceSession = _ps; }
-        }
-      }
-      queueUsage(clerkUserId, 'practice', usageCheck);
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
