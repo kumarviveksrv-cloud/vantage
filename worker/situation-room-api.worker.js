@@ -845,6 +845,18 @@ function buildSubscriptionEmail(isNew, nextBillingDate) {
     : `<a href="https://vantage.virorah.com/dashboard.html" style="display:block;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:700;font-size:14px;text-align:center;margin-bottom:24px">Go to Dashboard</a>`;
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vantage subscription</title></head><body style="margin:0;padding:0;background:#050410;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"><div style="max-width:600px;margin:0 auto;padding:32px 24px"><div style="border-bottom:1px solid rgba(99,102,241,0.2);padding-bottom:20px;margin-bottom:24px"><div style="font-size:18px;font-weight:700;color:#f4f3ff;letter-spacing:-0.01em">VIRORAH <span style="color:#6366f1">Vantage</span></div><div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#a5b4fc;margin-top:4px">${label}</div></div><div style="font-size:20px;font-weight:700;color:#f4f3ff;margin-bottom:12px;line-height:1.3">${heading}</div><div style="font-size:13px;color:rgba(244,243,255,0.68);line-height:1.75;margin-bottom:24px">${body}</div>${billingBlock}${ctaBlock}<div style="font-size:11px;color:rgba(244,243,255,0.25);border-top:1px solid rgba(99,102,241,0.1);padding-top:16px;line-height:1.6">Virorah Vantage. People decisions are financial decisions.<br>You are receiving this because you have an active Vantage subscription.</div></div></body></html>`;
 }
+function buildPaymentFailedEmail(stage) {
+  const halted = stage === 'halted';
+  const label = halted ? 'Access Paused' : 'Payment Did Not Go Through';
+  const heading = halted ? 'Your Vantage access is paused.' : 'Your latest payment did not go through.';
+  const body = halted
+    ? 'We tried to collect your Vantage subscription several times and the payment did not succeed, so access is paused. Nothing is lost. Your MERIDIAN context, Humac Score history and case record are exactly as you left them, and they come back the moment you resubscribe.'
+    : 'Your bank or card did not accept the latest Vantage payment. Your access continues for now and the payment will be retried automatically. If your card has expired, been replaced or is short of funds, please sort that out so the retry succeeds and nothing is interrupted.';
+  const ctaBlock = halted
+    ? `<a href="https://vantage.virorah.com/subscribe.html" style="display:block;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:700;font-size:14px;text-align:center;margin-bottom:24px">Resubscribe to restore access</a>`
+    : `<div style="font-size:13px;color:rgba(244,243,255,0.68);line-height:1.75;margin-bottom:24px">If you think this is a mistake, write to info@virorah.com and we will look into it.</div>`;
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vantage payment</title></head><body style="margin:0;padding:0;background:#050410;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"><div style="max-width:600px;margin:0 auto;padding:32px 24px"><div style="border-bottom:1px solid rgba(99,102,241,0.2);padding-bottom:20px;margin-bottom:24px"><div style="font-size:18px;font-weight:700;color:#f4f3ff;letter-spacing:-0.01em">VIRORAH <span style="color:#6366f1">Vantage</span></div><div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#a5b4fc;margin-top:4px">${label}</div></div><div style="font-size:20px;font-weight:700;color:#f4f3ff;margin-bottom:12px;line-height:1.3">${heading}</div><div style="font-size:13px;color:rgba(244,243,255,0.68);line-height:1.75;margin-bottom:24px">${body}</div>${ctaBlock}<div style="font-size:11px;color:rgba(244,243,255,0.25);border-top:1px solid rgba(99,102,241,0.1);padding-top:16px;line-height:1.6">Virorah Vantage. People decisions are financial decisions.<br>You are receiving this because you have a Vantage subscription.</div></div></body></html>`;
+}
 function buildCheckinReminderEmail() {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Your Humac Score check-in is due</title></head><body style="margin:0;padding:0;background:#050410;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"><div style="max-width:600px;margin:0 auto;padding:32px 24px"><div style="border-bottom:1px solid rgba(99,102,241,0.2);padding-bottom:20px;margin-bottom:24px"><div style="font-size:18px;font-weight:700;color:#f4f3ff;letter-spacing:-0.01em">VIRORAH <span style="color:#6366f1">Vantage</span></div><div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#a5b4fc;margin-top:4px">Quarterly Check-In</div></div><div style="font-size:20px;font-weight:700;color:#f4f3ff;margin-bottom:12px;line-height:1.3">Your Humac Score check-in is due.</div><div style="font-size:13px;color:rgba(244,243,255,0.68);line-height:1.75;margin-bottom:20px">Your Humac Score reflects your organisation's current people-financial health. It is not fixed. It moves as your org changes. Running a check-in takes about five minutes and shows you where things stand now compared to where they stood last time.</div><div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.18);border-left:3px solid #6366f1;border-radius:8px;padding:18px;margin:0 0 24px;font-size:13px;color:rgba(244,243,255,0.70);line-height:1.7;font-style:italic">The Humac Score is a planning index, not a report card. It is most useful as a trend. The only way to see the trend is to run the check-in.</div><a href="https://vantage.virorah.com/humac-checkin.html" style="display:block;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:700;font-size:14px;text-align:center;margin-bottom:24px">Run my check-in</a><div style="font-size:11px;color:rgba(244,243,255,0.25);border-top:1px solid rgba(99,102,241,0.1);padding-top:16px;line-height:1.6">Virorah Vantage. People decisions are financial decisions.<br>You are receiving this because you have an active Vantage subscription.</div></div></body></html>`;
 }
@@ -2451,13 +2463,26 @@ async function handleRazorpayWebhook(request, env) {
     'subscription.halted': 'past_due',
     'subscription.paused': 'past_due',
     'subscription.resumed': 'active',
-    'payment.failed': 'payment_failed',
   };
+  /* 'payment.failed' used to sit in this map. Razorpay sends it with a payment entity and no subscription entity, so it never got past the check above, and 'payment_failed' is not a standing state the gate knows. A single failed charge is retried by Razorpay, so it must not change standing. 'subscription.pending' (charge failed, retrying) only warns the user. */
+  const isPending = event.event === 'subscription.pending';
   const newStatus = statusMap[event.event];
-  if (!newStatus) return new Response('OK', { status: 200 });
+  if (!newStatus && !isPending) return new Response('OK', { status: 200 });
 
   const userRecord = await getFromAirtable('Users', `{user_id}="${escapeAirtableString(clerkUserId)}"`);
   if (!userRecord) return new Response('OK', { status: 200 });
+
+  const _prevStatus = userRecord.fields.subscription_status || '';
+
+  if (isPending) {
+    /* Heads-up only while the user is still paying and access continues. No status change. */
+    if (_prevStatus === 'active' && userRecord.fields.email) {
+      try {
+        await sendResendEmail({ to: userRecord.fields.email, subject: 'Your Vantage payment did not go through', html: buildPaymentFailedEmail('retrying') });
+      } catch(mailErr) { console.error('payment-retry email failed:', mailErr.message); }
+    }
+    return new Response('OK', { status: 200 });
+  }
 
     const _wbFields = { subscription_status: newStatus, razorpay_subscription_id: subEntity.id || '' };
   if ((event.event === 'subscription.activated' || event.event === 'subscription.charged') && subEntity.current_end) {
@@ -2476,6 +2501,18 @@ async function handleRazorpayWebhook(request, env) {
         html: buildSubscriptionEmail(event.event === 'subscription.activated', nextBillingDate),
       });
     } catch(mailErr) { console.error('subscription email failed:', mailErr.message); }
+  }
+
+  /* Halted means Razorpay gave up retrying: access is now blocked, so the user must be told, once. A paused subscription is a deliberate pause, not a failed payment, so it gets no email. */
+  if (event.event === 'subscription.halted' && _prevStatus !== 'past_due') {
+    if (userRecord.fields.email) {
+      try {
+        await sendResendEmail({ to: userRecord.fields.email, subject: 'Your Vantage access is paused', html: buildPaymentFailedEmail('halted') });
+      } catch(mailErr) { console.error('payment-halted email failed:', mailErr.message); }
+    }
+    try {
+      await sendResendEmail({ to: 'kumarvivek.srv@gmail.com', subject: 'Vantage: a subscriber payment failed', html: `<p>Razorpay halted a subscription after failed retries.</p><p>Account: ${userRecord.fields.email || clerkUserId}</p><p>Subscription: ${subEntity.id || 'unknown'}</p><p>Access is paused until they resubscribe.</p>` });
+    } catch(mailErr) { console.error('payment-halted alert failed:', mailErr.message); }
   }
 
   return new Response('OK', { status: 200 });

@@ -1,0 +1,45 @@
+// Failed-payment emails (v48). Run: node worker/test_payment.js
+const fs = require('fs'), vm = require('vm');
+const src = fs.readFileSync(__dirname + '/situation-room-api.worker.js', 'utf8').replace(/\r\n/g, '\n').replace('export default {', 'globalThis.__worker = {');
+vm.runInThisContext(src, { filename: 'worker.js' });
+let fails = 0;
+const check = (name, ok) => { console.log((ok ? 'PASS ' : 'FAIL ') + name); if (!ok) fails++; };
+(async function () {
+  const sent = [], updates = [];
+  let userStatus = 'active';
+  globalThis.verifyRazorpaySignature = async () => true;
+  globalThis.getFromAirtable = async () => ({ id: 'rec1', fields: { email: 'u@x.com', subscription_status: userStatus } });
+  globalThis.updateAirtable = async (t, id, f) => { updates.push(f); };
+  globalThis.sendResendEmail = async (m) => { sent.push(m); };
+  const fire = async (ev, noSub) => {
+    sent.length = 0; updates.length = 0;
+    const payload = noSub ? { payment: { entity: { id: 'pay_1' } } } : { subscription: { entity: { id: 'sub_1', notes: { vantage_user_id: 'user_1' } } } };
+    const req = { text: async () => JSON.stringify({ event: ev, payload }), headers: { get: () => 'sig' } };
+    return (await handleRazorpayWebhook(req, { RAZORPAY_WEBHOOK_SECRET: 'x' })).status;
+  };
+  userStatus = 'active';
+  check('pending: 200', (await fire('subscription.pending')) === 200);
+  check('pending: one warning email to the user, no status change', sent.length === 1 && sent[0].to === 'u@x.com' && /did not go through/.test(sent[0].subject) && updates.length === 0);
+  check('pending email says access continues', /access continues/.test(sent[0].html));
+  userStatus = 'active';
+  await fire('subscription.halted');
+  check('halted: status set to past_due', updates.length === 1 && updates[0].subscription_status === 'past_due');
+  check('halted: user email plus founder alert', sent.length === 2 && sent[0].to === 'u@x.com' && /paused/.test(sent[0].subject) && sent[1].to === 'kumarvivek.srv@gmail.com');
+  check('halted email links to the subscribe page', /subscribe\.html/.test(sent[0].html));
+  userStatus = 'past_due';
+  await fire('subscription.halted');
+  check('halted repeat: no duplicate emails', sent.length === 0);
+  userStatus = 'active';
+  await fire('subscription.paused');
+  check('paused: status past_due, no payment-failed email', updates.length === 1 && updates[0].subscription_status === 'past_due' && sent.length === 0);
+  userStatus = 'trial';
+  await fire('subscription.pending');
+  check('pending on a non-active user: no email', sent.length === 0);
+  userStatus = 'active';
+  const st = await fire('payment.failed', true);
+  check('payment.failed without a subscription entity: 200, nothing written or sent', st === 200 && sent.length === 0 && updates.length === 0);
+  await fire('subscription.charged');
+  check('charged still sends the payment-received email and sets active', sent.length === 1 && /Payment received/.test(sent[0].subject) && updates[0].subscription_status === 'active');
+  console.log(fails ? 'FAILURES: ' + fails : 'PAYMENT TESTS PASSED');
+  process.exit(fails ? 1 : 0);
+})();
