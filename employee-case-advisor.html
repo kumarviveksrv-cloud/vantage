@@ -79,11 +79,12 @@
     input[type=text]:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
     input[type=text]::placeholder{color:rgba(165,180,252,0.25)}
     .ctc-row{display:flex;gap:10px;flex-wrap:wrap}
-    .ctc-row select,.ctc-row input[type=number]{flex:1 1 200px;min-width:0;padding:14px 16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:12px;color:#f4f3ff;font-family:var(--font), sans-serif;font-size:13px;outline:none;transition:border .2s}
-    .ctc-row select:focus,.ctc-row input[type=number]:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
+    .ctc-row select,.ctc-row input[type=number],.ctc-row input#ctc-exact{flex:0 1 300px;min-width:0;padding:14px 16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:12px;color:#f4f3ff;font-family:var(--font), sans-serif;font-size:13px;outline:none;transition:border .2s}
+    .ctc-row select:focus,.ctc-row input[type=number]:focus,.ctc-row input#ctc-exact:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
     .ctc-row select option{background:#0b0a1c;color:#f4f3ff}
-    .ctc-row input[type=number]::placeholder{color:rgba(165,180,252,0.25)}
-    .privacy-note{font-size:11px;color:var(--dim);margin-top:8px;display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace}
+    .ctc-row input[type=number]::placeholder,.ctc-row input#ctc-exact::placeholder{color:rgba(165,180,252,0.4)}
+    @media(max-width:600px){.ctc-row select,.ctc-row input#ctc-exact{flex:1 1 100%}}
+    .privacy-note{font-size:12px;line-height:1.5;color:rgba(244,243,255,0.62);margin-top:8px;display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace}
     .submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:var(--font), sans-serif;font-weight:800;font-size:15px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.35)}
     .submit-btn:hover{opacity:.88}
     .submit-btn:disabled{opacity:.3;cursor:not-allowed;box-shadow:none}
