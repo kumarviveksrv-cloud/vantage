@@ -120,7 +120,8 @@
 .sm-chip:hover,.sm-chip.hover{background:rgba(99,102,241,.3);border-color:#a5b4fc}\
 .sm-chip i{font-style:normal;color:#FFB547;margin-left:6px}\
 .sm-then-note{font-size:12px;color:rgba(244,243,255,.7);margin:0 0 10px}\
-#sm-check{position:absolute;left:16px;bottom:240px;width:288px;z-index:31;border-radius:14px;padding:12px 14px;background:rgba(13,11,30,.88);border:1px solid rgba(99,102,241,.35);box-shadow:0 18px 50px rgba(0,0,0,.5);pointer-events:none}\
+#sm-check{position:absolute;left:16px;bottom:176px;width:288px;z-index:31;border-radius:14px;padding:12px 14px;background:rgba(13,11,30,.88);border:1px solid rgba(99,102,241,.35);box-shadow:0 18px 50px rgba(0,0,0,.5);pointer-events:none}\
+.sm-nocam #sm-check{bottom:96px}\
 #sm-check-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#c4b5fd}\
 #sm-check-x{pointer-events:auto;cursor:pointer;background:none;border:none;color:rgba(244,243,255,.6);font-size:16px;line-height:1;padding:0 2px}\
 .sm-chk-row{display:flex;gap:9px;align-items:flex-start;margin:0 0 7px;font-size:12px;line-height:1.45;color:rgba(244,243,255,.82)}\
@@ -433,9 +434,10 @@
     st.root.appendChild(o); st.chkEl = o; st.chkOk = 0;
     o.querySelector('#sm-check-x').addEventListener('click', closeCheck);
     checkTick(); st.chkT = setInterval(checkTick, 500);
+    st.chkLife = setTimeout(closeCheck, 25000); /* never lingers: gone after 25s even if something is still flagged */
   }
   function closeCheck() {
-    clearInterval(st.chkT); st.chkT = 0;
+    clearInterval(st.chkT); st.chkT = 0; clearTimeout(st.chkLife); st.chkLife = 0;
     if (st.chkEl) { st.chkEl.remove(); st.chkEl = null; }
   }
 
