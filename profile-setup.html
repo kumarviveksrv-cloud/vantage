@@ -415,6 +415,9 @@
       if (phone) document.getElementById('phone').value = phone;
 
       document.getElementById('sign-out-link').addEventListener('click', async () => {
+        /* Use the shared sign-out so the landing-page flag and cached local data are cleared too. */
+        if (typeof window.clerkSignOut === 'function') { window.clerkSignOut(); return; }
+        try { localStorage.removeItem('vantage_clerk_signed_in'); } catch (e) {}
         await Clerk.signOut();
         window.location.href = 'index.html';
       });
