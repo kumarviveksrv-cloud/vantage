@@ -107,7 +107,9 @@
     .risk-low{background:rgba(244,243,255,0.04);border:1px solid rgba(244,243,255,0.1)}
     .risk-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;color:var(--dim)}
     .risk-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#f4f3ff}
-    .risk-narrative{font-size:13px;color:var(--grey);margin-top:6px;line-height:1.5;max-width:600px}
+    .risk-narrative{font-size:13px;color:var(--grey);margin-top:6px;line-height:1.5}
+    .risk-banner > div:first-child{flex:1;min-width:0;padding-right:28px}
+    @media(max-width:600px){.risk-banner{flex-direction:column;align-items:flex-start;gap:12px}.risk-banner > div:first-child{padding-right:0;width:100%}}
     .risk-badge-lg{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:8px 18px;border-radius:8px;flex-shrink:0}
     .badge-critical{color:#FF4D6D;background:rgba(255,77,109,0.15);border:1px solid rgba(255,77,109,0.3)}
     .badge-high{color:#FFB547;background:rgba(255,181,71,0.15);border:1px solid rgba(255,181,71,0.3)}
