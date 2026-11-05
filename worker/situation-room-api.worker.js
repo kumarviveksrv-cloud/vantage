@@ -2439,6 +2439,53 @@ async function verifyRazorpaySignature(rawBody, signatureHeader, secret) {
   return computedHex === signatureHeader;
 }
 
+/* Checkout proof. After a payment Razorpay gives the buyer's browser razorpay_payment_id, razorpay_subscription_id and
+   razorpay_signature = HMAC-SHA256(payment_id + '|' + subscription_id, key secret). */
+async function verifyRazorpayPaymentSignature(paymentId, subscriptionId, signature, secret) {
+  if (!paymentId || !subscriptionId || !signature || !secret) return false;
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sigBuf = await crypto.subtle.sign('HMAC', key, encoder.encode(paymentId + '|' + subscriptionId));
+  const hex = Array.from(new Uint8Array(sigBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return hex === String(signature).toLowerCase();
+}
+
+/* Activates the signed-in user straight after checkout, so a missing or late webhook can never leave a paying customer on trial.
+   Three checks: the signature is genuine, the subscription is one this Worker created for this user, and Razorpay says it is paid up.
+   The webhook still runs afterwards and sends the welcome email; this path sends none, so nobody gets two. */
+async function handleVerifyRazorpayPayment(body, clerkUserId, env) {
+  const json = (obj, status) => new Response(JSON.stringify(obj), { status: status || 200, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+  const paymentId = body && typeof body.razorpay_payment_id === 'string' ? body.razorpay_payment_id.trim() : '';
+  const subId = body && typeof body.razorpay_subscription_id === 'string' ? body.razorpay_subscription_id.trim() : '';
+  const sig = body && typeof body.razorpay_signature === 'string' ? body.razorpay_signature.trim() : '';
+  if (!paymentId || !subId || !sig) { return json({ success: false, error: 'Missing payment details.' }, 400); }
+  const keyId = (env.RAZORPAY_KEY_ID || '').trim(), keySecret = (env.RAZORPAY_KEY_SECRET || '').trim();
+  if (!keyId || !keySecret) { return json({ success: false, error: 'Payment system not configured.' }, 503); }
+  if (!(await verifyRazorpayPaymentSignature(paymentId, subId, sig, keySecret))) {
+    console.error('verify_razorpay_payment: signature mismatch for user ' + clerkUserId);
+    return json({ success: false, error: 'Payment could not be verified.' }, 400);
+  }
+  let sub;
+  try {
+    const r = await fetch('https://api.razorpay.com/v1/subscriptions/' + encodeURIComponent(subId), { headers: { 'Authorization': 'Basic ' + btoa(keyId + ':' + keySecret) } });
+    if (!r.ok) { console.error('verify_razorpay_payment: subscription lookup failed ' + r.status); return json({ success: false, error: 'Could not confirm the subscription yet. Your access will update shortly.' }, 502); }
+    sub = await r.json();
+  } catch (e) { return json({ success: false, error: 'Could not reach the payment provider. Your access will update shortly.' }, 503); }
+  if (!sub || !sub.notes || sub.notes.vantage_user_id !== clerkUserId) {
+    console.error('verify_razorpay_payment: subscription does not belong to user ' + clerkUserId);
+    return json({ success: false, error: 'Payment could not be verified.' }, 403);
+  }
+  if (sub.status !== 'active' && sub.status !== 'authenticated') {
+    return json({ success: false, error: 'Payment not completed yet. Your access will update shortly.' }, 409);
+  }
+  const userRecord = await ensureUserRow(clerkUserId);
+  if (!userRecord) { return json({ success: false, error: 'Account not found. Please sign out and sign in again.' }, 404); }
+  const fields = { subscription_status: 'active', razorpay_subscription_id: subId };
+  if (sub.current_end) { fields.next_billing_date = sub.current_end * 1000; }
+  await updateAirtable('Users', userRecord.id, fields);
+  return json({ success: true, data: { status: 'active' } });
+}
+
 async function handleRazorpayWebhook(request, env) {
   const rawBody = await request.text();
   const signature = request.headers.get('X-Razorpay-Signature');
@@ -4137,8 +4184,7 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
   console.error('Razorpay subscription creation failed:', errText);
   return new Response(JSON.stringify({ 
     success: false, 
-    error: 'Subscription creation failed. Please try again.',
-    _debug: { kidLen: rzpKeyId.length, secLen: rzpKeySecret.length, rzpErr: errText }
+    error: 'Subscription creation failed. Please try again.'
   }), {
     status: 502, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
   });
@@ -4152,6 +4198,10 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
           keyId: env.RAZORPAY_KEY_ID,
         }
       }), { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+    }
+
+    if (tool === 'verify_razorpay_payment') {
+      return handleVerifyRazorpayPayment(body, clerkUserId, env);
     }
 
         // ── SAVE PROFILE ─────────────────────────────────────────────────────────
