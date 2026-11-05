@@ -180,7 +180,7 @@
             : new Date(plan.next_billing_date).getTime();
           var daysToRenewal = Math.ceil((billingMs - Date.now()) / 86400000);
           if (daysToRenewal > 0) {
-            activeBadge = daysToRenewal + (daysToRenewal === 1 ? ' day' : ' days') + ' left in subscription';
+            activeBadge = daysToRenewal + 'd to renewal';
           }
         }
 
@@ -250,8 +250,8 @@
         var hoursLeft = Math.ceil(msLeft / 3600000);
         var daysLeft = Math.ceil(msLeft / 86400000);
         var badgeStr = hoursLeft <= 36
-          ? (hoursLeft + 'h remaining')
-          : (daysLeft + (daysLeft === 1 ? ' day' : ' days') + ' remaining');
+          ? (hoursLeft + 'h left')
+          : (daysLeft + 'd left');
 
         return {
           label: 'Upgrade', href: 'subscribe.html', page: 'subscribe',
