@@ -233,3 +233,8 @@
 @media(max-width:768px){
   .sidebar{ display:none; }
 }
+
+/* Typed-figure fields: no native spin arrows (grey browser control). Typing and keyboard up/down still work. */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{ -webkit-appearance:none; margin:0; }
+input[type=number]{ -moz-appearance:textfield; appearance:textfield; }
