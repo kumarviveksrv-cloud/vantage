@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>/* profile-gate early hold: keep the page hidden until clerk-auth.js confirms the profile; self-releases after 8s */(function(){try{if(/(access|profile-setup|subscribe|pricing)(\.html)?$/.test(location.pathname))return;if(sessionStorage.getItem('vantage_profile_ok')==='1')return;var h=document.documentElement;h.style.visibility='hidden';setTimeout(function(){if(!window.__vantageProfileHold)h.style.visibility='visible';},8000);}catch(e){}})();</script>
 <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>L5 · Human Balance Sheet | Vantage</title>
 <link rel="apple-touch-icon" href="favicon.png"/><link rel="icon" type="image/png" href="favicon.png"/><link rel="shortcut icon" href="favicon.png"/><link rel="manifest" href="manifest.json"/><meta name="theme-color" content="#050410"/>
@@ -348,7 +349,7 @@ function printReport(){var prev=document.title;document.title='L5 Human Balance 
 function setScenario(s){scenario=s;render();}
 render();
 </script>
-<script src="clerk-auth.js?v=20261103a"></script>
+<script src="clerk-auth.js?v=20261105a"></script>
 <script src="sidebar-shared.js?v=20261104b"></script>
 </body>
 </html>

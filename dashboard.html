@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
+<script>/* profile-gate early hold: keep the page hidden until clerk-auth.js confirms the profile; self-releases after 8s */(function(){try{if(/(access|profile-setup|subscribe|pricing)(\.html)?$/.test(location.pathname))return;if(sessionStorage.getItem('vantage_profile_ok')==='1')return;var h=document.documentElement;h.style.visibility='hidden';setTimeout(function(){if(!window.__vantageProfileHold)h.style.visibility='visible';},8000);}catch(e){}})();</script> 
   <link rel="apple-touch-icon" href="favicon.png"/>
   <link rel="icon" type="image/png" href="favicon.png"/>
   <link rel="shortcut icon" href="favicon.png"/>
@@ -1285,7 +1286,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
     })();
   </script>
 
-    <script src="clerk-auth.js?v=20261103a"></script>
+    <script src="clerk-auth.js?v=20261105a"></script>
   <script src="sidebar-shared.js?v=20261104b"></script>
 
   <script>
