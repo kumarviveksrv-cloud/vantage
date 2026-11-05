@@ -514,9 +514,10 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
               <option value="1Cr to 2Cr">Rs.1Cr to 2Cr</option>
               <option value="2Cr and above">Rs.2Cr and above</option>
             </select>
-            <input type="text" id="ctc-exact" autocomplete="off" inputmode="decimal" maxlength="14" placeholder="Or type exact, e.g. 18.5 or 18.5L (optional)" aria-label="Exact annual CTC in lakh" />
+            <input type="text" id="ctc-exact" autocomplete="off" inputmode="decimal" maxlength="16" placeholder="Or type exact, e.g. 18.5L or 18,50,000 (optional)" aria-label="Exact annual CTC in lakh" />
           </div>
           <div class="privacy-note">&#x1F512; An approximate band is enough. It is used only to model the cost, never with a name. An exact figure, if you enter one, overrides the band.</div>
+          <div class="privacy-note" id="ctc-echo" aria-live="polite" style="display:none;margin-top:4px"></div>
           <label class="form-label" for="role-criticality" style="margin-top:14px">How hard is this role to replace? (optional, Medium if you leave it)</label>
           <div class="ctc-row">
             <select id="role-criticality" aria-label="Role criticality">
@@ -851,12 +852,49 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
 
     document.getElementById('narrative').addEventListener('input', checkSubmit);
     document.getElementById('ctc-band').addEventListener('change', checkSubmit);
-    document.getElementById('ctc-exact').addEventListener('input', checkSubmit);
+    document.getElementById('ctc-exact').addEventListener('input', function () { formatCtcLive(this); updateCtcEcho(); checkSubmit(); });
 
-    /* Reads '18', '18.5', '18L', '18 lakh', '1,8' style input as a number of lakh; returns NaN when unreadable. */
+    /* Exact CTC input. Accepts lakh ('18.5', '18.5L', '18 lakh') or full rupees ('18,50,000'); returns lakh, or NaN. */
     function parseLakh(v) {
-      var t = String(v == null ? '' : v).toLowerCase().replace(/[\s,₹]/g, '').replace(/(lakhs?|lacs?|lpa|l)$/, '');
-      return /^\d+(\.\d+)?$/.test(t) ? parseFloat(t) : NaN;
+      var raw = String(v == null ? '' : v).toLowerCase().replace(/[\s,\u20b9]/g, '');
+      var hasUnit = /(lakhs?|lacs?|lpa|l)$/.test(raw);
+      var t = raw.replace(/(lakhs?|lacs?|lpa|l)$/, '');
+      if (!/^\d+(\.\d+)?$/.test(t)) return NaN;
+      var n = parseFloat(t);
+      if (hasUnit || n <= 1000) return n;      /* plain small numbers are lakh */
+      return n >= 50000 ? n / 100000 : NaN;    /* big numbers are rupees; 1000 to 50000 is unclear */
+    }
+    function indianGroup(digits) {
+      if (digits.length <= 3) return digits;
+      var last3 = digits.slice(-3), rest = digits.slice(0, -3);
+      return rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + last3;
+    }
+    function fmtInr(rupees) { return '\u20b9' + indianGroup(String(Math.round(rupees))); }
+    function updateCtcEcho() {
+      var el = document.getElementById('ctc-exact'), echo = document.getElementById('ctc-echo');
+      if (!el || !echo) return;
+      var raw = el.value.trim();
+      if (!raw) { echo.style.display = 'none'; return; }
+      var lk = parseLakh(raw);
+      echo.style.display = '';
+      if (isFinite(lk) && lk >= 0.5 && lk <= 1000) {
+        echo.textContent = 'Read as ' + fmtInr(lk * 100000) + ' (' + (Math.round(lk * 100) / 100) + ' lakh) a year.';
+      } else {
+        echo.textContent = 'Not readable yet. Try 18.5L, or the full amount like 18,50,000.';
+      }
+    }
+    /* Live Indian comma grouping while typing plain digits; leaves 'L' or 'lakh' entries alone. */
+    function formatCtcLive(el) {
+      var v = el.value;
+      if (/[a-z]/i.test(v)) return;
+      var caret = el.selectionStart, digitsBefore = v.slice(0, caret).replace(/[^\d.]/g, '').length;
+      var clean = v.replace(/[^\d.]/g, ''), parts = clean.split('.');
+      var out = indianGroup(parts[0]) + (parts.length > 1 ? '.' + parts.slice(1).join('') : '');
+      if (out === v) return;
+      el.value = out;
+      var pos = 0, seen = 0;
+      while (pos < out.length && seen < digitsBefore) { if (/[\d.]/.test(out.charAt(pos))) seen++; pos++; }
+      try { el.setSelectionRange(pos, pos); } catch (e) {}
     }
     function checkSubmit() {
       var _len = document.getElementById('narrative').value.trim().length;
@@ -1379,7 +1417,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       document.getElementById('narrative').value = '';
       document.getElementById('stakeholders').value = '';
       var _cb = document.getElementById('ctc-band'); if (_cb) { _cb.value = ''; }
-      var _ce = document.getElementById('ctc-exact'); if (_ce) { _ce.value = ''; }
+      var _ce = document.getElementById('ctc-exact'); if (_ce) { _ce.value = ''; } if (typeof updateCtcEcho === 'function') { updateCtcEcho(); }
       var _rc = document.getElementById('role-criticality'); if (_rc) { _rc.value = 'Medium'; }
       document.querySelectorAll('.case-type-btn').forEach(function(b){ b.classList.remove('selected'); });
       updateCaseTypeSummary();
