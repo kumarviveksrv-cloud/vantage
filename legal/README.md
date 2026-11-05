@@ -14,6 +14,15 @@ the actual statutory text when answering PACT and Policy Advisor questions.
 | `social-security-gratuity-2020.txt` | Code on Social Security 2020, Chapter V (gratuity) | ADDED 3 Nov 2026. Sections 53 to 56 plus 1(4), First Schedule entry and 164, verbatim. Replaces the Payment of Gratuity Act 1972. |
 | `indian-contract-act-1872.txt` | Indian Contract Act 1872 | ADDED 3 Nov 2026. Selected sections only (15, 16, 23, 27, 73, 74), text from India Code. Optional: the Worker loads it for notice, bond, restraint, recovery and poaching cases, and skips it silently if the file is ever removed |
 
+## Full-text archive (added 5 Nov 2026)
+
+`legal/full/` holds the whole of six Acts (Wages, IR, Social Security, OSH, POSH, Contract), extracted from the India Code PDFs kept in
+`legal/source-pdfs/`. See `legal/full/MANIFEST.md` for versions, the extraction method and the check that proved nothing was lost.
+Nothing in `legal/full/` is loaded by the Worker yet. It is the source of truth that the curated files above are drawn from, and the
+starting point for loading the right sections per question (the whole set is about 277,000 tokens, too large to load at once).
+
+The OSH Code, which the library did not have before, is in `legal/full/osh-code-2020.txt` (it carries overtime, working hours and contract-labour licensing).
+
 ## How the Worker uses these
 
 1. User asks a Policy Advisor or PACT question
