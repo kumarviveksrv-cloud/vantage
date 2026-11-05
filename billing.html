@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <title>Billing — Vantage</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <link rel="stylesheet" href="vantage-theme.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font), sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px env(safe-area-inset-bottom, 0px);
+      padding-top: calc(32px + env(safe-area-inset-top, 0px));
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 36px; text-decoration: none; }
+
+    #auth-loading { color: var(--grey); font-size: 14px; text-align: center; }
+    #page-content { display: none; width: 100%; max-width: 480px; }
+
+    .billing-card {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--teal-border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .card-top-line { height: 2px; background: linear-gradient(90deg, transparent, #6366f1, #7c3aed, transparent); }
+    .card-body { padding: 36px 36px 32px; }
+
+    .plan-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px;
+    }
+    .plan-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px; font-weight: 600; color: var(--white);
+      margin-bottom: 14px; line-height: 1.2;
+    }
+
+    .status-pill {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px; margin-bottom: 18px;
+    }
+    .status-pill.ok   { background: rgba(74,222,128,0.12); color: rgba(74,222,128,0.9); border: 1px solid rgba(74,222,128,0.25); }
+    .status-pill.warn { background: rgba(251,191,36,0.10); color: rgba(251,191,36,0.9); border: 1px solid rgba(251,191,36,0.28); }
+    .status-pill.bad  { background: rgba(255,77,109,0.10); color: var(--red); border: 1px solid rgba(255,77,109,0.25); }
+
+    .fact-row {
+      display: flex; justify-content: space-between; gap: 16px;
+      padding: 12px 0; border-top: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .fact-row .k { color: var(--grey); }
+    .fact-row .v { color: var(--white); font-weight: 600; text-align: right; }
+
+    .lead { font-size: 14px; line-height: 1.65; color: rgba(244,243,255,0.78); margin: 14px 0 20px; }
+
+    .btn {
+      width: 100%; padding: 14px 20px; border-radius: 8px;
+      font-family: var(--font), sans-serif; font-weight: 700; font-size: 15px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      text-decoration: none; margin-top: 12px; transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary { background: linear-gradient(135deg, #6366f1, #7c3aed); color: #fff; border: none; box-shadow: 0 4px 24px rgba(99,102,241,0.4); }
+    .btn-primary:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
+    .btn-cancel { background: transparent; color: #fca5a5; border: 1px solid rgba(248,113,113,0.55); }
+    .btn-cancel:hover:not(:disabled) { background: rgba(248,113,113,0.08); }
+    .btn-ghost { background: transparent; color: var(--white); border: 1px solid var(--teal-border); }
+    .btn-ghost:hover:not(:disabled) { background: rgba(99,102,241,0.08); }
+
+    .confirm-box {
+      margin-top: 16px; padding: 18px; border-radius: 10px;
+      background: rgba(248,113,113,0.06); border: 1px solid rgba(248,113,113,0.3);
+    }
+    .confirm-box h2 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .confirm-box p { font-size: 13px; line-height: 1.6; color: rgba(244,243,255,0.78); }
+
+    .msg { margin-top: 16px; padding: 12px 14px; border-radius: 8px; font-size: 13px; line-height: 1.55; }
+    .msg.error { background: rgba(255,77,109,0.10); border: 1px solid rgba(255,77,109,0.25); color: var(--red); }
+    .msg.good  { background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.25); color: rgba(187,247,208,0.95); }
+
+    .help { margin-top: 22px; font-size: 12px; line-height: 1.6; color: rgba(244,243,255,0.4); text-align: center; }
+    .help a, .page-footer a { color: rgba(165,180,252,0.6); text-decoration: none; }
+    .help a:hover, .page-footer a:hover { color: var(--muted); }
+    .page-footer { margin-top: 20px; font-size: 12px; color: rgba(244,243,255,0.25); text-align: center; }
+
+    .btn:focus-visible { outline: 2px solid #a5b4fc; outline-offset: 2px; }
+
+    @media (max-width: 520px) {
+      .card-body { padding: 28px 20px 24px; }
+      .plan-name { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="brand" href="index.html">
+    <img src="virorah-vantage-logo.png" alt="Virorah Vantage" style="height:48px;width:auto;display:block;">
+  </a>
+
+  <div id="auth-loading">Loading...</div>
+
+  <div id="page-content">
+    <div class="billing-card">
+      <div class="card-top-line"></div>
+      <div class="card-body">
+        <div class="plan-label">Billing</div>
+        <div class="plan-name" id="plan-name">Your subscription</div>
+        <div id="state-area" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="help">
+      Need help with billing? Write to <a href="mailto:info@virorah.com">info@virorah.com</a>.
+    </div>
+    <div class="page-footer">
+      <a href="dashboard.html">Back to dashboard</a> &nbsp;&bull;&nbsp;
+      <a href="terms.html">Terms</a> &nbsp;&bull;&nbsp;
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </div>
+
+  <script>
+    try { sessionStorage.setItem('sr_access', 'true'); } catch (e) {}
+
+    const WORKER_URL = 'https://situation-room-api.kumarvivek-srv.workers.dev/';
+
+    function esc(t) {
+      return String(t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
+    }
+    function fmtDate(ms) {
+      return new Date(ms).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' });
+    }
+    function toMs(v) {
+      if (!v) return 0;
+      var n = typeof v === 'number' ? v : new Date(v).getTime();
+      return isFinite(n) ? n : 0;
+    }
+
+    async function waitForClerk() {
+      return new Promise(function (resolve) {
+        if (window.Clerk) { resolve(window.Clerk); return; }
+        var interval = setInterval(function () {
+          if (window.Clerk) { clearInterval(interval); resolve(window.Clerk); }
+        }, 50);
+        setTimeout(function () { clearInterval(interval); resolve(null); }, 10000);
+      });
+    }
+
+    async function callWorker(Clerk, tool) {
+      var token = await Clerk.session.getToken();
+      var res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ tool: tool })
+      });
+      return res.json();
+    }
+
+    function area() { return document.getElementById('state-area'); }
+
+    function renderActive(Clerk, d) {
+      var endMs = toMs(d.next_billing_date);
+      var endTxt = endMs ? fmtDate(endMs) : 'the end of your current billing period';
+      area().innerHTML =
+        '<span class="status-pill ok">Active</span>' +
+        '<div class="fact-row"><span class="k">Plan</span><span class="v">Vantage Core, &#8377;799 / month</span></div>' +
+        (endMs ? '<div class="fact-row"><span class="k">Next charge</span><span class="v">' + esc(endTxt) + '</span></div>' : '') +
+        '<p class="lead">You can cancel at any time. If you cancel, you will not be charged again and you keep full access until ' + esc(endTxt) + '.</p>' +
+        '<button type="button" class="btn btn-cancel" id="cancel-btn">Cancel subscription</button>' +
+        '<div class="confirm-box" id="confirm-box" hidden>' +
+          '<h2>Cancel your subscription?</h2>' +
+          '<p>You will not be charged again. You keep full access until ' + esc(endTxt) + ', and your MERIDIAN profile, Humac Score and case record stay in your account.</p>' +
+          '<button type="button" class="btn btn-cancel" id="confirm-cancel-btn">Yes, cancel my subscription</button>' +
+          '<button type="button" class="btn btn-ghost" id="keep-btn">Keep my subscription</button>' +
+        '</div>' +
+        '<div id="result-area" role="status"></div>';
+
+      var box = document.getElementById('confirm-box');
+      var cancelBtn = document.getElementById('cancel-btn');
+      var confirmBtn = document.getElementById('confirm-cancel-btn');
+      var keepBtn = document.getElementById('keep-btn');
+      cancelBtn.addEventListener('click', function () {
+        box.hidden = false; cancelBtn.hidden = true; keepBtn.focus();
+      });
+      keepBtn.addEventListener('click', function () {
+        box.hidden = true; cancelBtn.hidden = false; cancelBtn.focus();
+        document.getElementById('result-area').innerHTML = '';
+      });
+      confirmBtn.addEventListener('click', async function () {
+        var result = document.getElementById('result-area');
+        confirmBtn.disabled = true; keepBtn.disabled = true;
+        confirmBtn.textContent = 'Cancelling...';
+        result.innerHTML = '';
+        try {
+          var out = await callWorker(Clerk, 'cancel_subscription');
+          if (out && out.success) {
+            renderCancelled({ next_billing_date: (out.data && out.data.accessUntil) || endMs, immediate: !!(out.data && out.data.immediate), justNow: true });
+            return;
+          }
+          confirmBtn.disabled = false; keepBtn.disabled = false; confirmBtn.textContent = 'Yes, cancel my subscription';
+          result.innerHTML = '<div class="msg error">' + esc((out && out.error) || 'Something went wrong. Please try again, or write to info@virorah.com and we will cancel it for you.') + '</div>';
+        } catch (e) {
+          confirmBtn.disabled = false; keepBtn.disabled = false; confirmBtn.textContent = 'Yes, cancel my subscription';
+          result.innerHTML = '<div class="msg error">We could not reach the server. Please try again, or write to info@virorah.com and we will cancel it for you.</div>';
+        }
+      });
+    }
+
+    function renderCancelled(d) {
+      var endMs = toMs(d.next_billing_date);
+      var endTxt = endMs ? fmtDate(endMs) : 'the end of your current billing period';
+      var lead = d.immediate
+        ? 'Your subscription is cancelled and you will not be charged again.'
+        : 'You will not be charged again. You keep full access until ' + esc(endTxt) + '.';
+      area().innerHTML =
+        '<span class="status-pill warn">' + (d.immediate ? 'Cancelled' : 'Cancelled, access continues') + '</span>' +
+        (d.justNow ? '<div class="msg good">Done. Your subscription is cancelled. A confirmation email is on its way.</div>' : '') +
+        '<p class="lead">' + lead + (d.immediate ? '' : ' After that you can resubscribe from this page whenever you like, and everything in your account will still be there.') + '</p>' +
+        (d.immediate ? '<a class="btn btn-primary" href="subscribe.html?reason=cancelled">Resubscribe</a>' : '') +
+        '<a class="btn btn-ghost" href="dashboard.html">Back to dashboard</a>';
+    }
+
+    function renderLapsed(d) {
+      var pastDue = d.subscription_status === 'past_due';
+      area().innerHTML =
+        '<span class="status-pill bad">' + (pastDue ? 'Payment problem' : 'Cancelled') + '</span>' +
+        '<p class="lead">' + (pastDue
+          ? 'Your last payment did not go through, so access is paused. Nothing is lost. Resubscribe and everything comes back exactly as you left it.'
+          : 'Your subscription is cancelled and you are not being charged. You can resubscribe at any time and everything in your account is still there.') + '</p>' +
+        '<a class="btn btn-primary" href="subscribe.html?reason=' + (pastDue ? 'past_due' : 'cancelled') + '">Resubscribe &#8377;799/month</a>';
+    }
+
+    function renderNoPlan(d) {
+      area().innerHTML =
+        '<span class="status-pill warn">No paid plan</span>' +
+        '<p class="lead">You are on the free trial. No card is needed for the trial, and nothing is being charged. You can subscribe whenever you are ready, and cancel in one click from this page.</p>' +
+        '<a class="btn btn-primary" href="subscribe.html">See the plan</a>' +
+        '<a class="btn btn-ghost" href="dashboard.html">Back to dashboard</a>';
+    }
+
+    async function init() {
+      var Clerk = await waitForClerk();
+      if (!Clerk) { document.getElementById('auth-loading').textContent = 'Could not load authentication. Please refresh.'; return; }
+      await Clerk.load();
+      if (!Clerk.user) {
+        window.location.replace('https://vantage.virorah.com/access.html?redirect_url=' + encodeURIComponent('https://vantage.virorah.com/billing.html'));
+        return;
+      }
+      document.getElementById('auth-loading').style.display = 'none';
+      document.getElementById('page-content').style.display = 'block';
+
+      try {
+        var out = await callWorker(Clerk, 'get_plan');
+        var d = out && out.success && out.data;
+        if (!d) { throw new Error('no plan'); }
+        if (d.subscription_status === 'active') {
+          if (d.cancel_at_period_end) { renderCancelled({ next_billing_date: d.next_billing_date, immediate: false }); }
+          else { renderActive(Clerk, d); }
+        } else if (d.subscription_status === 'past_due' || d.subscription_status === 'cancelled') {
+          renderLapsed(d);
+        } else {
+          renderNoPlan(d);
+        }
+      } catch (e) {
+        area().innerHTML = '<div class="msg error">We could not load your billing details. Please refresh, or write to info@virorah.com and we will help right away.</div>';
+      }
+    }
+
+    init();
+  </script>
+
+  <script src="clerk-auth.js?v=20261105b"></script>
+</body>
+</html>

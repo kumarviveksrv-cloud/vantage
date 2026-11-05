@@ -857,6 +857,22 @@ function buildPaymentFailedEmail(stage) {
     : `<div style="font-size:13px;color:rgba(244,243,255,0.68);line-height:1.75;margin-bottom:24px">If you think this is a mistake, write to info@virorah.com and we will look into it.</div>`;
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vantage payment</title></head><body style="margin:0;padding:0;background:#050410;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"><div style="max-width:600px;margin:0 auto;padding:32px 24px"><div style="border-bottom:1px solid rgba(99,102,241,0.2);padding-bottom:20px;margin-bottom:24px"><div style="font-size:18px;font-weight:700;color:#f4f3ff;letter-spacing:-0.01em">VIRORAH <span style="color:#6366f1">Vantage</span></div><div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#a5b4fc;margin-top:4px">${label}</div></div><div style="font-size:20px;font-weight:700;color:#f4f3ff;margin-bottom:12px;line-height:1.3">${heading}</div><div style="font-size:13px;color:rgba(244,243,255,0.68);line-height:1.75;margin-bottom:24px">${body}</div>${ctaBlock}<div style="font-size:11px;color:rgba(244,243,255,0.25);border-top:1px solid rgba(99,102,241,0.1);padding-top:16px;line-height:1.6">Virorah Vantage. People decisions are financial decisions.<br>You are receiving this because you have a Vantage subscription.</div></div></body></html>`;
 }
+function buildCancellationEmail(accessUntil) {
+  const heading = 'Your subscription is cancelled.';
+  const body = accessUntil
+    ? 'We have cancelled your Vantage subscription, and you will not be charged again. You keep full access until the end of the period you have already paid for. Your MERIDIAN context, Humac Score history and case record stay in your account.'
+    : 'We have cancelled your Vantage subscription, and you will not be charged again. Your MERIDIAN context, Humac Score history and case record stay in your account.';
+  const accessBlock = accessUntil
+    ? `<div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:8px;padding:16px;margin-bottom:24px"><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(244,243,255,0.4);margin-bottom:4px">Full access until</div><div style="font-size:15px;font-weight:600;color:#a5b4fc">${accessUntil}</div></div>`
+    : '';
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vantage subscription cancelled</title></head><body style="margin:0;padding:0;background:#050410;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"><div style="max-width:600px;margin:0 auto;padding:32px 24px"><div style="border-bottom:1px solid rgba(99,102,241,0.2);padding-bottom:20px;margin-bottom:24px"><div style="font-size:18px;font-weight:700;color:#f4f3ff;letter-spacing:-0.01em">VIRORAH <span style="color:#6366f1">Vantage</span></div><div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#a5b4fc;margin-top:4px">Subscription Cancelled</div></div><div style="font-size:20px;font-weight:700;color:#f4f3ff;margin-bottom:12px;line-height:1.3">${heading}</div><div style="font-size:13px;color:rgba(244,243,255,0.68);line-height:1.75;margin-bottom:24px">${body}</div>${accessBlock}<div style="font-size:13px;color:rgba(244,243,255,0.68);line-height:1.75;margin-bottom:24px">If you ever want to come back, you can resubscribe from the Billing page and everything is exactly where you left it. If this was a mistake or you were charged after cancelling, write to info@virorah.com and we will sort it out.</div><div style="font-size:11px;color:rgba(244,243,255,0.25);border-top:1px solid rgba(99,102,241,0.1);padding-top:16px;line-height:1.6">Virorah Vantage. People decisions are financial decisions.<br>You are receiving this because you cancelled your Vantage subscription.</div></div></body></html>`;
+}
+function buildRenewalReminderEmail(renewalDate) {
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Your Vantage subscription renews soon</title></head><body style="margin:0;padding:0;background:#050410;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"><div style="max-width:600px;margin:0 auto;padding:32px 24px"><div style="border-bottom:1px solid rgba(99,102,241,0.2);padding-bottom:20px;margin-bottom:24px"><div style="font-size:18px;font-weight:700;color:#f4f3ff;letter-spacing:-0.01em">VIRORAH <span style="color:#6366f1">Vantage</span></div><div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#a5b4fc;margin-top:4px">Renewal Reminder</div></div><div style="font-size:20px;font-weight:700;color:#f4f3ff;margin-bottom:12px;line-height:1.3">Your Vantage subscription renews on ${renewalDate}.</div><div style="font-size:13px;color:rgba(244,243,255,0.68);line-height:1.75;margin-bottom:24px">This is a heads-up so nothing surprises you. &#8377;799 will be charged on ${renewalDate} to the payment method you used when you subscribed, and your access continues without a break.</div><div style="font-size:13px;color:rgba(244,243,255,0.68);line-height:1.75;margin-bottom:24px">If you do not want to continue, you can cancel in one click from the Billing page. No reason needed, and you keep full access until ${renewalDate}.</div><a href="https://vantage.virorah.com/billing.html" style="display:block;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:700;font-size:14px;text-align:center;margin-bottom:24px">View or cancel my subscription</a><div style="font-size:11px;color:rgba(244,243,255,0.25);border-top:1px solid rgba(99,102,241,0.1);padding-top:16px;line-height:1.6">Virorah Vantage. People decisions are financial decisions.<br>You are receiving this because you have an active Vantage subscription.</div></div></body></html>`;
+}
+function _formatBillingDate(ms) {
+  return new Date(ms).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' });
+}
 function buildCheckinReminderEmail() {
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Your Humac Score check-in is due</title></head><body style="margin:0;padding:0;background:#050410;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"><div style="max-width:600px;margin:0 auto;padding:32px 24px"><div style="border-bottom:1px solid rgba(99,102,241,0.2);padding-bottom:20px;margin-bottom:24px"><div style="font-size:18px;font-weight:700;color:#f4f3ff;letter-spacing:-0.01em">VIRORAH <span style="color:#6366f1">Vantage</span></div><div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#a5b4fc;margin-top:4px">Quarterly Check-In</div></div><div style="font-size:20px;font-weight:700;color:#f4f3ff;margin-bottom:12px;line-height:1.3">Your Humac Score check-in is due.</div><div style="font-size:13px;color:rgba(244,243,255,0.68);line-height:1.75;margin-bottom:20px">Your Humac Score reflects your organisation's current people-financial health. It is not fixed. It moves as your org changes. Running a check-in takes about five minutes and shows you where things stand now compared to where they stood last time.</div><div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.18);border-left:3px solid #6366f1;border-radius:8px;padding:18px;margin:0 0 24px;font-size:13px;color:rgba(244,243,255,0.70);line-height:1.7;font-style:italic">The Humac Score is a planning index, not a report card. It is most useful as a trend. The only way to see the trend is to run the check-in.</div><a href="https://vantage.virorah.com/humac-checkin.html" style="display:block;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:700;font-size:14px;text-align:center;margin-bottom:24px">Run my check-in</a><div style="font-size:11px;color:rgba(244,243,255,0.25);border-top:1px solid rgba(99,102,241,0.1);padding-top:16px;line-height:1.6">Virorah Vantage. People decisions are financial decisions.<br>You are receiving this because you have an active Vantage subscription.</div></div></body></html>`;
 }
@@ -2482,8 +2498,87 @@ async function handleVerifyRazorpayPayment(body, clerkUserId, env) {
   if (!userRecord) { return json({ success: false, error: 'Account not found. Please sign out and sign in again.' }, 404); }
   const fields = { subscription_status: 'active', razorpay_subscription_id: subId };
   if (sub.current_end) { fields.next_billing_date = sub.current_end * 1000; }
+  if (userRecord.fields && userRecord.fields.cancel_at_period_end) { fields.cancel_at_period_end = false; }
   await updateAirtable('Users', userRecord.id, fields);
   return json({ success: true, data: { status: 'active' } });
+}
+
+/* Cancel. The period already paid for is honoured: an active subscription is cancelled at the end of the current cycle, so the
+   promise "you keep access until the end of your billing period" and "you will not be charged again" both hold. The Users row stays
+   active, with cancel_at_period_end set, until next_billing_date passes. A subscription that is not running (for example payment
+   failed and Razorpay halted it) is cancelled straight away, because there is no paid period to honour. */
+async function handleCancelSubscription(clerkUserId, env) {
+  const json = (obj, status) => new Response(JSON.stringify(obj), { status: status || 200, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+  const keyId = (env.RAZORPAY_KEY_ID || '').trim(), keySecret = (env.RAZORPAY_KEY_SECRET || '').trim();
+  const HELP = ' You can also write to info@virorah.com and we will cancel it for you within one working day.';
+  if (!keyId || !keySecret) { return json({ success: false, error: 'Cancellation is not available right now.' + HELP }, 503); }
+  const rec = await getFromAirtable('Users', `{user_id}="${escapeAirtableString(clerkUserId)}"`);
+  if (!rec) { return json({ success: false, error: 'Account not found. Please sign out and sign in again.' }, 404); }
+  const f = rec.fields || {};
+  const subId = f.razorpay_subscription_id || '';
+  const status = f.subscription_status || '';
+  if (!subId || (status !== 'active' && status !== 'past_due')) { return json({ success: false, error: 'There is no active subscription to cancel.' }, 400); }
+  if (status === 'active' && f.cancel_at_period_end) {
+    return json({ success: true, data: { cancelled: true, immediate: false, accessUntil: Number(f.next_billing_date) || null, already: true } });
+  }
+  const auth = 'Basic ' + btoa(keyId + ':' + keySecret);
+  const base = 'https://api.razorpay.com/v1/subscriptions/' + encodeURIComponent(subId);
+  const fail = (msg) => json({ success: false, error: msg + HELP }, 502);
+  let sub;
+  try {
+    const g = await fetch(base, { headers: { 'Authorization': auth } });
+    if (!g.ok) { console.error('cancel_subscription: lookup failed ' + g.status); return fail('We could not reach the payment provider.'); }
+    sub = await g.json();
+  } catch (e) { return fail('We could not reach the payment provider.'); }
+  if (!sub || !sub.notes || sub.notes.vantage_user_id !== clerkUserId) {
+    console.error('cancel_subscription: subscription does not belong to user ' + clerkUserId);
+    return json({ success: false, error: 'This subscription could not be verified.' + HELP }, 403);
+  }
+  if (sub.status === 'cancelled' || sub.status === 'completed' || sub.status === 'expired') {
+    try { await updateAirtable('Users', rec.id, { subscription_status: 'cancelled' }); } catch (e) { console.error('cancel_subscription: sync failed: ' + e.message); }
+    return json({ success: true, data: { cancelled: true, immediate: true, accessUntil: null, already: true } });
+  }
+  const atCycleEnd = sub.status === 'active';
+  const endMs = sub.current_end ? sub.current_end * 1000 : (Number(f.next_billing_date) || 0);
+  try {
+    const c = await fetch(base + '/cancel', { method: 'POST', headers: { 'Authorization': auth, 'Content-Type': 'application/json' }, body: JSON.stringify({ cancel_at_cycle_end: atCycleEnd ? 1 : 0 }) });
+    if (!c.ok) { console.error('cancel_subscription: Razorpay refused: ' + c.status + ' ' + (await c.text())); return fail('The cancellation did not go through.'); }
+  } catch (e) { return fail('We could not reach the payment provider.'); }
+  try {
+    await updateAirtable('Users', rec.id, atCycleEnd ? { cancel_at_period_end: true } : { subscription_status: 'cancelled' });
+  } catch (e) { console.error('cancel_subscription: cancelled at Razorpay but could not record it: ' + e.message); }
+  if (f.email) {
+    try { await sendResendEmail({ to: f.email, subject: 'Your Vantage subscription is cancelled', html: buildCancellationEmail(atCycleEnd && endMs ? _formatBillingDate(endMs) : null) }); }
+    catch (mailErr) { console.error('cancel email failed: ' + mailErr.message); }
+  }
+  try { await sendResendEmail({ to: 'kumarvivek.srv@gmail.com', subject: 'Vantage: a subscriber cancelled', html: `<p>A subscriber cancelled.</p><p>Account: ${f.email || clerkUserId}</p><p>${atCycleEnd ? 'Access runs until the end of the paid period.' : 'Cancelled immediately (payment was not running).'}</p>` }); }
+  catch (mailErr) { console.error('cancel alert failed: ' + mailErr.message); }
+  return json({ success: true, data: { cancelled: true, immediate: !atCycleEnd, accessUntil: atCycleEnd && endMs ? endMs : null } });
+}
+
+/* Daily-safe housekeeping for paying subscribers. Runs on every cron trigger, so everything here is idempotent.
+   1. A cancellation scheduled for period end becomes final once next_billing_date has passed.
+   2. A renewal reminder goes out once, 3 days (or fewer) before the next charge. The marker renewal_reminder_for is written
+      BEFORE the email is sent, so a failed write can never turn into a reminder on every run. */
+async function runSubscriptionHousekeeping(nowMs) {
+  const now = nowMs || Date.now();
+  const rows = await listFromAirtable('Users', 'AND({subscription_status}="active", {next_billing_date}>0)', 200);
+  for (const rec of rows) {
+    const f = rec.fields || {};
+    const nb = Number(f.next_billing_date);
+    if (!nb) continue;
+    try {
+      if (f.cancel_at_period_end) {
+        if (nb <= now) { await updateAirtable('Users', rec.id, { subscription_status: 'cancelled' }); }
+        continue;
+      }
+      const msToRenewal = nb - now;
+      if (msToRenewal > 0 && msToRenewal <= 3 * 86400000 && f.email && Number(f.renewal_reminder_for) !== nb) {
+        await updateAirtable('Users', rec.id, { renewal_reminder_for: nb });
+        await sendResendEmail({ to: f.email, subject: 'Your Vantage subscription renews on ' + _formatBillingDate(nb), html: buildRenewalReminderEmail(_formatBillingDate(nb)) });
+      }
+    } catch (e) { console.error('subscription housekeeping failed for one user: ' + e.message); }
+  }
 }
 
 async function handleRazorpayWebhook(request, env) {
@@ -2520,6 +2615,12 @@ async function handleRazorpayWebhook(request, env) {
 
   const _prevStatus = userRecord.fields.subscription_status || '';
 
+  /* A cancellation the user asked for is scheduled for the end of the paid period. If Razorpay reports it early, access still runs to
+     next_billing_date; the daily sweep (runSubscriptionHousekeeping) ends it once that date passes. */
+  if (event.event === 'subscription.cancelled' && userRecord.fields.cancel_at_period_end && Number(userRecord.fields.next_billing_date) > Date.now()) {
+    return new Response('OK', { status: 200 });
+  }
+
   if (isPending) {
     /* Heads-up only while the user is still paying and access continues. No status change. */
     if (_prevStatus === 'active' && userRecord.fields.email) {
@@ -2534,6 +2635,7 @@ async function handleRazorpayWebhook(request, env) {
   if ((event.event === 'subscription.activated' || event.event === 'subscription.charged') && subEntity.current_end) {
     _wbFields.next_billing_date = subEntity.current_end * 1000;
   }
+  if ((event.event === 'subscription.activated' || event.event === 'subscription.charged' || event.event === 'subscription.resumed') && userRecord.fields.cancel_at_period_end) { _wbFields.cancel_at_period_end = false; }
   await updateAirtable('Users', userRecord.id, _wbFields);
 
   /* First payment fires both activated and charged within seconds. Welcome email goes on activated only; charged emails are for renewals (paid_count > 1). */
@@ -3660,7 +3762,7 @@ async function handleRequest(request, env) {
         status: 404, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }
-    const gpTrialEnd = gpRecord.fields.trial_end_date || null; const gpExtended = gpTrialEnd && trialExtensionApplies(gpTrialEnd, new Date()); return new Response(JSON.stringify({ success: true, data: { subscription_status: gpRecord.fields.subscription_status || null, next_billing_date: gpRecord.fields.next_billing_date || null, razorpay_subscription_id: gpRecord.fields.razorpay_subscription_id || null, trial_end_date: gpTrialEnd, effective_trial_end: gpExtended ? TRIAL_EXTEND_UNTIL : gpTrialEnd, trial_extended: !!gpExtended, trial_calls_used: gpRecord.fields.trial_calls_used || 0 } }), { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
+    const gpTrialEnd = gpRecord.fields.trial_end_date || null; const gpExtended = gpTrialEnd && trialExtensionApplies(gpTrialEnd, new Date()); return new Response(JSON.stringify({ success: true, data: { subscription_status: gpRecord.fields.subscription_status || null, next_billing_date: gpRecord.fields.next_billing_date || null, cancel_at_period_end: !!gpRecord.fields.cancel_at_period_end, razorpay_subscription_id: gpRecord.fields.razorpay_subscription_id || null, trial_end_date: gpTrialEnd, effective_trial_end: gpExtended ? TRIAL_EXTEND_UNTIL : gpTrialEnd, trial_extended: !!gpExtended, trial_calls_used: gpRecord.fields.trial_calls_used || 0 } }), { headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } });
   }
 
   // ── CTC REQUIRED FOR THE EMPLOYEE CASE ADVISOR ────────────────────────────
@@ -4206,6 +4308,10 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
 
     if (tool === 'verify_razorpay_payment') {
       return handleVerifyRazorpayPayment(body, clerkUserId, env);
+    }
+
+    if (tool === 'cancel_subscription') {
+      return handleCancelSubscription(clerkUserId, env);
     }
 
         // ── SAVE PROFILE ─────────────────────────────────────────────────────────
@@ -5137,6 +5243,9 @@ async function handleScheduled(env) {
       } catch(e) { /* continue with other users */ }
     }
   } catch(e) { /* Ledger table may not exist yet — non-fatal */ }
+
+  // ── SUBSCRIPTIONS: finish scheduled cancellations, send 3-day renewal reminders ──
+  try { await runSubscriptionHousekeeping(); } catch (e) { console.error('Subscription housekeeping error:', e.message); }
 
   // ── ACCOUNT DELETION PURGE — runs every cron trigger, independent of other timing ──
   // Finds every deletion request whose grace period has elapsed and actually

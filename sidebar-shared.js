@@ -185,7 +185,7 @@
         }
 
         return {
-          label: 'Billing', href: 'pricing.html', page: 'pricing',
+          label: 'Billing', href: 'billing.html', page: 'billing',
           badge: activeBadge,
           badgeColor: 'rgba(74,222,128,.85)', badgeBg: 'rgba(74,222,128,.12)'
         };

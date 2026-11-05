@@ -16,7 +16,7 @@
   // ── PROFILE GATE HOLD (starts immediately, before Clerk even loads) ─────────
   // Pages that need a profile stay hidden until the profile check answers, so an incomplete
   // profile never sees even a flash of the dashboard or a tool. Released by _releaseHold().
-  var _profileExempt = /(access|profile-setup|subscribe|pricing)(\.html)?$/.test(window.location.pathname);
+  var _profileExempt = /(access|profile-setup|subscribe|pricing|billing)(\.html)?$/.test(window.location.pathname);
   var _profileKnownOk = false;
   try { _profileKnownOk = sessionStorage.getItem('vantage_profile_ok') === '1'; } catch (e) {}
   if (!_profileExempt && !_profileKnownOk) {
