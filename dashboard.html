@@ -767,6 +767,9 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
     // shows "Set up MERIDIAN" / "Set up ->" for anyone who hasn't done it.
     // Make the header tell the truth too.
     (function(){
+      /* "Welcome back" only for someone with history; a brand-new user just gets "Welcome". */
+      var wl = document.querySelector('.welcome-label');
+      if (wl) wl.textContent = (hasMeridian || hasHumac || hasSavedCase) ? 'Welcome back' : 'Welcome';
       var sub = document.querySelector('.welcome-sub');
       if (!sub) return;
       sub.textContent = hasMeridian
