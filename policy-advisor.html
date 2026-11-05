@@ -741,12 +741,17 @@
       var assessMatch = text.match(/🧠\s*VANTAGE ASSESSMENT\s*([\s\S]*?)(?=⚖️|🎯|💰|$)/i);
       var legalMatch  = text.match(/⚖️\s*LEGAL POSITION\s*([\s\S]*?)(?=🧠|🎯|💰|$)/i);
       var recMatch    = text.match(/🎯\s*RECOMMENDED PATH\s*([\s\S]*?)(?=💰|$)/i);
-      var compMatch   = text.match(/💰\s*COMPLIANCE\s+EXPOSURE:\s*([^\n\r]+)/i);
+      /* Tolerant of how the model dresses the header: "## 💰 **COMPLIANCE EXPOSURE:** ₹4L-₹8L", a bare
+         header with the figure on the next line, colon or dash separators. */
+      var compMatch   = text.match(/💰[\s*#_]*COMPLIANCE\s+EXPOSURE[\s*#_:\u2013\u2014-]*([^\n\r]*(?:\r?\n[ \t]*[^\s\r\n][^\n\r]*)?)/i);
 
       if (assessMatch) sections.assessment = assessMatch[1].trim();
       if (legalMatch)  sections.legal      = legalMatch[1].trim();
       if (recMatch)    sections.recommended = recMatch[1].trim();
-      if (compMatch)   sections.complianceExposure = compMatch[1].trim();
+      if (compMatch) {
+        var _cv = compMatch[1].split(/\r?\n/).map(function (x) { return x.replace(/[*#_]+/g, '').replace(/^[\s:\u2013\u2014-]+|[\s]+$/g, ''); }).filter(Boolean);
+        sections.complianceExposure = _cv.length ? _cv[0] : '';
+      }
 
       if (!sections.assessment && !sections.legal && !sections.recommended) {
         sections.assessment = text.trim();
