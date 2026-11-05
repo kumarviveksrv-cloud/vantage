@@ -689,6 +689,21 @@
       });
       return out.slice(0,8);
     }
+    // Fallback list for devices whose voice names carry no gender hint (Android Chrome exposes
+    // generic names like 'en-in-x-ene-local'). Returns every on-device English voice with its raw
+    // OS name, so the user can pick one that sounds right instead of being stuck on 'Default'.
+    function ariaAnyVoiceList(){
+      var order=['en-IN','en-GB','en-US'];
+      var rank=function(v){var i=order.indexOf(String(v.lang).replace('_','-'));return i<0?order.length:i;};
+      var all=localVoices().filter(function(v){return /^en/i.test(v.lang);});
+      all.sort(function(x,y){return rank(x)-rank(y)||(x.name<y.name?-1:1);});
+      return all.slice(0,12).map(function(v){
+        var lang=String(v.lang).replace('_','-');
+        var short=v.name.length>28?v.name.slice(0,26)+'\u2026':v.name;
+        return {voice:v,label:short+' \u00B7 '+(ARIA_REGION[lang]||lang)};
+      });
+    }
+    var _offeredVoices=[];
     var ariaVoicePitch=1.0;
     function getBestVoice() {
       var list=ariaVoiceList();
@@ -1002,12 +1017,16 @@
         selectedVoiceName = 'auto';
         return;
       }
-      if (!list.length) {
-        sel.innerHTML = '<option value="auto">Default voice (female not available)</option>';
-        selectedVoiceName = 'auto';
-        return;
+      var autoLabel;
+      if (list.length) {
+        autoLabel = 'Auto (' + list[0].label.split(' \u00B7 ')[0] + ')';
+      } else {
+        // No female-named voice on this device. Offer every English voice so the user can pick.
+        list = ariaAnyVoiceList();
+        autoLabel = 'Auto (pitched)';
       }
-      var html = '<option value="auto">Auto (' + list[0].label.split(' \u00B7 ')[0] + ')</option>';
+      _offeredVoices = list;
+      var html = '<option value="auto">' + autoLabel + '</option>';
       list.forEach(function(it) {
         html += '<option value="' + it.voice.name.replace(/"/g, '') + '" title="' + String(it.voice.name).replace(/[&<>"]/g, '') + '">' + it.label + '</option>';
       });
@@ -1075,7 +1094,7 @@
     speak = function(text) {
       var v = null;
       if (selectedVoiceName !== 'auto') {
-        var hit = ariaVoiceList().find(function(it) { return it.voice.name === selectedVoiceName; });
+        var hit = _offeredVoices.find(function(it) { return it.voice.name === selectedVoiceName; });
         v = hit ? hit.voice : null; ariaVoicePitch = 1.0;
       }
       if (!v) v = getBestVoice();
