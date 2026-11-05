@@ -1,0 +1,295 @@
+VERBATIM EXTRACT. Sections copied unaltered from the full texts in legal/full/. Title: Contract labour, licensing, registration: OSH Code ss.3, 7, 45-58, 78-79
+
+=== Occupational Safety, Health and Working Conditions Code, 2020 ===
+   3. Registration of certain establishments.— (1) Every employer of any establishment,—
+        (a) which comes into existence after the commencement of this Code; and
+        (b) to which this Code shall apply,
+   shall, within sixty days from the date of such applicability of this Code, make an application
+   electronically to the registering officer appointed by the appropriate Government (hereinafter referred
+   to as the registering officer) for the registration of such establishment:
+
+      Provided that the registering officer may entertain any such application for registration after the
+   expiry of such period on payment of such late fees as may be prescribed by the appropriate
+   Government.
+      (2) Every application under sub-section (1) shall be submitted to the registering officer in such
+   manner, in such form, containing such particulars including the information relating to the
+   employment of inter-State migrant workers and shall be accompanied by such fees as may be
+   prescribed by the appropriate Government.
+      (3) After the receipt of an application under sub-section (1), the registering officer shall register the
+   establishment and issue a certificate of registration electronically to the employer thereof in such form
+   and within such time and subject to such conditions as may be prescribed by the Central Government:
+      Provided that if the registering officer fails to register an establishment under the application so
+   made or to entertain the application within the prescribed period, then, such establishment shall be
+   deemed to have been registered under this Code immediately on the expiration of such period and the
+   electronic certificate of registration shall be auto generated and the responsibility of such failure shall
+   be on the registering officer.
+     (4) Any change in the ownership or management or in any particulars referred to in sub-section (2)
+   which occurs after the registration of an establishment under this Code, shall be intimated by the
+   employer electronically to the registering officer within thirty days of such change in such form as
+
+   may be prescribed by the Central Government and thereafter the registering officer shall make
+
+   amendment in the certificate of registration electronically in such manner as may be prescribed by the
+   Central Government.
+      (5) The employer of an establishment shall, within thirty days of the closing of the establishment—
+
+        (a) inform the closing of such establishment; and
+
+        (b) certify payment of all dues to the workers employed in such establishment,
+to the registering officer in such manner as may be prescribed by the Central Government and the
+registering officer shall, on receiving such information and certificate remove such establishment from the
+register of establishments maintained by him and cancel the registration certificate of the establishment
+within sixty days from the receipt of such information:
+        Provided that if the registering officer fails to cancel the registration certification of the
+   establishment under this sub-section within such sixty days, then, the registration certificate of such
+   establishment shall be deemed to have been cancelled under this Code immediately on the expiration
+   of such period of sixty days and the cancellation of registration certificate shall be auto generated and
+   the responsibility of such failure shall be on the registering officer.
+   (6) If an employer of an establishment—
+     (a) has obtained the registration of his establishment by misrepresentation or suppression of any
+   material fact, or
+      (b) has obtained the registration of his establishment so fraudulently or otherwise that the
+   registration has become useless or ineffective to run the establishment,
+then, in case of clause (a) such misrepresentation or suppression of any material fact shall be deemed to
+be the contravention of the provisions of this Code for prosecution of the employer under section 94
+without affecting the registration and running of the establishment and in case of clause (b) the registering
+officer may, after giving an opportunity to the employer of the establishment to be heard, revoke the
+registration by an order and such process for revocation shall be completed by the registering officer
+within sixty days from coming into his notice the facts specified in clause (b).
+   (7) No employer of an establishment who—
+        (a) has not registered the establishment under this section; or
+
+        (b) has not preferred appeal under section 4 against the cancellation of the registration
+        certificate of the establishment under sub-section (5) or revocation of the registration of the
+        establishment under sub-section (6) or the appeal so preferred has been dismissed,
+shall employ any employee in the establishment.
+   (8) Notwithstanding anything contained in this Code, where any establishment, to which this Code
+applies, has already been registered under any—
+        (a) Central Labour law; or
+        (b) any other law which may be notified by the Central Government and which applies to the
+        establishment which is in existence at the time of the commencement of this Code,
+shall be deemed to have been registered under the provisions of this Code, subject to the condition that
+the registration holder provides the details of registration to the concerned registering officer within such
+time and in such form as may be prescribed.
+
+   7. Duties and responsibilities of owner, agent and manager in relation to mine.—(1) The owner
+and agent of every mine shall jointly and severally be responsible for making financial and other
+provisions and for taking such other steps as may be necessary for compliance with the provisions of this
+Code and the rules, regulations, bye-laws and orders made thereunder, relating to mine.
+
+   (2) In the event of any contravention by any person whosoever of any of the provisions of this Code or
+of the rules, regulations, bye-laws or orders made thereunder, relating to mine, except those which
+specifically require any person to do any act or thing or prohibit any person from doing an act or thing,
+besides the person who contravenes, then, each of the following persons shall also be deemed to be guilty
+of such contravention unless he proves that he had used due diligence to secure compliance with the
+provisions and had taken reasonable means to prevent such contravention, namely:—
+      (a) the official or officials appointed to perform duties of supervision in respect of the provisions
+   contravened;
+      (b) the manager of the mine;
+      (c) the owner and agent of the mine;
+      (d) the person appointed, if any, to carry out the responsibility under section 24.
+   (3) It shall not be a defence in any proceedings brought against the owner or agent of a mine under this
+section that the manager and other officials have been appointed in accordance with the provisions of this
+Code or that a person to carry the responsibility under section 24 has been appointed.
+
+   45. Applicability of this Part.—(1) This Part shall apply to—
+        (i) every establishment in which fifty or more contract labour are employed or were employed
+      on any day of the preceding twelve months through contract;
+        (ii) every manpower supply contractor who has employed, on any day of the preceding twelve
+      months, fifty or more contract labour.
+      (2) This Part shall not apply to the establishment in which work only of an intermittent or casual
+   nature is performed:
+       Provided that if a question arises as to whether work performed in an establishment is of an
+   intermittent or casual nature, the appropriate Government shall decide that question after consultation
+   with the National Board or a State Advisory Board and its decision thereon shall be final.
+      Explanation.—For the purpose of this sub-section, work performed in an establishment shall not be
+   deemed to be of an intermittent nature—
+
+        (i) if it was performed for more than one hundred and twenty days in the preceding twelve
+      months; or
+        (ii) if it is of seasonal character and is performed for more than sixty days in a year.
+
+   46. Appointment of designated authority.—The appropriate Government may, by an order, appoint
+such persons, being Gazetted officers of the Government, as it thinks fit to be designated as authority
+under sub-section (1) of section 119 and specify the limits of their jurisdiction and vest with such powers
+and duties including dealing with issuance and revocation of licences electronically as may be specified
+therein.
+
+   47. Licensing of contractors.—(1) No contractor to whom this Part applies shall—
+        (a) supply or engage contract labour in any establishment; or
+        (b) undertake or execute the work through contract labour,
+except under and in accordance with a licence issued to him by the authority referred to in sub-section (1)
+of section 119 in accordance with the provisions of that section after satisfying that the contractor fulfills
+such requisite qualifications or criteria as may be prescribed by the Central Government and such licence
+shall, in addition to the requisite particulars and conditions specified in sub-section (3), specify the
+number of such contract labour who can be supplied or engaged and the amount of security to be
+deposited by the contractor.
+    (2) Where the contractor does not fulfil the requisite qualifications or criteria referred to in
+sub-section (1), the authority referred to in sub-section (1) of section 119 may issue him a “work specific
+licence” electronically renewable within such period as may be prescribed by the Central Government to
+supply or engage the contract labour, or execute the work through contract labour, only for the concerned
+work order as may be specified in such licence and subject to such conditions as may be specified in such
+licence.
+   (3) Subject to the provisions of this Part,—
+      (a) a licence under sub-section (1) may contain such conditions including, in particular, conditions
+   as to hours of work, fixation of wages and other essential amenities in respect of contract labour as
+   may be prescribed by the appropriate Government;
+      (b) the licence referred to in sub-section (1) or sub-section (2), shall be obtained from, if for such
+   establishment the appropriate Government is—
+
+        (i) the Central Government, the authority referred to in sub-section (1) of section 119 designated
+      by that Government; and
+        (ii) the State Government, the authority referred to in sub-section (1) of section 119 designated
+      by that Government:
+    Provided that where the contractor is desirous of obtaining licence for supplying or engaging contract
+labour or undertaking or executing the contract works under sub-section (1) or sub-section (2) in more
+than one States or for the whole of India, then, he may obtain the licence from the authority referred to in
+sub-section (1) of section 119 designated by the Central Government for such purpose and the provisions
+of that section shall apply:
+   Provided further that before issuing such licence the authority referred to in the first proviso shall
+consult the concerned State or States authorities designated under sub-section (1) of section 119,
+electronically before issuing licence for the establishments for which the appropriate Government is the
+State Government.
+
+   48. Procedure for issue or renewal of licence.—(1) Subject to the provisions of section 119, every
+application for issuing a licence under section 119 for the purposes of sub-section (1) or sub-section (2) of
+section 47 shall be made electronically in such form and manner and shall contain such particulars
+regarding the number of contract labour, nature of work for which contract labour is to be employed and
+such other particulars including the information relating to the employment of inter-State migrant workers
+as may be prescribed by the appropriate Government.
+
+    (2) Subject to the provisions of section 119, the authority referred to in sub-section (1) thereof shall
+follow such procedure as may be prescribed by the appropriate Government.
+   (3) Subject to the provisions of section 119, the licence issued for the purposes of sub-section (1) of
+section 47 shall be valid for a period of five years in respect of the number of contract labour specified
+therein and in case the contractor wants to increase the number of the contract labour, he shall apply in the
+prescribed manner for the amendment to the licence for such purpose to the authority referred to in
+sub-section (1) of section119 and if the licence is so amended, the number of contract labour shall be
+increased to such extent by depositing such security deposit as specified in the amended licence for the
+balance period.
+   (4) Subject to the provisions of section 119, the licence issued for the purposes of sub-section (1) of
+section 47 shall contain responsibility of the contractor as may be prescribed by the appropriate
+Government.
+
+   49. No fees or commission or any cost to workers.—The contractor shall not charge directly or
+indirectly, in whole or in part, any fee or commission from the contract labour.
+
+   50. Information regarding work order to be given to the appropriate Government.—(1) When a
+contractor receives work order from an establishment either to supply contract labour in the establishment
+or to execute the contract through contract labour in the establishment he shall, within such time and in
+such manner as may be prescribed, intimate to the authority referred to in section 119.
+    (2) Where the contractor fails to give intimation under sub-section (1), the designated authority may,
+after giving the holder of the licence an opportunity of showing cause, suspend or cancel the licence in
+such manner as may be prescribed by the appropriate Government.
+
+   51. Revocation, suspension and amendment of licence.—(1) If the authority referred to in
+sub-section (1) of section 119 is satisfied, either on a reference made to him in this behalf or otherwise,
+that—
+      (a) a licence granted for the purposes of this Part has been obtained by misrepresentation or
+   suppression of any material fact, or
+      (b) the holder of a licence has, failed to comply with the conditions subject to which the licence has
+   been granted or has contravened any of the provisions of this Part or the rules made thereunder, then,
+without prejudice to any other penalty to which the contractor may be liable under this Code, the authority
+referred to in sub-section (1) of section 119 may, after giving the contractor an opportunity of showing
+cause, revoke or suspend the licence in accordance with the procedure as may be prescribed by the
+Central Government.
+   (2) Subject to any rules that may be made in this behalf, the authority referred to in sub-section (1) of
+section 119 may amend a licence granted for the purposes of this Part.
+
+   52. Appeal.—(1) Any person aggrieved by an order made under section 47, section 48 or section 51
+may, within thirty days from the date on which the order is communicated to him, prefer an appeal to an
+appellate authority prescribed by the appropriate Government under sub-section (6) of section 119:
+    Provided that the appellate authority may entertain the appeal after the expiry of the said period of
+thirty days, if he is satisfied that the appellant was prevented by sufficient cause from filing the appeal in
+time.
+   (2) On receipt of an appeal under sub-section (1), the appellate authority shall, after giving the
+appellant an opportunity of being heard, dispose of the appeal within thirty days from the date on which
+the appeal is preferred.
+
+   53. Liability of principal employer for welfare facilities.—Welfare facilities specified under
+section 23 and section 24 shall be provided by the principal employer of the establishment to the contract
+labour who are employed in such establishment.
+
+    54. Effect of employing contract labour from a non-licenced contractor.—Where any principal
+employer of an establishment is employing contract labour through a contractor who is required to obtain
+a licence under this Part, but he has not obtained such licence, then, such employment shall be deemed to
+be in contravention of the provision of this Code.
+
+   55. Responsibility for payment of wages.— (1) A contractor shall be responsible for payment of
+wages to each contract labour employed by him and such wages shall be paid before the expiry of such
+period as may be prescribed by the appropriate Government.
+
+   (2) Every contractor shall, make the disbursement of wages referred to in sub-section (1) through bank
+transfer or electronic mode and inform the principal employer electronically the amount so paid by such
+mode:
+   Provided that where it is not practicable to disburse payment in the mode specified in this section,
+then, the payment shall be made in such manner as may be prescribed by the appropriate Government.
+   (3) In case the contractor fails to make payment of wages referred to in sub-section (1) within the
+prescribed period or makes short payment, then, the principal employer shall be liable to make payment
+of the wages in full or the unpaid balance due, as the case may be, to the concerned contract labour
+employed by the contractor and recover the amount so paid from the contractor either by deduction from
+any amount payable to the contractor under any contract or as a debt payable by the contractor.
+   (4) The appropriate Government, in the event the contractor does not pay the wages to the contract
+labour employed by him, shall pass the orders of making payment of such wages from the amount
+deposited by such contractor as security deposit under the licence issued by the licensing officer to the
+contractor, in such manner as may be prescribed by such Government.
+
+   56. Experience certificate.—Every concerned contractor shall issue, on demand, experience
+certificate, in such form as may be prescribed by the appropriate Government, to the contract labour
+giving details of the work performed by such contract labour.
+
+   57. Prohibition of employment of contract labour.—(1) Notwithstanding anything contained in this
+Part, employment of contract labour in core activities of any establishment is prohibited:
+   Provided that the principal employer may engage contract labour through a contractor to any core
+activity, if—
+      (a) the normal functioning of the establishment is such that the activity is ordinarily done through
+   contractor; or
+     (b) the activities are such that they do not require full time workers for the major portion of the
+   working hours in a day or for longer periods, as the case may be;
+
+      (c) any sudden increase of volume of work in the core activity which needs to be accomplished in a
+   specified time.
+   (2) (a) The appropriate Government may, by notification, appoint a designated authority to advise that
+   Government on the question whether any activity of an establishment is a core activity or otherwise;
+      (b) if a question arises as to whether any activity of an establishment is a core activity or otherwise,
+   the aggrieved party may make an application in such form and manner as may be prescribed, to the
+   appropriate Government for decision;
+      (c) the appropriate Government may refer any such question suo motu or refer the application to the
+   designated authority, which on the basis of relevant material in its possession, or after making such an
+   enquiry as it deems fit, shall report to the appropriate Government, within such period and thereafter
+   the appropriate Government shall decide the question within such period as may be prescribed.
+
+   58. Power to exempt in special cases.—The appropriate Government may, in the case of an
+emergency, direct, by notification, that subject to such conditions and restrictions, if any, and for such
+period, as may be specified in the notification, all or any of the provisions of this Code or the rules made
+thereunder shall not apply to any establishment or class of establishments or any class of contractors.
+
+   78. Prohibition of employment of certain persons in certain building or other construction
+work.—No person, about whom the employer knows or has reasons to believe that he is a deaf or he has
+a defective vision or he has a tendency to giddiness, shall be required or allowed to work in any such
+operation of building or other construction work which is likely to involve a risk of any accident either to
+the building worker himself or to any other person.
+
+   79. Approval and licensing of factories.—(1) The appropriate Government may make rules in
+respect of factory or class or description of factories for—
+
+      (a) the submission of plans including specifications, nature and certification thereof;
+
+      (b) the previous permission for the site on which the factory is to be situated and for the
+   construction or extension thereof; and
+      (c) subject to the provision of sub-section 119, licensing and renewal thereof including fees to be
+   payable for such, licensing and renewal, if required, as the case may be.
+   (2) If on an application for permission referred to in clause (b) of sub-section (1) accompanied by the
+plans and specifications required by the rules made under clause (a) of that sub-section, sent to the State
+Government or Chief Inspector-cum-Facilitator in the electronic mode, no order is communicated to the
+applicant within such period not exceeding thirty days, the permission applied for in the said application
+shall be deemed to have been granted.
+    (3) Where a State Government or a Chief Inspector-cum-Facilitator refuses to grant permission to the
+site, construction or extension of a factory and licensing of a factory, the applicant may within thirty days
+of the date of such refusal appeal to the Central Government if the decision appealed from was of the
+State Government and to the State Government in any other case.
+   Explanation.—A factory shall not be deemed to be extended within the meaning of this section by
+reason only of the replacement of any plant or machinery or within such limits as may be prescribed, of
+the addition of any plant or machinery if such replacement or addition does not reduce the minimum clear
+space required for safe working around the plant or machinery or adversely affect the environmental
+conditions from the evolution or emission of steam, heat or dust or fumes injurious to health.

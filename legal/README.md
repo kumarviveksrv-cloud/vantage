@@ -65,3 +65,11 @@ and replace the file contents. The Worker infrastructure handles the rest.
 `indian-contract-act-1872.txt` holds ss. 15, 16, 23, 27, 73 and 74 only (coercion, undue influence, lawful object, restraint of trade, damages, penalty),
 copied word for word from India Code (https://www.indiacode.nic.in/handle/123456789/2187). The full Act is deliberately not added: it is long and is sent to Claude on every matching case.
 Statute text carries no case law. If a note on s.27 and service-bond decisions is ever added, it must be written and verified by a lawyer and headed clearly as a note, not statute text.
+
+## Extracts (added 5 Nov 2026)
+
+`legal/extracts/*.txt` are verbatim section extracts built from `legal/full/` by `python3 legal/build_extracts.py`.
+The Policy Advisor loads them by topic (hours and overtime, contract labour and licensing, registers and savings).
+When a law changes: replace the file in `legal/full/`, re-run the script, run `node worker/test_legal_select.js`,
+bump `LEGAL_CACHE_VERSION` in the Worker, push. To add a topic, add it to `TOPICS` in the script and a regex in `selectActsForPolicy`.
+Rules, prescribed forms and portal steps are not in the Codes; the Policy prompt tells the model not to invent them.
