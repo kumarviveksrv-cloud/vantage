@@ -1546,5 +1546,31 @@
   <script src="vantage-voice.js"></script>
   <script src="vantage-rehearse.js"></script>
   <script>if (window.VantageRehearse) { try { VantageRehearse.consume(); } catch (e) {} }</script>
+  <script>
+  /* On phones the shared "?" help button sits at a fixed height above the bottom, which lands on this page's
+     Send button. Park it on the "Review before sending" row instead (right side of that row is empty) and
+     re-measure whenever the input area changes size or the page is rotated. Wide screens keep the default. */
+  (function () {
+    var wrap = document.querySelector('.text-wrap');
+    var row = document.querySelector('.review-toggle-row');
+    if (!wrap || !row) return;
+    function place() {
+      var b = document.getElementById('vip-trigger');
+      if (!b) return;
+      var r = row.getBoundingClientRect();
+      if (window.innerWidth > 600 || !r.height || !wrap.getClientRects().length) {
+        b.style.removeProperty('bottom'); b.style.removeProperty('right'); return;
+      }
+      var gap = Math.max(0, (r.height - b.offsetHeight) / 2);
+      b.style.setProperty('bottom', Math.round(window.innerHeight - r.bottom + gap) + 'px', 'important');
+      b.style.setProperty('right', '16px', 'important');
+    }
+    try { if (window.ResizeObserver) new ResizeObserver(place).observe(wrap); } catch (e) {}
+    try { new MutationObserver(place).observe(document.body, { childList: true }); } catch (e) {}
+    window.addEventListener('resize', place);
+    window.addEventListener('orientationchange', place);
+    place();
+  })();
+  </script>
 </body>
 </html>
