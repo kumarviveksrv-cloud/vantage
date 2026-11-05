@@ -791,6 +791,12 @@
       }
 
       // Compliance exposure chip
+      /* Only claim MERIDIAN calibration when a MERIDIAN profile actually exists. */
+      var _hasMeridian = false;
+      try { _hasMeridian = !!sessionStorage.getItem('sr_meridian'); } catch (e) {}
+      var _cSub = document.querySelector('#compliance-exposure-chip .comp-exp-sub');
+      if (!_hasMeridian) { document.querySelectorAll('.page-sub').forEach(function (e) { if (/Calibrated to your MERIDIAN profile/.test(e.textContent)) e.textContent = 'General guidance under Indian law. Set up MERIDIAN to calibrate it to your context.'; }); }
+      if (_cSub) _cSub.innerHTML = _hasMeridian ? 'Estimated financial liability &middot; Calibrated to your MERIDIAN context' : 'Estimated financial liability &middot; General estimate (set up MERIDIAN to calibrate)';
       var compChip = document.getElementById('compliance-exposure-chip');
       var compValEl = document.getElementById('compliance-exposure-value');
       var saveBtn = document.getElementById('save-record-btn');
