@@ -56,7 +56,7 @@
     try {
       var raw = sessionStorage.getItem(KEY); if (!raw) { return; }
       var h = JSON.parse(raw);
-      var here = (location.pathname.split('/').pop() || '');
+      var here = (location.pathname.split('/').pop() || ''); if (here && here.indexOf('.') < 0) { here += '.html'; }
       if (!h || h.to !== here) { return; }
       var el = document.getElementById(BOX_FOR_PAGE[here]);
       if (!el) { return; }
