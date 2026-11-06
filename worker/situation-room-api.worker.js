@@ -1304,7 +1304,7 @@ Rules:
 - If the question carries no calculable financial risk (e.g. a general policy clarification with zero liability), write exactly: Not Quantifiable
 - If there is zero legal or financial exposure, write exactly: Nil
 - The headline range must be the same range your Basis line arrives at. Do the multiplication before you write the figure, and say whether fines are inside the range or added on top.
-- If the user message contains EXPOSURE INPUTS and the question is about underpaying wages, overtime or other pay due, write the headline as exactly {{EXPOSURE_RANGE}} and begin the Basis line with {{EXPOSURE_BASIS}} (you may add one short sentence after it). Do not write your own figures in that case. If the question is not about underpaid pay, ignore EXPOSURE INPUTS completely.
+- If the question is about underpaying wages, overtime or other pay due, write the headline as exactly {{EXPOSURE_RANGE}} and begin the Basis line with {{EXPOSURE_BASIS}} (you may add one short sentence after it). Do this whether or not the user message contains EXPOSURE INPUTS. Never write your own rupee figures, headcount assumptions or arithmetic for such a question: the system fills in the figure and the explanation. If the question is not about underpaid pay, ignore EXPOSURE INPUTS completely and estimate as normal.
 - Immediately after the figure, on its own line, write: Basis: followed by one or two plain sentences that show how the figure was reached. Name the statutory penalty from the supplied text with its section and amount, state any assumption about the user's workforce or pay with the numbers you assumed (for example headcount, hours or percentage of staff affected), and say how the parts combine. If the question did not give the inputs needed for a figure, say so in the Basis line and keep the range as a rough order of magnitude.
 - Never show a rupee range you cannot explain in the Basis line. If you cannot ground it in a penalty from the supplied text plus stated assumptions, write exactly: Not Quantifiable
 - Never omit this section.
@@ -2437,9 +2437,16 @@ function computeExposure(inputs) {
     summary: a[2] + '; monthly shortfall ' + sh[2] + ' per person; look-back ' + m + ' months',
   };
 }
+// With no user inputs, the only grounded figure for a pay shortfall is the statutory fine. No headcount is invented.
+const EXPOSURE_FINE_ONLY = {
+  range: 'Fine up to ₹50,000, plus back-pay',
+  basis: 'The only fixed figure in the Code is the fine of up to ₹50,000 under section 54(1)(a) of the Code on Wages 2019 for paying less than is due (a repeat offence within five years can bring up to ₹1,00,000 or three months\' imprisonment). The text does not say the fine multiplies per employee, so it is not multiplied here. Back-pay depends on how many employees are affected, the monthly shortfall per person and the look-back period, which were not provided. Use the optional cost-estimate inputs under your question to get a range.',
+  summary: '',
+};
 function applyExposureTokens(text, computed) {
   let t = String(text || '');
-  const usedRange = t.indexOf('{{EXPOSURE_RANGE}}') !== -1;
+  const usedRange = t.indexOf('{{EXPOSURE_RANGE}}') !== -1 || t.indexOf('{{EXPOSURE_BASIS}}') !== -1;
+  if (!computed && usedRange) { computed = EXPOSURE_FINE_ONLY; }
   if (computed) { t = t.split('{{EXPOSURE_RANGE}}').join(computed.range).split('{{EXPOSURE_BASIS}}').join(computed.basis); }
   // The model sometimes drops the Basis line. When the system range was used, the system basis must always be present.
   if (computed && usedRange && t.indexOf(computed.basis) === -1) {
