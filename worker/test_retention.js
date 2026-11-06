@@ -117,6 +117,11 @@ ok(sc3.scenarios.scenarioB.watchSignals[0] === 'LinkedIn activity up', 'scrub re
 const sc4 = { a: 'The delay tells us this is unlikely to be about pay.', b: ['Tells us that the role is at risk', 'nothing here'] };
 lib.retentionScrub(sc4, '');
 ok(sc4.a === 'The delay may suggest this is unlikely to be about pay.' && sc4.b[0] === 'May suggest that the role is at risk' && sc4.b[1] === 'nothing here', 'hedged tells-us is softened: ' + JSON.stringify(sc4));
+const sc5 = { recommendation: { rationale: 'A Full Match at Rs.24L costs Rs.12L over two years, Rs.15.72L less than replacement. The extra cost stays below replacement for about 55 to 73 months, well within a reasonable planning horizon for a Band B performer in a medium-criticality role. A third point. A fourth point.' }, scenarios: { scenarioA: { financialCase: 'One. Two. Three.', risk: 'Only one sentence', condition: null } } };
+lib.retentionScrub(sc5, '');
+ok(sc5.recommendation.rationale.indexOf('planning horizon') < 0, 'planning-horizon claim removed: ' + sc5.recommendation.rationale);
+ok(sc5.recommendation.rationale.indexOf('Rs.15.72L') > 0 && sc5.recommendation.rationale.split(/(?<=[.!?])\s+(?=[A-Z0-9])/).length <= 2, 'rationale trimmed to two sentences without splitting figures: ' + sc5.recommendation.rationale);
+ok(sc5.scenarios.scenarioA.financialCase === 'One. Two.' && sc5.scenarios.scenarioA.risk === 'Only one sentence' && sc5.scenarios.scenarioA.condition === null, 'scenario fields trimmed, short and null kept');
 // no-premium ceiling card
 const r3b = { recommendation: { primary: 'Walk Away', figure: 'x' }, financialModel: {}, humac: {} };
 lib.retentionApply(r3b, 'counter_offer', r3);

@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v77'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v78'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -726,7 +726,7 @@ function retentionApply(result, flow, m) {
         rc[p[0]] = { figure: engineLakh(o.ctc), annualIncrement: engineLakh(o.inc) + '/yr', breakEvenMonths: o.monthsLo === null ? 0 : Math.round((o.monthsLo + o.monthsHi) / 2), breakEvenMonthsRange: o.monthsLo === null ? 'n/a' : o.monthsLo + ' to ' + o.monthsHi };
       });
       var full = m.options.full;
-      fm.breakEvenCeiling = retLakhRange(m.ceilLo, m.ceilHi) + ' a year of extra pay. Two years of extra pay at this level equals the cost of replacing the employee, so any match below it is cheaper than losing them' + (full.inc > 0 ? '; the full match costs ' + engineLakh(full.inc) + ' a year' + (full.inc < m.ceilLo ? ', which is below the ceiling.' : full.inc <= m.ceilHi ? ', which falls inside the ceiling range.' : ', which is above the ceiling.') : '.');
+      fm.breakEvenCeiling = retLakhRange(m.ceilLo, m.ceilHi) + ' a year is the most extra pay a match can add. Two years of extra pay at this level equals the cost of replacing the employee, so any match below it is cheaper than losing them' + (full.inc > 0 ? '; the full match costs ' + engineLakh(full.inc) + ' a year' + (full.inc < m.ceilLo ? ', which is below the ceiling.' : full.inc <= m.ceilHi ? ', which falls inside the ceiling range.' : ', which is above the ceiling.') : '.');
       if (m.noPremium) { fm.breakEvenCeiling = 'Not applicable, because the offer is not above current CTC and no increment is needed.'; }
       if (result.employeeProfile) { result.employeeProfile.offerPremiumPct = m.premiumPct; }
       var rec = result.recommendation;
@@ -779,7 +779,7 @@ function retentionStrayFigures(result, flow, m) {
   return out;
 }
 var RET_SOCIAL_RE = /linkedin|open[- ]to[- ]work|social media|job (?:portal|board|site)s?|naukri|personal (?:account|profile)s?/i;
-var RET_OVERCLAIMS = [/\bnot about (?:the )?money\b/i, /\bnot a negotiating tactic\b/i, /\bgenuine(?:ly)? (?:intent|intending)\b/i, /\bentirely avoidable\b/i, /\bmaterially wrong\b/i, /\beliminates?\b[^.]{0,80}\b(?:entirely|completely|fully)\b/i, /\bactively sourc\w+/i, /\btells us (?:this|that)\b/i];
+var RET_OVERCLAIMS = [/\bnot about (?:the )?money\b/i, /\bnot a negotiating tactic\b/i, /\bgenuine(?:ly)? (?:intent|intending)\b/i, /\bentirely avoidable\b/i, /\bmaterially wrong\b/i, /\beliminates?\b[^.]{0,80}\b(?:entirely|completely|fully)\b/i, /\bactively sourc\w+/i, /\btells us (?:this|that)\b/i, /\bwell within (?:a |the )?(?:reasonable )?planning horizon\b/i];
 // Figures, durations, overclaims and personal-account monitoring in the narrative. Used to ask the model once to rewrite.
 function retentionIssues(result, flow, m, signalsText) {
   var out = retentionStrayFigures(result, flow, m);
@@ -802,13 +802,27 @@ function retentionIssues(result, flow, m, signalsText) {
 // Watch-signals must be things HR can see at work. Anything about personal or social accounts is removed in code.
 function retentionSoften(node) {
   // Deterministic wording fix that runs even when the model repeats a phrase after the one retry: "tells us this/that" becomes "may suggest this/that".
-  if (typeof node === 'string') { return node.replace(/\btells us (this|that)\b/gi, function (m, w) { return (m.charAt(0) === 'T' ? 'May suggest ' : 'may suggest ') + w; }); }
+  if (typeof node === 'string') { return node.replace(/,?\s*well within (?:a |the )?(?:reasonable )?planning horizon(?: for [^.;]*)?/gi, '').replace(/\btells us (this|that)\b/gi, function (m, w) { return (m.charAt(0) === 'T' ? 'May suggest ' : 'may suggest ') + w; }); }
   if (Array.isArray(node)) { for (var i = 0; i < node.length; i++) { node[i] = retentionSoften(node[i]); } return node; }
   if (node && typeof node === 'object') { Object.keys(node).forEach(function (k) { node[k] = retentionSoften(node[k]); }); }
   return node;
 }
+function retentionTrimText(t, n) {
+  // Keeps the first n sentences. A sentence ends at . ! or ? followed by a space and a capital letter or digit, so figures such as Rs.15.72L are never split.
+  if (typeof t !== 'string') { return t; }
+  var parts = t.split(/(?<=[.!?])\s+(?=[A-Z0-9\u20B9])/);
+  return parts.length > n ? parts.slice(0, n).join(' ') : t;
+}
+function retentionTrim(result) {
+  if (!result || typeof result !== 'object') { return result; }
+  var rec = result.recommendation; if (rec) { rec.rationale = retentionTrimText(rec.rationale, 2); }
+  var ep = result.employeeProfile; if (ep) { ep.flightRiskRationale = retentionTrimText(ep.flightRiskRationale, 2); }
+  var sc = result.scenarios;
+  if (sc) { ['scenarioA', 'scenarioB'].forEach(function (k) { var o = sc[k]; if (!o) { return; } ['financialCase', 'risk', 'condition', 'specificAction'].forEach(function (f) { o[f] = retentionTrimText(o[f], 2); }); }); }
+  return result;
+}
 function retentionScrub(result, signalsText) {
-  if (result && typeof result === 'object') { retentionSoften(result); }
+  if (result && typeof result === 'object') { retentionSoften(result); retentionTrim(result); }
   var sb = result && result.scenarios && result.scenarios.scenarioB;
   if (!sb || !Array.isArray(sb.watchSignals)) { return result; }
   var userSocial = RET_SOCIAL_RE.test(signalsText || '');
@@ -1746,7 +1760,7 @@ RETURN STRICT JSON ONLY:
     "tenureYears": number,
     "roleCriticality": "High|Medium|Low",
     "flightRisk": "High|Medium|Low",
-    "flightRiskRationale": "specific reason, max 2 sentences"
+    "flightRiskRationale": "one sentence, at most 30 words"
   },
   "financialModel": {
     "replacementCost": {
@@ -1763,21 +1777,21 @@ RETURN STRICT JSON ONLY:
   "recommendation": {
     "primary": "Match|Partial Match|Walk Away",
     "figure": "Rs.X (the specific CTC to offer, if matching)",
-    "rationale": "2-3 sentences. Specific financial and talent rationale.",
+    "rationale": "ONE or TWO short sentences, at most 40 words. Specific financial and talent rationale.",
     "confidence": "High|Medium|Low"
   },
   "scenarios": {
     "scenarioA": {
       "label": "short label e.g. Match at Rs.X",
-      "financialCase": "specific financial case for this path",
-      "risk": "specific risk of this path",
-      "condition": "prerequisite if any, else null"
+      "financialCase": "one sentence, at most 30 words",
+      "risk": "one sentence, at most 25 words",
+      "condition": "one sentence, at most 25 words, else null"
     },
     "scenarioB": {
       "label": "short label e.g. Walk Away",
-      "financialCase": "specific financial case for this path",
-      "risk": "specific risk of this path",
-      "condition": "prerequisite if any, else null"
+      "financialCase": "one sentence, at most 30 words",
+      "risk": "one sentence, at most 25 words",
+      "condition": "one sentence, at most 25 words, else null"
     }
   },
   "communication": {
@@ -1884,20 +1898,20 @@ RETURN STRICT JSON ONLY:
   },
   "recommendation": {
     "primary": "Act Now|Monitor|Investigate",
-    "rationale": "2-3 sentences. Specific to this case.",
+    "rationale": "ONE or TWO short sentences, at most 40 words. Specific to this case.",
     "urgency": "High|Medium|Low",
     "actionWindow": "specific timeframe e.g. this week, within 30 days"
   },
   "scenarios": {
     "scenarioA": {
       "label": "Act Now — Pre-emptive Retention",
-      "financialCase": "specific financial case",
+      "financialCase": "one sentence, at most 30 words",
       "specificAction": "what to do this week, specific",
       "risk": "cost of not acting"
     },
     "scenarioB": {
       "label": "Monitor — Watch and Wait",
-      "financialCase": "specific financial case",
+      "financialCase": "one sentence, at most 30 words",
       "watchSignals": ["signal 1", "signal 2"],
       "triggerPoint": "when to switch to Act Now"
     }
