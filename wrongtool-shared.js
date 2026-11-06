@@ -12,8 +12,17 @@
   };
   var BOX_FOR_PAGE = { 'policy-advisor.html': 'query', 'employee-case-advisor.html': 'narrative', 'business-case.html': 'context' };
   var KEY = 'vantage_handoff';
+  /* The model may name a tool loosely ("Vantage Policy Advisor", "the Retention Advisor"). Map it to a known tool name. */
+  function canon(name) {
+    var n = String(name || '').toLowerCase().replace(/^\s*(the|vantage)\s+/g, '').replace(/^\s*(the|vantage)\s+/g, '').replace(/\s+/g, ' ').trim();
+    if (n === 'aria' || n === 'difficult conversation') { return 'Difficult Conversations'; }
+    var keys = Object.keys(URLS);
+    for (var i = 0; i < keys.length; i++) { var k = keys[i].toLowerCase().replace(/^the\s+/, ''); if (n === k || n.indexOf(k) >= 0 || k.indexOf(n) >= 0 && n.length > 3) { return keys[i]; } }
+    return name;
+  }
 
   function go(tool, text) {
+    tool = canon(tool);
     var file = URLS[tool] || 'dashboard.html';
     var here = (location.pathname.split('/').pop() || ''); if (here && here.indexOf('.') < 0) { here += '.html'; }
     if (file === here && BOX_FOR_PAGE[file] && typeof window.startNew === 'function') {
@@ -31,8 +40,8 @@
   }
   function btn(tool, text) {
     var a = document.createElement('a');
-    a.href = URLS[tool] || 'dashboard.html';
-    a.textContent = 'Open ' + tool + ' →';
+    a.href = URLS[canon(tool)] || 'dashboard.html';
+    a.textContent = 'Open ' + canon(tool) + ' →';
     a.style.cssText = "display:inline-block;margin:10px 8px 0 0;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:#c4b5fd;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.35);border-radius:6px;padding:5px 12px;cursor:pointer;text-decoration:none";
     a.addEventListener('click', function (e) { e.preventDefault(); go(tool, text); });
     return a;
