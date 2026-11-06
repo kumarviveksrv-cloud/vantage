@@ -49,7 +49,7 @@ const pro = lib.computeRetentionModel({ currentCTC: 1800000, tenureYears: 3, rol
 const pr = { financialModel: { costOfLosingThem: { total: 'Rs.30L' }, proactiveInterventionCost: { salaryAdjustment: 'Rs.2L annual increment (10%)', breakEvenMonths: 9 } }, humac: {} };
 lib.retentionApply(pr, 'proactive', pro);
 ok(pr.financialModel.costOfLosingThem.total === 'Rs.27.72L – Rs.36.72L', 'proactive range');
-ok(pr.financialModel.proactiveInterventionCost.salaryAdjustment === 'Rs.1.8L annual increment (10%)' && pr.financialModel.proactiveInterventionCost.breakEvenMonths === Math.round((185 + 245) / 2), 'proactive intervention recomputed: ' + JSON.stringify(pr.financialModel.proactiveInterventionCost));
+ok(pr.financialModel.proactiveInterventionCost.salaryAdjustment === 'Rs.1.8L annual increment (10%)' && pr.financialModel.proactiveInterventionCost.breakEvenMonths === 'more than 120', 'proactive intervention recomputed and capped: ' + JSON.stringify(pr.financialModel.proactiveInterventionCost));
 
 // Stray figures
 const good = { recommendation: { rationale: 'Match at Rs.21L adds Rs.3L a year against replacement of Rs.27.72L to Rs.36.72L.' }, scenarios: { a: 'Two years cost Rs.6L.' } };
@@ -58,5 +58,37 @@ const bad = { recommendation: { rationale: 'Partial match at Rs.22L, a Rs.4L inc
 const strays = lib.retentionStrayFigures(bad, 'counter_offer', r1);
 ok(strays.length === 3, 'three stray figures found: ' + JSON.stringify(strays));
 ok(lib.retentionStrayFigures({ financialModel: { x: 'Rs.99L' } }, 'counter_offer', r1).length === 0, 'structured cards are not scanned');
+
+
+// v74: R3 no-premium override
+const r3res = { employeeProfile: { flightRisk: 'Low' }, recommendation: { primary: 'Walk Away', figure: 'Not applicable, the offer is lower' }, scenarios: { scenarioA: { label: 'Walk Away, Employee Accepts Competing Offer' }, scenarioB: { label: 'Hold Position, No Counter-Offer Increment' } }, financialModel: {}, humac: {} };
+lib.retentionApply(r3res, 'counter_offer', r3);
+ok(r3res.recommendation.primary === 'Hold Position' && r3res.recommendation.figure === 'No match needed', 'R3 recommendation forced to Hold Position: ' + r3res.recommendation.primary + ' / ' + r3res.recommendation.figure);
+ok(/^Hold/.test(r3res.scenarios.scenarioA.label) && /^Walk/.test(r3res.scenarios.scenarioB.label), 'R3 scenarios swapped so Hold is A');
+ok(r3res.employeeProfile.flightRisk === 'Medium', 'R3 flight risk floored at Medium');
+ok(r3res.financialModel.retentionCost.fullMatch.breakEvenMonths === 0, 'R3 no negative or phantom payback');
+// v74: label normalisation
+const lab = { recommendation: { primary: 'Match', figure: 'x' }, financialModel: {}, humac: {} };
+lib.retentionApply(lab, 'counter_offer', r1);
+ok(lab.recommendation.primary === 'Full Match' && lab.recommendation.figure === 'Rs.24L', 'Match becomes Full Match with 24L: ' + lab.recommendation.primary + ' ' + lab.recommendation.figure);
+const lab2 = { recommendation: { primary: 'Full Match', figure: 'x' }, financialModel: {}, humac: {} };
+lib.retentionApply(lab2, 'counter_offer', r1);
+ok(lab2.recommendation.figure === 'Rs.24L', 'Full Match figure follows the formula');
+const lab3 = { recommendation: { primary: 'Partial Match', figure: 'x' }, financialModel: {}, humac: {} };
+lib.retentionApply(lab3, 'counter_offer', r1);
+ok(lab3.recommendation.figure === 'Rs.21L', 'Partial Match figure 21L');
+// v74: months to years
+const yr = { recommendation: { rationale: 'The organisation would need to retain this employee for fewer than 8 years before the match pays for itself. A 3 year tenure and two years of cost are fine, as is a 10 years horizon.' } };
+const ys = lib.retentionStrayFigures(yr, 'counter_offer', r1);
+ok(ys.length === 1 && /8 years/.test(ys[0]), 'only the 8 years claim is flagged: ' + JSON.stringify(ys));
+// v74: absurd payback
+const proLong = lib.computeRetentionModel({ currentCTC: 1800000, tenureYears: 3, roleCriticality: 'Medium' });
+const blk = lib.retentionFixedBlock('proactive', proLong);
+ok(/Intervention at 5%: Rs\.90K a year; the cumulative extra cost stays below replacement cost for more than 10 years/.test(blk), 'long payback is shown as more than 10 years: ' + blk.split('\n').filter(l => /at 5%/.test(l))[0]);
+const prl = { financialModel: { costOfLosingThem: { total: 'x' }, proactiveInterventionCost: { salaryAdjustment: 'Rs.0.9L annual increment (5%)', breakEvenMonths: 430 } }, humac: {} };
+lib.retentionApply(prl, 'proactive', proLong);
+ok(prl.financialModel.proactiveInterventionCost.breakEvenMonths === 'more than 120', 'proactive 5% shows more than 120 months');
+const blk10 = lib.retentionFixedBlock('proactive', proLong);
+ok(/Intervention at 10%: Rs\.1\.8L a year; the cumulative extra cost stays below replacement cost for more than 10 years/.test(blk10), '10% also capped: ' + blk10.split('\n').filter(l => /at 10%/.test(l))[0]);
 
 if (fails) { console.log(fails + ' FAILED'); process.exit(1); } else { console.log('RETENTION TESTS PASSED'); }

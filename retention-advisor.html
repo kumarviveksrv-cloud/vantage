@@ -615,6 +615,11 @@
 
     // Extract the first Rs./\u20b9 figure from a string \u2014 handles both "Rs.17.24L, explanation"
     // and "Rs.17.24L midpoint replacement cost..." (no delimiter) patterns.
+    function signedPct(ep) {
+      var v = (ep.offerPremiumPct !== undefined && ep.offerPremiumPct !== null && ep.offerPremiumPct !== '') ? Number(ep.offerPremiumPct) : Math.round(((ep.offerCTC - ep.currentCTC) / ep.currentCTC) * 1000) / 10;
+      if (!isFinite(v)) { return ''; }
+      return (v > 0 ? '+' : '') + v + '%';
+    }
     function leadFigure(str) {
       if (!str) return 'N/A';
       var s = String(str);
@@ -724,7 +729,7 @@
         html += '<div class="profile-strip">';
         html += '<div class="profile-chip"><div class="pc-label">Current CTC</div><div class="pc-val">' + formatINR(ep.currentCTC) + '</div></div>';
         html += '<div class="profile-chip"><div class="pc-label">Competing Offer</div><div class="pc-val">' + formatINR(ep.offerCTC) + '</div></div>';
-        html += '<div class="profile-chip"><div class="pc-label">Premium</div><div class="pc-val">+' + (ep.offerPremiumPct || Math.round(((ep.offerCTC - ep.currentCTC) / ep.currentCTC) * 100)) + '%</div></div>';
+        html += '<div class="profile-chip"><div class="pc-label">Premium</div><div class="pc-val">' + signedPct(ep) + '</div></div>';
         html += '<div class="profile-chip"><div class="pc-label">Band &middot; Tenure</div><div class="pc-val">' + (ep.performanceBand || '') + ' &middot; ' + (ep.tenureYears || '') + 'y</div></div>';
         html += '<div class="profile-chip"><div class="pc-label">Flight Risk</div><div class="pc-val">' + riskBadgeHTML(ep.flightRisk) + '</div></div>';
         html += '</div>';
@@ -824,11 +829,12 @@
         var sc2A = sc2.scenarioA || {};
         var sc2B = sc2.scenarioB || {};
         html += '<div class="scenario-grid">';
-        html += '<div class="scenario-card primary"><div class="scenario-label">Scenario A <span class="scenario-primary-tag">PRIMARY</span></div><div class="scenario-title">' + (sc2A.label || '') + '</div><div class="scenario-body">' + (sc2A.financialCase || '') + '</div>';
+        var recP = String(rec2.primary || '').toLowerCase(), pa = recP.indexOf('act') === 0, pb = recP.indexOf('monitor') === 0;
+        html += '<div class="scenario-card' + (pa ? ' primary' : '') + '"><div class="scenario-label">Scenario A' + (pa ? ' <span class="scenario-primary-tag">PRIMARY</span>' : '') + '</div><div class="scenario-title">' + (sc2A.label || '') + '</div><div class="scenario-body">' + (sc2A.financialCase || '') + '</div>';
         if (sc2A.specificAction) html += '<div class="scenario-condition">This week: ' + sc2A.specificAction + '</div>';
         if (sc2A.risk) html += '<div class="scenario-risk">Risk if you wait: ' + sc2A.risk + '</div>';
         html += '</div>';
-        html += '<div class="scenario-card"><div class="scenario-label">Scenario B</div><div class="scenario-title">' + (sc2B.label || '') + '</div><div class="scenario-body">' + (sc2B.financialCase || '') + '</div>';
+        html += '<div class="scenario-card' + (pb ? ' primary' : '') + '"><div class="scenario-label">Scenario B' + (pb ? ' <span class="scenario-primary-tag">PRIMARY</span>' : '') + '</div><div class="scenario-title">' + (sc2B.label || '') + '</div><div class="scenario-body">' + (sc2B.financialCase || '') + '</div>';
         if (sc2B.watchSignals) html += '<div class="scenario-condition">Watch for: ' + (sc2B.watchSignals || []).join(', ') + '</div>';
         if (sc2B.triggerPoint) html += '<div class="scenario-risk">Switch to Act Now when: ' + sc2B.triggerPoint + '</div>';
         html += '</div></div>';
@@ -993,7 +999,7 @@ function attachRehearse(d) {
   var ep = d.employeeProfile || {}, rec = d.recommendation || {}, fm = d.financialModel || {}, counter = d.flow === 'counter_offer';
   var premium = ep.offerPremiumPct || (ep.currentCTC && ep.offerCTC ? Math.round(((ep.offerCTC - ep.currentCTC) / ep.currentCTC) * 100) : '');
   var who = (ep.performanceBand ? 'a ' + V.clip(ep.performanceBand, 40) + ' performer' : 'a valued employee') + (ep.tenureYears ? ' with ' + V.clip(ep.tenureYears, 10) + ' years of tenure' : '');
-  var offer = premium ? ' a competing offer ' + premium + '% above current pay' : ' a competing offer';
+  var offer = Number(premium) > 0 ? ' a competing offer ' + premium + '% above current pay' : Number(premium) < 0 ? ' a competing offer ' + Math.abs(premium) + '% below current pay' : ' a competing offer';
   var repl = fm.replacementCost && fm.replacementCost.total ? ' Modelled replacement cost: ' + V.clip(fm.replacementCost.total, 60) + '.' : '';
   var primary = V.clip(rec.primary, 120) || 'the recommended path';
   document.querySelectorAll('#output-content .script-card').forEach(function (card) {
@@ -1062,8 +1068,8 @@ function openSpatialRA() {
       { id: 'rec', title: 'Recommendation', summary: join([plain(rec.primary) + (rec.figure ? ': ' + plain(rec.figure) : ''), lead(rec.rationale, 170)]),
         html: big((rec.primary || '') + (rec.figure ? ': ' + rec.figure : '')) + paras(rec.rationale) },
       { id: 'profile', title: 'The employee and the offer',
-        summary: 'Current ' + inr(ep.currentCTC) + ', competing offer ' + inr(ep.offerCTC) + (premium ? ' (+' + premium + '%)' : '') + (ep.performanceBand ? ', band ' + plain(ep.performanceBand) : '') + (ep.tenureYears ? ', ' + plain(ep.tenureYears) + ' years' : '') + (ep.flightRisk ? ', flight risk ' + plain(ep.flightRisk) : '') + '.',
-        html: labelled('Current CTC', inr(ep.currentCTC)) + labelled('Competing offer', inr(ep.offerCTC)) + labelled('Premium', premium ? '+' + premium + '%' : '') + labelled('Band', ep.performanceBand) + labelled('Tenure (years)', ep.tenureYears) + labelled('Flight risk', ep.flightRisk) },
+        summary: 'Current ' + inr(ep.currentCTC) + ', competing offer ' + inr(ep.offerCTC) + (premium ? ' (' + (Number(premium) > 0 ? '+' : '') + premium + '%)' : '') + (ep.performanceBand ? ', band ' + plain(ep.performanceBand) : '') + (ep.tenureYears ? ', ' + plain(ep.tenureYears) + ' years' : '') + (ep.flightRisk ? ', flight risk ' + plain(ep.flightRisk) : '') + '.',
+        html: labelled('Current CTC', inr(ep.currentCTC)) + labelled('Competing offer', inr(ep.offerCTC)) + labelled('Premium', premium ? (Number(premium) > 0 ? '+' : '') + premium + '%' : '') + labelled('Band', ep.performanceBand) + labelled('Tenure (years)', ep.tenureYears) + labelled('Flight risk', ep.flightRisk) },
       { id: 'rep', title: 'Cost of replacing them', summary: rc.total ? 'Modelled replacement cost: ' + plain(rc.total) : '', html: big(rc.total) + list(rc.breakdown) },
       { id: 'bec', title: 'Break-even ceiling', summary: lead(fm.breakEvenCeiling, 200), html: paras(fm.breakEvenCeiling) },
       scen('sa', 'Scenario A', scA, isPrimA),
