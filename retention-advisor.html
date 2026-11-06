@@ -510,6 +510,7 @@
       'Difficult Conversations': 'aria.html'
     };
     function showWrongTool(reason, suggestedTool) {
+      if (window.VantageWrongTool) { var _n = document.getElementById('pr-signals'); VantageWrongTool.show({ reason: reason, suggestedTool: suggestedTool, secondTool: arguments[2] && arguments[2].secondTool, twoParts: arguments[2] && arguments[2].twoParts, text: _n ? _n.value : '' }); showView('intake-view'); return; }
       var url = VANTAGE_TOOL_URLS[suggestedTool] || 'dashboard.html';
       var msgEl = document.getElementById('vantage-wrongtool-msg');
       var linkEl = document.getElementById('vantage-wrongtool-link');
@@ -686,7 +687,7 @@
         }
         if (data.success && data.trial_calls_remaining === 0) { try { localStorage.setItem('vantage_trial_cap_hit', '1'); } catch(e) {} }
         if (data.success && data.data && data.data.wrongTool) {
-          showWrongTool(data.data.reason, data.data.suggestedTool);
+          showWrongTool(data.data.reason, data.data.suggestedTool, data.data);
         } else if (data.success) {
           currentResult = data.data;
           renderOutput(data.data);
@@ -1105,5 +1106,6 @@ function openSpatialRA() {
 </script>
 <script src="vantage-dictation.js"></script>
 <script>VantageDictation.init(["pr-signals"]);</script>
+<script src="wrongtool-shared.js?v=20261106b"></script>
 </body>
 </html>

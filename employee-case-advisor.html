@@ -767,6 +767,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       'Difficult Conversations': 'aria.html'
     };
     function showWrongTool(reason, suggestedTool) {
+      if (window.VantageWrongTool) { var _n = document.getElementById('narrative'); VantageWrongTool.show({ reason: reason, suggestedTool: suggestedTool, secondTool: arguments[2] && arguments[2].secondTool, twoParts: arguments[2] && arguments[2].twoParts, text: _n ? _n.value : '' }); showView('intake-view'); return; }
       var url = VANTAGE_TOOL_URLS[suggestedTool] || 'dashboard.html';
       var msgEl = document.getElementById('vantage-wrongtool-msg');
       var linkEl = document.getElementById('vantage-wrongtool-link');
@@ -976,7 +977,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         }
         if (data.success && data.trial_calls_remaining === 0) { try { localStorage.setItem('vantage_trial_cap_hit', '1'); } catch(e) {} }
         if (data.success && data.data && data.data.wrongTool) {
-          showWrongTool(data.data.reason, data.data.suggestedTool);
+          showWrongTool(data.data.reason, data.data.suggestedTool, data.data);
         } else if (data.success) {
           currentResult = data.data;
           localStorage.setItem('sr_last_case_id', (data.data && data.data.airtableId) || 'navigated');
@@ -1459,5 +1460,6 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
     </div>
   </div>
 <script src="vantage-wait.js?v=20261103b" data-range="90 to 120" data-est="120"></script>
+<script src="wrongtool-shared.js?v=20261106b"></script>
 </body>
 </html>

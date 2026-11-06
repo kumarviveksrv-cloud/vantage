@@ -870,6 +870,7 @@
       'Difficult Conversations': 'aria.html'
     };
     function showWrongTool(reason, suggestedTool, flow) {
+      if (window.VantageWrongTool) { var _x = arguments[3] || {}; var _n = document.getElementById('context') || document.getElementById('situation'); var _c = document.getElementById(flow === 'stakeholder' ? 'situation' : 'context'); var _t = _c ? _c.value : ''; VantageWrongTool.show({ reason: reason, suggestedTool: suggestedTool, secondTool: _x.secondTool, twoParts: _x.twoParts, text: _t }); if (typeof showView === 'function') { try { showView(flow === 'stakeholder' ? 'intake-view-stakeholder' : 'intake-view-general'); } catch (e) {} } return; }
       var url = VANTAGE_TOOL_URLS[suggestedTool] || 'dashboard.html';
       var msgEl = document.getElementById('vantage-wrongtool-msg');
       var linkEl = document.getElementById('vantage-wrongtool-link');
@@ -1075,7 +1076,7 @@
         }
         if (data.success && data.trial_calls_remaining === 0) { try { localStorage.setItem('vantage_trial_cap_hit', '1'); } catch(e) {} }
         if (data.success && data.data && data.data.wrongTool) {
-          showWrongTool(data.data.reason, data.data.suggestedTool, 'general');
+          showWrongTool(data.data.reason, data.data.suggestedTool, 'general', data.data);
         } else if (data.success) {
           currentResult = data.data;
           activeFlow = 'general';
@@ -1470,7 +1471,7 @@
         }
         if (data.success && data.trial_calls_remaining === 0) { try { localStorage.setItem('vantage_trial_cap_hit', '1'); } catch(e) {} }
         if (data.success && data.data && data.data.wrongTool) {
-          showWrongTool(data.data.reason, data.data.suggestedTool, 'stakeholder');
+          showWrongTool(data.data.reason, data.data.suggestedTool, 'stakeholder', data.data);
         } else if (data.success) {
           currentResult = data.data;
           activeFlow = 'stakeholder';
@@ -1824,5 +1825,6 @@ function openSpatialBC() {
 </script>
 <script src="vantage-dictation.js"></script>
 <script>VantageDictation.init(["stakeholder-ask"]);</script>
+<script src="wrongtool-shared.js?v=20261106b"></script>
 </body>
 </html>

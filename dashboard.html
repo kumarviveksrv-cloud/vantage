@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html.vw-pre{background:#050410}html.vw-pre body{visibility:hidden}html.vw-pre #vw-backdrop{visibility:visible}</style>
+<style>html.vw-pre{background:#050410}html.vw-pre body{visibility:hidden}html.vw-pre #vw-backdrop{visibility:visible}
+    .tool-use{font-size:11px;line-height:1.5;color:rgba(165,180,252,.75);margin-top:8px}
+    .tool-use b{font-weight:600;color:rgba(196,181,253,.95)}
+</style>
 <script>/* welcome-overlay pre-hide: first-time visitors see the overlay, never the dashboard underneath it first */(function(){try{var q=new URLSearchParams(location.search).get('welcome')==='1';if(q||localStorage.getItem('vantage_onboarded_v1')!=='1'){document.documentElement.classList.add('vw-pre');setTimeout(function(){document.documentElement.classList.remove('vw-pre');},9000);}}catch(e){}})();</script>
 <script>/* profile-gate early hold: keep the page hidden until clerk-auth.js confirms the profile; self-releases after 8s */(function(){try{if(/(access|profile-setup|subscribe|pricing)(\.html)?$/.test(location.pathname))return;if(sessionStorage.getItem('vantage_profile_ok')==='1')return;var h=document.documentElement;h.style.visibility='hidden';setTimeout(function(){if(!window.__vantageProfileHold)h.style.visibility='visible';},8000);}catch(e){}})();</script> 
   <link rel="apple-touch-icon" href="favicon.png"/>
@@ -598,21 +601,25 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
           <div class="tool-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h8L10 22l10-12h-8L13 2z"/></svg></div>
           <div class="tool-name">Employee Case Advisor</div>
           <div class="tool-desc">You have an employee situation with legal stakes.</div>
+          <div class="tool-use"><b>Use when</b> something has happened with a specific person.<br><b>Not for</b> how a rule works in general: Policy Advisor.</div>
         </a>
         <a href="business-case.html" class="tool-card tc-influence">
           <div class="tool-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
           <div class="tool-name">The Business Case</div>
           <div class="tool-desc">Numbers for the room, or an argument for one specific person.</div>
+          <div class="tool-use"><b>Use when</b> you must win the business over with numbers, or convince one person.<br><b>Not for</b> a legal question: Policy Advisor.</div>
         </a>
         <a href="policy-advisor.html" class="tool-card tc-policy">
           <div class="tool-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
           <div class="tool-name">Policy Advisor</div>
           <div class="tool-desc">Describe a policy gap, get the applicable legal framework.</div>
+          <div class="tool-use"><b>Use when</b> you need what the law or a policy says, and how to apply it.<br><b>Not for</b> a live case about a named employee: Employee Case Advisor.</div>
         </a>
         <a href="retention-advisor.html" class="tool-card tc-ret">
           <div class="tool-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><path d="M7 3h10"/><path d="M3.5 9l3.5 7H0l3.5-7zM16.5 9l3.5 7H13l3.5-7z"/></svg></div>
           <div class="tool-name">Retention Advisor</div>
           <div class="tool-desc">Model the real cost of keeping or losing this person.</div>
+          <div class="tool-use"><b>Use when</b> a specific person may leave or holds an offer.<br><b>Not for</b> a company-wide attrition argument: The Business Case.</div>
         </a>
       </div>
     </div>
