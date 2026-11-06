@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v74'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v75'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -727,6 +727,7 @@ function retentionApply(result, flow, m) {
       });
       var full = m.options.full;
       fm.breakEvenCeiling = retLakhRange(m.ceilLo, m.ceilHi) + ' a year of extra pay. Two years of extra pay at this level equals the cost of replacing the employee, so any match below it is cheaper than losing them' + (full.inc > 0 ? '; the full match costs ' + engineLakh(full.inc) + ' a year' + (full.inc < m.ceilLo ? ', which is below the ceiling.' : full.inc <= m.ceilHi ? ', which falls inside the ceiling range.' : ', which is above the ceiling.') : '.');
+      if (m.noPremium) { fm.breakEvenCeiling = 'Not applicable, because the offer is not above current CTC and no increment is needed.'; }
       if (result.employeeProfile) { result.employeeProfile.offerPremiumPct = m.premiumPct; }
       var rec = result.recommendation;
       if (result.employeeProfile && /^\s*low/i.test(String(result.employeeProfile.flightRisk || ''))) { result.employeeProfile.flightRisk = 'Medium'; }
@@ -776,6 +777,37 @@ function retentionStrayFigures(result, flow, m) {
     if (out.indexOf(ym[0].trim()) < 0) { out.push(ym[0].trim()); }
   }
   return out;
+}
+var RET_SOCIAL_RE = /linkedin|open[- ]to[- ]work|social media|job (?:portal|board|site)s?|naukri|personal (?:account|profile)s?/i;
+var RET_OVERCLAIMS = [/\bnot about (?:the )?money\b/i, /\bnot a negotiating tactic\b/i, /\bgenuine(?:ly)? (?:intent|intending)\b/i, /\bentirely avoidable\b/i, /\bmaterially wrong\b/i, /\beliminates?\b[^.]{0,80}\b(?:entirely|completely|fully)\b/i, /\bactively sourc\w+/i, /\btells us (?:this|that)\b/i];
+// Figures, durations, overclaims and personal-account monitoring in the narrative. Used to ask the model once to rewrite.
+function retentionIssues(result, flow, m, signalsText) {
+  var out = retentionStrayFigures(result, flow, m);
+  if (!result || !m) { return out; }
+  var parts = [];
+  Object.keys(result).forEach(function (k) {
+    if (k === 'financialModel' || k === 'humac') { return; }
+    if (k === 'employeeProfile') { parts.push(String((result.employeeProfile || {}).flightRiskRationale || '')); return; }
+    parts.push(JSON.stringify(result[k]));
+  });
+  var text = parts.join(' ');
+  RET_OVERCLAIMS.forEach(function (re) { var x = re.exec(text); if (x && out.indexOf(x[0]) < 0) { out.push(x[0]); } });
+  if (!RET_SOCIAL_RE.test(signalsText || '')) { var sx = RET_SOCIAL_RE.exec(text); if (sx) { out.push(sx[0]); } }
+  var okR = [];
+  if (m.options) { Object.keys(m.options).forEach(function (k) { var o = m.options[k]; okR.push(o.monthsLo + '-' + o.monthsHi); }); }
+  var mre = /(\d+)\s*(?:to|-|–)\s*(\d+)\s*months?/gi, mr;
+  while ((mr = mre.exec(text)) !== null) { if (okR.indexOf(mr[1] + '-' + mr[2]) < 0 && out.indexOf(mr[0]) < 0) { out.push(mr[0]); } }
+  return out;
+}
+// Watch-signals must be things HR can see at work. Anything about personal or social accounts is removed in code.
+function retentionScrub(result, signalsText) {
+  var sb = result && result.scenarios && result.scenarios.scenarioB;
+  if (!sb || !Array.isArray(sb.watchSignals)) { return result; }
+  var userSocial = RET_SOCIAL_RE.test(signalsText || '');
+  var kept = sb.watchSignals.filter(function (x) { x = String(x); if (/through any channel/i.test(x)) { return false; } return userSocial || !RET_SOCIAL_RE.test(x); });
+  if (!kept.length) { kept = ['Further withdrawal from team work, planning or meetings that the manager observes directly']; }
+  sb.watchSignals = kept;
+  return result;
 }
 // RETENTION_MODEL_END
 
@@ -1660,6 +1692,12 @@ LANGUAGE AND CLAIMS RULES (apply to every text field):
 - Do not cite any statistic, percentage or time window that is not in the inputs or the MERIDIAN profile (for example a re-attrition rate or a "prime switching window"). If you want to make a general point, say it in plain words without a number.
 - Never convert months into years, and never restate payback durations in your own words. Use the duration text given in the system-calculated figures exactly.
 - Never assume facts about the organisation that the MERIDIAN profile does not state.
+- When you cite the industry attrition benchmark, call it the estimated sector benchmark, unless the MERIDIAN profile says it is company-reported.
+- Do not assume the employee went looking for the offer. They may have been approached.
+- Never write that a signal "tells us" what is driving the employee. Say what it may indicate, and what could be checked by asking.
+- Never say that an action eliminates, removes or guarantees anything. Say it may reduce the risk.
+- Make no claims about what happens at a tenure milestone, or about the current job market ("people often take stock at three years", "the market right now").
+- Never tell HR to watch, check or monitor an employee's LinkedIn, social media, job portals or any personal account, and never suggest asking others to check on the employee's behalf. Watch-signals must be behaviour HR or the manager can see at work, such as attendance, participation, output, or something the employee says directly.
 
 MERIDIAN CALIBRATION: Use org size for replacement cost scale. Use industry for flight risk baseline. Use state for statutory components if relevant.
 
@@ -1752,7 +1790,7 @@ ${meridianCtx}
 FLIGHT RISK ASSESSMENT — assess from signals provided plus these factors:
 High: signals include LinkedIn activity, recruiter contact, disengagement, recent tenure in prime switching window (2-5 years), band A or B, high-criticality role
 Medium: 1-2 weak signals, or band C, or tenure < 2 years
-Low: single ambiguous signal, band D, tenure > 8 years, or low criticality
+Low: a single ambiguous signal on its own (even for a band A or B performer), band D, tenure > 8 years, or low criticality. estimatedTimeToLeave must be Unknown unless the signals include an offer, talk of resigning, or recruiter contact.
 Weigh these signals against the Industry Attrition Benchmark given in the MERIDIAN profile above, not against a generic national assumption — the same signals mean less in a sector where 30%+ annual turnover is already typical than in one where 13% is typical. If the benchmark is company-reported, prioritise it over the sector default entirely.
 
 FINANCIAL MODEL — apply exactly:
@@ -1777,6 +1815,12 @@ LANGUAGE AND CLAIMS RULES (apply to every text field):
 - Do not cite any statistic, percentage or time window that is not in the inputs or the MERIDIAN profile (for example a re-attrition rate or a "prime switching window"). If you want to make a general point, say it in plain words without a number.
 - Never convert months into years, and never restate payback durations in your own words. Use the duration text given in the system-calculated figures exactly.
 - Never assume facts about the organisation that the MERIDIAN profile does not state.
+- When you cite the industry attrition benchmark, call it the estimated sector benchmark, unless the MERIDIAN profile says it is company-reported.
+- Do not assume the employee went looking for the offer. They may have been approached.
+- Never write that a signal "tells us" what is driving the employee. Say what it may indicate, and what could be checked by asking.
+- Never say that an action eliminates, removes or guarantees anything. Say it may reduce the risk.
+- Make no claims about what happens at a tenure milestone, or about the current job market ("people often take stock at three years", "the market right now").
+- Never tell HR to watch, check or monitor an employee's LinkedIn, social media, job portals or any personal account, and never suggest asking others to check on the employee's behalf. Watch-signals must be behaviour HR or the manager can see at work, such as attendance, participation, output, or something the employee says directly.
 
 MERIDIAN CALIBRATION: Use org size for financial scale. Use the Industry Attrition Benchmark in the MERIDIAN profile above for switching rate baseline.
 
@@ -4456,6 +4500,7 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
       const systemPrompt = getOfferIntelligencePrompt(offerMeridian || meridian, flow);
       const replacementMultiplier = getReplacementCostMultiplier(roleCriticality);
       let userMessage;
+      let retSignalsText = '';
       if (flow === 'counter_offer') {
         userMessage = `FLOW: Counter-offer Decision\nCurrent CTC: Rs.${currentCTC}\nCompeting Offer CTC: Rs.${offerCTC}\nPerformance Band: ${performanceBand}\nTenure: ${tenureYears} years\nRole Criticality: ${roleCriticality}\nNotice Period: ${noticePeriodMonths || 2} months\nReplacement Cost Multiplier for this role: ${replacementMultiplier.label}\n\nRun the full Offer Intelligence analysis, using the Replacement Cost Multiplier given above in place of any flat default in your instructions. Return strict JSON only.`;
       } else {
@@ -4469,6 +4514,7 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
         const anonymizedSignals = truncatedSignals ? await anonymizeNarrative(truncatedSignals) : '';
         if (truncatedSignals && anonymizedSignals === null) return anonymizationFailedResponse();
         userMessage = `FLOW: Proactive Flight Risk Assessment\nCurrent CTC: Rs.${currentCTC}\nPerformance Band: ${performanceBand}\nTenure: ${tenureYears} years\nRole Criticality: ${roleCriticality}\nSignals observed: ${anonymizedSignals || 'Not specified'}\nReplacement Cost Multiplier for this role: ${replacementMultiplier.label}\n\nRun the full flight risk assessment, using the Replacement Cost Multiplier given above in place of any flat default in your instructions. Before answering, apply the SCOPE CHECK to the signals text: if it is only a conduct or attendance problem with no sign of leaving, return the redirect object only. Return strict JSON only.`;
+        retSignalsText = anonymizedSignals || '';
         if (anonymizedSignals && /\b(legal|legally|law|laws|statut\w*|section|notice period|enforce\w*|compliance|labour code|codes)\b/i.test(anonymizedSignals)) { userMessage += '\n\nNOTE: the signals text also contains what looks like a separate legal or policy question. If it also describes a live matter about a specific employee, you must return the redirect object with twoParts true, suggestedTool Retention Advisor and secondTool Policy Advisor, and answer neither half.'; }
       }
       const retFlow = flow === 'counter_offer' ? 'counter_offer' : 'proactive';
@@ -4510,17 +4556,17 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
         }
       }
       if (result && result.wrongTool !== true && retModel) {
-        const retStrays = retentionStrayFigures(result, retFlow, retModel);
+        const retStrays = retentionIssues(result, retFlow, retModel, retSignalsText);
         if (retStrays.length) {
           console.error('RETENTION: figures outside the calculated set, retrying once: ' + retStrays.join(', '));
           try {
-            const retFix = await callClaude(systemPrompt, [{ role: 'user', content: userMessage + ' IMPORTANT: your previous reply used figures or durations that are not in the SYSTEM-CALCULATED FIGURES block (' + retStrays.slice(0, 6).join(', ') + '). Return the full JSON again. Every rupee figure in your text must be one listed in that block or a plain sum of them, ranges must stay ranges, and never convert months into years.' }], MAX_TOKENS, CLAUDE_MODEL_DEFAULT, undefined, undefined, ANALYST_TEMPERATURE);
+            const retFix = await callClaude(systemPrompt, [{ role: 'user', content: userMessage + ' IMPORTANT: your previous reply contained figures, durations or wording that is not allowed. The SYSTEM-CALCULATED FIGURES block is the only source of figures, and the phrases below are either banned overclaims or point HR at personal or social accounts (' + retStrays.slice(0, 6).join(', ') + '). Return the full JSON again. Every rupee figure in your text must be one listed in that block or a plain sum of them, ranges must stay ranges, never convert months into years, never say an action eliminates or guarantees anything, and never tell HR to watch LinkedIn, social media or any personal account.' }], MAX_TOKENS, CLAUDE_MODEL_DEFAULT, undefined, undefined, ANALYST_TEMPERATURE);
             const retFixBlock = (retFix.content || []).find(function(b){ return b.type === 'text'; });
             const retFixResult = retFixBlock ? JSON.parse(retFixBlock.text.split('```json').join('').split('```').join('').trim()) : null;
-            if (retFixResult && offerIsComplete(retFixResult, flow) && retentionStrayFigures(retFixResult, retFlow, retModel).length < retStrays.length) { result = retFixResult; }
+            if (retFixResult && offerIsComplete(retFixResult, flow) && retentionIssues(retFixResult, retFlow, retModel, retSignalsText).length < retStrays.length) { result = retFixResult; }
           } catch (retFixErr) { console.error('RETENTION: figure retry failed: ' + retFixErr.message); }
         }
-        if (result && result.wrongTool !== true) { retentionApply(result, retFlow, retModel); }
+        if (result && result.wrongTool !== true) { retentionApply(result, retFlow, retModel); retentionScrub(result, retSignalsText); }
       }
       if (result && result.wrongTool === true) { if (await settleWrongTool(clerkUserId, 'offer_intelligence', usageCheck, trialCharged)) { _trialLastCall = false; } } else { queueUsage(clerkUserId, 'offer_intelligence', usageCheck); }
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {

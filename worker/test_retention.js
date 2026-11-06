@@ -4,7 +4,7 @@ const src = fs.readFileSync(path.join(__dirname, 'situation-room-api.worker.js')
 const m0 = src.indexOf('const REPLACEMENT_COST_MULTIPLIER'), m1 = src.indexOf('const DEFAULT_REPLACEMENT_MULTIPLIER');
 const e0 = src.indexOf('function engineLakh'), e1 = src.indexOf('function r2(');
 const a = src.indexOf('// RETENTION_MODEL_START'), b = src.indexOf('// RETENTION_MODEL_END');
-const lib = new Function(src.slice(m0, m1) + ';' + src.slice(e0, e1) + ';' + src.slice(a, b) + ';return {computeRetentionModel, retentionFixedBlock, retentionApply, retentionStrayFigures};')();
+const lib = new Function(src.slice(m0, m1) + ';' + src.slice(e0, e1) + ';' + src.slice(a, b) + ';return {computeRetentionModel, retentionFixedBlock, retentionApply, retentionStrayFigures, retentionIssues, retentionScrub};')();
 let fails = 0; const ok = (c, msg) => { if (!c) { fails++; console.log('FAIL', msg); } };
 const near = (x, y) => Math.abs(x - y) < 0.005;
 
@@ -90,5 +90,33 @@ lib.retentionApply(prl, 'proactive', proLong);
 ok(prl.financialModel.proactiveInterventionCost.breakEvenMonths === 'more than 120', 'proactive 5% shows more than 120 months');
 const blk10 = lib.retentionFixedBlock('proactive', proLong);
 ok(/Intervention at 10%: Rs\.1\.8L a year; the cumulative extra cost stays below replacement cost for more than 10 years/.test(blk10), '10% also capped: ' + blk10.split('\n').filter(l => /at 10%/.test(l))[0]);
+
+
+// v75: overclaims, month ranges, personal-account monitoring
+const iss = (txt, sig) => lib.retentionIssues({ recommendation: { rationale: txt } }, 'proactive', pro, sig || '');
+ok(iss('The signals are consistent with disengagement. A 5% raise may reduce the risk.').length === 0, 'clean text has no issues: ' + JSON.stringify(iss('The signals are consistent with disengagement. A 5% raise may reduce the risk.')));
+ok(iss('Acting now eliminates the risk of losing a Band B performer entirely.').length === 1, 'eliminates ... entirely flagged');
+ok(iss('The offer is below current CTC, which tells us this is not about money.').length === 2, 'tells us + not about money flagged: ' + JSON.stringify(iss('The offer is below current CTC, which tells us this is not about money.')));
+ok(iss('Non-financial drivers may resurface within 12 to 18 months.').length === 1, '12 to 18 months flagged');
+ok(iss('The 6-12 month re-attrition risk is high.').length === 1, '6-12 month flagged');
+ok(iss('Watch for LinkedIn profile updates.').length === 1, 'LinkedIn flagged when the user did not mention it');
+ok(iss('The signal you gave, LinkedIn activity, is noted.', 'LinkedIn activity is up').length === 0, 'LinkedIn allowed when the user raised it');
+ok(iss('This employee has been genuinely engaged and we can genuinely fix it.').length === 0, 'plain genuinely is not flagged');
+ok(iss('The match may keep payback inside about 111 months.').length === 0, 'a single payback figure is fine');
+const rngOk = lib.retentionIssues({ recommendation: { rationale: 'Cumulative extra cost stays below replacement for about 111 to 147 months.' } }, 'counter_offer', r1, '');
+ok(rngOk.length === 0, 'calculated month range allowed: ' + JSON.stringify(rngOk));
+const sc = { scenarios: { scenarioB: { watchSignals: ['LinkedIn profile updated or marked Open to Work', 'Reduced participation in project planning', 'Recruiter contact confirmed through any channel'] } } };
+lib.retentionScrub(sc, 'quiet in meetings');
+ok(sc.scenarios.scenarioB.watchSignals.length === 1 && /participation/.test(sc.scenarios.scenarioB.watchSignals[0]), 'scrub keeps only workplace signals: ' + JSON.stringify(sc.scenarios.scenarioB.watchSignals));
+const sc2 = { scenarios: { scenarioB: { watchSignals: ['LinkedIn profile updated'] } } };
+lib.retentionScrub(sc2, '');
+ok(sc2.scenarios.scenarioB.watchSignals.length === 1 && !/LinkedIn/i.test(sc2.scenarios.scenarioB.watchSignals[0]), 'scrub never leaves the list empty');
+const sc3 = { scenarios: { scenarioB: { watchSignals: ['LinkedIn activity up'] } } };
+lib.retentionScrub(sc3, 'LinkedIn activity up');
+ok(sc3.scenarios.scenarioB.watchSignals[0] === 'LinkedIn activity up', 'scrub respects the user own LinkedIn signal');
+// no-premium ceiling card
+const r3b = { recommendation: { primary: 'Walk Away', figure: 'x' }, financialModel: {}, humac: {} };
+lib.retentionApply(r3b, 'counter_offer', r3);
+ok(/^Not applicable/.test(r3b.financialModel.breakEvenCeiling), 'no-premium ceiling is Not applicable: ' + r3b.financialModel.breakEvenCeiling);
 
 if (fails) { console.log(fails + ' FAILED'); process.exit(1); } else { console.log('RETENTION TESTS PASSED'); }
