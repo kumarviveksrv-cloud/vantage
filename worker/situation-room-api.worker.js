@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v61'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v62'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4146,6 +4146,8 @@ if (actContext) {
   response = await callClaude(systemPrompt, [{ role: 'user', content: userMessage }], MAX_TOKENS, CLAUDE_MODEL_DEFAULT, undefined, function (n) { _emit('gen', { chars: n }); }, ANALYST_TEMPERATURE);
 }
       let policyText = (response.content||[]).find(b=>b.type==='text')?.text||'';
+      const exposureUsed = /\{\{EXPOSURE_(RANGE|BASIS)\}\}/.test(policyText);
+      const exposureFinal = exposureComputed || EXPOSURE_FINE_ONLY;
       policyText = applyExposureTokens(policyText, exposureComputed);
       const policyBounce = parseWrongToolReply(policyText);
       if (policyBounce) {
@@ -4158,6 +4160,8 @@ if (actContext) {
         policyText += '\n\nNote: the statutory text for ' + policyActLoad.missing.join(' and ') + ' could not be loaded for this answer, so section references come from general knowledge and should be checked against the Act.';
       }
       result = { response: policyText };
+      // Sent as its own field so the page never has to parse the explanation out of the model's text
+      if (exposureUsed) { result.exposure = { range: exposureFinal.range, basis: exposureFinal.basis }; }
       queueUsage(clerkUserId, 'policy', usageCheck);
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }

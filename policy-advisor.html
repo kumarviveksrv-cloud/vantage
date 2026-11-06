@@ -827,7 +827,9 @@
       var compChip = document.getElementById('compliance-exposure-chip');
       var compValEl = document.getElementById('compliance-exposure-value');
       var saveBtn = document.getElementById('save-record-btn');
-      var compVal = parsedSections.complianceExposure || '';
+      var _sysEx = (currentResult && currentResult.exposure) || null;
+      var compVal = (_sysEx && _sysEx.range) || parsedSections.complianceExposure || '';
+      if (_sysEx && _sysEx.basis) { parsedSections.exposureBasis = _sysEx.basis; }
       if (compVal && compVal.toLowerCase() !== 'not quantifiable' && compVal.toLowerCase() !== 'nil') {
         compValEl.textContent = compVal;
         var _bEl = document.getElementById('compliance-exposure-basis');
