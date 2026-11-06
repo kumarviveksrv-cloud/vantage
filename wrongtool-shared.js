@@ -15,6 +15,17 @@
 
   function go(tool, text) {
     var file = URLS[tool] || 'dashboard.html';
+    var here = (location.pathname.split('/').pop() || ''); if (here && here.indexOf('.') < 0) { here += '.html'; }
+    if (file === here && BOX_FOR_PAGE[file] && typeof window.startNew === 'function') {
+      /* Already on the target tool: reset it in place and fill the box, instead of reloading the same page. */
+      try {
+        window.startNew();
+        var box = document.getElementById(BOX_FOR_PAGE[file]);
+        if (box) { box.value = String(text || '').slice(0, 3000); try { box.dispatchEvent(new Event('input', { bubbles: true })); } catch (e2) {} try { box.focus(); box.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e3) {} }
+        var b = document.getElementById('vantage-wrongtool-shared'); if (b && b.parentNode) { b.parentNode.removeChild(b); }
+        return;
+      } catch (e) {}
+    }
     try { if (text && BOX_FOR_PAGE[file]) { sessionStorage.setItem(KEY, JSON.stringify({ to: file, text: String(text).slice(0, 3000) })); } } catch (e) {}
     window.location.href = file;
   }
