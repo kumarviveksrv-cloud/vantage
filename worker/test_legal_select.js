@@ -9,6 +9,7 @@ ok(sel('uniform allowance included in OT calculation under new wage code').inclu
 ok(sel('uniform allowance included in OT calculation under new wage code').includes('wages-code-2019'), 'OT question loads wages code');
 ok(sel('Labour licence Central for construction company Shram Suvidha').includes('extracts/contract-labour-licensing'), 'licence question');
 ok(sel('Form 15 accident register Uttarakhand factories').includes('extracts/registers-returns-savings'), 'register question');
+ok(sel('Can we terminate?','Active flags: Contractual worker').includes('extracts/contract-labour-licensing'), 'contractual worker flag loads contract labour extract');
 ok(!sel('How do I handle a notice period dispute?').some(a => a.startsWith('extracts/')), 'unrelated question loads no extract');
 const need = { 'hours-overtime-leave': ['14. Wages for overtime work', '27. Extra wages for overtime', '25. Daily and weekly working hours'],
   'contract-labour-licensing': ['47. Licensing of contractors', '45. Applicability of this Part', '79. Approval and licensing of factories'],
