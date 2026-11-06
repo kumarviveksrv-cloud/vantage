@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v72'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v73'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -652,6 +652,120 @@ async function loadActsForContext(actKeys) {
 // Add a README.md to /legal/ explaining the files and how to update them.
 // (See the separate README file delivered alongside this patch.)
 // ══════════════════════════════════════════════════════════════════════════════
+// RETENTION_MODEL_START
+// Retention Advisor arithmetic is done here, not by the model. The model receives the figures as fixed inputs and
+// the structured cards are overwritten after it replies, so a wrong sum can never reach the page.
+const RETENTION_RAMP_MONTHS = { Low: 3, Medium: 6, High: 9 };
+function retLakhRange(lo, hi) { return engineLakh(lo) + ' – ' + engineLakh(hi); }
+function retMonths(repl, inc) { return inc > 0 ? Math.round(repl * 12 / inc) : null; }
+function computeRetentionModel(inp) {
+  inp = inp || {};
+  var cur = Number(inp.currentCTC) / 100000;
+  if (!isFinite(cur) || cur <= 0) { return null; }
+  var tenure = Math.max(0, Number(inp.tenureYears) || 0);
+  var crit = REPLACEMENT_COST_MULTIPLIER[inp.roleCriticality] ? inp.roleCriticality : 'Medium';
+  var mm = /([\d.]+)\s*-\s*([\d.]+)/.exec(REPLACEMENT_COST_MULTIPLIER[crit].multiplier);
+  var m1 = parseFloat(mm[1]), m2 = parseFloat(mm[2]);
+  var ramp = RETENTION_RAMP_MONTHS[crit];
+  var gap = cur / 12 * ramp, know = tenure * cur * 0.08;
+  var m = { cur: cur, tenure: tenure, crit: crit, mult: m1 + '-' + m2 + 'x', ramp: ramp, directLo: cur * m1, directHi: cur * m2, gap: gap, know: know };
+  m.replLo = m.directLo + gap + know; m.replHi = m.directHi + gap + know;
+  m.ceilLo = m.replLo / 2; m.ceilHi = m.replHi / 2;
+  var offer = Number(inp.offerCTC) / 100000;
+  if (isFinite(offer) && offer > 0) {
+    m.offer = offer; m.premiumPct = Math.round((offer - cur) / cur * 1000) / 10;
+    var incs = { partial: Math.max(0, (offer - cur) / 2), full: Math.max(0, offer - cur), exceed: Math.max(0, offer * 1.1 - cur) };
+    m.noPremium = incs.full === 0; m.options = {};
+    Object.keys(incs).forEach(function (k) {
+      var inc = incs[k];
+      m.options[k] = { inc: inc, ctc: cur + inc, twoYear: inc * 2, saveLo: m.replLo - inc * 2, saveHi: m.replHi - inc * 2, monthsLo: retMonths(m.replLo, inc), monthsHi: retMonths(m.replHi, inc) };
+    });
+  }
+  return m;
+}
+function retMonthsText(o) { return o.monthsLo === null ? 'not applicable (no extra cost)' : 'about ' + o.monthsLo + ' to ' + o.monthsHi + ' months'; }
+function retentionFixedBlock(flow, m) {
+  var L = [];
+  L.push('SYSTEM-CALCULATED FIGURES (calculated in code from the inputs above). They override the formulas and any arithmetic in your instructions. Copy them exactly. Never recalculate, never round differently, never replace a range with a single number and never invent another rupee figure; any rupee figure in your text must be one listed here or a plain sum of them.');
+  L.push('Replacement cost: ' + retLakhRange(m.replLo, m.replHi) + ' = recruitment and onboarding ' + retLakhRange(m.directLo, m.directHi) + ' (multiplier ' + m.mult + ') + productivity gap ' + engineLakh(m.gap) + ' (' + m.ramp + ' months) + knowledge transfer ' + engineLakh(m.know) + ' (an unsourced planning estimate of 8% of CTC per year of tenure; say so in the breakdown).');
+  if (flow === 'counter_offer' && m.options) {
+    if (m.noPremium) { L.push('The competing offer is not above current CTC, so there is no retention premium to match. Say so plainly; do not model a match.'); }
+    [['partial', 'Partial match (half the gap)'], ['full', 'Full match'], ['exceed', 'Exceed (offer plus 10%)']].forEach(function (p) {
+      var o = m.options[p[0]];
+      L.push(p[1] + ': CTC ' + engineLakh(o.ctc) + ', extra ' + engineLakh(o.inc) + ' a year; cost over 2 years ' + engineLakh(o.twoYear) + ', which is ' + retLakhRange(o.saveLo, o.saveHi) + ' less than replacing; the cumulative extra cost stays below replacement cost for ' + retMonthsText(o) + '.');
+    });
+    L.push('Break-even ceiling: ' + retLakhRange(m.ceilLo, m.ceilHi) + ' a year of extra pay (the level at which two years of extra pay equals the replacement cost).');
+    L.push('If you recommend Match, the figure is the Full match CTC above. If you recommend Partial Match, the figure is the Partial match CTC above. Quote the replacement cost as the range, never as one number.');
+  } else {
+    [5, 10, 15].forEach(function (pct) {
+      var inc = m.cur * pct / 100;
+      L.push('Intervention at ' + pct + '%: ' + engineLakh(inc) + ' a year; the cumulative extra cost stays below replacement cost for about ' + retMonths(m.replLo, inc) + ' to ' + retMonths(m.replHi, inc) + ' months.');
+    });
+    L.push('Choose the intervention from 5%, 10% or 15% above and write it as "Rs.X annual increment (N%)" using the figure above. Quote the cost of losing them as the range, never as one number.');
+  }
+  return L.join('\n');
+}
+function retentionApply(result, flow, m) {
+  if (!result || !m) { return result; }
+  var fm = result.financialModel = result.financialModel || {};
+  var breakdown = [
+    'Direct recruitment and onboarding (' + m.mult + ' of CTC): ' + retLakhRange(m.directLo, m.directHi),
+    'Productivity gap (' + m.ramp + ' months): ' + engineLakh(m.gap),
+    'Knowledge transfer (unsourced planning estimate, 8% of CTC per year of tenure): ' + engineLakh(m.know)
+  ];
+  var total = retLakhRange(m.replLo, m.replHi);
+  var hum = result.humac = result.humac || {}; hum.range = total;
+  if (flow === 'counter_offer') {
+    fm.replacementCost = { total: total, breakdown: breakdown };
+    if (m.options) {
+      var rc = fm.retentionCost = {};
+      [['partialMatch', 'partial'], ['fullMatch', 'full'], ['exceed', 'exceed']].forEach(function (p) {
+        var o = m.options[p[1]];
+        rc[p[0]] = { figure: engineLakh(o.ctc), annualIncrement: engineLakh(o.inc) + '/yr', breakEvenMonths: o.monthsLo === null ? 0 : Math.round((o.monthsLo + o.monthsHi) / 2), breakEvenMonthsRange: o.monthsLo === null ? 'n/a' : o.monthsLo + ' to ' + o.monthsHi };
+      });
+      var full = m.options.full;
+      fm.breakEvenCeiling = retLakhRange(m.ceilLo, m.ceilHi) + ' a year of extra pay. Two years of extra pay at this level equals the cost of replacing the employee, so any match below it is cheaper than losing them' + (full.inc > 0 ? '; the full match costs ' + engineLakh(full.inc) + ' a year' + (full.inc < m.ceilLo ? ', which is below the ceiling.' : full.inc <= m.ceilHi ? ', which falls inside the ceiling range.' : ', which is above the ceiling.') : '.');
+      if (result.employeeProfile) { result.employeeProfile.offerPremiumPct = m.premiumPct; }
+      var rec = result.recommendation;
+      if (rec && typeof rec.primary === 'string' && !m.noPremium) {
+        if (/^\s*partial/i.test(rec.primary)) { rec.figure = engineLakh(m.options.partial.ctc); }
+        else if (/^\s*match/i.test(rec.primary)) { rec.figure = engineLakh(m.options.full.ctc); }
+      }
+    }
+  } else {
+    fm.costOfLosingThem = { total: total, breakdown: breakdown };
+    var pic = fm.proactiveInterventionCost;
+    var pm = pic && typeof pic.salaryAdjustment === 'string' ? /(\d+(?:\.\d+)?)\s*%/.exec(pic.salaryAdjustment) : null;
+    if (pm) {
+      var pct = parseFloat(pm[1]), inc = m.cur * pct / 100, lo = retMonths(m.replLo, inc), hi = retMonths(m.replHi, inc);
+      pic.salaryAdjustment = engineLakh(inc) + ' annual increment (' + pct + '%)';
+      pic.breakEvenMonths = Math.round((lo + hi) / 2); pic.breakEvenMonthsRange = lo + ' to ' + hi;
+    }
+  }
+  return result;
+}
+// Rupee amounts in the narrative that are not in the calculated set. Used to ask the model once to rewrite.
+function retentionStrayFigures(result, flow, m) {
+  if (!result || !m) { return []; }
+  var allowed = [m.cur, m.cur / 12, m.directLo, m.directHi, m.gap, m.know, m.replLo, m.replHi, m.ceilLo, m.ceilHi];
+  if (m.offer) { allowed.push(m.offer, m.offer / 12, m.offer * 1.1); }
+  if (m.options) { Object.keys(m.options).forEach(function (k) { var o = m.options[k]; allowed.push(o.inc, o.ctc, o.twoYear, o.saveLo, o.saveHi, o.inc / 12); }); }
+  [5, 10, 15].forEach(function (p) { allowed.push(m.cur * p / 100, m.cur * (1 + p / 100)); });
+  var skip = { financialModel: 1, humac: 1, employeeProfile: 1 };
+  var text = Object.keys(result).filter(function (k) { return !skip[k]; }).map(function (k) { return JSON.stringify(result[k]); }).join(' ');
+  var out = [], re = /(?:Rs\.?|₹)\s*([\d,]+(?:\.\d+)?)\s*(Cr|L|K)?/gi, mt;
+  while ((mt = re.exec(text)) !== null) {
+    var v = parseFloat(mt[1].replace(/,/g, '')); if (!isFinite(v)) { continue; }
+    var u = (mt[2] || '').toLowerCase();
+    var lakh = u === 'cr' ? v * 100 : u === 'l' ? v : u === 'k' ? v / 100 : v / 100000;
+    if (lakh < 0.5) { continue; }
+    var hit = allowed.some(function (a) { return Math.abs(a - lakh) <= Math.max(0.011, a * 0.0006); });
+    if (!hit && out.indexOf(mt[0].trim()) < 0) { out.push(mt[0].trim()); }
+  }
+  return out;
+}
+// RETENTION_MODEL_END
+
 function getReplacementCostMultiplier(roleCriticality) {
   const tier = REPLACEMENT_COST_MULTIPLIER[roleCriticality];
   if (!tier) {
@@ -4329,6 +4443,9 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
         if (truncatedSignals && anonymizedSignals === null) return anonymizationFailedResponse();
         userMessage = `FLOW: Proactive Flight Risk Assessment\nCurrent CTC: Rs.${currentCTC}\nPerformance Band: ${performanceBand}\nTenure: ${tenureYears} years\nRole Criticality: ${roleCriticality}\nSignals observed: ${anonymizedSignals || 'Not specified'}\nReplacement Cost Multiplier for this role: ${replacementMultiplier.label}\n\nRun the full flight risk assessment, using the Replacement Cost Multiplier given above in place of any flat default in your instructions. Return strict JSON only.`;
       }
+      const retFlow = flow === 'counter_offer' ? 'counter_offer' : 'proactive';
+      const retModel = computeRetentionModel({ currentCTC: currentCTC, offerCTC: retFlow === 'counter_offer' ? offerCTC : null, tenureYears: tenureYears, roleCriticality: roleCriticality });
+      if (retModel) { userMessage += '\n\n' + retentionFixedBlock(retFlow, retModel); }
       _emit('stage', { stage: 'analyse' });
       const response = await callClaude(systemPrompt, [{ role: 'user', content: userMessage }], MAX_TOKENS, CLAUDE_MODEL_DEFAULT, undefined, function (n) { _emit('gen', { chars: n }); }, ANALYST_TEMPERATURE);
       const ofBlock = (response.content || []).find(function(b){ return b.type === 'text'; });
@@ -4363,6 +4480,19 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
             status: 502, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
           });
         }
+      }
+      if (result && result.wrongTool !== true && retModel) {
+        const retStrays = retentionStrayFigures(result, retFlow, retModel);
+        if (retStrays.length) {
+          console.error('RETENTION: figures outside the calculated set, retrying once: ' + retStrays.join(', '));
+          try {
+            const retFix = await callClaude(systemPrompt, [{ role: 'user', content: userMessage + ' IMPORTANT: your previous reply used rupee figures that are not in the SYSTEM-CALCULATED FIGURES block (' + retStrays.slice(0, 6).join(', ') + '). Return the full JSON again. Every rupee figure in your text must be one listed in that block or a plain sum of them, and ranges must stay ranges.' }], MAX_TOKENS, CLAUDE_MODEL_DEFAULT, undefined, undefined, ANALYST_TEMPERATURE);
+            const retFixBlock = (retFix.content || []).find(function(b){ return b.type === 'text'; });
+            const retFixResult = retFixBlock ? JSON.parse(retFixBlock.text.split('```json').join('').split('```').join('').trim()) : null;
+            if (retFixResult && offerIsComplete(retFixResult, flow) && retentionStrayFigures(retFixResult, retFlow, retModel).length < retStrays.length) { result = retFixResult; }
+          } catch (retFixErr) { console.error('RETENTION: figure retry failed: ' + retFixErr.message); }
+        }
+        if (result && result.wrongTool !== true) { retentionApply(result, retFlow, retModel); }
       }
       if (result && result.wrongTool === true) { if (await settleWrongTool(clerkUserId, 'offer_intelligence', usageCheck, trialCharged)) { _trialLastCall = false; } } else { queueUsage(clerkUserId, 'offer_intelligence', usageCheck); }
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
