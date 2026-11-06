@@ -452,7 +452,6 @@
         <!-- Action row -->
         <div class="action-row">
           <button class="btn-primary" onclick="startNew()">&#x2190; New Question</button>
-          <button class="btn-primary" onclick="openInCaseNavigator()">Open in Employee Case Advisor &rarr;</button>
           <button class="btn-ghost" id="save-record-btn" onclick="saveToRecord()" style="display:none">&#x2713; Save to Vantage Record</button>
           <button class="btn-ghost" onclick="printReport()">&#x2913; Download Report</button>
           <button class="btn-ghost" onclick="window.location.href='dashboard.html'">Dashboard</button>
@@ -857,13 +856,6 @@
         policyContext: parsedSections.recommended
       }));
       window.location.href = BASE + 'aria.html';
-    }
-
-    function openInCaseNavigator() {
-      sessionStorage.setItem('sr_case_from_practice', JSON.stringify({
-        scenario: currentQuery
-      }));
-      window.location.href = BASE + 'employee-case-advisor.html';
     }
 
     function qbFill(targetId, chipEl, postFn) {
