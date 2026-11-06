@@ -179,6 +179,8 @@
     .print-date{font-size:11px;color:rgba(244,243,255,0.5);text-align:right;font-family:'JetBrains Mono',monospace;padding-top:2px}
 
     /* COMPLIANCE EXPOSURE CHIP */
+    .comp-exp-basis{margin-top:12px;padding-top:12px;border-top:1px solid rgba(74,222,128,0.16);font-size:13px;line-height:1.6;color:rgba(244,243,255,0.82)}
+    .comp-exp-basis b{color:rgba(134,239,172,0.95);font-weight:600}
     .compliance-exposure-chip{background:rgba(74,222,128,0.05);border:1px solid rgba(74,222,128,0.22);border-radius:12px;padding:18px 22px;margin-bottom:16px}
     .comp-exp-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(134,239,172,0.7);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
     .comp-exp-value{font-size:20px;font-weight:700;color:#86efac;margin-bottom:4px;font-family:'JetBrains Mono',monospace;letter-spacing:.03em}
@@ -417,6 +419,7 @@
           <div class="comp-exp-label">&#x1F4B0; Compliance Exposure</div>
           <div class="comp-exp-value" id="compliance-exposure-value"></div>
           <div class="comp-exp-sub">Estimated financial liability &middot; Calibrated to your MERIDIAN context</div>
+          <div class="comp-exp-basis" id="compliance-exposure-basis"></div>
         </div>
 
         <!-- Disclaimer, shown after the recommendation and any exposure figure -->
@@ -738,7 +741,7 @@
     }
 
     function parsePolicyResponse(text) {
-      var sections = { assessment: '', legal: '', recommended: '', meridianNote: '', ariaOffer: '', complianceExposure: '' };
+      var sections = { assessment: '', legal: '', recommended: '', meridianNote: '', ariaOffer: '', complianceExposure: '', exposureBasis: '' };
       if (!text) return sections;
 
       var assessMatch = text.match(/🧠\s*VANTAGE ASSESSMENT\s*([\s\S]*?)(?=⚖️|🎯|💰|$)/i);
@@ -748,6 +751,8 @@
          header with the figure on the next line, colon or dash separators. */
       var compMatch   = text.match(/💰[\s*#_]*COMPLIANCE\s+EXPOSURE[\s*#_:\u2013\u2014-]*([^\n\r]*(?:\r?\n[ \t]*[^\s\r\n][^\n\r]*)?)/i);
 
+      var basisMatch = text.match(/💰[\s\S]*?\bBasis\s*:\s*\**\s*([\s\S]*?)(?:\n\s*\n|$)/i);
+      if (basisMatch) sections.exposureBasis = basisMatch[1].replace(/[*_#]+/g, '').replace(/\s*\n\s*/g, ' ').trim();
       if (assessMatch) sections.assessment = assessMatch[1].trim();
       if (legalMatch)  sections.legal      = legalMatch[1].trim();
       if (recMatch)    sections.recommended = recMatch[1].trim();
@@ -806,6 +811,13 @@
       var compVal = parsedSections.complianceExposure || '';
       if (compVal && compVal.toLowerCase() !== 'not quantifiable' && compVal.toLowerCase() !== 'nil') {
         compValEl.textContent = compVal;
+        var _bEl = document.getElementById('compliance-exposure-basis');
+        if (_bEl) {
+          _bEl.textContent = '';
+          var _bb = document.createElement('b'); _bb.textContent = 'How this was estimated: ';
+          _bEl.appendChild(_bb);
+          _bEl.appendChild(document.createTextNode(parsedSections.exposureBasis || 'No breakdown was given for this figure, so treat it as a rough order of magnitude and not a calculation.'));
+        }
         compChip.style.display = 'block';
         if (saveBtn) saveBtn.style.display = '';
       } else {
