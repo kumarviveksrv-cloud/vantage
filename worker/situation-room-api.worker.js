@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v75'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v76'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1017,7 +1017,7 @@ function buildSubscriptionEmail(isNew, nextBillingDate) {
   const label = isNew ? 'Subscription Confirmed' : 'Payment Received';
   const heading = isNew ? "You're in." : 'Payment received.';
   const body = isNew
-    ? 'Your Vantage subscription is live. You now have full access to MERIDIAN, your Humac Score, and all six HR intelligence tools. People decisions are financial decisions. Vantage is where you start treating them that way.'
+    ? 'Your Vantage subscription is live. This paid plan replaces your free trial, so you can ignore any earlier trial email. You now have full access to MERIDIAN, your Humac Score, and all six HR intelligence tools. People decisions are financial decisions. Vantage is where you start treating them that way.'
     : 'Your Vantage subscription continues. Your MERIDIAN context, Humac Score history, and case record are exactly as you left them. Nothing resets.';
   const billingBlock = nextBillingDate
     ? `<div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:8px;padding:16px;margin-bottom:24px"><div style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(244,243,255,0.4);margin-bottom:4px">Next billing date</div><div style="font-size:15px;font-weight:600;color:#a5b4fc">${nextBillingDate}</div></div>`
