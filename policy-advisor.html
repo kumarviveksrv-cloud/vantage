@@ -830,6 +830,7 @@
       var _sysEx = (currentResult && currentResult.exposure) || null;
       var compVal = (_sysEx && _sysEx.range) || parsedSections.complianceExposure || '';
       if (_sysEx && _sysEx.basis) { parsedSections.exposureBasis = _sysEx.basis; }
+      if (_sysEx && _sysEx.range) { parsedSections.complianceExposure = _sysEx.range; }
       if (compVal && compVal.toLowerCase() !== 'not quantifiable' && compVal.toLowerCase() !== 'nil') {
         compValEl.textContent = compVal;
         var _bEl = document.getElementById('compliance-exposure-basis');

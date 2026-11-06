@@ -2,7 +2,7 @@
 const fs = require('fs'), path = require('path');
 const src = fs.readFileSync(path.join(__dirname, 'situation-room-api.worker.js'), 'utf8');
 const a = src.indexOf('const EXPOSURE_AFFECTED'), b = src.indexOf('// A wrong-tool redirect is free');
-const { computeExposure, applyExposureTokens, fmtRupees } = new Function(src.slice(a, b) + ';return {computeExposure, applyExposureTokens, fmtRupees};')();
+const { computeExposure, applyExposureTokens, fmtRupees, PAY_SHORTFALL_QUESTION } = new Function(src.slice(a, b) + ';return {computeExposure, applyExposureTokens, fmtRupees, PAY_SHORTFALL_QUESTION};')();
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('FAIL', m); } };
 const c = computeExposure({ affected: '11-50', shortfall: '500-2000', months: 12 });
 ok(c && c.range === '₹66,000–₹12.5L', 'range 11-50 x 500-2000 x 12 + 50k fine: ' + (c && c.range));
@@ -25,4 +25,9 @@ ok(/\n💰[^\n]*\nBasis: Back-pay = /.test(dropped) && dropped.includes('₹66,0
 ok(applyExposureTokens('💰 COMPLIANCE EXPOSURE: ₹1L–₹2L\nBasis: own', c) === '💰 COMPLIANCE EXPOSURE: ₹1L–₹2L\nBasis: own', 'model own figure left alone when it did not use the token');
 ok(applyExposureTokens('plain text', null) === 'plain text', 'plain text untouched');
 ok(/result\.exposure = \{ range: exposureFinal\.range, basis: exposureFinal\.basis \}/.test(src), 'policy handler sends exposure as its own field');
+ok(PAY_SHORTFALL_QUESTION.test('Uniform allowance paid as a fixed monthly amount: is it included in overtime under the new Wage Code?'), 'uniform allowance question is a pay question');
+ok(PAY_SHORTFALL_QUESTION.test('Employee claims unpaid wages for last month'), 'unpaid wages is a pay question');
+ok(!PAY_SHORTFALL_QUESTION.test('POSH complaint raised informally against a manager. What are we required to do now?'), 'POSH is not a pay question');
+ok(!PAY_SHORTFALL_QUESTION.test('Can we terminate an employee absent for 10 days?'), 'termination is not a pay question');
+ok(/exposureUsed \|\| exposurePay/.test(src), 'handler sends system exposure for pay questions even if the model skipped the token');
 console.log(fails ? fails + ' FAILED' : 'EXPOSURE TESTS PASSED'); process.exit(fails ? 1 : 0);

@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v63'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v64'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -2439,6 +2439,8 @@ function computeExposure(inputs) {
     summary: a[2] + '; monthly shortfall ' + sh[2] + ' per person; look-back ' + m + ' months',
   };
 }
+// Whether a question is about pay that may be underpaid is decided here in code, not left to the model.
+const PAY_SHORTFALL_QUESTION = /overtime|\bOT\b|\bwages?\b|under[-\s]?pa(y|id|yment)|arrears?|shortfall|minimum\s*wage|allowance|bonus|salary\s*(delay|deduct)|deductions?/i;
 // With no user inputs, the only grounded figure for a pay shortfall is the statutory fine. No headcount is invented.
 const EXPOSURE_FINE_ONLY = {
   range: 'Fine up to ₹50,000, plus back-pay',
@@ -4162,7 +4164,8 @@ if (actContext) {
       }
       result = { response: policyText };
       // Sent as its own field so the page never has to parse the explanation out of the model's text
-      if (exposureUsed) { result.exposure = { range: exposureFinal.range, basis: exposureFinal.basis }; }
+      const exposurePay = PAY_SHORTFALL_QUESTION.test(String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || ''));
+      if (exposureUsed || exposurePay) { result.exposure = { range: exposureFinal.range, basis: exposureFinal.basis }; }
       queueUsage(clerkUserId, 'policy', usageCheck);
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
