@@ -1,5 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
+const WORKER_VERSION = 'v61'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -543,7 +544,7 @@ const HEALTH_FETCH_TIMEOUT_MS = 5000;
 async function handleHealth() {
   const nowMs = Date.now();
   if (_healthCache && nowMs - _healthCache.at < 60000) { return healthResponse(_healthCache.body); }
-  const body = { ok: true, airtable: 'ok', clerk: 'ok', checkedAt: new Date().toISOString() };
+  const body = { ok: true, airtable: 'ok', clerk: 'ok', version: WORKER_VERSION, checkedAt: new Date().toISOString() };
   try {
     const r = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Users?maxRecords=1&fields%5B%5D=user_id`, {
       headers: { 'Authorization': `Bearer ${AIRTABLE_API_KEY}` },
