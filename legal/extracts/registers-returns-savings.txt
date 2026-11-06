@@ -1,4 +1,4 @@
-VERBATIM EXTRACT. Sections copied unaltered from the full texts in legal/full/. Title: Registers, returns, rules-making and savings: Wages Code ss.50-51, 69; OSH Code ss.130-135, 143
+VERBATIM EXTRACT. Sections copied unaltered from the full texts in legal/full/. Title: Registers, returns, rules-making and savings: Wages Code ss.50-51, 69; OSH Code ss.10-12, 33, 130-135, 143
 
 === Code on Wages, 2019 ===
     50. Records, returns and notices.—(1) Every employer of an establishment to which this Code
@@ -71,6 +71,60 @@ corresponding provisions of this Code or by the notification to that effect by t
 Clauses Act, 1897 (10 of 1897) shall apply to the repeal of such enactments.
 
 === Occupational Safety, Health and Working Conditions Code, 2020 ===
+   10. Notice of certain accident.—(1) Where at any place in an establishment, an accident occurs
+which causes death, or which causes any bodily injury by reason of which the person injured is prevented
+from working for a period of forty-eight hours or more immediately following the accident or which is of
+such nature as may be prescribed by the appropriate Government, then,—
+     (a) employer or owner or agent or manager referred to in section 67 of such establishment if it is
+   mine; or
+
+      (b) employer or manager in relation to such establishment if it is factory or relates to dock work; or
+
+      (c) the employer of a plantation or an establishment relating to building or other construction or any
+   other establishment,
+shall send notice thereof to such authorities, in such manner and within such time, as may be prescribed
+by the appropriate Government.
+   (2) Where a notice given under sub-section (1) relates to an accident causing death in a plantation or
+an establishment relating to building or other construction work or any other establishment, the authority
+to whom the notice is sent shall make an inquiry into the occurrence within two months of the receipt of
+the notice or if there is no such authority, the Chief Inspector-cum-Facilitator shall cause the Inspector-
+cum-Facilitator to make an inquiry within the said period.
+
+   11. Notice of certain dangerous occurrences.—Where in an establishment there is any dangerous
+occurrence of such nature, (whether causing any bodily injury or disability, or not) the employer shall
+send notice thereof to such authorities, and in such form and within such time, as may be prescribed by
+the appropriate Government.
+
+   12. Notice of certain diseases.—(1) Where any worker in an establishment contracts any disease
+specified in the Third Schedule, the employer of the establishment shall send notice thereof to such
+authorities, and in such form and within such time, as may be prescribed by the appropriate Government.
+   (2) If any qualified medical practitioner attends on a person, who is or has been employed in an
+establishment, and who is, or is believed by the qualified medical practitioner, to be suffering from any
+disease specified in the Third Schedule, the medical practitioner shall without delay send a report in
+writing to the office of the Chief Inspector-cum-Facilitator in such form and manner and within such time
+as may be prescribed by the appropriate Government.
+   (3) If any qualified medical practitioner fails to comply with the provisions of sub-section (2), he shall
+be punishable with penalty which may extend to ten thousand rupees.
+
+   33. Maintenance of registers, records and filing of returns.—An employer of an establishment
+shall—
+        (a) maintain register in prescribed form, electronically or otherwise, containing such particulars
+
+      of workers as may be prescribed by the appropriate Government including,—
+        (i) work performed by them;
+        (ii) number of hours of work constituting normal working hours in a day;
+        (iii) day of rest allowed in every period of seven days;
+
+        (iv) wage paid and receipts given therefor;
+
+        (v) leave, leave wages, overtime work, attendance and dangerous occurrences; and
+        (vi) employment of adolescent;
+        (b) display notices at the work place of the workers in such manner and form as may be
+      prescribed by the appropriate Government;
+        (c) issue wage slips to the workers, in electronic forms or otherwise; and
+        (d) file such return electronically or otherwise to the Inspector-cum-Facilitator in such manner
+      and during such periods as may be prescribed by the appropriate Government.
+
    130. Persons required to give notice, etc., legally bound to do so.—Every person required to give
 any notice or to furnish any information to any authority in relation to the provisions of this Code shall be
 legally bound to do so within the meaning of section 176 of the Indian Penal Code (45 of 1860).

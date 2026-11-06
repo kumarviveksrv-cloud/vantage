@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v64'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v65'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -388,7 +388,7 @@ const LEGAL_ACT_OPTIONAL = { 'indian-contract-act-1872': true, 'social-security-
 // requests on the same edge node are free. Falls back gracefully if unavailable.
 // Bump this whenever a legal/*.txt file is edited and you want the change live at once.
 // Otherwise a changed file shows up within an hour, when the edge copy expires.
-const LEGAL_CACHE_VERSION = '2026-11-05a';
+const LEGAL_CACHE_VERSION = '2026-11-06a';
 const LEGAL_CACHE_SECONDS = 3600;
 const LEGAL_FETCH_TIMEOUT_MS = 8000; // GitHub raw: give up after this so a stall cannot hold a whole request
 
