@@ -9,7 +9,8 @@
  *     sel: '.script-card',          // which elements are collapsible cards
  *     head: '.script-header',       // always visible; clicking it toggles
  *     keep: ['.fin-cell-amount'],   // other direct children that stay visible when collapsed
- *     preview: '.script-text'       // direct child shown as a faded two-line preview when collapsed
+ *     preview: '.script-text',      // direct child shown as a faded two-line preview when collapsed
+ *     open: '.legal-section'        // optional: cards matching this start open and stay open on each new render
  *   }]
  * });
  *
@@ -76,7 +77,7 @@
   };
   Inst.prototype.collapseAll = function () {
     var self = this;
-    this.cards.forEach(function (r) { if (r.el.isConnected) self.apply(r, true); });
+    this.cards.forEach(function (r) { if (r.el.isConnected) self.apply(r, !(r.def.open && r.el.matches(r.def.open))); });
     this.syncBar();
   };
   Inst.prototype.setup = function () {
@@ -101,7 +102,7 @@
             self.apply(rec, false); self.syncBar();
           } else if (head && head.contains(e.target)) { self.apply(rec, true); self.syncBar(); }
         });
-        self.cards.push(rec); self.apply(rec, true); added++;
+        self.cards.push(rec); self.apply(rec, !(def.open && el.matches(def.open))); added++;
       });
     });
     if (this.cfg.bar !== false && this.cards.length && !this.root.querySelector('.vc-bar')) {
