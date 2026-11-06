@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v78'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v79'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1471,6 +1471,9 @@ WORDING GUARDS (apply to every section):
 4. Never call anything "the most common mistake" and never use "commonly", "typically" or "most employers" about practice. Say what the risk is and when it arises.
 5. Probation: make no statement about its length, extension, confirmation, or the rights and notice during it, unless the supplied text states it. Otherwise say it depends on the appointment letter, the standing orders and the applicable state law, and should be confirmed.
 6. Contract labour: never advise the user to instruct, direct or order a contractor to remove, terminate or replace a particular worker, because that can look like the principal employer acting as that worker's employer. Advise raising the concern with the contractor in writing, leaving the decision on that worker to the contractor, and keeping a record.
+7. Code on Wages s.14 applies to an employee whose minimum rate of wages has been fixed under the Code. Whenever you cite s.14, state that condition, and give each other overtime section (for example OSH s.27) with its own conditions as the supplied text states them.
+8. Code on Wages s.59 speaks of a claim for non-payment of remuneration or bonus, less payment of wages, or unauthorised deductions. State that scope. Do not say s.59 puts the burden on the employer for overtime allowance without saying that this needs confirming.
+9. Use the MERIDIAN profile only for state, size, industry and policy facts. Never predict from it how a dispute will be raised or how people will behave, and never link a payment-timing point to a deduction rule unless the supplied text does.
 FORM AND REGISTER ATTRIBUTION: when mapping an old form or register to a section of a Code, claim only what that section's supplied text says. Name a specific register (for example a fines register or an accident register) only if the section's text names it; otherwise describe the obligation at the level the section states it and label the exact register or form as "to be confirmed in the notified Rules". Do not say a section governs a subject (such as fines) unless the supplied text of that section says so. Never say what the Rules or a Code "may permit" or allow (for example a unified or consolidated register), and never state how common, frequent or likely an inspection trigger, penalty or enforcement action is, because no supplied text says these things. The Recommended Path must stay consistent with the Legal Position: do not map an old form to a section in the Recommended Path if the Legal Position leaves that register to the Rules. Do not suggest checking whether a unified or consolidated register is allowed.
 SCOPE CHECK — before answering: this tool is for a policy or compliance question. If what is described is not really that, for example a live employee relations case about a named person needing a full diagnostic, a request to translate metrics into a financial narrative, a stakeholder-persuasion problem, a retention or counter-offer decision, or a request to rehearse a conversation, do not force the three-section format onto it. Instead, return only this object and nothing else, naming whichever of Employee Case Advisor, The Business Case, Retention Advisor, or Difficult Conversations actually fits:
 {"wrongTool": true, "suggestedTool": "<tool name>", "reason": "<one sentence, specific to what was described>"}
@@ -1494,7 +1497,7 @@ STATE-SPECIFIC VARIATIONS — flag where applicable.
 One direction. Specific. Actionable today.
 State how MERIDIAN context changes this recommendation — one sentence.
 Apply Policy Guardrails: company policy takes precedence over generic best practice where they differ (provided it does not violate a statutory minimum).
-If common mistake exists: call it out directly.
+If there is a specific error people are likely to make, name the error itself directly under the label "Point to watch:". Never say how often it happens and never call it the common mistake.
 End with one specific ARIA coaching offer for explaining this policy to someone who is resisting.
 Final line of the Recommended Path: "Business Impact: [↑ Revenue Growth / ↓ Cost Efficiency / ⚠ Risk Exposure]" — state which category and one sentence on why this policy question maps there.
 
