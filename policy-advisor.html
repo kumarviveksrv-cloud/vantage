@@ -319,6 +319,19 @@
           </div>
         </div>
 
+        <details class="exposure-inputs" id="exposure-inputs" style="margin:14px 0">
+          <summary style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:rgba(165,180,252,.85)">MAKE THE COST ESTIMATE YOURS <span style="opacity:.6">(optional, only for pay shortfalls)</span></summary>
+          <div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+            <label style="font-size:12px;color:var(--grey)">Employees affected
+              <select id="ex-affected" style="width:100%;margin-top:6px;padding:10px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:#f4f3ff"><option value="">Not sure</option><option value="1-10">1 to 10</option><option value="11-50">11 to 50</option><option value="51-200">51 to 200</option><option value="200+">200 or more</option></select></label>
+            <label style="font-size:12px;color:var(--grey)">Monthly shortfall per person (rough)
+              <select id="ex-shortfall" style="width:100%;margin-top:6px;padding:10px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:#f4f3ff"><option value="">Not sure</option><option value="u500">Under &#8377;500</option><option value="500-2000">&#8377;500 to &#8377;2,000</option><option value="2000-5000">&#8377;2,000 to &#8377;5,000</option><option value="5000+">&#8377;5,000 or more</option></select></label>
+            <label style="font-size:12px;color:var(--grey)">Look-back period
+              <select id="ex-months" style="width:100%;margin-top:6px;padding:10px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:#f4f3ff"><option value="">Not sure</option><option value="6">6 months</option><option value="12">12 months</option><option value="24">24 months</option><option value="36">36 months</option></select></label>
+          </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--grey)">Broad ranges only, no payroll files and no names. Fill all three or leave them blank. If blank, the estimate uses stated assumptions instead.</div>
+        </details>
+
         <!-- DOCUMENT UPLOAD (NEW) -->
         <div class="form-section doc-upload-section">
           <div class="doc-upload-toggle" onclick="toggleDocUploadPanel()">
@@ -700,6 +713,10 @@
               tool: 'policy',
               question: currentQuery,
               context: context,
+              exposureInputs: (function () {
+                var a = document.getElementById('ex-affected'), s = document.getElementById('ex-shortfall'), m = document.getElementById('ex-months');
+                return (a && s && m && a.value && s.value && m.value) ? { affected: a.value, shortfall: s.value, months: Number(m.value) } : undefined;
+              })(),
               meridian: meridian
             })
           });

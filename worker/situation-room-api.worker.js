@@ -1302,6 +1302,8 @@ Rules:
 - Examples of quantifiable exposure: statutory penalties, wrongful termination awards, POSH tribunal orders, PF/ESI arrears, Labour Court compensation
 - If the question carries no calculable financial risk (e.g. a general policy clarification with zero liability), write exactly: Not Quantifiable
 - If there is zero legal or financial exposure, write exactly: Nil
+- The headline range must be the same range your Basis line arrives at. Do the multiplication before you write the figure, and say whether fines are inside the range or added on top.
+- If the user message contains EXPOSURE INPUTS and the question is about underpaying wages, overtime or other pay due, write the headline as exactly {{EXPOSURE_RANGE}} and begin the Basis line with {{EXPOSURE_BASIS}} (you may add one short sentence after it). Do not write your own figures in that case. If the question is not about underpaid pay, ignore EXPOSURE INPUTS completely.
 - Immediately after the figure, on its own line, write: Basis: followed by one or two plain sentences that show how the figure was reached. Name the statutory penalty from the supplied text with its section and amount, state any assumption about the user's workforce or pay with the numbers you assumed (for example headcount, hours or percentage of staff affected), and say how the parts combine. If the question did not give the inputs needed for a figure, say so in the Basis line and keep the range as a rough order of magnitude.
 - Never show a rupee range you cannot explain in the Basis line. If you cannot ground it in a penalty from the supplied text plus stated assumptions, write exactly: Not Quantifiable
 - Never omit this section.
@@ -2406,6 +2408,40 @@ function queueUsage(userId, tool, usageCheck) {
   if (_activeCtx && typeof _activeCtx.waitUntil === 'function') {
     try { _activeCtx.waitUntil(p); } catch (e) { /* already settled */ }
   }
+}
+
+// ── EXPOSURE FROM USER RANGES ────────────────────────────────────────────────
+// Optional broad inputs from the Policy Advisor page. The arithmetic is done here, not by the model, so the
+// headline figure always matches its own basis. The model only writes the tokens {{EXPOSURE_RANGE}} and
+// {{EXPOSURE_BASIS}} where the system figures should appear.
+const EXPOSURE_AFFECTED = { '1-10': [1, 10, '1 to 10 employees'], '11-50': [11, 50, '11 to 50 employees'], '51-200': [51, 200, '51 to 200 employees'], '200+': [200, 500, '200 to 500 employees (200+ capped at 500 for this estimate)'] };
+const EXPOSURE_SHORTFALL = { 'u500': [100, 500, '₹100 to ₹500'], '500-2000': [500, 2000, '₹500 to ₹2,000'], '2000-5000': [2000, 5000, '₹2,000 to ₹5,000'], '5000+': [5000, 10000, '₹5,000 to ₹10,000 (5,000+ capped at ₹10,000)'] };
+const EXPOSURE_MONTHS = [6, 12, 24, 36];
+const EXPOSURE_FINE_FIRST = 50000; // Code on Wages 2019 s.54(1)(a)
+function fmtRupees(n) {
+  if (n >= 10000000) { return '₹' + (Math.round(n / 100000) / 100).toString() + ' Cr'; }
+  if (n >= 100000) { return '₹' + (Math.round(n / 1000) / 100).toString().replace(/\.0+$/, '') + 'L'; }
+  return '₹' + n.toLocaleString('en-IN');
+}
+function computeExposure(inputs) {
+  if (!inputs || typeof inputs !== 'object') { return null; }
+  const a = EXPOSURE_AFFECTED[inputs.affected], sh = EXPOSURE_SHORTFALL[inputs.shortfall], m = Number(inputs.months);
+  if (!a || !sh || EXPOSURE_MONTHS.indexOf(m) === -1) { return null; }
+  const backLow = a[0] * sh[0] * m, backHigh = a[1] * sh[1] * m;
+  const low = backLow, high = backHigh + EXPOSURE_FINE_FIRST;
+  return {
+    range: fmtRupees(low) + '–' + fmtRupees(high),
+    basis: 'Back-pay = ' + a[2] + ' × a monthly shortfall of ' + sh[2] + ' per person × ' + m + ' months = ' + fmtRupees(backLow) + ' to ' + fmtRupees(backHigh) +
+      '. The upper figure adds the fine of up to ₹50,000 under section 54(1)(a) of the Code on Wages 2019 (a repeat offence within five years can bring up to ₹1,00,000 or three months\' imprisonment, which is not included). The employee count, shortfall and look-back are the broad ranges you chose, so the real figure depends on your payroll data.',
+    summary: a[2] + '; monthly shortfall ' + sh[2] + ' per person; look-back ' + m + ' months',
+  };
+}
+function applyExposureTokens(text, computed) {
+  let t = String(text || '');
+  if (computed) { t = t.split('{{EXPOSURE_RANGE}}').join(computed.range).split('{{EXPOSURE_BASIS}}').join(computed.basis); }
+  // A token the system could not fill must never reach the user
+  t = t.split('{{EXPOSURE_RANGE}}').join('Not Quantifiable').split('{{EXPOSURE_BASIS}}').join('');
+  return t;
 }
 
 // A wrong-tool redirect is free: it refunds the trial call and does not use up the tool's daily count.
@@ -4083,7 +4119,8 @@ if (actContext) {
       if (truncatedContext && anonymizedContext === null) return anonymizationFailedResponse();
 
       const systemPrompt = getPolicyPrompt(meridian);
-      const userMessage = `POLICY QUESTION: ${anonymizedQuestion}\n${anonymizedContext ? `ADDITIONAL CONTEXT: ${anonymizedContext}` : ''}\n\nAnswer this policy question in SHORT mode format with the three section headers. Include financial stakes in the Legal Position section where applicable.`;
+      const exposureComputed = computeExposure(body.exposureInputs);
+      const userMessage = (exposureComputed ? `EXPOSURE INPUTS (chosen by the user, figures computed by the system): ${exposureComputed.summary}\n` : '') + `POLICY QUESTION: ${anonymizedQuestion}\n${anonymizedContext ? `ADDITIONAL CONTEXT: ${anonymizedContext}` : ''}\n\nAnswer this policy question in SHORT mode format with the three section headers. Include financial stakes in the Legal Position section where applicable.`;
       const policyActKeys = selectActsForPolicy(anonymizedQuestion, anonymizedContext || '');
 const policyActLoad = await loadActsWithStatus(policyActKeys);
 const actContext = policyActLoad.text;
@@ -4095,6 +4132,7 @@ if (actContext) {
   response = await callClaude(systemPrompt, [{ role: 'user', content: userMessage }], MAX_TOKENS, CLAUDE_MODEL_DEFAULT, undefined, function (n) { _emit('gen', { chars: n }); }, ANALYST_TEMPERATURE);
 }
       let policyText = (response.content||[]).find(b=>b.type==='text')?.text||'';
+      policyText = applyExposureTokens(policyText, exposureComputed);
       const policyBounce = parseWrongToolReply(policyText);
       if (policyBounce) {
         if (await settleWrongTool(clerkUserId, 'policy', usageCheck, trialCharged)) { _trialLastCall = false; }

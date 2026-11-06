@@ -1,0 +1,23 @@
+// Exposure from user ranges: arithmetic in code, tokens filled by the system, no token ever reaches the user.
+const fs = require('fs'), path = require('path');
+const src = fs.readFileSync(path.join(__dirname, 'situation-room-api.worker.js'), 'utf8');
+const a = src.indexOf('const EXPOSURE_AFFECTED'), b = src.indexOf('// A wrong-tool redirect is free');
+const { computeExposure, applyExposureTokens, fmtRupees } = new Function(src.slice(a, b) + ';return {computeExposure, applyExposureTokens, fmtRupees};')();
+let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('FAIL', m); } };
+const c = computeExposure({ affected: '11-50', shortfall: '500-2000', months: 12 });
+ok(c && c.range === '₹66,000–₹12.5L', 'range 11-50 x 500-2000 x 12 + 50k fine: ' + (c && c.range));
+ok(/66,000 to ₹12,00,000|₹66,000 to ₹12L/.test(c.basis), 'basis shows back-pay before fine: ' + c.basis.slice(0, 160));
+ok(/section 54\(1\)\(a\)/.test(c.basis) && /payroll data/.test(c.basis), 'basis cites s.54(1)(a) and payroll caveat');
+ok(computeExposure({ affected: '1-10', shortfall: 'u500', months: 6 }).range === '₹600–₹80,000', 'small case: ' + computeExposure({ affected: '1-10', shortfall: 'u500', months: 6 }).range);
+ok(computeExposure({ affected: '200+', shortfall: '5000+', months: 36 }).range.startsWith('₹') , 'large case computes');
+ok(computeExposure({ affected: 'x', shortfall: 'u500', months: 6 }) === null, 'bad bucket ignored');
+ok(computeExposure({ affected: '1-10', shortfall: 'u500', months: 7 }) === null, 'bad months ignored');
+ok(computeExposure(null) === null && computeExposure('x') === null, 'missing inputs ignored');
+ok(fmtRupees(240000) === '₹2.4L' && fmtRupees(1250000) === '₹12.5L' && fmtRupees(99999) === '₹99,999' && fmtRupees(10000000) === '₹1 Cr', 'formatting: ' + [fmtRupees(240000), fmtRupees(1250000), fmtRupees(10000000)]);
+const t = '💰 COMPLIANCE EXPOSURE: {{EXPOSURE_RANGE}}\nBasis: {{EXPOSURE_BASIS}} Extra sentence.';
+const filled = applyExposureTokens(t, c);
+ok(filled.includes('₹66,000–₹12.5L') && filled.includes('Back-pay = ') && !filled.includes('{{'), 'tokens filled');
+const stripped = applyExposureTokens(t, null);
+ok(stripped.includes('Not Quantifiable') && !stripped.includes('{{'), 'unfillable tokens never reach the user');
+ok(applyExposureTokens('plain text', null) === 'plain text', 'plain text untouched');
+console.log(fails ? fails + ' FAILED' : 'EXPOSURE TESTS PASSED'); process.exit(fails ? 1 : 0);
