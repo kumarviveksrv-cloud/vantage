@@ -13,7 +13,7 @@ ok(sel('Can we terminate?','Active flags: Contractual worker').includes('extract
 ok(!sel('How do I handle a notice period dispute?').some(a => a.startsWith('extracts/')), 'unrelated question loads no extract');
 const need = { 'hours-overtime-leave': ['14. Wages for overtime work', '27. Extra wages for overtime', '25. Daily and weekly working hours'],
   'contract-labour-licensing': ['47. Licensing of contractors', '45. Applicability of this Part', '79. Approval and licensing of factories'],
-  'registers-returns-savings': ['50. Records, returns and notices', '69. Repeal and savings', '143. Repeal and Savings', '33. Maintenance of registers'] };
+  'registers-returns-savings': ['50. Records, returns and notices', '69. Repeal and savings', '143. Repeal and Savings', '33. Maintenance of registers', '35. Powers of Inspector-cum-Facilitators'] };
 for (const n in need) { const t = fs.readFileSync(path.join(__dirname, '..', 'legal', 'extracts', n + '.txt'), 'utf8'); need[n].forEach(h => ok(t.includes(h), n + ' has ' + h)); ok(!/STATEMENT OF OBJECTS|THE FIRST SCHEDULE/.test(t), n + ' has no schedule bleed'); }
 // verbatim: every non-empty extract line must exist in a full text
 const full = ['osh-code-2020.txt', 'code-on-wages-2019.txt'].map(x => fs.readFileSync(path.join(__dirname, '..', 'legal', 'full', x), 'utf8')).join('\n');

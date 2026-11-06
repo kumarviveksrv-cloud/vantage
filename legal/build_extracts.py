@@ -12,8 +12,8 @@ TOPICS = {
     [('wages', [13, 14]), ('osh', [24, 25, 26, 27, 28, 29, 31, 32])]),
  'contract-labour-licensing': ('Contract labour, licensing, registration: OSH Code ss.3, 7, 45-58, 78-79',
     [('osh', [3, 7, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 78, 79])]),
- 'registers-returns-savings': ('Registers, returns, rules-making and savings: Wages Code ss.50-51, 69; OSH Code ss.10-12, 33, 130-135, 143',
-    [('wages', [50, 51, 69]), ('osh', [10, 11, 12, 33, 130, 131, 133, 134, 135, 143])]),
+ 'registers-returns-savings': ('Registers, returns, rules-making and savings: Wages Code ss.50-51, 69; OSH Code ss.10-12, 33, 35, 130-135, 143',
+    [('wages', [50, 51, 69]), ('osh', [10, 11, 12, 33, 35, 130, 131, 133, 134, 135, 143])]),
 }
 START = re.compile(r'^\s{0,8}(\d{1,3})\. [A-Z]')
 def load(key):

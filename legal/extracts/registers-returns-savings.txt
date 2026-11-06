@@ -1,4 +1,4 @@
-VERBATIM EXTRACT. Sections copied unaltered from the full texts in legal/full/. Title: Registers, returns, rules-making and savings: Wages Code ss.50-51, 69; OSH Code ss.10-12, 33, 130-135, 143
+VERBATIM EXTRACT. Sections copied unaltered from the full texts in legal/full/. Title: Registers, returns, rules-making and savings: Wages Code ss.50-51, 69; OSH Code ss.10-12, 33, 35, 130-135, 143
 
 === Code on Wages, 2019 ===
     50. Records, returns and notices.—(1) Every employer of an establishment to which this Code
@@ -124,6 +124,60 @@ shall—
         (c) issue wage slips to the workers, in electronic forms or otherwise; and
         (d) file such return electronically or otherwise to the Inspector-cum-Facilitator in such manner
       and during such periods as may be prescribed by the appropriate Government.
+
+   35. Powers of Inspector-cum-Facilitators.—(1) Subject to any rules made in this behalf, an
+Inspector-cum-Facilitator may—
+      (i) enter, with such assistance of persons, being persons in the service of the Government, or any
+   local or other public authority, or with an expert, as he thinks fit, any place which is used, or which he
+   has reason to believe, is used as a work place;
+       (ii) inspect and examine the establishment, any premises, plant, machinery, article, or any other
+   relevant material;
+      (iii) inquire into any accident or dangerous occurrence, whether resulting in bodily injury, disability
+   or death or not and take on the spot or otherwise statement of any person which he may consider
+   necessary for such inquiry;
+       (iv) subject to any rules made by the State Government in this behalf, within his jurisdiction,
+   examine the crops grown in any plantation or any worker employed therein or require the production
+   of any register or other document maintained in pursuance of this Code, and take on the spot or
+   otherwise statement of any person which he may consider necessary for carrying out the purposes of
+   this Code relating to plantation;
+
+     (v) supply information and sensitise the employers and workers regarding the provisions of this
+
+   Code and compliance thereof;
+      (vi) require the production of any register or any other document relating to the workplace or work
+   activity;
+
+       (vii) search or seize, or take copies of, any register, record or other document or any portion
+   thereof, as he may consider necessary in respect of any offence under this Code, which he has reason
+
+   to believe, has been committed;
+      (viii) direct the concerned occupier or employer that any premises or any part thereof, or anything
+   lying therein, shall be left undisturbed (whether generally or in particular respects) for so long as is
+   necessary for the purpose of any inspection or inquiry;
+      (ix) take measurements, photographs and videographs and make such recordings as he considers
+   necessary for the purpose of any examination or inquiry;
+      (x) take samples of any articles or substances found in any establishment or premises into which he
+   has power to enter and of the air of the atmosphere in or in the vicinity of any such establishment or
+   premises in such manner as may be prescribed by the appropriate Government;
+       (xi) in case of any article or substance found in any establishment or premises, being an article or
+   substance which appears to him as having caused or is likely to cause danger to the health and safety
+   of the employees, direct it to be dismantled or subject it to any process or test (but not so as to damage
+   or destroy it unless the same is, in the circumstances necessary, for carrying out the purposes of any
+   provision of this Code) and take possession of any such article or substance or a part thereof, and
+   detain it for so long as is necessary for such examination;
+     (xii) issue show cause notice relating to safety, health and welfare provisions arising under this
+   Code, rules, regulations and bye-laws made thereunder;
+      (xiii) prosecute, conduct or defend before any court any complaint or other proceeding arising
+   under this Code, the rules and regulations made thereunder; and
+      (xiv) exercise such other powers and perform such other duties as may be prescribed by the
+   appropriate Government.
+   (2) Any person required to produce any document or to give any information required by an Inspector-
+cum-Facilitator under sub-section (1) shall be deemed to be legally bound to do so within the meaning of
+section 175 and section 176 of the Indian Penal Code (45 of 1860).
+
+   (3) The provisions of the Code of Criminal Procedure, 1973 (2 of 1974), shall, so far as may be, apply
+to such search or seizure under sub-section (1) as they apply to any search or seizure made under the
+authority of a warrant issued under section 94 of the said Code.
 
    130. Persons required to give notice, etc., legally bound to do so.—Every person required to give
 any notice or to furnish any information to any authority in relation to the provisions of this Code shall be
