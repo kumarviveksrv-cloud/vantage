@@ -66,7 +66,7 @@
   function onStage(name) {
     if (!STAGES[name]) return;
     live = true; stageText = STAGES[name];
-    if (box) { box.querySelector('.vw-head').textContent = 'Working on your case'; }
+    if (box) { box.querySelector('.vw-head').textContent = 'Working on your case. Usually ' + RANGE + ' seconds'; }
     showMsg(stageText);
   }
   function onGen(chars) {
