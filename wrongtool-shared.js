@@ -21,7 +21,7 @@
     return name;
   }
 
-  function go(tool, text) {
+  function go(tool, text, other) {
     tool = canon(tool);
     var file = URLS[tool] || 'dashboard.html';
     var here = (location.pathname.split('/').pop() || ''); if (here && here.indexOf('.') < 0) { here += '.html'; }
@@ -35,15 +35,21 @@
         return;
       } catch (e) {}
     }
-    try { if (text && BOX_FOR_PAGE[file]) { sessionStorage.setItem(KEY, JSON.stringify({ to: file, text: String(text).slice(0, 3000) })); } } catch (e) {}
+    if (file === here && BOX_FOR_PAGE[file]) {
+      /* Already on the target tool and its box already holds the text: just close the banner. */
+      var bx = document.getElementById(BOX_FOR_PAGE[file]); var bn = document.getElementById('vantage-wrongtool-shared');
+      if (bn && bn.parentNode) { bn.parentNode.removeChild(bn); }
+      if (bx) { try { bx.focus(); } catch (e6) {} return; }
+    }
+    try { if (text && BOX_FOR_PAGE[file]) { sessionStorage.setItem(KEY, JSON.stringify({ to: file, text: String(text).slice(0, 3000), other: other ? canon(other) : '' })); } } catch (e) {}
     window.location.href = file;
   }
-  function btn(tool, text) {
+  function btn(tool, text, other) {
     var a = document.createElement('a');
     a.href = URLS[canon(tool)] || 'dashboard.html';
     a.textContent = 'Open ' + canon(tool) + ' →';
     a.style.cssText = "display:inline-block;margin:10px 8px 0 0;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:#c4b5fd;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.35);border-radius:6px;padding:5px 12px;cursor:pointer;text-decoration:none";
-    a.addEventListener('click', function (e) { e.preventDefault(); go(tool, text); });
+    a.addEventListener('click', function (e) { e.preventDefault(); go(tool, text, other); });
     return a;
   }
   function show(o) {
@@ -64,8 +70,8 @@
     var base = o.reason || ('This looks like it belongs in ' + (o.suggestedTool || 'a different tool') + '.');
     msg.textContent = two ? ('This has two parts. ' + base + ' Each gets a better answer in its own tool. Redirects like this are free, up to 10 a day.') : (base + ' Redirects like this are free, up to 10 a day.');
     col.appendChild(msg);
-    if (o.suggestedTool) { col.appendChild(btn(o.suggestedTool, o.text)); }
-    if (two) { col.appendChild(btn(o.secondTool, o.text)); }
+    if (o.suggestedTool) { col.appendChild(btn(o.suggestedTool, o.text, two ? o.secondTool : '')); }
+    if (two) { col.appendChild(btn(o.secondTool, o.text, o.suggestedTool)); }
     var x = document.createElement('button'); x.textContent = '✕'; x.setAttribute('aria-label', 'Close');
     x.style.cssText = 'background:none;border:none;color:rgba(244,243,255,.3);cursor:pointer;font-size:16px;padding:0;line-height:1;flex-shrink:0';
     x.addEventListener('click', function () { if (box.parentNode) { box.parentNode.removeChild(box); } });
@@ -88,6 +94,17 @@
       var el = document.getElementById(BOX_FOR_PAGE[here]);
       if (!el) { return; }
       sessionStorage.removeItem(KEY);
+      if (h.other) {
+        /* The question had two parts: leave a way back to the other tool, carrying the same text. */
+        var host2 = document.querySelector('.main');
+        if (host2) {
+          var note = document.createElement('div');
+          note.style.cssText = "display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 16px 0;padding:12px 16px;background:#11102a;border:1px solid rgba(99,102,241,.35);border-left:3px solid #6366f1;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(244,243,255,.85)";
+          var nt = document.createElement('span'); nt.textContent = 'Your question had two parts. This tool answers one. The other part is waiting in ' + h.other + '.';
+          var back = btn(h.other, h.text, ''); back.style.margin = '0';
+          note.appendChild(nt); note.appendChild(back); host2.insertBefore(note, host2.firstChild);
+        }
+      }
       if (!el.value) { el.value = h.text || ''; try { el.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {} }
       if (here === 'retention-advisor.html' && typeof window.selectFlow === 'function') {
         /* The carried text is a situation description, so open the watch-signals flow where its box lives. */
