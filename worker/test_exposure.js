@@ -19,5 +19,8 @@ const filled = applyExposureTokens(t, c);
 ok(filled.includes('₹66,000–₹12.5L') && filled.includes('Back-pay = ') && !filled.includes('{{'), 'tokens filled');
 const stripped = applyExposureTokens(t, null);
 ok(stripped.includes('Not Quantifiable') && !stripped.includes('{{'), 'unfillable tokens never reach the user');
+const dropped = applyExposureTokens('🧠 A\n\n💰 COMPLIANCE EXPOSURE: {{EXPOSURE_RANGE}}\n\nOutput', c);
+ok(/\n💰[^\n]*\nBasis: Back-pay = /.test(dropped) && dropped.includes('₹66,000–₹12.5L'), 'dropped Basis line is inserted by the system: ' + JSON.stringify(dropped.slice(0,200)));
+ok(applyExposureTokens('💰 COMPLIANCE EXPOSURE: ₹1L–₹2L\nBasis: own', c) === '💰 COMPLIANCE EXPOSURE: ₹1L–₹2L\nBasis: own', 'model own figure left alone when it did not use the token');
 ok(applyExposureTokens('plain text', null) === 'plain text', 'plain text untouched');
 console.log(fails ? fails + ' FAILED' : 'EXPOSURE TESTS PASSED'); process.exit(fails ? 1 : 0);
