@@ -10,7 +10,7 @@
     'Retention Advisor': 'retention-advisor.html',
     'Difficult Conversations': 'aria.html'
   };
-  var BOX_FOR_PAGE = { 'policy-advisor.html': 'query', 'employee-case-advisor.html': 'narrative', 'business-case.html': 'context' };
+  var BOX_FOR_PAGE = { 'policy-advisor.html': 'query', 'employee-case-advisor.html': 'narrative', 'business-case.html': 'context', 'retention-advisor.html': 'pr-signals' };
   var KEY = 'vantage_handoff';
   /* The model may name a tool loosely ("Vantage Policy Advisor", "the Retention Advisor"). Map it to a known tool name. */
   function canon(name) {
@@ -70,7 +70,14 @@
     x.style.cssText = 'background:none;border:none;color:rgba(244,243,255,.3);cursor:pointer;font-size:16px;padding:0;line-height:1;flex-shrink:0';
     x.addEventListener('click', function () { if (box.parentNode) { box.parentNode.removeChild(box); } });
     row.appendChild(icon); row.appendChild(col); row.appendChild(x); box.appendChild(row);
-    document.body.appendChild(box);
+    var host = o.inline ? document.querySelector('.main') : null;
+    if (host) {
+      /* In-flow card at the top of the page content, so it never covers the page heading or the form. */
+      box.style.position = 'relative'; box.style.top = 'auto'; box.style.left = 'auto'; box.style.transform = 'none';
+      box.style.margin = '0 0 16px 0'; box.style.maxWidth = 'none'; box.style.width = 'auto';
+      host.insertBefore(box, host.firstChild);
+      try { box.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e4) {}
+    } else { document.body.appendChild(box); }
   }
   function prefill() {
     try {
@@ -82,6 +89,10 @@
       if (!el) { return; }
       sessionStorage.removeItem(KEY);
       if (!el.value) { el.value = h.text || ''; try { el.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {} }
+      if (here === 'retention-advisor.html' && typeof window.selectFlow === 'function') {
+        /* The carried text is a situation description, so open the watch-signals flow where its box lives. */
+        try { window.selectFlow('proactive', document.querySelector('.flow-card[onclick*="proactive"]')); } catch (e5) {}
+      }
     } catch (e) {}
   }
   if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', prefill); } else { prefill(); }

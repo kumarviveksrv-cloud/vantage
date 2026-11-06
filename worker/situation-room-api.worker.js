@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v76'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v77'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -800,7 +800,15 @@ function retentionIssues(result, flow, m, signalsText) {
   return out;
 }
 // Watch-signals must be things HR can see at work. Anything about personal or social accounts is removed in code.
+function retentionSoften(node) {
+  // Deterministic wording fix that runs even when the model repeats a phrase after the one retry: "tells us this/that" becomes "may suggest this/that".
+  if (typeof node === 'string') { return node.replace(/\btells us (this|that)\b/gi, function (m, w) { return (m.charAt(0) === 'T' ? 'May suggest ' : 'may suggest ') + w; }); }
+  if (Array.isArray(node)) { for (var i = 0; i < node.length; i++) { node[i] = retentionSoften(node[i]); } return node; }
+  if (node && typeof node === 'object') { Object.keys(node).forEach(function (k) { node[k] = retentionSoften(node[k]); }); }
+  return node;
+}
 function retentionScrub(result, signalsText) {
+  if (result && typeof result === 'object') { retentionSoften(result); }
   var sb = result && result.scenarios && result.scenarios.scenarioB;
   if (!sb || !Array.isArray(sb.watchSignals)) { return result; }
   var userSocial = RET_SOCIAL_RE.test(signalsText || '');
@@ -1419,6 +1427,16 @@ OUTPUT FORMAT — STRICT JSON ONLY:
 }`;
 }
 
+// A pay question (overtime, arrears, bonus) does not need the company notice-period policy; including it pulls notice-period talk into the answer.
+function policyMeridianFor(meridian, question) {
+  if (!meridian || !meridian.policyNoticePeriod) { return meridian; }
+  var q = String(question || '');
+  var pay = new RegExp(PAY_SHORTFALL_QUESTION.source, 'i').test(q);
+  if (pay && !/notice|resign|terminat|dismiss|retrench|lay.?off|exit|separat|relieving|abscond|probation|settle/i.test(q)) {
+    var m = Object.assign({}, meridian); delete m.policyNoticePeriod; return m;
+  }
+  return meridian;
+}
 function getPolicyPrompt(meridian) {
   return `You are the Policy Advisor for Vantage — the HR Decision Intelligence platform by Virorah, built for Indian HR professionals.
 
@@ -1432,6 +1450,13 @@ RULES, FORMS AND PORTALS GUARD: many practical questions depend on subordinate R
 Never state that a Rule is notified or not notified in a state, or that a state has or has not changed a threshold, unless the supplied text says so. Instead say that state notifications can change the position and the user should confirm with the state labour department. This also bars phrases such as "Rules are being notified in phases", "some states run transitional arrangements" or "many states have not yet notified", because the supplied text does not say them.
 SAVINGS RULE: when a question involves old forms, registers or rules made under a repealed Act (Factories Act 1948, Payment of Wages Act 1936, Minimum Wages Act 1948, Contract Labour Act 1970 and similar), you must apply the savings clauses in the supplied text (OSH Code s.143(3), Code on Wages s.69(2), as supplied). Where the supplied savings clause says rules made under a repealed enactment are deemed made under the corresponding provision of the Code and remain in force to the extent not contrary to the Code until repealed, state that and say old forms may therefore still be operative until replaced. NEVER say old forms or rules are void, lost legal authority or no longer operative on the basis of repeal alone. If the savings text was not supplied, say that repeal alone does not settle the question and that the savings provisions must be checked. Compare the wording of each savings clause before relying on it and never describe two savings clauses as identical or equivalent. In particular, OSH s.143(3) as supplied expressly preserves rules, regulations and bye-laws, while Code on Wages s.69(2) as supplied lists notifications, nominations, appointments, orders, directions and wage amounts and does not name rules. For an old form that rests on rules under the Payment of Wages Act or the Minimum Wages Act, say the preservation under s.69(2) depends on how that wording is read, and recommend confirming it with counsel. Do not say old forms are "deemed compliant"; say they remain in force to the extent not contrary to the Code.
 PENALTY SOURCE RULE: cite a penalty only from the penalty section of the same Code that creates the obligation in question. Never mention a fine or imprisonment figure from any other Code, not even as an example or as a disclaimer (for example never quote an Industrial Relations Code fine in an OSH or Wages record-keeping answer). If that Code's penalty section was not supplied, say only that the penalty amount cannot be confirmed from the supplied text, and do not describe a contravention as an offence or as punishable unless the supplied text says so.
+WORDING GUARDS (apply to every section):
+1. Overtime and section 17: the time limit in Code on Wages s.17 is for wages, and s.2(y)(h) excludes any overtime allowance from the definition of wages. Never apply the s.17 time limit to overtime pay, and never call overtime pay wages under that Code. Cite the overtime provision supplied, and say the timing of overtime payment is to be confirmed in the notified Rules unless the supplied text states it.
+2. Savings clauses: Code on Wages s.69(2) saves anything done or any action taken under the repealed enactments, including a notification, nomination, appointment, order or direction, and any amount of wages. It does not name rules or forms. OSH Code s.143(3) does name any rule, regulation and bye-laws. Never say s.69(2) expressly saves rules; for an old Wages-side form or register say it continues only to the extent s.69(2) covers it, to be confirmed in the notified Rules. Give the sub-section exactly: Wages s.69(2), OSH s.143(3).
+3. Never write "unified register" or say one register replaces others unless the supplied text says so. Describe registers at the level the supplied section states.
+4. Never call anything "the most common mistake" and never use "commonly", "typically" or "most employers" about practice. Say what the risk is and when it arises.
+5. Probation: make no statement about its length, extension, confirmation, or the rights and notice during it, unless the supplied text states it. Otherwise say it depends on the appointment letter, the standing orders and the applicable state law, and should be confirmed.
+6. Contract labour: never advise the user to instruct, direct or order a contractor to remove, terminate or replace a particular worker, because that can look like the principal employer acting as that worker's employer. Advise raising the concern with the contractor in writing, leaving the decision on that worker to the contractor, and keeping a record.
 FORM AND REGISTER ATTRIBUTION: when mapping an old form or register to a section of a Code, claim only what that section's supplied text says. Name a specific register (for example a fines register or an accident register) only if the section's text names it; otherwise describe the obligation at the level the section states it and label the exact register or form as "to be confirmed in the notified Rules". Do not say a section governs a subject (such as fines) unless the supplied text of that section says so. Never say what the Rules or a Code "may permit" or allow (for example a unified or consolidated register), and never state how common, frequent or likely an inspection trigger, penalty or enforcement action is, because no supplied text says these things. The Recommended Path must stay consistent with the Legal Position: do not map an old form to a section in the Recommended Path if the Legal Position leaves that register to the Rules. Do not suggest checking whether a unified or consolidated register is allowed.
 SCOPE CHECK — before answering: this tool is for a policy or compliance question. If what is described is not really that, for example a live employee relations case about a named person needing a full diagnostic, a request to translate metrics into a financial narrative, a stakeholder-persuasion problem, a retention or counter-offer decision, or a request to rehearse a conversation, do not force the three-section format onto it. Instead, return only this object and nothing else, naming whichever of Employee Case Advisor, The Business Case, Retention Advisor, or Difficult Conversations actually fits:
 {"wrongTool": true, "suggestedTool": "<tool name>", "reason": "<one sentence, specific to what was described>"}
@@ -1692,6 +1717,7 @@ LANGUAGE AND CLAIMS RULES (apply to every text field):
 - Do not cite any statistic, percentage or time window that is not in the inputs or the MERIDIAN profile (for example a re-attrition rate or a "prime switching window"). If you want to make a general point, say it in plain words without a number.
 - Never convert months into years, and never restate payback durations in your own words. Use the duration text given in the system-calculated figures exactly.
 - Never assume facts about the organisation that the MERIDIAN profile does not state.
+- LENGTH: be sharp and succinct. Every explanatory text field is at most two sentences and about 40 words. Each communication script is at most 90 words. Lists have at most five items, each one short line. Do not repeat a figure or a point that another card already carries.
 - When you cite the industry attrition benchmark, call it the estimated sector benchmark, unless the MERIDIAN profile says it is company-reported.
 - Do not assume the employee went looking for the offer. They may have been approached.
 - Never write that a signal "tells us" what is driving the employee. Say what it may indicate, and what could be checked by asking.
@@ -1815,6 +1841,7 @@ LANGUAGE AND CLAIMS RULES (apply to every text field):
 - Do not cite any statistic, percentage or time window that is not in the inputs or the MERIDIAN profile (for example a re-attrition rate or a "prime switching window"). If you want to make a general point, say it in plain words without a number.
 - Never convert months into years, and never restate payback durations in your own words. Use the duration text given in the system-calculated figures exactly.
 - Never assume facts about the organisation that the MERIDIAN profile does not state.
+- LENGTH: be sharp and succinct. Every explanatory text field is at most two sentences and about 40 words. Each communication script is at most 90 words. Lists have at most five items, each one short line. Do not repeat a figure or a point that another card already carries.
 - When you cite the industry attrition benchmark, call it the estimated sector benchmark, unless the MERIDIAN profile says it is company-reported.
 - Do not assume the employee went looking for the offer. They may have been approached.
 - Never write that a signal "tells us" what is driving the employee. Say what it may indicate, and what could be checked by asking.
@@ -4324,7 +4351,7 @@ if (actContext) {
       if (truncatedQuestion && anonymizedQuestion === null) return anonymizationFailedResponse();
       if (truncatedContext && anonymizedContext === null) return anonymizationFailedResponse();
 
-      const systemPrompt = getPolicyPrompt(meridian);
+      const systemPrompt = getPolicyPrompt(policyMeridianFor(meridian, anonymizedQuestion));
       const exposureComputed = computeExposure(body.exposureInputs);
       const userMessage = (exposureComputed ? `EXPOSURE INPUTS (chosen by the user, figures computed by the system): ${exposureComputed.summary}\n` : '') + `POLICY QUESTION: ${anonymizedQuestion}\n${anonymizedContext ? `ADDITIONAL CONTEXT: ${anonymizedContext}` : ''}\n\nAnswer this policy question in SHORT mode format with the three section headers. Include financial stakes in the Legal Position section where applicable.`;
       const policyActKeys = selectActsForPolicy(anonymizedQuestion, anonymizedContext || '');
@@ -4393,7 +4420,7 @@ if (actContext) {
       const anonymizedQuestion = await anonymizeNarrative(truncatedQuestion);
       if (truncatedQuestion && anonymizedQuestion === null) return anonymizationFailedResponse();
 
-      const basePrompt = getPolicyPrompt(meridian);
+      const basePrompt = getPolicyPrompt(policyMeridianFor(meridian, anonymizedQuestion));
       const documentInstructions = `\n\nYou have been given the user's own policy document below, already anonymised. Ground your SHORT mode answer directly in this document — cite the specific section or clause it comes from where possible. If the document does not address the question asked, say so explicitly rather than falling back silently to generic guidance, and note whether generic Indian employment law guidance would still be useful to add.`;
       const instructionPrompt = basePrompt + documentInstructions;
       const userMessage = `POLICY QUESTION: ${anonymizedQuestion}\n\nAnswer in SHORT mode format with the three section headers, grounded in the attached policy document.`;

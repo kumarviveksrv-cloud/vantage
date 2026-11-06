@@ -510,7 +510,7 @@
       'Difficult Conversations': 'aria.html'
     };
     function showWrongTool(reason, suggestedTool) {
-      if (window.VantageWrongTool) { var _n = document.getElementById('pr-signals'); VantageWrongTool.show({ reason: reason, suggestedTool: suggestedTool, secondTool: arguments[2] && arguments[2].secondTool, twoParts: arguments[2] && arguments[2].twoParts, text: _n ? _n.value : '' }); showView('intake-view'); return; }
+      if (window.VantageWrongTool) { var _n = document.getElementById('pr-signals'); VantageWrongTool.show({ reason: reason, suggestedTool: suggestedTool, secondTool: arguments[2] && arguments[2].secondTool, twoParts: arguments[2] && arguments[2].twoParts, text: _n ? _n.value : '', inline: true }); showView('form-view'); return; }
       var url = VANTAGE_TOOL_URLS[suggestedTool] || 'dashboard.html';
       var msgEl = document.getElementById('vantage-wrongtool-msg');
       var linkEl = document.getElementById('vantage-wrongtool-link');
@@ -750,6 +750,7 @@
         html += '<div class="fin-cell"><div class="fin-cell-label">Break-even Ceiling</div><div class="fin-cell-amount">' + becFig + '</div>' + (becSub ? '<div class="fin-cell-sub">' + becSub + '</div>' : '') + '</div>';
         html += '<div class="fin-cell highlight"><div class="fin-cell-label">Recommended Match</div><div class="fin-cell-amount">' + (rec.figure || '\u2014') + '</div></div>';
         html += '</div>';
+        html += '<div class="fin-cell-sub" style="margin:-6px 0 16px;font-size:12px;opacity:.75;line-height:1.5">How these figures are built: replacement cost is the employee\u2019s CTC times a range set by role criticality, plus a ramp-up allowance of 3, 6 or 9 months of CTC, plus 8% of CTC for each year of tenure as a knowledge allowance. These are planning assumptions, not published benchmarks, so treat the numbers as a range for discussion. The ceiling assumes a two year horizon.</div>';
 
         // Primary recommendation
         html += '<div class="rec-card">';
@@ -1113,6 +1114,6 @@ function openSpatialRA() {
 </script>
 <script src="vantage-dictation.js"></script>
 <script>VantageDictation.init(["pr-signals"]);</script>
-<script src="wrongtool-shared.js?v=20261106e"></script>
+<script src="wrongtool-shared.js?v=20261106f"></script>
 </body>
 </html>

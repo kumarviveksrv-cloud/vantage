@@ -114,6 +114,9 @@ ok(sc2.scenarios.scenarioB.watchSignals.length === 1 && !/LinkedIn/i.test(sc2.sc
 const sc3 = { scenarios: { scenarioB: { watchSignals: ['LinkedIn activity up'] } } };
 lib.retentionScrub(sc3, 'LinkedIn activity up');
 ok(sc3.scenarios.scenarioB.watchSignals[0] === 'LinkedIn activity up', 'scrub respects the user own LinkedIn signal');
+const sc4 = { a: 'The delay tells us this is unlikely to be about pay.', b: ['Tells us that the role is at risk', 'nothing here'] };
+lib.retentionScrub(sc4, '');
+ok(sc4.a === 'The delay may suggest this is unlikely to be about pay.' && sc4.b[0] === 'May suggest that the role is at risk' && sc4.b[1] === 'nothing here', 'hedged tells-us is softened: ' + JSON.stringify(sc4));
 // no-premium ceiling card
 const r3b = { recommendation: { primary: 'Walk Away', figure: 'x' }, financialModel: {}, humac: {} };
 lib.retentionApply(r3b, 'counter_offer', r3);
