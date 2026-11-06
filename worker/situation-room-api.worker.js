@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v70'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v71'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1305,13 +1305,14 @@ This section is MANDATORY. It must always appear, after the Recommended Path sec
 Rules:
 - Give a rupee range calibrated to the MERIDIAN context (org size, industry, seniority, union status)
 - Format: ₹XL–₹YL (e.g. ₹4L–₹8L) or ₹X Cr–₹Y Cr for larger organisations
-- Examples of quantifiable exposure: statutory penalties, wrongful termination awards, POSH tribunal orders, PF/ESI arrears, Labour Court compensation
+- Examples of quantifiable exposure (only where the supplied text states the amount): statutory fines and penalties
+- Rupee figures may come only from fines and penalties stated in the supplied text, each named with its section and amount. NEVER assume a salary, CTC, tenure, headcount, number of employees affected or look-back period to build a figure. NEVER put a back-wage, compensation, award, settlement or legal-cost amount in rupees; describe such items in words as depending on salary and tenure, which were not provided. Do not add fines from different sections together unless the supplied text says they apply together; where more than one section may apply, give the lowest minimum to the highest maximum of the single applicable fines and name the sections. If no fine in the supplied text covers the situation, write exactly: Not Quantifiable
 - If the question carries no calculable financial risk (e.g. a general policy clarification with zero liability), write exactly: Not Quantifiable
 - If there is zero legal or financial exposure, write exactly: Nil
 - The headline range must be the same range your Basis line arrives at. Do the multiplication before you write the figure, and say whether fines are inside the range or added on top.
 - If the question is about underpaying wages, overtime or other pay due, write the headline as exactly {{EXPOSURE_RANGE}} and begin the Basis line with {{EXPOSURE_BASIS}} (you may add one short sentence after it). Do this whether or not the user message contains EXPOSURE INPUTS. Never write your own rupee figures, headcount assumptions or arithmetic for such a question: the system fills in the figure and the explanation. If the question is not about underpaid pay, ignore EXPOSURE INPUTS completely and estimate as normal.
-- Immediately after the figure, on its own line, write: Basis: followed by one or two plain sentences that show how the figure was reached. Name the statutory penalty from the supplied text with its section and amount, state any assumption about the user's workforce or pay with the numbers you assumed (for example headcount, hours or percentage of staff affected), and say how the parts combine. If the question did not give the inputs needed for a figure, say so in the Basis line and keep the range as a rough order of magnitude.
-- Never show a rupee range you cannot explain in the Basis line. If you cannot ground it in a penalty from the supplied text plus stated assumptions, write exactly: Not Quantifiable
+- Immediately after the figure, on its own line, write: Basis: followed by one or two plain sentences that show how the figure was reached. Name the statutory penalty from the supplied text with its section and amount, state any assumption about the user's workforce or pay with the numbers you assumed (for example headcount, hours or percentage of staff affected), and say how the parts combine. If the question did not give the inputs needed for more than the statutory fine, say so in the Basis line and show the statutory fine only.
+- Never show a rupee range you cannot explain in the Basis line. If you cannot ground it in a penalty from the supplied text, write exactly: Not Quantifiable
 - Never omit this section.
 
 Output as structured prose (not JSON).`;
