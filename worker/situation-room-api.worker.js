@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v82'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v83'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -578,12 +578,161 @@ async function loadActsWithStatus(actKeys) {
   const results = await Promise.all(actKeys.map(function (key) { return loadActText(key).catch(function () { return null; }); }));
   console.log('Acts loaded (' + actKeys.join(', ') + ') in ' + (Date.now() - tActs) + 'ms');
   const parts = [];
+  const partsByKey = [];
   const missing = [];
   results.forEach(function (t, i) {
-    if (t && t.length > 0) { parts.push(t); } else if (!LEGAL_ACT_OPTIONAL[actKeys[i]]) { missing.push(LEGAL_ACT_LABELS[actKeys[i]] || actKeys[i]); }
+    if (t && t.length > 0) { parts.push(t); partsByKey.push({ key: actKeys[i], text: t }); } else if (!LEGAL_ACT_OPTIONAL[actKeys[i]]) { missing.push(LEGAL_ACT_LABELS[actKeys[i]] || actKeys[i]); }
   });
-  return { text: parts.length ? parts.join('\n\n' + '═'.repeat(60) + '\n\n') : null, missing: missing };
+  return { text: parts.length ? parts.join('\n\n' + '═'.repeat(60) + '\n\n') : null, missing: missing, parts: partsByKey };
 }
+
+// ── CITATION CHECKER START ───────────────────────────────────────────────────
+// Code-side check of a Policy Advisor answer. Every section reference and every rupee figure is compared with the statute text that was
+// actually supplied to the model for this answer. Anything that cannot be matched is marked in the text and listed in a closing note.
+// It checks that a section NUMBER exists in the supplied text for the named Act. It does not judge whether the sentence about the section is right.
+const CITE_ACTS = [
+  { id: 'wages', re: /Code on Wages|Wages Code/i, name: 'Code on Wages' },
+  { id: 'ir', re: /Industrial Relations Code|IR Code/i, name: 'Industrial Relations Code' },
+  { id: 'osh', re: /OSH Code|Occupational Safety,? Health/i, name: 'OSH Code' },
+  { id: 'ss', re: /Code on Social Security|Social Security Code|SS Code/i, name: 'Code on Social Security' },
+  { id: 'posh', re: /POSH Act|Sexual Harassment of Women/i, name: 'POSH Act' },
+  { id: 'contract', re: /Indian Contract Act|Contract Act/i, name: 'Indian Contract Act' }
+];
+const CITE_KEY_ACT = { 'ir-code-2020': 'ir', 'posh-act-2013': 'posh', 'wages-code-2019': 'wages', 'indian-contract-act-1872': 'contract', 'social-security-maternity-2020': 'ss', 'social-security-gratuity-2020': 'ss' };
+const CITE_OUTSIDE_RE = /\b((?:[A-Z][A-Za-z&'()-]*\s+){1,7}Act)\b(?:,?\s*(?:of\s+)?\d{4})?/g;
+const CITE_NUMBER_WORDS = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90 };
+
+function citeActFromName(name) {
+  if (/Wages/i.test(name)) { return 'wages'; }
+  if (/Occupational/i.test(name)) { return 'osh'; }
+  if (/Social Security/i.test(name)) { return 'ss'; }
+  if (/Industrial Relations/i.test(name)) { return 'ir'; }
+  return null;
+}
+function citeActName(id) {
+  for (var i = 0; i < CITE_ACTS.length; i++) { if (CITE_ACTS[i].id === id) { return CITE_ACTS[i].name; } }
+  return id;
+}
+function citeSupplied(actName) {
+  for (var i = 0; i < CITE_ACTS.length; i++) { if (CITE_ACTS[i].re.test(actName)) { return CITE_ACTS[i].id; } }
+  return null;
+}
+function citeWordsToNumber(str) {
+  var total = 0, cur = 0, seen = false;
+  String(str).toLowerCase().split(/[\s-]+/).forEach(function (w) {
+    if (CITE_NUMBER_WORDS[w] !== undefined) { cur += CITE_NUMBER_WORDS[w]; seen = true; }
+    else if (w === 'hundred') { cur = (cur || 1) * 100; seen = true; }
+    else if (w === 'thousand') { total += (cur || 1) * 1000; cur = 0; seen = true; }
+    else if (w === 'lakh') { total += (cur || 1) * 100000; cur = 0; seen = true; }
+    else if (w === 'crore') { total += (cur || 1) * 10000000; cur = 0; seen = true; }
+  });
+  return seen ? total + cur : null;
+}
+function citeBuildIndex(parts) {
+  var sections = {}, figures = {};
+  var secRe1 = /^\s*(\d{1,3}[A-Z]{0,2})\.\s+(?:\(|[A-Z"“‘])/gm, secRe2 = /^Section (\d{1,3}[A-Z]{0,2})\b/gm;
+  function addSecs(act, txt) {
+    var set = sections[act] || (sections[act] = {}), m;
+    secRe1.lastIndex = 0; secRe2.lastIndex = 0;
+    while ((m = secRe1.exec(txt))) { set[m[1]] = true; }
+    while ((m = secRe2.exec(txt))) { set[m[1]] = true; }
+  }
+  (parts || []).forEach(function (p) {
+    var single = CITE_KEY_ACT[p.key];
+    if (single) { addSecs(single, p.text); }
+    else {
+      var pieces = String(p.text).split(/^=== (.+?) ===\s*$/m);
+      for (var i = 1; i < pieces.length; i += 2) { var a = citeActFromName(pieces[i]); if (a) { addSecs(a, pieces[i + 1] || ''); } }
+    }
+    var wm, wre = /((?:(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|lakh|crore|and)[\s-]+)+)rupees/gi;
+    while ((wm = wre.exec(p.text))) { var n = citeWordsToNumber(wm[1]); if (n) { figures[n] = true; } }
+    var dm, dre = /(?:₹|Rs\.?)\s?(\d[\d,]*)/gi;
+    while ((dm = dre.exec(p.text))) { figures[Number(dm[1].replace(/,/g, ''))] = true; }
+  });
+  return { sections: sections, figures: figures };
+}
+function citeFigureValue(numStr, unit) {
+  var v = Number(String(numStr).replace(/,/g, ''));
+  if (!isFinite(v)) { return null; }
+  var u = String(unit || '').toLowerCase();
+  if (u === 'lakh' || u === 'lakhs' || u === 'l') { v *= 100000; } else if (u === 'crore' || u === 'crores' || u === 'cr') { v *= 10000000; } else if (u === 'k') { v *= 1000; }
+  return Math.round(v);
+}
+function citeUserFigures(userText) {
+  var out = {}, m, re = /(\d[\d,]*(?:\.\d+)?)\s?(lakhs?|crores?|L|Cr|K)?\b/gi;
+  while ((m = re.exec(String(userText || '')))) { var v = citeFigureValue(m[1], m[2]); if (v !== null) { out[v] = true; } }
+  return out;
+}
+function citeLastAlias(before) {
+  var best = null, pos = -1;
+  CITE_ACTS.forEach(function (a) {
+    var re = new RegExp(a.re.source, 'gi'), m;
+    while ((m = re.exec(before))) { if (m.index >= pos) { pos = m.index; best = a.id; } }
+  });
+  var om, ore = new RegExp(CITE_OUTSIDE_RE.source, 'g');
+  while ((om = ore.exec(before))) { if (!citeSupplied(om[1]) && om.index >= pos) { pos = om.index; best = 'outside'; } }
+  return best;
+}
+function policyCitationCheck(text, parts, userText) {
+  var src = String(text || '');
+  var idx = citeBuildIndex(parts);
+  var userFigs = citeUserFigures(userText);
+  var flags = [], inserts = [], cites = 0, figs = 0;
+  var lastAct = null, lastPara = 0;
+  var tokRe = /\b(ss?\.|sections?)\s*(\d{1,3}[A-Z]{0,2})((?:\([a-zA-Z0-9]{1,4}\))*)/gi, m;
+  while ((m = tokRe.exec(src))) {
+    var i = m.index, j = i + m[0].length, num = m[2];
+    var paraStart = src.lastIndexOf('\n\n', i);
+    if (paraStart !== lastPara) { lastPara = paraStart; lastAct = null; }
+    var act = null;
+    var after = src.slice(j, j + 90).match(/^[\s,)]*(?:of|under|in)\s+(?:the\s+)?([^.;\n]{0,70})/i);
+    if (after) {
+      var s1 = citeSupplied(after[1]);
+      if (s1) { act = s1; } else if (/\bAct\b/.test(after[1]) && /^(?:[A-Z][A-Za-z&'()-]*\s+){1,7}Act/.test(after[1].trim())) { act = 'outside'; }
+    }
+    if (!act) {
+      var before = src.slice(Math.max(0, i - 70), i);
+      var cut = before.search(/[.!?]\s+[A-Z][^.!?]*$/);
+      if (cut > -1) { before = before.slice(cut + 1); }
+      act = citeLastAlias(before) || lastAct;
+    }
+    cites++;
+    var reason = null;
+    if (act === 'outside') { reason = 'cites an Act that was not supplied'; }
+    else if (act) {
+      if (!idx.sections[act]) { reason = 'the text of that Act was not supplied for this answer'; }
+      else if (!idx.sections[act][num]) { reason = 'section ' + num + ' is not in the supplied text of that Act'; }
+    } else {
+      var found = Object.keys(idx.sections).some(function (k) { return idx.sections[k][num]; });
+      if (!found) { reason = 'section ' + num + ' is not in any supplied text'; }
+    }
+    if (act && act !== 'outside') { lastAct = act; }
+    if (reason) { flags.push({ kind: 'citation', item: m[0].trim() + (act ? ' (' + (act === 'outside' ? 'an Act not supplied' : citeActName(act)) + ')' : ''), reason: reason }); inserts.push({ at: j, mark: ' [outside the supplied text]' }); }
+  }
+  var figRe = /(?:₹|Rs\.?|INR)\s?(\d[\d,]*(?:\.\d+)?)(?:\s?(lakhs?|crores?|L|Cr|K)\b)?/gi, f;
+  while ((f = figRe.exec(src))) {
+    var val = citeFigureValue(f[1], f[2]);
+    if (val === null || val < 100) { continue; }
+    figs++;
+    if (!idx.figures[val] && !userFigs[val]) {
+      flags.push({ kind: 'figure', item: f[0].trim(), reason: 'not found in the supplied text or in your inputs' });
+      inserts.push({ at: f.index + f[0].length, mark: ' [figure not in the supplied text or your inputs]' });
+    }
+  }
+  inserts.sort(function (a, b) { return b.at - a.at; });
+  var out = src;
+  inserts.forEach(function (ins) { out = out.slice(0, ins.at) + ins.mark + out.slice(ins.at); });
+  var note;
+  if (!flags.length) {
+    note = (cites || figs) ? '\n\nSystem check: the section numbers and rupee figures in this answer were checked by the system against the statute text supplied for this answer, and all were found. This checks that the section exists in that text, not that the answer reads it correctly.' : '';
+  } else {
+    var seen = {}, list = [];
+    flags.forEach(function (x) { if (!seen[x.item]) { seen[x.item] = true; list.push(x.item); } });
+    note = '\n\nSystem check: these items could not be matched to the statute text supplied for this answer, so treat them as unverified and confirm with counsel before relying on them: ' + list.join('; ') + '.';
+  }
+  return { text: out + note, flags: flags, citations: cites, figures: figs };
+}
+// ── CITATION CHECKER END ─────────────────────────────────────────────────────
 
 async function loadActsForContext(actKeys) {
   const results = await Promise.all(actKeys.map(key => loadActText(key)));
@@ -4402,6 +4551,13 @@ if (actContext) {
       }
       if (policyActLoad.missing.length > 0) {
         policyText += '\n\nNote: the statutory text for ' + policyActLoad.missing.join(' and ') + ' could not be loaded for this answer, so section references come from general knowledge and should be checked against the Act.';
+      }
+      if (policyActLoad.parts && policyActLoad.parts.length) {
+        try {
+          const _chk = policyCitationCheck(policyText, policyActLoad.parts, String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || '') + ' ' + (exposureComputed ? exposureComputed.summary : '') + ' ' + (exposureFinal && exposureFinal.range ? exposureFinal.range : ''));
+          policyText = _chk.text;
+          console.log('Policy citation check: ' + _chk.citations + ' citations, ' + _chk.figures + ' figures, ' + _chk.flags.length + ' flagged');
+        } catch (chkErr) { console.log('Policy citation check failed: ' + (chkErr && chkErr.message)); }
       }
       result = { response: policyText };
       // Sent as its own field so the page never has to parse the explanation out of the model's text
