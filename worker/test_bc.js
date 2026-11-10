@@ -152,5 +152,10 @@ ok(es.bcCheck.ok === true && es.bcCheck.claimsRemoved === 3 && es.stack.narrativ
 es = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Every quarter costs Rs.19L.' } }, bcInputs: EIN };
 ER.applyBusinessCaseStakeholder(es, ET); ok(es.bcCheck.ok === false && es.bcCheck.flagged.some(f => /19L/.test(f)), 'Rs.19L is not a slice of the drag: flagged');
 ok(/hide, downplay or avoid saying/.test(ER.erPromptBlock(e)), 'prompt forbids coaching to avoid the disclosure');
+// v119: fully stripped meridianCalibration becomes empty; model note about obeying the rule is cut from the ARIA line
+es = { openingLine: 'x', humac: { pillarRationale: 'Maps to L3.', meridianCalibration: 'Attrition of 20 to 24 percent is the industry norm here.' }, aria: 'ARIA plays the CEO: \'Why Rs.20L on a planning figure?\' -- the rehearsal keeps the disclosure in place and coaches you to hold the argument.', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' } }, bcInputs: EIN };
+ER.applyBusinessCaseStakeholder(es, ET);
+ok(es.humac.meridianCalibration === '' && es.humac.pillarRationale === 'Maps to L3.', 'stripped meridianCalibration is empty, not Not stated: ' + JSON.stringify(es.humac));
+ok(es.aria === 'ARIA plays the CEO: \'Why Rs.20L on a planning figure?\'', 'rule-compliance note cut from ARIA line: ' + es.aria);
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);

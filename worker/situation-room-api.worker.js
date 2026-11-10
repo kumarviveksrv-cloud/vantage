@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v118'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v119'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4531,10 +4531,12 @@ function ldStripClaims(result, extraRe) {
   var removed = 0;
   var bad = function (s) { return LD_CLAIM_RE.test(s) || (extraRe && extraRe.test(s)); };
   var scrub = function (s, key) {
+    var tail = s.replace(/\s+(?:--|\u2014|\u2013)\s+the rehearsal [^]*$/i, '');
+    if (tail !== s) { removed += 1; s = tail; }
     if (!bad(s)) { return s; }
     var parts = s.split(/(?<=[.!?])\s+(?=[A-Z(])/), keep = parts.filter(function (p) { return !bad(p); });
     removed += parts.length - keep.length;
-    return keep.length ? keep.join(' ') : (key === 'deadline' ? 'Not stated: no decision date was given.' : 'Not stated.');
+    return keep.length ? keep.join(' ') : (key === 'deadline' ? 'Not stated: no decision date was given.' : (key === 'meridianCalibration' ? '' : 'Not stated.'));
   };
   var walk = function (n) {
     if (Array.isArray(n)) { n.forEach(function (x, i) { if (typeof x === 'string') { n[i] = scrub(x, ''); } else { walk(x); } }); }
@@ -4575,7 +4577,7 @@ function erPromptBlock(e) {
   var s = 'SYSTEM-COMPUTED FIGURES (already calculated by code from the data above; use exactly these and do not recompute them):\n';
   s += '- Payroll affected: ' + engineLakh(r2(e.baseL)) + ' (' + (e.kind === 'engagement' ? e.n + ' disengaged employees at an average CTC of ' + engineLakh(r2(e.ctcL)) : e.n + ' below-average managers x ' + e.size + ' people per team at an average CTC of ' + engineLakh(r2(e.ctcL))) + ').\n';
   s += '- Annual productivity drag: ' + engineLakh(r2(e.dragL)) + ', computed as the payroll affected x ' + pct + ' percent. The ' + pct + ' percent is an assumed planning coefficient, not a measured result.\n';
-  s += 'Do not attribute the ' + pct + ' percent to Gallup or to any study, survey, benchmark or research body, and do not state any derivation of it. Do not add attrition, replacement cost or any other benefit or cost in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above or a figure the user gave. The drag rests on an assumed coefficient, so never call it a floor, a minimum, conservative, certain, not a projection or already incurred. Never state numeric targets for the success metric or alternatives (such as a number of managers who improve or a score the group must reach); write that the target and measure will be agreed with the stakeholder before the programme begins. Do not state how the people were selected, where they sit, how a survey was run or what process produced them unless the user said so. Describe phasing as fractions or percentages of the spend only if a spend was given. Do not state whether any programme, earlier budget request or earlier survey exists unless the user said so. Never rank this intervention against others (for example as one of the highest-return options). Never coach the user to hide, downplay or avoid saying that the figure rests on an assumed coefficient; any ARIA rehearsal must keep that disclosure.\n';
+  s += 'Do not attribute the ' + pct + ' percent to Gallup or to any study, survey, benchmark or research body, and do not state any derivation of it. Do not add attrition, replacement cost or any other benefit or cost in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above or a figure the user gave. The drag rests on an assumed coefficient, so never call it a floor, a minimum, conservative, certain, not a projection or already incurred. Never state numeric targets for the success metric or alternatives (such as a number of managers who improve or a score the group must reach); write that the target and measure will be agreed with the stakeholder before the programme begins. Do not state how the people were selected, where they sit, how a survey was run or what process produced them unless the user said so. Describe phasing as fractions or percentages of the spend only if a spend was given. Do not state whether any programme, earlier budget request or earlier survey exists unless the user said so. Never rank this intervention against others (for example as one of the highest-return options). Never coach the user to hide, downplay or avoid saying that the figure rests on an assumed coefficient; any ARIA rehearsal must keep that disclosure. Never describe these rules or your own compliance with them in the output. Do not claim the programme will stop, fix or remove the drag, or that every outcome costs more than the programme; its effect is not computed.\n';
   return s;
 }
 function ldCalc(inp, text) {
