@@ -194,6 +194,18 @@ ok(p2.humac.pillar === 'L4' && p2.greenCategory.primary === 'Risk Mitigation', '
 ok(/^Not computed/.test(p2.stack.dataAnchor.humacBasis) && !/SHRM|Gallup|Panopto|YouGov|14%/.test(p2j), 'humacBasis overridden, research bodies gone: ' + p2.stack.dataAnchor.humacBasis);
 ok(!/quantifiable|on our books|begins at|per violation|falls due|may each attract/i.test(p2j), 'claim phrases stripped: ' + (p2j.match(/quantifiable|on our books|begins at|per violation|falls due|may each attract/i) || []));
 ok(/Internal Complaints Committee/.test(p2.openingLine), 'opening line fallback used: ' + p2.openingLine);
+// v122: BC6 v121 residue
+let p3 = posh();
+p3.humac = { pillar: 'L1', pillarRationale: 'x', meridianCalibration: 'The HUMAC score of 49 makes the L1 framing accurate.' };
+p3.stack.dataAnchor.context = 'Not stated.';
+p3.stack.credibility.statement = 'No Committee exists at the Location A office. This is not triggered by a complaint.';
+p3.stack.decisionRunway.ask = 'Approve Rs.3,00,000, all for the Location A office.';
+p3.stack.riskMirror.scenario = 'An order under s.25 can open an inspection.';
+PX.applyBusinessCaseStakeholder(p3, PT);
+const p3j = JSON.stringify(p3);
+ok(p3.greenCategory.primary === 'Risk Mitigation' && p3.humac.meridianCalibration === '' && !/L1 framing/.test(p3j), 'category forced even when absent, L1 text gone');
+ok(!/the our office|our office office|Location A/.test(p3j) && /for our office\./.test(p3.stack.decisionRunway.ask), 'no "the our office": ' + p3.stack.decisionRunway.ask);
+ok(p3.stack.dataAnchor.context !== 'Not stated.' && !/not triggered by a complaint/i.test(p3j) && /s\.25 can open an inspection/.test(p3.stack.riskMirror.scenario), 'orphan Not stated gone, trigger claim stripped, s.25 inspection sentence kept');
 // generic stakeholder with no engine: unsupported figures removed, note accurate
 let gs = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.42L' }, riskMirror: { revenueAtRisk: 'Rs.1.2Cr', revenueAtRiskBasis: 'b' }, credibility: { statement: 'The budget is Rs.8L. A similar firm lost Rs.90L last year.' } } };
 PX.applyBusinessCaseStakeholder(gs, 'We want Rs.8L for a hiring programme.');
