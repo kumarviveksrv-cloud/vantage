@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v98'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v99'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1377,6 +1377,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
   "secondaryCaseType": "Return a second type from the eight standard types ONLY when the facts show that second matter is already under way or has been raised (for example a discrimination grievance filed during a PIP, or absence that has already led to a termination notice). A possible or likely next step is NOT a second type: a PIP that may end in termination is still only PIP. A matter that is only proposed, considered or feared by a manager (for example non-confirmation, pressure to resign, a rotation change) has not been raised, so it is not a second type. Return null unless the narrative itself says the second matter has already started. When in doubt return null. Otherwise null.",
   "poshInputs": "Only when detectedCaseType is POSH Complaint; otherwise null. When present, an object whose keys are incidentDate, lastIncidentDate, complaintDate, committeeReceiptDate, inquiryStartDate, inquiryCompletionDate, reportDate and actionDate. Each is a date written yyyy-mm-dd, copied from a calendar date the narrative actually states, or null. incidentDate is the date of the incident, or of the first incident in a series; lastIncidentDate is the date of the last incident in a series, null if there was a single incident. complaintDate is when the written complaint was made; committeeReceiptDate is when the Internal Committee received it; inquiryStartDate is when the inquiry began; inquiryCompletionDate is when the inquiry was completed; reportDate is when the committee report or recommendation reached the employer; actionDate is when the employer acted on it. Use null for any date the narrative gives only loosely (for example last week, a few months ago, in March). Never work out a date from a duration, and never calculate a deadline: the system adds the dated deadline calendar.",
   "terminationInputs": "Only when detectedCaseType is Termination, Redundancy or Retrenchment; otherwise null. When present, an object with five keys. scenario is exactly one of retrenchment, misconduct, probation, other. Use retrenchment when the employer is ending the employment for reasons such as redundancy, restructuring, closure of a role, cost reduction or lack of work, and it is not a punishment. Use misconduct when the dismissal or termination is for conduct. Use probation when the employee is on probation and the decision is to end the employment or refuse confirmation. Use other for a resignation, a mutual separation, a fixed-term expiry, or when the facts do not say. workerStatus is exactly one of worker, managerial, unclear: worker for a role such as an operator, technician, clerk or other non-managerial employee; managerial for a role that manages people or the business or is administrative; unclear when the facts do not say. joiningDate and endDate are dates written yyyy-mm-dd, copied from a calendar date the narrative states (endDate is the date employment ends or ended), or null. serviceMonths is the total length of service in whole months only when the narrative states a length such as 4 years 8 months, else null. Never put a rupee figure in this object and never calculate an amount.",
+  "bondInputs": "Only when detectedCaseType is Other; otherwise null. When present, an object with six keys. isBond is true only when the case is about a training bond, minimum-service bond or recovery of training cost on leaving, otherwise false. bondAmount is the rupee amount the bond names, written as a plain number (for example 150000 for Rs 1.5L), copied from the narrative, or null. bondMonths is the length of the bond period in whole months, or null. monthsServed is the number of whole months of that bond period the employee had served when leaving, or null. trainingCost is the actual training cost in rupees only when the narrative states one, as a plain number, else null. recovery is deduct_from_final_pay if the employer plans to take the money out of the final pay or settlement, otherwise other. Never calculate an amount and never invent a figure the narrative does not state.",
   "engineFlags": "Only when the case involves a pregnant employee, or one on or returning from maternity leave; otherwise null. When present, an object with three keys. scenario is exactly one of non_confirmation_only, pressure_to_resign, dismissal_or_resignation_occurred. Use pressure_to_resign when anyone has suggested, hinted or pressed that she should resign or leave, even informally, and she has not yet left. Use dismissal_or_resignation_occurred only when the narrative says she has already been dismissed, has been given notice, or has resigned. Use non_confirmation_only when the only matter is a decision on confirmation, probation, duties or leave and nobody has suggested she leave. freePrenatalCareStated is true only if the narrative says the employer provides pre-natal and post-natal care free of charge, false only if it says it does not, otherwise null. dates is an object with joiningDate, expectedDeliveryDate and decisionDate, each written yyyy-mm-dd and copied from the narrative, or null when the narrative does not give it; decisionDate is the date of the confirmation or other decision the narrative says is coming. Never put a rupee figure in this object.",
   "headcountStated": "The number of employees or workers the narrative states for the organisation or establishment, as a whole number, or null if the narrative gives no headcount. Copy the figure; do not estimate it and do not take it from the MERIDIAN size band.",
   "greenCategory": {
@@ -1401,6 +1402,7 @@ The financial.items list is how the cost model is shown to the HR professional, 
 - For a POSH Complaint, never write a calendar date as a deadline in any field, and never say that a time limit has passed, expired or is overdue unless the dates in the narrative and TODAY'S DATE show it. State time limits as periods (for example 90 days from the start of the inquiry) and the system adds the dated calendar and the status of each limit.
 - Scope of the retrenchment provisions in the supplied IR Code text: section 70 applies to any worker in any industry with at least one year of continuous service under the employer, and is not limited to factories, mines or plantations. Section 65 only limits sections 67 to 69 (lay-off compensation) and has no bearing on section 70. Chapter X (sections 77 to 82, including the prior permission in section 79) applies only to a factory, mine or plantation with 300 or more workers, so treat Chapter X as not applying unless the narrative says the establishment is one of those. Never recommend pausing the process or asking counsel to classify the establishment because of these provisions, and never mention the Factories Act unless the narrative says the workplace is a factory.
 - For Termination, Redundancy and Retrenchment cases, never write a calendar date as a deadline unless the narrative states that exact date; say now, before the end date, or within a number of days instead.
+- For a bond or recovery-of-training-cost case the system replaces the financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item), and never write a recoverable amount, ceiling or pro-rata figure in any text field. A bond is not automatically enforceable for its full amount: Contract Act s.74 allows reasonable compensation not exceeding the named sum, and the Code on Wages s.18(2) does not permit deducting it from wages.
 - For Termination, Redundancy and Retrenchment cases the system may replace the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item), keep the range field short, and never write a statutory amount, notice pay, compensation or gratuity figure in any text field.
 - When engineFlags is not null, the system replaces the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item) and keep the range field short. Fill engineFlags carefully, because the figures depend on it.
 - Every number that comes neither from the narrative nor from an Act provided to you has basis assumed. Never state a statutory amount, penalty or compensation formula that the Acts provided to you do not contain.
@@ -4211,6 +4213,88 @@ function applyTerminationText(result, narrative) {
 }
 // ── TERMINATION ENGINE END ───────────────────────────────────────────────────
 
+// ── BOND ENGINE START ────────────────────────────────────────────────────────
+// Training or minimum-service bond cases (Contract Act s.74 and s.27, Code on Wages s.18(2) and s.54(1)(a)).
+// The model only reads the terms out of the narrative; every figure is checked against the narrative text and all arithmetic is done here.
+const BOND_ENGINE = { pursueLakh: [0.5, 2], fineLakh: 0.5 };
+function bondAmountsIn(text) {
+  var out = [], t = String(text || ''), m;
+  var re = /(?:₹|rs\.?|inr)\s*([\d,]+(?:\.\d+)?)\s*(crore|cr|lakhs?|lacs?|l|k)?\b|\b([\d,]+(?:\.\d+)?)\s*(crore|cr|lakhs?|lacs?|k)\b/gi;
+  while ((m = re.exec(t))) {
+    var n = parseFloat((m[1] || m[3]).replace(/,/g, '')), u = String(m[2] || m[4] || '').toLowerCase();
+    if (!isFinite(n)) { continue; }
+    if (u === 'crore' || u === 'cr') { n *= 10000000; } else if (u[0] === 'l') { n *= 100000; } else if (u === 'k') { n *= 1000; }
+    out.push(n);
+  }
+  return out;
+}
+function bondMoney(v, narrative) {
+  var n = typeof v === 'number' ? v : parseFloat(String(v == null ? '' : v).replace(/[,\s₹]/g, ''));
+  if (!isFinite(n) || n < 1000 || n > 10000000) { return null; }
+  var found = bondAmountsIn(narrative).some(function (a) { return Math.abs(a - n) <= Math.max(1, n * 0.005); });
+  return found ? Math.round(n) : null;
+}
+function bondMonthsVal(v, max) {
+  var n = parseInt(v, 10);
+  return (isFinite(n) && n >= 0 && n <= max) ? n : null;
+}
+function bondReadTerms(inp, narrative) {
+  var i = inp || {};
+  return { amount: bondMoney(i.bondAmount, narrative), period: bondMonthsVal(i.bondMonths, 120), served: bondMonthsVal(i.monthsServed, 120), cost: bondMoney(i.trainingCost, narrative),
+    route: i.recovery === 'deduct_from_final_pay' ? 'deduct' : 'other' };
+}
+function bondItems(T) {
+  var E = BOND_ENGINE, items = [], rs = function (n) { return termRs(n); };
+  var parts = [];
+  parts.push('bond amount ' + (T.amount ? rs(T.amount) : 'not stated'));
+  parts.push('bond period ' + (T.period !== null ? T.period + ' months' : 'not stated'));
+  parts.push('months of the bond period served ' + (T.served !== null ? T.served : 'not stated'));
+  parts.push('actual training cost ' + (T.cost ? rs(T.cost) : 'not stated'));
+  items.push({ label: 'Bond terms read from your description', kind: 'assumption', basis: 'narrative', workings: parts.join('; ') + '. Check these against the signed bond.' });
+  var notes = [], pro = null;
+  if (!T.amount) { notes.push('The bond amount was not stated, so no recovery figure is computed.'); }
+  else {
+    if (T.period !== null && T.period > 0 && T.served !== null) {
+      if (T.served >= T.period) { notes.push('The bond period appears to have been served in full, so a minimum-service bond leaves nothing to recover.'); }
+      else {
+        pro = T.amount * (T.period - T.served) / T.period;
+        items.push({ label: 'Pro-rata benchmark', kind: 'owed_in_any_case', conditional: true, basis: 'assumed', low: termLakh(pro), high: termLakh(pro),
+          workings: rs(T.amount) + ' x ' + (T.period - T.served) + ' unserved months / ' + T.period + ' bond months. This is a common way to test whether a recovery is reasonable. It is not stated in the Contract Act' });
+      }
+    } else { notes.push('The bond period or the months served were not stated, so the pro-rata benchmark is not computed.'); }
+    if (!(T.served !== null && T.period !== null && T.served >= T.period)) {
+      items.push({ label: 'Outer limit under s.74', kind: 'owed_in_any_case', conditional: true, basis: 'statute', low: termLakh(T.amount), high: termLakh(T.amount),
+        workings: 'Section 74 entitles the employer, whether or not actual loss is proved, to reasonable compensation not exceeding the sum named in the bond, which is ' + rs(T.amount) + '. What is reasonable is for the court, so this is a ceiling and not an amount the employer is entitled to' });
+    }
+    if (T.cost) { notes.push('The actual training cost stated is ' + rs(T.cost) + '. This is evidence on reasonableness, not a limit set by the Act' + ((pro !== null && pro > T.cost) || T.amount > T.cost * 1.5 ? '; a claim well above the actual cost invites a challenge that the bond is a penalty.' : '.')); }
+    else { notes.push('The actual training cost was not stated; reasonableness cannot be tested against it.'); }
+  }
+  items.push({ label: 'Cost of pursuing recovery or answering a challenge', kind: 'exposure', basis: 'assumed', low: E.pursueLakh[0], high: E.pursueLakh[1],
+    workings: 'A fixed planning range of Rs.' + E.pursueLakh[0] + 'L to Rs.' + E.pursueLakh[1] + 'L for a notice, negotiation or a claim. It is an assumption, not a published figure.' });
+  if (T.route === 'deduct') {
+    items.push({ label: 'If the amount is deducted from final pay', kind: 'exposure', basis: 'statute', low: 0, high: E.fineLakh,
+      workings: 'A deduction not authorised by s.18(2) means the employee is paid less than the amount due, which s.54(1)(a) punishes with a fine of up to Rs.50,000. The sum deducted would also have to be paid back. The fine is the extra exposure; the repayment only returns money the employer would not otherwise hold.' });
+  }
+  var tail = notes.join(' ') + ' Deduction from wages or the final settlement: s.18(2) of the Code on Wages lists the only permitted purposes (fines, absence, damage or loss of goods entrusted, housing, advances and overpayment of wages, tax, certain fund and society contributions), and a bond recovery is not on the list. Section 18(1) also treats any payment by an employee to the employer as a deduction. The permitted deduction is therefore Rs.0, and recovery has to be by agreement or a claim. Restraint: s.27 of the Contract Act voids, to that extent, an agreement that restrains the employee from a lawful profession. A bond that only recovers money is different from one that stops the employee working elsewhere; any such restraint is flagged and not valued. Not counted: interest, tax, and any counter-claim by the employee.';
+  items.push({ label: 'What the range leaves out', kind: 'not_included', workings: tail });
+  return items;
+}
+function applyBondFinancial(result, narrative) {
+  if (!result) { return false; }
+  var inp = result.bondInputs; delete result.bondInputs;
+  if (result.wrongTool === true || result.detectedCaseType !== 'Other' || !inp || inp.isBond !== true) { return false; }
+  if (!result.protocol || !result.protocol.financial) { return false; }
+  var T = bondReadTerms(inp, narrative);
+  var f = result.protocol.financial;
+  f.items = bondItems(T);
+  normaliseFinancial(result);
+  f.confidence = (T.amount && T.period !== null && T.served !== null) ? 'Medium' : 'Low';
+  f.rangeNote = 'Recovery and defence costs are planning assumptions. The recoverable amounts are conditional and are not added to this range.';
+  delete f.split;
+  return true;
+}
+// ── BOND ENGINE END ──────────────────────────────────────────────────────────
+
 function applyDeterministicFinancial(result, reqBody) {
   try { applyPoshEngine(result, new Date()); } catch (e) { console.error('applyPoshEngine failed: ' + e.message); if (result) { delete result.poshInputs; } }
   try {
@@ -4226,12 +4310,13 @@ function applyDeterministicFinancial(result, reqBody) {
   try { var _scrubbed = scrubInternalNames(result, 0); if (_scrubbed) { console.log('PACT: removed internal field names from ' + _scrubbed + ' text field(s)'); } } catch (e) { console.error('scrubInternalNames failed: ' + e.message); }
   try {
     try { applyTerminationText(result, reqBody && reqBody.narrative); } catch (e) { console.error('applyTerminationText failed: ' + e.message); }
-    if (!result || result.wrongTool === true || !result.protocol || !result.protocol.financial) { if (result) { delete result.terminationInputs; } return; }
+    if (!result || result.wrongTool === true || !result.protocol || !result.protocol.financial) { if (result) { delete result.terminationInputs; delete result.bondInputs; } return; }
     var flags = result.engineFlags;
     delete result.engineFlags;
-    if (flags && typeof flags === 'object') { delete result.terminationInputs; }
+    if (flags && typeof flags === 'object') { delete result.terminationInputs; delete result.bondInputs; }
     if (!flags || typeof flags !== 'object') {
       try { applyPoshFinancial(result); } catch (e) { console.error('applyPoshFinancial failed: ' + e.message); }
+      try { if (applyBondFinancial(result, reqBody && reqBody.narrative)) { console.log('Bond engine applied'); } } catch (e) { console.error('applyBondFinancial failed: ' + e.message); }
       try { if (applyTerminationFinancial(result, resolveCtc(reqBody), reqBody && reqBody.monthlyGross, reqBody && reqBody.monthlyBasicDa, new Date())) { console.log('Termination engine applied'); } } catch (e) { console.error('applyTerminationFinancial failed: ' + e.message); }
       return;
     }
