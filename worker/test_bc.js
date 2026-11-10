@@ -94,5 +94,10 @@ ok(/pays for itself/.test(ls.openingLine) && !/1\.4Cr/.test(ls.openingLine), 'in
 ok(ls.bcCheck.ok === false && ls.bcCheck.flagged.some(f => /8L/.test(f)), 'ld invented pilot flagged: ' + JSON.stringify(ls.bcCheck.flagged));
 ls = { openingLine: 'Rs.25L covers Rs.14Cr of payroll.', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Planning return Rs.25L to Rs.50L, about Rs.12,500 per head, half is Rs.12.5L.' } }, bcInputs: LDIN };
 LD.applyBusinessCaseStakeholder(ls, LDT); ok(ls.bcCheck.ok === true && ls.openingLine === 'Rs.25L covers Rs.14Cr of payroll.', 'clean ld passes: ' + JSON.stringify(ls.bcCheck.flagged));
+// v114: "rs" inside a word is not a rupee prefix
+ok(bondAmountsIn('Rs.25L covers 200 employees; managers 5 and hours 8').join() === '2500000', 'rs inside words ignored: ' + bondAmountsIn('Rs.25L covers 200 employees; managers 5 and hours 8'));
+ok(bondAmountsIn('(Rs.8L) and ₹15L and INR 2,00,000').join() === '800000,1500000,200000', 'real prefixes still parsed');
+ls = { openingLine: 'Rs.25L covers 200 employees.', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Rs.25L covers 200 employees at Rs.12,500 per head.' } }, bcInputs: LDIN };
+LD.applyBusinessCaseStakeholder(ls, LDT); ok(ls.bcCheck.ok === true, 'covers 200 not flagged: ' + JSON.stringify(ls.bcCheck.flagged));
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);

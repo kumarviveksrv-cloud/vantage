@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v113'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v114'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4238,7 +4238,7 @@ function applyTerminationText(result, narrative) {
 const BOND_ENGINE = { pursueLakh: [0.5, 2], fineLakh: 0.5 };
 function bondAmountsIn(text) {
   var out = [], t = String(text || ''), m;
-  var re = /(?:₹|rs\.?|inr)\s*([\d,]+(?:\.\d+)?)\s*(crore|cr|lakhs?|lacs?|lpa|l|k)?\b|\b([\d,]+(?:\.\d+)?)\s*(crore|cr|lakhs?|lacs?|lpa|k)\b/gi;
+  var re = /(?:₹|\b(?:rs\.?|inr))\s*([\d,]+(?:\.\d+)?)\s*(crore|cr|lakhs?|lacs?|lpa|l|k)?\b|\b([\d,]+(?:\.\d+)?)\s*(crore|cr|lakhs?|lacs?|lpa|k)\b/gi;
   while ((m = re.exec(t))) {
     var n = parseFloat((m[1] || m[3]).replace(/,/g, '')), u = String(m[2] || m[4] || '').toLowerCase();
     if (!isFinite(n)) { continue; }
@@ -4563,7 +4563,7 @@ function bcFigureCheck(result, c, userText, extra) {
     var vals = bcFigureNums(f[1]);
     multiples = [];
     if (c) { var kWords = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, fifteen: 15, twenty: 20 }, kRe = /(?:even\s+)?(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty)\s+(?:more\s+)?(?:even\s+)?(?:exits?|departures?|employees?|people|leavers?|resignations?)/gi, km; while ((km = kRe.exec(f[1]))) { var k = kWords[km[1].toLowerCase()] || parseInt(km[1], 10); if (k >= 1 && k <= 100) { [c.perExit, c.replPer, c.prodPer].forEach(function (a) { multiples.push(a[0] * k, a[1] * k); }); multiples.push(c.ctcL * k); } } }
-    var txt = f[1], m, re = /(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\b|\b[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|k)\b/gi;
+    var txt = f[1], m, re = /(?:₹|\b(?:rs\.?|inr))\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\b|\b[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|k)\b/gi;
     while ((m = re.exec(txt))) {
       var v = bcFigureNums(m[0])[0];
       if (v === undefined) { continue; }
@@ -4574,7 +4574,7 @@ function bcFigureCheck(result, c, userText, extra) {
   });
   return flagged.slice(0, 8);
 }
-var BC_RUPEE_SRC = '(?:₹|rs\\.?|inr)\\s*[\\d,]+(?:\\.\\d+)?\\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\\b|\\b[\\d,]+(?:\\.\\d+)?\\s*(?:crore|cr|lakhs?|lacs?|lpa)\\b';
+var BC_RUPEE_SRC = '(?:₹|\\b(?:rs\\.?|inr))\\s*[\\d,]+(?:\\.\\d+)?\\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\\b|\\b[\\d,]+(?:\\.\\d+)?\\s*(?:crore|cr|lakhs?|lacs?|lpa)\\b';
 var BC_NOT_COMPUTED = 'Not computed: the number of exits (or the attrition rate with the headcount) and the average CTC are needed.';
 function bcStripInvented(result) {
   var removed = 0, has = function (s) { return new RegExp(BC_RUPEE_SRC, 'i').test(s); };
@@ -4611,7 +4611,7 @@ function applyBusinessCaseEngine(result, userText) {
     result.signal.impact.breakdown = bcLines(c);
     if (result.humac) { result.humac.range = bcRange(c.total).replace(' to ', ' – '); }
     if (typeof result.headline === 'string') {
-      var userFig = bcFigureNums(userText).concat([c.ctcL, c.budgetL || 0]), offending = false, m, re = /(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?(?:\s*(?:to|-|–|—)\s*(?:₹|rs\.?|inr)?\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?)?\b/gi;
+      var userFig = bcFigureNums(userText).concat([c.ctcL, c.budgetL || 0]), offending = false, m, re = /(?:₹|\b(?:rs\.?|inr))\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?(?:\s*(?:to|-|–|—)\s*(?:₹|\b(?:rs\.?|inr))?\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?)?\b/gi;
       result.headline = result.headline.replace(re, function (all) { var vs = bcFigureNums(all); if (!vs.length) { return all; } var good = vs.every(function (v) { return (v >= c.total[0] * 0.97 && v <= c.total[1] * 1.03) || userFig.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, a * 0.005); }); }); if (good) { return all; } offending = true; return fig; });
       if (offending) { result.headline = result.headline.replace(new RegExp(fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\s*(?:to|-|–)\\s*' + fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')+', 'g'), fig); }
     }
