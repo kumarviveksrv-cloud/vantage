@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v108'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v109'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4517,7 +4517,7 @@ function bcPromptBlock(c) {
   s += '- Cost of one exit: ' + bcRange(c.perExit) + '.\n';
   if (c.rate !== null) { s += '- Annualised attrition rate: ' + (Math.round(c.rate * 10) / 10) + ' percent.\n'; }
   if (c.breakEven) { s += '- Programme budget ' + engineLakh(r2(c.budgetL)) + ' breaks even if it prevents ' + (Math.round(c.breakEven[0] * 10) / 10) + ' to ' + (Math.round(c.breakEven[1] * 10) / 10) + ' exits. Use this break-even, not a return ratio you calculate yourself.\n'; }
-  s += 'Any other rupee figure you write must be a whole number of exits multiplied by the per-exit cost above, with the number of exits stated in the same sentence. Do not invent other rupee amounts or percentages of productivity. Do not write hypothetical alternative rupee amounts anywhere, for example other budget sizes in a rehearsal prompt; refer to the stated budget only. When you quote avoided cost for a number of exits, call it avoided cost, not return, because it is before the programme spend.\n';
+  s += 'Every rupee figure you write about the cost of the exits, including any Data Anchor and Revenue at Risk figure, must be this total range, or the replacement or productivity part above, or a whole number of exits multiplied by the per-exit cost with that number of exits stated in the same sentence. Never use salary alone as the cost of an exit. Describe decision alternatives such as phasing as fractions or percentages of the stated budget, not as new rupee amounts. Any other rupee figure you write must be a whole number of exits multiplied by the per-exit cost above, with the number of exits stated in the same sentence. Do not invent other rupee amounts or percentages of productivity. Do not write hypothetical alternative rupee amounts anywhere, for example other budget sizes in a rehearsal prompt; refer to the stated budget only. When you quote avoided cost for a number of exits, call it avoided cost, not return, because it is before the programme spend.\n';
   return s;
 }
 function bcFigureNums(text) { return bondAmountsIn(text).map(function (n) { return n / 100000; }); }
@@ -4567,6 +4567,26 @@ function applyBusinessCaseEngine(result, userText) {
       var userFig = bcFigureNums(userText).concat([c.ctcL, c.budgetL || 0]), offending = false, m, re = /(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?(?:\s*(?:to|-|–|—)\s*(?:₹|rs\.?|inr)?\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?)?\b/gi;
       result.headline = result.headline.replace(re, function (all) { var vs = bcFigureNums(all); if (!vs.length) { return all; } var good = vs.every(function (v) { return (v >= c.total[0] * 0.97 && v <= c.total[1] * 1.03) || userFig.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, a * 0.005); }); }); if (good) { return all; } offending = true; return fig; });
       if (offending) { result.headline = result.headline.replace(new RegExp(fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\s*(?:to|-|–)\\s*' + fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')+', 'g'), fig); }
+    }
+    result.bcEngine = { model: 'attrition-v1', total: [r2(c.total[0]), r2(c.total[1])], perExit: [r2(c.perExit[0]), r2(c.perExit[1])] };
+  }
+  var flagged = bcFigureCheck(result, c, userText);
+  result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged,
+    note: c ? (flagged.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flagged.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.')
+            : 'The system could not compute the attrition figures from your data (it needs the number of exits and the average CTC, both stated as numbers). The rupee figures below are the model\'s own estimates and are not system-checked.' };
+  return !!c;
+}
+function applyBusinessCaseStakeholder(result, userText) {
+  if (!result) { return false; }
+  var inp = result.bcInputs; delete result.bcInputs;
+  if (result.wrongTool === true || !result.stack) { return false; }
+  var T = bcRead(inp, userText), c = bcCalc(T);
+  if (c) {
+    var fig = bcRange(c.total);
+    if (result.stack.dataAnchor) { result.stack.dataAnchor.figure = fig; }
+    if (result.stack.riskMirror) {
+      result.stack.riskMirror.revenueAtRisk = fig;
+      result.stack.riskMirror.revenueAtRiskBasis = 'Computed by the system: ' + r2(c.annualExits) + ' exits a year x ' + engineLakh(r2(c.ctcL)) + ' x (replacement multiple ' + c.mult[0] + ' to ' + c.mult[1] + ' plus ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] : c.ramp[0] + ' to ' + c.ramp[1]) + ' months of ramp-up productivity gap).';
     }
     result.bcEngine = { model: 'attrition-v1', total: [r2(c.total[0]), r2(c.total[1])], perExit: [r2(c.perExit[0]), r2(c.perExit[1])] };
   }
@@ -5174,6 +5194,7 @@ if (actContext) {
         if (truncatedContext && anonymizedContext === null) return anonymizationFailedResponse();
         if (truncatedStakeholderName && anonymizedStakeholderName === null) return anonymizationFailedResponse();
 
+        bcAnonText = String(anonymizedSituation || '') + ' ' + String(anonymizedAsk || '') + ' ' + String(anonymizedContext || '');
         userMessage = `STAKEHOLDER TYPE: ${truncateInput(stakeholderType, 200)}\n${anonymizedStakeholderName ? `STAKEHOLDER: ${anonymizedStakeholderName}` : ''}\nSITUATION: ${anonymizedSituation}\nWHAT I NEED FROM THEM: ${anonymizedAsk}\n${anonymizedContext ? `ADDITIONAL CONTEXT: ${anonymizedContext}` : ''}\n\nBuild the complete INFLUENCE Stack with Humac-grounded Data Anchor, Revenue at Risk in the Risk Mirror, and ARIA handoff. Return the complete JSON response as specified.`;
       } else {
         const { metrics, context, audience } = body;
@@ -5195,7 +5216,7 @@ if (actContext) {
       }
 
       let bcPre = null;
-      if (flow === 'general') { try { bcPre = await bcFiguresBlock(bcAnonText, String(body.metrics || '') + ' ' + String(body.context || '') + ' ' + String(body.ask || '')); if (bcPre && bcPre.block) { userMessage = bcPre.block + '\n' + userMessage; } } catch (bcPreE) { console.error('bc pre-extract failed: ' + bcPreE.message); } }
+      { try { bcPre = await bcFiguresBlock(bcAnonText, flow === 'stakeholder' ? (String(body.situation || '') + ' ' + String(body.ask || '') + ' ' + String(body.context || '')) : (String(body.metrics || '') + ' ' + String(body.context || '') + ' ' + String(body.ask || ''))); if (bcPre && bcPre.block) { userMessage = bcPre.block + '\n' + userMessage; } } catch (bcPreE) { console.error('bc pre-extract failed: ' + bcPreE.message); } }
       const systemPrompt = getBusinessCasePrompt(meridian, flow, humacContext);
       _emit('stage', { stage: 'analyse' });
       const response = await callClaude(systemPrompt, [{ role: 'user', content: userMessage }], MAX_TOKENS, CLAUDE_MODEL_DEFAULT, undefined, function (n) { _emit('gen', { chars: n }); }, ANALYST_TEMPERATURE);
@@ -5232,7 +5253,8 @@ if (actContext) {
           });
         }
       }
-      if (result && flow === 'general' && bcPre && bcPre.inputs) { result.bcInputs = bcPre.inputs; }
+      if (result && bcPre && bcPre.inputs) { result.bcInputs = bcPre.inputs; }
+      if (result && flow === 'stakeholder') { try { if (applyBusinessCaseStakeholder(result, String(body.situation || '') + ' ' + String(body.ask || '') + ' ' + String(body.context || ''))) { console.log('Business Case stakeholder engine applied'); } } catch (bcS) { console.error('applyBusinessCaseStakeholder failed: ' + bcS.message); if (result) { delete result.bcInputs; } } }
       if (result && flow === 'general') { try { if (applyBusinessCaseEngine(result, String(body.metrics || '') + ' ' + String(body.context || '') + ' ' + String(body.ask || ''))) { console.log('Business Case engine applied'); } } catch (bcE) { console.error('applyBusinessCaseEngine failed: ' + bcE.message); if (result) { delete result.bcInputs; } } }
       if (result && result.wrongTool === true) { if (await settleWrongTool(clerkUserId, 'business_case', usageCheck, trialCharged)) { _trialLastCall = false; } } else { queueUsage(clerkUserId, 'business_case', usageCheck); }
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {

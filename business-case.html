@@ -740,6 +740,7 @@
         </div>
 
         <!-- 5-layer INFLUENCE Stack -->
+        <div id="bc-check-st" style="display:none;margin:0 0 14px;padding:12px 16px;border-radius:10px;border:1px solid rgba(99,102,241,0.25);background:rgba(99,102,241,0.06);font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.6;color:var(--muted)"></div>
         <div class="influence-stack" id="influence-layers"></div>
 
         <!-- Humac financial intelligence -->
@@ -1627,6 +1628,9 @@
 }
         document.getElementById('humac-influence-card').style.display = 'block';
       }
+
+      var _bcSt = document.getElementById('bc-check-st');
+      if (_bcSt) { var _bk = r.bcCheck; if (_bk && _bk.note) { _bcSt.textContent = 'System check: ' + _bk.note; _bcSt.style.borderColor = _bk.ok ? 'rgba(74,222,128,0.3)' : 'rgba(251,191,36,0.45)'; _bcSt.style.display = 'block'; } else { _bcSt.style.display = 'none'; } }
 
       // ARIA offer
       if (r.aria) {
