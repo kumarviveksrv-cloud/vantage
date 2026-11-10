@@ -216,6 +216,17 @@ PX.applyBusinessCaseStakeholder(p4, PT);
 const p4j = JSON.stringify(p4);
 ok(!/per finding|most expensive|lopsided|Thursday|end of day/i.test(p4j), 'per-finding, comparative-cost and invented-day claims stripped: ' + (p4j.match(/per finding|most expensive|lopsided|Thursday|end of day/i) || []));
 ok(/Internal Complaints Committee/.test(p4.openingLine) && /so the three statutory gaps can be closed/.test(p4.closingLine) && /Rs\.3L closes the gap/.test(p4.stack.dataAnchor.context), 'fallbacks used, user-figure sentence kept: ' + p4.closingLine + ' | ' + p4.stack.dataAnchor.context);
+// v124: BC6 v123 residue
+let p5 = posh();
+p5.openingLine = 'We have an unmet duty. The cost of not meeting it is not capped.';
+p5.stack.decisionRunway.deadline = 'I recommend this quarter. I will bring you a phased plan within five working days of approval.';
+p5.closingLine = 'I will have the draft on your desk by end of this week. The gap closes when you sign.';
+p5.stack.dataAnchor.context = 'What matters is what happens on a second finding.';
+p5.stack.credibility.evidence = 'None of these are discretionary. Location A has 180 employees. This sits below the legal team radar.';
+PX.applyBusinessCaseStakeholder(p5, PT);
+const p5j = JSON.stringify(p5);
+ok(!/not capped|within five|end of this week|legal team|second finding/i.test(p5j), 'v123 residue stripped: ' + (p5j.match(/not capped|within five|end of this week|legal team|second finding/i) || []));
+ok(/on a repeat conviction/.test(p5.stack.dataAnchor.context) && /discretionary\. Our office has 180/.test(p5.stack.credibility.evidence) && /I recommend this quarter/.test(p5.stack.decisionRunway.deadline), 'repeat conviction wording, capitalised Our office, recommendation kept: ' + p5.stack.credibility.evidence + ' | ' + p5.stack.decisionRunway.deadline);
 // generic stakeholder with no engine: unsupported figures removed, note accurate
 let gs = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.42L' }, riskMirror: { revenueAtRisk: 'Rs.1.2Cr', revenueAtRiskBasis: 'b' }, credibility: { statement: 'The budget is Rs.8L. A similar firm lost Rs.90L last year.' } } };
 PX.applyBusinessCaseStakeholder(gs, 'We want Rs.8L for a hiring programme.');
