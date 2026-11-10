@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v87'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v88'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -739,7 +739,7 @@ function policyScrub(text) {
   var removed = false;
   var clauseRe = /,?\s*(?:or|and),?\s*(?:more\s+commonly|commonly|typically|usually|often),?\s*(?:by\s+)?withhold(?:ing)?[^.;\n]*?(?:relieving|experience|service)\s+(?:letter|certificate)[^.;\n]*/gi;
   var out = String(text || '').replace(clauseRe, function () { removed = true; return ''; });
-  out = out.replace(/(\u20B9\s?[\d,.]+(?:\s?(?:lakh|L|crore|Cr))?)\s+per\s+(?:instance|offence|violation)\b/gi, '$1');
+  out = out.replace(/((?:\u20B9|Rs\.?|INR)\s?[\d,.]+(?:\s?(?:lakh|L|crore|Cr))?)\s+per\s+(?:instance|offence|violation)\b/gi, '$1');
   out = out.split('\n').map(function (line) {
     if (!POLICY_WITHHOLD_RE.test(line)) { return line; }
     var sents = line.split(/(?<=[.!?])\s+(?=[A-Z0-9₹])/);

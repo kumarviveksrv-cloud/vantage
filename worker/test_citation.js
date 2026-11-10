@@ -69,6 +69,8 @@ ok(eo.replaced && !/1\.2L|1,20,000|invented/.test(eo.text) && /Fine up to \u20B9
 ok(!policyExposureOverride('No exposure block here.', { range: 'x', basis: 'y' }).replaced, 'no block, nothing replaced');
 ok(/policyExposureOverride\(policyText, exposureFinal\)/.test(src), 'override wired in handler');
 
+sc = policyScrub('fine up to Rs 50,000 per instance. Then Rs 1 lakh per offence.');
+ok(!/per instance|per offence/.test(sc.text), 'Rs wording stripped: ' + sc.text);
 ok(/policyCitationCheck\(policyText, policyActLoad\.parts/.test(src) && /tool === 'policy'/.test(src), 'wired into policy handler');
 console.log(fails ? fails + ' FAILED' : 'citation checker: all passed');
 process.exit(fails ? 1 : 0);
