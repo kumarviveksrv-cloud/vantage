@@ -101,5 +101,10 @@ applyTerminationText(rm, NARR); ok(rm.protocol.legalRows[0].verdict === 'not_yet
 let rd = { detectedCaseType: 'Disciplinary', protocol: { recommendation: 'Act by 15 November 2026.' } };
 ok(applyTerminationText(rd, NARR) === false && /15 November/.test(rd.protocol.recommendation), 'other case types untouched');
 
+// s.70 scope: unclear/factory-reasoned rows corrected, s.65 row dropped in retrenchment
+let rs = { detectedCaseType: 'Retrenchment', protocol: { legalRows: [{ ref: 'IR Code s.70', verdict: 'unclear', point: 'Depends on whether the insurance establishment is a factory, mine or plantation.' }, { ref: 'IR Code s.65', verdict: 'unclear', point: 'Depends on factory definition.' }, { ref: 'IR Code s.2(zr)', verdict: 'unclear', point: 'Depends on duties.' }] } };
+applyTerminationText(rs, NARR);
+ok(rs.protocol.legalRows.length === 2 && rs.protocol.legalRows[0].ref === 'IR Code s.70' && rs.protocol.legalRows[0].verdict === 'live' && !/factory, mine/.test(rs.protocol.legalRows[0].point) && /any industry/.test(rs.protocol.legalRows[0].point), 's.70 live with scope sentence, s.65 dropped: ' + JSON.stringify(rs.protocol.legalRows));
+
 console.log(fails ? fails + ' FAILED' : 'termination: all passed');
 process.exit(fails ? 1 : 0);

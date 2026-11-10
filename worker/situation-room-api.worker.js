@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v96'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v97'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1399,6 +1399,7 @@ The financial.items list is how the cost model is shown to the HR professional, 
 - exposure: a cost that arises only if the wrong decision is taken, such as back wages or reinstatement-equivalent relief, defence and complaint costs, or replacement cost. Give low and high in lakh as plain numbers. The workings must show the inputs and arithmetic that produce exactly those numbers. The system adds the exposure items to make the range, so put every cost you want counted into an exposure item and count nothing twice. An exposure item must never contain any part of an amount shown as owed_in_any_case: for example, back wages or relief cover only the extra period of a dispute or wrongful action, never the statutory benefit period that is already shown as owed in any case.
 - owed_in_any_case: an amount payable whether or not the employee is dismissed, such as a statutory benefit. It is shown but never added to the range. Work it out from the Act's own wording: a benefit paid at the average daily wage for the period of absence is paid for every day of that period, not only working days.
 - For a POSH Complaint, never write a calendar date as a deadline in any field, and never say that a time limit has passed, expired or is overdue unless the dates in the narrative and TODAY'S DATE show it. State time limits as periods (for example 90 days from the start of the inquiry) and the system adds the dated calendar and the status of each limit.
+- Scope of the retrenchment provisions in the supplied IR Code text: section 70 applies to any worker in any industry with at least one year of continuous service under the employer, and is not limited to factories, mines or plantations. Section 65 only limits sections 67 to 69 (lay-off compensation) and has no bearing on section 70. Chapter X (sections 77 to 82, including the prior permission in section 79) applies only to a factory, mine or plantation with 300 or more workers, so treat Chapter X as not applying unless the narrative says the establishment is one of those. Never recommend pausing the process or asking counsel to classify the establishment because of these provisions, and never mention the Factories Act unless the narrative says the workplace is a factory.
 - For Termination, Redundancy and Retrenchment cases, never write a calendar date as a deadline unless the narrative states that exact date; say now, before the end date, or within a number of days instead.
 - For Termination, Redundancy and Retrenchment cases the system may replace the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item), keep the range field short, and never write a statutory amount, notice pay, compensation or gratuity figure in any text field.
 - When engineFlags is not null, the system replaces the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item) and keep the range field short. Fill engineFlags carefully, because the figures depend on it.
@@ -4189,7 +4190,12 @@ function termFixVerdicts(result, scenario) {
   var pr = result && result.protocol;
   if (!pr || !Array.isArray(pr.legalRows) || scenario !== 'retrenchment') { return 0; }
   var n = 0;
-  pr.legalRows.forEach(function (r) { if (r && r.verdict === 'not_yet' && /^IR Code s\.70(\([abc]\))?$/i.test(String(r.ref).trim())) { r.verdict = 'live'; n++; } });
+  pr.legalRows = pr.legalRows.filter(function (r) { return !(r && /^IR Code s\.(65|67|68|69)$/i.test(String(r.ref).trim())); });
+  pr.legalRows.forEach(function (r) {
+    if (!r || !/^IR Code s\.70(\([abc]\))?$/i.test(String(r.ref).trim())) { return; }
+    if (r.verdict !== 'live') { r.verdict = 'live'; n++; }
+    if (/factory|factories|mine|plantation|chapter\s*(ix|x)\b/i.test(String(r.point))) { r.point = 'Applies to any worker in any industry with at least one year of continuous service, so it is not limited to factories, mines or plantations. The notice, compensation and government notice are required before the retrenchment takes effect, and the narrative does not show them done.'; }
+  });
   if (n) { var order = ['live', 'unclear', 'not_yet']; pr.legalRows.sort(function (a, b) { return order.indexOf(a.verdict) - order.indexOf(b.verdict); }); }
   return n;
 }
