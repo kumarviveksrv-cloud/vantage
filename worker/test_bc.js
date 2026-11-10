@@ -1,0 +1,43 @@
+// Business Case attrition engine: inputs checked against the user's text, arithmetic in code, figure checker flags unsupported rupee figures.
+const fs = require('fs'), path = require('path');
+const src = fs.readFileSync(path.join(__dirname, 'situation-room-api.worker.js'), 'utf8');
+const sl = (a, b) => src.slice(src.indexOf(a), src.indexOf(b));
+const code = src.slice(src.indexOf('const REPLACEMENT_COST_MULTIPLIER'), src.indexOf('const DEFAULT_REPLACEMENT_MULTIPLIER')) + sl('function parseMultiplierRange', '// Every component for one CTC figure') + sl('// ── BOND ENGINE START', 'function bondFixText') + sl('// ── BUSINESS CASE ENGINE START', '// ── BUSINESS CASE ENGINE END');
+const { bcRead, bcCalc, bcLines, bcFigureCheck, applyBusinessCaseEngine, bondAmountsIn } = new Function(code + ';return {bcRead, bcCalc, bcLines, bcFigureCheck, applyBusinessCaseEngine, bondAmountsIn};')();
+let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('FAIL', m); } };
+const TXT = 'We lost 40 employees out of a headcount of 250 in the last 12 months. Average CTC is ₹8L. We are considering a retention programme with a budget of ₹15L.';
+ok(bondAmountsIn('8 LPA and 2.5 lakh per annum').join() === '800000,250000', 'LPA parsed: ' + bondAmountsIn('8 LPA and 2.5 lakh per annum'));
+const IN = { model: 'attrition', exits: 40, headcount: 250, avgCtc: 800000, periodMonths: 12, rampMonths: null, roleTier: 'default', programmeBudget: 1500000 };
+let T = bcRead(IN, TXT);
+ok(T.exits === 40 && T.headcount === 250 && T.ctc === 800000 && T.months === 12 && T.ramp === null && T.budget === 1500000, 'inputs read: ' + JSON.stringify(T));
+let c = bcCalc(T);
+ok(Math.abs(c.total[0] - 336) < 0.01 && Math.abs(c.total[1] - 576) < 0.01, 'total 40 x (6.4+2) to (10.4+4) = 336 to 576L: ' + c.total);
+ok(Math.abs(c.rate - 16) < 0.001, 'rate 16 percent');
+ok(Math.abs(c.breakEven[0] - 15 / 14.4) < 0.001 && Math.abs(c.breakEven[1] - 15 / 8.4) < 0.001, 'break-even exits');
+ok(bcLines(c).some(l => /3\.36Cr to Rs\.5\.76Cr/.test(l)) && bcLines(c).some(l => /assumed planning range/.test(l)), 'lines carry total and flag assumed ramp');
+// fabricated inputs rejected
+T = bcRead({ model: 'attrition', exits: 55, headcount: 250, avgCtc: 800000 }, TXT); ok(T.exits === null && bcCalc(T) === null, 'exits not in text: no computation');
+T = bcRead({ model: 'attrition', exits: 40, avgCtc: 900000 }, TXT); ok(T.ctc === null && bcCalc(T) === null, 'CTC not in text: no computation');
+ok(bcCalc(bcRead({ model: 'other', exits: 40, avgCtc: 800000 }, TXT)) === null, 'non-attrition model: no computation');
+// tier and ramp and period
+T = bcRead({ model: 'attrition', exits: 40, headcount: 250, avgCtc: 800000, roleTier: 'senior', rampMonths: 4, periodMonths: 6 }, TXT + ' Ramp is 4 months. Data covers 6 months.'.replace('Data covers 6 months', 'Data covers 6 months'));
+c = bcCalc(T); ok(c.annualExits === 80 && c.mult[0] === 1.5 && c.ramp[0] === 4 && Math.abs(c.total[0] - 80 * (8 * 1.5 + 8 / 12 * 4)) < 0.01, 'senior tier, stated ramp, 6 months annualised: ' + JSON.stringify(c.total));
+// apply
+function mk() { return { headline: 'Attrition is costing Rs.1.2Cr a year', revenueAtRisk: { figure: 'Rs.1.2Cr', basis: 'x', confidence: 'Low' }, signal: { situation: { narrative: 'Cost is Rs.7Cr.' }, impact: { narrative: 'n', financialImpact: 'Rs.1.2Cr', breakdown: ['a'] }, narrative: { cfoVersion: 'The exposure is Rs.9Cr and the budget is Rs.15L.' } }, humac: { range: 'Rs.1Cr – Rs.2Cr' }, bcInputs: IN }; }
+let r = mk(); ok(applyBusinessCaseEngine(r, TXT) === true && r.bcInputs === undefined, 'applied, input removed');
+ok(r.revenueAtRisk.figure === 'Rs.3.36Cr to Rs.5.76Cr' && r.signal.impact.financialImpact === r.revenueAtRisk.figure && /Computed by the system/.test(r.revenueAtRisk.basis), 'revenue at risk overwritten: ' + r.revenueAtRisk.figure);
+ok(r.headline === 'Attrition is costing Rs.3.36Cr to Rs.5.76Cr a year', 'headline figure replaced: ' + r.headline);
+ok(r.humac.range === 'Rs.3.36Cr – Rs.5.76Cr', 'humac range: ' + r.humac.range);
+ok(r.signal.impact.breakdown.length >= 6, 'breakdown rebuilt');
+ok(r.bcCheck.engine === true && r.bcCheck.ok === false && r.bcCheck.flagged.some(f => /9Cr/i.test(f)) && !r.bcCheck.flagged.some(f => /15L/i.test(f)), 'flags Rs.9Cr, not the user budget: ' + JSON.stringify(r.bcCheck));
+ok(r.bcCheck.flagged.some(f => /7Cr/i.test(f)), 'flags 7Cr in situation narrative: ' + JSON.stringify(r.bcCheck.flagged));
+// headline already inside the range is kept
+r = mk(); r.headline = 'Attrition costs Rs.4Cr a year'; applyBusinessCaseEngine(r, TXT); ok(r.headline === 'Attrition costs Rs.4Cr a year', 'in-range headline kept');
+// clean narrative gives ok
+r = mk(); r.signal.situation.narrative = 'We lost 40 of 250.'; r.signal.narrative.cfoVersion = 'Budget Rs.15L against Rs.4Cr at risk.'; r.headline = 'Rs.3.36Cr to Rs.5.76Cr at risk';
+applyBusinessCaseEngine(r, TXT); ok(r.bcCheck.ok === true && /comes from your data/.test(r.bcCheck.note), 'clean analysis passes: ' + JSON.stringify(r.bcCheck));
+// no engine: model figures untouched, check still runs against the user text, note says not system-checked
+r = mk(); r.bcInputs = { model: 'attrition', exits: 99, avgCtc: 1 }; ok(applyBusinessCaseEngine(r, TXT) === false && r.revenueAtRisk.figure === 'Rs.1.2Cr' && r.bcCheck.engine === false && /not system-checked/.test(r.bcCheck.note), 'engine off: model figure kept, honestly labelled');
+r = { wrongTool: true }; ok(applyBusinessCaseEngine(r, TXT) === false && r.bcCheck === undefined, 'wrong tool untouched');
+console.log(fails ? fails + ' FAILED' : 'business case: all passed');
+process.exit(fails ? 1 : 0);

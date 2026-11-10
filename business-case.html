@@ -589,6 +589,7 @@
           <span class="spatial-strip-cta">Enter &rarr;</span>
         </div>
 
+        <div id="bc-check" style="display:none;margin:0 0 14px;padding:12px 16px;border-radius:10px;border:1px solid rgba(99,102,241,0.25);background:rgba(99,102,241,0.06);font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.6;color:var(--muted)"></div>
         <!-- Revenue at Risk + Humac -->
         <div class="top-two-col">
           <div class="rar-card">
@@ -1155,6 +1156,8 @@
       var rarConf = document.getElementById('rar-conf');
       rarConf.innerText = (rar.confidence || '') + ' input coverage';
       rarConf.className = 'rar-conf ' + getConfClass(rar.confidence);
+      var _bcEl = document.getElementById('bc-check');
+      if (_bcEl) { var _bc = r.bcCheck; if (_bc && _bc.note) { _bcEl.textContent = 'System check: ' + _bc.note; _bcEl.style.borderColor = _bc.ok ? 'rgba(74,222,128,0.3)' : 'rgba(251,191,36,0.45)'; _bcEl.style.display = 'block'; } else { _bcEl.style.display = 'none'; } }
 
       // Humac
       document.getElementById('humac-green-cat').innerHTML = renderGreenCat(r.greenCategory);

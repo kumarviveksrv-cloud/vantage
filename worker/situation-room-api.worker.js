@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v103'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v104'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1623,7 +1623,8 @@ OUTPUT FORMAT — STRICT JSON ONLY:
     "primary": "Revenue Growth|Cost Efficiency|Risk Mitigation",
     "secondary": "Revenue Growth|Cost Efficiency|Risk Mitigation|null",
     "primaryRationale": "one sentence — the specific business outcome this data situation most directly threatens"
-  }
+  },
+  "bcInputs": "null unless the data is about employee exits or attrition. When it is, an object with model (the word attrition), exits (the number of exits as a plain number copied from the data, or null), headcount (the headcount as a plain number, or null), avgCtc (the average CTC in rupees as a plain number, for example 800000 for Rs 8L, or null), periodMonths (the number of months the exits cover, only if the data states it, else null), rampMonths (months to full productivity, only if the data states it, else null), roleTier (junior for entry level or easy to backfill roles, senior for senior, specialised or hard to backfill roles, otherwise default) and programmeBudget (the retention programme budget in rupees as a plain number, or null). Copy numbers exactly as the data states them. Never calculate anything and never invent a number the data does not state. The system computes the rupee figures itself."
 }`;
 }
 
@@ -4221,7 +4222,7 @@ function applyTerminationText(result, narrative) {
 const BOND_ENGINE = { pursueLakh: [0.5, 2], fineLakh: 0.5 };
 function bondAmountsIn(text) {
   var out = [], t = String(text || ''), m;
-  var re = /(?:₹|rs\.?|inr)\s*([\d,]+(?:\.\d+)?)\s*(crore|cr|lakhs?|lacs?|l|k)?\b|\b([\d,]+(?:\.\d+)?)\s*(crore|cr|lakhs?|lacs?|k)\b/gi;
+  var re = /(?:₹|rs\.?|inr)\s*([\d,]+(?:\.\d+)?)\s*(crore|cr|lakhs?|lacs?|lpa|l|k)?\b|\b([\d,]+(?:\.\d+)?)\s*(crore|cr|lakhs?|lacs?|lpa|k)\b/gi;
   while ((m = re.exec(t))) {
     var n = parseFloat((m[1] || m[3]).replace(/,/g, '')), u = String(m[2] || m[4] || '').toLowerCase();
     if (!isFinite(n)) { continue; }
@@ -4441,6 +4442,113 @@ function applyPipFinancial(result, ctcInfo, crit) {
   return true;
 }
 // ── PIP ENGINE END ───────────────────────────────────────────────────────────
+
+// ── BUSINESS CASE ENGINE START ───────────────────────────────────────────────
+// Attrition model for the Business Case (general flow): exits x CTC x replacement multiple, plus the productivity gap (CTC / 12 x ramp months).
+// The model only copies the inputs out of the data; every one is checked against the text the user typed, and all arithmetic is done here.
+const BC_ENGINE = { rampMonths: [3, 6], tiers: { junior: 'Low', default: 'Medium', senior: 'High' } };
+function bcNumbersIn(text) {
+  var out = [], m, re = /\d[\d,]*(?:\.\d+)?/g, t = String(text || '');
+  while ((m = re.exec(t))) { var n = parseFloat(m[0].replace(/,/g, '')); if (isFinite(n)) { out.push(n); } }
+  return out;
+}
+function bcCount(v, text, max) {
+  var n = typeof v === 'number' ? v : parseFloat(String(v == null ? '' : v).replace(/,/g, ''));
+  if (!isFinite(n) || n <= 0 || n > max || Math.round(n) !== n) { return null; }
+  return bcNumbersIn(text).indexOf(n) !== -1 ? n : null;
+}
+function bcRupees(v, text) {
+  var n = typeof v === 'number' ? v : parseFloat(String(v == null ? '' : v).replace(/[,\s₹]/g, ''));
+  if (!isFinite(n) || n < 10000 || n > 1000000000) { return null; }
+  return bondAmountsIn(text).some(function (a) { return Math.abs(a - n) <= Math.max(1, n * 0.005); }) ? Math.round(n) : null;
+}
+function bcRead(inp, text) {
+  var i = inp || {}, ramp = parseFloat(i.rampMonths);
+  return { model: i.model === 'attrition' ? 'attrition' : 'other', exits: bcCount(i.exits, text, 100000), headcount: bcCount(i.headcount, text, 1000000),
+    ctc: bcRupees(i.avgCtc, text), months: (function () { var m = parseInt(i.periodMonths, 10); return (isFinite(m) && m >= 1 && m <= 36 && bcNumbersIn(text).indexOf(m) !== -1) ? m : null; })(),
+    ramp: (isFinite(ramp) && ramp > 0 && ramp <= 24 && bcNumbersIn(text).indexOf(ramp) !== -1) ? ramp : null,
+    tier: BC_ENGINE.tiers[i.roleTier] ? i.roleTier : 'default', budget: bcRupees(i.programmeBudget, text) };
+}
+function bcCalc(T) {
+  if (T.model !== 'attrition' || !T.exits || !T.ctc) { return null; }
+  var mult = parseMultiplierRange((REPLACEMENT_COST_MULTIPLIER[BC_ENGINE.tiers[T.tier]] || REPLACEMENT_COST_MULTIPLIER.Medium).multiplier);
+  var ctcL = T.ctc / 100000, ramp = T.ramp ? [T.ramp, T.ramp] : BC_ENGINE.rampMonths;
+  var months = T.months || 12, annualExits = T.exits * 12 / months;
+  var replPer = [ctcL * mult[0], ctcL * mult[1]], prodPer = [ctcL / 12 * ramp[0], ctcL / 12 * ramp[1]];
+  var perExit = [replPer[0] + prodPer[0], replPer[1] + prodPer[1]];
+  var c = { T: T, mult: mult, ramp: ramp, ctcL: ctcL, annualExits: annualExits, months: months, replPer: replPer, prodPer: prodPer, perExit: perExit,
+    repl: [annualExits * replPer[0], annualExits * replPer[1]], prod: [annualExits * prodPer[0], annualExits * prodPer[1]], total: [annualExits * perExit[0], annualExits * perExit[1]] };
+  c.rate = T.headcount ? (T.exits / T.headcount * 100 * 12 / months) : null;
+  if (T.budget) { var bl = T.budget / 100000; c.budgetL = bl; c.breakEven = [bl / perExit[1], bl / perExit[0]]; }
+  return c;
+}
+function bcRange(a) { return engineLakh(r2(a[0])) + ' to ' + engineLakh(r2(a[1])); }
+function bcLines(c) {
+  var T = c.T, tierName = T.tier === 'default' ? 'typical professional role' : (T.tier === 'junior' ? 'entry level or easy to backfill role' : 'senior or hard to backfill role');
+  var L = [];
+  L.push('Inputs read from your data: ' + T.exits + ' exits' + (T.headcount ? ' from a headcount of ' + T.headcount : '') + (T.months ? ' over ' + T.months + ' months' : '') + ', average CTC ' + engineLakh(r2(c.ctcL)) + (T.budget ? ', programme budget ' + engineLakh(r2(c.budgetL)) : '') + '.');
+  if (T.months && T.months !== 12) { L.push('Exits annualised to ' + r2(c.annualExits) + ' a year (' + T.exits + ' x 12 / ' + T.months + ') because the data covers ' + T.months + ' months.'); }
+  if (c.rate !== null) { L.push('Annualised attrition rate: ' + (Math.round(c.rate * 10) / 10) + ' percent (' + T.exits + (T.months && T.months !== 12 ? ' x 12 / ' + T.months : '') + ' / ' + T.headcount + ').'); }
+  L.push('Replacement cost: ' + r2(c.annualExits) + ' exits x ' + engineLakh(r2(c.ctcL)) + ' x ' + c.mult[0] + ' to ' + c.mult[1] + ' (' + tierName + ' multiple) = ' + bcRange(c.repl) + '.');
+  L.push('Productivity gap: ' + r2(c.annualExits) + ' exits x ' + engineLakh(r2(c.ctcL)) + ' / 12 x ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] + ' ramp months' : c.ramp[0] + ' to ' + c.ramp[1] + ' ramp months (an assumed planning range, because the data gives none)') + ' = ' + bcRange(c.prod) + '.');
+  L.push('Total over 12 months if nothing changes: ' + bcRange(c.total) + '. Institutional knowledge loss is a real risk but is not priced here.');
+  if (c.breakEven) { L.push('Break-even for the ' + engineLakh(r2(c.budgetL)) + ' programme: it pays for itself if it prevents ' + (Math.round(c.breakEven[0] * 10) / 10) + ' to ' + (Math.round(c.breakEven[1] * 10) / 10) + ' exits (each exit costs ' + bcRange(c.perExit) + ').'); }
+  return L;
+}
+function bcFigureNums(text) { return bondAmountsIn(text).map(function (n) { return n / 100000; }); }
+function bcFigureCheck(result, c, userText) {
+  var allowed = bcFigureNums(userText), flagged = [], seen = {};
+  if (c) {
+    [c.repl, c.prod, c.total, c.perExit, c.replPer, c.prodPer].forEach(function (a) { allowed.push(a[0], a[1]); });
+    allowed.push(c.ctcL); if (c.budgetL) { allowed.push(c.budgetL); }
+  }
+  var inRange = function (v) { return c && v >= c.total[0] * 0.97 && v <= c.total[1] * 1.03; };
+  var fields = [];
+  var walk = function (n, path) {
+    if (typeof n === 'string') { fields.push([path, n]); }
+    else if (Array.isArray(n)) { n.forEach(function (x, i) { walk(x, path + '[' + i + ']'); }); }
+    else if (n && typeof n === 'object') { Object.keys(n).forEach(function (k) { if (k !== 'bcCheck') { walk(n[k], path ? path + '.' + k : k); } }); }
+  };
+  walk(result, '');
+  fields.forEach(function (f) {
+    var vals = bcFigureNums(f[1]);
+    var txt = f[1], m, re = /(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\b|\b[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|k)\b/gi;
+    while ((m = re.exec(txt))) {
+      var v = bcFigureNums(m[0])[0];
+      if (v === undefined) { continue; }
+      var ok = inRange(v) || allowed.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, Math.abs(a) * 0.03); });
+      var key = m[0].replace(/\s+/g, '').toLowerCase();
+      if (!ok && !seen[key]) { seen[key] = true; flagged.push(m[0].replace(/\s+/g, ' ').trim()); }
+    }
+  });
+  return flagged.slice(0, 8);
+}
+function applyBusinessCaseEngine(result, userText) {
+  if (!result) { return false; }
+  var inp = result.bcInputs; delete result.bcInputs;
+  if (result.wrongTool === true || !result.signal) { return false; }
+  var T = bcRead(inp, userText), c = bcCalc(T);
+  if (c) {
+    var fig = bcRange(c.total);
+    result.revenueAtRisk = { figure: fig, basis: 'Computed by the system: ' + r2(c.annualExits) + ' exits a year x ' + engineLakh(r2(c.ctcL)) + ' x (replacement multiple ' + c.mult[0] + ' to ' + c.mult[1] + ' plus ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] : c.ramp[0] + ' to ' + c.ramp[1]) + ' months of ramp-up productivity gap).', confidence: (T.headcount && T.ramp) ? 'High' : 'Medium' };
+    if (!result.signal.impact) { result.signal.impact = {}; }
+    result.signal.impact.financialImpact = fig;
+    result.signal.impact.breakdown = bcLines(c);
+    if (result.humac) { result.humac.range = bcRange(c.total).replace(' to ', ' – '); }
+    if (typeof result.headline === 'string') {
+      var bad = bcFigureNums(result.headline), offending = false, m, re = /(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\b/gi;
+      result.headline = result.headline.replace(re, function (all) { var v = bcFigureNums(all)[0]; if (v === undefined) { return all; } if (v >= c.total[0] * 0.97 && v <= c.total[1] * 1.03) { return all; } offending = true; return fig; });
+      if (offending) { result.headline = result.headline.replace(new RegExp(fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\s*(?:to|-|–)\\s*' + fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')+', 'g'), fig); }
+    }
+    result.bcEngine = { model: 'attrition-v1', total: [r2(c.total[0]), r2(c.total[1])], perExit: [r2(c.perExit[0]), r2(c.perExit[1])] };
+  }
+  var flagged = bcFigureCheck(result, c, userText);
+  result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged,
+    note: c ? (flagged.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flagged.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.')
+            : 'The system could not compute the attrition figures from your data (it needs the number of exits and the average CTC, both stated as numbers). The rupee figures below are the model\'s own estimates and are not system-checked.' };
+  return !!c;
+}
+// ── BUSINESS CASE ENGINE END ─────────────────────────────────────────────────
 
 function applyDeterministicFinancial(result, reqBody) {
   try { applyPipEngine(result, new Date(), reqBody && reqBody.narrative); } catch (e) { console.error('applyPipEngine failed: ' + e.message); if (result) { delete result.pipInputs; } }
@@ -5090,6 +5198,7 @@ if (actContext) {
           });
         }
       }
+      if (result && flow === 'general') { try { if (applyBusinessCaseEngine(result, String(body.metrics || '') + ' ' + String(body.context || ''))) { console.log('Business Case engine applied'); } } catch (bcE) { console.error('applyBusinessCaseEngine failed: ' + bcE.message); if (result) { delete result.bcInputs; } } }
       if (result && result.wrongTool === true) { if (await settleWrongTool(clerkUserId, 'business_case', usageCheck, trialCharged)) { _trialLastCall = false; } } else { queueUsage(clerkUserId, 'business_case', usageCheck); }
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
