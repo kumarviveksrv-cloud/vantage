@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v120'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v121'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4602,7 +4602,7 @@ function ldPromptBlock(l) {
 }
 var POSH_RE = /\bPOSH\b|sexual harassment|internal (?:complaints? )?committee/i;
 var POSH_SECTIONS = [4, 13, 14, 15, 19, 21, 22, 25, 26];
-var POSH_CLAIM_RE = /\bin (?:19|20)\d{2}\b|tribunal|documented cases|have ranged|settled for|settlement|\birdai\b|ministry of|national commission|strict[- ]liability|\bfloor\b|\b(?:10|ten) or more employees|third-party information|compound(?:s|ed|ing)? across|within \d+ (?:days|weeks|months)|\d+\s*(?:%|percent)[^.]*(?:probab|likel|chance)|(?:probab|likel|chance)[^.]*\d+\s*(?:%|percent)|expected (?:value|cost)|dwarfs|exposure range|lower bound|upper bound|that range|that exposure|blended exposure/i;
+var POSH_CLAIM_RE = /\bin (?:19|20)\d{2}\b|tribunal|documented cases|have ranged|settled for|settlement|\birdai\b|ministry of|national commission|strict[- ]liability|\bfloor\b|\b(?:10|ten) or more employees|third-party information|compound(?:s|ed|ing)? across|within \d+ (?:days|weeks|months)|\d+\s*(?:%|percent)[^.]*(?:probab|likel|chance)|(?:probab|likel|chance)[^.]*\d+\s*(?:%|percent)|expected (?:value|cost)|dwarfs|exposure range|lower bound|upper bound|that range|that exposure|blended exposure|quantifiable|on (?:our|the) books|balance sheet|falls due|begins at|starts at|minimum (?:fine|penalty)|per (?:violation|offence)|may each attract|each attract|grows with every month|\bpanopto\b|\byougov\b|replacement cost multiplier/i;
 function poshBadSection(s) {
   var re = /\b(?:sections?|ss?\.)\s*((?:\d+(?:\([a-z0-9]+\))*\s*(?:,|and|&|to)?\s*)*\d+(?:\([a-z0-9]+\))*)/gi, m, nums;
   while ((m = re.exec(s))) {
@@ -4619,14 +4619,15 @@ function poshPromptBlock() {
   s += '- s.25: the appropriate Government may, by written order in the public interest, require information or authorise an inspection of records and workplaces.\n';
   s += '- s.26(1): the fine for failing to constitute the Internal Committee, to act under sections 13, 14 and 22, or to comply with the Act may extend to Rs.50,000. It is a maximum, never a floor or a fixed amount. s.26(2): on a repeat conviction the punishment is doubled and a licence or registration may be cancelled or not renewed. Do not price the repeat penalty.\n';
   s += '- s.15: compensation to a complainant follows factors listed in the Act and the Act gives no formula, so no compensation figure can be computed.\n';
-  s += 'RULES: the only rupee figures you may write are Rs.50,000 (always as up to or may extend to), figures the user gave, and fractions of the user\'s own spend. Never state a probability, percentage chance or expected value of a complaint, inspection or award. Never state tribunal awards, settlements, legal defence costs, client or business losses, penalties under any other law, or any past case, company or incident. Never name a regulator or ministry or say what it has done or issued. Never call the fine a floor or minimum. Never state a threshold of employees for the Committee. Cite no section other than those listed above. State no deadline or timeline the user did not give; write timing only as a first-person recommendation. For the success metric write that the target and measure will be agreed with the stakeholder before the programme begins. Anything in the Risk Mirror beyond the fine, write as Not computed with the reason.\n';
+  s += 'RULES: do not call the exposure quantified, quantifiable, a liability or an asset on the books or balance sheet; it is not computed. Do not say the fine applies per violation or per ground, or that it begins at or starts at an amount. Do not apply the attrition or replacement-cost model, any research body, or any exit to this decision. Do not say when the annual report falls due. the only rupee figures you may write are Rs.50,000 (always as up to or may extend to), figures the user gave, and fractions of the user\'s own spend. Never state a probability, percentage chance or expected value of a complaint, inspection or award. Never state tribunal awards, settlements, legal defence costs, client or business losses, penalties under any other law, or any past case, company or incident. Never name a regulator or ministry or say what it has done or issued. Never call the fine a floor or minimum. Never state a threshold of employees for the Committee. Cite no section other than those listed above. State no deadline or timeline the user did not give; write timing only as a first-person recommendation. For the success metric write that the target and measure will be agreed with the stakeholder before the programme begins. Anything in the Risk Mirror beyond the fine, write as Not computed with the reason.\n';
   return s;
 }
 function bcOk(okNums, v) { return okNums.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, a * 0.03); }); }
-function bcScrub(result, bad, figKeys) {
+function bcScrub(result, bad, figKeys, pre) {
   var removed = 0;
   var scrub = function (s, key) {
     if (figKeys && figKeys.indexOf(key) !== -1) { return bad(s) ? 'Not computed' : s; }
+    if (pre) { var p0 = pre(s); if (p0 !== s) { removed += 1; s = p0; } }
     var tail = s.replace(/\s+(?:--|—|–)\s+the rehearsal [^]*$/i, '');
     if (tail !== s) { removed += 1; s = tail; }
     if (!bad(s)) { return s; }
@@ -4652,14 +4653,18 @@ function bcFixPlaceholders(result, userText) {
 var BC_FIG_KEYS = ['figure', 'revenueAtRisk', 'financialImpact'];
 function applyPoshStakeholder(result, userText) {
   var okNums = bcFigureNums(userText).concat([0.5], bcUserFractions(userText));
-  var bad = function (s) { return bcFigureNums(s).some(function (v) { return !bcOk(okNums, v); }) || POSH_CLAIM_RE.test(s) || poshBadSection(s); };
+  var bad = function (s) { return bcFigureNums(s).some(function (v) { return !bcOk(okNums, v); }) || POSH_CLAIM_RE.test(s) || LD_CLAIM_RE.test(s) || poshBadSection(s); };
   if (result.stack.dataAnchor) { result.stack.dataAnchor.figure = 'A fine of up to Rs.50,000 under POSH Act s.26(1); every other cost is not computed'; }
   if (result.stack.riskMirror) {
     result.stack.riskMirror.revenueAtRisk = 'Not computed';
     result.stack.riskMirror.revenueAtRiskBasis = 'Not computed: the POSH Act gives no formula for compensation (s.15), and no probability of a complaint or an inspection can be computed from the data given. The only fixed figure is a fine that may extend to Rs.50,000 (s.26(1)); a repeat conviction doubles the punishment (s.26(2)) and is not priced here.';
     result.stack.riskMirror.probability = '';
   }
-  var removed = bcScrub(result, bad, BC_FIG_KEYS);
+  var removed = bcScrub(result, bad, BC_FIG_KEYS, function (s) { return s.replace(/,?\s*which is when [^.]*?falls due/i, ''); });
+  if (!result.openingLine || result.openingLine === 'Not stated.') { result.openingLine = 'We have no Internal Complaints Committee under the POSH Act and no annual POSH training, and both are duties the Act places on the employer.'; }
+  if (result.stack.dataAnchor) { result.stack.dataAnchor.humacBasis = 'Not computed: the only fixed figure is the fine that may extend to Rs.50,000 under POSH Act s.26(1). No attrition or other calculation applies to this decision.'; }
+  if (result.humac) { result.humac.pillar = 'L4'; result.humac.pillarRationale = 'This is a compliance exposure decision, which maps to the L4 pillar.'; result.humac.trajectorySignal = 'neutral: no trend data was given for this decision.'; }
+  if (result.greenCategory && typeof result.greenCategory === 'object') { result.greenCategory.primary = 'Risk Mitigation'; }
   if (result.stack.narrativeBridge && (!result.stack.narrativeBridge.story || result.stack.narrativeBridge.story === 'Not stated.')) { result.stack.narrativeBridge.story = 'The duty to constitute an Internal Complaints Committee applies whether or not anyone has made a complaint (POSH Act s.4(1)).'; }
   var emptyish = function (v) { return !v || v === 'Not stated.'; };
   if (result.stack.dataAnchor && emptyish(result.stack.dataAnchor.humacBasis)) { result.stack.dataAnchor.humacBasis = 'Not computed: the only fixed figure is the fine that may extend to Rs.50,000 under POSH Act s.26(1). No other calculation applies.'; }

@@ -181,6 +181,19 @@ ok(/The duty to constitute an Internal Complaints Committee/.test(ps.stack.narra
 ok(ps.bcCheck.ok === true && ps.bcCheck.stripped >= 8 && /POSH Act text the system holds/.test(ps.bcCheck.note) && !/attrition/.test(ps.bcCheck.note), 'check note about POSH, no attrition wording: ' + ps.bcCheck.note);
 ok(/s\.4\(1\)/.test(PX.poshPromptBlock()) && /never a floor/.test(PX.poshPromptBlock()) && /Never state a threshold of employees/.test(PX.poshPromptBlock()), 'posh prompt block');
 ok(!/lower bound|exposure range/.test(pj) && ps.stack.dataAnchor.humacBasis !== 'Not stated.' && /POSH Act s\.4\(1\)/.test(ps.stack.riskMirror.scenario) && !/Not stated/.test(JSON.stringify(ps.stack.riskMirror)), 'dangling range sentence gone, emptied POSH fields get statute-grounded text: ' + ps.stack.dataAnchor.context + ' | ' + ps.stack.riskMirror.scenario + ' | ' + ps.stack.dataAnchor.humacBasis);
+// v121: BC6 v120 residue: humac basis/pillar/category overrides, stricter claim stripping
+let p2 = posh();
+p2.openingLine = 'This exposure is quantifiable and sits on our books, and begins at Rs.50,000 in fines per violation.';
+p2.humac = { pillar: 'L1', pillarRationale: 'Cost.', trajectorySignal: 'Rising.' };
+p2.greenCategory = { primary: 'Cost Efficiency' };
+p2.stack.dataAnchor.humacBasis = 'Attrition model per SHRM and Gallup: 14% of the cost of one exit, per Panopto and YouGov.';
+p2.stack.credibility.evidence += ' The annual report falls due in January. Fines may each attract a further penalty.';
+PX.applyBusinessCaseStakeholder(p2, PT);
+const p2j = JSON.stringify(p2);
+ok(p2.humac.pillar === 'L4' && p2.greenCategory.primary === 'Risk Mitigation', 'pillar L4 and Risk Mitigation forced');
+ok(/^Not computed/.test(p2.stack.dataAnchor.humacBasis) && !/SHRM|Gallup|Panopto|YouGov|14%/.test(p2j), 'humacBasis overridden, research bodies gone: ' + p2.stack.dataAnchor.humacBasis);
+ok(!/quantifiable|on our books|begins at|per violation|falls due|may each attract/i.test(p2j), 'claim phrases stripped: ' + (p2j.match(/quantifiable|on our books|begins at|per violation|falls due|may each attract/i) || []));
+ok(/Internal Complaints Committee/.test(p2.openingLine), 'opening line fallback used: ' + p2.openingLine);
 // generic stakeholder with no engine: unsupported figures removed, note accurate
 let gs = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.42L' }, riskMirror: { revenueAtRisk: 'Rs.1.2Cr', revenueAtRiskBasis: 'b' }, credibility: { statement: 'The budget is Rs.8L. A similar firm lost Rs.90L last year.' } } };
 PX.applyBusinessCaseStakeholder(gs, 'We want Rs.8L for a hiring programme.');
