@@ -1613,7 +1613,7 @@
         '<div class="l-text">' + parasHtml(dr.ask) + '</div>' +
         (dr.deadline ? '<div class="l-sub"><strong>Deadline:</strong> ' + dr.deadline + '</div>' : '') +
         altsHtml +
-        (dr.successMetric ? '<div class="l-success"><div class="l-success-label">What you commit to report in 90 days</div>' + dr.successMetric + '</div>' : '')
+        (dr.successMetric ? '<div class="l-success"><div class="l-success-label">What you commit to report</div>' + dr.successMetric + '</div>' : '')
       ));
 
       // Humac card
@@ -1812,7 +1812,7 @@ function openSpatialBC() {
       { id: 'l4', title: '4. Risk mirror: revenue at risk', summary: (rm.revenueAtRisk ? 'Revenue at risk ' + plain(rm.revenueAtRisk) + (prob ? ', likelihood ' + plain(prob) : '') + '. ' : '') + lead(rm.scenario, 160),
         html: big(rm.revenueAtRisk) + paras(rm.revenueAtRiskBasis) + paras(rm.scenario) + labelled('Timeline', rm.timeline) },
       { id: 'l5', title: '5. Decision runway', summary: lead(dr.ask, 240),
-        html: paras(dr.ask) + labelled('Deadline', dr.deadline) + list((dr.alternatives || []).map(function (a, i) { return (i === 0 ? 'Alt A: ' : 'Alt B: ') + a; })) + labelled('What you commit to report in 90 days', dr.successMetric) },
+        html: paras(dr.ask) + labelled('Deadline', dr.deadline) + list((dr.alternatives || []).map(function (a, i) { return (i === 0 ? 'Alt A: ' : 'Alt B: ') + a; })) + labelled('What you commit to report', dr.successMetric) },
       { id: 'humac', title: 'Humac financial intelligence', tag: h.pillar ? 'Humac ' + h.pillar : '',
         summary: (h.pillar ? plain(h.pillar) + ' pillar. ' : '') + lead(h.meridianCalibration || h.pillarRationale, 200),
         html: paras(h.pillarRationale) + paras(h.meridianCalibration) + labelled('Planning signal', h.trajectorySignal) },

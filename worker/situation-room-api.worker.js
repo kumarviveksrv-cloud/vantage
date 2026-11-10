@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v115'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v116'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1522,6 +1522,8 @@ LAYER 5 — DECISION RUNWAY: The specific ask, deadline with reason, two alterna
 
 THIN INPUT RULE: when the situation gives no numbers, no named decision and no expected resistance, treat it as thin. Never invent a figure, a deadline or a stakeholder reaction. State plainly what is not established. Then end stakeholderProfile with one final sentence that begins exactly with "Facts that would change this answer:" followed by at most three missing facts. When the input is complete enough, omit that sentence.
 
+NO INVENTED FACTS RULE: never state as fact a deadline, budget cycle, vendor or contracting timeline, business-plan content, target or any constraint the person did not give. Where timing advice helps, write it as a recommendation in the first person ("I recommend deciding this quarter"), never as a fact about the business ("the decision is needed this week", "this is already priced into the plan").
+
 OPENING LINE: First sentence spoken in the room. A provocation that earns immediate attention.
 CLOSING LINE: Last sentence before leaving the room. Plants the decision without demanding an immediate answer.
 CRITICAL: Must NOT be a question. A question plants uncertainty and invites immediate pushback. It must be a forward-motion statement that assumes the next step is happening.
@@ -1589,6 +1591,8 @@ HEADLINE: Not a title. A single statement or number that makes the CFO look up f
 HEADLINE FIGURE RULE: any rupee figure in the headline must be the same figure as revenueAtRisk.figure, or sit inside the same range. Never quote a partial subtotal, such as the replacement cost line alone, as the headline number. If you mention a component, name it as a component.
 
 THIN INPUT RULE: when fewer than three metrics are given, or the context names no decision and no audience need, treat the input as thin. Never invent a metric, a trend, a headcount or a date. State plainly which figure is not given. Then end signal.situation.narrative with one final sentence that begins exactly with "Facts that would change this answer:" followed by at most three missing facts. When the input is complete enough, omit that sentence.
+
+NO INVENTED FACTS RULE: never state as fact a deadline, budget cycle, vendor or contracting timeline, business-plan content, target or any constraint the person did not give. Where timing advice helps, write it as a recommendation in the first person ("I recommend deciding this quarter"), never as a fact about the business ("the decision is needed this week", "this is already priced into the plan").
 
 REVENUE AT RISK: Calculate Revenue at Risk — the financial cost of not acting on what this data shows over the next 12 months if the current trajectory continues unchanged.
 If the data provided is insufficient to calculate a precise figure, do NOT fabricate one. Instead write: "Insufficient data for precise calculation. Required: [name the specific missing data point]. Directional estimate: Rs.X–Y." Set confidence to Low in this case.
@@ -2306,7 +2310,7 @@ async function anonymizeLargeDocument(text, maxChunkSize = 6000) {
 
 async function bcPreExtract(text) {
   try {
-    var prompt = 'You copy numbers out of text. Return strict JSON only: {"model":"attrition" or "ld" or "other","ldSpend":rupees as a plain number or null,"employees":number or null,"exits":number or null,"headcount":number or null,"avgCtc":rupees as a plain number or null,"periodMonths":number or null,"rampMonths":number or null,"roleTier":"junior"|"senior"|"default","programmeBudget":rupees as a plain number or null}. model is attrition only if the text is about employees leaving. model is ld only if the text is about spending on a learning, training, leadership or development programme; then ldSpend is that programme budget and employees is the number of employees it covers. Copy numbers exactly as written (Rs 8L = 800000, 15L = 1500000). If a number is not stated, use null. Never calculate or invent anything. exits must be the count of people who left.';
+    var prompt = 'You copy numbers out of text. Return strict JSON only: {"model":"attrition" or "ld" or "engagement" or "manager" or "other","disengaged":number or null,"belowAvgManagers":number or null,"teamSize":number or null,"ldSpend":rupees as a plain number or null,"employees":number or null,"exits":number or null,"headcount":number or null,"avgCtc":rupees as a plain number or null,"periodMonths":number or null,"rampMonths":number or null,"roleTier":"junior"|"senior"|"default","programmeBudget":rupees as a plain number or null}. model is attrition only if the text is about employees leaving. model is ld only if the text is about spending on a learning, training, leadership or development programme; then ldSpend is that programme budget and employees is the number of employees it covers. model is engagement only if the text is about disengaged or low-engagement employees and lost productivity; then disengaged is the count of disengaged employees. model is manager only if the text is about below-average or ineffective managers; then belowAvgManagers is their count and teamSize is the number of people in an average team. Copy numbers exactly as written (Rs 8L = 800000, 15L = 1500000). If a number is not stated, use null. Never calculate or invent anything. exits must be the count of people who left.';
     var resp = await callClaude(prompt, [{ role: 'user', content: String(text).slice(0, 6000) }], 600, CLAUDE_MODEL_FAST, CLAUDE_FAST_TIMEOUT_MS);
     var raw = resp.content[0].text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     return JSON.parse(raw);
@@ -2316,7 +2320,7 @@ async function bcFiguresBlock(anonText, rawText, flow) {
   var text = rawText, inp = await bcPreExtract(anonText);
   if (!inp) { return { inputs: null, block: '' }; }
   var c = bcCalc(bcRead(inp, text));
-  if (!c && flow === 'stakeholder') { var l = ldCalc(inp, text); if (l) { return { inputs: inp, block: ldPromptBlock(l) }; } }
+  if (!c && flow === 'stakeholder') { var l = ldCalc(inp, text); if (l) { return { inputs: inp, block: ldPromptBlock(l) }; } var e = erCalc(inp, text); if (e) { return { inputs: inp, block: erPromptBlock(e) }; } }
   if (!c) { return { inputs: null, block: '' }; }
   return { inputs: inp, block: bcPromptBlock(c) };
 }
@@ -4522,7 +4526,7 @@ function bcPromptBlock(c) {
   s += 'Every rupee figure you write about the cost of the exits, including any Data Anchor and Revenue at Risk figure, must be this total range, or the replacement or productivity part above, or a whole number of exits multiplied by the per-exit cost with that number of exits stated in the same sentence. Never use salary alone as the cost of an exit. Describe decision alternatives such as phasing as fractions or percentages of the stated budget, not as new rupee amounts. Any other rupee figure you write must be a whole number of exits multiplied by the per-exit cost above, with the number of exits stated in the same sentence. Do not invent other rupee amounts or percentages of productivity. Do not write hypothetical alternative rupee amounts anywhere, for example other budget sizes in a rehearsal prompt; refer to the stated budget only. When you quote avoided cost for a number of exits, call it avoided cost, not return, because it is before the programme spend.\n';
   return s;
 }
-var LD_CLAIM_RE = /commonly cited|widely (?:cited|acknowledged|accepted|used|recogni[sz]ed)|industry'?s?\s+(?:own|standard|norm|benchmark|average|typical)|industry[- ](?:standard|benchmark|average|norm)|\bbenchmarks?\b|\btypical(?:ly)?\b|\bnormally\b|\boutlier\b|modest but credible|well within the range|\bresearch (?:shows|suggests)|\bstudies (?:show|suggest)|generally accepted|rule of thumb|\b(?:gallup|shrm|deloitte|mckinsey|kirkpatrick)\b|\bnorms?\b/i;
+var LD_CLAIM_RE = /commonly cited|widely (?:cited|acknowledged|accepted|used|recogni[sz]ed)|industry'?s?\s+(?:own|standard|norm|benchmark|average|typical)|industry[- ](?:standard|benchmark|average|norm)|\bbenchmarks?\b|\btypical(?:ly)?\b|\bnormally\b|\boutlier\b|modest but credible|well within the range|\bresearch (?:shows|suggests)|\bstudies (?:show|suggest)|generally accepted|rule of thumb|\b(?:gallup|shrm|deloitte|mckinsey|kirkpatrick)\b|\bnorms?\b|variance in (?:team )?engagement|2\.7 million|17(?:%| percent) more productive|gallup-derived/i;
 function ldStripClaims(result) {
   var removed = 0, FALLBACK = 'Not stated: no sourced benchmark is available for this programme.';
   var scrub = function (s) {
@@ -4537,6 +4541,35 @@ function ldStripClaims(result) {
   };
   walk(result);
   return removed;
+}
+function erCalc(inp, text) {
+  var i = inp || {}, ctc = bcRupees(i.avgCtc, text);
+  if (!ctc) { return null; }
+  var base, d, n, s;
+  if (i.model === 'engagement') {
+    d = bcCount(i.disengaged, text, 1000000); if (!d) { return null; }
+    base = d * ctc / 100000;
+    return { kind: 'engagement', n: d, size: null, ctcL: ctc / 100000, baseL: base, coef: 0.15, dragL: base * 0.15 };
+  }
+  if (i.model === 'manager') {
+    n = bcCount(i.belowAvgManagers, text, 100000); s = bcCount(i.teamSize, text, 100000); if (!n || !s) { return null; }
+    base = n * s * ctc / 100000;
+    return { kind: 'manager', n: n, size: s, ctcL: ctc / 100000, baseL: base, coef: 0.08, dragL: base * 0.08 };
+  }
+  return null;
+}
+function erAllowed(e) { return [e.baseL, e.dragL, e.ctcL]; }
+function erBasis(e) {
+  var pct = Math.round(e.coef * 100);
+  return 'Computed by the system: ' + (e.kind === 'engagement' ? e.n + ' disengaged employees x ' + engineLakh(r2(e.ctcL)) : e.n + ' below-average managers x ' + e.size + ' people per team x ' + engineLakh(r2(e.ctcL))) + ' x ' + pct + ' percent productivity drag. The ' + pct + ' percent is an assumed planning coefficient, not a measured result.';
+}
+function erPromptBlock(e) {
+  var pct = Math.round(e.coef * 100);
+  var s = 'SYSTEM-COMPUTED FIGURES (already calculated by code from the data above; use exactly these and do not recompute them):\n';
+  s += '- Payroll affected: ' + engineLakh(r2(e.baseL)) + ' (' + (e.kind === 'engagement' ? e.n + ' disengaged employees at an average CTC of ' + engineLakh(r2(e.ctcL)) : e.n + ' below-average managers x ' + e.size + ' people per team at an average CTC of ' + engineLakh(r2(e.ctcL))) + ').\n';
+  s += '- Annual productivity drag: ' + engineLakh(r2(e.dragL)) + ', computed as the payroll affected x ' + pct + ' percent. The ' + pct + ' percent is an assumed planning coefficient, not a measured result.\n';
+  s += 'Do not attribute the ' + pct + ' percent to Gallup or to any study, survey, benchmark or research body, and do not state any derivation of it. Do not add attrition, replacement cost or any other benefit or cost in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above or a figure the user gave.\n';
+  return s;
 }
 function ldCalc(inp, text) {
   var i = inp || {};
@@ -4646,7 +4679,7 @@ function applyBusinessCaseStakeholder(result, userText) {
   if (!result) { return false; }
   var inp = result.bcInputs; delete result.bcInputs;
   if (result.wrongTool === true || !result.stack) { return false; }
-  var T = bcRead(inp, userText), c = bcCalc(T), l = c ? null : ldCalc(inp, userText);
+  var T = bcRead(inp, userText), c = bcCalc(T), l = c ? null : ldCalc(inp, userText), er = (c || l) ? null : erCalc(inp, userText);
   if (l) {
     var pctL = Math.round(l.pct * 10) / 10, notC = 'Not computed: no exit, vacancy or performance data was given, so the cost of not acting cannot be priced.';
     if (result.stack.dataAnchor) { result.stack.dataAnchor.figure = 'Break-even at a ' + pctL + ' percent uplift on ' + engineLakh(r2(l.payrollL)) + ' payroll'; }
@@ -4659,6 +4692,20 @@ function applyBusinessCaseStakeholder(result, userText) {
     var fl = bcFigureCheck(result, null, userText, ldAllowed(l));
     result.bcCheck = { ok: fl.length === 0, engine: true, flagged: fl, note: fl.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + fl.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.' };
     if (claimsRemoved) { result.bcCheck.note += ' ' + claimsRemoved + ' sentence(s) citing industry benchmarks or studies were removed because the system cannot verify them.'; result.bcCheck.claimsRemoved = claimsRemoved; }
+    return true;
+  }
+  if (er) {
+    var dragFig = engineLakh(r2(er.dragL)), cPct = Math.round(er.coef * 100);
+    if (result.stack.dataAnchor) { result.stack.dataAnchor.figure = dragFig + ' a year of productivity drag at an assumed ' + cPct + ' percent'; }
+    if (result.stack.riskMirror) { result.stack.riskMirror.revenueAtRisk = dragFig + ' a year'; result.stack.riskMirror.revenueAtRiskBasis = erBasis(er); result.stack.riskMirror.probability = ''; }
+    var okE = bcFigureNums(userText).concat(erAllowed(er));
+    var openBadE = typeof result.openingLine === 'string' && bcFigureNums(result.openingLine).some(function (v) { return !okE.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, a * 0.03); }); });
+    if (openBadE) { result.openingLine = 'The productivity drag on this group is about ' + dragFig + ' a year, at an assumed ' + cPct + ' percent of the ' + engineLakh(r2(er.baseL)) + ' payroll it affects.'; }
+    var claimsE = ldStripClaims(result);
+    result.bcEngine = { model: 'er-v1', kind: er.kind, drag: r2(er.dragL), base: r2(er.baseL) };
+    var flE = bcFigureCheck(result, null, userText, erAllowed(er));
+    result.bcCheck = { ok: flE.length === 0, engine: true, flagged: flE, note: flE.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flE.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.' };
+    if (claimsE) { result.bcCheck.note += ' ' + claimsE + ' sentence(s) citing industry benchmarks or studies were removed because the system cannot verify them.'; result.bcCheck.claimsRemoved = claimsE; }
     return true;
   }
   if (c) {
