@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v109'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v110'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4515,6 +4515,7 @@ function bcPromptBlock(c) {
   s += '- Annual cost of attrition if nothing changes (the only total to quote): ' + bcRange(c.total) + '. This already covers 12 months. Never annualise it again and never quote a smaller or different total.\n';
   s += '- Of which replacement cost: ' + bcRange(c.repl) + '; productivity gap during ramp-up: ' + bcRange(c.prod) + '.\n';
   s += '- Cost of one exit: ' + bcRange(c.perExit) + '.\n';
+  s += '- Replacement multiple used: ' + c.mult[0] + ' to ' + c.mult[1] + ' times annual salary, and ramp-up of ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] : c.ramp[0] + ' to ' + c.ramp[1]) + ' months. State no other multiple, blended multiple or per-exit multiple anywhere, including in the calculation basis.\n';
   if (c.rate !== null) { s += '- Annualised attrition rate: ' + (Math.round(c.rate * 10) / 10) + ' percent.\n'; }
   if (c.breakEven) { s += '- Programme budget ' + engineLakh(r2(c.budgetL)) + ' breaks even if it prevents ' + (Math.round(c.breakEven[0] * 10) / 10) + ' to ' + (Math.round(c.breakEven[1] * 10) / 10) + ' exits. Use this break-even, not a return ratio you calculate yourself.\n'; }
   s += 'Every rupee figure you write about the cost of the exits, including any Data Anchor and Revenue at Risk figure, must be this total range, or the replacement or productivity part above, or a whole number of exits multiplied by the per-exit cost with that number of exits stated in the same sentence. Never use salary alone as the cost of an exit. Describe decision alternatives such as phasing as fractions or percentages of the stated budget, not as new rupee amounts. Any other rupee figure you write must be a whole number of exits multiplied by the per-exit cost above, with the number of exits stated in the same sentence. Do not invent other rupee amounts or percentages of productivity. Do not write hypothetical alternative rupee amounts anywhere, for example other budget sizes in a rehearsal prompt; refer to the stated budget only. When you quote avoided cost for a number of exits, call it avoided cost, not return, because it is before the programme spend.\n';
@@ -4527,6 +4528,8 @@ function bcFigureCheck(result, c, userText) {
     [c.repl, c.prod, c.total, c.perExit, c.replPer, c.prodPer].forEach(function (a) { allowed.push(a[0], a[1]); });
     allowed.push(c.ctcL); if (c.budgetL) { allowed.push(c.budgetL); }
     allowed.push(c.ctcL * c.T.exits, c.ctcL * c.annualExits);
+    for (var mm = 1; mm <= 12; mm++) { allowed.push(c.ctcL / 12 * mm); }
+    if (c.budgetL) { [0.25, 1 / 3, 0.5, 2 / 3, 0.75].forEach(function (fr) { allowed.push(c.budgetL * fr); }); }
   }
   var inRange = function (v) { return c && v >= c.total[0] * 0.97 && v <= c.total[1] * 1.03; };
   var fields = [];
