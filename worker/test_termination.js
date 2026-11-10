@@ -4,7 +4,7 @@ const src = fs.readFileSync(path.join(__dirname, 'situation-room-api.worker.js')
 const fa = src.indexOf('function normaliseFinancial'), fb = src.indexOf('// DETERMINISTIC FINANCIAL ENGINE (v17)');
 const pa = src.indexOf('// ── POSH ENGINE START'), pb = src.indexOf('// ── POSH ENGINE END');
 const ta = src.indexOf('// ── TERMINATION ENGINE START'), tb = src.indexOf('// ── TERMINATION ENGINE END');
-const { termWage, termService, termItems, applyTerminationFinancial, termParseRupees } = new Function(src.slice(fa, fb) + src.slice(pa, pb) + src.slice(ta, tb) + ';return {termWage, termService, termItems, applyTerminationFinancial, termParseRupees};')();
+const { termWage, termService, termItems, applyTerminationFinancial, termParseRupees, applyTerminationText, termScrubDeadlines } = new Function(src.slice(fa, fb) + src.slice(pa, pb) + src.slice(ta, tb) + ';return {termWage, termService, termItems, applyTerminationFinancial, termParseRupees, applyTerminationText, termScrubDeadlines};')();
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('FAIL', m); } };
 const D = (s) => new Date(s + 'T00:00:00Z');
 const item = (its, l) => its.find(i => i.label.indexOf(l) === 0);
@@ -85,6 +85,21 @@ r = mk({ terminationInputs: { scenario: 'other' } }); ok(applyTerminationFinanci
 r = mk(); ok(applyTerminationFinancial(r, null, null, null, D('2026-11-10')) === false, 'no CTC: not applied');
 r = mk({ wrongTool: true }); ok(applyTerminationFinancial(r, { lakh: 12 }, null, null, D('2026-11-10')) === false, 'wrong tool: not applied');
 r = mk({ detectedCaseType: 'Redundancy', terminationInputs: null }); ok(applyTerminationFinancial(r, { lakh: 12 }, null, null, D('2026-11-10')) === true && /not stated/.test(r.protocol.financial.breakdown.join(' ')), 'redundancy with no inputs: defaults to retrenchment, service not computed');
+
+
+// invented deadlines removed, narrative dates kept
+const NARR = 'Ramesh joined on 15 January 2020 and we plan to end his employment on 30 November 2026.';
+let rt = { detectedCaseType: 'Retrenchment', protocol: { recommendation: 'Proceed on 30 November 2026 but finance must confirm the compensation figure by 15 November 2026. File notice before 30 November 2026.', immediate_actions: ['Serve notice no later than 12 Nov 2026.', 'Pay on 30 Nov 2026.'], legalRows: [{ ref: 'IR Code s.70(a)', verdict: 'not_yet', point: 'Requires notice by 20 November 2026.' }, { ref: 'IR Code s.71', verdict: 'unclear', point: 'Depends on others.' }, { ref: 'IR Code s.72', verdict: 'not_yet', point: 'x' }, { ref: 'IR Code s.70(c)', verdict: 'not_yet', point: 'y' }] } };
+applyTerminationText(rt, NARR);
+ok(!/15 November/.test(rt.protocol.recommendation) && /before 30 November 2026/.test(rt.protocol.recommendation) && /Proceed on 30 November 2026/.test(rt.protocol.recommendation), 'invented deadline removed, narrative deadline kept: ' + rt.protocol.recommendation);
+ok(!/12 Nov/.test(rt.protocol.immediate_actions[0]) && /30 Nov 2026/.test(rt.protocol.immediate_actions[1]), 'actions scrubbed: ' + JSON.stringify(rt.protocol.immediate_actions));
+ok(!/20 November/.test(rt.protocol.legalRows[0].point), 'legal row point scrubbed');
+ok(rt.protocol.legalRows.filter(r => r.verdict === 'live').map(r => r.ref).join() === 'IR Code s.70(a),IR Code s.70(c)', 'unperformed s.70 duties set to live and sorted first: ' + JSON.stringify(rt.protocol.legalRows.map(r => r.ref + ':' + r.verdict)));
+ok(rt.protocol.legalRows.find(r => r.ref === 'IR Code s.72').verdict === 'not_yet', 's.72 left alone');
+let rm = { detectedCaseType: 'Termination', terminationInputs: { scenario: 'misconduct' }, protocol: { legalRows: [{ ref: 'IR Code s.70(a)', verdict: 'not_yet', point: 'z' }] } };
+applyTerminationText(rm, NARR); ok(rm.protocol.legalRows[0].verdict === 'not_yet', 'verdict untouched outside retrenchment');
+let rd = { detectedCaseType: 'Disciplinary', protocol: { recommendation: 'Act by 15 November 2026.' } };
+ok(applyTerminationText(rd, NARR) === false && /15 November/.test(rd.protocol.recommendation), 'other case types untouched');
 
 console.log(fails ? fails + ' FAILED' : 'termination: all passed');
 process.exit(fails ? 1 : 0);

@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v95'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v96'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1345,7 +1345,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
   },
   "protocol": {
     "legal": "Full reading, for the reader who opens the detail. About 250 words in total. Cover only the provisions that are live or unclear and the one step that would be most costly if missed; leave out provisions that do not apply and headcount threshold checks such as Standing Orders or Chapter X. Legal position reading. What does the process look like against the relevant Codes and Acts given the state and industry in meridian? Where is the organisation exposed? Where is it protected? What one procedural step, if missed, would be the most costly? This is a process-risk reading, not a formal legal opinion. Base it on the wording of the Acts provided to you. Do not cite court judgments or case-law readings. Every statement about what an Act section requires or allows must be traceable to its exact wording. Do not add tests, conditions or doctrines the wording does not contain (for example penalty versus genuine pre-estimate, or a duty to prove actual loss, unless the wording itself says so), and keep the Act's own verbs: if it says entitled, do not write may. Where an Act section plainly says something, state what it says, and where the Acts provided do not cover a point, say so instead of filling the gap from memory. Keep the wording apart from your inference: state what the wording says first, citing the section, and mark any inference or risk judgement with the words Risk reading. Never say an Act prohibits or requires something unless its wording does. If a section applies only on a condition (for example a request by the employee, or a leave that has already begun), state that condition and check it against the facts. If the narrative does not say the condition has happened, say plainly that it has not been met on the facts given, and do not argue that something else (such as a verbal disclosure, an intention or a plan) satisfies it; put what follows from that under Risk reading. Write the legal field as finished prose: never include a sentence that instructs yourself or describes a check you are about to make, and do not use doctrine labels (such as constructive dismissal or general principles) unless a provided Act uses them. When you mention a threshold, name the section that sets it and say what it covers (for example the section that applies a Chapter, and which sections it applies). When you apply a time window or period to the facts, work it out from the dates in the narrative before saying whether it has begun. In a case about a pregnant employee, do not calculate or state any count of days between dates: put the dates in engineFlags.dates, and Vantage adds a day-count paragraph to the end of this section, which you may refer to as the day count below. In any other case, when you compare a count of days with a number of days in an Act, say whether you are counting calendar days or days actually worked, and convert (about five working days a week) before comparing. Before applying a Chapter or Act, check the establishment size in the meridian against its stated threshold, and do not apply it to an establishment below that threshold. Do not describe what a document made under an Act contains (such as model standing orders) unless the Acts provided say so. Never state a fine, penalty, imprisonment term or compensation amount unless the exact figure appears in the Acts provided to you, and copy it as the Act words it; if a penalty matters and the figure is not in the Acts provided, say that the Code provides a penalty and name the section only. Never refer to a section by a number the Acts provided do not give to that provision. Close this section with one sentence: this reads the statute wording only, and courts may apply it differently, so confirm with counsel before acting.",
-    "legalRows": "Array of 3 to 5 objects, one per provision the facts actually bring into question. Each object has ref (only the Act and section, for example Social Security Code s.68(1) or Contract Act s.16, with no description and no abbreviations; put the explanation in point), verdict (exactly one of live, not_yet, unclear: live means its condition is met on the facts, not_yet means its condition is not met yet or only applies later, unclear means the outcome depends on one fact the narrative does not give or on a question the Acts do not settle; if the facts show the condition is not met, use not_yet and not unclear) and point (two sentences, 40 words or fewer in total: first the condition and how the facts stand against it, then why it matters in this case; when the verdict is unclear, the first sentence must start with the words Depends on and name the deciding fact). Do not make a row for a provision that is only a headcount threshold check, because the MERIDIAN section covers those. Do not make a row for the eighty-day count, because Vantage adds it. Never put a fine, penalty or compensation amount in a row.",
+    "legalRows": "Array of 3 to 5 objects, one per provision the facts actually bring into question. Each object has ref (only the Act and section, for example Social Security Code s.68(1) or Contract Act s.16, with no description and no abbreviations; put the explanation in point), verdict (exactly one of live, not_yet, unclear: live means its condition is met on the facts, not_yet means its condition is not met yet or only applies later (a duty that already applies but that the employer has not yet performed, such as a notice or filing still to be done, is live and not not_yet), unclear means the outcome depends on one fact the narrative does not give or on a question the Acts do not settle; if the facts show the condition is not met, use not_yet and not unclear) and point (two sentences, 40 words or fewer in total: first the condition and how the facts stand against it, then why it matters in this case; when the verdict is unclear, the first sentence must start with the words Depends on and name the deciding fact). Do not make a row for a provision that is only a headcount threshold check, because the MERIDIAN section covers those. Do not make a row for the eighty-day count, because Vantage adds it. Never put a fine, penalty or compensation amount in a row.",
     "costliestStep": "One sentence of 35 words or fewer naming the single procedural step that would be most costly if missed in this case, and what it would expose the organisation to. Use only facts from the narrative and provisions of the Acts provided.",
     "notEngaged": "Array of up to 6 strings, each only an Act and section that you checked and that does not apply on the facts, for example Social Security Code s.65. No explanation, no brackets, no commas.",
     "quick_take": "Two sentences, each 20 words or fewer, with no comma splices: never join two complete sentences with a comma, end the first with a full stop instead (wrong: The notice was late, it is the main risk. Right: The notice was late. That is the main risk.). What is happening, what is the single biggest risk, and what that means for the decision in front of this HR professional. Write for someone reading on a phone in 10 seconds. Do not say that an Act prohibits, blocks or makes unlawful an action unless its wording does, and use the wording's own conditions (for example a section that applies only once a leave has begun, or only on the employee's request); where it is a risk rather than a prohibition, say risk. Do not state as fact anything the narrative does not say; write if or check whether instead. Write this after, and consistent with, the legal field above: never say a protection is engaged or a section is triggered when the legal field says its condition has not yet been met (for example a request not yet made, or a leave not yet begun).",
@@ -1399,6 +1399,7 @@ The financial.items list is how the cost model is shown to the HR professional, 
 - exposure: a cost that arises only if the wrong decision is taken, such as back wages or reinstatement-equivalent relief, defence and complaint costs, or replacement cost. Give low and high in lakh as plain numbers. The workings must show the inputs and arithmetic that produce exactly those numbers. The system adds the exposure items to make the range, so put every cost you want counted into an exposure item and count nothing twice. An exposure item must never contain any part of an amount shown as owed_in_any_case: for example, back wages or relief cover only the extra period of a dispute or wrongful action, never the statutory benefit period that is already shown as owed in any case.
 - owed_in_any_case: an amount payable whether or not the employee is dismissed, such as a statutory benefit. It is shown but never added to the range. Work it out from the Act's own wording: a benefit paid at the average daily wage for the period of absence is paid for every day of that period, not only working days.
 - For a POSH Complaint, never write a calendar date as a deadline in any field, and never say that a time limit has passed, expired or is overdue unless the dates in the narrative and TODAY'S DATE show it. State time limits as periods (for example 90 days from the start of the inquiry) and the system adds the dated calendar and the status of each limit.
+- For Termination, Redundancy and Retrenchment cases, never write a calendar date as a deadline unless the narrative states that exact date; say now, before the end date, or within a number of days instead.
 - For Termination, Redundancy and Retrenchment cases the system may replace the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item), keep the range field short, and never write a statutory amount, notice pay, compensation or gratuity figure in any text field.
 - When engineFlags is not null, the system replaces the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item) and keep the range field short. Fill engineFlags carefully, because the figures depend on it.
 - Every number that comes neither from the narrative nor from an Act provided to you has basis assumed. Never state a statutory amount, penalty or compensation formula that the Acts provided to you do not contain.
@@ -4154,6 +4155,54 @@ function applyTerminationFinancial(result, ctcInfo, grossRaw, basicRaw, asOf) {
   delete f.split;
   return true;
 }
+const TERM_MONTHS = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+const TERM_DEADLINE_RE = /\s*,?\s*\b(?:by|before|no later than|latest by|on or before|until|not later than)\s+(\d{1,2})(?:st|nd|rd|th)?\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?,?\s+(\d{4})/gi;
+function termDateKeys(text) {
+  var keys = {}, t = String(text || ''), m;
+  var a = /(\d{1,2})(?:st|nd|rd|th)?\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?,?\s+(\d{4})/gi;
+  while ((m = a.exec(t))) { keys[m[3] + '-' + TERM_MONTHS[m[2].toLowerCase()] + '-' + parseInt(m[1], 10)] = true; }
+  var b = /(\d{4})-(\d{2})-(\d{2})/g;
+  while ((m = b.exec(t))) { keys[m[1] + '-' + (parseInt(m[2], 10) - 1) + '-' + parseInt(m[3], 10)] = true; }
+  var c = /(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/g;
+  while ((m = c.exec(t))) { keys[m[3] + '-' + (parseInt(m[2], 10) - 1) + '-' + parseInt(m[1], 10)] = true; }
+  return keys;
+}
+// A deadline date the narrative never stated is the model's own invention; the phrase is removed and the rest of the sentence kept.
+function termScrubDeadlines(result, narrative) {
+  var pr = result && result.protocol;
+  if (!pr) { return 0; }
+  var known = termDateKeys(narrative), removed = 0;
+  var fix = function (str) {
+    if (typeof str !== 'string') { return str; }
+    return str.replace(TERM_DEADLINE_RE, function (all, d, mo, y) {
+      if (known[y + '-' + TERM_MONTHS[mo.toLowerCase()] + '-' + parseInt(d, 10)]) { return all; }
+      removed++; return '';
+    });
+  };
+  ['recommendation', 'quick_take', 'assessment', 'communication', 'legal', 'costliestStep'].forEach(function (k) { if (typeof pr[k] === 'string') { pr[k] = fix(pr[k]); } });
+  if (Array.isArray(pr.immediate_actions)) { pr.immediate_actions = pr.immediate_actions.map(fix); }
+  if (Array.isArray(pr.legalRows)) { pr.legalRows.forEach(function (r) { if (r) { r.point = fix(r.point); } }); }
+  return removed;
+}
+// A duty that applies now but has not been performed is "live". The model sometimes marks it "not triggered".
+function termFixVerdicts(result, scenario) {
+  var pr = result && result.protocol;
+  if (!pr || !Array.isArray(pr.legalRows) || scenario !== 'retrenchment') { return 0; }
+  var n = 0;
+  pr.legalRows.forEach(function (r) { if (r && r.verdict === 'not_yet' && /^IR Code s\.70(\([abc]\))?$/i.test(String(r.ref).trim())) { r.verdict = 'live'; n++; } });
+  if (n) { var order = ['live', 'unclear', 'not_yet']; pr.legalRows.sort(function (a, b) { return order.indexOf(a.verdict) - order.indexOf(b.verdict); }); }
+  return n;
+}
+function applyTerminationText(result, narrative) {
+  if (!result || result.wrongTool === true) { return false; }
+  var t = result.detectedCaseType;
+  if (['Termination', 'Redundancy', 'Retrenchment'].indexOf(t) === -1) { return false; }
+  var inp = result.terminationInputs;
+  var sc = inp && TERMINATION_ENGINE.scenarios.indexOf(inp.scenario) !== -1 ? inp.scenario : (inp && inp.scenario === 'other' ? 'other' : ((t === 'Redundancy' || t === 'Retrenchment') ? 'retrenchment' : null));
+  var a = termScrubDeadlines(result, narrative), b = termFixVerdicts(result, sc);
+  if (a || b) { console.log('Termination text: ' + a + ' invented deadline(s) removed, ' + b + ' verdict(s) set to live'); }
+  return true;
+}
 // ── TERMINATION ENGINE END ───────────────────────────────────────────────────
 
 function applyDeterministicFinancial(result, reqBody) {
@@ -4170,7 +4219,8 @@ function applyDeterministicFinancial(result, reqBody) {
   try { sanitiseMeridianContext(result); } catch (e) { console.error('sanitiseMeridianContext failed: ' + e.message); }
   try { var _scrubbed = scrubInternalNames(result, 0); if (_scrubbed) { console.log('PACT: removed internal field names from ' + _scrubbed + ' text field(s)'); } } catch (e) { console.error('scrubInternalNames failed: ' + e.message); }
   try {
-    if (!result || result.wrongTool === true || !result.protocol || !result.protocol.financial) { return; }
+    try { applyTerminationText(result, reqBody && reqBody.narrative); } catch (e) { console.error('applyTerminationText failed: ' + e.message); }
+    if (!result || result.wrongTool === true || !result.protocol || !result.protocol.financial) { if (result) { delete result.terminationInputs; } return; }
     var flags = result.engineFlags;
     delete result.engineFlags;
     if (flags && typeof flags === 'object') { delete result.terminationInputs; }
