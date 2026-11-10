@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v102'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v103'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1403,7 +1403,7 @@ The financial.items list is how the cost model is shown to the HR professional, 
 - For a POSH Complaint, never write a calendar date as a deadline in any field, and never say that a time limit has passed, expired or is overdue unless the dates in the narrative and TODAY'S DATE show it. State time limits as periods (for example 90 days from the start of the inquiry) and the system adds the dated calendar and the status of each limit.
 - Scope of the retrenchment provisions in the supplied IR Code text: section 70 applies to any worker in any industry with at least one year of continuous service under the employer, and is not limited to factories, mines or plantations. Section 65 only limits sections 67 to 69 (lay-off compensation) and has no bearing on section 70. Chapter X (sections 77 to 82, including the prior permission in section 79) applies only to a factory, mine or plantation with 300 or more workers, so treat Chapter X as not applying unless the narrative says the establishment is one of those. Never recommend pausing the process or asking counsel to classify the establishment because of these provisions, and never mention the Factories Act unless the narrative says the workplace is a factory.
 - For Termination, Redundancy and Retrenchment cases, never write a calendar date as a deadline unless the narrative states that exact date; say now, before the end date, or within a number of days instead.
-- For a PIP case the system works out the plan dates and the cost range itself, so return financial.items with only two entries (the CTC assumption and one not_included item), never write a calendar date as a deadline unless the narrative states that exact date, and never say a plan is overdue, expired or that a review was missed unless the narrative's own dates show it. No statute in the supplied Acts sets a length, review frequency or process for a PIP, so do not cite one.
+- For a PIP case the system works out the plan dates and the cost range itself, so return financial.items with only two entries (the CTC assumption and one not_included item), never write a calendar date as a deadline unless the narrative states that exact date, and never say a plan is overdue, expired or that a review was missed unless the narrative's own dates show it. No statute in the supplied Acts sets a length, review frequency or process for a PIP, so do not cite one. A termination for poor performance is not automatically retrenchment and not automatically misconduct: say that the classification is an open point, never assert that a separate disciplinary process or a section 70 notice is required unless the narrative says the employee is being dismissed for misconduct or retrenched, and never name a most costly mistake that assumes an exit has been decided.
 - For a bond or recovery-of-training-cost case the system replaces the financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item), and never write a recoverable amount, ceiling or pro-rata figure in any text field, never call the training cost a legal ceiling or limit (the s.74 limit is the sum named in the bond, the court decides what is reasonable, and training cost is only evidence), and never say that the employee's consent makes a deduction from wages lawful (s.18(2) lists no such ground for a bond). A bond is not automatically enforceable for its full amount: Contract Act s.74 allows reasonable compensation not exceeding the named sum, and the Code on Wages s.18(2) does not permit deducting it from wages.
 - For Termination, Redundancy and Retrenchment cases the system may replace the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item), keep the range field short, and never write a statutory amount, notice pay, compensation or gratuity figure in any text field.
 - When engineFlags is not null, the system replaces the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item) and keep the range field short. Fill engineFlags carefully, because the figures depend on it.
@@ -4347,7 +4347,7 @@ function pipCalendar(inputs, asOf) {
     else if (unit === 'months' && lv <= 12) { calcEnd = poshAddMonths(start, lv); }
   }
   var end = statedEnd || calcEnd, rows = [];
-  var rule1 = 'The end date you gave, or the start date plus the length of the plan.';
+  var rule1 = 'The end date you gave, or the start date plus the length of the plan (the start day is day 0; counting it as day 1 gives one day earlier).';
   if (!end) { rows.push({ label: 'Plan end date', section: '', rule: rule1, date: '', status: 'Not computed: need the end date, or the start date and the length of the plan', tone: 'na' }); }
   else {
     var n = poshDays(today, end), st, tn;
@@ -4379,7 +4379,7 @@ function pipCalendar(inputs, asOf) {
     rows.push({ label: 'Reviews held', section: 'practice, not law', rule: rule3, date: poshFmt(last), status: s3, tone: t3 });
   }
   return {
-    title: 'PIP Timeline', asOf: poshFmt(today), rows: rows,
+    title: 'PIP Timeline', asOf: poshFmt(today), endText: end ? poshFmt(end) : '', rows: rows,
     penalty: 'None of the Acts supplied sets a length, a review frequency or a process for a PIP, so the lengths and gaps above are common practice and not law. Whether the plan is specific, fair and properly supported is a judgement and is not computed.',
     note: 'Dates are counted from the dates in your description. A date you did not give is shown as not computed and is never guessed.'
   };
@@ -4390,6 +4390,31 @@ function applyPipEngine(result, asOf, narrative) {
   if (result.wrongTool === true || result.detectedCaseType !== 'PIP') { return; }
   result.pipCalendar = pipCalendar(inp, asOf || new Date());
   try { termScrubDeadlines(result, narrative); } catch (e) { console.error('pip deadline scrub failed: ' + e.message); }
+  try { pipAlignDates(result, narrative); } catch (e) { console.error('pip date align failed: ' + e.message); }
+}
+// A date the model worked out for itself is replaced by the engine's own end date when it is within two days of it (an off-by-one count), so the page never shows two different end dates.
+function pipAlignDates(result, narrative) {
+  var pr = result && result.protocol, cal = result && result.pipCalendar;
+  if (!pr || !cal || !cal.endText) { return 0; }
+  var endDt = poshParseDate(null), m = /^(\d{1,2}) (\w{3}) (\d{4})$/.exec(cal.endText);
+  if (!m) { return 0; }
+  var endUtc = Date.UTC(parseInt(m[3], 10), TERM_MONTHS[m[2].toLowerCase()], parseInt(m[1], 10)), known = termDateKeys(narrative), n = 0;
+  var re = /(\d{1,2})(?:st|nd|rd|th)?\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?,?\s+(\d{4})/gi;
+  var fix = function (str) {
+    if (typeof str !== 'string') { return str; }
+    return str.replace(re, function (all, d, mo, y) {
+      var k = y + '-' + TERM_MONTHS[mo.toLowerCase()] + '-' + parseInt(d, 10);
+      if (known[k]) { return all; }
+      var diff = Math.abs(Date.UTC(parseInt(y, 10), TERM_MONTHS[mo.toLowerCase()], parseInt(d, 10)) - endUtc) / 86400000;
+      if (diff > 0 && diff <= 2) { n++; return cal.endText; }
+      return all;
+    });
+  };
+  ['recommendation', 'quick_take', 'assessment', 'communication', 'legal', 'costliestStep'].forEach(function (k) { if (typeof pr[k] === 'string') { pr[k] = fix(pr[k]); } });
+  if (Array.isArray(pr.immediate_actions)) { pr.immediate_actions = pr.immediate_actions.map(fix); }
+  if (Array.isArray(pr.legalRows)) { pr.legalRows.forEach(function (r) { if (r) { r.point = fix(r.point); } }); }
+  if (typeof pr.costliestStep === 'string' && /\bs\.70\b|section 70|retrench/i.test(pr.costliestStep)) { delete pr.costliestStep; n++; }
+  return n;
 }
 function pipItems(ctcInfo, crit) {
   var E = PIP_ENGINE, ctc = ctcInfo.lakh;

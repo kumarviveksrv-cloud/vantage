@@ -6,7 +6,7 @@ const mulStart = src.indexOf('const REPLACEMENT_COST_MULTIPLIER'), mulEnd = src.
 const code = src.slice(mulStart, mulEnd) + 'function r2(n) { return Math.round(n * 100) / 100; }\n' + src.slice(src.indexOf('function parseMultiplierRange'), src.indexOf('function engineLakh')) +
   src.slice(src.indexOf('function normaliseFinancial'), src.indexOf('// DETERMINISTIC FINANCIAL ENGINE (v17)')) +
   sl('// ── POSH ENGINE START', '// ── POSH ENGINE END') + sl('// ── TERMINATION ENGINE START', '// ── TERMINATION ENGINE END') + sl('// ── PIP ENGINE START', '// ── PIP ENGINE END');
-const { pipCalendar, applyPipEngine, pipItems, applyPipFinancial } = new Function(code + ';return {pipCalendar, applyPipEngine, pipItems, applyPipFinancial};')();
+const { pipCalendar, applyPipEngine, pipItems, applyPipFinancial, pipAlignDates } = new Function(code + ';return {pipCalendar, applyPipEngine, pipItems, applyPipFinancial, pipAlignDates};')();
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('FAIL', m); } };
 const D = (s) => new Date(s + 'T00:00:00Z');
 const row = (c, l) => c.rows.find(r => r.label === l);
@@ -56,5 +56,12 @@ ok(it.find(i => i.label.indexOf('Replacement') === 0).low === 6.4 && it.find(i =
 r = { detectedCaseType: 'PIP', protocol: { financial: { items: [{ label: 'x', kind: 'assumption', workings: 'y' }] } } };
 ok(applyPipFinancial(r, { lakh: 8, source: 'exact' }, 'Medium') && /Rs\.7\.4L to Rs\.13\.4L/.test(r.protocol.financial.range) && r.protocol.financial.confidence === 'Medium', 'range = 6.4+1 to 10.4+3: ' + r.protocol.financial.range);
 r = { detectedCaseType: 'Disciplinary', protocol: { financial: { items: [] } } }; ok(applyPipFinancial(r, { lakh: 8, source: 'exact' }, 'Medium') === false, 'other types untouched');
+r = { detectedCaseType: 'PIP', pipInputs: { pipStartDate: '2026-10-01', pipLengthValue: 60, pipLengthUnit: 'days' }, protocol: { quick_take: 'Calendar reviews before the plan ends on 29 November 2026.', assessment: 'Runs to approximately 29 November 2026; started 1 October 2026.', costliestStep: 'Failing to serve notice under section 70(c) would expose the organisation to a fine.', legalRows: [{ ref: 'x', verdict: 'unclear', point: 'Ends 1 December 2026.' }] } };
+applyPipEngine(r, D('2026-11-10'), 'PIP started 1 October 2026 for 60 days.');
+ok(/30 Nov 2026/.test(r.protocol.quick_take) && !/29 November/.test(r.protocol.quick_take + r.protocol.assessment), 'off-by-one model end date replaced by engine date: ' + r.protocol.quick_take);
+ok(/1 October 2026/.test(r.protocol.assessment), 'narrative date kept');
+ok(/30 Nov 2026/.test(r.protocol.legalRows[0].point), 'two days off also aligned');
+ok(r.protocol.costliestStep === undefined, 's.70 costliest mistake dropped on a PIP with no exit decided');
+ok(/day 0/.test(r.pipCalendar.rows[0].rule) && r.pipCalendar.endText === '30 Nov 2026', 'convention disclosed, endText set');
 console.log(fails ? fails + ' FAILED' : 'pip: all passed');
 process.exit(fails ? 1 : 0);
