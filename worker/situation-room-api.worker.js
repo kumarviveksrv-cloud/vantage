@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v88'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v89'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1374,6 +1374,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
   "detectedCaseType": "Exactly one of: Disciplinary | Grievance | PIP | Termination | Redundancy | POSH Complaint | Absence Management | Retrenchment | Other. The type the facts most closely match. If it matches the submitted caseType, return the same value. If the submitted caseType is Auto, no type was chosen, so decide from the facts alone. Use Other only when none of the eight genuinely fits (for example a resignation or notice-period dispute, recovery of losses after exit, client poaching, a conflict of interest, or a transfer or role change). Do not force a poor fit into one of the eight.",
   "otherLabel": "Only when detectedCaseType is Other: a 2 to 4 word label in sentence case describing the situation. Existing labels and what each one means: Exit and notice dispute = a resignation, notice period, buyout, last day, exit settlement or constructive dismissal claim; Conflict of interest = an outside business, directorship or relationship that conflicts with the employer's interest while still employed; Competition and confidentiality = working for or diverting clients to a competitor, or misusing confidential information or client data; Transfer and role change = the EMPLOYER moves, demotes, promotes or reassigns the employee or changes the role; Recovery of dues or losses = the employer seeking money back from an employee or ex-employee, such as a bond, advance or loss; Wages and pay dispute = unpaid, delayed or disputed salary, bonus, overtime, deductions or minimum wage, where the EMPLOYEE says they were not paid correctly; Probation issue = confirming, extending or ending probation; Flexible work request = a request made by the employee for remote or flexible work, relocation or leave; Maternity and pregnancy = a pregnant employee, or one on or returning from maternity leave, including benefit, leave, dismissal or role change. Use an existing label only when its meaning matches the facts. A request made BY the employee (such as remote or flexible work, relocation or leave) is not an employer transfer. If no label matches, coin a new 2 to 4 word label that does. A new accurate label is better than a stretched old one. Letters, numbers and spaces only. Otherwise null.",
   "secondaryCaseType": "Return a second type from the eight standard types ONLY when the facts show that second matter is already under way or has been raised (for example a discrimination grievance filed during a PIP, or absence that has already led to a termination notice). A possible or likely next step is NOT a second type: a PIP that may end in termination is still only PIP. A matter that is only proposed, considered or feared by a manager (for example non-confirmation, pressure to resign, a rotation change) has not been raised, so it is not a second type. Return null unless the narrative itself says the second matter has already started. When in doubt return null. Otherwise null.",
+  "poshInputs": "Only when detectedCaseType is POSH Complaint; otherwise null. When present, an object whose keys are incidentDate, lastIncidentDate, complaintDate, committeeReceiptDate, inquiryStartDate, inquiryCompletionDate, reportDate and actionDate. Each is a date written yyyy-mm-dd, copied from a calendar date the narrative actually states, or null. incidentDate is the date of the incident, or of the first incident in a series; lastIncidentDate is the date of the last incident in a series, null if there was a single incident. complaintDate is when the written complaint was made; committeeReceiptDate is when the Internal Committee received it; inquiryStartDate is when the inquiry began; inquiryCompletionDate is when the inquiry was completed; reportDate is when the committee report or recommendation reached the employer; actionDate is when the employer acted on it. Use null for any date the narrative gives only loosely (for example last week, a few months ago, in March). Never work out a date from a duration, and never calculate a deadline: the system adds the dated deadline calendar.",
   "engineFlags": "Only when the case involves a pregnant employee, or one on or returning from maternity leave; otherwise null. When present, an object with three keys. scenario is exactly one of non_confirmation_only, pressure_to_resign, dismissal_or_resignation_occurred. Use pressure_to_resign when anyone has suggested, hinted or pressed that she should resign or leave, even informally, and she has not yet left. Use dismissal_or_resignation_occurred only when the narrative says she has already been dismissed, has been given notice, or has resigned. Use non_confirmation_only when the only matter is a decision on confirmation, probation, duties or leave and nobody has suggested she leave. freePrenatalCareStated is true only if the narrative says the employer provides pre-natal and post-natal care free of charge, false only if it says it does not, otherwise null. dates is an object with joiningDate, expectedDeliveryDate and decisionDate, each written yyyy-mm-dd and copied from the narrative, or null when the narrative does not give it; decisionDate is the date of the confirmation or other decision the narrative says is coming. Never put a rupee figure in this object.",
   "headcountStated": "The number of employees or workers the narrative states for the organisation or establishment, as a whole number, or null if the narrative gives no headcount. Copy the figure; do not estimate it and do not take it from the MERIDIAN size band.",
   "greenCategory": {
@@ -1395,6 +1396,7 @@ FINANCIAL ITEMS
 The financial.items list is how the cost model is shown to the HR professional, who will be asked to defend every number. Use 4 to 7 items in this order. First, one assumption item stating the annual CTC being used: if the message contains EMPLOYEE ANNUAL CTC, use that figure and set basis to supplied; otherwise assume a CTC for this role, sector and company size, say why, and set basis to assumed. In that item also state the daily wage as annual CTC divided by 260 working days. Then the exposure items. Then any owed_in_any_case items. Last, one not_included item saying what the range leaves out.
 - exposure: a cost that arises only if the wrong decision is taken, such as back wages or reinstatement-equivalent relief, defence and complaint costs, or replacement cost. Give low and high in lakh as plain numbers. The workings must show the inputs and arithmetic that produce exactly those numbers. The system adds the exposure items to make the range, so put every cost you want counted into an exposure item and count nothing twice. An exposure item must never contain any part of an amount shown as owed_in_any_case: for example, back wages or relief cover only the extra period of a dispute or wrongful action, never the statutory benefit period that is already shown as owed in any case.
 - owed_in_any_case: an amount payable whether or not the employee is dismissed, such as a statutory benefit. It is shown but never added to the range. Work it out from the Act's own wording: a benefit paid at the average daily wage for the period of absence is paid for every day of that period, not only working days.
+- For a POSH Complaint, never write a calendar date as a deadline in any field. State time limits as periods (for example 90 days from the start of the inquiry) and the system adds the dated calendar.
 - When engineFlags is not null, the system replaces the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item) and keep the range field short. Fill engineFlags carefully, because the figures depend on it.
 - Every number that comes neither from the narrative nor from an Act provided to you has basis assumed. Never state a statutory amount, penalty or compensation formula that the Acts provided to you do not contain.
 
@@ -3892,7 +3894,108 @@ function resignationPressureNet(narrative, scenario) {
 }
 
 // Replaces the model's own financial figures with the engine's, when the model flagged a pregnancy or maternity case.
+// ── POSH ENGINE START ────────────────────────────────────────────────────────
+// Deadline calendar for a POSH Complaint, computed in code from dates copied out of the narrative. Time limits are quoted from the POSH Act text held in /legal.
+// The model only extracts dates. It never calculates one. A missing date gives "Not computed", never a guess.
+const POSH_DATE_KEYS = ['incidentDate', 'lastIncidentDate', 'complaintDate', 'committeeReceiptDate', 'inquiryStartDate', 'inquiryCompletionDate', 'reportDate', 'actionDate'];
+const POSH_MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function poshParseDate(v) {
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(v == null ? '' : v).trim());
+  if (!m) { return null; }
+  var y = +m[1], mo = +m[2], d = +m[3];
+  if (y < 2000 || y > 2100 || mo < 1 || mo > 12 || d < 1 || d > 31) { return null; }
+  var dt = new Date(Date.UTC(y, mo - 1, d));
+  if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d) { return null; }
+  return dt;
+}
+function poshAddMonths(dt, n) {
+  var y = dt.getUTCFullYear(), mo = dt.getUTCMonth() + n, d = dt.getUTCDate();
+  var last = new Date(Date.UTC(y, mo + 1, 0)).getUTCDate();
+  return new Date(Date.UTC(y, mo, Math.min(d, last)));
+}
+function poshAddDays(dt, n) { return new Date(dt.getTime() + n * 86400000); }
+function poshDays(a, b) { return Math.round((b.getTime() - a.getTime()) / 86400000); }
+function poshFmt(dt) { return dt.getUTCDate() + ' ' + POSH_MONTH_NAMES[dt.getUTCMonth()] + ' ' + dt.getUTCFullYear(); }
+function poshPlural(n) { return n + (n === 1 ? ' day' : ' days'); }
+
+function poshCalendar(inputs, asOf) {
+  var inp = (inputs && typeof inputs === 'object') ? inputs : {};
+  var D = {};
+  POSH_DATE_KEYS.forEach(function (k) { D[k] = poshParseDate(inp[k]); });
+  var now = asOf instanceof Date ? asOf : new Date();
+  var today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  var rows = [];
+  function notComputed(label, section, rule, needWhat) { rows.push({ label: label, section: section, rule: rule, date: '', status: 'Not computed: need ' + needWhat, tone: 'na' }); }
+  function timed(label, section, rule, start, deadline, done, doneWord) {
+    var status, tone;
+    if (done) {
+      if (done.getTime() < start.getTime()) { status = 'Dates out of order, check the dates you gave'; tone = 'na'; }
+      else if (done.getTime() <= deadline.getTime()) { status = 'On time (' + doneWord + ' ' + poshFmt(done) + ')'; tone = 'ok'; }
+      else { status = 'Late by ' + poshPlural(poshDays(deadline, done)) + ' (' + doneWord + ' ' + poshFmt(done) + ')'; tone = 'late'; }
+    } else {
+      var n = poshDays(today, deadline);
+      if (n < 0) { status = 'Overdue by ' + poshPlural(-n); tone = 'late'; }
+      else if (n === 0) { status = 'Due today'; tone = 'warn'; }
+      else { status = 'Due in ' + poshPlural(n); tone = n <= 14 ? 'warn' : 'ok'; }
+    }
+    rows.push({ label: label, section: section, rule: rule, date: poshFmt(deadline), status: status, tone: tone });
+  }
+  // 1. Complaint window, s.9(1)
+  var rule1 = '3 months from the incident (from the last incident if there was a series). The committee may extend by up to 3 more months for reasons recorded in writing.';
+  var incident = D.lastIncidentDate || D.incidentDate;
+  if (!incident) { notComputed('Complaint window', 's.9(1)', rule1, 'the incident date'); }
+  else {
+    var win = poshAddMonths(incident, 3), outer = poshAddMonths(incident, 6), st, tn;
+    if (D.complaintDate) {
+      if (D.complaintDate.getTime() < incident.getTime()) { st = 'Dates out of order, check the dates you gave'; tn = 'na'; }
+      else if (D.complaintDate.getTime() <= win.getTime()) { st = 'Complaint made in time (' + poshFmt(D.complaintDate) + ')'; tn = 'ok'; }
+      else if (D.complaintDate.getTime() <= outer.getTime()) { st = 'Made after 3 months (' + poshFmt(D.complaintDate) + '). Valid only if the committee recorded written reasons for an extension; the latest possible date is ' + poshFmt(outer) + '.'; tn = 'warn'; }
+      else { st = 'Made after the 6-month outer limit of ' + poshFmt(outer) + ' (' + poshFmt(D.complaintDate) + ')'; tn = 'late'; }
+    } else if (today.getTime() <= win.getTime()) { var left = poshDays(today, win); st = 'Window open for ' + poshPlural(left); tn = left <= 14 ? 'warn' : 'ok'; }
+    else if (today.getTime() <= outer.getTime()) { st = 'Past the 3 months. An extension is possible only with written reasons, up to ' + poshFmt(outer) + '.'; tn = 'warn'; }
+    else { st = 'Past the 6-month outer limit of ' + poshFmt(outer); tn = 'late'; }
+    rows.push({ label: 'Complaint window', section: 's.9(1)', rule: rule1, date: poshFmt(win), status: st, tone: tn });
+  }
+  // 2. Inquiry to be completed within 90 days, s.11(4). The Act does not say which date the 90 days runs from.
+  var inqStart = D.inquiryStartDate || D.committeeReceiptDate;
+  var inqBasis = D.inquiryStartDate ? 'the inquiry start date' : 'the date the committee received the complaint';
+  var rule2 = 'The inquiry is to be completed within 90 days. The Act does not say which date the 90 days runs from' + (inqStart ? '; counted here from ' + inqBasis + '.' : '.');
+  if (!inqStart) { notComputed('Inquiry completion', 's.11(4)', rule2, 'the inquiry start date or the date the committee received the complaint'); }
+  else { timed('Inquiry completion', 's.11(4)', rule2, inqStart, poshAddDays(inqStart, 90), D.inquiryCompletionDate, 'completed'); }
+  // 3. Report within 10 days of completing the inquiry, s.13(1)
+  var rule3 = 'The committee gives its report to the employer within 10 days of completing the inquiry.';
+  if (!D.inquiryCompletionDate) { notComputed('Report to the employer', 's.13(1)', rule3, 'the date the inquiry was completed'); }
+  else { timed('Report to the employer', 's.13(1)', rule3, D.inquiryCompletionDate, poshAddDays(D.inquiryCompletionDate, 10), D.reportDate, 'reported'); }
+  // 4. Employer acts within 60 days of receiving the recommendation, s.13(4)
+  var rule4 = 'The employer acts on the recommendation within 60 days of receiving it.';
+  if (!D.reportDate) { notComputed('Employer action', 's.13(4)', rule4, 'the date the employer received the report'); }
+  else { timed('Employer action', 's.13(4)', rule4, D.reportDate, poshAddDays(D.reportDate, 60), D.actionDate, 'acted'); }
+  // 5. Appeal within 90 days of the recommendations, s.18(2)
+  var rule5 = 'Appeal is to be preferred within 90 days of the recommendations.';
+  if (!D.reportDate) { notComputed('Appeal window', 's.18(2)', rule5, 'the date of the recommendations'); }
+  else {
+    var ap = poshAddDays(D.reportDate, 90), an = poshDays(today, ap);
+    rows.push({ label: 'Appeal window', section: 's.18(2)', rule: rule5, date: poshFmt(ap), status: an >= 0 ? ('Open for ' + poshPlural(an)) : ('Closed ' + poshPlural(-an) + ' ago'), tone: an < 0 ? 'na' : (an <= 14 ? 'warn' : 'ok') });
+  }
+  return {
+    asOf: poshFmt(today),
+    rows: rows,
+    penalty: 'If the employer fails to constitute the Internal Committee, to act under sections 13, 14 and 22, or to comply with the Act, the fine may extend to ₹50,000 (s.26(1)). On a repeat conviction the punishment is doubled and the licence or registration can be cancelled or not renewed (s.26(2)). The Act gives no formula for the compensation under s.15, so none is calculated here.',
+    note: 'Dates are counted from the dates in your description. A date you did not give is shown as not computed and is never guessed. Check each date against the committee file.'
+  };
+}
+function applyPoshEngine(result, asOf) {
+  if (!result) { return; }
+  var inputs = result.poshInputs;
+  delete result.poshInputs;
+  if (result.wrongTool === true) { return; }
+  if (result.detectedCaseType !== 'POSH Complaint' && result.secondaryCaseType !== 'POSH Complaint') { return; }
+  result.poshCalendar = poshCalendar(inputs, asOf || new Date());
+}
+// ── POSH ENGINE END ──────────────────────────────────────────────────────────
+
 function applyDeterministicFinancial(result, reqBody) {
+  try { applyPoshEngine(result, new Date()); } catch (e) { console.error('applyPoshEngine failed: ' + e.message); if (result) { delete result.poshInputs; } }
   try {
     if (result && result.wrongTool !== true && result.protocol) {
       result.protocol.context = buildMeridianContext(reqBody && reqBody.meridian, result.headcountStated);
