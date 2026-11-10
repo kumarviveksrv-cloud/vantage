@@ -145,5 +145,12 @@ ok(!/at least Rs\.72L/.test(es.stack.riskMirrorExtra.t) && !/not a projection/.t
 es = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Pilot at Rs.9L first.' } }, bcInputs: EIN };
 ER.applyBusinessCaseStakeholder(es, ET); ok(es.bcCheck.ok === false && es.bcCheck.flagged.some(f => /9L/.test(f)), 'Rs.9L is not a fraction of the spend: flagged');
 ok(/never call it a floor/.test(ER.erPromptBlock(e)) && /Never state numeric targets/.test(ER.erPromptBlock(e)), 'er prompt forbids floor claims and numeric targets');
+// v118: quarterly and monthly slices of the system drag allowed; ranking and disclosure-avoidance claims stripped
+es = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Every quarter without intervention is approximately Rs.18L, or Rs.6L a month.' }, narrativeBridge: { story: 'Fixing this is one of the highest-return interventions available. The group has no active programme in place. Rehearse your answer without retreating to the coefficient.' } }, bcInputs: EIN };
+ER.applyBusinessCaseStakeholder(es, ET);
+ok(es.bcCheck.ok === true && es.bcCheck.claimsRemoved === 3 && es.stack.narrativeBridge.story === 'Not stated.', 'quarter and month slices allowed, three claims removed: ' + JSON.stringify(es.bcCheck) + ' | ' + es.stack.narrativeBridge.story);
+es = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Every quarter costs Rs.19L.' } }, bcInputs: EIN };
+ER.applyBusinessCaseStakeholder(es, ET); ok(es.bcCheck.ok === false && es.bcCheck.flagged.some(f => /19L/.test(f)), 'Rs.19L is not a slice of the drag: flagged');
+ok(/hide, downplay or avoid saying/.test(ER.erPromptBlock(e)), 'prompt forbids coaching to avoid the disclosure');
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);

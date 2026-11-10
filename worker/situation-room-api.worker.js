@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v117'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v118'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4543,7 +4543,7 @@ function ldStripClaims(result, extraRe) {
   walk(result);
   return removed;
 }
-var LD_OVERSTATE_RE = /not a projection|not a worst case|conservative end|\bis the floor\b|\bthe floor:|costs the business at least|already been incurred|distributed across functions/i;
+var LD_OVERSTATE_RE = /not a projection|not a worst case|conservative end|\bis the floor\b|\bthe floor:|costs the business at least|already been incurred|distributed across functions|highest[- ]return|retreating to the coefficient|over-qualif|no active programme|no programme in place/i;
 function bcUserFractions(text) {
   var out = [];
   bcFigureNums(text).forEach(function (v) { [0.25, 1 / 3, 0.4, 0.5, 0.6, 2 / 3, 0.75].forEach(function (f) { out.push(v * f); }); });
@@ -4565,7 +4565,7 @@ function erCalc(inp, text) {
   }
   return null;
 }
-function erAllowed(e) { return [e.baseL, e.dragL, e.ctcL]; }
+function erAllowed(e) { var a = [e.baseL, e.dragL, e.ctcL]; for (var mm = 1; mm <= 11; mm++) { a.push(e.dragL * mm / 12); } return a; }
 function erBasis(e) {
   var pct = Math.round(e.coef * 100);
   return 'Computed by the system: ' + (e.kind === 'engagement' ? e.n + ' disengaged employees x ' + engineLakh(r2(e.ctcL)) : e.n + ' below-average managers x ' + e.size + ' people per team x ' + engineLakh(r2(e.ctcL))) + ' x ' + pct + ' percent productivity drag. The ' + pct + ' percent is an assumed planning coefficient, not a measured result.';
@@ -4575,7 +4575,7 @@ function erPromptBlock(e) {
   var s = 'SYSTEM-COMPUTED FIGURES (already calculated by code from the data above; use exactly these and do not recompute them):\n';
   s += '- Payroll affected: ' + engineLakh(r2(e.baseL)) + ' (' + (e.kind === 'engagement' ? e.n + ' disengaged employees at an average CTC of ' + engineLakh(r2(e.ctcL)) : e.n + ' below-average managers x ' + e.size + ' people per team at an average CTC of ' + engineLakh(r2(e.ctcL))) + ').\n';
   s += '- Annual productivity drag: ' + engineLakh(r2(e.dragL)) + ', computed as the payroll affected x ' + pct + ' percent. The ' + pct + ' percent is an assumed planning coefficient, not a measured result.\n';
-  s += 'Do not attribute the ' + pct + ' percent to Gallup or to any study, survey, benchmark or research body, and do not state any derivation of it. Do not add attrition, replacement cost or any other benefit or cost in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above or a figure the user gave. The drag rests on an assumed coefficient, so never call it a floor, a minimum, conservative, certain, not a projection or already incurred. Never state numeric targets for the success metric or alternatives (such as a number of managers who improve or a score the group must reach); write that the target and measure will be agreed with the stakeholder before the programme begins. Do not state how the people were selected, where they sit, how a survey was run or what process produced them unless the user said so. Describe phasing as fractions or percentages of the spend only if a spend was given.\n';
+  s += 'Do not attribute the ' + pct + ' percent to Gallup or to any study, survey, benchmark or research body, and do not state any derivation of it. Do not add attrition, replacement cost or any other benefit or cost in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above or a figure the user gave. The drag rests on an assumed coefficient, so never call it a floor, a minimum, conservative, certain, not a projection or already incurred. Never state numeric targets for the success metric or alternatives (such as a number of managers who improve or a score the group must reach); write that the target and measure will be agreed with the stakeholder before the programme begins. Do not state how the people were selected, where they sit, how a survey was run or what process produced them unless the user said so. Describe phasing as fractions or percentages of the spend only if a spend was given. Do not state whether any programme, earlier budget request or earlier survey exists unless the user said so. Never rank this intervention against others (for example as one of the highest-return options). Never coach the user to hide, downplay or avoid saying that the figure rests on an assumed coefficient; any ARIA rehearsal must keep that disclosure.\n';
   return s;
 }
 function ldCalc(inp, text) {
