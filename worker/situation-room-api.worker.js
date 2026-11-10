@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v99'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v100'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1402,7 +1402,7 @@ The financial.items list is how the cost model is shown to the HR professional, 
 - For a POSH Complaint, never write a calendar date as a deadline in any field, and never say that a time limit has passed, expired or is overdue unless the dates in the narrative and TODAY'S DATE show it. State time limits as periods (for example 90 days from the start of the inquiry) and the system adds the dated calendar and the status of each limit.
 - Scope of the retrenchment provisions in the supplied IR Code text: section 70 applies to any worker in any industry with at least one year of continuous service under the employer, and is not limited to factories, mines or plantations. Section 65 only limits sections 67 to 69 (lay-off compensation) and has no bearing on section 70. Chapter X (sections 77 to 82, including the prior permission in section 79) applies only to a factory, mine or plantation with 300 or more workers, so treat Chapter X as not applying unless the narrative says the establishment is one of those. Never recommend pausing the process or asking counsel to classify the establishment because of these provisions, and never mention the Factories Act unless the narrative says the workplace is a factory.
 - For Termination, Redundancy and Retrenchment cases, never write a calendar date as a deadline unless the narrative states that exact date; say now, before the end date, or within a number of days instead.
-- For a bond or recovery-of-training-cost case the system replaces the financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item), and never write a recoverable amount, ceiling or pro-rata figure in any text field. A bond is not automatically enforceable for its full amount: Contract Act s.74 allows reasonable compensation not exceeding the named sum, and the Code on Wages s.18(2) does not permit deducting it from wages.
+- For a bond or recovery-of-training-cost case the system replaces the financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item), and never write a recoverable amount, ceiling or pro-rata figure in any text field, never call the training cost a legal ceiling or limit (the s.74 limit is the sum named in the bond, the court decides what is reasonable, and training cost is only evidence), and never say that the employee's consent makes a deduction from wages lawful (s.18(2) lists no such ground for a bond). A bond is not automatically enforceable for its full amount: Contract Act s.74 allows reasonable compensation not exceeding the named sum, and the Code on Wages s.18(2) does not permit deducting it from wages.
 - For Termination, Redundancy and Retrenchment cases the system may replace the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item), keep the range field short, and never write a statutory amount, notice pay, compensation or gratuity figure in any text field.
 - When engineFlags is not null, the system replaces the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item) and keep the range field short. Fill engineFlags carefully, because the figures depend on it.
 - Every number that comes neither from the narrative nor from an Act provided to you has basis assumed. Never state a statutory amount, penalty or compensation formula that the Acts provided to you do not contain.
@@ -4279,12 +4279,39 @@ function bondItems(T) {
   items.push({ label: 'What the range leaves out', kind: 'not_included', workings: tail });
   return items;
 }
+function bondFixText(result, T) {
+  var pr = result.protocol; if (!pr) { return 0; }
+  var n = 0;
+  var fix = function (str) {
+    if (typeof str !== 'string') { return str; }
+    var o = str;
+    str = str.replace(/\s*(?:without|absent)\s+(?:the\s+)?(?:employee'?s\s+)?(?:written\s+)?consent(?:\s+or\s+(?:a\s+)?court\s+order)?/gi, '')
+             .replace(/\b(?:defensible|maximum|legal|statutory)\s+(?:recovery\s+)?ceiling\b/gi, 'figure easiest to defend');
+    if (str !== o) { n++; }
+    return str;
+  };
+  ['quick_take', 'assessment', 'recommendation', 'communication', 'costliestStep', 'legal'].forEach(function (k) { if (typeof pr[k] === 'string') { pr[k] = fix(pr[k]); } });
+  if (Array.isArray(pr.immediate_actions)) { pr.immediate_actions = pr.immediate_actions.map(fix); }
+  if (Array.isArray(pr.legalRows)) {
+    pr.legalRows.forEach(function (r) {
+      if (!r) { return; }
+      r.point = fix(r.point);
+      if (T.amount && /^Contract Act s\.74$/i.test(String(r.ref).trim())) {
+        r.verdict = 'live';
+        r.point = 'The bond names ' + termRs(T.amount) + '. Section 74 allows reasonable compensation not exceeding that sum, whether or not actual loss is proved. What is reasonable is for the court; the training cost and the pro-rata figure are evidence, not limits.';
+      }
+    });
+  }
+  result.otherLabel = 'Recovery of dues or losses';
+  return n;
+}
 function applyBondFinancial(result, narrative) {
   if (!result) { return false; }
   var inp = result.bondInputs; delete result.bondInputs;
   if (result.wrongTool === true || result.detectedCaseType !== 'Other' || !inp || inp.isBond !== true) { return false; }
   if (!result.protocol || !result.protocol.financial) { return false; }
   var T = bondReadTerms(inp, narrative);
+  try { bondFixText(result, T); } catch (e) { console.error('bondFixText failed: ' + e.message); }
   var f = result.protocol.financial;
   f.items = bondItems(T);
   normaliseFinancial(result);

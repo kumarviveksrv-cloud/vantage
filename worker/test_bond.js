@@ -5,7 +5,7 @@ const fa = src.indexOf('function normaliseFinancial'), fb = src.indexOf('// DETE
 const pa = src.indexOf('// ── POSH ENGINE START'), pb = src.indexOf('// ── POSH ENGINE END');
 const ta = src.indexOf('// ── TERMINATION ENGINE START'), tb = src.indexOf('// ── TERMINATION ENGINE END');
 const ba = src.indexOf('// ── BOND ENGINE START'), bb = src.indexOf('// ── BOND ENGINE END');
-const { bondAmountsIn, bondMoney, bondReadTerms, bondItems, applyBondFinancial } = new Function(src.slice(fa, fb) + src.slice(pa, pb) + src.slice(ta, tb) + src.slice(ba, bb) + ';return {bondAmountsIn, bondMoney, bondReadTerms, bondItems, applyBondFinancial};')();
+const { bondAmountsIn, bondMoney, bondReadTerms, bondItems, applyBondFinancial, bondFixText } = new Function(src.slice(fa, fb) + src.slice(pa, pb) + src.slice(ta, tb) + src.slice(ba, bb) + ';return {bondAmountsIn, bondMoney, bondReadTerms, bondItems, applyBondFinancial, bondFixText};')();
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('FAIL', m); } };
 const item = (its, l) => its.find(i => i.label.indexOf(l) === 0);
 const N1 = 'Employee left owing ₹1.5L under a training bond. He says the bond is unenforceable.';
@@ -48,5 +48,11 @@ ok(r.protocol.financial.confidence === 'Medium', 'Medium confidence with terms c
 r = mk({ bondInputs: { isBond: false } }); ok(applyBondFinancial(r, NARR) === false, 'not a bond: untouched');
 r = mk({ detectedCaseType: 'Termination' }); ok(applyBondFinancial(r, NARR) === false && r.bondInputs === undefined, 'other case types untouched');
 r = mk({ bondInputs: null }); ok(applyBondFinancial(r, NARR) === false, 'no inputs: untouched');
+r = mk({ otherLabel: 'Probation issue' }); r.protocol.quick_take = 'The deduction must not proceed without consent or a court order.'; r.protocol.recommendation = 'Demand Rs 90,000, the defensible recovery ceiling.'; r.protocol.legalRows = [{ ref: 'Contract Act s.74', verdict: 'unclear', point: 'Training cost of 90,000 is the defensible ceiling.' }, { ref: 'Contract Act s.27', verdict: 'not_yet', point: 'Not engaged.' }];
+applyBondFinancial(r, NARR);
+ok(r.otherLabel === 'Recovery of dues or losses', 'label corrected');
+ok(!/consent/.test(r.protocol.quick_take) && /must not proceed/.test(r.protocol.quick_take), 'consent escape removed: ' + r.protocol.quick_take);
+ok(!/ceiling/.test(r.protocol.recommendation) && /easiest to defend/.test(r.protocol.recommendation), 'training cost no longer called a ceiling: ' + r.protocol.recommendation);
+ok(r.protocol.legalRows[0].verdict === 'live' && /not exceeding that sum/.test(r.protocol.legalRows[0].point) && r.protocol.legalRows[1].verdict === 'not_yet', 's.74 row replaced with code text, s.27 untouched');
 console.log(fails ? fails + ' FAILED' : 'bond: all passed');
 process.exit(fails ? 1 : 0);
