@@ -106,5 +106,6 @@ let rs = { detectedCaseType: 'Retrenchment', protocol: { legalRows: [{ ref: 'IR 
 applyTerminationText(rs, NARR);
 ok(rs.protocol.legalRows.length === 2 && rs.protocol.legalRows[0].ref === 'IR Code s.70' && rs.protocol.legalRows[0].verdict === 'live' && !/factory, mine/.test(rs.protocol.legalRows[0].point) && /any industry/.test(rs.protocol.legalRows[0].point), 's.70 live with scope sentence, s.65 dropped: ' + JSON.stringify(rs.protocol.legalRows));
 
+ok(/Gratuity, only if s\.53\(1\) covers this exit \(conditional, not added/.test(rg.protocol.financial.breakdown.join('\n')) && /Notice or pay in lieu \(s\.70\(a\)\) \(owed in any case/.test(rg.protocol.financial.breakdown.join('\n')), 'gratuity line says conditional, notice says owed');
 console.log(fails ? fails + ' FAILED' : 'termination: all passed');
 process.exit(fails ? 1 : 0);
