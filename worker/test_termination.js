@@ -43,7 +43,7 @@ ok(comp && comp.low === 2.42 && comp.high === 2.42, '60000/26*15*7 = 242307.69 -
 let nt = item(b, 'Notice or pay in lieu');
 ok(nt && nt.low === 0.6 && nt.high === 0.6, 'notice = one month of wages 60000 = 0.6L');
 let gr = item(b, 'Gratuity');
-ok(gr && gr.low === 2.42 && /26/.test(gr.workings) && /ceiling/.test(gr.workings) && !/s\.53\(6\)/.test(gr.workings), 'gratuity same arithmetic, ceiling flagged, no forfeiture note for retrenchment');
+ok(gr && gr.label === 'Gratuity, only if s.53(1) covers this exit' && /not listed/.test(gr.workings) && gr.low === 2.42 && /26/.test(gr.workings) && /ceiling/.test(gr.workings) && !/s\.53\(6\)/.test(gr.workings), 'gratuity same arithmetic, ceiling flagged, no forfeiture note for retrenchment');
 ok(item(b, 'Back wages').low === 1.8 && item(b, 'Back wages').high === 7.2, 'back wages 3 to 12 months of 60000');
 ok(item(b, 'Defence').low === 1 && item(b, 'Defence').high === 3, 'defence 1 to 3 lakh');
 ok(/s\.70\(c\)/.test(item(b, 'What the range').workings) && /sections 77 to 82/.test(item(b, 'What the range').workings), 'notice to Government and Chapter X flagged');

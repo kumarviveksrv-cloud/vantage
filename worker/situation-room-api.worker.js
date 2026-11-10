@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v94'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v95'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4125,8 +4125,8 @@ function termItems(ctcLakh, grossRaw, basicRaw, scenario, workerStatus, svc) {
   else if (svc.months < E.gratuityMinMonths) { out.push('Gratuity needs five years of continuous service (s.53(1)), so none is computed.'); }
   else {
     var forf = scenario === 'misconduct' ? ' On a dismissal for misconduct, s.53(6) allows forfeiture: to the extent of any damage or loss to the employer\'s property, and wholly or partly where the services were terminated for riotous or disorderly conduct, violence, or an offence involving moral turpitude committed in the course of employment.' : '';
-    items.push({ label: 'Gratuity, if s.53(1) applies', kind: 'owed_in_any_case', basis: 'statute', low: termLakh(w.lo / E.dayDivisor * E.gratuityDays * svc.years), high: termLakh(w.hi / E.dayDivisor * E.gratuityDays * svc.years),
-      workings: 'Fifteen days\' wages for every completed year of service or part over six months, with the monthly wage divided by 26 (s.53(2) and Explanation 3): monthly wages / ' + E.dayDivisor + ' x ' + E.gratuityDays + ' x ' + svc.years + ' years. It is payable on the events listed in s.53(1), so confirm that the way this employment ends is one of them. It is subject to a ceiling notified by the Central Government, which is not in the supplied text, so no ceiling is applied.' + forf });
+    items.push({ label: 'Gratuity, only if s.53(1) covers this exit', kind: 'owed_in_any_case', basis: 'statute', low: termLakh(w.lo / E.dayDivisor * E.gratuityDays * svc.years), high: termLakh(w.hi / E.dayDivisor * E.gratuityDays * svc.years),
+      workings: 'Fifteen days\' wages for every completed year of service or part over six months, with the monthly wage divided by 26 (s.53(2) and Explanation 3): monthly wages / ' + E.dayDivisor + ' x ' + E.gratuityDays + ' x ' + svc.years + ' years. Section 53(1) lists superannuation, retirement or resignation, death or disablement, expiry of a fixed term, and events notified by the Central Government. A dismissal or retrenchment is not listed in the text supplied, so whether gratuity is payable on this exit needs confirming (many employers pay it regardless). If it is payable, it is subject to a ceiling notified by the Central Government, which is not in the supplied text, so no ceiling is applied.' + forf });
   }
   var tail = out.join(' ') + (out.length ? ' ' : '');
   if (scenario === 'retrenchment') { tail += 'Notice to the appropriate Government (s.70(c)) is a required step, not a cost. For a factory, mine or plantation with 300 or more workers, Chapter X (sections 77 to 82) needs prior permission; this is flagged and not priced. '; }
