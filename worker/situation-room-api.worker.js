@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v114'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v115'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4522,6 +4522,22 @@ function bcPromptBlock(c) {
   s += 'Every rupee figure you write about the cost of the exits, including any Data Anchor and Revenue at Risk figure, must be this total range, or the replacement or productivity part above, or a whole number of exits multiplied by the per-exit cost with that number of exits stated in the same sentence. Never use salary alone as the cost of an exit. Describe decision alternatives such as phasing as fractions or percentages of the stated budget, not as new rupee amounts. Any other rupee figure you write must be a whole number of exits multiplied by the per-exit cost above, with the number of exits stated in the same sentence. Do not invent other rupee amounts or percentages of productivity. Do not write hypothetical alternative rupee amounts anywhere, for example other budget sizes in a rehearsal prompt; refer to the stated budget only. When you quote avoided cost for a number of exits, call it avoided cost, not return, because it is before the programme spend.\n';
   return s;
 }
+var LD_CLAIM_RE = /commonly cited|widely (?:cited|acknowledged|accepted|used|recogni[sz]ed)|industry'?s?\s+(?:own|standard|norm|benchmark|average|typical)|industry[- ](?:standard|benchmark|average|norm)|\bbenchmarks?\b|\btypical(?:ly)?\b|\bnormally\b|\boutlier\b|modest but credible|well within the range|\bresearch (?:shows|suggests)|\bstudies (?:show|suggest)|generally accepted|rule of thumb|\b(?:gallup|shrm|deloitte|mckinsey|kirkpatrick)\b|\bnorms?\b/i;
+function ldStripClaims(result) {
+  var removed = 0, FALLBACK = 'Not stated: no sourced benchmark is available for this programme.';
+  var scrub = function (s) {
+    if (!LD_CLAIM_RE.test(s)) { return s; }
+    var parts = s.split(/(?<=[.!?])\s+(?=[A-Z(])/), keep = parts.filter(function (p) { return !LD_CLAIM_RE.test(p); });
+    removed += parts.length - keep.length;
+    return keep.length ? keep.join(' ') : FALLBACK;
+  };
+  var walk = function (n) {
+    if (Array.isArray(n)) { n.forEach(function (x, i) { if (typeof x === 'string') { n[i] = scrub(x); } else { walk(x); } }); }
+    else if (n && typeof n === 'object') { Object.keys(n).forEach(function (k) { if (k === 'bcCheck') { return; } if (typeof n[k] === 'string') { n[k] = scrub(n[k]); } else { walk(n[k]); } }); }
+  };
+  walk(result);
+  return removed;
+}
 function ldCalc(inp, text) {
   var i = inp || {};
   if (i.model !== 'ld') { return null; }
@@ -4538,7 +4554,7 @@ function ldPromptBlock(l) {
   s += '- Programme spend: ' + engineLakh(r2(l.spendL)) + ' covering ' + l.emp + ' employees at an average CTC of ' + engineLakh(r2(l.ctcL)) + '. Payroll covered: ' + engineLakh(r2(l.payrollL)) + '. Cost per head: ' + ldRupees(l.perHead) + '.\n';
   s += '- Break-even: the programme pays for itself if it lifts the output of the covered payroll by ' + pct + ' percent.\n';
   s += '- Planning return range if the programme performs at 1x to 2x its spend: ' + bcRange(l.ret) + ' gross, before the spend. This multiple is an assumed planning range, not a measured result.\n';
-  s += 'Do not model manager effectiveness drag, the share of managers below average, attrition for this cohort, or any other benefit in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above. Describe phasing as fractions or percentages of the spend.\n';
+  s += 'Do not model manager effectiveness drag, the share of managers below average, attrition for this cohort, or any other benefit in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above. Describe phasing as fractions or percentages of the spend. Do not cite any industry benchmark, standard, norm, typical or commonly cited ROI figure, study, survey or research body, and do not judge whether the spend is modest, typical, high or an outlier. The 1x to 2x range is only an assumption chosen for planning; say exactly that and nothing about where it comes from.\n';
   return s;
 }
 function bcFigureNums(text) { return bondAmountsIn(text).map(function (n) { return n / 100000; }); }
@@ -4634,13 +4650,15 @@ function applyBusinessCaseStakeholder(result, userText) {
   if (l) {
     var pctL = Math.round(l.pct * 10) / 10, notC = 'Not computed: no exit, vacancy or performance data was given, so the cost of not acting cannot be priced.';
     if (result.stack.dataAnchor) { result.stack.dataAnchor.figure = 'Break-even at a ' + pctL + ' percent uplift on ' + engineLakh(r2(l.payrollL)) + ' payroll'; }
-    if (result.stack.riskMirror) { result.stack.riskMirror.revenueAtRisk = 'Not computed'; result.stack.riskMirror.revenueAtRiskBasis = notC; }
+    if (result.stack.riskMirror) { result.stack.riskMirror.revenueAtRisk = 'Not computed'; result.stack.riskMirror.revenueAtRiskBasis = notC; result.stack.riskMirror.probability = ''; }
     var okAllowed = bcFigureNums(userText).concat(ldAllowed(l));
     var openBad = typeof result.openingLine === 'string' && bcFigureNums(result.openingLine).some(function (v) { return !okAllowed.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, a * 0.03); }); });
     if (openBad) { result.openingLine = 'The ' + engineLakh(r2(l.spendL)) + ' on the table pays for itself if it lifts the output of the ' + engineLakh(r2(l.payrollL)) + ' payroll it covers by ' + pctL + ' percent.'; }
+    var claimsRemoved = ldStripClaims(result);
     result.bcEngine = { model: 'ld-v1', breakEvenPct: pctL, payroll: r2(l.payrollL) };
     var fl = bcFigureCheck(result, null, userText, ldAllowed(l));
     result.bcCheck = { ok: fl.length === 0, engine: true, flagged: fl, note: fl.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + fl.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.' };
+    if (claimsRemoved) { result.bcCheck.note += ' ' + claimsRemoved + ' sentence(s) citing industry benchmarks or studies were removed because the system cannot verify them.'; result.bcCheck.claimsRemoved = claimsRemoved; }
     return true;
   }
   if (c) {

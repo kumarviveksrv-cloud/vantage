@@ -99,5 +99,16 @@ ok(bondAmountsIn('Rs.25L covers 200 employees; managers 5 and hours 8').join() =
 ok(bondAmountsIn('(Rs.8L) and ₹15L and INR 2,00,000').join() === '800000,1500000,200000', 'real prefixes still parsed');
 ls = { openingLine: 'Rs.25L covers 200 employees.', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Rs.25L covers 200 employees at Rs.12,500 per head.' } }, bcInputs: LDIN };
 LD.applyBusinessCaseStakeholder(ls, LDT); ok(ls.bcCheck.ok === true, 'covers 200 not flagged: ' + JSON.stringify(ls.bcCheck.flagged));
+// v115: L&D benchmark claims removed, likelihood badge cleared
+ls = { openingLine: 'Rs.25L covers Rs.14Cr of payroll.', humac: { basis: 'Break-even lift is 1.8%. The 1x to 2x multiplier reflects the industry\'s own commonly cited training ROI target of 100 to 200% return. L&D ROI is widely acknowledged as poorly measured.' }, stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x', probability: 'Medium, the financial logic is sound.' }, credibility: { statement: 'At Rs.12,500 per head this is a modest but credible investment, not an outlier spend. The break-even is 1.8 percent.' }, closing: ['Gallup says engagement pays. Agree the metric at approval.'] }, bcInputs: LDIN };
+LD.applyBusinessCaseStakeholder(ls, LDT);
+ok(ls.humac.basis === 'Break-even lift is 1.8%.' , 'benchmark sentences removed from humac basis: ' + ls.humac.basis);
+ok(ls.stack.credibility.statement === 'The break-even is 1.8 percent.', 'modest/outlier judgement removed: ' + ls.stack.credibility.statement);
+ok(ls.stack.closing[0] === 'Agree the metric at approval.', 'named body removed inside array: ' + ls.stack.closing[0]);
+ok(ls.stack.riskMirror.probability === '', 'likelihood badge cleared');
+ok(ls.bcCheck.ok === true && ls.bcCheck.claimsRemoved === 4 && /removed because the system cannot verify/.test(ls.bcCheck.note), 'note counts removals: ' + ls.bcCheck.claimsRemoved + ' ' + ls.bcCheck.note);
+ls = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Typically programmes like this return 3x.' } }, bcInputs: LDIN };
+LD.applyBusinessCaseStakeholder(ls, LDT); ok(/^Not stated/.test(ls.stack.credibility.statement), 'field fully made of a claim gets a Not stated line: ' + ls.stack.credibility.statement);
+ok(/Do not cite any industry benchmark/.test(LD.ldPromptBlock(LD.ldCalc(LDIN, LDT))), 'prompt forbids benchmarks');
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);
