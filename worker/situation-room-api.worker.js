@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v111'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v112'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4568,8 +4568,9 @@ function bcStripInvented(result) {
     if (Array.isArray(n)) { for (var i = n.length - 1; i >= 0; i--) { if (typeof n[i] === 'string') { n[i] = scrub(n[i]); if (!n[i].trim()) { n.splice(i, 1); } } else { walk(n[i]); } } }
     else if (n && typeof n === 'object') { Object.keys(n).forEach(function (k) { if (k === 'bcCheck') { return; } if (typeof n[k] === 'string') { n[k] = scrub(n[k]); } else { walk(n[k]); } }); }
   };
+  var hOrig = String(result.headline || '');
   walk(result);
-  if (!result.headline || !String(result.headline).trim()) { result.headline = 'No rupee figure can be named yet. The cost of attrition needs the number of exits and the average CTC.'; }
+  if (!result.headline || !String(result.headline).trim() || String(result.headline) !== hOrig) { result.headline = 'No rupee figure can be named yet. The cost of attrition needs the number of exits and the average CTC.'; }
   result.revenueAtRisk = { figure: 'Not computed', basis: BC_NOT_COMPUTED, confidence: 'Low' };
   if (!result.signal.impact) { result.signal.impact = {}; }
   result.signal.impact.financialImpact = 'Not computed';

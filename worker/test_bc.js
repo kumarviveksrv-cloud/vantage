@@ -70,6 +70,8 @@ ok(r.revenueAtRisk.figure === 'Not computed' && r.humac.range === 'Not computed'
 ok(/HR must pull the data/.test(r.signal.situation.narrative) && /confirmed number needs HR data/.test(r.signal.narrative.cfoVersion), 'thin: non-rupee sentences kept');
 ok(r.signal.impact.breakdown.length === 1 && /Not computed/.test(r.signal.impact.breakdown[0]), 'thin: breakdown replaced');
 ok(r.bcCheck.stripped >= 4 && /removed/.test(r.bcCheck.note) && /No rupee figure can be named/.test(r.headline), 'thin: note and headline: ' + r.bcCheck.note + ' | ' + r.headline);
+r = { headline: 'Insufficient data to name the number, but the cost is rarely below Rs. 1.5 Cr annually. Here is what we need to make that case undeniable.', revenueAtRisk: {}, signal: { impact: {} }, bcInputs: null };
+applyBusinessCaseEngine(r, THIN); ok(/^No rupee figure can be named yet/.test(r.headline) && !/Here is what we need/.test(r.headline), 'partly stripped headline fully replaced: ' + r.headline);
 // no engine: model figures untouched, check still runs against the user text, note says not system-checked
 r = mk(); r.bcInputs = { model: 'attrition', exits: 99, avgCtc: 1 }; ok(applyBusinessCaseEngine(r, TXT) === false && r.revenueAtRisk.figure === 'Rs.1.2Cr' && r.bcCheck.engine === false && /not system-checked/.test(r.bcCheck.note), 'engine off: model figure kept, honestly labelled');
 r = { wrongTool: true }; ok(applyBusinessCaseEngine(r, TXT) === false && r.bcCheck === undefined, 'wrong tool untouched');
