@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v104'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v105'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4497,10 +4497,13 @@ function bcLines(c) {
 }
 function bcFigureNums(text) { return bondAmountsIn(text).map(function (n) { return n / 100000; }); }
 function bcFigureCheck(result, c, userText) {
-  var allowed = bcFigureNums(userText), flagged = [], seen = {};
+  var allowed = bcFigureNums(userText), multiples = [], flagged = [], seen = {};
   if (c) {
     [c.repl, c.prod, c.total, c.perExit, c.replPer, c.prodPer].forEach(function (a) { allowed.push(a[0], a[1]); });
     allowed.push(c.ctcL); if (c.budgetL) { allowed.push(c.budgetL); }
+    allowed.push(c.ctcL * c.T.exits, c.ctcL * c.annualExits);
+    var kMax = Math.min(Math.max(c.T.exits, Math.ceil(c.annualExits)), 100);
+    for (var k = 1; k <= kMax; k++) { [c.perExit, c.replPer, c.prodPer].forEach(function (a) { multiples.push(a[0] * k, a[1] * k); }); }
   }
   var inRange = function (v) { return c && v >= c.total[0] * 0.97 && v <= c.total[1] * 1.03; };
   var fields = [];
@@ -4516,7 +4519,7 @@ function bcFigureCheck(result, c, userText) {
     while ((m = re.exec(txt))) {
       var v = bcFigureNums(m[0])[0];
       if (v === undefined) { continue; }
-      var ok = inRange(v) || allowed.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, Math.abs(a) * 0.03); });
+      var ok = inRange(v) || allowed.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, Math.abs(a) * 0.03); }) || multiples.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, Math.abs(a) * 0.01); });
       var key = m[0].replace(/\s+/g, '').toLowerCase();
       if (!ok && !seen[key]) { seen[key] = true; flagged.push(m[0].replace(/\s+/g, ' ').trim()); }
     }
@@ -4536,8 +4539,8 @@ function applyBusinessCaseEngine(result, userText) {
     result.signal.impact.breakdown = bcLines(c);
     if (result.humac) { result.humac.range = bcRange(c.total).replace(' to ', ' – '); }
     if (typeof result.headline === 'string') {
-      var bad = bcFigureNums(result.headline), offending = false, m, re = /(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\b/gi;
-      result.headline = result.headline.replace(re, function (all) { var v = bcFigureNums(all)[0]; if (v === undefined) { return all; } if (v >= c.total[0] * 0.97 && v <= c.total[1] * 1.03) { return all; } offending = true; return fig; });
+      var userFig = bcFigureNums(userText).concat([c.ctcL, c.budgetL || 0]), offending = false, m, re = /(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\b/gi;
+      result.headline = result.headline.replace(re, function (all) { var v = bcFigureNums(all)[0]; if (v === undefined) { return all; } if (v >= c.total[0] * 0.97 && v <= c.total[1] * 1.03) { return all; } if (userFig.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, a * 0.005); })) { return all; } offending = true; return fig; });
       if (offending) { result.headline = result.headline.replace(new RegExp(fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\s*(?:to|-|–)\\s*' + fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')+', 'g'), fig); }
     }
     result.bcEngine = { model: 'attrition-v1', total: [r2(c.total[0]), r2(c.total[1])], perExit: [r2(c.perExit[0]), r2(c.perExit[1])] };
@@ -5152,14 +5155,16 @@ if (actContext) {
         const truncatedMetrics = truncateInput(metrics, 6000);
         const truncatedContext = context ? truncateInput(context, 3000) : '';
 
-        const [anonymizedMetrics, anonymizedContext] = await Promise.all([
+        const [anonymizedMetrics, anonymizedContext, anonymizedGenAsk] = await Promise.all([
           anonymizeNarrative(truncatedMetrics),
           truncatedContext ? anonymizeNarrative(truncatedContext) : Promise.resolve(''),
+          body.ask ? anonymizeNarrative(truncateInput(String(body.ask), 600)) : Promise.resolve(''),
         ]);
+        if (body.ask && anonymizedGenAsk === null) return anonymizationFailedResponse();
         if (truncatedMetrics && anonymizedMetrics === null) return anonymizationFailedResponse();
         if (truncatedContext && anonymizedContext === null) return anonymizationFailedResponse();
 
-        userMessage = `HR METRICS / DATA: ${anonymizedMetrics}\n${anonymizedContext ? `ADDITIONAL CONTEXT: ${anonymizedContext}` : ''}\n${audience ? `PRIMARY AUDIENCE: ${truncateInput(audience, 200)}` : ''}\n\nBuild the complete SIGNAL narrative including Revenue at Risk and Humac financial translation. Return the complete JSON response as specified.`;
+        userMessage = `HR METRICS / DATA: ${anonymizedMetrics}\n${anonymizedContext ? `ADDITIONAL CONTEXT: ${anonymizedContext}` : ''}\n${anonymizedGenAsk ? `THE ASK (what the requester wants approved or decided): ${anonymizedGenAsk}` : ''}\n${audience ? `PRIMARY AUDIENCE: ${truncateInput(audience, 200)}` : ''}\n\nBuild the complete SIGNAL narrative including Revenue at Risk and Humac financial translation. Return the complete JSON response as specified.`;
       }
 
       const systemPrompt = getBusinessCasePrompt(meridian, flow, humacContext);
@@ -5198,7 +5203,7 @@ if (actContext) {
           });
         }
       }
-      if (result && flow === 'general') { try { if (applyBusinessCaseEngine(result, String(body.metrics || '') + ' ' + String(body.context || ''))) { console.log('Business Case engine applied'); } } catch (bcE) { console.error('applyBusinessCaseEngine failed: ' + bcE.message); if (result) { delete result.bcInputs; } } }
+      if (result && flow === 'general') { try { if (applyBusinessCaseEngine(result, String(body.metrics || '') + ' ' + String(body.context || '') + ' ' + String(body.ask || ''))) { console.log('Business Case engine applied'); } } catch (bcE) { console.error('applyBusinessCaseEngine failed: ' + bcE.message); if (result) { delete result.bcInputs; } } }
       if (result && result.wrongTool === true) { if (await settleWrongTool(clerkUserId, 'business_case', usageCheck, trialCharged)) { _trialLastCall = false; } } else { queueUsage(clerkUserId, 'business_case', usageCheck); }
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }

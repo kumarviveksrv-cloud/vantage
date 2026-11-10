@@ -36,6 +36,11 @@ r = mk(); r.headline = 'Attrition costs Rs.4Cr a year'; applyBusinessCaseEngine(
 // clean narrative gives ok
 r = mk(); r.signal.situation.narrative = 'We lost 40 of 250.'; r.signal.narrative.cfoVersion = 'Budget Rs.15L against Rs.4Cr at risk.'; r.headline = 'Rs.3.36Cr to Rs.5.76Cr at risk';
 applyBusinessCaseEngine(r, TXT); ok(r.bcCheck.ok === true && /comes from your data/.test(r.bcCheck.note), 'clean analysis passes: ' + JSON.stringify(r.bcCheck));
+// v105: user-supplied budget in headline survives; legitimate derived arithmetic is not flagged
+r = mk(); r.headline = 'A Rs.15L retention programme against Rs.3.36Cr to Rs.5.76Cr at risk'; applyBusinessCaseEngine(r, TXT); ok(/Rs\.15L/.test(r.headline) && !/Rs\.3\.36Cr to Rs\.5\.76Cr to/.test(r.headline), 'budget kept in headline: ' + r.headline);
+r = mk(); r.headline = 'Rs.15L budget'; r.signal.situation.narrative = 'Cohort payroll Rs.3.2Cr; avoiding 10 exits saves Rs.1.44Cr to Rs.1.04Cr'.replace('Rs.1.44Cr to Rs.1.04Cr', 'Rs.84L to Rs.1.44Cr'); r.signal.narrative.cfoVersion = 'Preventing 8 exits saves Rs.64L to Rs.1.12Cr.';
+applyBusinessCaseEngine(r, TXT); ok(r.bcCheck.ok === true, 'cohort payroll and k-multiples allowed: ' + JSON.stringify(r.bcCheck.flagged));
+r = mk(); r.signal.situation.narrative = 'Assume Rs.37L at 50 percent productivity.'; r.signal.narrative.cfoVersion = 'x'; applyBusinessCaseEngine(r, TXT); ok(r.bcCheck.flagged.some(f => /37L/i.test(f)), 'model own assumption still flagged');
 // no engine: model figures untouched, check still runs against the user text, note says not system-checked
 r = mk(); r.bcInputs = { model: 'attrition', exits: 99, avgCtc: 1 }; ok(applyBusinessCaseEngine(r, TXT) === false && r.revenueAtRisk.figure === 'Rs.1.2Cr' && r.bcCheck.engine === false && /not system-checked/.test(r.bcCheck.note), 'engine off: model figure kept, honestly labelled');
 r = { wrongTool: true }; ok(applyBusinessCaseEngine(r, TXT) === false && r.bcCheck === undefined, 'wrong tool untouched');
