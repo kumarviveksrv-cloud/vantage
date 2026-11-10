@@ -96,6 +96,9 @@ r = { detectedCaseType: 'Termination', protocol: { financial: { range: 'x', item
 ok(applyPoshFinancial(r) === false && r.protocol.financial.range === 'x', 'other case types untouched');
 ok(/applyPoshFinancial\(result\)/.test(src), 'financial wired into applyDeterministicFinancial');
 
+r = { detectedCaseType: 'POSH Complaint', poshInputs: { inquiryCompletionDate: '2026-11-02' }, protocol: { summary: 'The report has not reached the employer by 10 November 2026, breaching the ten-day window in section 13(1). The sixty-day clock cannot start until the report arrives.', aria: 'Prompt delivery without breaching confidentiality.' } };
+applyPoshEngine(r, D('2026-11-10'));
+ok(!/breaching the ten-day/.test(r.protocol.summary) && /sixty-day clock/.test(r.protocol.summary) && /breaching confidentiality/.test(r.protocol.aria), 'breaching the window removed, breaching confidentiality kept: ' + r.protocol.summary);
 ok(/applyPoshEngine\(result, new Date\(\)\)/.test(src) && /"poshInputs":/.test(src) && /never calculate a deadline/.test(src), 'wired: schema field, prompt rule and handler call present');
 console.log(fails ? fails + ' FAILED' : 'POSH engine: all passed');
 process.exit(fails ? 1 : 0);

@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v92'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v93'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4043,7 +4043,7 @@ function applyPoshFinancial(result) {
   delete f.split;
   return true;
 }
-const POSH_BREACH_RE = /\b(?:live|existing|current|present|ongoing)\s+breach\b|\bitself\s+a\s+breach\b|\balready\s+in\s+breach\b|\bin\s+breach\s+of\s+this\b|\bhas\s+breached\b|\bbreached\b/i;
+const POSH_BREACH_RE = /\b(?:live|existing|current|present|ongoing)\s+breach\b|\bitself\s+a\s+breach\b|\balready\s+in\s+breach\b|\bin\s+breach\s+of\s+this\b|\bhas\s+breached\b|\bbreached\b|\bbreach(?:ing|es)\s+the\s+[^.]{0,40}\b(?:window|deadline|limit)\b/i;
 // ── POSH ENGINE END ──────────────────────────────────────────────────────────
 
 function applyDeterministicFinancial(result, reqBody) {
