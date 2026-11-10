@@ -659,7 +659,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
 
         <!-- POSH deadline calendar: computed by the system from dates in the description -->
         <div class="fin-card" id="posh-calendar-card" style="display:none">
-          <div class="proto-label" style="margin-bottom:6px"><span class="proto-icon">📅</span> POSH Deadline Calendar</div>
+          <div class="proto-label" style="margin-bottom:6px"><span class="proto-icon">📅</span> <span id="posh-calendar-title">POSH Deadline Calendar</span></div>
           <div id="posh-calendar-asof" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.55);letter-spacing:.04em;margin-bottom:12px"></div>
           <div id="posh-calendar-body"></div>
           <div id="posh-calendar-penalty" style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(99,102,241,0.15);font-size:12px;line-height:1.6;color:rgba(244,243,255,0.78)"></div>
@@ -1152,7 +1152,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
           box.style.display = ''; single.style.display = 'none';
         } else { box.style.display = 'none'; box.innerHTML = ''; single.style.display = ''; }
       })();
-      try { renderPoshCalendar(r.poshCalendar); } catch (_pe) { }
+      try { renderPoshCalendar(r.poshCalendar || r.pipCalendar); } catch (_pe) { }
       (function () { var rn = document.getElementById('fin-range-note'); if (!rn) return; if (fin.rangeNote) { rn.textContent = fin.rangeNote; rn.style.display = ''; } else { rn.textContent = ''; rn.style.display = 'none'; } })();
       var confBadge = document.getElementById('fin-confidence-badge');
       confBadge.innerText = (fin.confidence || '') + ' input coverage';
@@ -1344,6 +1344,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         right.appendChild(d); right.appendChild(s);
         wrap.appendChild(left); wrap.appendChild(right); body.appendChild(wrap);
       });
+      var _pt = document.getElementById('posh-calendar-title'); if (_pt) { _pt.textContent = String(c.title || 'POSH Deadline Calendar'); }
       document.getElementById('posh-calendar-asof').textContent = 'COMPUTED BY THE SYSTEM FROM THE DATES YOU GAVE · AS OF ' + String(c.asOf || '').toUpperCase();
       document.getElementById('posh-calendar-penalty').textContent = String(c.penalty || '');
       document.getElementById('posh-calendar-note').textContent = String(c.note || '');

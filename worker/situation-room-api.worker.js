@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v100'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v101'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1378,6 +1378,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
   "poshInputs": "Only when detectedCaseType is POSH Complaint; otherwise null. When present, an object whose keys are incidentDate, lastIncidentDate, complaintDate, committeeReceiptDate, inquiryStartDate, inquiryCompletionDate, reportDate and actionDate. Each is a date written yyyy-mm-dd, copied from a calendar date the narrative actually states, or null. incidentDate is the date of the incident, or of the first incident in a series; lastIncidentDate is the date of the last incident in a series, null if there was a single incident. complaintDate is when the written complaint was made; committeeReceiptDate is when the Internal Committee received it; inquiryStartDate is when the inquiry began; inquiryCompletionDate is when the inquiry was completed; reportDate is when the committee report or recommendation reached the employer; actionDate is when the employer acted on it. Use null for any date the narrative gives only loosely (for example last week, a few months ago, in March). Never work out a date from a duration, and never calculate a deadline: the system adds the dated deadline calendar.",
   "terminationInputs": "Only when detectedCaseType is Termination, Redundancy or Retrenchment; otherwise null. When present, an object with five keys. scenario is exactly one of retrenchment, misconduct, probation, other. Use retrenchment when the employer is ending the employment for reasons such as redundancy, restructuring, closure of a role, cost reduction or lack of work, and it is not a punishment. Use misconduct when the dismissal or termination is for conduct. Use probation when the employee is on probation and the decision is to end the employment or refuse confirmation. Use other for a resignation, a mutual separation, a fixed-term expiry, or when the facts do not say. workerStatus is exactly one of worker, managerial, unclear: worker for a role such as an operator, technician, clerk or other non-managerial employee; managerial for a role that manages people or the business or is administrative; unclear when the facts do not say. joiningDate and endDate are dates written yyyy-mm-dd, copied from a calendar date the narrative states (endDate is the date employment ends or ended), or null. serviceMonths is the total length of service in whole months only when the narrative states a length such as 4 years 8 months, else null. Never put a rupee figure in this object and never calculate an amount.",
   "bondInputs": "Only when detectedCaseType is Other; otherwise null. When present, an object with six keys. isBond is true only when the case is about a training bond, minimum-service bond or recovery of training cost on leaving, otherwise false. bondAmount is the rupee amount the bond names, written as a plain number (for example 150000 for Rs 1.5L), copied from the narrative, or null. bondMonths is the length of the bond period in whole months, or null. monthsServed is the number of whole months of that bond period the employee had served when leaving, or null. trainingCost is the actual training cost in rupees only when the narrative states one, as a plain number, else null. recovery is deduct_from_final_pay if the employer plans to take the money out of the final pay or settlement, otherwise other. Never calculate an amount and never invent a figure the narrative does not state.",
+  "pipInputs": "Only when detectedCaseType is PIP; otherwise null. When present, an object with six keys, each copied from the narrative and never calculated. pipStartDate is the date the plan starts or started, written yyyy-mm-dd, or null. pipLengthValue is the stated length of the plan as a number, or null. pipLengthUnit is exactly one of days, weeks, months, or null. pipEndDate is the end date or review deadline of the plan if the narrative states one, written yyyy-mm-dd, or null. reviewDates is an array of the yyyy-mm-dd dates on which the narrative says a review or check-in took place, or an empty array. Never turn a phrase such as last month or two weeks ago into a date; use null for a date the narrative does not state as a calendar date.",
   "engineFlags": "Only when the case involves a pregnant employee, or one on or returning from maternity leave; otherwise null. When present, an object with three keys. scenario is exactly one of non_confirmation_only, pressure_to_resign, dismissal_or_resignation_occurred. Use pressure_to_resign when anyone has suggested, hinted or pressed that she should resign or leave, even informally, and she has not yet left. Use dismissal_or_resignation_occurred only when the narrative says she has already been dismissed, has been given notice, or has resigned. Use non_confirmation_only when the only matter is a decision on confirmation, probation, duties or leave and nobody has suggested she leave. freePrenatalCareStated is true only if the narrative says the employer provides pre-natal and post-natal care free of charge, false only if it says it does not, otherwise null. dates is an object with joiningDate, expectedDeliveryDate and decisionDate, each written yyyy-mm-dd and copied from the narrative, or null when the narrative does not give it; decisionDate is the date of the confirmation or other decision the narrative says is coming. Never put a rupee figure in this object.",
   "headcountStated": "The number of employees or workers the narrative states for the organisation or establishment, as a whole number, or null if the narrative gives no headcount. Copy the figure; do not estimate it and do not take it from the MERIDIAN size band.",
   "greenCategory": {
@@ -1402,6 +1403,7 @@ The financial.items list is how the cost model is shown to the HR professional, 
 - For a POSH Complaint, never write a calendar date as a deadline in any field, and never say that a time limit has passed, expired or is overdue unless the dates in the narrative and TODAY'S DATE show it. State time limits as periods (for example 90 days from the start of the inquiry) and the system adds the dated calendar and the status of each limit.
 - Scope of the retrenchment provisions in the supplied IR Code text: section 70 applies to any worker in any industry with at least one year of continuous service under the employer, and is not limited to factories, mines or plantations. Section 65 only limits sections 67 to 69 (lay-off compensation) and has no bearing on section 70. Chapter X (sections 77 to 82, including the prior permission in section 79) applies only to a factory, mine or plantation with 300 or more workers, so treat Chapter X as not applying unless the narrative says the establishment is one of those. Never recommend pausing the process or asking counsel to classify the establishment because of these provisions, and never mention the Factories Act unless the narrative says the workplace is a factory.
 - For Termination, Redundancy and Retrenchment cases, never write a calendar date as a deadline unless the narrative states that exact date; say now, before the end date, or within a number of days instead.
+- For a PIP case the system works out the plan dates and the cost range itself, so return financial.items with only two entries (the CTC assumption and one not_included item), never write a calendar date as a deadline unless the narrative states that exact date, and never say a plan is overdue, expired or that a review was missed unless the narrative's own dates show it. No statute in the supplied Acts sets a length, review frequency or process for a PIP, so do not cite one.
 - For a bond or recovery-of-training-cost case the system replaces the financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item), and never write a recoverable amount, ceiling or pro-rata figure in any text field, never call the training cost a legal ceiling or limit (the s.74 limit is the sum named in the bond, the court decides what is reasonable, and training cost is only evidence), and never say that the employee's consent makes a deduction from wages lawful (s.18(2) lists no such ground for a bond). A bond is not automatically enforceable for its full amount: Contract Act s.74 allows reasonable compensation not exceeding the named sum, and the Code on Wages s.18(2) does not permit deducting it from wages.
 - For Termination, Redundancy and Retrenchment cases the system may replace the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item), keep the range field short, and never write a statutory amount, notice pay, compensation or gratuity figure in any text field.
 - When engineFlags is not null, the system replaces the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item) and keep the range field short. Fill engineFlags carefully, because the figures depend on it.
@@ -4322,7 +4324,101 @@ function applyBondFinancial(result, narrative) {
 }
 // ── BOND ENGINE END ──────────────────────────────────────────────────────────
 
+// ── PIP ENGINE START ─────────────────────────────────────────────────────────
+// Performance Improvement Plan: dates counted in code from dates the narrative states, and a replacement-cost figure from the CTC.
+// No statute in the supplied Acts sets a length, a review frequency or a process for a PIP, so the benchmarks below are practice, not law.
+const PIP_ENGINE = { benchmarkDays: [30, 90], reviewGapDays: 30, defenceLakh: [1, 3] };
+function pipPlural(n) { return n + ' day' + (n === 1 ? '' : 's'); }
+function pipDates(list, startDt) {
+  var out = [];
+  (Array.isArray(list) ? list : []).forEach(function (v) { var d = poshParseDate(v); if (d && (!startDt || d.getTime() >= startDt.getTime())) { out.push(d); } });
+  out.sort(function (a, b) { return a.getTime() - b.getTime(); });
+  return out.filter(function (d, i) { return i === 0 || d.getTime() !== out[i - 1].getTime(); }).slice(0, 12);
+}
+function pipCalendar(inputs, asOf) {
+  var E = PIP_ENGINE, inp = (inputs && typeof inputs === 'object') ? inputs : {};
+  var now = asOf instanceof Date ? asOf : new Date();
+  var today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  var start = poshParseDate(inp.pipStartDate), statedEnd = poshParseDate(inp.pipEndDate);
+  var lv = parseInt(inp.pipLengthValue, 10), unit = String(inp.pipLengthUnit || '').toLowerCase(), calcEnd = null;
+  if (start && isFinite(lv) && lv > 0 && lv <= 365) {
+    if (unit === 'days') { calcEnd = poshAddDays(start, lv); }
+    else if (unit === 'weeks') { calcEnd = poshAddDays(start, lv * 7); }
+    else if (unit === 'months' && lv <= 12) { calcEnd = poshAddMonths(start, lv); }
+  }
+  var end = statedEnd || calcEnd, rows = [];
+  var rule1 = 'The end date you gave, or the start date plus the length of the plan.';
+  if (!end) { rows.push({ label: 'Plan end date', section: '', rule: rule1, date: '', status: 'Not computed: need the end date, or the start date and the length of the plan', tone: 'na' }); }
+  else {
+    var n = poshDays(today, end), st, tn;
+    if (n > 0) { st = 'Ends in ' + pipPlural(n); tn = n <= 7 ? 'warn' : 'ok'; }
+    else if (n === 0) { st = 'Ends today'; tn = 'warn'; }
+    else { st = 'Ended ' + pipPlural(-n) + ' ago; the plan period is over'; tn = 'warn'; }
+    if (statedEnd && calcEnd && Math.abs(poshDays(statedEnd, calcEnd)) > 3) { st += '. Start date plus the stated length gives ' + poshFmt(calcEnd) + ', which differs from the end date you gave'; tn = 'warn'; }
+    rows.push({ label: 'Plan end date', section: '', rule: rule1, date: poshFmt(end), status: st, tone: tn });
+  }
+  var rule2 = 'No statute sets a length for a PIP. Common practice is ' + E.benchmarkDays[0] + ' to ' + E.benchmarkDays[1] + ' days.';
+  if (start && end && end.getTime() > start.getTime()) {
+    var len = poshDays(start, end), el = poshDays(start, today), stat2 = 'Length ' + pipPlural(len), tone2 = 'ok';
+    if (len < E.benchmarkDays[0]) { stat2 += ', shorter than the usual range'; tone2 = 'warn'; }
+    else if (len > E.benchmarkDays[1]) { stat2 += ', longer than the usual range'; tone2 = 'warn'; }
+    if (el >= 0 && el <= len) { stat2 += '. Today is day ' + el + ' of ' + len; }
+    rows.push({ label: 'Plan length', section: 'practice, not law', rule: rule2, date: poshFmt(start) + ' to ' + poshFmt(end), status: stat2, tone: tone2 });
+  } else { rows.push({ label: 'Plan length', section: 'practice, not law', rule: rule2, date: '', status: 'Not computed: need the start date and the end date or length of the plan', tone: 'na' }); }
+  var rule3 = 'No statute sets how often a PIP is reviewed. Common practice is a review roughly every 2 to 4 weeks. Gaps over ' + E.reviewGapDays + ' days are flagged.';
+  var reviews = pipDates(inp.reviewDates, start);
+  if (!reviews.length) { rows.push({ label: 'Reviews held', section: 'practice, not law', rule: rule3, date: '', status: 'Not computed: need the dates of the reviews held', tone: 'na' }); }
+  else {
+    var pts = (start ? [start] : []).concat(reviews), maxGap = 0;
+    for (var i = 1; i < pts.length; i++) { maxGap = Math.max(maxGap, poshDays(pts[i - 1], pts[i])); }
+    var last = reviews[reviews.length - 1], since = poshDays(last, today), active = !end || end.getTime() >= today.getTime();
+    var s3 = reviews.length + ' review' + (reviews.length === 1 ? '' : 's') + ' given. Last review ' + pipPlural(since) + ' ago.';
+    var t3 = 'ok';
+    if (maxGap > E.reviewGapDays) { s3 += ' Longest gap between the start or a review and the next review: ' + pipPlural(maxGap) + '.'; t3 = 'warn'; }
+    if (active && since > E.reviewGapDays) { s3 += ' No review for more than ' + E.reviewGapDays + ' days while the plan is running.'; t3 = 'warn'; }
+    rows.push({ label: 'Reviews held', section: 'practice, not law', rule: rule3, date: poshFmt(last), status: s3, tone: t3 });
+  }
+  return {
+    title: 'PIP Timeline', asOf: poshFmt(today), rows: rows,
+    penalty: 'None of the Acts supplied sets a length, a review frequency or a process for a PIP, so the lengths and gaps above are common practice and not law. Whether the plan is specific, fair and properly supported is a judgement and is not computed.',
+    note: 'Dates are counted from the dates in your description. A date you did not give is shown as not computed and is never guessed.'
+  };
+}
+function applyPipEngine(result, asOf, narrative) {
+  if (!result) { return; }
+  var inp = result.pipInputs; delete result.pipInputs;
+  if (result.wrongTool === true || result.detectedCaseType !== 'PIP') { return; }
+  result.pipCalendar = pipCalendar(inp, asOf || new Date());
+  try { termScrubDeadlines(result, narrative); } catch (e) { console.error('pip deadline scrub failed: ' + e.message); }
+}
+function pipItems(ctcInfo, crit) {
+  var E = PIP_ENGINE, ctc = ctcInfo.lakh;
+  var mult = parseMultiplierRange((REPLACEMENT_COST_MULTIPLIER[crit] || REPLACEMENT_COST_MULTIPLIER.Medium).multiplier);
+  var items = [];
+  items.push({ label: 'Annual CTC used', kind: 'assumption', basis: 'supplied', workings: ctcInfo.source === 'exact' ? 'Rs.' + ctc + 'L, the exact figure you entered.' : 'Rs.' + ctc + 'L, the midpoint of the ' + ctcInfo.band + ' band you chose.' });
+  items.push({ label: 'Role criticality used', kind: 'assumption', basis: 'assumed', workings: crit + (crit === 'Medium' ? ' (the default unless you choose otherwise)' : '') + ', which sets the replacement multiple below.' });
+  items.push({ label: 'Replacement cost if the employee leaves or is exited', kind: 'exposure', basis: 'assumed', low: r2(ctc * mult[0]), high: r2(ctc * mult[1]),
+    workings: 'Annual CTC of Rs.' + ctc + 'L times ' + mult[0] + ' to ' + mult[1] + ', the replacement cost multiple for a ' + crit + ' criticality role. It arises if the plan ends in an exit.' });
+  items.push({ label: 'Defence costs if the exit is challenged', kind: 'exposure', basis: 'assumed', low: E.defenceLakh[0], high: E.defenceLakh[1],
+    workings: 'A fixed planning range of Rs.' + E.defenceLakh[0] + 'L to Rs.' + E.defenceLakh[1] + 'L for advice and defence if an exit after the plan is challenged. It is an assumption, not a published figure.' });
+  items.push({ label: 'What the range leaves out', kind: 'not_included', workings: 'Notice or pay in lieu on a performance exit is set by the employment contract and is not computed. Not counted: management time on the plan, lost productivity during it, tax effects, and any claim beyond defence costs.' });
+  return items;
+}
+function applyPipFinancial(result, ctcInfo, crit) {
+  if (!result || result.wrongTool === true || result.detectedCaseType !== 'PIP' || !ctcInfo) { return false; }
+  if (!result.protocol || !result.protocol.financial) { return false; }
+  var f = result.protocol.financial;
+  f.items = pipItems(ctcInfo, crit);
+  normaliseFinancial(result);
+  f.confidence = ctcInfo.source === 'exact' ? 'Medium' : 'Low';
+  f.rangeNote = 'Replacement and defence costs are planning assumptions. They arise only if the plan ends in an exit.';
+  delete f.split;
+  return true;
+}
+// ── PIP ENGINE END ───────────────────────────────────────────────────────────
+
 function applyDeterministicFinancial(result, reqBody) {
+  try { applyPipEngine(result, new Date(), reqBody && reqBody.narrative); } catch (e) { console.error('applyPipEngine failed: ' + e.message); if (result) { delete result.pipInputs; } }
   try { applyPoshEngine(result, new Date()); } catch (e) { console.error('applyPoshEngine failed: ' + e.message); if (result) { delete result.poshInputs; } }
   try {
     if (result && result.wrongTool !== true && result.protocol) {
@@ -4343,6 +4439,7 @@ function applyDeterministicFinancial(result, reqBody) {
     if (flags && typeof flags === 'object') { delete result.terminationInputs; delete result.bondInputs; }
     if (!flags || typeof flags !== 'object') {
       try { applyPoshFinancial(result); } catch (e) { console.error('applyPoshFinancial failed: ' + e.message); }
+      try { if (applyPipFinancial(result, resolveCtc(reqBody), resolveCriticality(reqBody && reqBody.roleCriticality))) { console.log('PIP engine applied'); } } catch (e) { console.error('applyPipFinancial failed: ' + e.message); }
       try { if (applyBondFinancial(result, reqBody && reqBody.narrative)) { console.log('Bond engine applied'); } } catch (e) { console.error('applyBondFinancial failed: ' + e.message); }
       try { if (applyTerminationFinancial(result, resolveCtc(reqBody), reqBody && reqBody.monthlyGross, reqBody && reqBody.monthlyBasicDa, new Date())) { console.log('Termination engine applied'); } } catch (e) { console.error('applyTerminationFinancial failed: ' + e.message); }
       return;
