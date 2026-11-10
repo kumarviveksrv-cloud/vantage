@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v101'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v102'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4327,7 +4327,7 @@ function applyBondFinancial(result, narrative) {
 // ── PIP ENGINE START ─────────────────────────────────────────────────────────
 // Performance Improvement Plan: dates counted in code from dates the narrative states, and a replacement-cost figure from the CTC.
 // No statute in the supplied Acts sets a length, a review frequency or a process for a PIP, so the benchmarks below are practice, not law.
-const PIP_ENGINE = { benchmarkDays: [30, 90], reviewGapDays: 30, defenceLakh: [1, 3] };
+const PIP_ENGINE = { benchmarkDays: [28, 92], reviewGapDays: 30, defenceLakh: [1, 3] };
 function pipPlural(n) { return n + ' day' + (n === 1 ? '' : 's'); }
 function pipDates(list, startDt) {
   var out = [];
@@ -4357,7 +4357,7 @@ function pipCalendar(inputs, asOf) {
     if (statedEnd && calcEnd && Math.abs(poshDays(statedEnd, calcEnd)) > 3) { st += '. Start date plus the stated length gives ' + poshFmt(calcEnd) + ', which differs from the end date you gave'; tn = 'warn'; }
     rows.push({ label: 'Plan end date', section: '', rule: rule1, date: poshFmt(end), status: st, tone: tn });
   }
-  var rule2 = 'No statute sets a length for a PIP. Common practice is ' + E.benchmarkDays[0] + ' to ' + E.benchmarkDays[1] + ' days.';
+  var rule2 = 'No statute sets a length for a PIP. Common practice is about 1 to 3 months (startups often use 30 days, larger companies 2 or 3 months).';
   if (start && end && end.getTime() > start.getTime()) {
     var len = poshDays(start, end), el = poshDays(start, today), stat2 = 'Length ' + pipPlural(len), tone2 = 'ok';
     if (len < E.benchmarkDays[0]) { stat2 += ', shorter than the usual range'; tone2 = 'warn'; }

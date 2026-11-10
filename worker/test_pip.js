@@ -27,6 +27,15 @@ c = pipCalendar({ pipStartDate: '2026-01-01', pipEndDate: '2026-12-31' }, D('202
 ok(/longer than the usual range/.test(row(c, 'Plan length').status), 'long plan flagged');
 c = pipCalendar({ pipStartDate: '2026-10-01', pipEndDate: '2026-12-15', pipLengthValue: 60, pipLengthUnit: 'days' }, D('2026-11-10'));
 ok(/differs from the end date you gave/.test(row(c, 'Plan end date').status), 'conflicting end dates flagged');
+c = pipCalendar({ pipStartDate: '2026-10-01', pipLengthValue: 3, pipLengthUnit: 'months' }, D('2026-11-10'));
+ok(!/usual range/.test(row(c, 'Plan length').status) && /Length 92 days/.test(row(c, 'Plan length').status), '3 months (92 days) not flagged: ' + row(c, 'Plan length').status);
+c = pipCalendar({ pipStartDate: '2026-02-01', pipLengthValue: 1, pipLengthUnit: 'months' }, D('2026-02-10'));
+ok(!/usual range/.test(row(c, 'Plan length').status) && /Length 28 days/.test(row(c, 'Plan length').status), '1 month in Feb (28 days) not flagged: ' + row(c, 'Plan length').status);
+c = pipCalendar({ pipStartDate: '2026-10-01', pipLengthValue: 30, pipLengthUnit: 'days' }, D('2026-10-05'));
+ok(row(c, 'Plan length').tone === 'ok', 'startup 30 days fine');
+c = pipCalendar({ pipStartDate: '2026-10-01', pipLengthValue: 95, pipLengthUnit: 'days' }, D('2026-10-05'));
+ok(/longer than the usual range/.test(row(c, 'Plan length').status), '95 days flagged');
+ok(/startups often use 30 days/.test(row(c, 'Plan length').rule), 'rule text names the range');
 // reviews
 c = pipCalendar({ pipStartDate: '2026-10-01', pipEndDate: '2026-12-01', reviewDates: ['2026-10-10', '2026-10-24'] }, D('2026-11-10'));
 ok(/2 reviews given. Last review 17 days ago/.test(row(c, 'Reviews held').status) && row(c, 'Reviews held').tone === 'ok', 'reviews ok: ' + row(c, 'Reviews held').status);
