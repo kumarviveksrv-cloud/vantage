@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v106'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v107'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4539,7 +4539,7 @@ function bcFigureCheck(result, c, userText) {
   fields.forEach(function (f) {
     var vals = bcFigureNums(f[1]);
     multiples = [];
-    if (c) { var kRe = /(\d+)\s+(?:more\s+)?(?:exits?|departures?|employees?|people|leavers?|resignations?)/gi, km; while ((km = kRe.exec(f[1]))) { var k = parseInt(km[1], 10); if (k >= 1 && k <= 100) { [c.perExit, c.replPer, c.prodPer].forEach(function (a) { multiples.push(a[0] * k, a[1] * k); }); multiples.push(c.ctcL * k); } } }
+    if (c) { var kWords = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, fifteen: 15, twenty: 20 }, kRe = /(?:even\s+)?(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty)\s+(?:more\s+)?(?:even\s+)?(?:exits?|departures?|employees?|people|leavers?|resignations?)/gi, km; while ((km = kRe.exec(f[1]))) { var k = kWords[km[1].toLowerCase()] || parseInt(km[1], 10); if (k >= 1 && k <= 100) { [c.perExit, c.replPer, c.prodPer].forEach(function (a) { multiples.push(a[0] * k, a[1] * k); }); multiples.push(c.ctcL * k); } } }
     var txt = f[1], m, re = /(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\b|\b[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|k)\b/gi;
     while ((m = re.exec(txt))) {
       var v = bcFigureNums(m[0])[0];
