@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v105'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v106'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -2304,6 +2304,21 @@ async function anonymizeLargeDocument(text, maxChunkSize = 6000) {
   return anonymizedChunks.join('\n\n');
 }
 
+async function bcPreExtract(text) {
+  try {
+    var prompt = 'You copy numbers out of text. Return strict JSON only: {"model":"attrition" or "other","exits":number or null,"headcount":number or null,"avgCtc":rupees as a plain number or null,"periodMonths":number or null,"rampMonths":number or null,"roleTier":"junior"|"senior"|"default","programmeBudget":rupees as a plain number or null}. model is attrition only if the text is about employees leaving. Copy numbers exactly as written (Rs 8L = 800000, 15L = 1500000). If a number is not stated, use null. Never calculate or invent anything. exits must be the count of people who left.';
+    var resp = await callClaude(prompt, [{ role: 'user', content: String(text).slice(0, 6000) }], 600, CLAUDE_MODEL_FAST, CLAUDE_FAST_TIMEOUT_MS);
+    var raw = resp.content[0].text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    return JSON.parse(raw);
+  } catch (e) { console.error('bcPreExtract failed: ' + e.message); return null; }
+}
+async function bcFiguresBlock(anonText, rawText) {
+  var text = rawText, inp = await bcPreExtract(anonText);
+  if (!inp) { return { inputs: null, block: '' }; }
+  var c = bcCalc(bcRead(inp, text));
+  if (!c) { return { inputs: null, block: '' }; }
+  return { inputs: inp, block: bcPromptBlock(c) };
+}
 async function anonymizeNarrative(text, attempt = 1, context = '') {
   if (!text || typeof text !== 'string' || text.trim().length === 0) return '';
   // Later turns of a conversation are anonymised one at a time. Showing the model the
@@ -4495,6 +4510,16 @@ function bcLines(c) {
   if (c.breakEven) { L.push('Break-even for the ' + engineLakh(r2(c.budgetL)) + ' programme: it pays for itself if it prevents ' + (Math.round(c.breakEven[0] * 10) / 10) + ' to ' + (Math.round(c.breakEven[1] * 10) / 10) + ' exits (each exit costs ' + bcRange(c.perExit) + ').'); }
   return L;
 }
+function bcPromptBlock(c) {
+  var T = c.T, s = 'SYSTEM-COMPUTED FIGURES (already calculated by code from the data above; use exactly these and do not recompute them):\n';
+  s += '- Annual cost of attrition if nothing changes (the only total to quote): ' + bcRange(c.total) + '. This already covers 12 months. Never annualise it again and never quote a smaller or different total.\n';
+  s += '- Of which replacement cost: ' + bcRange(c.repl) + '; productivity gap during ramp-up: ' + bcRange(c.prod) + '.\n';
+  s += '- Cost of one exit: ' + bcRange(c.perExit) + '.\n';
+  if (c.rate !== null) { s += '- Annualised attrition rate: ' + (Math.round(c.rate * 10) / 10) + ' percent.\n'; }
+  if (c.breakEven) { s += '- Programme budget ' + engineLakh(r2(c.budgetL)) + ' breaks even if it prevents ' + (Math.round(c.breakEven[0] * 10) / 10) + ' to ' + (Math.round(c.breakEven[1] * 10) / 10) + ' exits. Use this break-even, not a return ratio you calculate yourself.\n'; }
+  s += 'Any other rupee figure you write must be a whole number of exits multiplied by the per-exit cost above, with the number of exits stated in the same sentence. Do not invent other rupee amounts or percentages of productivity.\n';
+  return s;
+}
 function bcFigureNums(text) { return bondAmountsIn(text).map(function (n) { return n / 100000; }); }
 function bcFigureCheck(result, c, userText) {
   var allowed = bcFigureNums(userText), multiples = [], flagged = [], seen = {};
@@ -4502,8 +4527,6 @@ function bcFigureCheck(result, c, userText) {
     [c.repl, c.prod, c.total, c.perExit, c.replPer, c.prodPer].forEach(function (a) { allowed.push(a[0], a[1]); });
     allowed.push(c.ctcL); if (c.budgetL) { allowed.push(c.budgetL); }
     allowed.push(c.ctcL * c.T.exits, c.ctcL * c.annualExits);
-    var kMax = Math.min(Math.max(c.T.exits, Math.ceil(c.annualExits)), 100);
-    for (var k = 1; k <= kMax; k++) { [c.perExit, c.replPer, c.prodPer].forEach(function (a) { multiples.push(a[0] * k, a[1] * k); }); }
   }
   var inRange = function (v) { return c && v >= c.total[0] * 0.97 && v <= c.total[1] * 1.03; };
   var fields = [];
@@ -4515,6 +4538,8 @@ function bcFigureCheck(result, c, userText) {
   walk(result, '');
   fields.forEach(function (f) {
     var vals = bcFigureNums(f[1]);
+    multiples = [];
+    if (c) { var kRe = /(\d+)\s+(?:more\s+)?(?:exits?|departures?|employees?|people|leavers?|resignations?)/gi, km; while ((km = kRe.exec(f[1]))) { var k = parseInt(km[1], 10); if (k >= 1 && k <= 100) { [c.perExit, c.replPer, c.prodPer].forEach(function (a) { multiples.push(a[0] * k, a[1] * k); }); multiples.push(c.ctcL * k); } } }
     var txt = f[1], m, re = /(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\b|\b[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|k)\b/gi;
     while ((m = re.exec(txt))) {
       var v = bcFigureNums(m[0])[0];
@@ -4539,8 +4564,8 @@ function applyBusinessCaseEngine(result, userText) {
     result.signal.impact.breakdown = bcLines(c);
     if (result.humac) { result.humac.range = bcRange(c.total).replace(' to ', ' – '); }
     if (typeof result.headline === 'string') {
-      var userFig = bcFigureNums(userText).concat([c.ctcL, c.budgetL || 0]), offending = false, m, re = /(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\b/gi;
-      result.headline = result.headline.replace(re, function (all) { var v = bcFigureNums(all)[0]; if (v === undefined) { return all; } if (v >= c.total[0] * 0.97 && v <= c.total[1] * 1.03) { return all; } if (userFig.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, a * 0.005); })) { return all; } offending = true; return fig; });
+      var userFig = bcFigureNums(userText).concat([c.ctcL, c.budgetL || 0]), offending = false, m, re = /(?:₹|rs\.?|inr)\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?(?:\s*(?:to|-|–|—)\s*(?:₹|rs\.?|inr)?\s*[\d,]+(?:\.\d+)?\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?)?\b/gi;
+      result.headline = result.headline.replace(re, function (all) { var vs = bcFigureNums(all); if (!vs.length) { return all; } var good = vs.every(function (v) { return (v >= c.total[0] * 0.97 && v <= c.total[1] * 1.03) || userFig.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, a * 0.005); }); }); if (good) { return all; } offending = true; return fig; });
       if (offending) { result.headline = result.headline.replace(new RegExp(fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\s*(?:to|-|–)\\s*' + fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')+', 'g'), fig); }
     }
     result.bcEngine = { model: 'attrition-v1', total: [r2(c.total[0]), r2(c.total[1])], perExit: [r2(c.perExit[0]), r2(c.perExit[1])] };
@@ -5127,6 +5152,7 @@ if (actContext) {
       const humacContext = body.humacContext || null;
 
       let userMessage;
+      let bcAnonText = '';
       if (flow === 'stakeholder') {
         const { situation, stakeholderType, stakeholderName, ask, context } = body;
 
@@ -5164,9 +5190,12 @@ if (actContext) {
         if (truncatedMetrics && anonymizedMetrics === null) return anonymizationFailedResponse();
         if (truncatedContext && anonymizedContext === null) return anonymizationFailedResponse();
 
+        bcAnonText = String(anonymizedMetrics || '') + ' ' + String(anonymizedContext || '') + ' ' + String(anonymizedGenAsk || '');
         userMessage = `HR METRICS / DATA: ${anonymizedMetrics}\n${anonymizedContext ? `ADDITIONAL CONTEXT: ${anonymizedContext}` : ''}\n${anonymizedGenAsk ? `THE ASK (what the requester wants approved or decided): ${anonymizedGenAsk}` : ''}\n${audience ? `PRIMARY AUDIENCE: ${truncateInput(audience, 200)}` : ''}\n\nBuild the complete SIGNAL narrative including Revenue at Risk and Humac financial translation. Return the complete JSON response as specified.`;
       }
 
+      let bcPre = null;
+      if (flow === 'general') { try { bcPre = await bcFiguresBlock(bcAnonText, String(body.metrics || '') + ' ' + String(body.context || '') + ' ' + String(body.ask || '')); if (bcPre && bcPre.block) { userMessage = bcPre.block + '\n' + userMessage; } } catch (bcPreE) { console.error('bc pre-extract failed: ' + bcPreE.message); } }
       const systemPrompt = getBusinessCasePrompt(meridian, flow, humacContext);
       _emit('stage', { stage: 'analyse' });
       const response = await callClaude(systemPrompt, [{ role: 'user', content: userMessage }], MAX_TOKENS, CLAUDE_MODEL_DEFAULT, undefined, function (n) { _emit('gen', { chars: n }); }, ANALYST_TEMPERATURE);
@@ -5203,6 +5232,7 @@ if (actContext) {
           });
         }
       }
+      if (result && flow === 'general' && bcPre && bcPre.inputs) { result.bcInputs = bcPre.inputs; }
       if (result && flow === 'general') { try { if (applyBusinessCaseEngine(result, String(body.metrics || '') + ' ' + String(body.context || '') + ' ' + String(body.ask || ''))) { console.log('Business Case engine applied'); } } catch (bcE) { console.error('applyBusinessCaseEngine failed: ' + bcE.message); if (result) { delete result.bcInputs; } } }
       if (result && result.wrongTool === true) { if (await settleWrongTool(clerkUserId, 'business_case', usageCheck, trialCharged)) { _trialLastCall = false; } } else { queueUsage(clerkUserId, 'business_case', usageCheck); }
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
