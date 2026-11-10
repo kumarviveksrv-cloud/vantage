@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v107'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v108'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4517,7 +4517,7 @@ function bcPromptBlock(c) {
   s += '- Cost of one exit: ' + bcRange(c.perExit) + '.\n';
   if (c.rate !== null) { s += '- Annualised attrition rate: ' + (Math.round(c.rate * 10) / 10) + ' percent.\n'; }
   if (c.breakEven) { s += '- Programme budget ' + engineLakh(r2(c.budgetL)) + ' breaks even if it prevents ' + (Math.round(c.breakEven[0] * 10) / 10) + ' to ' + (Math.round(c.breakEven[1] * 10) / 10) + ' exits. Use this break-even, not a return ratio you calculate yourself.\n'; }
-  s += 'Any other rupee figure you write must be a whole number of exits multiplied by the per-exit cost above, with the number of exits stated in the same sentence. Do not invent other rupee amounts or percentages of productivity.\n';
+  s += 'Any other rupee figure you write must be a whole number of exits multiplied by the per-exit cost above, with the number of exits stated in the same sentence. Do not invent other rupee amounts or percentages of productivity. Do not write hypothetical alternative rupee amounts anywhere, for example other budget sizes in a rehearsal prompt; refer to the stated budget only. When you quote avoided cost for a number of exits, call it avoided cost, not return, because it is before the programme spend.\n';
   return s;
 }
 function bcFigureNums(text) { return bondAmountsIn(text).map(function (n) { return n / 100000; }); }
