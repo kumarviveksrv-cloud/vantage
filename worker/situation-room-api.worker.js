@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v84'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v85'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -489,7 +489,7 @@ function selectActsForPolicy(question = '', context = '') {
     acts.add(LEGAL_ACT_KEYS.POSH);
   }
 
-  if (/bonus|wage|minimum\s*wage|payment\s*of\s*wage|salary|overtime|equal\s*pay|remuneration/.test(text)) {
+  if (/bonus|wage|minimum\s*wage|payment\s*of\s*wage|salary|overtime|equal\s*pay|remuneration|deduct|withhold|withheld|set[-\s]*off|notice\s*(period|pay)|full[-\s]*and[-\s]*final|\bf\s*&\s*f\b|final\s*settlement|exit\s*settlement|\bdues\b|allowance|\bfines?\b|salary\s*advance|pay\s*cut|unpaid|stipend|\bctc\b/.test(text)) {
     acts.add(LEGAL_ACT_KEYS.WAGES_CODE);
   }
 
