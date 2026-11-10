@@ -80,11 +80,11 @@
     input[type=text]:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
     input[type=text]::placeholder{color:rgba(165,180,252,0.25)}
     .ctc-row{display:flex;gap:10px;flex-wrap:wrap}
-    .ctc-row select,.ctc-row input[type=number],.ctc-row input#ctc-exact{flex:0 1 360px;min-width:0;padding:14px 16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:12px;color:#f4f3ff;font-family:var(--font), sans-serif;font-size:13px;outline:none;transition:border .2s}
-    .ctc-row select:focus,.ctc-row input[type=number]:focus,.ctc-row input#ctc-exact:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
+    .ctc-row select,.ctc-row input[type=number],.ctc-row input#ctc-exact,.ctc-row input.money-in{flex:0 1 360px;min-width:0;padding:14px 16px;background:rgba(5,4,16,0.4);border:1px solid rgba(99,102,241,0.15);border-radius:12px;color:#f4f3ff;font-family:var(--font), sans-serif;font-size:13px;outline:none;transition:border .2s}
+    .ctc-row select:focus,.ctc-row input[type=number]:focus,.ctc-row input#ctc-exact:focus,.ctc-row input.money-in:focus{border-color:rgba(99,102,241,0.45);box-shadow:0 0 0 3px rgba(99,102,241,0.06)}
     .ctc-row select option{background:#0b0a1c;color:#f4f3ff}
-    .ctc-row input[type=number]::placeholder,.ctc-row input#ctc-exact::placeholder{color:rgba(165,180,252,0.4)}
-    @media(max-width:600px){.ctc-row select,.ctc-row input#ctc-exact{flex:1 1 100%}}
+    .ctc-row input[type=number]::placeholder,.ctc-row input#ctc-exact::placeholder,.ctc-row input.money-in::placeholder{color:rgba(165,180,252,0.4)}
+    @media(max-width:600px){.ctc-row select,.ctc-row input#ctc-exact,.ctc-row input.money-in{flex:1 1 100%}}
     .privacy-note{font-size:12px;line-height:1.5;color:rgba(244,243,255,0.62);margin-top:8px;display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace}
     .submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;font-family:var(--font), sans-serif;font-weight:800;font-size:15px;border:none;border-radius:12px;cursor:pointer;transition:opacity .2s;box-shadow:0 4px 20px rgba(99,102,241,0.35)}
     .submit-btn:hover{opacity:.88}
@@ -528,6 +528,12 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
               <option value="High">High: senior, specialised or hard to backfill</option>
             </select>
           </div>
+          <label class="form-label" for="monthly-gross" style="margin-top:14px">Monthly pay, for dismissals and retrenchments (optional)</label>
+          <div class="ctc-row">
+            <input type="text" class="money-in" id="monthly-gross" autocomplete="off" inputmode="numeric" maxlength="10" placeholder="Monthly gross, e.g. 85,000" aria-label="Monthly gross pay in rupees" />
+            <input type="text" class="money-in" id="monthly-basic" autocomplete="off" inputmode="numeric" maxlength="10" placeholder="Basic + DA a month, e.g. 40,000" aria-label="Monthly basic pay plus dearness allowance in rupees" />
+          </div>
+          <div class="privacy-note">&#x1F512; Gross is total monthly pay before deductions, without employer PF or gratuity. Notice pay, retrenchment compensation and gratuity are worked out from wages (basic + DA, at least half of gross). Leave both blank and you get a range from the CTC.</div>
         </div>
         <button class="submit-btn" id="submit-btn" onclick="runPACT()" disabled>Run PACT Assessment + Decision Protocol &rarr;</button>         <div id="submit-hint" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:#c4b5fd;text-align:center;font-weight:600"></div>
       </div>
@@ -953,6 +959,8 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       var ctcBand = _ctcBandEl ? _ctcBandEl.value : '';
       var _exParsed = parseLakh(_ctcExactEl ? _ctcExactEl.value : '');
       var ctcExact = isFinite(_exParsed) ? String(_exParsed) : '';
+      var _mgEl = document.getElementById('monthly-gross'), _mbEl = document.getElementById('monthly-basic');
+      var monthlyGross = _mgEl ? _mgEl.value.replace(/[^0-9]/g, '') : '', monthlyBasicDa = _mbEl ? _mbEl.value.replace(/[^0-9]/g, '') : '';
       var _roleCritEl = document.getElementById('role-criticality');
       var roleCriticality = _roleCritEl ? _roleCritEl.value : 'Medium';
       var _exNum = _exParsed;
@@ -974,6 +982,8 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
             ctcBand: ctcBand,
             ctcExact: ctcExact,
             roleCriticality: roleCriticality,
+            monthlyGross: monthlyGross,
+            monthlyBasicDa: monthlyBasicDa,
             meridian: meridian
           })
         });
@@ -1463,6 +1473,8 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       var _cb = document.getElementById('ctc-band'); if (_cb) { _cb.value = ''; }
       var _ce = document.getElementById('ctc-exact'); if (_ce) { _ce.value = ''; } if (typeof updateCtcEcho === 'function') { updateCtcEcho(); }
       var _rc = document.getElementById('role-criticality'); if (_rc) { _rc.value = 'Medium'; }
+      var _mg = document.getElementById('monthly-gross'); if (_mg) { _mg.value = ''; }
+      var _mb = document.getElementById('monthly-basic'); if (_mb) { _mb.value = ''; }
       document.querySelectorAll('.case-type-btn').forEach(function(b){ b.classList.remove('selected'); });
       updateCaseTypeSummary();
       document.getElementById('submit-btn').disabled = true;

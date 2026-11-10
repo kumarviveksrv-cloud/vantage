@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v93'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v94'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1376,6 +1376,7 @@ Return ONLY a valid JSON object. No markdown, no prose wrapper, no explanation o
   "otherLabel": "Only when detectedCaseType is Other: a 2 to 4 word label in sentence case describing the situation. Existing labels and what each one means: Exit and notice dispute = a resignation, notice period, buyout, last day, exit settlement or constructive dismissal claim; Conflict of interest = an outside business, directorship or relationship that conflicts with the employer's interest while still employed; Competition and confidentiality = working for or diverting clients to a competitor, or misusing confidential information or client data; Transfer and role change = the EMPLOYER moves, demotes, promotes or reassigns the employee or changes the role; Recovery of dues or losses = the employer seeking money back from an employee or ex-employee, such as a bond, advance or loss; Wages and pay dispute = unpaid, delayed or disputed salary, bonus, overtime, deductions or minimum wage, where the EMPLOYEE says they were not paid correctly; Probation issue = confirming, extending or ending probation; Flexible work request = a request made by the employee for remote or flexible work, relocation or leave; Maternity and pregnancy = a pregnant employee, or one on or returning from maternity leave, including benefit, leave, dismissal or role change. Use an existing label only when its meaning matches the facts. A request made BY the employee (such as remote or flexible work, relocation or leave) is not an employer transfer. If no label matches, coin a new 2 to 4 word label that does. A new accurate label is better than a stretched old one. Letters, numbers and spaces only. Otherwise null.",
   "secondaryCaseType": "Return a second type from the eight standard types ONLY when the facts show that second matter is already under way or has been raised (for example a discrimination grievance filed during a PIP, or absence that has already led to a termination notice). A possible or likely next step is NOT a second type: a PIP that may end in termination is still only PIP. A matter that is only proposed, considered or feared by a manager (for example non-confirmation, pressure to resign, a rotation change) has not been raised, so it is not a second type. Return null unless the narrative itself says the second matter has already started. When in doubt return null. Otherwise null.",
   "poshInputs": "Only when detectedCaseType is POSH Complaint; otherwise null. When present, an object whose keys are incidentDate, lastIncidentDate, complaintDate, committeeReceiptDate, inquiryStartDate, inquiryCompletionDate, reportDate and actionDate. Each is a date written yyyy-mm-dd, copied from a calendar date the narrative actually states, or null. incidentDate is the date of the incident, or of the first incident in a series; lastIncidentDate is the date of the last incident in a series, null if there was a single incident. complaintDate is when the written complaint was made; committeeReceiptDate is when the Internal Committee received it; inquiryStartDate is when the inquiry began; inquiryCompletionDate is when the inquiry was completed; reportDate is when the committee report or recommendation reached the employer; actionDate is when the employer acted on it. Use null for any date the narrative gives only loosely (for example last week, a few months ago, in March). Never work out a date from a duration, and never calculate a deadline: the system adds the dated deadline calendar.",
+  "terminationInputs": "Only when detectedCaseType is Termination, Redundancy or Retrenchment; otherwise null. When present, an object with five keys. scenario is exactly one of retrenchment, misconduct, probation, other. Use retrenchment when the employer is ending the employment for reasons such as redundancy, restructuring, closure of a role, cost reduction or lack of work, and it is not a punishment. Use misconduct when the dismissal or termination is for conduct. Use probation when the employee is on probation and the decision is to end the employment or refuse confirmation. Use other for a resignation, a mutual separation, a fixed-term expiry, or when the facts do not say. workerStatus is exactly one of worker, managerial, unclear: worker for a role such as an operator, technician, clerk or other non-managerial employee; managerial for a role that manages people or the business or is administrative; unclear when the facts do not say. joiningDate and endDate are dates written yyyy-mm-dd, copied from a calendar date the narrative states (endDate is the date employment ends or ended), or null. serviceMonths is the total length of service in whole months only when the narrative states a length such as 4 years 8 months, else null. Never put a rupee figure in this object and never calculate an amount.",
   "engineFlags": "Only when the case involves a pregnant employee, or one on or returning from maternity leave; otherwise null. When present, an object with three keys. scenario is exactly one of non_confirmation_only, pressure_to_resign, dismissal_or_resignation_occurred. Use pressure_to_resign when anyone has suggested, hinted or pressed that she should resign or leave, even informally, and she has not yet left. Use dismissal_or_resignation_occurred only when the narrative says she has already been dismissed, has been given notice, or has resigned. Use non_confirmation_only when the only matter is a decision on confirmation, probation, duties or leave and nobody has suggested she leave. freePrenatalCareStated is true only if the narrative says the employer provides pre-natal and post-natal care free of charge, false only if it says it does not, otherwise null. dates is an object with joiningDate, expectedDeliveryDate and decisionDate, each written yyyy-mm-dd and copied from the narrative, or null when the narrative does not give it; decisionDate is the date of the confirmation or other decision the narrative says is coming. Never put a rupee figure in this object.",
   "headcountStated": "The number of employees or workers the narrative states for the organisation or establishment, as a whole number, or null if the narrative gives no headcount. Copy the figure; do not estimate it and do not take it from the MERIDIAN size band.",
   "greenCategory": {
@@ -1398,6 +1399,7 @@ The financial.items list is how the cost model is shown to the HR professional, 
 - exposure: a cost that arises only if the wrong decision is taken, such as back wages or reinstatement-equivalent relief, defence and complaint costs, or replacement cost. Give low and high in lakh as plain numbers. The workings must show the inputs and arithmetic that produce exactly those numbers. The system adds the exposure items to make the range, so put every cost you want counted into an exposure item and count nothing twice. An exposure item must never contain any part of an amount shown as owed_in_any_case: for example, back wages or relief cover only the extra period of a dispute or wrongful action, never the statutory benefit period that is already shown as owed in any case.
 - owed_in_any_case: an amount payable whether or not the employee is dismissed, such as a statutory benefit. It is shown but never added to the range. Work it out from the Act's own wording: a benefit paid at the average daily wage for the period of absence is paid for every day of that period, not only working days.
 - For a POSH Complaint, never write a calendar date as a deadline in any field, and never say that a time limit has passed, expired or is overdue unless the dates in the narrative and TODAY'S DATE show it. State time limits as periods (for example 90 days from the start of the inquiry) and the system adds the dated calendar and the status of each limit.
+- For Termination, Redundancy and Retrenchment cases the system may replace the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item), keep the range field short, and never write a statutory amount, notice pay, compensation or gratuity figure in any text field.
 - When engineFlags is not null, the system replaces the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item) and keep the range field short. Fill engineFlags carefully, because the figures depend on it.
 - Every number that comes neither from the narrative nor from an Act provided to you has basis assumed. Never state a statutory amount, penalty or compensation formula that the Acts provided to you do not contain.
 
@@ -4046,6 +4048,114 @@ function applyPoshFinancial(result) {
 const POSH_BREACH_RE = /\b(?:live|existing|current|present|ongoing)\s+breach\b|\bitself\s+a\s+breach\b|\balready\s+in\s+breach\b|\bin\s+breach\s+of\s+this\b|\bhas\s+breached\b|\bbreached\b|\bbreach(?:ing|es)\s+the\s+[^.]{0,40}\b(?:window|deadline|limit)\b/i;
 // ── POSH ENGINE END ──────────────────────────────────────────────────────────
 
+// ── TERMINATION ENGINE START ─────────────────────────────────────────────────
+// Statutory amounts for a Termination, Redundancy or Retrenchment case, computed in code from the CTC, optional monthly pay and the service period.
+// Sources are the Acts held in /legal: IR Code s.70 (notice, compensation), Social Security Code s.53 (gratuity), Code on Wages s.2(y) (wages).
+// The model only extracts the scenario, worker status and service dates. A missing input is reported, never guessed.
+const TERMINATION_ENGINE = {
+  noticeMonths: 1,
+  compDays: 15,
+  dayDivisor: 26,
+  gratuityDays: 15,
+  gratuityMinMonths: 60,
+  wageFloorShare: 0.5,
+  backWagesMonths: [3, 12],
+  defenceLakh: [1, 3],
+  scenarios: ['retrenchment', 'misconduct', 'probation']
+};
+function termParseRupees(v) {
+  var n = parseFloat(String(v == null ? '' : v).replace(/[,\s₹]/g, '').replace(/^rs\.?/i, ''));
+  return (isFinite(n) && n >= 1000 && n <= 5000000) ? Math.round(n) : null;
+}
+function termRs(n) { return 'Rs.' + Math.round(n).toLocaleString('en-IN'); }
+function termWage(ctcLakh, grossRaw, basicRaw) {
+  var E = TERMINATION_ENGINE, gross = termParseRupees(grossRaw), basic = termParseRupees(basicRaw);
+  var ctcMonthly = ctcLakh * 100000 / 12, lo, hi, basis, note;
+  if (gross && basic) { var w = Math.min(gross, Math.max(basic, E.wageFloorShare * gross)); lo = hi = w; basis = 'supplied'; note = 'the higher of the basic + DA you gave (' + termRs(basic) + ') and half of the gross you gave (' + termRs(gross) + ')'; }
+  else if (gross) { lo = E.wageFloorShare * gross; hi = gross; basis = 'supplied'; note = 'a range from half of the gross you gave (' + termRs(gross) + ') up to the gross, because basic + DA was not given'; }
+  else if (basic) { lo = basic; hi = Math.max(basic, ctcMonthly); basis = 'assumed'; note = 'a range from the basic + DA you gave (' + termRs(basic) + ') up to one twelfth of CTC, because gross was not given'; }
+  else { lo = E.wageFloorShare * ctcMonthly; hi = ctcMonthly; basis = 'assumed'; note = 'a range from half of one twelfth of CTC up to one twelfth of CTC, because no monthly pay was given'; }
+  return { lo: lo, hi: hi, point: lo === hi, basis: basis, note: note };
+}
+function termService(inp, asOf) {
+  var i = inp || {}, join = poshParseDate(i.joiningDate), end = poshParseDate(i.endDate), months = null, extra = 0, source = null;
+  if (join) {
+    var stop = end || asOf, sourceNote = end ? 'to the end date given' : 'to today';
+    if (stop && stop.getTime() >= join.getTime()) {
+      months = (stop.getUTCFullYear() - join.getUTCFullYear()) * 12 + (stop.getUTCMonth() - join.getUTCMonth());
+      if (poshAddMonths(join, months).getTime() > stop.getTime()) { months--; }
+      extra = poshDays(poshAddMonths(join, months), stop);
+      source = 'joined ' + poshFmt(join) + ', counted ' + sourceNote + ' (' + poshFmt(stop) + ')';
+    }
+  }
+  if (months === null) {
+    var sm = parseInt(i.serviceMonths, 10);
+    if (isFinite(sm) && sm >= 0 && sm <= 720) { months = sm; extra = 0; source = 'as stated in the description'; }
+  }
+  if (months === null) { return null; }
+  var rem = months % 12, completed = Math.floor(months / 12), part = rem > 6 || (rem === 6 && extra > 0);
+  return { months: months, completed: completed, partOverSix: part, years: completed + (part ? 1 : 0), source: source,
+    text: completed + ' completed year' + (completed === 1 ? '' : 's') + ' and ' + rem + ' month' + (rem === 1 ? '' : 's') };
+}
+function termLakh(rupees) { return Math.round(rupees / 1000) / 100; }
+function termItems(ctcLakh, grossRaw, basicRaw, scenario, workerStatus, svc) {
+  var E = TERMINATION_ENGINE, w = termWage(ctcLakh, grossRaw, basicRaw), items = [];
+  items.push({ label: 'Monthly wages used', kind: 'assumption', basis: w.basis,
+    workings: (w.point ? termRs(w.lo) : termRs(w.lo) + ' to ' + termRs(w.hi)) + ' a month: ' + w.note + '. The Code on Wages defines wages as basic pay, dearness allowance and retaining allowance, and adds back any excluded payments that exceed half of total remuneration (s.2(y), first proviso), so wages are at least half of total pay.' });
+  if (svc) { items.push({ label: 'Service counted', kind: 'assumption', basis: 'narrative',
+    workings: svc.text + ' (' + svc.source + '). A part-year of more than six months counts as a further year, so ' + svc.years + ' year' + (svc.years === 1 ? '' : 's') + ' for the amounts below.' }); }
+  items.push({ label: 'Back wages for the dispute period', kind: 'exposure', basis: 'assumed', low: termLakh(w.lo * E.backWagesMonths[0]), high: termLakh(w.hi * E.backWagesMonths[1]),
+    workings: E.backWagesMonths[0] + ' to ' + E.backWagesMonths[1] + ' months of wages, covering the time a challenge could run before an order. It arises only if the termination is set aside or found unlawful.' });
+  items.push({ label: 'Defence costs', kind: 'exposure', basis: 'assumed', low: E.defenceLakh[0], high: E.defenceLakh[1],
+    workings: 'A fixed planning range of Rs.' + E.defenceLakh[0] + 'L to Rs.' + E.defenceLakh[1] + 'L for advice and defence of a challenge. It is an assumption, not a published figure.' });
+  var out = [];
+  if (scenario === 'retrenchment') {
+    if (workerStatus === 'managerial') { out.push('Section 70 covers a worker. The facts suggest a managerial or administrative role, which is outside the definition of worker in s.2(zr), so the s.70 notice and compensation are not computed.'); }
+    else if (!svc) { out.push('The period of service was not stated, so the s.70 compensation is not computed. Section 70 needs at least one year of continuous service.'); }
+    else if (svc.months < 12) { out.push('Section 70 applies to a worker with at least one year of continuous service. This employee has ' + svc.text + ', so the s.70 notice and compensation are not computed.'); }
+    else {
+      var cond = workerStatus === 'worker' ? '' : ' This applies if the employee is a worker under s.2(zr).';
+      items.push({ label: 'Notice or pay in lieu (s.70(a))', kind: 'owed_in_any_case', basis: 'statute', low: termLakh(w.lo * E.noticeMonths), high: termLakh(w.hi * E.noticeMonths),
+        workings: 'One month\'s notice in writing giving the reasons, or wages for the notice period instead, counted as one month of wages.' + cond });
+      items.push({ label: 'Retrenchment compensation (s.70(b))', kind: 'owed_in_any_case', basis: 'statute', low: termLakh(w.lo / E.dayDivisor * E.compDays * svc.years), high: termLakh(w.hi / E.dayDivisor * E.compDays * svc.years),
+        workings: 'Fifteen days\' average pay for every completed year of continuous service or any part over six months: monthly wages / ' + E.dayDivisor + ' x ' + E.compDays + ' x ' + svc.years + ' years. The Code does not define the day divisor for this section; ' + E.dayDivisor + ' is used, as the gratuity provision (s.53, Explanation 3) states for monthly-rated employees. Average pay is approximated by monthly wages.' + cond });
+    }
+  }
+  if (!svc) { out.push('Gratuity is not computed because the period of service was not stated.'); }
+  else if (svc.months < E.gratuityMinMonths) { out.push('Gratuity needs five years of continuous service (s.53(1)), so none is computed.'); }
+  else {
+    var forf = scenario === 'misconduct' ? ' On a dismissal for misconduct, s.53(6) allows forfeiture: to the extent of any damage or loss to the employer\'s property, and wholly or partly where the services were terminated for riotous or disorderly conduct, violence, or an offence involving moral turpitude committed in the course of employment.' : '';
+    items.push({ label: 'Gratuity, if s.53(1) applies', kind: 'owed_in_any_case', basis: 'statute', low: termLakh(w.lo / E.dayDivisor * E.gratuityDays * svc.years), high: termLakh(w.hi / E.dayDivisor * E.gratuityDays * svc.years),
+      workings: 'Fifteen days\' wages for every completed year of service or part over six months, with the monthly wage divided by 26 (s.53(2) and Explanation 3): monthly wages / ' + E.dayDivisor + ' x ' + E.gratuityDays + ' x ' + svc.years + ' years. It is payable on the events listed in s.53(1), so confirm that the way this employment ends is one of them. It is subject to a ceiling notified by the Central Government, which is not in the supplied text, so no ceiling is applied.' + forf });
+  }
+  var tail = out.join(' ') + (out.length ? ' ' : '');
+  if (scenario === 'retrenchment') { tail += 'Notice to the appropriate Government (s.70(c)) is a required step, not a cost. For a factory, mine or plantation with 300 or more workers, Chapter X (sections 77 to 82) needs prior permission; this is flagged and not priced. '; }
+  tail += 'Not counted: unpaid wages, bonus and leave encashment up to the last day, tax effects, and any reinstatement order beyond back wages.';
+  items.push({ label: 'What the range leaves out', kind: 'not_included', workings: tail });
+  return { items: items, wage: w };
+}
+function applyTerminationFinancial(result, ctcInfo, grossRaw, basicRaw, asOf) {
+  if (!result) { return false; }
+  var inp = result.terminationInputs; delete result.terminationInputs;
+  var t = result.detectedCaseType;
+  if (result.wrongTool === true || ['Termination', 'Redundancy', 'Retrenchment'].indexOf(t) === -1) { return false; }
+  if (!result.protocol || !result.protocol.financial || !ctcInfo) { return false; }
+  if (inp && inp.scenario === 'other') { return false; }
+  var sc = inp && TERMINATION_ENGINE.scenarios.indexOf(inp.scenario) !== -1 ? inp.scenario : ((t === 'Redundancy' || t === 'Retrenchment') ? 'retrenchment' : null);
+  if (!sc) { return false; }
+  var ws = inp && (inp.workerStatus === 'worker' || inp.workerStatus === 'managerial') ? inp.workerStatus : 'unclear';
+  var svc = termService(inp, asOf || new Date());
+  var built = termItems(ctcInfo.lakh, grossRaw, basicRaw, sc, ws, svc);
+  var f = result.protocol.financial;
+  f.items = built.items;
+  normaliseFinancial(result);
+  f.confidence = (built.wage.basis === 'supplied' && svc) ? 'Medium' : 'Low';
+  f.rangeNote = 'Back wages and defence costs are planning assumptions. Statutory amounts shown as owed in any case are not added to this range.';
+  delete f.split;
+  return true;
+}
+// ── TERMINATION ENGINE END ───────────────────────────────────────────────────
+
 function applyDeterministicFinancial(result, reqBody) {
   try { applyPoshEngine(result, new Date()); } catch (e) { console.error('applyPoshEngine failed: ' + e.message); if (result) { delete result.poshInputs; } }
   try {
@@ -4063,7 +4173,12 @@ function applyDeterministicFinancial(result, reqBody) {
     if (!result || result.wrongTool === true || !result.protocol || !result.protocol.financial) { return; }
     var flags = result.engineFlags;
     delete result.engineFlags;
-    if (!flags || typeof flags !== 'object') { try { applyPoshFinancial(result); } catch (e) { console.error('applyPoshFinancial failed: ' + e.message); } return; }
+    if (flags && typeof flags === 'object') { delete result.terminationInputs; }
+    if (!flags || typeof flags !== 'object') {
+      try { applyPoshFinancial(result); } catch (e) { console.error('applyPoshFinancial failed: ' + e.message); }
+      try { if (applyTerminationFinancial(result, resolveCtc(reqBody), reqBody && reqBody.monthlyGross, reqBody && reqBody.monthlyBasicDa, new Date())) { console.log('Termination engine applied'); } } catch (e) { console.error('applyTerminationFinancial failed: ' + e.message); }
+      return;
+    }
     try { var _dc = stripModelDayCounts(result); if (_dc) { console.log('PACT: removed ' + _dc + ' model-written day-count sentence(s)'); } } catch (e) { console.error('stripModelDayCounts failed: ' + e.message); }
     appendDayCount(result, flags);
     try { var _s70 = applyShortServiceRule(result, flags); if (_s70) { console.log('PACT: removed ' + _s70 + ' section 70 item(s), service under one year'); } } catch (e) { console.error('applyShortServiceRule failed: ' + e.message); }
