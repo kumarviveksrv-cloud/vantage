@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v86'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v87'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -739,6 +739,7 @@ function policyScrub(text) {
   var removed = false;
   var clauseRe = /,?\s*(?:or|and),?\s*(?:more\s+commonly|commonly|typically|usually|often),?\s*(?:by\s+)?withhold(?:ing)?[^.;\n]*?(?:relieving|experience|service)\s+(?:letter|certificate)[^.;\n]*/gi;
   var out = String(text || '').replace(clauseRe, function () { removed = true; return ''; });
+  out = out.replace(/(\u20B9\s?[\d,.]+(?:\s?(?:lakh|L|crore|Cr))?)\s+per\s+(?:instance|offence|violation)\b/gi, '$1');
   out = out.split('\n').map(function (line) {
     if (!POLICY_WITHHOLD_RE.test(line)) { return line; }
     var sents = line.split(/(?<=[.!?])\s+(?=[A-Z0-9₹])/);
@@ -749,6 +750,13 @@ function policyScrub(text) {
     return kept.join(' ');
   }).join('\n');
   return { text: out, removed: removed };
+}
+// A pay or deduction question gets the system's exposure figure. When the model wrote its own range instead of the tokens, its whole exposure block is replaced, so an invented figure is removed and not just hidden by the page.
+function policyExposureOverride(text, finalExposure) {
+  var t = String(text || '');
+  if (!finalExposure || !finalExposure.range || t.indexOf('\u{1F4B0}') === -1) { return { text: t, replaced: false }; }
+  var out = t.replace(/\u{1F4B0}[\s\S]*$/u, '\u{1F4B0} COMPLIANCE EXPOSURE: ' + finalExposure.range + '\nBasis: ' + finalExposure.basis);
+  return { text: out, replaced: out !== t };
 }
 // ── CITATION CHECKER END ─────────────────────────────────────────────────────
 
@@ -4572,9 +4580,11 @@ if (actContext) {
       if (policyActLoad.missing.length > 0) {
         policyText += '\n\nNote: the statutory text for ' + policyActLoad.missing.join(' and ') + ' could not be loaded for this answer, so section references come from general knowledge and should be checked against the Act.';
       }
+      const exposurePay = PAY_SHORTFALL_QUESTION.test(String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || '')) || DEDUCTION_FINE_QUESTION.test(String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || ''));
       let policyCheckNote = null;
       const _scr = policyScrub(policyText);
       policyText = _scr.text;
+      if (exposurePay && !exposureUsed) { policyText = policyExposureOverride(policyText, exposureFinal).text; }
       if (policyActLoad.parts && policyActLoad.parts.length) {
         try {
           const _chk = policyCitationCheck(policyText, policyActLoad.parts, String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || '') + ' ' + (exposureComputed ? exposureComputed.summary : '') + ' ' + (exposureFinal && exposureFinal.range ? exposureFinal.range : ''));
@@ -4591,7 +4601,6 @@ if (actContext) {
       result = { response: policyText };
       if (policyCheckNote) { result.citationCheck = policyCheckNote; }
       // Sent as its own field so the page never has to parse the explanation out of the model's text
-      const exposurePay = PAY_SHORTFALL_QUESTION.test(String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || '')) || DEDUCTION_FINE_QUESTION.test(String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || ''));
       if (exposureUsed || exposurePay) { result.exposure = { range: exposureFinal.range, basis: exposureFinal.basis }; }
       queueUsage(clerkUserId, 'policy', usageCheck);
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {

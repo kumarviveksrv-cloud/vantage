@@ -2,7 +2,7 @@
 const fs = require('fs'), path = require('path');
 const src = fs.readFileSync(path.join(__dirname, 'situation-room-api.worker.js'), 'utf8');
 const a = src.indexOf('// ── CITATION CHECKER START'), b = src.indexOf('// ── CITATION CHECKER END');
-const { policyCitationCheck, citeBuildIndex, policyScrub } = new Function(src.slice(a, b) + ';return {policyCitationCheck, citeBuildIndex, policyScrub};')();
+const { policyCitationCheck, citeBuildIndex, policyScrub, policyExposureOverride } = new Function(src.slice(a, b) + ';return {policyCitationCheck, citeBuildIndex, policyScrub, policyExposureOverride};')();
 const L = (f) => fs.readFileSync(path.join(__dirname, '..', 'legal', f), 'utf8');
 const parts = [
   { key: 'wages-code-2019', text: L('wages-code-2019.txt') },
@@ -61,6 +61,13 @@ ok(!sc.removed && /Do not withhold/.test(sc.text), 'negated advice kept: ' + sc.
 sc = policyScrub('Withholding documents is a separate matter from notice enforcement.');
 ok(!sc.removed, 'separate-matter wording kept');
 ok(/DEDUCTION_FINE_QUESTION = /.test(src) && /exposurePay = PAY_SHORTFALL_QUESTION\.test\([^;]*\|\| DEDUCTION_FINE_QUESTION/.test(src), 'deduction questions get the system fine figure');
+
+sc = policyScrub('A fine extending to \u20B950,000 per instance. Repeat: \u20B91,00,000 per offence, or both.');
+ok(!/per instance|per offence/.test(sc.text) && sc.text.includes('\u20B950,000.') , 'per-instance wording stripped: ' + sc.text);
+let eo = policyExposureOverride('Answer text.\n\n\u{1F4B0} COMPLIANCE EXPOSURE: \u20B91.2L\nBasis: invented arithmetic \u20B91,20,000.', { range: 'Fine up to \u20B950,000, plus back-pay', basis: 'System basis.' });
+ok(eo.replaced && !/1\.2L|1,20,000|invented/.test(eo.text) && /Fine up to \u20B950,000/.test(eo.text) && /^Answer text\./.test(eo.text), 'model own exposure block replaced: ' + eo.text);
+ok(!policyExposureOverride('No exposure block here.', { range: 'x', basis: 'y' }).replaced, 'no block, nothing replaced');
+ok(/policyExposureOverride\(policyText, exposureFinal\)/.test(src), 'override wired in handler');
 
 ok(/policyCitationCheck\(policyText, policyActLoad\.parts/.test(src) && /tool === 'policy'/.test(src), 'wired into policy handler');
 console.log(fails ? fails + ' FAILED' : 'citation checker: all passed');
