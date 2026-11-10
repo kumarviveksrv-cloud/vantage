@@ -75,5 +75,24 @@ applyBusinessCaseEngine(r, THIN); ok(/^No rupee figure can be named yet/.test(r.
 // no engine: model figures untouched, check still runs against the user text, note says not system-checked
 r = mk(); r.bcInputs = { model: 'attrition', exits: 99, avgCtc: 1 }; ok(applyBusinessCaseEngine(r, TXT) === false && r.revenueAtRisk.figure === 'Rs.1.2Cr' && r.bcCheck.engine === false && /not system-checked/.test(r.bcCheck.note), 'engine off: model figure kept, honestly labelled');
 r = { wrongTool: true }; ok(applyBusinessCaseEngine(r, TXT) === false && r.bcCheck === undefined, 'wrong tool untouched');
+// v113: L&D programme engine (stakeholder flow)
+const LD = new Function(code + ';return {ldCalc, ldPromptBlock, applyBusinessCaseStakeholder, bcFigureCheck};')();
+const LDT = 'We plan to spend ₹25L on L&D for 200 employees, average CTC ₹7L. The CEO sees L&D as a cost, not an investment.';
+const LDIN = { model: 'ld', ldSpend: 2500000, employees: 200, avgCtc: 700000, exits: null, headcount: null };
+let l = LD.ldCalc(LDIN, LDT);
+ok(l && l.spendL === 25 && Math.abs(l.payrollL - 1400) < 1e-9 && Math.abs(l.perHead - 12500) < 1e-9 && Math.abs(l.pct - 25 / 1400 * 100) < 1e-9, 'ld calc: ' + JSON.stringify(l));
+ok(LD.ldCalc({ ...LDIN, ldSpend: 3000000 }, LDT) === null, 'ld spend not in text: no computation');
+ok(LD.ldCalc({ ...LDIN, employees: 250 }, LDT) === null, 'ld employees not in text: no computation');
+ok(LD.ldCalc({ ...LDIN, model: 'attrition' }, LDT) === null, 'ld needs model ld');
+const blk = LD.ldPromptBlock(l);
+ok(/1\.8 percent/.test(blk) && /Rs\.14Cr/.test(blk) && /Rs\.12,500/.test(blk) && /Rs\.25L to Rs\.50L/.test(blk) && /assumed planning range/.test(blk), 'ld prompt block: ' + blk);
+let ls = { openingLine: 'The programme costs roughly Rs.1.4Cr a year in lost output.', stack: { dataAnchor: { figure: 'Rs.56,00,000' }, riskMirror: { revenueAtRisk: 'Rs.1,00,00,000', revenueAtRiskBasis: 'invented' }, credibility: { statement: 'A first tranche of Rs.12.5L, then Rs.8L pilot.' } }, bcInputs: LDIN };
+ok(LD.applyBusinessCaseStakeholder(ls, LDT) === true && ls.bcInputs === undefined, 'ld stakeholder applied');
+ok(/Break-even at a 1\.8 percent uplift on Rs\.14Cr payroll/.test(ls.stack.dataAnchor.figure), 'ld anchor: ' + ls.stack.dataAnchor.figure);
+ok(ls.stack.riskMirror.revenueAtRisk === 'Not computed' && /Not computed/.test(ls.stack.riskMirror.revenueAtRiskBasis), 'ld risk mirror not computed');
+ok(/pays for itself/.test(ls.openingLine) && !/1\.4Cr/.test(ls.openingLine), 'invented opening line replaced: ' + ls.openingLine);
+ok(ls.bcCheck.ok === false && ls.bcCheck.flagged.some(f => /8L/.test(f)), 'ld invented pilot flagged: ' + JSON.stringify(ls.bcCheck.flagged));
+ls = { openingLine: 'Rs.25L covers Rs.14Cr of payroll.', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Planning return Rs.25L to Rs.50L, about Rs.12,500 per head, half is Rs.12.5L.' } }, bcInputs: LDIN };
+LD.applyBusinessCaseStakeholder(ls, LDT); ok(ls.bcCheck.ok === true && ls.openingLine === 'Rs.25L covers Rs.14Cr of payroll.', 'clean ld passes: ' + JSON.stringify(ls.bcCheck.flagged));
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);

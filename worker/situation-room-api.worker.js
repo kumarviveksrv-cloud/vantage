@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v112'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v113'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -2306,16 +2306,17 @@ async function anonymizeLargeDocument(text, maxChunkSize = 6000) {
 
 async function bcPreExtract(text) {
   try {
-    var prompt = 'You copy numbers out of text. Return strict JSON only: {"model":"attrition" or "other","exits":number or null,"headcount":number or null,"avgCtc":rupees as a plain number or null,"periodMonths":number or null,"rampMonths":number or null,"roleTier":"junior"|"senior"|"default","programmeBudget":rupees as a plain number or null}. model is attrition only if the text is about employees leaving. Copy numbers exactly as written (Rs 8L = 800000, 15L = 1500000). If a number is not stated, use null. Never calculate or invent anything. exits must be the count of people who left.';
+    var prompt = 'You copy numbers out of text. Return strict JSON only: {"model":"attrition" or "ld" or "other","ldSpend":rupees as a plain number or null,"employees":number or null,"exits":number or null,"headcount":number or null,"avgCtc":rupees as a plain number or null,"periodMonths":number or null,"rampMonths":number or null,"roleTier":"junior"|"senior"|"default","programmeBudget":rupees as a plain number or null}. model is attrition only if the text is about employees leaving. model is ld only if the text is about spending on a learning, training, leadership or development programme; then ldSpend is that programme budget and employees is the number of employees it covers. Copy numbers exactly as written (Rs 8L = 800000, 15L = 1500000). If a number is not stated, use null. Never calculate or invent anything. exits must be the count of people who left.';
     var resp = await callClaude(prompt, [{ role: 'user', content: String(text).slice(0, 6000) }], 600, CLAUDE_MODEL_FAST, CLAUDE_FAST_TIMEOUT_MS);
     var raw = resp.content[0].text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     return JSON.parse(raw);
   } catch (e) { console.error('bcPreExtract failed: ' + e.message); return null; }
 }
-async function bcFiguresBlock(anonText, rawText) {
+async function bcFiguresBlock(anonText, rawText, flow) {
   var text = rawText, inp = await bcPreExtract(anonText);
   if (!inp) { return { inputs: null, block: '' }; }
   var c = bcCalc(bcRead(inp, text));
+  if (!c && flow === 'stakeholder') { var l = ldCalc(inp, text); if (l) { return { inputs: inp, block: ldPromptBlock(l) }; } }
   if (!c) { return { inputs: null, block: '' }; }
   return { inputs: inp, block: bcPromptBlock(c) };
 }
@@ -4521,9 +4522,28 @@ function bcPromptBlock(c) {
   s += 'Every rupee figure you write about the cost of the exits, including any Data Anchor and Revenue at Risk figure, must be this total range, or the replacement or productivity part above, or a whole number of exits multiplied by the per-exit cost with that number of exits stated in the same sentence. Never use salary alone as the cost of an exit. Describe decision alternatives such as phasing as fractions or percentages of the stated budget, not as new rupee amounts. Any other rupee figure you write must be a whole number of exits multiplied by the per-exit cost above, with the number of exits stated in the same sentence. Do not invent other rupee amounts or percentages of productivity. Do not write hypothetical alternative rupee amounts anywhere, for example other budget sizes in a rehearsal prompt; refer to the stated budget only. When you quote avoided cost for a number of exits, call it avoided cost, not return, because it is before the programme spend.\n';
   return s;
 }
+function ldCalc(inp, text) {
+  var i = inp || {};
+  if (i.model !== 'ld') { return null; }
+  var spend = bcRupees(i.ldSpend, text), emp = bcCount(i.employees, text, 1000000), ctc = bcRupees(i.avgCtc, text);
+  if (!spend || !emp || !ctc) { return null; }
+  var spendL = spend / 100000, payrollL = emp * ctc / 100000;
+  return { spendL: spendL, emp: emp, ctcL: ctc / 100000, payrollL: payrollL, perHead: spend / emp, pct: spendL / payrollL * 100, ret: [spendL, spendL * 2] };
+}
+function ldRupees(n) { return 'Rs.' + Math.round(n).toLocaleString('en-IN'); }
+function ldAllowed(l) { return [l.spendL, l.payrollL, l.ret[1], l.spendL / 2, l.spendL / 4, l.perHead / 100000, l.ctcL]; }
+function ldPromptBlock(l) {
+  var pct = Math.round(l.pct * 10) / 10;
+  var s = 'SYSTEM-COMPUTED FIGURES (already calculated by code from the data above; use exactly these and do not recompute them):\n';
+  s += '- Programme spend: ' + engineLakh(r2(l.spendL)) + ' covering ' + l.emp + ' employees at an average CTC of ' + engineLakh(r2(l.ctcL)) + '. Payroll covered: ' + engineLakh(r2(l.payrollL)) + '. Cost per head: ' + ldRupees(l.perHead) + '.\n';
+  s += '- Break-even: the programme pays for itself if it lifts the output of the covered payroll by ' + pct + ' percent.\n';
+  s += '- Planning return range if the programme performs at 1x to 2x its spend: ' + bcRange(l.ret) + ' gross, before the spend. This multiple is an assumed planning range, not a measured result.\n';
+  s += 'Do not model manager effectiveness drag, the share of managers below average, attrition for this cohort, or any other benefit in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above. Describe phasing as fractions or percentages of the spend.\n';
+  return s;
+}
 function bcFigureNums(text) { return bondAmountsIn(text).map(function (n) { return n / 100000; }); }
-function bcFigureCheck(result, c, userText) {
-  var allowed = bcFigureNums(userText), multiples = [], flagged = [], seen = {};
+function bcFigureCheck(result, c, userText, extra) {
+  var allowed = bcFigureNums(userText).concat(extra || []), multiples = [], flagged = [], seen = {};
   if (c) {
     [c.repl, c.prod, c.total, c.perExit, c.replPer, c.prodPer].forEach(function (a) { allowed.push(a[0], a[1]); });
     allowed.push(c.ctcL); if (c.budgetL) { allowed.push(c.budgetL); }
@@ -4610,7 +4630,19 @@ function applyBusinessCaseStakeholder(result, userText) {
   if (!result) { return false; }
   var inp = result.bcInputs; delete result.bcInputs;
   if (result.wrongTool === true || !result.stack) { return false; }
-  var T = bcRead(inp, userText), c = bcCalc(T);
+  var T = bcRead(inp, userText), c = bcCalc(T), l = c ? null : ldCalc(inp, userText);
+  if (l) {
+    var pctL = Math.round(l.pct * 10) / 10, notC = 'Not computed: no exit, vacancy or performance data was given, so the cost of not acting cannot be priced.';
+    if (result.stack.dataAnchor) { result.stack.dataAnchor.figure = 'Break-even at a ' + pctL + ' percent uplift on ' + engineLakh(r2(l.payrollL)) + ' payroll'; }
+    if (result.stack.riskMirror) { result.stack.riskMirror.revenueAtRisk = 'Not computed'; result.stack.riskMirror.revenueAtRiskBasis = notC; }
+    var okAllowed = bcFigureNums(userText).concat(ldAllowed(l));
+    var openBad = typeof result.openingLine === 'string' && bcFigureNums(result.openingLine).some(function (v) { return !okAllowed.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, a * 0.03); }); });
+    if (openBad) { result.openingLine = 'The ' + engineLakh(r2(l.spendL)) + ' on the table pays for itself if it lifts the output of the ' + engineLakh(r2(l.payrollL)) + ' payroll it covers by ' + pctL + ' percent.'; }
+    result.bcEngine = { model: 'ld-v1', breakEvenPct: pctL, payroll: r2(l.payrollL) };
+    var fl = bcFigureCheck(result, null, userText, ldAllowed(l));
+    result.bcCheck = { ok: fl.length === 0, engine: true, flagged: fl, note: fl.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + fl.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.' };
+    return true;
+  }
   if (c) {
     var fig = bcRange(c.total);
     if (result.stack.dataAnchor) { result.stack.dataAnchor.figure = fig; }
@@ -5246,7 +5278,7 @@ if (actContext) {
       }
 
       let bcPre = null;
-      { try { bcPre = await bcFiguresBlock(bcAnonText, flow === 'stakeholder' ? (String(body.situation || '') + ' ' + String(body.ask || '') + ' ' + String(body.context || '')) : (String(body.metrics || '') + ' ' + String(body.context || '') + ' ' + String(body.ask || ''))); if (bcPre && bcPre.block) { userMessage = bcPre.block + '\n' + userMessage; } } catch (bcPreE) { console.error('bc pre-extract failed: ' + bcPreE.message); } }
+      { try { bcPre = await bcFiguresBlock(bcAnonText, flow === 'stakeholder' ? (String(body.situation || '') + ' ' + String(body.ask || '') + ' ' + String(body.context || '')) : (String(body.metrics || '') + ' ' + String(body.context || '') + ' ' + String(body.ask || '')), flow); if (bcPre && bcPre.block) { userMessage = bcPre.block + '\n' + userMessage; } } catch (bcPreE) { console.error('bc pre-extract failed: ' + bcPreE.message); } }
       const systemPrompt = getBusinessCasePrompt(meridian, flow, humacContext);
       _emit('stage', { stage: 'analyse' });
       const response = await callClaude(systemPrompt, [{ role: 'user', content: userMessage }], MAX_TOKENS, CLAUDE_MODEL_DEFAULT, undefined, function (n) { _emit('gen', { chars: n }); }, ANALYST_TEMPERATURE);
