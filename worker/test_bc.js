@@ -227,6 +227,14 @@ PX.applyBusinessCaseStakeholder(p5, PT);
 const p5j = JSON.stringify(p5);
 ok(!/not capped|within five|end of this week|legal team|second finding/i.test(p5j), 'v123 residue stripped: ' + (p5j.match(/not capped|within five|end of this week|legal team|second finding/i) || []));
 ok(/on a repeat conviction/.test(p5.stack.dataAnchor.context) && /discretionary\. Our office has 180/.test(p5.stack.credibility.evidence) && /I recommend this quarter/.test(p5.stack.decisionRunway.deadline), 'repeat conviction wording, capitalised Our office, recommendation kept: ' + p5.stack.credibility.evidence + ' | ' + p5.stack.decisionRunway.deadline);
+// v125: BC6 v124 residue, generic comparative-cost rule
+let p6 = posh();
+p6.stack.dataAnchor.context = 'The gap we are carrying costs more to defend than to close. The Rs.3L closes the gap.';
+p6.stack.credibility.statement = 'As CHRO I bring decisions where the cost of delay is higher than the cost of action. We are in breach of both, and that is visible to anyone who asks.';
+PX.applyBusinessCaseStakeholder(p6, PT);
+const p6j = JSON.stringify(p6);
+ok(!/costs more|cost of delay|cost of action|in breach of both|visible to anyone/i.test(p6j), 'comparative-cost and dangling both stripped: ' + (p6j.match(/costs more|cost of delay|cost of action|in breach of both|visible to anyone/i) || []));
+ok(/Rs\.3L closes the gap/.test(p6.stack.dataAnchor.context), 'user-figure sentence kept: ' + p6.stack.dataAnchor.context);
 // generic stakeholder with no engine: unsupported figures removed, note accurate
 let gs = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.42L' }, riskMirror: { revenueAtRisk: 'Rs.1.2Cr', revenueAtRiskBasis: 'b' }, credibility: { statement: 'The budget is Rs.8L. A similar firm lost Rs.90L last year.' } } };
 PX.applyBusinessCaseStakeholder(gs, 'We want Rs.8L for a hiring programme.');
