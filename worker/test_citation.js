@@ -71,6 +71,8 @@ ok(/policyExposureOverride\(policyText, exposureFinal\)/.test(src), 'override wi
 
 sc = policyScrub('fine up to Rs 50,000 per instance. Then Rs 1 lakh per offence.');
 ok(!/per instance|per offence/.test(sc.text), 'Rs wording stripped: ' + sc.text);
+sc = policyScrub('\u20B950,000 (per contravention, up to) and Rs. 50,000 per contravention.');
+ok(!/contravention/.test(sc.text) && /50,000/.test(sc.text), 'per contravention stripped: ' + sc.text);
 ok(/policyCitationCheck\(policyText, policyActLoad\.parts/.test(src) && /tool === 'policy'/.test(src), 'wired into policy handler');
 console.log(fails ? fails + ' FAILED' : 'citation checker: all passed');
 process.exit(fails ? 1 : 0);
