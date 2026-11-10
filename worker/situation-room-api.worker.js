@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v116'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v117'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4527,20 +4527,27 @@ function bcPromptBlock(c) {
   return s;
 }
 var LD_CLAIM_RE = /commonly cited|widely (?:cited|acknowledged|accepted|used|recogni[sz]ed)|industry'?s?\s+(?:own|standard|norm|benchmark|average|typical)|industry[- ](?:standard|benchmark|average|norm)|\bbenchmarks?\b|\btypical(?:ly)?\b|\bnormally\b|\boutlier\b|modest but credible|well within the range|\bresearch (?:shows|suggests)|\bstudies (?:show|suggest)|generally accepted|rule of thumb|\b(?:gallup|shrm|deloitte|mckinsey|kirkpatrick)\b|\bnorms?\b|variance in (?:team )?engagement|2\.7 million|17(?:%| percent) more productive|gallup-derived/i;
-function ldStripClaims(result) {
-  var removed = 0, FALLBACK = 'Not stated: no sourced benchmark is available for this programme.';
-  var scrub = function (s) {
-    if (!LD_CLAIM_RE.test(s)) { return s; }
-    var parts = s.split(/(?<=[.!?])\s+(?=[A-Z(])/), keep = parts.filter(function (p) { return !LD_CLAIM_RE.test(p); });
+function ldStripClaims(result, extraRe) {
+  var removed = 0;
+  var bad = function (s) { return LD_CLAIM_RE.test(s) || (extraRe && extraRe.test(s)); };
+  var scrub = function (s, key) {
+    if (!bad(s)) { return s; }
+    var parts = s.split(/(?<=[.!?])\s+(?=[A-Z(])/), keep = parts.filter(function (p) { return !bad(p); });
     removed += parts.length - keep.length;
-    return keep.length ? keep.join(' ') : FALLBACK;
+    return keep.length ? keep.join(' ') : (key === 'deadline' ? 'Not stated: no decision date was given.' : 'Not stated.');
   };
   var walk = function (n) {
-    if (Array.isArray(n)) { n.forEach(function (x, i) { if (typeof x === 'string') { n[i] = scrub(x); } else { walk(x); } }); }
-    else if (n && typeof n === 'object') { Object.keys(n).forEach(function (k) { if (k === 'bcCheck') { return; } if (typeof n[k] === 'string') { n[k] = scrub(n[k]); } else { walk(n[k]); } }); }
+    if (Array.isArray(n)) { n.forEach(function (x, i) { if (typeof x === 'string') { n[i] = scrub(x, ''); } else { walk(x); } }); }
+    else if (n && typeof n === 'object') { Object.keys(n).forEach(function (k) { if (k === 'bcCheck') { return; } if (typeof n[k] === 'string') { n[k] = scrub(n[k], k); } else { walk(n[k]); } }); }
   };
   walk(result);
   return removed;
+}
+var LD_OVERSTATE_RE = /not a projection|not a worst case|conservative end|\bis the floor\b|\bthe floor:|costs the business at least|already been incurred|distributed across functions/i;
+function bcUserFractions(text) {
+  var out = [];
+  bcFigureNums(text).forEach(function (v) { [0.25, 1 / 3, 0.4, 0.5, 0.6, 2 / 3, 0.75].forEach(function (f) { out.push(v * f); }); });
+  return out;
 }
 function erCalc(inp, text) {
   var i = inp || {}, ctc = bcRupees(i.avgCtc, text);
@@ -4568,7 +4575,7 @@ function erPromptBlock(e) {
   var s = 'SYSTEM-COMPUTED FIGURES (already calculated by code from the data above; use exactly these and do not recompute them):\n';
   s += '- Payroll affected: ' + engineLakh(r2(e.baseL)) + ' (' + (e.kind === 'engagement' ? e.n + ' disengaged employees at an average CTC of ' + engineLakh(r2(e.ctcL)) : e.n + ' below-average managers x ' + e.size + ' people per team at an average CTC of ' + engineLakh(r2(e.ctcL))) + ').\n';
   s += '- Annual productivity drag: ' + engineLakh(r2(e.dragL)) + ', computed as the payroll affected x ' + pct + ' percent. The ' + pct + ' percent is an assumed planning coefficient, not a measured result.\n';
-  s += 'Do not attribute the ' + pct + ' percent to Gallup or to any study, survey, benchmark or research body, and do not state any derivation of it. Do not add attrition, replacement cost or any other benefit or cost in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above or a figure the user gave.\n';
+  s += 'Do not attribute the ' + pct + ' percent to Gallup or to any study, survey, benchmark or research body, and do not state any derivation of it. Do not add attrition, replacement cost or any other benefit or cost in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above or a figure the user gave. The drag rests on an assumed coefficient, so never call it a floor, a minimum, conservative, certain, not a projection or already incurred. Never state numeric targets for the success metric or alternatives (such as a number of managers who improve or a score the group must reach); write that the target and measure will be agreed with the stakeholder before the programme begins. Do not state how the people were selected, where they sit, how a survey was run or what process produced them unless the user said so. Describe phasing as fractions or percentages of the spend only if a spend was given.\n';
   return s;
 }
 function ldCalc(inp, text) {
@@ -4587,7 +4594,7 @@ function ldPromptBlock(l) {
   s += '- Programme spend: ' + engineLakh(r2(l.spendL)) + ' covering ' + l.emp + ' employees at an average CTC of ' + engineLakh(r2(l.ctcL)) + '. Payroll covered: ' + engineLakh(r2(l.payrollL)) + '. Cost per head: ' + ldRupees(l.perHead) + '.\n';
   s += '- Break-even: the programme pays for itself if it lifts the output of the covered payroll by ' + pct + ' percent.\n';
   s += '- Planning return range if the programme performs at 1x to 2x its spend: ' + bcRange(l.ret) + ' gross, before the spend. This multiple is an assumed planning range, not a measured result.\n';
-  s += 'Do not model manager effectiveness drag, the share of managers below average, attrition for this cohort, or any other benefit in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above. Describe phasing as fractions or percentages of the spend. Do not cite any industry benchmark, standard, norm, typical or commonly cited ROI figure, study, survey or research body, and do not judge whether the spend is modest, typical, high or an outlier. The 1x to 2x range is only an assumption chosen for planning; say exactly that and nothing about where it comes from.\n';
+  s += 'Do not model manager effectiveness drag, the share of managers below average, attrition for this cohort, or any other benefit in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above. Describe phasing as fractions or percentages of the spend. Do not cite any industry benchmark, standard, norm, typical or commonly cited ROI figure, study, survey or research body, and do not judge whether the spend is modest, typical, high or an outlier. The 1x to 2x range is only an assumption chosen for planning; say exactly that and nothing about where it comes from. Never state numeric targets for the success metric; write that the target and measure will be agreed with the stakeholder before the programme begins. Never call the return a floor, conservative or certain.\n';
   return s;
 }
 function bcFigureNums(text) { return bondAmountsIn(text).map(function (n) { return n / 100000; }); }
@@ -4687,9 +4694,9 @@ function applyBusinessCaseStakeholder(result, userText) {
     var okAllowed = bcFigureNums(userText).concat(ldAllowed(l));
     var openBad = typeof result.openingLine === 'string' && bcFigureNums(result.openingLine).some(function (v) { return !okAllowed.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, a * 0.03); }); });
     if (openBad) { result.openingLine = 'The ' + engineLakh(r2(l.spendL)) + ' on the table pays for itself if it lifts the output of the ' + engineLakh(r2(l.payrollL)) + ' payroll it covers by ' + pctL + ' percent.'; }
-    var claimsRemoved = ldStripClaims(result);
+    var claimsRemoved = ldStripClaims(result, LD_OVERSTATE_RE);
     result.bcEngine = { model: 'ld-v1', breakEvenPct: pctL, payroll: r2(l.payrollL) };
-    var fl = bcFigureCheck(result, null, userText, ldAllowed(l));
+    var fl = bcFigureCheck(result, null, userText, ldAllowed(l).concat(bcUserFractions(userText)));
     result.bcCheck = { ok: fl.length === 0, engine: true, flagged: fl, note: fl.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + fl.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.' };
     if (claimsRemoved) { result.bcCheck.note += ' ' + claimsRemoved + ' sentence(s) citing industry benchmarks or studies were removed because the system cannot verify them.'; result.bcCheck.claimsRemoved = claimsRemoved; }
     return true;
@@ -4698,12 +4705,12 @@ function applyBusinessCaseStakeholder(result, userText) {
     var dragFig = engineLakh(r2(er.dragL)), cPct = Math.round(er.coef * 100);
     if (result.stack.dataAnchor) { result.stack.dataAnchor.figure = dragFig + ' a year of productivity drag at an assumed ' + cPct + ' percent'; }
     if (result.stack.riskMirror) { result.stack.riskMirror.revenueAtRisk = dragFig + ' a year'; result.stack.riskMirror.revenueAtRiskBasis = erBasis(er); result.stack.riskMirror.probability = ''; }
-    var okE = bcFigureNums(userText).concat(erAllowed(er));
+    var okE = bcFigureNums(userText).concat(erAllowed(er)).concat(bcUserFractions(userText));
     var openBadE = typeof result.openingLine === 'string' && bcFigureNums(result.openingLine).some(function (v) { return !okE.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, a * 0.03); }); });
     if (openBadE) { result.openingLine = 'The productivity drag on this group is about ' + dragFig + ' a year, at an assumed ' + cPct + ' percent of the ' + engineLakh(r2(er.baseL)) + ' payroll it affects.'; }
-    var claimsE = ldStripClaims(result);
+    var claimsE = ldStripClaims(result, LD_OVERSTATE_RE);
     result.bcEngine = { model: 'er-v1', kind: er.kind, drag: r2(er.dragL), base: r2(er.baseL) };
-    var flE = bcFigureCheck(result, null, userText, erAllowed(er));
+    var flE = bcFigureCheck(result, null, userText, erAllowed(er).concat(bcUserFractions(userText)));
     result.bcCheck = { ok: flE.length === 0, engine: true, flagged: flE, note: flE.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flE.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.' };
     if (claimsE) { result.bcCheck.note += ' ' + claimsE + ' sentence(s) citing industry benchmarks or studies were removed because the system cannot verify them.'; result.bcCheck.claimsRemoved = claimsE; }
     return true;

@@ -136,5 +136,14 @@ ok(es.bcCheck.ok === false && es.bcCheck.flagged.some(f => /40L/.test(f)), 'inve
 es = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'The drag is Rs.61.44L on Rs.7.68Cr of team payroll.' } }, bcInputs: MIN };
 ER.applyBusinessCaseStakeholder(es, MT); ok(es.bcCheck.ok === true && es.stack.riskMirror.revenueAtRisk === 'Rs.61.44L a year', 'manager clean case passes: ' + JSON.stringify(es.bcCheck.flagged) + ' ' + es.stack.riskMirror.revenueAtRisk);
 ok(/NO INVENTED FACTS RULE/.test(src) && (src.match(/NO INVENTED FACTS RULE/g) || []).length === 2, 'no-invented-facts rule in both prompts');
+// v117: budget fractions allowed, per-field fallback, overstatement stripped
+es = { openingLine: 'We have identified Rs.72L sitting on the table right now, not a projection, not a worst case.', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Phase Rs.10L now and Rs.10L later, or 60 percent as Rs.12L and 40 percent as Rs.8L.' }, riskMirrorExtra: { t: 'Twelve months of inaction costs the business at least Rs.72L in productivity alone.' }, decisionRunway: { deadline: 'This is typically a one-quarter decision.', ask: 'Approve Rs.20L.' } }, bcInputs: EIN };
+ER.applyBusinessCaseStakeholder(es, ET);
+ok(es.bcCheck.ok === true, 'half and 60/40 of the stated spend allowed: ' + JSON.stringify(es.bcCheck.flagged));
+ok(es.stack.decisionRunway.deadline === 'Not stated: no decision date was given.', 'deadline fallback is about the date: ' + es.stack.decisionRunway.deadline);
+ok(!/at least Rs\.72L/.test(es.stack.riskMirrorExtra.t) && !/not a projection/.test(es.openingLine), 'floor and not-a-projection claims removed: ' + es.stack.riskMirrorExtra.t + ' | ' + es.openingLine);
+es = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Pilot at Rs.9L first.' } }, bcInputs: EIN };
+ER.applyBusinessCaseStakeholder(es, ET); ok(es.bcCheck.ok === false && es.bcCheck.flagged.some(f => /9L/.test(f)), 'Rs.9L is not a fraction of the spend: flagged');
+ok(/never call it a floor/.test(ER.erPromptBlock(e)) && /Never state numeric targets/.test(ER.erPromptBlock(e)), 'er prompt forbids floor claims and numeric targets');
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);
