@@ -206,6 +206,16 @@ const p3j = JSON.stringify(p3);
 ok(p3.greenCategory.primary === 'Risk Mitigation' && p3.humac.meridianCalibration === '' && !/L1 framing/.test(p3j), 'category forced even when absent, L1 text gone');
 ok(!/the our office|our office office|Location A/.test(p3j) && /for our office\./.test(p3.stack.decisionRunway.ask), 'no "the our office": ' + p3.stack.decisionRunway.ask);
 ok(p3.stack.dataAnchor.context !== 'Not stated.' && !/not triggered by a complaint/i.test(p3j) && /s\.25 can open an inspection/.test(p3.stack.riskMirror.scenario), 'orphan Not stated gone, trigger claim stripped, s.25 inspection sentence kept');
+// v123: BC6 v122 residue
+let p4 = posh();
+p4.openingLine = 'I want to show you why the Rs.3L is the most expensive decision on your desk.';
+p4.closingLine = 'I will have the one-pager on your desk by end of day. Let us reconnect Thursday.';
+p4.stack.dataAnchor.context = 'The ceiling is Rs.50,000 per finding. Rs.3L closes the gap.';
+p4.stakeholderProfile = 'The asymmetry is so lopsided that skipping compliance is riskier. The CEO is cautious.';
+PX.applyBusinessCaseStakeholder(p4, PT);
+const p4j = JSON.stringify(p4);
+ok(!/per finding|most expensive|lopsided|Thursday|end of day/i.test(p4j), 'per-finding, comparative-cost and invented-day claims stripped: ' + (p4j.match(/per finding|most expensive|lopsided|Thursday|end of day/i) || []));
+ok(/Internal Complaints Committee/.test(p4.openingLine) && /so the three statutory gaps can be closed/.test(p4.closingLine) && /Rs\.3L closes the gap/.test(p4.stack.dataAnchor.context), 'fallbacks used, user-figure sentence kept: ' + p4.closingLine + ' | ' + p4.stack.dataAnchor.context);
 // generic stakeholder with no engine: unsupported figures removed, note accurate
 let gs = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.42L' }, riskMirror: { revenueAtRisk: 'Rs.1.2Cr', revenueAtRiskBasis: 'b' }, credibility: { statement: 'The budget is Rs.8L. A similar firm lost Rs.90L last year.' } } };
 PX.applyBusinessCaseStakeholder(gs, 'We want Rs.8L for a hiring programme.');
