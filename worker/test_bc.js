@@ -60,6 +60,16 @@ applyBusinessCaseStakeholder(st, TXT); ok(st.bcCheck.ok === true, 'clean stakeho
 ok(applyBusinessCaseStakeholder({ wrongTool: true, stack: {} }, TXT) === false, 'stakeholder wrong tool untouched');
 // v110: monthly salary multiples and budget fractions allowed
 r = mk(); r.headline = 'Rs.15L'; r.signal.situation.narrative = 'One month of salary is about Rs.67K, a two-month ramp is Rs.1.33L per exit, and a phased first tranche is Rs.7.5 lakh.'; r.signal.narrative.cfoVersion = 'x'; applyBusinessCaseEngine(r, TXT); ok(r.bcCheck.ok === true, 'monthly salary and budget half allowed: ' + JSON.stringify(r.bcCheck.flagged));
+// v111: thin input, no exits, no CTC, no rupee amounts: every rupee figure removed
+const THIN = 'Attrition is high and leadership needs to act.';
+r = { headline: 'The cost of high attrition is rarely below Rs. 1.5 Cr annually.', revenueAtRisk: { figure: 'Rs. 1.5 Cr - Rs. 4.2 Cr', basis: 'x', confidence: 'Low' }, signal: { situation: { narrative: 'We know the org is large. A 20 percent rate means about 60 exits. At Rs. 8L CTC that is Rs. 3.84 Cr in replacement cost. HR must pull the data.' }, impact: { narrative: 'n', financialImpact: 'Rs. 2.4 Cr', breakdown: ['Replacement cost: 60 x Rs. 8L = Rs. 3.84 Cr', 'Ramp gap not confirmed'] }, narrative: { cfoVersion: 'Directional modelling puts it at Rs. 3.84 Cr. The confirmed number needs HR data.' } }, humac: { range: 'Rs. 2.4 Cr - Rs. 7.8 Cr' }, bcInputs: { model: 'attrition', exits: null, avgCtc: null } };
+ok(applyBusinessCaseEngine(r, THIN) === false, 'thin: no engine');
+const flat = JSON.stringify(r);
+ok(!/Rs\. ?\d/.test(flat.replace(/Not computed[^"]*/g, '')), 'thin: no rupee figure left: ' + flat.slice(0, 400));
+ok(r.revenueAtRisk.figure === 'Not computed' && r.humac.range === 'Not computed' && r.signal.impact.financialImpact === 'Not computed', 'thin: cards say Not computed');
+ok(/HR must pull the data/.test(r.signal.situation.narrative) && /confirmed number needs HR data/.test(r.signal.narrative.cfoVersion), 'thin: non-rupee sentences kept');
+ok(r.signal.impact.breakdown.length === 1 && /Not computed/.test(r.signal.impact.breakdown[0]), 'thin: breakdown replaced');
+ok(r.bcCheck.stripped >= 4 && /removed/.test(r.bcCheck.note) && /No rupee figure can be named/.test(r.headline), 'thin: note and headline: ' + r.bcCheck.note + ' | ' + r.headline);
 // no engine: model figures untouched, check still runs against the user text, note says not system-checked
 r = mk(); r.bcInputs = { model: 'attrition', exits: 99, avgCtc: 1 }; ok(applyBusinessCaseEngine(r, TXT) === false && r.revenueAtRisk.figure === 'Rs.1.2Cr' && r.bcCheck.engine === false && /not system-checked/.test(r.bcCheck.note), 'engine off: model figure kept, honestly labelled');
 r = { wrongTool: true }; ok(applyBusinessCaseEngine(r, TXT) === false && r.bcCheck === undefined, 'wrong tool untouched');

@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v110'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v111'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4554,6 +4554,29 @@ function bcFigureCheck(result, c, userText) {
   });
   return flagged.slice(0, 8);
 }
+var BC_RUPEE_SRC = '(?:₹|rs\\.?|inr)\\s*[\\d,]+(?:\\.\\d+)?\\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\\b|\\b[\\d,]+(?:\\.\\d+)?\\s*(?:crore|cr|lakhs?|lacs?|lpa)\\b';
+var BC_NOT_COMPUTED = 'Not computed: the number of exits (or the attrition rate with the headcount) and the average CTC are needed.';
+function bcStripInvented(result) {
+  var removed = 0, has = function (s) { return new RegExp(BC_RUPEE_SRC, 'i').test(s); };
+  var scrub = function (s) {
+    if (!has(s)) { return s; }
+    var parts = s.split(/(?<=[.!?])\s+(?=[A-Z(])/), keep = parts.filter(function (p) { return !has(p); });
+    removed += parts.length - keep.length;
+    return keep.join(' ');
+  };
+  var walk = function (n) {
+    if (Array.isArray(n)) { for (var i = n.length - 1; i >= 0; i--) { if (typeof n[i] === 'string') { n[i] = scrub(n[i]); if (!n[i].trim()) { n.splice(i, 1); } } else { walk(n[i]); } } }
+    else if (n && typeof n === 'object') { Object.keys(n).forEach(function (k) { if (k === 'bcCheck') { return; } if (typeof n[k] === 'string') { n[k] = scrub(n[k]); } else { walk(n[k]); } }); }
+  };
+  walk(result);
+  if (!result.headline || !String(result.headline).trim()) { result.headline = 'No rupee figure can be named yet. The cost of attrition needs the number of exits and the average CTC.'; }
+  result.revenueAtRisk = { figure: 'Not computed', basis: BC_NOT_COMPUTED, confidence: 'Low' };
+  if (!result.signal.impact) { result.signal.impact = {}; }
+  result.signal.impact.financialImpact = 'Not computed';
+  result.signal.impact.breakdown = [BC_NOT_COMPUTED];
+  if (result.humac) { result.humac.range = 'Not computed'; }
+  return removed;
+}
 function applyBusinessCaseEngine(result, userText) {
   if (!result) { return false; }
   var inp = result.bcInputs; delete result.bcInputs;
@@ -4573,10 +4596,13 @@ function applyBusinessCaseEngine(result, userText) {
     }
     result.bcEngine = { model: 'attrition-v1', total: [r2(c.total[0]), r2(c.total[1])], perExit: [r2(c.perExit[0]), r2(c.perExit[1])] };
   }
+  var stripped = 0;
+  if (!c && !bondAmountsIn(userText).length) { stripped = bcStripInvented(result); }
   var flagged = bcFigureCheck(result, c, userText);
-  result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged,
+  result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged, stripped: stripped,
     note: c ? (flagged.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flagged.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.')
             : 'The system could not compute the attrition figures from your data (it needs the number of exits and the average CTC, both stated as numbers). The rupee figures below are the model\'s own estimates and are not system-checked.' };
+  if (stripped) { result.bcCheck.note = 'The system could not compute attrition figures because your input has no exit count or average CTC, and it contains no rupee amounts. Every rupee figure the model wrote was removed (' + stripped + ' sentences). Add the number of exits and the average CTC to get a computed figure.'; }
   return !!c;
 }
 function applyBusinessCaseStakeholder(result, userText) {
