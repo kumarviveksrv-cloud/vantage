@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v119'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v120'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1465,7 +1465,7 @@ ENGAGEMENT SCORES → L3: disengaged headcount x avg salary x 0.15. This figure 
 MANAGER EFFECTIVENESS → L3: below-average manager teams x team salary x 0.08. This coefficient is Gallup-derivable: Gallup's State of the Global Workplace shows engaged teams are 17% more productive than disengaged teams, and managers account for 70% of the variance in team engagement (tracked across 2.7 million workers). A below-average manager driving approximately 50% of their team toward low engagement produces an expected drag of 50% x 17% = 8.5%, which rounds to the 0.08 figure used here. Cite this as a Gallup-derived inference, not a direct Gallup statistic.
 TIME TO HIRE / VACANCY COST → L1: open roles x (revenue per employee / 12) x months open
 TALENT PROGRAMME CONCENTRATION RISK → L2+L5: HiPo count x salary x [0.375-0.55x expected annual exposure] + top performer exits x salary x [1.5-2.2x, top performers are by definition harder to replace than an average role]. Basis for the HiPo multiplier: LSA Global research shows up to 25% of high-potential employees expect to explore new opportunities within any given year (annual flight risk probability). At a 1.5-2.2x replacement cost multiplier, expected annual exposure per HiPo = 25% x 1.5-2.2x = 0.375-0.55x salary. Use 0.375x as the conservative baseline when a retention programme is active; use 0.55x when active flight-risk signals are present for specific individuals. Cite as an expected-value derivation from LSA Global flight risk data combined with SHRM/Gallup replacement cost benchmarks.
-COMPLIANCE/POLICY EXPOSURE → L4: probability x penalty + litigation risk`;
+COMPLIANCE/POLICY EXPOSURE → L4: a statutory penalty may be quoted only where the penalty text is supplied in this prompt, with its section and the words up to or may extend to. Never estimate a probability, a tribunal award, a settlement, a legal cost, a client loss or any past case; write Not computed with the input needed.`;
 }
 
 // ── SHARED HUMAC CONTEXT BLOCK — used by both getBusinessCasePrompt flows ──
@@ -2317,6 +2317,7 @@ async function bcPreExtract(text) {
   } catch (e) { console.error('bcPreExtract failed: ' + e.message); return null; }
 }
 async function bcFiguresBlock(anonText, rawText, flow) {
+  if (flow === 'stakeholder' && POSH_RE.test(String(rawText || ''))) { return { inputs: null, block: poshPromptBlock() }; }
   var text = rawText, inp = await bcPreExtract(anonText);
   if (!inp) { return { inputs: null, block: '' }; }
   var c = bcCalc(bcRead(inp, text));
@@ -4599,6 +4600,75 @@ function ldPromptBlock(l) {
   s += 'Do not model manager effectiveness drag, the share of managers below average, attrition for this cohort, or any other benefit in rupees. Anything that cannot be computed from the data above, write as Not computed with the input needed. Any other rupee figure you write must be one of the figures above. Describe phasing as fractions or percentages of the spend. Do not cite any industry benchmark, standard, norm, typical or commonly cited ROI figure, study, survey or research body, and do not judge whether the spend is modest, typical, high or an outlier. The 1x to 2x range is only an assumption chosen for planning; say exactly that and nothing about where it comes from. Never state numeric targets for the success metric; write that the target and measure will be agreed with the stakeholder before the programme begins. Never call the return a floor, conservative or certain.\n';
   return s;
 }
+var POSH_RE = /\bPOSH\b|sexual harassment|internal (?:complaints? )?committee/i;
+var POSH_SECTIONS = [4, 13, 14, 15, 19, 21, 22, 25, 26];
+var POSH_CLAIM_RE = /\bin (?:19|20)\d{2}\b|tribunal|documented cases|have ranged|settled for|settlement|\birdai\b|ministry of|national commission|strict[- ]liability|\bfloor\b|\b(?:10|ten) or more employees|third-party information|compound(?:s|ed|ing)? across|within \d+ (?:days|weeks|months)|\d+\s*(?:%|percent)[^.]*(?:probab|likel|chance)|(?:probab|likel|chance)[^.]*\d+\s*(?:%|percent)|expected (?:value|cost)|dwarfs|exposure range|lower bound|upper bound|that range|that exposure|blended exposure/i;
+function poshBadSection(s) {
+  var re = /\b(?:sections?|ss?\.)\s*((?:\d+(?:\([a-z0-9]+\))*\s*(?:,|and|&|to)?\s*)*\d+(?:\([a-z0-9]+\))*)/gi, m, nums;
+  while ((m = re.exec(s))) {
+    nums = m[1].replace(/\([a-z0-9]+\)/gi, '').match(/\d+/g) || [];
+    for (var i = 0; i < nums.length; i++) { if (POSH_SECTIONS.indexOf(parseInt(nums[i], 10)) === -1) { return true; } }
+  }
+  return false;
+}
+function poshPromptBlock() {
+  var s = 'SYSTEM-SUPPLIED LAW (use only this; the Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act 2013, the POSH Act):\n';
+  s += '- s.4(1): every employer must, by an order in writing, constitute an Internal Complaints Committee. s.4(2): it has a senior woman employee as Presiding Officer, at least two employee members, and one member from an NGO or a person familiar with sexual harassment issues; at least half the members are women.\n';
+  s += '- s.19: employer duties include a safe working environment, displaying the penal consequences and the order constituting the Committee, and organising workshops and awareness programmes at regular intervals.\n';
+  s += '- s.21: the Internal Committee prepares an annual report each calendar year and submits it to the employer and the District Officer. s.22: the employer includes the number of cases filed and their disposal in its annual report.\n';
+  s += '- s.25: the appropriate Government may, by written order in the public interest, require information or authorise an inspection of records and workplaces.\n';
+  s += '- s.26(1): the fine for failing to constitute the Internal Committee, to act under sections 13, 14 and 22, or to comply with the Act may extend to Rs.50,000. It is a maximum, never a floor or a fixed amount. s.26(2): on a repeat conviction the punishment is doubled and a licence or registration may be cancelled or not renewed. Do not price the repeat penalty.\n';
+  s += '- s.15: compensation to a complainant follows factors listed in the Act and the Act gives no formula, so no compensation figure can be computed.\n';
+  s += 'RULES: the only rupee figures you may write are Rs.50,000 (always as up to or may extend to), figures the user gave, and fractions of the user\'s own spend. Never state a probability, percentage chance or expected value of a complaint, inspection or award. Never state tribunal awards, settlements, legal defence costs, client or business losses, penalties under any other law, or any past case, company or incident. Never name a regulator or ministry or say what it has done or issued. Never call the fine a floor or minimum. Never state a threshold of employees for the Committee. Cite no section other than those listed above. State no deadline or timeline the user did not give; write timing only as a first-person recommendation. For the success metric write that the target and measure will be agreed with the stakeholder before the programme begins. Anything in the Risk Mirror beyond the fine, write as Not computed with the reason.\n';
+  return s;
+}
+function bcOk(okNums, v) { return okNums.some(function (a) { return Math.abs(a - v) <= Math.max(0.005, a * 0.03); }); }
+function bcScrub(result, bad, figKeys) {
+  var removed = 0;
+  var scrub = function (s, key) {
+    if (figKeys && figKeys.indexOf(key) !== -1) { return bad(s) ? 'Not computed' : s; }
+    var tail = s.replace(/\s+(?:--|—|–)\s+the rehearsal [^]*$/i, '');
+    if (tail !== s) { removed += 1; s = tail; }
+    if (!bad(s)) { return s; }
+    var parts = s.split(/(?<=[.!?])\s+(?=[A-Z(])/), keep = parts.filter(function (p) { return !bad(p); });
+    removed += parts.length - keep.length;
+    return keep.length ? keep.join(' ') : (key === 'deadline' ? 'Not stated: no decision date was given.' : (key === 'meridianCalibration' ? '' : 'Not stated.'));
+  };
+  var walk = function (n) {
+    if (Array.isArray(n)) { n.forEach(function (x, i) { if (typeof x === 'string') { n[i] = scrub(x, ''); } else { walk(x); } }); }
+    else if (n && typeof n === 'object') { Object.keys(n).forEach(function (k) { if (k === 'bcCheck') { return; } if (typeof n[k] === 'string') { n[k] = scrub(n[k], k); } else { walk(n[k]); } }); }
+  };
+  walk(result);
+  return removed;
+}
+function bcFixPlaceholders(result, userText) {
+  if (/\bLocation [A-Z]\b/.test(String(userText || ''))) { return; }
+  var walk = function (n) {
+    if (Array.isArray(n)) { n.forEach(function (x, i) { if (typeof x === 'string') { n[i] = x.replace(/\bLocation [A-Z]\b/g, 'our office'); } else { walk(x); } }); }
+    else if (n && typeof n === 'object') { Object.keys(n).forEach(function (k) { if (typeof n[k] === 'string') { n[k] = n[k].replace(/\bLocation [A-Z]\b/g, 'our office'); } else { walk(n[k]); } }); }
+  };
+  walk(result);
+}
+var BC_FIG_KEYS = ['figure', 'revenueAtRisk', 'financialImpact'];
+function applyPoshStakeholder(result, userText) {
+  var okNums = bcFigureNums(userText).concat([0.5], bcUserFractions(userText));
+  var bad = function (s) { return bcFigureNums(s).some(function (v) { return !bcOk(okNums, v); }) || POSH_CLAIM_RE.test(s) || poshBadSection(s); };
+  if (result.stack.dataAnchor) { result.stack.dataAnchor.figure = 'A fine of up to Rs.50,000 under POSH Act s.26(1); every other cost is not computed'; }
+  if (result.stack.riskMirror) {
+    result.stack.riskMirror.revenueAtRisk = 'Not computed';
+    result.stack.riskMirror.revenueAtRiskBasis = 'Not computed: the POSH Act gives no formula for compensation (s.15), and no probability of a complaint or an inspection can be computed from the data given. The only fixed figure is a fine that may extend to Rs.50,000 (s.26(1)); a repeat conviction doubles the punishment (s.26(2)) and is not priced here.';
+    result.stack.riskMirror.probability = '';
+  }
+  var removed = bcScrub(result, bad, BC_FIG_KEYS);
+  if (result.stack.narrativeBridge && (!result.stack.narrativeBridge.story || result.stack.narrativeBridge.story === 'Not stated.')) { result.stack.narrativeBridge.story = 'The duty to constitute an Internal Complaints Committee applies whether or not anyone has made a complaint (POSH Act s.4(1)).'; }
+  var emptyish = function (v) { return !v || v === 'Not stated.'; };
+  if (result.stack.dataAnchor && emptyish(result.stack.dataAnchor.humacBasis)) { result.stack.dataAnchor.humacBasis = 'Not computed: the only fixed figure is the fine that may extend to Rs.50,000 under POSH Act s.26(1). No other calculation applies.'; }
+  if (result.stack.riskMirror && emptyish(result.stack.riskMirror.scenario)) { result.stack.riskMirror.scenario = 'Without an Internal Complaints Committee the employer is in breach of POSH Act s.4(1) whether or not a complaint is ever made, and the fine under s.26(1) may extend to Rs.50,000. The cost beyond the fine is not computed.'; }
+  var flagged = bcFigureCheck(result, null, userText, [0.5].concat(bcUserFractions(userText)));
+  result.bcEngine = { model: 'posh-v1', maxFine: 50000 };
+  result.bcCheck = { ok: flagged.length === 0, engine: true, flagged: flagged, stripped: removed, note: 'Law references and the fine are limited to the POSH Act text the system holds (ss.4, 13 to 15, 19, 21, 22, 25 and 26). No probability, compensation or legal-cost figure is computed.' + (removed ? ' ' + removed + ' sentence(s) with unsupported figures, section numbers, cases, regulator claims or invented timelines were removed.' : '') + (flagged.length ? ' Check these figures: ' + flagged.join(', ') + '.' : '') };
+  return true;
+}
 function bcFigureNums(text) { return bondAmountsIn(text).map(function (n) { return n / 100000; }); }
 function bcFigureCheck(result, c, userText, extra) {
   var allowed = bcFigureNums(userText).concat(extra || []), multiples = [], flagged = [], seen = {};
@@ -4680,7 +4750,7 @@ function applyBusinessCaseEngine(result, userText) {
   var flagged = bcFigureCheck(result, c, userText);
   result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged, stripped: stripped,
     note: c ? (flagged.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flagged.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.')
-            : 'The system could not compute the attrition figures from your data (it needs the number of exits and the average CTC, both stated as numbers). The rupee figures below are the model\'s own estimates and are not system-checked.' };
+            : ((inp && inp.model === 'attrition' ? 'The system could not compute the attrition figures from your data (it needs the number of exits and the average CTC, both stated as numbers). ' : 'The system has no calculation for this kind of analysis, or could not compute it from your data. ') + 'The rupee figures below are the model\'s own estimates and are not system-checked.' + (flagged.length ? ' Not in your data: ' + flagged.join(', ') + '.' : '')) };
   if (stripped) { result.bcCheck.note = 'The system could not compute attrition figures because your input has no exit count or average CTC, and it contains no rupee amounts. Every rupee figure the model wrote was removed (' + stripped + ' sentences). Add the number of exits and the average CTC to get a computed figure.'; }
   return !!c;
 }
@@ -4688,6 +4758,8 @@ function applyBusinessCaseStakeholder(result, userText) {
   if (!result) { return false; }
   var inp = result.bcInputs; delete result.bcInputs;
   if (result.wrongTool === true || !result.stack) { return false; }
+  bcFixPlaceholders(result, userText);
+  if (POSH_RE.test(String(userText || ''))) { return applyPoshStakeholder(result, userText); }
   var T = bcRead(inp, userText), c = bcCalc(T), l = c ? null : ldCalc(inp, userText), er = (c || l) ? null : erCalc(inp, userText);
   if (l) {
     var pctL = Math.round(l.pct * 10) / 10, notC = 'Not computed: no exit, vacancy or performance data was given, so the cost of not acting cannot be priced.';
@@ -4726,10 +4798,16 @@ function applyBusinessCaseStakeholder(result, userText) {
     }
     result.bcEngine = { model: 'attrition-v1', total: [r2(c.total[0]), r2(c.total[1])], perExit: [r2(c.perExit[0]), r2(c.perExit[1])] };
   }
+  var strippedS = 0;
+  if (!c) {
+    var okG = bcFigureNums(userText).concat(bcUserFractions(userText));
+    strippedS = bcScrub(result, function (s) { return bcFigureNums(s).some(function (v) { return !bcOk(okG, v); }); }, BC_FIG_KEYS);
+  }
   var flagged = bcFigureCheck(result, c, userText);
-  result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged,
+  var attHint = (inp && inp.model === 'attrition') ? ' An attrition calculation needs the number of exits and the average CTC, both stated as numbers.' : '';
+  result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged, stripped: strippedS,
     note: c ? (flagged.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flagged.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.')
-            : 'The system could not compute the attrition figures from your data (it needs the number of exits and the average CTC, both stated as numbers). The rupee figures below are the model\'s own estimates and are not system-checked.' };
+            : (strippedS ? 'The system has no calculation for this kind of analysis. ' + strippedS + ' sentence(s) with rupee figures that are not in your data were removed and the figure fields were marked Not computed. The figures that remain come from your input.' + attHint : 'The system has no calculation for this kind of analysis. It found no rupee figure that is absent from your data.' + attHint) };
   return !!c;
 }
 // ── BUSINESS CASE ENGINE END ─────────────────────────────────────────────────
