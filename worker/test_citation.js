@@ -2,7 +2,7 @@
 const fs = require('fs'), path = require('path');
 const src = fs.readFileSync(path.join(__dirname, 'situation-room-api.worker.js'), 'utf8');
 const a = src.indexOf('// ── CITATION CHECKER START'), b = src.indexOf('// ── CITATION CHECKER END');
-const { policyCitationCheck, citeBuildIndex } = new Function(src.slice(a, b) + ';return {policyCitationCheck, citeBuildIndex};')();
+const { policyCitationCheck, citeBuildIndex, policyScrub } = new Function(src.slice(a, b) + ';return {policyCitationCheck, citeBuildIndex, policyScrub};')();
 const L = (f) => fs.readFileSync(path.join(__dirname, '..', 'legal', f), 'utf8');
 const parts = [
   { key: 'wages-code-2019', text: L('wages-code-2019.txt') },
@@ -51,6 +51,16 @@ ok(r.flags.length === 0 && r.text === 'No citations here, just advice.' && r.not
 
 r = policyCitationCheck('Section 17 of the Code on Wages applies.', [], '');
 ok(r.flags.length === 1, 'no supplied text: citation unverified');
+
+let sc = policyScrub('The remedy is a claim for damages or, more commonly, withholding of the relieving letter pending negotiation. Note the MERIDIAN policy says 12 months.');
+ok(sc.removed && !/relieving/.test(sc.text) && /claim for damages/.test(sc.text) && /MERIDIAN policy/.test(sc.text), 'clause removed, rest kept: ' + sc.text);
+sc = policyScrub('Step 4. Withholding her experience certificate gives you leverage. Pay dues on time.');
+ok(sc.removed && !/experience certificate/.test(sc.text) && /Pay dues/.test(sc.text), 'positive suggestion sentence dropped: ' + sc.text);
+sc = policyScrub('Do not withhold the relieving letter as leverage over an employee who is leaving.');
+ok(!sc.removed && /Do not withhold/.test(sc.text), 'negated advice kept: ' + sc.text);
+sc = policyScrub('Withholding documents is a separate matter from notice enforcement.');
+ok(!sc.removed, 'separate-matter wording kept');
+ok(/DEDUCTION_FINE_QUESTION = /.test(src) && /exposurePay = PAY_SHORTFALL_QUESTION\.test\([^;]*\|\| DEDUCTION_FINE_QUESTION/.test(src), 'deduction questions get the system fine figure');
 
 ok(/policyCitationCheck\(policyText, policyActLoad\.parts/.test(src) && /tool === 'policy'/.test(src), 'wired into policy handler');
 console.log(fails ? fails + ' FAILED' : 'citation checker: all passed');

@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v85'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v86'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -731,6 +731,24 @@ function policyCitationCheck(text, parts, userText) {
     note = '\n\nSystem check: these items could not be matched to the statute text supplied for this answer, so treat them as unverified and confirm with counsel before relying on them: ' + list.join('; ') + '.';
   }
   return { text: out, note: note.replace(/^\n+/, ''), ok: flags.length === 0, flags: flags, citations: cites, figures: figs };
+}
+// Code-side removal of one suggestion this tool never makes: withholding an employee's relieving letter, experience certificate or documents as leverage.
+const POLICY_WITHHOLD_RE = /withhold(?:ing)?\s+(?:of\s+)?(?:the\s+|her\s+|his\s+|their\s+)?(?:relieving|experience|service)\s+(?:letter|certificate)|withhold(?:ing)?\s+(?:of\s+)?(?:the\s+|her\s+|his\s+|their\s+)?(?:documents|certificates|papers)/i;
+const POLICY_NEGATION_RE = /\b(?:do not|don't|never|must not|should not|cannot|can't|not)\b[^.]{0,40}withhold|withholding[^.]{0,80}\b(?:is|are)\s+(?:not|unlawful|prohibited|improper|a separate)/i;
+function policyScrub(text) {
+  var removed = false;
+  var clauseRe = /,?\s*(?:or|and),?\s*(?:more\s+commonly|commonly|typically|usually|often),?\s*(?:by\s+)?withhold(?:ing)?[^.;\n]*?(?:relieving|experience|service)\s+(?:letter|certificate)[^.;\n]*/gi;
+  var out = String(text || '').replace(clauseRe, function () { removed = true; return ''; });
+  out = out.split('\n').map(function (line) {
+    if (!POLICY_WITHHOLD_RE.test(line)) { return line; }
+    var sents = line.split(/(?<=[.!?])\s+(?=[A-Z0-9₹])/);
+    var kept = sents.filter(function (sn) {
+      if (POLICY_WITHHOLD_RE.test(sn) && !POLICY_NEGATION_RE.test(sn)) { removed = true; return false; }
+      return true;
+    });
+    return kept.join(' ');
+  }).join('\n');
+  return { text: out, removed: removed };
 }
 // ── CITATION CHECKER END ─────────────────────────────────────────────────────
 
@@ -2830,6 +2848,8 @@ function computeExposure(inputs) {
   };
 }
 // Whether a question is about pay that may be underpaid is decided here in code, not left to the model.
+// Deduction and withholding questions get the system's statutory fine figure too, but they are not 'pure pay' questions (MERIDIAN notice policy stays in the prompt).
+const DEDUCTION_FINE_QUESTION = /\bdeduct\w*|withh[eo]ld\w*|set[-\s]*off|notice\s*pay|final\s*settlement|full[-\s]*and[-\s]*final|\bf\s*&\s*f\b/i;
 const PAY_SHORTFALL_QUESTION = /overtime|\bOT\b|\bwages?\b|under[-\s]?pa(y|id|yment)|arrears?|shortfall|minimum\s*wage|allowance|bonus|salary\s*(delay|deduct)|deductions?/i;
 // With no user inputs, the only grounded figure for a pay shortfall is the statutory fine. No headcount is invented.
 const EXPOSURE_FINE_ONLY = {
@@ -4553,6 +4573,8 @@ if (actContext) {
         policyText += '\n\nNote: the statutory text for ' + policyActLoad.missing.join(' and ') + ' could not be loaded for this answer, so section references come from general knowledge and should be checked against the Act.';
       }
       let policyCheckNote = null;
+      const _scr = policyScrub(policyText);
+      policyText = _scr.text;
       if (policyActLoad.parts && policyActLoad.parts.length) {
         try {
           const _chk = policyCitationCheck(policyText, policyActLoad.parts, String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || '') + ' ' + (exposureComputed ? exposureComputed.summary : '') + ' ' + (exposureFinal && exposureFinal.range ? exposureFinal.range : ''));
@@ -4561,10 +4583,15 @@ if (actContext) {
           console.log('Policy citation check: ' + _chk.citations + ' citations, ' + _chk.figures + ' figures, ' + _chk.flags.length + ' flagged');
         } catch (chkErr) { console.log('Policy citation check failed: ' + (chkErr && chkErr.message)); }
       }
+      if (_scr.removed) {
+        policyCheckNote = policyCheckNote || { ok: true, note: '', items: [] };
+        policyCheckNote.note = (policyCheckNote.note ? policyCheckNote.note + ' ' : '') + 'The system also removed a suggestion to withhold an employee document, which this tool does not recommend.';
+        console.log('Policy scrub: removed withhold-document suggestion');
+      }
       result = { response: policyText };
       if (policyCheckNote) { result.citationCheck = policyCheckNote; }
       // Sent as its own field so the page never has to parse the explanation out of the model's text
-      const exposurePay = PAY_SHORTFALL_QUESTION.test(String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || ''));
+      const exposurePay = PAY_SHORTFALL_QUESTION.test(String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || '')) || DEDUCTION_FINE_QUESTION.test(String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || ''));
       if (exposureUsed || exposurePay) { result.exposure = { range: exposureFinal.range, basis: exposureFinal.basis }; }
       queueUsage(clerkUserId, 'policy', usageCheck);
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
