@@ -2,7 +2,7 @@
 const fs = require('fs'), path = require('path');
 const src = fs.readFileSync(path.join(__dirname, 'situation-room-api.worker.js'), 'utf8');
 const a = src.indexOf('// ── POSH ENGINE START'), b = src.indexOf('// ── POSH ENGINE END');
-const { poshParseDate, poshAddMonths, poshCalendar, applyPoshEngine } = new Function(src.slice(a, b) + ';return {poshParseDate, poshAddMonths, poshCalendar, applyPoshEngine};')();
+const { poshParseDate, poshAddMonths, poshCalendar, applyPoshEngine, poshDropLateClaims } = new Function(src.slice(a, b) + ';return {poshParseDate, poshAddMonths, poshCalendar, applyPoshEngine, poshDropLateClaims};')();
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('FAIL', m); } };
 const D = (s) => new Date(s + 'T00:00:00Z');
 const row = (cal, label) => cal.rows.find(r => r.label === label);
@@ -61,6 +61,18 @@ ok(r.poshCalendar && r.poshCalendar.rows.every(x => x.tone === 'na'), 'secondary
 r = { wrongTool: true, detectedCaseType: 'POSH Complaint', poshInputs: {} };
 applyPoshEngine(r, D('2026-11-10'));
 ok(r.poshCalendar === undefined, 'wrong-tool reply gets no calendar');
+// status claims by the model are removed when the calendar shows nothing late
+r = { detectedCaseType: 'POSH Complaint', poshInputs: { inquiryCompletionDate: '2026-11-02' }, protocol: { quick_take: 'The committee has not reported. The ten-day window from 2 November expired on 12 November 2026; the report is already overdue. Write to the Presiding Officer today.', bullets: ['The ten-day statutory deadline has passed.', 'Log the date the report arrives.'], pact: { p: { points: ['The ten-day window expired on 12 November 2026; the report is already overdue on the facts given.'] } } } };
+applyPoshEngine(r, D('2026-11-10'));
+ok(!/expired|overdue|has passed/.test(JSON.stringify(r.protocol)), 'late claims removed: ' + JSON.stringify(r.protocol));
+ok(/Write to the Presiding Officer today/.test(r.protocol.quick_take) && /Log the date the report arrives/.test(r.protocol.bullets[1]), 'other sentences kept');
+ok(r.protocol.bullets[0] === 'See the POSH Deadline Calendar for the dated status of each time limit.' && /See the POSH Deadline Calendar/.test(r.protocol.pact.p.points[0]), 'fully removed text replaced by the pointer to the calendar');
+r = { detectedCaseType: 'POSH Complaint', poshInputs: { inquiryCompletionDate: '2026-10-01' }, protocol: { quick_take: 'The ten-day window expired on 11 October 2026; the report is overdue.' } };
+applyPoshEngine(r, D('2026-11-10'));
+ok(/overdue/.test(r.protocol.quick_take) && row(r.poshCalendar, 'Report to the employer').tone === 'late', 'when the calendar does show a late row, the claim is kept');
+ok(poshDropLateClaims({ a: 'The rent is overdue. Pay it.' }) === 0, 'unrelated overdue text untouched');
+ok(/TODAY'S DATE: \$\{poshFmt\(new Date\(\)\)\}/.test(src), 'model is told today\'s date');
+
 ok(/applyPoshEngine\(result, new Date\(\)\)/.test(src) && /"poshInputs":/.test(src) && /never calculate a deadline/.test(src), 'wired: schema field, prompt rule and handler call present');
 console.log(fails ? fails + ' FAILED' : 'POSH engine: all passed');
 process.exit(fails ? 1 : 0);

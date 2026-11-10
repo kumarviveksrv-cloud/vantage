@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v90'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v91'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1397,7 +1397,7 @@ FINANCIAL ITEMS
 The financial.items list is how the cost model is shown to the HR professional, who will be asked to defend every number. Use 4 to 7 items in this order. First, one assumption item stating the annual CTC being used: if the message contains EMPLOYEE ANNUAL CTC, use that figure and set basis to supplied; otherwise assume a CTC for this role, sector and company size, say why, and set basis to assumed. In that item also state the daily wage as annual CTC divided by 260 working days. Then the exposure items. Then any owed_in_any_case items. Last, one not_included item saying what the range leaves out.
 - exposure: a cost that arises only if the wrong decision is taken, such as back wages or reinstatement-equivalent relief, defence and complaint costs, or replacement cost. Give low and high in lakh as plain numbers. The workings must show the inputs and arithmetic that produce exactly those numbers. The system adds the exposure items to make the range, so put every cost you want counted into an exposure item and count nothing twice. An exposure item must never contain any part of an amount shown as owed_in_any_case: for example, back wages or relief cover only the extra period of a dispute or wrongful action, never the statutory benefit period that is already shown as owed in any case.
 - owed_in_any_case: an amount payable whether or not the employee is dismissed, such as a statutory benefit. It is shown but never added to the range. Work it out from the Act's own wording: a benefit paid at the average daily wage for the period of absence is paid for every day of that period, not only working days.
-- For a POSH Complaint, never write a calendar date as a deadline in any field. State time limits as periods (for example 90 days from the start of the inquiry) and the system adds the dated calendar.
+- For a POSH Complaint, never write a calendar date as a deadline in any field, and never say that a time limit has passed, expired or is overdue unless the dates in the narrative and TODAY'S DATE show it. State time limits as periods (for example 90 days from the start of the inquiry) and the system adds the dated calendar and the status of each limit.
 - When engineFlags is not null, the system replaces the whole financial calculation with its own, so return financial.items with only two entries (the CTC assumption and one not_included item) and keep the range field short. Fill engineFlags carefully, because the figures depend on it.
 - Every number that comes neither from the narrative nor from an Act provided to you has basis assumed. Never state a statutory amount, penalty or compensation formula that the Acts provided to you do not contain.
 
@@ -3992,6 +3992,32 @@ function applyPoshEngine(result, asOf) {
   if (result.wrongTool === true) { return; }
   if (result.detectedCaseType !== 'POSH Complaint' && result.secondaryCaseType !== 'POSH Complaint') { return; }
   result.poshCalendar = poshCalendar(inputs, asOf || new Date());
+  if (!result.poshCalendar.rows.some(function (r) { return r.tone === 'late'; })) {
+    var _n = poshDropLateClaims(result);
+    if (_n) { console.log('POSH: removed ' + _n + ' sentence(s) claiming a time limit had passed while the calendar shows none late'); }
+  }
+}
+// The model is not trusted to say whether a time limit has run. When the calendar shows nothing late, sentences claiming a POSH time limit has passed, expired or is overdue are removed from the text.
+const POSH_LATE_CLAIM_RE = /\b(?:has|have|had)\s+(?:already\s+)?(?:passed|expired|lapsed|elapsed)\b|\balready\s+(?:overdue|expired|lapsed)\b|\boverdue\b|\bexpired\s+on\b|\bin\s+breach\s+of\s+this\s+(?:deadline|limit)\b/i;
+const POSH_PERIOD_RE = /\b(?:ten|10|sixty|60|ninety|90)[\s-]*days?\b|\bsection\s*(?:13\(1\)|13\(4\)|11\(4\)|18)|\bs\.\s*(?:13\(1\)|13\(4\)|11\(4\)|18)|\bstatutory\s+deadline|\b(?:report|inquiry|action|appeal)\s+(?:window|deadline)/i;
+const POSH_STATUS_FALLBACK = 'See the POSH Deadline Calendar for the dated status of each time limit.';
+function poshDropLateClaims(node) {
+  var dropped = 0;
+  function fixString(t) {
+    if (!POSH_LATE_CLAIM_RE.test(t) || !POSH_PERIOD_RE.test(t)) { return t; }
+    var sents = t.split(/(?<=[.!?])\s+(?=[A-Z0-9₹])/);
+    var kept = sents.filter(function (sn) { if (POSH_LATE_CLAIM_RE.test(sn) && POSH_PERIOD_RE.test(sn)) { dropped++; return false; } return true; });
+    return kept.length ? kept.join(' ') : POSH_STATUS_FALLBACK;
+  }
+  (function walk(n, depth) {
+    if (!n || typeof n !== 'object' || depth > 8) { return; }
+    Object.keys(n).forEach(function (k) {
+      if (k === 'poshCalendar') { return; }
+      if (typeof n[k] === 'string') { n[k] = fixString(n[k]); }
+      else { walk(n[k], depth + 1); }
+    });
+  })(node, 0);
+  return dropped;
 }
 // ── POSH ENGINE END ──────────────────────────────────────────────────────────
 
@@ -4462,7 +4488,7 @@ async function handleRequest(request, env) {
       if (truncatedStakeholders && anonymizedStakeholders === null) { if (trialCharged) { await refundTrialCall(clerkUserId); } return anonymizationFailedResponse(); }
 
       const systemPrompt = getPactPrompt(meridian);
-      const userMessage = `${buildPactMeridianBlock(meridian)}\n\nCASE TYPE: ${truncateInput(caseType, 200)}\nNARRATIVE: ${anonymizedNarrative}\n${anonymizedStakeholders ? `STAKEHOLDERS: ${anonymizedStakeholders}` : ''}\n${ctcLine}\nRun the full PACT diagnostic and Unified Decision Protocol. Return the complete JSON response with both pact_scores and protocol fields as specified.`;
+      const userMessage = `${buildPactMeridianBlock(meridian)}\n\nCASE TYPE: ${truncateInput(caseType, 200)}\nNARRATIVE: ${anonymizedNarrative}\n${anonymizedStakeholders ? `STAKEHOLDERS: ${anonymizedStakeholders}` : ''}\n${ctcLine}\nTODAY'S DATE: ${poshFmt(new Date())}. Use it only to judge whether a period in the narrative has run.\nRun the full PACT diagnostic and Unified Decision Protocol. Return the complete JSON response with both pact_scores and protocol fields as specified.`;
       const caseActKeys = selectActsForCase(caseType, anonymizedNarrative);
 const actLoad = await loadActsWithStatus(caseActKeys);
 const actContext = actLoad.text;
