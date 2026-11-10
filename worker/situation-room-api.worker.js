@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v91'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v92'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4004,9 +4004,9 @@ const POSH_STATUS_FALLBACK = 'See the POSH Deadline Calendar for the dated statu
 function poshDropLateClaims(node) {
   var dropped = 0;
   function fixString(t) {
-    if (!POSH_LATE_CLAIM_RE.test(t) || !POSH_PERIOD_RE.test(t)) { return t; }
+    if (!((POSH_LATE_CLAIM_RE.test(t) && POSH_PERIOD_RE.test(t)) || POSH_BREACH_RE.test(t))) { return t; }
     var sents = t.split(/(?<=[.!?])\s+(?=[A-Z0-9₹])/);
-    var kept = sents.filter(function (sn) { if (POSH_LATE_CLAIM_RE.test(sn) && POSH_PERIOD_RE.test(sn)) { dropped++; return false; } return true; });
+    var kept = sents.filter(function (sn) { if ((POSH_LATE_CLAIM_RE.test(sn) && POSH_PERIOD_RE.test(sn)) || POSH_BREACH_RE.test(sn)) { dropped++; return false; } return true; });
     return kept.length ? kept.join(' ') : POSH_STATUS_FALLBACK;
   }
   (function walk(n, depth) {
@@ -4019,6 +4019,31 @@ function poshDropLateClaims(node) {
   })(node, 0);
   return dropped;
 }
+// POSH cost model, built in code. The one statutory figure is the s.26(1) fine, quoted from the Act. Legal and advisory cost is a labelled planning assumption.
+// Compensation to the complainant (ss.13(3)(ii) and 15) has no formula in the Act, so it is listed as not priced and never estimated.
+const POSH_ENGINE = { fineLakh: 0.5, legalLakh: [1, 3] };
+function poshFinancialItems() {
+  var E = POSH_ENGINE;
+  return [
+    { label: 'Employer fine under s.26(1)', kind: 'exposure', basis: 'statute', low: 0, high: E.fineLakh,
+      workings: 'The fine may extend to fifty thousand rupees (Rs.50,000) for failing to constitute the Internal Committee, to act under sections 13, 14 and 22, or to comply with the Act. It is a maximum, so the low end is nil. A repeat conviction doubles the punishment (s.26(2)) and is not priced here.' },
+    { label: 'Legal and advisory costs', kind: 'exposure', basis: 'assumed', low: E.legalLakh[0], high: E.legalLakh[1],
+      workings: 'A fixed planning range of Rs.' + E.legalLakh[0] + 'L to Rs.' + E.legalLakh[1] + 'L for external legal advice if either party appeals (s.18) or the outcome is challenged. It is an assumption, not a published figure.' },
+    { label: 'What the range leaves out', kind: 'not_included',
+      workings: 'Compensation to the complainant under sections 13(3)(ii) and 15: the Act lists factors and gives no formula, so none is priced. Also not counted: a repeat-conviction penalty and licence cancellation (s.26(2)), fees of the external committee member, action against the respondent, replacement hiring, criminal proceedings and reputational cost.' }
+  ];
+}
+function applyPoshFinancial(result) {
+  if (!result || !result.poshCalendar || !result.protocol || !result.protocol.financial) { return false; }
+  var f = result.protocol.financial;
+  f.items = poshFinancialItems();
+  normaliseFinancial(result);
+  f.confidence = 'Low';
+  f.rangeNote = 'Compensation to the complainant under s.15 has no formula in the Act and is not priced in this range.';
+  delete f.split;
+  return true;
+}
+const POSH_BREACH_RE = /\b(?:live|existing|current|present|ongoing)\s+breach\b|\bitself\s+a\s+breach\b|\balready\s+in\s+breach\b|\bin\s+breach\s+of\s+this\b|\bhas\s+breached\b|\bbreached\b/i;
 // ── POSH ENGINE END ──────────────────────────────────────────────────────────
 
 function applyDeterministicFinancial(result, reqBody) {
@@ -4038,7 +4063,7 @@ function applyDeterministicFinancial(result, reqBody) {
     if (!result || result.wrongTool === true || !result.protocol || !result.protocol.financial) { return; }
     var flags = result.engineFlags;
     delete result.engineFlags;
-    if (!flags || typeof flags !== 'object') { return; }
+    if (!flags || typeof flags !== 'object') { try { applyPoshFinancial(result); } catch (e) { console.error('applyPoshFinancial failed: ' + e.message); } return; }
     try { var _dc = stripModelDayCounts(result); if (_dc) { console.log('PACT: removed ' + _dc + ' model-written day-count sentence(s)'); } } catch (e) { console.error('stripModelDayCounts failed: ' + e.message); }
     appendDayCount(result, flags);
     try { var _s70 = applyShortServiceRule(result, flags); if (_s70) { console.log('PACT: removed ' + _s70 + ' section 70 item(s), service under one year'); } } catch (e) { console.error('applyShortServiceRule failed: ' + e.message); }

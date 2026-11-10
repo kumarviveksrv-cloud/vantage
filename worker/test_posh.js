@@ -1,8 +1,9 @@
 // POSH deadline calendar: every date computed in code from dates the narrative states; a missing date is never guessed.
 const fs = require('fs'), path = require('path');
 const src = fs.readFileSync(path.join(__dirname, 'situation-room-api.worker.js'), 'utf8');
+const fa = src.indexOf('function normaliseFinancial'), fb = src.indexOf('// DETERMINISTIC FINANCIAL ENGINE (v17)');
 const a = src.indexOf('// ── POSH ENGINE START'), b = src.indexOf('// ── POSH ENGINE END');
-const { poshParseDate, poshAddMonths, poshCalendar, applyPoshEngine, poshDropLateClaims } = new Function(src.slice(a, b) + ';return {poshParseDate, poshAddMonths, poshCalendar, applyPoshEngine, poshDropLateClaims};')();
+const { poshParseDate, poshAddMonths, poshCalendar, applyPoshEngine, poshDropLateClaims, applyPoshFinancial, poshFinancialItems } = new Function(src.slice(fa, fb) + src.slice(a, b) + ';return {poshParseDate, poshAddMonths, poshCalendar, applyPoshEngine, poshDropLateClaims, applyPoshFinancial, poshFinancialItems};')();
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('FAIL', m); } };
 const D = (s) => new Date(s + 'T00:00:00Z');
 const row = (cal, label) => cal.rows.find(r => r.label === label);
@@ -72,6 +73,28 @@ applyPoshEngine(r, D('2026-11-10'));
 ok(/overdue/.test(r.protocol.quick_take) && row(r.poshCalendar, 'Report to the employer').tone === 'late', 'when the calendar does show a late row, the claim is kept');
 ok(poshDropLateClaims({ a: 'The rent is overdue. Pay it.' }) === 0, 'unrelated overdue text untouched');
 ok(/TODAY'S DATE: \$\{poshFmt\(new Date\(\)\)\}/.test(src), 'model is told today\'s date');
+
+// breach wording
+r = { detectedCaseType: 'POSH Complaint', poshInputs: { inquiryCompletionDate: '2026-11-02' }, protocol: { summary: 'The inquiry is complete but the report has not reached the employer, creating a live breach of the ten-day reporting window under POSH Act s.13(1). The sixty-day clock cannot start until the report arrives.', legal: 'Failure to actively prompt the IC now is itself a breach of that duty. The employer must monitor timely submission.' } };
+applyPoshEngine(r, D('2026-11-10'));
+ok(!/breach/.test(r.protocol.summary) && /sixty-day clock cannot start/.test(r.protocol.summary), 'live-breach sentence removed, the rest kept: ' + r.protocol.summary);
+ok(!/breach/.test(r.protocol.legal) && /must monitor timely submission/.test(r.protocol.legal), 'itself-a-breach sentence removed: ' + r.protocol.legal);
+ok(/confidentiality/.test(poshDropLateClaims.toString()) === false && poshDropLateClaims({ a: 'Prompt delivery without breaching confidentiality.' }) === 0, 'breaching (not breached) is left alone');
+
+// cost model built in code
+const items = poshFinancialItems();
+ok(items[0].high === 0.5 && items[0].low === 0 && items[0].basis === 'statute' && /fifty thousand rupees/.test(items[0].workings), 'fine item is Rs.50,000 = 0.5 lakh, from the Act');
+ok(items[1].basis === 'assumed' && items[1].low === 1 && items[1].high === 3, 'legal cost is a labelled assumption');
+ok(/no formula/.test(items[2].workings) && items[2].kind === 'not_included', 'compensation listed as not priced');
+r = { detectedCaseType: 'POSH Complaint', poshInputs: null, protocol: { financial: { range: 'Rs.2.69L to Rs.7.92L', confidence: 'Medium', items: [{ kind: 'exposure', label: 'wrong 10x', low: 0.05, high: 0.05, basis: 'assumed', workings: 'x' }], split: { a: 1 } } } };
+applyPoshEngine(r, D('2026-11-10'));
+ok(applyPoshFinancial(r) === true, 'financial applied for a POSH result');
+ok(r.protocol.financial.range === 'Rs.1L to Rs.3.5L', 'range computed in code: ' + r.protocol.financial.range);
+ok(r.protocol.financial.confidence === 'Low' && r.protocol.financial.split === undefined && /not priced/.test(r.protocol.financial.rangeNote), 'low confidence, no split, range note present');
+ok(r.protocol.financial.breakdown.some(l => /Rs\.50K/.test(l)) && !r.protocol.financial.breakdown.some(l => /0\.05L|Rs\.5K/.test(l)), 'fine shown as Rs.50K, never Rs.5K: ' + r.protocol.financial.breakdown[0]);
+r = { detectedCaseType: 'Termination', protocol: { financial: { range: 'x', items: [] } } };
+ok(applyPoshFinancial(r) === false && r.protocol.financial.range === 'x', 'other case types untouched');
+ok(/applyPoshFinancial\(result\)/.test(src), 'financial wired into applyDeterministicFinancial');
 
 ok(/applyPoshEngine\(result, new Date\(\)\)/.test(src) && /"poshInputs":/.test(src) && /never calculate a deadline/.test(src), 'wired: schema field, prompt rule and handler call present');
 console.log(fails ? fails + ' FAILED' : 'POSH engine: all passed');
