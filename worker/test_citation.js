@@ -17,10 +17,10 @@ ok(idx.sections.osh && idx.sections.osh['143'], 'osh s.143 indexed from extract:
 ok(!idx.sections.wages['999'], 'no invented wages section');
 
 let r = policyCitationCheck('Section 17 of the Code on Wages sets the time limit. Section 54 gives the penalty.', parts, '');
-ok(r.flags.length === 0 && /all were found/.test(r.text), 'valid citations pass: ' + JSON.stringify(r.flags));
+ok(r.flags.length === 0 && /all were found/.test(r.note), 'valid citations pass: ' + JSON.stringify(r.flags));
 
 r = policyCitationCheck('Section 999 of the Code on Wages covers this.', parts, '');
-ok(r.flags.length === 1 && r.text.includes('[outside the supplied text]') && /could not be matched/.test(r.text), 'invented wages section flagged');
+ok(r.flags.length === 1 && r.text.includes('[outside the supplied text]') && /could not be matched/.test(r.note), 'invented wages section flagged');
 
 r = policyCitationCheck('Section 143(3) of the OSH Code names the rules.', parts, '');
 ok(r.flags.length === 0, 'OSH s.143 passes via extract: ' + JSON.stringify(r.flags));
@@ -47,7 +47,7 @@ r = policyCitationCheck('The penalty is up to ₹50,000.', parts, '');
 ok(r.flags.length === 0, 'statute figure passes (fifty thousand rupees in Wages s.54): ' + JSON.stringify(r.flags));
 
 r = policyCitationCheck('No citations here, just advice.', parts, '');
-ok(r.flags.length === 0 && r.text === 'No citations here, just advice.', 'no citations: text untouched');
+ok(r.flags.length === 0 && r.text === 'No citations here, just advice.' && r.note === '', 'no citations: text untouched');
 
 r = policyCitationCheck('Section 17 of the Code on Wages applies.', [], '');
 ok(r.flags.length === 1, 'no supplied text: citation unverified');

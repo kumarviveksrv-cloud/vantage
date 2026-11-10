@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v83'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v84'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -730,7 +730,7 @@ function policyCitationCheck(text, parts, userText) {
     flags.forEach(function (x) { if (!seen[x.item]) { seen[x.item] = true; list.push(x.item); } });
     note = '\n\nSystem check: these items could not be matched to the statute text supplied for this answer, so treat them as unverified and confirm with counsel before relying on them: ' + list.join('; ') + '.';
   }
-  return { text: out + note, flags: flags, citations: cites, figures: figs };
+  return { text: out, note: note.replace(/^\n+/, ''), ok: flags.length === 0, flags: flags, citations: cites, figures: figs };
 }
 // ── CITATION CHECKER END ─────────────────────────────────────────────────────
 
@@ -4552,14 +4552,17 @@ if (actContext) {
       if (policyActLoad.missing.length > 0) {
         policyText += '\n\nNote: the statutory text for ' + policyActLoad.missing.join(' and ') + ' could not be loaded for this answer, so section references come from general knowledge and should be checked against the Act.';
       }
+      let policyCheckNote = null;
       if (policyActLoad.parts && policyActLoad.parts.length) {
         try {
           const _chk = policyCitationCheck(policyText, policyActLoad.parts, String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || '') + ' ' + (exposureComputed ? exposureComputed.summary : '') + ' ' + (exposureFinal && exposureFinal.range ? exposureFinal.range : ''));
           policyText = _chk.text;
+          if (_chk.note) { policyCheckNote = { ok: _chk.ok, note: _chk.note, items: _chk.flags.map(function (x) { return x.item; }) }; }
           console.log('Policy citation check: ' + _chk.citations + ' citations, ' + _chk.figures + ' figures, ' + _chk.flags.length + ' flagged');
         } catch (chkErr) { console.log('Policy citation check failed: ' + (chkErr && chkErr.message)); }
       }
       result = { response: policyText };
+      if (policyCheckNote) { result.citationCheck = policyCheckNote; }
       // Sent as its own field so the page never has to parse the explanation out of the model's text
       const exposurePay = PAY_SHORTFALL_QUESTION.test(String(anonymizedQuestion || '') + ' ' + String(anonymizedContext || ''));
       if (exposureUsed || exposurePay) { result.exposure = { range: exposureFinal.range, basis: exposureFinal.basis }; }
