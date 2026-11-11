@@ -69,4 +69,11 @@ const dq = { stack: { credibility: {}, dataAnchor: { headline: 'h', figure: 'Not
 applyBusinessCaseStakeholder(dq, 'Hire two analysts at Rs.14L each. I need approval.', PROFILE);
 ok(dq.stack.decisionRunway.deadline === 'Not stated. Add the date you need the decision by.', 'model deadline replaced: ' + dq.stack.decisionRunway.deadline);
 ok(dq.stack.decisionRunway.alternatives.length === 1, 'duplicate alternatives collapsed');
+// audience profile is a fixed line per audience, never the model's text
+const au = { stakeholderProfile: 'The CFO controls headcount and will probe whether an RPO arrangement is cheaper.', stack: { credibility: {}, dataAnchor: { headline: 'h', figure: 'Not computed', context: 'c' }, riskMirror: {}, decisionRunway: {} }, humac: {} };
+applyBusinessCaseStakeholder(au, 'Hire two analysts at Rs.14L each. I need approval.', PROFILE, 'Board / Investors');
+ok(/^A board or investor group decides/.test(au.stakeholderProfile) && !/RPO/.test(au.stakeholderProfile), 'board line used: ' + au.stakeholderProfile);
+const au2 = { stakeholderProfile: 'x', stack: { credibility: {}, dataAnchor: { headline: 'h', figure: 'Not computed', context: 'c' }, riskMirror: {}, decisionRunway: {} }, humac: {} };
+applyBusinessCaseStakeholder(au2, 'Hire two analysts at Rs.14L each. I need approval.', PROFILE, 'CFO / Finance head');
+ok(/^A finance head decides on numbers and risk/.test(au2.stakeholderProfile), 'cfo line used');
 if (fails) { console.log(fails + ' FAILED'); process.exit(1); } else { console.log('PROVENANCE TESTS PASSED'); }

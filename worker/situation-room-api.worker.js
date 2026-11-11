@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v155'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v156'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4956,7 +4956,22 @@ function bcRatioBad(s, userText) {
   return false;
 }
 var BC_PROMISE_RE = /\bI will (?:send|share|have|bring|get|circulate|email|forward)\b|\bby (?:end of (?:the )?day|eod|tonight|tomorrow)\b|\bwithin (?:the next )?(?:24|48) hours\b/i;
-function applyBusinessCaseStakeholder(result, userText, profileText) {
+var BC_AUDIENCE_LINES = [
+  [/ceo|founder/i, 'A CEO or founder decides on the business outcome and the cost of waiting, so lead with the decision you are asking for and the figures you gave.'],
+  [/cfo|finance/i, 'A finance head decides on numbers and risk, so lead with the figures you gave and the decision you are asking for.'],
+  [/chro|hr head/i, 'An HR head decides on workforce impact and what can be defended to peers, so lead with the people facts you gave and the decision you are asking for.'],
+  [/board|investor/i, 'A board or investor group decides at summary level on risk and return, so lead with the decision, then the figures you gave.'],
+  [/business unit|bu head/i, 'A business unit head decides on the effect on their own team and output, so lead with the operating facts you gave and the decision you are asking for.'],
+  [/line manager|manager/i, 'A line manager decides on the day-to-day effect on their team, so lead with what changes for the team and the decision you are asking for.'],
+  [/legal|compliance/i, 'A legal or compliance head decides on exposure and process, so lead with the facts you gave, keep every claim to what you can document, and state the decision you are asking for.'],
+  [/leadership/i, 'A leadership team decides on priorities and trade-offs across functions, so lead with the decision you are asking for and the figures you gave.']
+];
+function bcAudienceLine(stakeholderType) {
+  var t = String(stakeholderType || '');
+  for (var i = 0; i < BC_AUDIENCE_LINES.length; i++) { if (BC_AUDIENCE_LINES[i][0].test(t)) { return BC_AUDIENCE_LINES[i][1]; } }
+  return 'This audience decides on numbers and risk, so lead with the figures you gave and the decision you are asking for.';
+}
+function applyBusinessCaseStakeholder(result, userText, profileText, stakeholderType) {
   var provSnap = (result && result.provenance && typeof result.provenance === 'object') ? JSON.parse(JSON.stringify(result)) : null;
   var r = applyBusinessCaseStakeholder0(result, userText);
   if (result && result.stack && result.wrongTool !== true) {
@@ -4991,7 +5006,7 @@ function applyBusinessCaseStakeholder(result, userText, profileText) {
       var pm = /^(high|medium|low)\b/i.exec(String(rmk.probability || ''));
       rmk.probability = pm ? pm[1].charAt(0).toUpperCase() + pm[1].slice(1).toLowerCase() + ': a judgement from the facts you gave, not a computed probability.' : '';
     }
-    if (empty(result.stakeholderProfile)) { result.stakeholderProfile = 'This audience decides on numbers and risk, so lead with the figures you gave and the decision you are asking for.'; }
+    result.stakeholderProfile = bcAudienceLine(stakeholderType);
     if (st) { fixO(st.credibility, 'statement', 'HR is bringing you a decision request based on the facts in the situation described.'); }
     if (empty(result.openingLine)) { result.openingLine = 'I am here to ask for one decision, and I will stay with the facts I have.'; }
     if (st) { fixO(st.decisionRunway, 'ask', 'The ask is the decision stated in your input.'); fixO(st.dataAnchor, 'headline', 'No calculation applies yet. Add headcount affected, average CTC and the number of exits or vacancies to get a computed range.'); }
@@ -5760,7 +5775,7 @@ if (actContext) {
         }
       }
       if (result && bcPre && bcPre.inputs) { result.bcInputs = bcPre.inputs; }
-      if (result && flow === 'stakeholder') { try { if (applyBusinessCaseStakeholder(result, String(body.situation || '') + ' ' + String(body.ask || '') + ' ' + String(body.context || ''), JSON.stringify(meridian || {}))) { console.log('Business Case stakeholder engine applied'); } } catch (bcS) { console.error('applyBusinessCaseStakeholder failed: ' + bcS.message); if (result) { delete result.bcInputs; } } }
+      if (result && flow === 'stakeholder') { try { if (applyBusinessCaseStakeholder(result, String(body.situation || '') + ' ' + String(body.ask || '') + ' ' + String(body.context || ''), JSON.stringify(meridian || {}), String(body.stakeholderType || ''))) { console.log('Business Case stakeholder engine applied'); } } catch (bcS) { console.error('applyBusinessCaseStakeholder failed: ' + bcS.message); if (result) { delete result.bcInputs; } } }
       if (result && flow === 'general') { try { if (applyBusinessCaseEngine(result, String(body.metrics || '') + ' ' + String(body.context || '') + ' ' + String(body.ask || ''))) { console.log('Business Case engine applied'); } } catch (bcE) { console.error('applyBusinessCaseEngine failed: ' + bcE.message); if (result) { delete result.bcInputs; } } }
       if (result && result.wrongTool === true) { if (await settleWrongTool(clerkUserId, 'business_case', usageCheck, trialCharged)) { _trialLastCall = false; } } else { queueUsage(clerkUserId, 'business_case', usageCheck); }
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {

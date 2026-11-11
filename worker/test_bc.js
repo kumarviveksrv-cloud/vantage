@@ -245,7 +245,7 @@ p7.stack.dataAnchor.context = 'The ceiling for a first finding under s.26(1) is 
 PX.applyBusinessCaseStakeholder(p7, PT);
 const p7j = JSON.stringify(p7);
 ok(!/costs us nothing|modest relative|protect you personally|I will send|first finding/i.test(p7j), 'v125 residue stripped: ' + (p7j.match(/costs us nothing|modest relative|protect you personally|I will send|first finding/i) || []));
-ok(/first contravention under s\.26\(1\)/.test(p7.stack.dataAnchor.context) && /Lead with exposure/.test(p7.stakeholderProfile) && /The duty sits in s\.4\(1\)/.test(p7.stack.credibility.statement), 'neighbouring good sentences kept: ' + p7.stakeholderProfile);
+ok(/first contravention under s\.26\(1\)/.test(p7.stack.dataAnchor.context) && /lead with the figures you gave/.test(p7.stakeholderProfile) && /The duty sits in s\.4\(1\)/.test(p7.stack.credibility.statement), 'neighbouring good sentences kept: ' + p7.stakeholderProfile);
 // v127: BC7 wrong-tool pre-check and generic no-engine strip
 const WT = new Function(code + ';return {bcIsIndividualCase, bcPctBad, applyBusinessCaseStakeholder};')();
 ok(WT.bcIsIndividualCase('Ramesh has been absent without notice for 6 days. HR wants to terminate him next week. Need the CEO to sign off.', 'Approve terminating Ramesh for repeated absenteeism.') === true, 'live termination is an individual case');
