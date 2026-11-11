@@ -354,7 +354,7 @@ function computeDraftHumac(draftL3){
   var hciAdj=Math.round(raw*(hd.hci||1));
   return {raw:raw,hciAdj:hciAdj,l3Excluded:false,l3Answered:cov.total,persisted:true};
 }
-function getBandL3(s){if(s<=30)return{name:'Value Destruction',color:'#E05C3A'};if(s<=50)return{name:'Value Neutral',color:'#a5b4fc'};if(s<=70)return{name:'Value Generating',color:'#6366f1'};if(s<=85)return{name:'Value Compounding',color:'#7c3aed'};return{name:'Value Exceptional',color:'#c4b5fd'};}
+function getBandL3(s){if(s<=30)return{name:'Low Attribution',color:'#E05C3A'};if(s<=50)return{name:'Value Neutral',color:'#a5b4fc'};if(s<=70)return{name:'Value Generating',color:'#6366f1'};if(s<=85)return{name:'Value Compounding',color:'#7c3aed'};return{name:'Value Exceptional',color:'#c4b5fd'};}
 
 function renderPage(){
   var answered=countAnswered();

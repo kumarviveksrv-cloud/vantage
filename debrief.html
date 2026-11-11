@@ -452,7 +452,7 @@
       var l4 = stored.l4;
       var l5 = Math.round(calcL5(raw.q16, raw.q17, raw.q18));
       var hciYes = countYes(raw, hciIds4);
-      var hci = Math.round((0.70 + hciYes * 0.15) * 100) / 100;
+      var hci = Math.min(1, Math.round((0.70 + hciYes * 0.15) * 100) / 100);
 
       // Exclusion-aware weighted average: a null pillar (excluded elsewhere
       // in the product for having too little data) must not be treated as
@@ -467,9 +467,9 @@
       var humac = wsum > 0 ? Math.round(weightedSum / wsum) : null;
       var hciAdj = humac == null ? null : Math.min(100, Math.round(humac * hci));
 
-      var bands = ['Value Destruction','Value Neutral','Value Generating','Value Compounding','Value Exceptional'];
+      var bands = ['Low Attribution','Value Neutral','Value Generating','Value Compounding','Value Exceptional'];
       var band = humac == null ? 'Incomplete' : humac <= 30 ? bands[0] : humac <= 50 ? bands[1] : humac <= 70 ? bands[2] : humac <= 85 ? bands[3] : bands[4];
-      var bandColors = {'Value Destruction':'#E05C3A','Value Neutral':'#a5b4fc','Value Generating':'#6366f1','Value Compounding':'#7c3aed','Value Exceptional':'#c4b5fd','Incomplete':'#E05C3A'};
+      var bandColors = {'Low Attribution':'#E05C3A','Value Destruction':'#E05C3A','Value Neutral':'#a5b4fc','Value Generating':'#6366f1','Value Compounding':'#7c3aed','Value Exceptional':'#c4b5fd','Incomplete':'#E05C3A'};
       var bc = bandColors[band] || '#6366f1';
 
       // Save — l2/l3/l4 pass through unchanged (including null), since this
@@ -503,7 +503,7 @@
             '<span style="width:5px;height:5px;border-radius:50%;background:' + bc + ';display:inline-block"></span>' +
             '<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;color:' + bc + '">' + band + '</span>' +
           '</span>' +
-          '<span style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:rgba(244,243,255,.60)">HCI ' + hci.toFixed(2) + 'x · Trajectory activates at next quarterly check-in</span>' +
+          '<span style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:rgba(244,243,255,.60)">Stability ' + hci.toFixed(2) + 'x · Trajectory activates at next quarterly check-in</span>' +
         '</div>';
     }
     // ── END HUMAC REFRESH ───────────────────────────────────────────────────
