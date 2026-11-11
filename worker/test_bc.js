@@ -301,5 +301,34 @@ ok(Math.abs(tdc.total[0] - 453.6) < 0.01 && Math.abs(tdc.total[1] - 777.6) < 0.0
 ok(bcLines(tdc).some(l => /Exits derived from your data: 18 percent of 200 = 36 exits/.test(l)), 'derivation shown');
 ok(bcRead({ model: 'attrition', headcount: 175, attritionPct: 18, avgCtc: 1200000 }, 'We have 175 employees, attrition 18 percent, CTC Rs.12 lakh.').exits === null, 'non-integer derivation (31.5) not used');
 ok(bcRead({ model: 'attrition', headcount: 200, attritionPct: 22, avgCtc: 1200000 }, TD).exits === null, 'percentage not in the text is rejected');
+// v130b: unverified sector percentage gets a caveat, "confirmed cost" becomes modelled
+let a4 = mkA(); a4.stack.dataAnchor.context = 'Attrition is held at the 20-24% sector benchmark as the ceiling. The annual cost is a confirmed annual cost.'; a4.stack.riskMirror.scenario = 'Your stated 18 percent stays. The 18-20% band is yours.'; AT.applyBusinessCaseStakeholder(a4, ATT + ' We think 18-20% is where it settles.');
+ok(/20-24% sector benchmark as the ceiling \(a directional estimate from your profile/.test(a4.stack.dataAnchor.context) && /modelled annual cost/.test(a4.stack.dataAnchor.context) && !/confirmed/.test(a4.stack.dataAnchor.context), 'benchmark caveated, confirmed softened: ' + a4.stack.dataAnchor.context);
+ok(!/directional estimate/.test(a4.stack.riskMirror.scenario), 'user-given percentage band not caveated: ' + a4.stack.riskMirror.scenario);
+// v131b: promises by a stated time are removed on every stakeholder engine, closing line gets a safe fallback
+let a5 = mkA(); a5.closingLine = 'I will send you the summary by end of day.'; a5.stack.credibility.statement = 'HR owns the data. I will share the model by end of day.';
+AT.applyBusinessCaseStakeholder(a5, ATT);
+ok(!/by end of day/.test(JSON.stringify(a5.stack)) && /HR owns the data/.test(a5.stack.credibility.statement) && !/Not stated/.test(a5.closingLine) && !/end of day/.test(a5.closingLine), 'promises removed, closing fallback: ' + a5.closingLine + ' | ' + a5.stack.credibility.statement);
+// v132: unsupported worsening predictions removed, trend signal reset when the user gave no trend
+let a6 = mkA(); a6.stack.riskMirror.scenario = 'The direction of travel is toward a more expensive problem, not a self-correcting one. The team is stretched.'; a6.humac = { range: 'x', trajectorySignal: 'negative, because it is more likely to worsen than to self-correct.' };
+AT.applyBusinessCaseStakeholder(a6, ATT);
+ok(!/self-correct|more expensive problem/.test(JSON.stringify(a6.stack)) && /team is stretched/.test(a6.stack.riskMirror.scenario) && /^neutral: no trend data/.test(a6.humac.trajectorySignal), 'predictions stripped, trajectory neutralised: ' + a6.stack.riskMirror.scenario + ' | ' + a6.humac.trajectorySignal);
+let a7 = mkA(); a7.humac = { range: 'x', trajectorySignal: 'negative, because attrition is rising as you said.' };
+AT.applyBusinessCaseStakeholder(a7, ATT + ' Attrition is rising every quarter.');
+ok(/^negative/.test(a7.humac.trajectorySignal), 'user-supplied trend keeps the signal: ' + a7.humac.trajectorySignal);
+// v132: no-engine path removes claims about a model that does not exist
+let a8 = { openingLine: 'x', closingLine: 'I will send you a one-page model once you share it.', stack: { dataAnchor: { figure: 'Rs.8L' }, riskMirror: { revenueAtRisk: 'x', revenueAtRiskBasis: 'y' }, credibility: { statement: 'The vacancy cost model used here is built on the organisation\'s own revenue-per-employee ratio. Five roles are open.' } } };
+PX.applyBusinessCaseStakeholder(a8, 'We have 5 open sales roles. Approve Rs.8L to hire.');
+ok(!/vacancy cost model|revenue-per-employee/.test(JSON.stringify(a8.stack)) && /Five roles are open/.test(a8.stack.credibility.statement) && !/I will send/.test(a8.closingLine) && !/Not stated/.test(a8.closingLine), 'invented model claim and promise removed: ' + JSON.stringify(a8.stack.credibility) + ' | ' + a8.closingLine);
+// v132: early-tenure cohort counted once, not annualised; Location placeholder fixed in general flow
+const TW = 'Our HRBP says 4 of our 11 new joiners in the Gurgaon office resigned within 90 days. Average CTC is Rs.7 lakh.';
+const twT = bcRead({ model: 'attrition', exits: 4, headcount: 11, avgCtc: 700000 }, TW);
+ok(twT.tenureWindow === true && Math.abs(bcCalc(twT).total[0] - 29.4) < 0.01 && Math.abs(bcCalc(twT).total[1] - 50.4) < 0.01, 'tenure window flagged, total 4 x 7.35 to 12.6 = 29.4 to 50.4: ' + JSON.stringify(twT));
+ok(bcLines(bcCalc(twT)).some(l => /counted once/.test(l)) && !bcLines(bcCalc(twT)).some(l => /over 12 months if nothing changes/.test(l)), 'lines say counted once');
+ok(bcRead({ model: 'attrition', exits: 40, headcount: 250, avgCtc: 800000, periodMonths: 12 }, TXT).tenureWindow === false, 'a 12 month window is not a tenure window');
+let a9 = { bcInputs: { model: 'attrition', exits: 4, headcount: 11, avgCtc: 700000 }, headline: 'At Location A office, annual cost is Rs.29.4L to Rs.50.4L.', signal: { impact: { financialImpact: 'x', breakdown: ['x'] }, situation: 'The industry benchmark is 20 to 24%. At Location A office, 4 resigned. If this continues at the same pace the annual cost is high.' }, revenueAtRisk: { figure: 'x', basis: 'y', confidence: 'Low' }, humac: { range: 'x' } };
+AT.applyBusinessCaseEngine(a9, TW);
+const a9s = JSON.stringify(a9.signal);
+ok(!/benchmark|same pace|Location A/.test(a9s) && /our office, 4 resigned/.test(a9s) && /total cost is Rs\.29\.4L/.test(a9.headline) && !/Not stated/.test(a9.headline), 'tenure cohort text corrected: ' + a9s + ' | ' + a9.headline);
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);

@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v131'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v132'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4489,6 +4489,7 @@ function bcRead(inp, text) {
     var e = pct * T.headcount / 100;
     if (Math.round(e) > 0 && Math.abs(e - Math.round(e)) < 0.01) { T.exits = Math.round(e); T.derivedFromPct = pct; }
   }
+  T.tenureWindow = !T.months && /\b(?:within|in the first|in their first|first)\s+\d+\s+(?:days?|weeks?|months?)\b/i.test(String(text || ''));
   return T;
 }
 function bcRead0(inp, text) {
@@ -4521,7 +4522,8 @@ function bcLines(c) {
   if (c.rate !== null) { L.push('Annualised attrition rate: ' + (Math.round(c.rate * 10) / 10) + ' percent (' + T.exits + (T.months && T.months !== 12 ? ' x 12 / ' + T.months : '') + ' / ' + T.headcount + ').'); }
   L.push('Replacement cost: ' + r2(c.annualExits) + ' exits x ' + engineLakh(r2(c.ctcL)) + ' x ' + c.mult[0] + ' to ' + c.mult[1] + ' (' + tierName + ' multiple) = ' + bcRange(c.repl) + '.');
   L.push('Productivity gap: ' + r2(c.annualExits) + ' exits x ' + engineLakh(r2(c.ctcL)) + ' / 12 x ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] + ' ramp months' : c.ramp[0] + ' to ' + c.ramp[1] + ' ramp months (an assumed planning range, because the data gives none)') + ' = ' + bcRange(c.prod) + '.');
-  L.push('Total over 12 months if nothing changes: ' + bcRange(c.total) + '. Institutional knowledge loss is a real risk but is not priced here.');
+  if (T.tenureWindow) { L.push('Total cost of these ' + r2(c.annualExits) + ' exits: ' + bcRange(c.total) + '. They are counted once: your data describes people who left early in their tenure, so no further cohorts are assumed to leave. Institutional knowledge loss is a real risk but is not priced here.'); }
+  else { L.push('Total over 12 months if nothing changes: ' + bcRange(c.total) + '. Institutional knowledge loss is a real risk but is not priced here.'); }
   if (c.breakEven) { L.push('Break-even for the ' + engineLakh(r2(c.budgetL)) + ' programme: it pays for itself if it prevents ' + (Math.round(c.breakEven[0] * 10) / 10) + ' to ' + (Math.round(c.breakEven[1] * 10) / 10) + ' exits (each exit costs ' + bcRange(c.perExit) + ').'); }
   return L;
 }
@@ -4531,6 +4533,7 @@ function bcPromptBlock(c) {
   s += '- Of which replacement cost: ' + bcRange(c.repl) + '; productivity gap during ramp-up: ' + bcRange(c.prod) + '.\n';
   s += '- Cost of one exit: ' + bcRange(c.perExit) + '.\n';
   s += '- Replacement multiple used: ' + c.mult[0] + ' to ' + c.mult[1] + ' times annual salary, and ramp-up of ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] : c.ramp[0] + ' to ' + c.ramp[1]) + ' months. State no other multiple, blended multiple or per-exit multiple anywhere, including in the calculation basis.\n';
+  if (c.T.tenureWindow) { s += '- These exits are people who left early in their tenure (a single cohort). Count them once. Never describe the total as annual or yearly, never say the pattern continues at the same pace for twelve months, never multiply it by further cohorts, and never compare the early-exit percentage with an annual attrition benchmark.\n'; }
   if (c.rate !== null) { s += '- Annualised attrition rate: ' + (Math.round(c.rate * 10) / 10) + ' percent.\n'; }
   if (c.breakEven) { s += '- Programme budget ' + engineLakh(r2(c.budgetL)) + ' breaks even if it prevents ' + (Math.round(c.breakEven[0] * 10) / 10) + ' to ' + (Math.round(c.breakEven[1] * 10) / 10) + ' exits. Use this break-even, not a return ratio you calculate yourself.\n'; }
   s += 'Every rupee figure you write about the cost of the exits, including any Data Anchor and Revenue at Risk figure, must be this total range, or the replacement or productivity part above, or a whole number of exits multiplied by the per-exit cost with that number of exits stated in the same sentence. Never use salary alone as the cost of an exit. Describe decision alternatives such as phasing as fractions or percentages of the stated budget, not as new rupee amounts. Any other rupee figure you write must be a whole number of exits multiplied by the per-exit cost above, with the number of exits stated in the same sentence. Do not invent other rupee amounts or percentages of productivity. Do not state facts about the organisation that the user did not give: never say the cost was unbudgeted, unmeasured, unapproved, never presented to Finance, preventable, or that conditions have not changed. When comparing the attrition rate with a benchmark, state the direction correctly (a rate below the low end of a range is below it). Do not write hypothetical alternative rupee amounts anywhere, for example other budget sizes in a rehearsal prompt; refer to the stated budget only. When you quote avoided cost for a number of exits, call it avoided cost, not return, because it is before the programme spend.\n';
@@ -4672,9 +4675,18 @@ function bcAttrBenchBad(s, rate) {
   if (below && !above) { return midRef ? rate >= mid : rate > hi; }
   return false;
 }
-function bcAttrClaims(result, c) {
+function bcAttrSoften(s, userText, tw) {
+  s = String(s).replace(/\b(\d+) or more (exits|departures|resignations)\b/gi, '$1 $2').replace(/\bconfirmed (annual |yearly )?cost\b/gi, function (m, a) { return 'modelled ' + (a || '') + 'cost'; });
+  if (tw) { s = s.replace(/\bannual(?:ly)? (cost|churn|exposure|attrition cost)\b/gi, 'total $1').replace(/\b(?:per|a) year\b/gi, 'in total').replace(/\bannual\b/gi, 'total'); }
+  return s.split(/(?<=[.!?])\s+(?=[A-Z(])/).map(function (p) {
+    if (/\d+(?:\.\d+)?\s*(?:-|–|to)\s*\d+(?:\.\d+)?\s*(?:%|percent)/i.test(p) && /benchmark|sector|industry/i.test(p) && !/directional|profile|estimate|not (?:a )?verified/i.test(p) && bcPctBad(p, userText)) { return p.replace(/[.!?]?$/, ' (a directional estimate from your profile, not a verified statistic).'); }
+    return p;
+  }).join(' ');
+}
+function bcAttrClaims(result, c, userText) {
+  var tw = !!(c && c.T && c.T.tenureWindow);
   var rate = (c && c.rate !== null && c.rate !== undefined) ? c.rate : null, fig = bcRange(c.total);
-  var removed = bcScrub(result, function (s) { return BC_ATTR_CLAIM_RE.test(s) || bcAttrBenchBad(s, rate); }, null, function (s) { return s.replace(/\b(\d+) or more (exits|departures|resignations)\b/gi, '$1 $2'); });
+  var removed = bcScrub(result, function (s) { return BC_ATTR_CLAIM_RE.test(s) || bcAttrBenchBad(s, rate) || (tw && /\bbenchmark\b|\b(?:same|current) pace\b|\bacross a (?:12|twelve)-month\b/i.test(s) && !/Computed by the system|exits \(counted once/i.test(s)); }, null, function (s) { return bcAttrSoften(s, userText, tw); });
   var empty = function (v) { return !v || v === 'Not stated.'; };
   if (empty(result.openingLine)) { result.openingLine = 'At this rate, the exits you described cost the organisation ' + fig + ' a year if nothing changes.'; }
   if (empty(result.closingLine)) { result.closingLine = 'The decision I am asking for is on the table, and the cost of the exits is ' + fig + ' a year if nothing changes.'; }
@@ -4790,9 +4802,10 @@ function applyBusinessCaseEngine(result, userText) {
   var inp = result.bcInputs; delete result.bcInputs;
   if (result.wrongTool === true || !result.signal) { return false; }
   var T = bcRead(inp, userText), c = bcCalc(T), claimsG = 0;
+  bcFixPlaceholders(result, userText);
   if (c) {
     var fig = bcRange(c.total);
-    result.revenueAtRisk = { figure: fig, basis: 'Computed by the system: ' + r2(c.annualExits) + ' exits a year x ' + engineLakh(r2(c.ctcL)) + ' x (replacement multiple ' + c.mult[0] + ' to ' + c.mult[1] + ' plus ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] : c.ramp[0] + ' to ' + c.ramp[1]) + ' months of ramp-up productivity gap).', confidence: (T.headcount && T.ramp) ? 'High' : 'Medium' };
+    result.revenueAtRisk = { figure: fig, basis: 'Computed by the system: ' + r2(c.annualExits) + (T.tenureWindow ? ' exits (counted once, no further cohorts assumed) x ' : ' exits a year x ') + engineLakh(r2(c.ctcL)) + ' x (replacement multiple ' + c.mult[0] + ' to ' + c.mult[1] + ' plus ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] : c.ramp[0] + ' to ' + c.ramp[1]) + ' months of ramp-up productivity gap).', confidence: (T.headcount && T.ramp) ? 'High' : 'Medium' };
     if (!result.signal.impact) { result.signal.impact = {}; }
     result.signal.impact.financialImpact = fig;
     result.signal.impact.breakdown = bcLines(c);
@@ -4803,7 +4816,7 @@ function applyBusinessCaseEngine(result, userText) {
       if (offending) { result.headline = result.headline.replace(new RegExp(fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\s*(?:to|-|–)\\s*' + fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')+', 'g'), fig); }
     }
     result.bcEngine = { model: 'attrition-v1', total: [r2(c.total[0]), r2(c.total[1])], perExit: [r2(c.perExit[0]), r2(c.perExit[1])] };
-    claimsG = bcAttrClaims(result, c);
+    claimsG = bcAttrClaims(result, c, userText);
   }
   var stripped = 0;
   if (!c && !bondAmountsIn(userText).length) { stripped = bcStripInvented(result); }
@@ -4825,7 +4838,7 @@ function applyBusinessCaseEngine(result, userText) {
   if (stripped) { result.bcCheck.note = 'The system could not compute attrition figures because your input has no exit count or average CTC, and it contains no rupee amounts. Every rupee figure the model wrote was removed (' + stripped + ' sentences). Add the number of exits and the average CTC to get a computed figure.'; }
   return !!c;
 }
-function applyBusinessCaseStakeholder(result, userText) {
+function applyBusinessCaseStakeholder0(result, userText) {
   if (!result) { return false; }
   var inp = result.bcInputs; delete result.bcInputs;
   if (result.wrongTool === true || !result.stack) { return false; }
@@ -4866,10 +4879,10 @@ function applyBusinessCaseStakeholder(result, userText) {
     if (result.stack.dataAnchor) { result.stack.dataAnchor.figure = fig; }
     if (result.stack.riskMirror) {
       result.stack.riskMirror.revenueAtRisk = fig;
-      result.stack.riskMirror.revenueAtRiskBasis = 'Computed by the system: ' + r2(c.annualExits) + ' exits a year x ' + engineLakh(r2(c.ctcL)) + ' x (replacement multiple ' + c.mult[0] + ' to ' + c.mult[1] + ' plus ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] : c.ramp[0] + ' to ' + c.ramp[1]) + ' months of ramp-up productivity gap).';
+      result.stack.riskMirror.revenueAtRiskBasis = 'Computed by the system: ' + r2(c.annualExits) + (T.tenureWindow ? ' exits (counted once, no further cohorts assumed) x ' : ' exits a year x ') + engineLakh(r2(c.ctcL)) + ' x (replacement multiple ' + c.mult[0] + ' to ' + c.mult[1] + ' plus ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] : c.ramp[0] + ' to ' + c.ramp[1]) + ' months of ramp-up productivity gap).';
     }
     result.bcEngine = { model: 'attrition-v1', total: [r2(c.total[0]), r2(c.total[1])], perExit: [r2(c.perExit[0]), r2(c.perExit[1])] };
-    claimsA = bcAttrClaims(result, c);
+    claimsA = bcAttrClaims(result, c, userText);
   }
   var strippedS = 0;
   if (!c) {
@@ -4889,6 +4902,22 @@ function applyBusinessCaseStakeholder(result, userText) {
             : (strippedS ? 'The system has no calculation for this kind of analysis. ' + strippedS + ' sentence(s) with figures or research claims that are not in your data were removed and the figure fields were marked Not computed. The figures that remain come from your input.' + attHint : 'The system has no calculation for this kind of analysis. It found no rupee figure that is absent from your data.' + attHint) };
   if (claimsA) { result.bcCheck.stripped = (result.bcCheck.stripped || 0) + claimsA; result.bcCheck.note += ' ' + claimsA + ' sentence(s) stating facts about your organisation that you did not give (for example that costs were unbudgeted), or contradicting the benchmark direction, were removed.'; }
   return !!c;
+}
+var BC_PREDICT_RE = /\bself-correct\w*|\bmore likely to worsen\b|\btoward a more expensive problem\b|\bwill only (?:get|grow|become) (?:worse|bigger|costlier)\b|\bgets? worse (?:on its own|without)\b|\bwill (?:certainly|inevitably) (?:worsen|deteriorate)\b/i;
+var BC_MODEL_CLAIM_RE = /\b(?:vacancy cost|cost of vacancy|vacancy) model\b|\bthe (?:cost )?model used here\b|\bno external research body\b|\bnot (?:on|from) industry averages or vendor claims\b|\b(?:the|this) range is wide\b|\bfor this range\b|\bmodelled (?:range|estimate) (?:is|was) (?:built|based)\b/i;
+var BC_PROMISE_RE = /\bI will (?:send|share|have|bring|get|circulate|email|forward)\b|\bby (?:end of (?:the )?day|eod|tonight|tomorrow)\b|\bwithin (?:the next )?(?:24|48) hours\b/i;
+function applyBusinessCaseStakeholder(result, userText) {
+  var r = applyBusinessCaseStakeholder0(result, userText);
+  if (result && result.stack && result.wrongTool !== true) {
+    var pre0 = 0;
+    if (result.humac && typeof result.humac.trajectorySignal === 'string' && /^\s*(?:negative|worsening|declining)|self-correct|worsen|deteriorat/i.test(result.humac.trajectorySignal) && !/\b(?:trend|rising|increas\w*|declin\w*|worsen\w*|falling|dropp\w*|growing)\b/i.test(String(userText || ''))) { result.humac.trajectorySignal = 'neutral: no trend data was given for this decision.'; pre0 += 1; }
+    var noEng = !result.bcEngine, hasRev = /revenue/i.test(String(userText || ''));
+    var n = pre0 + bcScrub(result, function (s) { return BC_PROMISE_RE.test(s) || BC_PREDICT_RE.test(s) || (noEng && (BC_MODEL_CLAIM_RE.test(s) || (/revenue[- ]per[- ](?:employee|head)/i.test(s) && !hasRev))); }, null);
+    var empty = function (v) { return !v || v === 'Not stated.'; };
+    if (empty(result.closingLine)) { result.closingLine = 'The decision I am asking for is on the table, and I will take your questions now.'; }
+    if (n && result.bcCheck) { result.bcCheck.stripped = (result.bcCheck.stripped || 0) + n; result.bcCheck.note = String(result.bcCheck.note || '') + ' ' + n + ' sentence(s) promising an action by a stated time were removed because the system cannot know your commitments.'; }
+  }
+  return r;
 }
 // ── BUSINESS CASE ENGINE END ─────────────────────────────────────────────────
 
