@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v143'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v144'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4975,6 +4975,45 @@ function applyBusinessCaseStakeholder(result, userText) {
     if (n && result.bcCheck) { result.bcCheck.stripped = (result.bcCheck.stripped || 0) + n; result.bcCheck.note = String(result.bcCheck.note || '') + ' ' + n + ' sentence(s) promising an action by a stated time were removed because the system cannot know your commitments.'; }
   }
   return r;
+}
+// Provenance filter (dark in v144): the model returns, next to its prose, a provenance map of path -> [{s, t, q}] where s is the start of a sentence,
+// t is figure | user | profile | advice and q is the supporting quote. Code checks every tag. A sentence with no valid tag is removed.
+var BC_PROV_PATHS = ['stakeholderProfile', 'openingLine', 'closingLine', 'stack.credibility.statement', 'stack.credibility.evidence', 'stack.credibility.deliveryNote', 'stack.dataAnchor.context', 'stack.narrativeBridge.story', 'stack.narrativeBridge.connection', 'stack.narrativeBridge.emotionalHook', 'stack.riskMirror.scenario', 'stack.riskMirror.timeline', 'stack.decisionRunway.ask', 'stack.decisionRunway.successMetric'];
+var BC_ORGFACT_RE = /\b(?:has|have|had|is|are|was|were|does|do|did)\s+(?:not|never|already|still|yet)\b|\bcurrently\b|\balready\b|\bno one\b|\bnobody\b/i;
+function bcProvNorm(x) { return String(x || '').toLowerCase().replace(/[^a-z0-9₹.%]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+function bcProvGet(o, path) { var parts = path.split('.'), n = o; for (var i = 0; i < parts.length; i++) { if (!n || typeof n !== 'object') { return undefined; } n = n[parts[i]]; } return n; }
+function bcProvSet(o, path, v) { var parts = path.split('.'), n = o; for (var i = 0; i < parts.length - 1; i++) { n = n[parts[i]]; } n[parts[parts.length - 1]] = v; }
+function bcProvOk(sentence, e, ctx) {
+  if (!e || typeof e !== 'object') { return false; }
+  var t = String(e.t || '').toLowerCase(), q = bcProvNorm(e.q);
+  if (BC_RESEARCH_RE.test(sentence) || LD_CLAIM_RE.test(sentence) || BC_PREDICT_RE.test(sentence) || BC_PROMISE_RE.test(sentence) || BC_TIME_RE.test(sentence)) { return false; }
+  var numsOk = bcFigureNums(sentence).every(function (v) { return bcOk(ctx.okNums, v); }) && !bcPctBad(sentence, ctx.userText) && !bcDurationBad(sentence, ctx.userText) && !bcRatioBad(sentence, ctx.userText);
+  if (!numsOk) { return false; }
+  if (t === 'figure') { return true; }
+  if (t === 'user') { return q.length >= 4 && ctx.userNorm.indexOf(q) !== -1; }
+  if (t === 'profile') { return q.length >= 3 && ctx.profileNorm.indexOf(q) !== -1; }
+  if (t === 'advice') { return !BC_ORGFACT_RE.test(sentence) && !(ctx.noEng && (BC_NOENG_CLAIM_RE.test(sentence) || BC_MODEL_CLAIM_RE.test(sentence))); }
+  return false;
+}
+function bcProvFilter(result, userText, profileText, extraNums, noEng) {
+  var prov = result && result.provenance;
+  if (result) { delete result.provenance; }
+  if (!prov || typeof prov !== 'object') { return { applied: false, removed: 0 }; }
+  var ctx = { userText: userText, userNorm: bcProvNorm(userText), profileNorm: bcProvNorm(profileText), noEng: !!noEng, okNums: bcFigureNums(userText).concat(bcUserFractions(userText)).concat(extraNums || []) };
+  var removed = 0;
+  BC_PROV_PATHS.forEach(function (path) {
+    var txt = bcProvGet(result, path);
+    if (typeof txt !== 'string' || !txt.trim() || txt === 'Not stated.') { return; }
+    var entries = Array.isArray(prov[path]) ? prov[path] : [];
+    var parts = txt.split(/(?<=[.!?])\s+(?=[A-Z(])/);
+    var keep = parts.filter(function (sent) {
+      var ns = bcProvNorm(sent), e = entries.filter(function (x) { var k = bcProvNorm(x && x.s); return k.length >= 8 && (ns.indexOf(k) !== -1 || k.indexOf(ns) !== -1); })[0];
+      return bcProvOk(sent, e, ctx);
+    });
+    removed += parts.length - keep.length;
+    if (keep.length !== parts.length) { bcProvSet(result, path, keep.length ? keep.join(' ') : 'Not stated.'); }
+  });
+  return { applied: true, removed: removed };
 }
 // ── BUSINESS CASE ENGINE END ─────────────────────────────────────────────────
 
