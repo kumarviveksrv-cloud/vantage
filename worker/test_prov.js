@@ -76,4 +76,30 @@ ok(/^A board or investor group decides/.test(au.stakeholderProfile) && !/RPO/.te
 const au2 = { stakeholderProfile: 'x', stack: { credibility: {}, dataAnchor: { headline: 'h', figure: 'Not computed', context: 'c' }, riskMirror: {}, decisionRunway: {} }, humac: {} };
 applyBusinessCaseStakeholder(au2, 'Hire two analysts at Rs.14L each. I need approval.', PROFILE, 'CFO / Finance head');
 ok(/^A finance head decides on numbers and risk/.test(au2.stakeholderProfile), 'cfo line used');
+// mixed programme + named or single-individual dismissal is redirected, however it is phrased
+{
+  const wsrc = require('fs').readFileSync(require('path').join(__dirname, 'situation-room-api.worker.js'), 'utf8');
+  const mixF = new Function(wsrc.slice(wsrc.indexOf('function bcMixedIndividual'), wsrc.indexOf('function applyPoshStakeholder')) + ';return bcMixedIndividual;')();
+  const mixCases = [
+    ['We want a Rs.25 lakh leadership programme for our 60 managers. Separately, one manager, Anil Rao, should be dismissed for misconduct. Approve both.', true],
+    ['We want a Rs.25 lakh leadership programme. Separately we should dismiss Anil Rao for misconduct.', true],
+    ['Our attrition programme needs funding, and Priya needs to be terminated for absence.', true],
+    ['We want a programme for 60 managers. One manager should be dismissed for misconduct.', true],
+    ['We want a Rs.25 lakh leadership programme for our 60 managers. I need the CEO to approve it.', false],
+    ['We want a programme to reduce attrition. The Board wants it approved. Our CHRO should be consulted.', false],
+    ['Our retention programme is for staff who were terminated last year. Approve the budget.', false],
+    ['The new policy on dismissal for misconduct needs approval across the company.', false]
+  ];
+  mixCases.forEach(function (c) { ok(mixF(c[0], 'Approve') === c[1], 'mixed individual detection: ' + c[0].slice(0, 60)); });
+}
+// counts written as words are accepted as user-supplied numbers
+{
+  const wsrc2 = require('fs').readFileSync(require('path').join(__dirname, 'situation-room-api.worker.js'), 'utf8');
+  const nf = new Function(wsrc2.slice(wsrc2.indexOf('function bcNumbersIn'), wsrc2.indexOf('function bcRupees')) + ';return {bcNumbersIn, bcCount};')();
+  ok(nf.bcCount(4, 'Four of the 11 people we hired last quarter left within 90 days.', 100000) === 4, 'four read from words');
+  ok(nf.bcCount(11, 'Four of the 11 people we hired left.', 1000000) === 11, 'digits still read');
+  ok(nf.bcCount(1, 'We need one decision from the CEO.', 100000) === null, 'one decision is not a count of one');
+  ok(nf.bcCount(1, 'One employee left in March.', 100000) === 1, 'one employee is a count of one');
+  ok(nf.bcNumbersIn('twenty-five staff left').join() === '25', 'compound number read once: ' + nf.bcNumbersIn('twenty-five staff left').join());
+}
 if (fails) { console.log(fails + ' FAILED'); process.exit(1); } else { console.log('PROVENANCE TESTS PASSED'); }

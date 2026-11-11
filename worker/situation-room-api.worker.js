@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v156'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v157'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4488,6 +4488,15 @@ const BC_ENGINE = { rampMonths: [3, 6], tiers: { junior: 'Low', default: 'Medium
 function bcNumbersIn(text) {
   var out = [], m, re = /\d[\d,]*(?:\.\d+)?/g, t = String(text || '');
   while ((m = re.exec(t))) { var n = parseFloat(m[0].replace(/,/g, '')); if (isFinite(n)) { out.push(n); } }
+  // counts written as words ("Four of the 11 people left"): two to twenty, tens, compounds, and "one" only next to a person or event noun
+  var W = { two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90 };
+  var T10 = { twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90 }, U = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9 };
+  var cm, cre = /\b(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[\s-]+(one|two|three|four|five|six|seven|eight|nine)\b/gi;
+  while ((cm = cre.exec(t))) { out.push(T10[cm[1].toLowerCase()] + U[cm[2].toLowerCase()]); }
+  var wm, wre = /\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)\b/gi;
+  var tw = t.replace(cre, ' ');
+  while ((wm = wre.exec(tw))) { out.push(W[wm[1].toLowerCase()]); }
+  if (/\bone\s+(?:employee|person|people|exit|resignation|resigned|manager|hire|joiner|member|of\s+(?:the|our|them))/i.test(t)) { out.push(1); }
   return out;
 }
 function bcCount(v, text, max) {
@@ -4741,6 +4750,11 @@ function bcMixedIndividual(situation, ask) {
   var notName = /^(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|The|This|That|Our|All|Any|Some|Policy|Programme|Program|HR|CEO|CFO|CHRO|India|Q[1-4])$/;
   var re = /\b(?:terminat(?:e|es|ed|ing)|dismiss(?:ed|ing)?|sack(?:ed|ing)?|fir(?:e|ed|ing)|let go of|remov(?:e|ed|ing))\s+(?:of\s+)?([A-Z][a-z]{2,})\b/g, m, named = false;
   while ((m = re.exec(text))) { if (!notName.test(m[1])) { named = true; } }
+  // name first: "Anil Rao, should be dismissed", "Priya needs to be terminated", "Rahul's dismissal"
+  var re2 = /\b([A-Z][a-z]{2,})(?:\s+[A-Z][a-z]{2,})?(?:'s)?,?\s+(?:[a-z]+\s+){0,3}?(?:(?:should|must|needs? to|has to|will|to)\s+be\s+(?:terminated|dismissed|sacked|fired|let go|removed)|(?:termination|dismissal))\b/g, m2;
+  while ((m2 = re2.exec(text))) { if (!notName.test(m2[1])) { named = true; } }
+  // an unnamed single person: "one manager should be dismissed", "dismiss a team member for misconduct"
+  if (/\b(?:(?:one|an?|the|our)\s+(?:\w+\s+)?(?:manager|employee|executive|associate|team member|colleague|person|individual|director)\b[^.]{0,60}\b(?:should|must|needs? to|has to|will)\s+be\s+(?:terminated|dismissed|sacked|fired|let go|removed)|(?:terminate|dismiss|sack|fire)\s+(?:one|an?|the|our)\s+(?:\w+\s+)?(?:manager|employee|executive|associate|team member|colleague|person|individual|director))\b/i.test(text)) { named = true; }
   var orgLevel = /\b(policy|policies|programme|program|framework|attrition rate|company-wide|across the (?:company|organisation|organization))\b/i.test(text);
   var processAsk = /\b(?:loop(?:ing)? in|involve|bring in|engage|consult)\b[^.]*\b(?:legal|counsel|lawyer|compliance)\b|\blegal review\b|\bbefore the (?:termination|dismissal|exit) proceeds\b/i.test(String(ask || ''));
   return named && orgLevel && !processAsk;
