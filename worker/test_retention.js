@@ -122,6 +122,17 @@ lib.retentionScrub(sc5, '');
 ok(sc5.recommendation.rationale.indexOf('planning horizon') < 0, 'planning-horizon claim removed: ' + sc5.recommendation.rationale);
 ok(sc5.recommendation.rationale.indexOf('Rs.15.72L') > 0 && sc5.recommendation.rationale.split(/(?<=[.!?])\s+(?=[A-Z0-9])/).length <= 2, 'rationale trimmed to two sentences without splitting figures: ' + sc5.recommendation.rationale);
 ok(sc5.scenarios.scenarioA.financialCase === 'One. Two.' && sc5.scenarios.scenarioA.risk === 'Only one sentence' && sc5.scenarios.scenarioA.condition === null, 'scenario fields trimmed, short and null kept');
+// exit window only with an offer, resignation talk or recruiter contact
+const x1 = { employeeProfile: { estimatedTimeToLeave: '3-6 months' }, scenarios: { scenarioA: { specificAction: 'This week: brief the manager.' } } };
+lib.retentionScrub(x1, 'Updated LinkedIn last month. Quieter in meetings.');
+ok(x1.employeeProfile.estimatedTimeToLeave === 'Unknown', 'exit window reset without offer/recruiter signal: ' + x1.employeeProfile.estimatedTimeToLeave);
+ok(x1.scenarios.scenarioA.specificAction === 'brief the manager.', 'leading This week stripped: ' + x1.scenarios.scenarioA.specificAction);
+const x2 = { employeeProfile: { estimatedTimeToLeave: '1-3 months' } };
+lib.retentionScrub(x2, 'A recruiter called them twice.');
+ok(x2.employeeProfile.estimatedTimeToLeave === '1-3 months', 'exit window kept with recruiter contact');
+const x3 = { employeeProfile: { estimatedTimeToLeave: '1-3 months' } };
+lib.retentionScrub(x3, 'They mentioned an offer from a competitor.');
+ok(x3.employeeProfile.estimatedTimeToLeave === '1-3 months', 'exit window kept with offer');
 // no-premium ceiling card
 const r3b = { recommendation: { primary: 'Walk Away', figure: 'x' }, financialModel: {}, humac: {} };
 lib.retentionApply(r3b, 'counter_offer', r3);

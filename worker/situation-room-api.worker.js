@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v140'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v141'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -999,6 +999,11 @@ function retentionTrim(result) {
 }
 function retentionScrub(result, signalsText) {
   if (result && typeof result === 'object') { retentionSoften(result); retentionTrim(result); }
+  // An exit window is only given when the signals include an offer, talk of resigning or recruiter contact. A softer signal such as a profile update leaves it Unknown.
+  var epx = result && result.employeeProfile;
+  if (epx && epx.estimatedTimeToLeave && epx.estimatedTimeToLeave !== 'Unknown' && !/\b(?:offer(?:ed|s)?|resign(?:ed|ing|ation)?|recruiter|headhunter|notice period|interview(?:s|ing|ed)?|quit(?:ting)?|leav(?:e|ing) the (?:company|organi[sz]ation)|job (?:hunt|search))\b/i.test(signalsText || '')) { epx.estimatedTimeToLeave = 'Unknown'; }
+  var scx = result && result.scenarios && result.scenarios.scenarioA;
+  if (scx && typeof scx.specificAction === 'string') { scx.specificAction = scx.specificAction.replace(/^\s*this week\s*[:\-]\s*/i, ''); }
   var sb = result && result.scenarios && result.scenarios.scenarioB;
   if (!sb || !Array.isArray(sb.watchSignals)) { return result; }
   var userSocial = RET_SOCIAL_RE.test(signalsText || '');
