@@ -274,9 +274,9 @@ function render(){
 
   var know=(ra.cq5_seniorcount||0)*avg*Math.min((ra.cq5_seniortenure||0)*0.08,0.6);
   var rel=(ra.cq5_revemployees||0)*avg*m('rel');
-  var assets=know+rel+hipoBench;
   var hipoN=HumacShared.cappedHipo(ra.cq5_hipo||0,headcount);
   var hipoBench=hipoN*avg*(1-HumacShared.HIPO_P);
+  var assets=know+rel+hipoBench;
   var g2=HumacShared.gap(l2), g3=HumacShared.gap(l3);
   var skill=comp*m('skill')*g2, growth=comp*m('growth')*g2, cliab=comp*m('cliab')*g3;
   var liab=skill+growth+cliab;
