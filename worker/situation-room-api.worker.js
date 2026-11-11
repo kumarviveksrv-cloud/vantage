@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v153'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v154'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4943,7 +4943,7 @@ var BC_NUMWORDS = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7
 function bcDurationBad(s, userText) {
   var ut = String(userText || '').toLowerCase(), nums = (ut.match(/\d+(?:\.\d+)?/g) || []).map(parseFloat);
   Object.keys(BC_NUMWORDS).forEach(function (w) { if (new RegExp('\\b' + w + '\\b').test(ut)) { nums.push(BC_NUMWORDS[w]); } });
-  var re = /\b(\d+(?:\.\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|sixty|ninety)(?:\s*(?:to|-)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|sixty|ninety))?\s+(?:business |working |calendar )?(?:days?|weeks?|months?)\b|\bday (\d+)\b/gi, m, val = function (x) { return /^\d/.test(x) ? parseFloat(x) : BC_NUMWORDS[String(x).toLowerCase()]; };
+  var re = /\b(\d+(?:\.\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|sixty|ninety)(?:\s*(?:to|-)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|sixty|ninety))?[\s-]+(?:business |working |calendar )?(?:days?|weeks?|months?)\b|\bday (\d+)\b/gi, m, val = function (x) { return /^\d/.test(x) ? parseFloat(x) : BC_NUMWORDS[String(x).toLowerCase()]; };
   while ((m = re.exec(String(s || '')))) {
     var vs = [m[1], m[2], m[3]].filter(Boolean).map(val);
     if (vs.some(function (v) { return nums.indexOf(v) === -1; })) { return true; }
@@ -4963,6 +4963,7 @@ function applyBusinessCaseStakeholder(result, userText, profileText) {
     var pre0 = 0;
     if (result.humac && typeof result.humac.trajectorySignal === 'string' && /^\s*(?:negative|worsening|declining)|self-correct|worsen|deteriorat/i.test(result.humac.trajectorySignal) && !/\b(?:trend|rising|increas\w*|declin\w*|worsen\w*|falling|dropp\w*|growing)\b/i.test(String(userText || ''))) { result.humac.trajectorySignal = 'neutral: no trend data was given for this decision.'; pre0 += 1; }
     var provN = 0, noEng = !result.bcEngine, hasRev = /revenue/i.test(String(userText || ''));
+    var altN = noEng ? bcProvAlts(result, userText, profileText) : 0;
     if (noEng && provSnap) { var pv = bcProvDrops(provSnap, userText, profileText, true); if (pv.applied) { provN = bcProvApplyDrops(result, pv.drops); pre0 += provN; console.log('BC provenance removed ' + pv.removed + ': ' + JSON.stringify(pv.debug.slice(0, 40))); } }
     delete result.provenance;
     var n = pre0 - provN + bcScrub(result, function (s) { return BC_PROMISE_RE.test(s) || BC_PREDICT_RE.test(s) || BC_TIME_RE.test(s) || (noEng && (BC_MODEL_CLAIM_RE.test(s) || BC_NOENG_CLAIM_RE.test(s) || bcDurationBad(s, userText) || bcRatioBad(s, userText) || (/revenue[- ]per[- ](?:employee|head)/i.test(s) && !hasRev))); }, null);
@@ -4990,7 +4991,7 @@ function applyBusinessCaseStakeholder(result, userText, profileText) {
     if (empty(result.openingLine)) { result.openingLine = 'I am here to ask for one decision, and I will stay with the facts I have.'; }
     if (st) { fixO(st.decisionRunway, 'ask', 'The ask is the decision stated in your input.'); fixO(st.dataAnchor, 'headline', 'No calculation applies yet. Add headcount affected, average CTC and the number of exits or vacancies to get a computed range.'); }
     if (empty(result.closingLine)) { result.closingLine = 'The decision I am asking for is on the table, and I will take your questions now.'; }
-    if (provN && result.bcCheck) { result.bcCheck.note = String(result.bcCheck.note || '') + ' ' + provN + ' sentence(s) were removed because they were not backed by your input, your profile or a system figure.'; }
+    if ((provN + altN) && result.bcCheck) { result.bcCheck.note = String(result.bcCheck.note || '') + ' ' + (provN + altN) + ' sentence(s) were removed because they were not backed by your input, your profile or a system figure.'; }
     if (n && result.bcCheck) { result.bcCheck.stripped = (result.bcCheck.stripped || 0) + n; result.bcCheck.note = String(result.bcCheck.note || '') + ' ' + n + ' sentence(s) promising an action by a stated time were removed because the system cannot know your commitments.'; }
   }
   if (result && result.provenance) { delete result.provenance; }
@@ -5011,22 +5012,36 @@ function bcProvOverlap(sentence, srcNorm, min) {
   return hit / st.length >= min;
 }
 var BC_ADVICE_FORM_RE = /^(?:i|we)\s+(?:need|ask|am asking|are asking|would like|want|recommend|propose|suggest|should|will take|am here)\b|^(?:please|let'?s|approve|agree|confirm|decide|review|start|begin|consider|put|set|schedule|share|take|treat|keep|focus|ask|make|give|use|move|hold|name|agree|sign|release|fund|open|close|pause|test|measure|track|compare|bring|send|walk|state|show|say|open)\b|\?\s*$/i;
+var BC_PROFILE_GENERIC_RE = /\b(?:typically|usually|generally|always|never|directly tied|is tied to|are tied to|is driven by|are driven by|all metrics|every (?:cfo|ceo|board|chro)|most (?:cfos|ceos|boards)|in (?:insurance|banking|manufacturing|retail|it services|healthcare|pharma|telecom|logistics|saas)\b)/i;
 function bcProvWhy(sentence, e, ctx, path) {
   if (!e || typeof e !== 'object') { return 'no-entry'; }
   var t = String(e.t || '').toLowerCase(), q = bcProvNorm(e.q);
   if (BC_RESEARCH_RE.test(sentence) || LD_CLAIM_RE.test(sentence) || BC_PREDICT_RE.test(sentence) || BC_PROMISE_RE.test(sentence) || BC_TIME_RE.test(sentence)) { return 'blocklist'; }
   var nums = bcFigureNums(sentence);
   if (!(nums.every(function (v) { return bcOk(bcOkFor(sentence, ctx.userNums, ctx.okNums), v); }) && !bcPctBad(sentence, ctx.userText) && !bcDurationBad(sentence, ctx.userText) && !bcRatioBad(sentence, ctx.userText))) { return 'number'; }
+  if (path === 'stakeholderProfile' && BC_PROFILE_GENERIC_RE.test(sentence) && t !== 'user') { return 'generic-claim'; }
   if (t === 'figure') { return nums.length ? '' : 'figure-no-number'; }
   if (t === 'user') { if (q.length < 4 || ctx.userNorm.indexOf(q) === -1) { return 'quote-missing'; } if (!bcProvOverlap(sentence, ctx.userNorm, 0.5)) { return 'user-overlap'; } var cl = sentence.split(/[,;]\s+/).filter(function (c) { return Object.keys(bcProvStems(c)).length >= 3; }); return cl.every(function (c) { return bcProvOverlap(c, ctx.userNorm, 0.34); }) ? '' : 'user-clause'; }
   if (t === 'profile') { if (q.length < 3 || ctx.profileNorm.indexOf(q) === -1) { return 'quote-missing'; } return bcProvOverlap(sentence, ctx.profileNorm, 0.5) ? '' : 'profile-overlap'; }
   if (t === 'advice') {
     if (BC_ORGFACT_RE.test(sentence)) { return 'orgfact'; }
     if (ctx.noEng && (BC_NOENG_CLAIM_RE.test(sentence) || BC_MODEL_CLAIM_RE.test(sentence))) { return 'noeng-claim'; }
-    if (path !== 'stakeholderProfile' && !BC_ADVICE_FORM_RE.test(sentence.trim())) { return 'advice-form'; }
+    if (path !== 'stakeholderProfile' && path !== 'stack.decisionRunway.alternatives' && !BC_ADVICE_FORM_RE.test(sentence.trim())) { return 'advice-form'; }
     return '';
   }
   return 'bad-tag';
+}
+function bcProvAlts(result, userText, profileText) {
+  var d = result && result.stack && result.stack.decisionRunway;
+  if (!d || !Array.isArray(d.alternatives)) { return 0; }
+  var ctx = { userText: userText, userNorm: bcProvNorm(userText), profileNorm: bcProvNorm(profileText), noEng: true, userNums: bcFigureNums(userText), okNums: bcUserFractions(userText), debug: [] }, n = 0;
+  d.alternatives = d.alternatives.map(function (a) {
+    if (typeof a !== 'string' || !a.trim() || a === 'Not stated.') { return a; }
+    var bad = a.split(/(?<=[.!?])\s+(?=[A-Z(])/).some(function (x) { return bcProvWhy(x, { t: 'advice', q: '' }, ctx, 'stack.decisionRunway.alternatives'); });
+    if (bad) { n += 1; return 'Not computed: no further alternative can be priced from the data given.'; }
+    return a;
+  });
+  return n;
 }
 function bcProvFilter(result, userText, profileText, extraNums, noEng) {
   var prov = result && result.provenance;
