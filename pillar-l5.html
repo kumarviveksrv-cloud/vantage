@@ -235,6 +235,25 @@ function buildActions(per,largestLiabName){
 
 function intelText(per,nhw){
   var ctx=industry?' in the '+industry+' sector':'';
+  if(per!=null&&arguments[2]){
+    var d=arguments[2];
+    var pct=d.comp>0?nhw/d.comp*100:0, days=Math.round(Math.abs(pct)/100*365), sbb=band(l5);
+    var s1='Your people position is modelled as follows. About <b>'+fmtINR(d.assets)+'</b> of value would be costly to rebuild if it walked out (senior knowledge, client relationships and your high-potential bench). Set against that is about <b>'+fmtINR(d.liab)+'</b> of drag from gaps in capability and culture.';
+    var s2=nhw>=0?'What is left, <b>'+fmtINR(nhw)+'</b>, is '+pct.toFixed(1)+'% of annual payroll, roughly '+days+' days of payroll. That is the cushion your people position gives the business.'
+      :'The gaps outweigh that value by <b>'+fmtINR(-nhw)+'</b>, '+Math.abs(pct).toFixed(1)+'% of annual payroll, roughly '+days+' days of payroll.';
+    var s3='On the placeholder 0 to 100 scale this is a score of <b>'+l5+'</b> ('+sbb.name+'), so use it to track direction from quarter to quarter, not to compare with other companies.';
+    var capGap=d.skill+d.growth, lever;
+    if(capGap>=d.cliab&&capGap>0&&l2==null){
+      lever='Your Talent Premium pillar is not measured yet, so the capability gap is assumed at its midpoint. Measuring promotion quality, manager quality and hiring quality replaces that assumption with evidence.';
+    } else if(capGap>=d.cliab&&capGap>0&&l2<70){
+      lever='The biggest drag is the capability gap ('+fmtINR(capGap)+'), which is sized by your Talent Premium score of '+l2+'. Measuring promotion quality, manager quality and hiring quality properly is the fastest lever: at a Talent Premium score of 70 the gap would shrink by about '+fmtINR(capGap*(1-HumacShared.gap(70)/HumacShared.gap(l2)))+'.';
+    } else if(d.cliab>capGap&&l3!=null&&l3<70){
+      lever='The biggest drag is the culture gap ('+fmtINR(d.cliab)+'), which is sized by your Org Vitals score of '+l3+'. At an Org Vitals score of 70 it would shrink by about '+fmtINR(d.cliab*(1-HumacShared.gap(70)/HumacShared.gap(l3)))+'.';
+    } else {
+      lever='Your gaps are small relative to the value your people hold. The risk to watch is concentration: that value sits with a few senior people, client-facing staff and high-potential employees, so succession cover and documented handovers protect it.';
+    }
+    return s1+' '+s2+' '+s3+' '+lever+' This is a planning estimate from your own inputs, not a booked or audited figure.';
+  }
   if(per==null)return'An L5 score of <b>'+l5+'</b>'+ctx+' has no Net Human Worth to report yet \u2014 a compensation base is needed before the ratio can be computed.';
   if(per<0)return'An L5 score of <b>'+l5+'</b>'+ctx+' is modelled at <b>\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll, under the '+scenario+' case \u2014 liabilities currently exceed assets in this model. The capability gap (sized by L2) or the culture gap (sized by L3) is outweighing institutional knowledge, relationship capital and the HiPo bench. The actions below address the largest of these first.';
   if(per<20)return'An L5 score of <b>'+l5+'</b>'+ctx+' is modelled at <b>+\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll, under the '+scenario+' case \u2014 positive but modest. Assets narrowly exceed liabilities in this model \u2014 deepening senior tenure or revenue-facing relationships is the fastest way to widen that margin.';
@@ -336,7 +355,7 @@ function render(){
     '<tr><td>HiPo expected attrition</td><td>25.0%</td><td>25.0%</td><td>25.0%</td><td>Fixed rate, not scenario-adjustable. Stated-intent survey figure used as a planning rate.<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s4-talent" target="_blank" rel="noopener">?</a></td></tr>';
   var assumptionsTable='<table class="assumptions"><tr><th>Line</th><th>Low</th><th>Base</th><th>High</th><th>Status</th></tr>'+assumptionRows+fixedRows+'</table>';
 
-  var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L5 Human Balance Sheet</div><div class="stmt-txt">'+intelText(per,nhw)+'</div></div>';
+  var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L5 Human Balance Sheet</div><div class="stmt-txt">'+intelText(per,nhw,{comp:comp,assets:assets,liab:liab,skill:skill,growth:growth,cliab:cliab})+'</div></div>';
 
   var acts=buildActions(per,largestLiab.name);
   var actions='<div class="section-eyebrow">What to do next</div><div class="section-title">Strengthening your Human Balance Sheet</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('');

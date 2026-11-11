@@ -394,6 +394,22 @@ function buildActions(insufficient, q1Display, q1Ratio, ratioNum){
 // handle the insufficient-data case the old version didn't have.
 function buildIntelText(insufficient, q1Display, q1Ratio, benchPos){
   var ctx=industry?' in the '+industry+' sector':'';
+  if(!insufficient&&arguments[4]&&!arguments[4].insufficient&&arguments[4].compBase>0&&arguments[4].rows&&arguments[4].rows.length){
+    var L=arguments[4];
+    var pct=L.totalRet/L.compBase*100, days=Math.round(pct/100*365);
+    var top=L.rows.reduce(function(x,y){return y.ret>x.ret?y:x;});
+    var share=L.totalRet>0?Math.round(top.ret/L.totalRet*100):0;
+    var nextStep={
+      retention:'Count your real star exits over the next two quarters. Your own exit rate then replaces the industry leave probability in this line.',
+      hire:'Rate each revenue hire against role expectations six months after joining, so Quality of Hire becomes a measured figure instead of an assumed one.',
+      dri:'Track what your emerging talent actually delivers after the development spend, so this line rests on outcomes.',
+      engage:'Test the tenure premium: compare the output of your 5+ year staff with newer staff and replace the assumption with what you find.',
+      risk:'Log what happened to each at-risk performer (improved, exited, managed out) so this line rests on outcomes.'
+    }[top.key]||'Convert the largest line from an assumption to a measured figure.';
+    return 'In plain terms, your Value Ledger credits HR with about <b>'+fmtINR(L.totalRet)+'</b> a year under the '+scenario+' case. That is <b>'+pct.toFixed(1)+'%</b> of annual payroll, roughly '+days+' days of payroll. About '+share+'% of it comes from <b>'+top.action+'</b>. '+
+      'Two discounts are already applied: only about '+Math.round((L.leaveP||0)*1000)/10+'% of stars would be expected to leave in a year (your industry rate), and HR is credited with '+Math.round((L.attribution||0.5)*100)+'% of the outcomes, because line managers, pay and the market also drive them. '+
+      'The score of <b>'+l1+'</b> is on a placeholder 0 to 100 scale, so use it to track direction from quarter to quarter, not to compare with other companies. '+nextStep+' This is a planning model built from your headcounts, not a measured saving.';
+  }
   if(insufficient){
     return 'An L1 score of <b>'+l1+'</b>'+ctx+' is currently a planning figure only \u2014 there isn\u2019t enough cohort or compensation data entered yet for the ledger below to compute a modelled return. The formulas are ready; they just need headcount, comp base, and at least one cohort count to run against.';
   }
@@ -489,7 +505,7 @@ function render(){
     '<div class="sec-head"><h2><span class="step">1</span>The Ledger \xb7 '+scoreDate+'</h2><div class="sec-sub">'+(l1Mode==='computed'?'Computed cohorts \xb7 '+scenario+' multiples':'Estimate mode allocates one self-reported ratio')+'</div></div>'+
     '<div class="legend"><div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div>Revenue-Generating</div><div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div>Cost-Saving</div><div class="leg-item"><div class="leg-dot" style="background:#a5b4fc"></div>Development</div><div class="leg-item"><div class="leg-dot" style="background:#c4b5fd"></div>Culture</div><div class="leg-item"><div class="leg-dot" style="background:#F07060"></div>Risk</div></div>'+
     ledgerHTML()+
-    '<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L1 Value Ledger</div><div class="stmt-txt">'+buildIntelText(isInsufficient, q1Display, q1Ratio, benchPos)+'</div></div>'+
+    '<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L1 Value Ledger</div><div class="stmt-txt">'+buildIntelText(isInsufficient, q1Display, q1Ratio, benchPos, realLedger)+'</div></div>'+
     '<div class="section-eyebrow">What to do next</div><div class="section-title">Moving your Value Ledger forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('')+
     '<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><button onclick="printReport()" class="btn-back" style="cursor:pointer">\u2b07 Download PDF</button><a href="pillar-l2.html" class="btn-next">L2 Talent Premium \u2192</a></div>';
 }

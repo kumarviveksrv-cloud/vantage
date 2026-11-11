@@ -263,6 +263,17 @@ function buildActions(margin){
 
 function intelText(margin){
   var ctx=industry?' in the '+industry+' sector':'';
+  if(margin!=null&&arguments[1]){
+    var d=arguments[1];
+    var s1='For every \u20b91 your HR function spends, the model credits <b>\u20b9'+margin.toFixed(2)+'</b> of value back. The spend is <b>'+fmtINR(d.invest)+'</b> a year ('+(d.actual?'the figure you entered':'assumed at 7.5% of payroll, not your actual spend')+') and the credited value is <b>'+fmtINR(d.totalRev)+'</b>.';
+    var s2=margin<1?'That is below break-even. It does not show that HR destroys value: the model counts only five cohorts, allows only for the share of people who would realistically have left, and credits HR with only part of what it counts. It shows that on these assumptions the credited value has not yet covered the spend.'
+      :margin<2?'That is above break-even: on these assumptions the credited value covers the spend.'
+      :'That is well above break-even. A ratio this high deserves a sanity check of the cohort counts before it travels.';
+    var s3='The score of <b>'+l4+'</b> is on a placeholder scale where 1.5x is full marks, so use it to track direction, not to compare with other companies.';
+    var lever=d.actual?'To move it, raise the credited value in the Value Ledger (L1) by turning an assumption into a measured figure, for example by tracking real exits and hire performance.'
+      :'The fastest step is to enter your actual annual HR spend, which replaces the 7.5% assumption. Pull it from finance: HR team cost, tools, training, recruitment, compliance and culture spend.';
+    return s1+' '+s2+' '+s3+' '+lever;
+  }
   if(margin==null)return 'An L4 score of <b>'+l4+'</b>'+ctx+' has no margin to report yet \u2014 the Value Ledger (L1) hasn\u2019t produced a return to divide against L4\u2019s HR operating costs.';
   if(margin<1)return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+margin.toFixed(2)+'x modelled margin means the P&L is currently negative under the '+scenario+' case \u2014 HR is modelled as consuming more in operating cost than the L1 book currently models as return. This does not mean HR is not generating value; it means the L1 book or the L4 cost assumptions need review. The actions below cover both.';
   if(margin<2)return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+margin.toFixed(2)+'x modelled margin is positive under the '+scenario+' case. The return side is already discounted by the leave probability and your HR attribution share, so 1.0x is break-even. The gap to a stronger reading is usually precision on the cost side, not the revenue side: reviewing the L4 assumptions against real spend often closes it.';
@@ -340,7 +351,7 @@ function render(){
 
   var bookNote='<p class="book-note">cq1_revhires is a 12-month count used by L1. cq4_revhires24 is a 24-month count. They are not the same question, so L4 does not merge or price either \u2014 L4\u2019s only revenue input is the L1 book total above.</p>';
 
-  var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L4 Human P&amp;L</div><div class="stmt-txt">'+intelText(margin)+'</div></div>';
+  var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L4 Human P&amp;L</div><div class="stmt-txt">'+intelText(margin,{invest:invest,totalRev:totalRev,actual:actualSpend>0})+'</div></div>';
 
   var acts=buildActions(margin);
   var actions='<div class="section-eyebrow">What to do next</div><div class="section-title">Strengthening your Human P&amp;L</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('');
