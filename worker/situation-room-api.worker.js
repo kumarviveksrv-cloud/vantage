@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v163'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v164'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -6512,7 +6512,7 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
       if (verifiedEmail) {
         await sendResendEmail({
           to: verifiedEmail,
-          subject: `Your ${month} ${year} Vantage Debrief is ready`,
+          subject: `Your ${month} Vantage Debrief is ready`,
           html: buildDebriefEmail(debriefData, month, year),
         });
       }
