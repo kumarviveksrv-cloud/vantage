@@ -207,7 +207,7 @@
         ]
       },
       {
-        id:'policy', title:'Your Policy Guardrails', sub:'Optional: helps the platform understand your company context and policy boundaries. All fields are optional.',
+        id:'policy', title:'Your Policy Guardrails', sub:'Optional: helps the platform understand your company context and policy boundaries. All fields are optional. Click a selected option again to clear it.',
         type:'policy'
       }
     ];
@@ -307,7 +307,9 @@
     }
 
     function selectPolicyOpt(field, value, el) {
+      var wasSelected = el.classList.contains('selected');
       el.closest('.options-grid').querySelectorAll('.opt-btn').forEach(function(b){ b.classList.remove('selected'); });
+      if (wasSelected) { profile[field] = ''; return; }
       el.classList.add('selected');
       profile[field] = value;
     }
