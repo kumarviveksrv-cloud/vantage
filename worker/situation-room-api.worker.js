@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v136'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v137'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4919,7 +4919,7 @@ function applyBusinessCaseStakeholder0(result, userText) {
 var BC_PREDICT_RE = /\bself-correct\w*|\bmore likely to worsen\b|\btoward a more expensive problem\b|\bwill only (?:get|grow|become) (?:worse|bigger|costlier)\b|\bgets? worse (?:on its own|without)\b|\bwill (?:certainly|inevitably) (?:worsen|deteriorate)\b/i;
 var BC_MODEL_CLAIM_RE = /\b(?:vacancy cost|cost of vacancy|vacancy) model\b|\bthe (?:cost )?model used here\b|\bno external research body\b|\bnot (?:on|from) industry averages or vendor claims\b|\b(?:the|this) range is wide\b|\bfor this range\b|\bmodelled (?:range|estimate) (?:is|was) (?:built|based)\b/i;
 var BC_TIME_RE = /\btomorrow\b|\bbefore the (?:week|month|quarter) (?:closes|ends)\b|\b(?:on|by|this) (?:monday|tuesday|wednesday|thursday|friday)\b|\bthis week\b|\bnext week\b/i;
-var BC_NOENG_CLAIM_RE = /\b(?:recoverable|recoup\w*|pays? (?:for itself|back)|payback|pays itself back)\b|\bprobability of\b|\b(?:increases?|raises?) the (?:risk|probability|likelihood)\b|\bevery (?:week|day|month) of delay\b|\bcurrently in or near\b|\bfinal[- ]stage pipeline\b|\bpipeline (?:loss|collapse)\b|\bfull hiring restart\b|\bmaterially (?:increases?|reduces?)\b/i;
+var BC_NOENG_CLAIM_RE = /\b(?:recoverable|recoup\w*|pays? (?:for itself|back)|payback|pays itself back)\b|\bprobability of\b|\b(?:increases?|raises?) the (?:risk|probability|likelihood)\b|\bevery (?:week|day|month) of delay\b|\bcurrently in or near\b|\bfinal[- ]stage pipeline\b|\bpipeline (?:loss|collapse)\b|\bfull hiring restart\b|\bmaterially (?:increases?|reduces?)\b|\bexceeds? the (?:hiring |programme |recruitment )?cost\b|\bwithin the first (?:quarter|month|year|week)\b|\bany reasonable\b[^.]*\bassumption\b|\bcost of (?:inaction|doing nothing|delay) is\b|\b(?:revenue|vacancy) (?:drag|cost) (?:from|of) (?:open|vacant)\b/i;
 var BC_NUMWORDS = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, fifteen: 15, twenty: 20, thirty: 30, forty: 40, sixty: 60, ninety: 90 };
 function bcDurationBad(s, userText) {
   var ut = String(userText || '').toLowerCase(), nums = (ut.match(/\d+(?:\.\d+)?/g) || []).map(parseFloat);
@@ -4931,6 +4931,11 @@ function bcDurationBad(s, userText) {
   }
   return false;
 }
+function bcRatioBad(s, userText) {
+  var ut = String(userText || ''), nums = (ut.match(/\d+(?:\.\d+)?/g) || []).map(parseFloat), m, re = /(\d+(?:\.\d+)?)\s?[x\u00d7](?![a-z])/gi;
+  while ((m = re.exec(String(s || '')))) { if (nums.indexOf(parseFloat(m[1])) === -1) { return true; } }
+  return false;
+}
 var BC_PROMISE_RE = /\bI will (?:send|share|have|bring|get|circulate|email|forward)\b|\bby (?:end of (?:the )?day|eod|tonight|tomorrow)\b|\bwithin (?:the next )?(?:24|48) hours\b/i;
 function applyBusinessCaseStakeholder(result, userText) {
   var r = applyBusinessCaseStakeholder0(result, userText);
@@ -4938,8 +4943,20 @@ function applyBusinessCaseStakeholder(result, userText) {
     var pre0 = 0;
     if (result.humac && typeof result.humac.trajectorySignal === 'string' && /^\s*(?:negative|worsening|declining)|self-correct|worsen|deteriorat/i.test(result.humac.trajectorySignal) && !/\b(?:trend|rising|increas\w*|declin\w*|worsen\w*|falling|dropp\w*|growing)\b/i.test(String(userText || ''))) { result.humac.trajectorySignal = 'neutral: no trend data was given for this decision.'; pre0 += 1; }
     var noEng = !result.bcEngine, hasRev = /revenue/i.test(String(userText || ''));
-    var n = pre0 + bcScrub(result, function (s) { return BC_PROMISE_RE.test(s) || BC_PREDICT_RE.test(s) || BC_TIME_RE.test(s) || (noEng && (BC_MODEL_CLAIM_RE.test(s) || BC_NOENG_CLAIM_RE.test(s) || bcDurationBad(s, userText) || (/revenue[- ]per[- ](?:employee|head)/i.test(s) && !hasRev))); }, null);
+    var n = pre0 + bcScrub(result, function (s) { return BC_PROMISE_RE.test(s) || BC_PREDICT_RE.test(s) || BC_TIME_RE.test(s) || (noEng && (BC_MODEL_CLAIM_RE.test(s) || BC_NOENG_CLAIM_RE.test(s) || bcDurationBad(s, userText) || bcRatioBad(s, userText) || (/revenue[- ]per[- ](?:employee|head)/i.test(s) && !hasRev))); }, null);
     var empty = function (v) { return !v || v === 'Not stated.'; };
+    var st = result.stack, fixO = function (o, k, txt) { if (o && typeof o === 'object' && empty(o[k]) && k in o) { o[k] = txt; } };
+    if (st) {
+      fixO(st.credibility, 'evidence', 'The evidence is the figures and facts you gave in your input.');
+      fixO(st.credibility, 'deliveryNote', 'Say it plainly and put the figures you gave on the table before you speak.');
+      fixO(st.narrativeBridge, 'story', 'The story is the situation you described in your input.');
+      fixO(st.narrativeBridge, 'connection', 'This connects to the decision you are asking for.');
+      fixO(st.narrativeBridge, 'emotionalHook', 'Behind the numbers are the people and the work your input describes.');
+      fixO(st.riskMirror, 'scenario', 'Not computed: the cost of not acting cannot be priced from the data given.');
+      fixO(st.riskMirror, 'timeline', 'Not stated: no timeline was given.');
+      fixO(st.decisionRunway, 'successMetric', 'The target and measure will be agreed with the stakeholder before the programme begins.');
+      if (st.decisionRunway && Array.isArray(st.decisionRunway.alternatives)) { st.decisionRunway.alternatives = st.decisionRunway.alternatives.map(function (a) { return empty(a) ? 'Not computed: no further alternative can be priced from the data given.' : a; }); }
+    }
     if (empty(result.closingLine)) { result.closingLine = 'The decision I am asking for is on the table, and I will take your questions now.'; }
     if (n && result.bcCheck) { result.bcCheck.stripped = (result.bcCheck.stripped || 0) + n; result.bcCheck.note = String(result.bcCheck.note || '') + ' ' + n + ' sentence(s) promising an action by a stated time were removed because the system cannot know your commitments.'; }
   }

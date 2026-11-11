@@ -148,7 +148,7 @@ ok(/never call it a floor/.test(ER.erPromptBlock(e)) && /Never state numeric tar
 // v118: quarterly and monthly slices of the system drag allowed; ranking and disclosure-avoidance claims stripped
 es = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Every quarter without intervention is approximately Rs.18L, or Rs.6L a month.' }, narrativeBridge: { story: 'Fixing this is one of the highest-return interventions available. The group has no active programme in place. Rehearse your answer without retreating to the coefficient.' } }, bcInputs: EIN };
 ER.applyBusinessCaseStakeholder(es, ET);
-ok(es.bcCheck.ok === true && es.bcCheck.claimsRemoved === 3 && es.stack.narrativeBridge.story === 'Not stated.', 'quarter and month slices allowed, three claims removed: ' + JSON.stringify(es.bcCheck) + ' | ' + es.stack.narrativeBridge.story);
+ok(es.bcCheck.ok === true && es.bcCheck.claimsRemoved === 3 && es.stack.narrativeBridge.story === 'The story is the situation you described in your input.', 'quarter and month slices allowed, three claims removed: ' + JSON.stringify(es.bcCheck) + ' | ' + es.stack.narrativeBridge.story);
 es = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Every quarter costs Rs.19L.' } }, bcInputs: EIN };
 ER.applyBusinessCaseStakeholder(es, ET); ok(es.bcCheck.ok === false && es.bcCheck.flagged.some(f => /19L/.test(f)), 'Rs.19L is not a slice of the drag: flagged');
 ok(/hide, downplay or avoid saying/.test(ER.erPromptBlock(e)), 'prompt forbids coaching to avoid the disclosure');
@@ -357,5 +357,10 @@ ok(/hiring has taken 3 months/.test(h2.stack.credibility.statement), 'user-given
 let b3 = mkA(); b3.stack.credibility.statement = 'This is a cost that is not captured in any current budget line. Finance is currently not measuring it. Sales teams in insurance are a known flight-risk segment given commission portability. There is no active mechanism to hold the rate. HR owns the data.';
 AT.applyBusinessCaseStakeholder(b3, ATT);
 ok(!/budget line|not measuring|flight-risk|commission portability|no active mechanism/.test(b3.stack.credibility.statement) && /HR owns the data/.test(b3.stack.credibility.statement), 'more invented claims removed: ' + b3.stack.credibility.statement);
+// v137: invented multiples removed in no-engine path; emptied fields get neutral text, not Not stated
+let h3 = { openingLine: 'x', closingLine: 'c', stack: { credibility: { statement: 'ok one', evidence: 'The cost of inaction is 3x to 6x the cost of the ask.', deliveryNote: 'Not stated.' }, dataAnchor: { figure: 'Rs.8L', headline: 'h', context: 'c', humacBasis: 'b' }, narrativeBridge: { story: 'Vacancy cost exceeds the hiring cost within the first quarter.', connection: 'fine connection', emotionalHook: 'e' }, riskMirror: { scenario: 'The cost of inaction is high.', revenueAtRisk: 'x', revenueAtRiskBasis: 'y', timeline: 'Not stated.' }, decisionRunway: { ask: 'Approve Rs.8L', deadline: 'd', alternatives: ['Approve 5 roles over 6 weeks', 'Approve 2 roles now'], successMetric: 'Offers released within 45 days.' } } };
+PX.applyBusinessCaseStakeholder(h3, 'We have 5 open sales roles. Approve Rs.8L. Targets are behind plan.');
+const h3j = JSON.stringify(h3.stack);
+ok(!/3x|exceeds the hiring|6 weeks|45 days/.test(h3j) && !/Not stated\.?"/.test(h3j.replace(/Not stated: no/g, '')) && /Approve 2 roles now/.test(h3j) && /agreed with the stakeholder/.test(h3.stack.decisionRunway.successMetric), 'multiples removed, no orphan Not stated: ' + h3j);
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);
