@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v132'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v134'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4656,14 +4656,17 @@ function bcScrub(result, bad, figKeys, pre) {
 }
 function bcFixPlaceholders(result, userText) {
   var locFix = function (m, off, str) { return /(^|[.!?]\s*|\n\s*)$/.test(String(str).slice(0, off)) ? 'Our office' : 'our office'; };
-  if (/\bLocation [A-Z]\b/.test(String(userText || ''))) { return; }
+  var perFix = function (m, role, off, str) { var low = 'the ' + role.toLowerCase(); return /(^|[.!?]\s*|\n\s*)$/.test(String(str).slice(0, off)) ? 'The ' + role.toLowerCase() : low; };
+  var utext = String(userText || '');
+  var doLoc = !/\bLocation [A-Z]\b/.test(utext), doPer = !/\b(?:Employee|Manager|Candidate|Person) [A-Z]\b/.test(utext);
+  var fix = function (x) { if (doLoc) { x = x.replace(/(?:\bthe\s+)?\bLocation [A-Z]\b(?:\s+office)?/gi, locFix); } if (doPer) { x = x.replace(/(?:\bthe\s+)?\b(Employee|Manager|Candidate|Person) [A-Z]\b/g, perFix); } return x; };
+  if (!doLoc && !doPer) { return; }
   var walk = function (n) {
-    if (Array.isArray(n)) { n.forEach(function (x, i) { if (typeof x === 'string') { n[i] = x.replace(/(?:\bthe\s+)?\bLocation [A-Z]\b(?:\s+office)?/gi, locFix); } else { walk(x); } }); }
-    else if (n && typeof n === 'object') { Object.keys(n).forEach(function (k) { if (typeof n[k] === 'string') { n[k] = n[k].replace(/(?:\bthe\s+)?\bLocation [A-Z]\b(?:\s+office)?/gi, locFix); } else { walk(n[k]); } }); }
+    if (Array.isArray(n)) { n.forEach(function (x, i) { if (typeof x === 'string') { n[i] = fix(x); } else { walk(x); } }); }
+    else if (n && typeof n === 'object') { Object.keys(n).forEach(function (k) { if (typeof n[k] === 'string') { n[k] = fix(n[k]); } else { walk(n[k]); } }); }
   };
   walk(result);
-}
-var BC_ATTR_CLAIM_RE = /\bnone of (?:it|that|this)\b[^.]*\b(?:budget\w*|consolidated|measured|presented|approved)|\bno (?:line item|budget line|approval)\b|\bnot one rupee\b|\bany budget line\b|\bunbudgeted\b|\bnot budgeted\b|\ball of it real\b|\bnever (?:been )?(?:measured|consolidated|presented|budgeted|costed|tracked)\b|\b(?:has|have|had) not (?:been )?(?:measured|consolidated|presented|budgeted|costed|tracked)\b|\bpreventable\b|\bno structural change\b|\bself-correcting\b|\babsorbed silently\b|\bno return\b|\bnever (?:been )?approved\b|\bwithout (?:a|any) (?:line item|approval|budget)\b/i;
+}var BC_ATTR_CLAIM_RE = /\bnone of (?:it|that|this)\b[^.]*\b(?:budget\w*|consolidated|measured|presented|approved)|\bno (?:line item|budget line|approval)\b|\bnot one rupee\b|\bany budget line\b|\bunbudgeted\b|\bnot budgeted\b|\ball of it real\b|\bnever (?:been )?(?:measured|consolidated|presented|budgeted|costed|tracked)\b|\b(?:has|have|had) not (?:been )?(?:measured|consolidated|presented|budgeted|costed|tracked)\b|\bpreventable\b|\bno structural change\b|\bself-correcting\b|\babsorbed silently\b|\bno return\b|\bnever (?:been )?approved\b|\bwithout (?:a|any) (?:line item|approval|budget)\b|\b(?:organisation|company|team|we) (?:currently )?(?:has|have|had) no (?:structured|formal|documented|existing|standard)\b|\balready recurring\b|\bone repeat of this pattern\b|\b(?:is|are) (?:a )?recurring (?:cost|pattern|problem)\b/i;
 function bcAttrBenchBad(s, rate) {
   if (rate === null || rate === undefined) { return false; }
   var str = String(s || ''), m = /(\d+(?:\.\d+)?)\s*(?:-|–|to)\s*(\d+(?:\.\d+)?)\s*(?:%|percent|per cent)/i.exec(str);
@@ -4712,6 +4715,16 @@ function bcIsIndividualCase(situation, ask) {
   var orgLevel = /\b(policy|policies|programme|program|framework|attrition rate|company-wide|across the (?:company|organisation|organization))\b/i.test(text);
   var processAsk = /\b(?:loop(?:ing)? in|involve|bring in|engage|consult)\b[^.]*\b(?:legal|counsel|lawyer|compliance)\b|\blegal review\b|\bbefore the (?:termination|dismissal|exit) proceeds\b/i.test(String(ask || ''));
   return verb && person && !orgLevel && !processAsk;
+}
+// A programme-level ask that also asks to dismiss or discipline a named individual: the individual part cannot be handled in a stakeholder pitch.
+function bcMixedIndividual(situation, ask) {
+  var text = String(situation || '') + ' ' + String(ask || '');
+  var notName = /^(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|The|This|That|Our|All|Any|Some|Policy|Programme|Program|HR|CEO|CFO|CHRO|India|Q[1-4])$/;
+  var re = /\b(?:terminat(?:e|es|ed|ing)|dismiss(?:ed|ing)?|sack(?:ed|ing)?|fir(?:e|ed|ing)|let go of|remov(?:e|ed|ing))\s+(?:of\s+)?([A-Z][a-z]{2,})\b/g, m, named = false;
+  while ((m = re.exec(text))) { if (!notName.test(m[1])) { named = true; } }
+  var orgLevel = /\b(policy|policies|programme|program|framework|attrition rate|company-wide|across the (?:company|organisation|organization))\b/i.test(text);
+  var processAsk = /\b(?:loop(?:ing)? in|involve|bring in|engage|consult)\b[^.]*\b(?:legal|counsel|lawyer|compliance)\b|\blegal review\b|\bbefore the (?:termination|dismissal|exit) proceeds\b/i.test(String(ask || ''));
+  return named && orgLevel && !processAsk;
 }
 function applyPoshStakeholder(result, userText) {
   var okNums = bcFigureNums(userText).concat([0.5], bcUserFractions(userText));
@@ -5538,8 +5551,8 @@ if (actContext) {
         userMessage = `HR METRICS / DATA: ${anonymizedMetrics}\n${anonymizedContext ? `ADDITIONAL CONTEXT: ${anonymizedContext}` : ''}\n${anonymizedGenAsk ? `THE ASK (what the requester wants approved or decided): ${anonymizedGenAsk}` : ''}\n${audience ? `PRIMARY AUDIENCE: ${truncateInput(audience, 200)}` : ''}\n\nBuild the complete SIGNAL narrative including Revenue at Risk and Humac financial translation. Return the complete JSON response as specified.`;
       }
 
-      if (flow === 'stakeholder' && bcIsIndividualCase(body.situation, body.ask)) {
-        const bcRedirect = { wrongTool: true, suggestedTool: 'Employee Case Advisor', reason: 'This describes a live termination or disciplinary decision about an individual employee. That needs the Employee Case Advisor diagnostic (process, evidence and exposure) before any case is made to a stakeholder.' };
+      if (flow === 'stakeholder' && (bcIsIndividualCase(body.situation, body.ask) || bcMixedIndividual(body.situation, body.ask))) {
+        const bcRedirect = { wrongTool: true, suggestedTool: 'Employee Case Advisor', reason: bcIsIndividualCase(body.situation, body.ask) ? 'This describes a live termination or disciplinary decision about an individual employee. That needs the Employee Case Advisor diagnostic (process, evidence and exposure) before any case is made to a stakeholder.' : 'This request mixes a programme-level decision with a decision to dismiss or discipline a named individual. Submit the programme case here without the individual, and take the individual decision to the Employee Case Advisor for its process, evidence and exposure diagnostic.' };
         if (await settleWrongTool(clerkUserId, 'business_case', usageCheck, trialCharged)) { _trialLastCall = false; }
         return new Response(JSON.stringify(_trialLastCall ? { success: true, data: bcRedirect, trial_calls_remaining: 0 } : { success: true, data: bcRedirect }), {
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }

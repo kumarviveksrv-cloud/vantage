@@ -330,5 +330,20 @@ let a9 = { bcInputs: { model: 'attrition', exits: 4, headcount: 11, avgCtc: 7000
 AT.applyBusinessCaseEngine(a9, TW);
 const a9s = JSON.stringify(a9.signal);
 ok(!/benchmark|same pace|Location A/.test(a9s) && /our office, 4 resigned/.test(a9s) && /total cost is Rs\.29\.4L/.test(a9.headline) && !/Not stated/.test(a9.headline), 'tenure cohort text corrected: ' + a9s + ' | ' + a9.headline);
+// v133: invented "no structured programme" and recurring-cost claims removed
+let b1 = mkA(); b1.stack.credibility.statement = 'The organisation currently has no structured onboarding programme. Approving it keeps absorbing a cost that is already recurring. HR owns the data.';
+AT.applyBusinessCaseStakeholder(b1, ATT);
+ok(!/no structured|already recurring/.test(b1.stack.credibility.statement) && /HR owns the data/.test(b1.stack.credibility.statement), 'invented org facts removed: ' + b1.stack.credibility.statement);
+// v134: mixed programme plus named-individual dismissal is redirected deterministically
+const MX = new Function(code + ';return {bcMixedIndividual, bcIsIndividualCase};')();
+ok(MX.bcMixedIndividual('We have 30 managers. Ravi manages a weak team and I think he should go.', 'Approve Rs.5L for a manager coaching programme, and also approve terminating Ravi, our worst manager.') === true, 'mixed ask redirected');
+ok(MX.bcMixedIndividual('We have 30 managers.', 'Approve Rs.5L for a manager coaching programme.') === false, 'plain programme not redirected');
+ok(MX.bcMixedIndividual('We want a new termination policy for the company.', 'Approve the policy.') === false, 'termination policy not redirected');
+ok(MX.bcMixedIndividual('We will fire Monday the old process and start a programme.', 'Approve the programme.') === false, 'weekday after verb is not a name');
+ok(MX.bcMixedIndividual('We are about to terminate a senior engineer. I want legal to review the process first.', 'Agree to loop in legal before the termination proceeds.') === false, 'process ask still exempt');
+// v134: person placeholders do not leak
+let b2 = mkA(); b2.stack.credibility.statement = 'Manager A is weak. The case of Employee B is separate. HR owns the data.';
+AT.applyBusinessCaseStakeholder(b2, ATT);
+ok(!/Manager A|Employee B/.test(b2.stack.credibility.statement) && /^The manager is weak/.test(b2.stack.credibility.statement) && /HR owns the data/.test(b2.stack.credibility.statement), 'person placeholders replaced: ' + b2.stack.credibility.statement);
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);
