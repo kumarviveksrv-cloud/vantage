@@ -77,8 +77,11 @@
   }
   var IDLE_MS = 45000, TOTAL_MS = 240000;
   function lostResponse() {
-    return new Response(JSON.stringify({ success: false, error: 'The connection dropped before your result arrived. Please try again.' }), { status: 502, headers: { 'Content-Type': 'application/json' } });
+    var r = new Response(JSON.stringify({ success: false, error: 'The connection dropped before your result arrived. Please try again.' }), { status: 502, headers: { 'Content-Type': 'application/json' } });
+    r.__vwLost = true; /* the stream ended with no result: the one case worth one automatic retry */
+    return r;
   }
+  var RETRY_WAIT_MS = 6000;
   /* reads the SSE body; resolves with an ordinary JSON Response built from the final "result" event */
   function readEvents(resp, arm) {
     var reader = resp.body.getReader(), dec = new TextDecoder(), buf = '';
@@ -111,7 +114,7 @@
     }
     return pump();
   }
-  function streamed(self, input, init, url) {
+  function streamed(self, input, init, url, retried) {
     var ctrl = new AbortController(), idleT = 0, totalT = 0;
     function clear() { clearTimeout(idleT); clearTimeout(totalT); }
     function arm() { clearTimeout(idleT); idleT = setTimeout(function () { ctrl.abort(); }, window.__vwIdleMs || IDLE_MS); }
@@ -121,7 +124,15 @@
     return orig.call(self, u, Object.assign({}, init || {}, { signal: ctrl.signal })).then(function (resp) {
       var ct = (resp.headers && resp.headers.get('Content-Type')) || '';
       if (ct.indexOf('text/event-stream') === -1 || !resp.body || !resp.body.getReader) { clear(); release(); return resp; }
-      return readEvents(resp, arm).then(function (r) { clear(); release(); return r; });
+      return readEvents(resp, arm).then(function (r) {
+        clear();
+        /* Stream cut before any result (the server was stopped mid-run): wait a moment and try once more. Timeouts and aborts are never retried, because that run may still be going. */
+        if (r && r.__vwLost && !retried && !window.__vwNoRetry) {
+          showMsg('The connection dropped. Trying once more automatically. Please keep this tab open.');
+          return new Promise(function (ok) { setTimeout(ok, window.__vwRetryMs || RETRY_WAIT_MS); }).then(function () { return streamed(self, input, init, url, true); });
+        }
+        release(); return r;
+      });
     }).catch(function (e) { clear(); release(); throw e; });
   }
 
