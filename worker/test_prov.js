@@ -44,4 +44,8 @@ applyBusinessCaseStakeholder(w, SIT, PROFILE);
 ok(w.provenance === undefined, 'provenance not shipped');
 ok(/^Not stated|Evidence|evidence/.test(w.stack.credibility.evidence) && !/Studies show/.test(w.stack.credibility.evidence), 'unsupported studies sentence removed on the wire: ' + w.stack.credibility.evidence);
 ok(/not computed/.test(w.stack.dataAnchor.context) && w.openingLine === "I need approval from the CFO.", "sourced sentences kept: " + w.stack.dataAnchor.context + " | " + w.openingLine);
+// a half of a per-hire amount is not allowed as a cost, but is allowed in a phasing sentence
+r = { stack: { dataAnchor: { headline: 'h', figure: 'Rs.7L', context: 'c' }, credibility: {}, riskMirror: {}, decisionRunway: {} }, humac: {} };
+applyBusinessCaseStakeholder(r, 'Hire two analysts at Rs.14L each. I need approval.', PROFILE);
+ok(r.stack.dataAnchor.figure === 'Not computed', 'half of a salary is not a figure: ' + r.stack.dataAnchor.figure);
 if (fails) { console.log(fails + ' FAILED'); process.exit(1); } else { console.log('PROVENANCE TESTS PASSED'); }

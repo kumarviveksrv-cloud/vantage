@@ -108,7 +108,7 @@ ok(ls.stack.closing[0] === 'Agree the metric at approval.', 'named body removed 
 ok(ls.stack.riskMirror.probability === '', 'likelihood badge cleared');
 ok(ls.bcCheck.ok === true && ls.bcCheck.claimsRemoved === 4 && /removed because the system cannot verify/.test(ls.bcCheck.note), 'note counts removals: ' + ls.bcCheck.claimsRemoved + ' ' + ls.bcCheck.note);
 ls = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Typically programmes like this return 3x.' } }, bcInputs: LDIN };
-LD.applyBusinessCaseStakeholder(ls, LDT); ok(/^Not stated/.test(ls.stack.credibility.statement), 'field fully made of a claim gets a Not stated line: ' + ls.stack.credibility.statement);
+LD.applyBusinessCaseStakeholder(ls, LDT); ok(/^(Not stated|HR is bringing you a decision request)/.test(ls.stack.credibility.statement), 'field fully made of a claim gets a Not stated line: ' + ls.stack.credibility.statement);
 ok(/Do not cite any industry benchmark/.test(LD.ldPromptBlock(LD.ldCalc(LDIN, LDT))), 'prompt forbids benchmarks');
 // v116: engagement (0.15) and manager effectiveness (0.08) engine, stakeholder flow
 const ER = new Function(code + ';return {erCalc, erPromptBlock, applyBusinessCaseStakeholder};')();

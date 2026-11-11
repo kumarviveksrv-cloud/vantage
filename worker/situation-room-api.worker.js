@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v147'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v148'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4576,6 +4576,8 @@ function ldStripClaims(result, extraRe) {
   return removed;
 }
 var LD_OVERSTATE_RE = /not a projection|not a worst case|conservative end|\bis the floor\b|\bthe floor:|costs the business at least|already been incurred|distributed across functions|highest[- ]return|retreating to the coefficient|over-qualif|no active programme|no programme in place/i;
+var BC_PHASE_RE = /\b(?:phas\w*|tranche\w*|half|split|stage[sd]?|fraction\w*|percent|per cent|instal?ment\w*|portion|pilot)\b|%/i;
+function bcOkFor(sentence, userNums, fracNums) { return BC_PHASE_RE.test(String(sentence || '')) ? userNums.concat(fracNums) : userNums; }
 function bcUserFractions(text) {
   var out = [];
   bcFigureNums(text).forEach(function (v) { [0.25, 1 / 3, 0.4, 0.5, 0.6, 2 / 3, 0.75].forEach(function (f) { out.push(v * f); }); });
@@ -4852,8 +4854,8 @@ function applyBusinessCaseEngine(result, userText) {
   if (!c && !bondAmountsIn(userText).length) { stripped = bcStripInvented(result); }
   var strippedF = 0;
   if (!c && bondAmountsIn(userText).length) {
-    var okG2 = bcFigureNums(userText).concat(bcUserFractions(userText));
-    var badG2 = function (s) { return bcFigureNums(s).some(function (v) { return !bcOk(okG2, v); }) || BC_RESEARCH_RE.test(s) || bcPctBad(s, userText); };
+    var okU2 = bcFigureNums(userText), okF2 = bcUserFractions(userText);
+    var badG2 = function (s) { return bcFigureNums(s).some(function (v) { return !bcOk(bcOkFor(s, okU2, okF2), v); }) || BC_RESEARCH_RE.test(s) || bcPctBad(s, userText); };
     strippedF = bcScrub(result, badG2, ['figure', 'financialImpact', 'revenueAtRisk']);
     if (result.revenueAtRisk && typeof result.revenueAtRisk === 'object' && result.revenueAtRisk.figure === 'Not computed') { result.revenueAtRisk.basis = BC_NOT_COMPUTED; result.revenueAtRisk.confidence = 'Low'; }
     if (result.humac && badG2(String(result.humac.range || ''))) { result.humac.range = 'Not computed'; }
@@ -4916,8 +4918,8 @@ function applyBusinessCaseStakeholder0(result, userText) {
   }
   var strippedS = 0;
   if (!c) {
-    var okG = bcFigureNums(userText).concat(bcUserFractions(userText));
-    strippedS = bcScrub(result, function (s) { return bcFigureNums(s).some(function (v) { return !bcOk(okG, v); }) || BC_RESEARCH_RE.test(s) || bcPctBad(s, userText); }, BC_FIG_KEYS);
+    var okU = bcFigureNums(userText), okF = bcUserFractions(userText);
+    strippedS = bcScrub(result, function (s) { return bcFigureNums(s).some(function (v) { return !bcOk(bcOkFor(s, okU, okF), v); }) || BC_RESEARCH_RE.test(s) || bcPctBad(s, userText); }, BC_FIG_KEYS);
     var gda = result.stack && result.stack.dataAnchor;
     if (gda) {
       if (!gda.humacBasis || gda.humacBasis === 'Not stated.' || BC_HBASIS_RE.test(String(gda.humacBasis))) { gda.humacBasis = 'Not computed: the system has no calculation for this kind of analysis.'; }
@@ -4977,6 +4979,8 @@ function applyBusinessCaseStakeholder(result, userText, profileText) {
       fixO(st.decisionRunway, 'successMetric', 'The target and measure will be agreed with the stakeholder before the programme begins.');
       if (st.decisionRunway && Array.isArray(st.decisionRunway.alternatives)) { st.decisionRunway.alternatives = st.decisionRunway.alternatives.map(function (a) { return empty(a) ? 'Not computed: no further alternative can be priced from the data given.' : a; }); }
     }
+    if (empty(result.stakeholderProfile)) { result.stakeholderProfile = 'This audience decides on numbers and risk, so lead with the figures you gave and the decision you are asking for.'; }
+    if (st) { fixO(st.credibility, 'statement', 'HR is bringing you a decision request based on the facts in the situation described.'); }
     if (empty(result.openingLine)) { result.openingLine = 'I am here to ask for one decision, and I will stay with the facts I have.'; }
     if (st) { fixO(st.decisionRunway, 'ask', 'The ask is the decision stated in your input.'); fixO(st.dataAnchor, 'headline', 'No calculation applies to this decision with the numbers given.'); }
     if (empty(result.closingLine)) { result.closingLine = 'The decision I am asking for is on the table, and I will take your questions now.'; }
@@ -5006,7 +5010,7 @@ function bcProvWhy(sentence, e, ctx, path) {
   var t = String(e.t || '').toLowerCase(), q = bcProvNorm(e.q);
   if (BC_RESEARCH_RE.test(sentence) || LD_CLAIM_RE.test(sentence) || BC_PREDICT_RE.test(sentence) || BC_PROMISE_RE.test(sentence) || BC_TIME_RE.test(sentence)) { return 'blocklist'; }
   var nums = bcFigureNums(sentence);
-  if (!(nums.every(function (v) { return bcOk(ctx.okNums, v); }) && !bcPctBad(sentence, ctx.userText) && !bcDurationBad(sentence, ctx.userText) && !bcRatioBad(sentence, ctx.userText))) { return 'number'; }
+  if (!(nums.every(function (v) { return bcOk(bcOkFor(sentence, ctx.userNums, ctx.okNums), v); }) && !bcPctBad(sentence, ctx.userText) && !bcDurationBad(sentence, ctx.userText) && !bcRatioBad(sentence, ctx.userText))) { return 'number'; }
   if (t === 'figure') { return nums.length ? '' : 'figure-no-number'; }
   if (t === 'user') { if (q.length < 4 || ctx.userNorm.indexOf(q) === -1) { return 'quote-missing'; } return bcProvOverlap(sentence, ctx.userNorm, 0.6) ? '' : 'user-overlap'; }
   if (t === 'profile') { if (q.length < 3 || ctx.profileNorm.indexOf(q) === -1) { return 'quote-missing'; } return bcProvOverlap(sentence, ctx.profileNorm, 0.5) ? '' : 'profile-overlap'; }
@@ -5022,7 +5026,7 @@ function bcProvFilter(result, userText, profileText, extraNums, noEng) {
   var prov = result && result.provenance;
   if (result) { delete result.provenance; }
   if (!prov || typeof prov !== 'object') { return { applied: false, removed: 0 }; }
-  var ctx = { userText: userText, userNorm: bcProvNorm(userText), profileNorm: bcProvNorm(profileText), noEng: !!noEng, okNums: bcFigureNums(userText).concat(bcUserFractions(userText)).concat(extraNums || []), debug: [] };
+  var ctx = { userText: userText, userNorm: bcProvNorm(userText), profileNorm: bcProvNorm(profileText), noEng: !!noEng, userNums: bcFigureNums(userText).concat(extraNums || []), okNums: bcUserFractions(userText), debug: [] };
   var removed = 0;
   BC_PROV_PATHS.forEach(function (path) {
     var txt = bcProvGet(result, path);
