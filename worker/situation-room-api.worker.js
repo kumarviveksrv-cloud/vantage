@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v164'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v165'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -2184,6 +2184,35 @@ const JWKS_TIMEOUT_MS = 8000;         // Clerk JWKS
 function isHighDemandError(msg) {
   return /Claude API error: (?:429|503|529)\b|overloaded_error|rate_limit_error|Airtable[^\n]{0,40}\b429\b/i.test(String(msg || ''));
 }
+// v165: real cost of every Claude call, so cost per run comes from data and not from estimates.
+// One row per UTC day, model and max_tokens (4000 = anonymise, 600 = fast checks, 8000 = main analysis) in the D1 table claude_cost_daily.
+// Prices are USD per million tokens: Haiku 1 in / 5 out, everything else priced as Sonnet 3 in / 15 out; cache writes 1.25x, cache reads 0.1x.
+// A call that was cut off before the model reported usage is not counted here (Anthropic still bills it; the Console cost export is the check).
+// It never stands in the way of a user's run: every failure is swallowed.
+let _costTableReady = false;
+function claudeCostUsd(model, u) {
+  u = u || {};
+  const r = /haiku/i.test(String(model || '')) ? [1, 5] : [3, 15];
+  const inp = Number(u.input_tokens) || 0, out = Number(u.output_tokens) || 0;
+  const cw = Number(u.cache_creation_input_tokens) || 0, cr = Number(u.cache_read_input_tokens) || 0;
+  return (inp * r[0] + out * r[1] + cw * r[0] * 1.25 + cr * r[0] * 0.1) / 1e6;
+}
+async function recordClaudeCost(model, maxTokens, u) {
+  if (!TRIAL_COUNTER_DB) return;
+  if (!_costTableReady) {
+    await TRIAL_COUNTER_DB.prepare('CREATE TABLE IF NOT EXISTS claude_cost_daily (day TEXT NOT NULL, model TEXT NOT NULL, max_tokens INTEGER NOT NULL, calls INTEGER NOT NULL DEFAULT 0, in_tokens INTEGER NOT NULL DEFAULT 0, out_tokens INTEGER NOT NULL DEFAULT 0, cache_write INTEGER NOT NULL DEFAULT 0, cache_read INTEGER NOT NULL DEFAULT 0, cost_usd REAL NOT NULL DEFAULT 0, PRIMARY KEY (day, model, max_tokens))').run();
+    _costTableReady = true;
+  }
+  u = u || {};
+  await TRIAL_COUNTER_DB.prepare('INSERT INTO claude_cost_daily (day, model, max_tokens, calls, in_tokens, out_tokens, cache_write, cache_read, cost_usd) VALUES (?1, ?2, ?3, 1, ?4, ?5, ?6, ?7, ?8) ON CONFLICT(day, model, max_tokens) DO UPDATE SET calls = calls + 1, in_tokens = in_tokens + ?4, out_tokens = out_tokens + ?5, cache_write = cache_write + ?6, cache_read = cache_read + ?7, cost_usd = cost_usd + ?8')
+    .bind(new Date().toISOString().slice(0, 10), String(model || 'unknown'), Number(maxTokens) || 0, Number(u.input_tokens) || 0, Number(u.output_tokens) || 0, Number(u.cache_creation_input_tokens) || 0, Number(u.cache_read_input_tokens) || 0, claudeCostUsd(model, u)).run();
+}
+function queueClaudeCost(model, maxTokens, u) {
+  try {
+    const p = recordClaudeCost(model, maxTokens, u).catch(function (e) { console.error('Claude cost log failed: ' + (e && e.message)); });
+    if (_activeCtx && typeof _activeCtx.waitUntil === 'function') { _activeCtx.waitUntil(p); }
+  } catch (e) { /* never affects the run */ }
+}
 async function claudeStreamCall(body, extraHeaders, totalMs, onChunk) {
   const t0 = Date.now();
   const ctrl = new AbortController();
@@ -2254,7 +2283,8 @@ async function claudeStreamCall(body, extraHeaders, totalMs, onChunk) {
     if (onChunk) { try { onChunk(raw.length); } catch (ce) {} }
     let text = '';
     try { text = JSON.parse('"' + raw + '"'); } catch (de) { throw new Error('Claude stream text could not be decoded: ' + de.message); }
-    console.log('Claude call done in ' + Math.round((Date.now() - t0) / 1000) + 's, stop ' + stop + ', output ' + text.length + ' chars (model ' + body.model + ')');
+    console.log('Claude call done in ' + Math.round((Date.now() - t0) / 1000) + 's, stop ' + stop + ', output ' + text.length + ' chars (model ' + body.model + ', tokens in ' + (usage.input_tokens || 0) + ' out ' + (usage.output_tokens || 0) + ' cache write ' + (usage.cache_creation_input_tokens || 0) + ' read ' + (usage.cache_read_input_tokens || 0) + ', cost $' + claudeCostUsd(body.model, usage).toFixed(4) + ')');
+    queueClaudeCost(body.model, body.max_tokens, usage);
     return { content: [{ type: 'text', text: text }], stop_reason: stop, usage: usage };
   } catch (e) {
     const took = Math.round((Date.now() - t0) / 1000);
