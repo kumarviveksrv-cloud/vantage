@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v139'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v140'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -151,9 +151,9 @@ function getTribunalEscalationLikelihood(meridian) {
 // case — the same field that already drives rampMonths, extended here to
 // also drive the replacement-cost multiplier itself.
 const REPLACEMENT_COST_MULTIPLIER = {
-  'Low': { multiplier: '0.4-0.6x', note: 'entry-level or lower-complexity role — sourced from Center for American Progress and Manatal research on lower-wage-role replacement costs' },
-  'Medium': { multiplier: '0.8-1.3x', note: 'typical professional role — sourced from SHRM\'s widely-cited 50-200% band and the "6-9 months of salary" benchmark' },
-  'High': { multiplier: '1.5-2.2x', note: 'senior, specialized, or hard-to-backfill role — sourced from Center for American Progress research finding up to 213% of salary for senior or highly skilled positions' },
+  'Low': { multiplier: '0.4-0.6x', note: 'entry-level or lower-complexity role; an assumed planning range used by this tool, not a verified statistic' },
+  'Medium': { multiplier: '0.8-1.3x', note: 'typical professional role; an assumed planning range used by this tool, not a verified statistic' },
+  'High': { multiplier: '1.5-2.2x', note: 'senior, specialized, or hard-to-backfill role; an assumed planning range used by this tool, not a verified statistic' },
 };
 const DEFAULT_REPLACEMENT_MULTIPLIER = '0.8-1.3x';
 

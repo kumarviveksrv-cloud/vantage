@@ -370,5 +370,8 @@ ok(!/either figure|cost-per-day/.test(JSON.stringify(h4.stack)) && /Five roles a
 let b4 = mkA(); b4.stack.riskMirror.scenario = 'The probability of the cost recurring at the same level is high. The direction of travel is upward. HR owns the data.';
 AT.applyBusinessCaseStakeholder(b4, ATT);
 ok(!/probability of the cost|direction of travel/.test(b4.stack.riskMirror.scenario), 'predictions removed: ' + b4.stack.riskMirror.scenario);
+// v140: replacement-cost tier notes carry no named research bodies
+const rcBlock = src.slice(src.indexOf('const REPLACEMENT_COST_MULTIPLIER'), src.indexOf('const DEFAULT_REPLACEMENT_MULTIPLIER'));
+ok(!/Gallup|SHRM|Manatal|American Progress|Work Institute|LinkedIn|213%|widely-cited/i.test(rcBlock) && (rcBlock.match(/assumed planning range/g) || []).length === 3, 'multiplier notes neutral: ' + (rcBlock.match(/Gallup|SHRM|Manatal|American Progress/i) || ''));
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);
