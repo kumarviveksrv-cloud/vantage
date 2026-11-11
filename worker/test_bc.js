@@ -269,6 +269,10 @@ GE.applyBusinessCaseEngine(ge, 'Three new joiners left within 90 days. Approve R
 const gej = JSON.stringify(ge);
 ok(!/7\.2L|19\.5L|Gallup/.test(gej) && ge.revenueAtRisk.figure === 'Not computed' && ge.signal.impact.financialImpact === 'Not computed' && ge.humac.range === 'Not computed' && /Productivity gap is large/.test(gej) && /Rs\.8L/.test(ge.headline || '') === false || /No rupee figure beyond/.test(ge.headline), 'general flow strips model estimates, keeps neutral text: ' + gej.slice(0, 500));
 ok(ge.bcCheck.stripped >= 1 && /figures or research claims/.test(ge.bcCheck.note), 'general flow note: ' + ge.bcCheck.note);
+// v129: BC14, the Business Case financial-model prompt carries no research attributions
+const fmBlock = src.slice(src.indexOf('function getBusinessCaseFinancialModels'), src.indexOf('function getBusinessCaseFinancialModels') + 6000);
+const fmEnd = fmBlock.indexOf('`;\n}') > 0 ? fmBlock.slice(0, fmBlock.indexOf('`;\n}')) : fmBlock.slice(0, fmBlock.indexOf('`;\r\n}'));
+ok(!/Panopto|YouGov|LSA Global|derivable|well-grounded|commonly-cited|2\.7 million|research-grounded/i.test(fmEnd) && /assumed planning/.test(fmEnd), 'financial-model prompt has no research attributions: ' + (fmEnd.match(/Panopto|YouGov|LSA Global|derivable|well-grounded|commonly-cited|2\.7 million|research-grounded/i) || []));
 // generic stakeholder with no engine: unsupported figures removed, note accurate
 let gs = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.42L' }, riskMirror: { revenueAtRisk: 'Rs.1.2Cr', revenueAtRiskBasis: 'b' }, credibility: { statement: 'The budget is Rs.8L. A similar firm lost Rs.90L last year.' } } };
 PX.applyBusinessCaseStakeholder(gs, 'We want Rs.8L for a hiring programme.');
