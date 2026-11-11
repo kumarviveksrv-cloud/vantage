@@ -72,8 +72,8 @@ ok(r.signal.impact.breakdown.length === 1 && /Not computed/.test(r.signal.impact
 ok(r.bcCheck.stripped >= 4 && /removed/.test(r.bcCheck.note) && /No rupee figure can be named/.test(r.headline), 'thin: note and headline: ' + r.bcCheck.note + ' | ' + r.headline);
 r = { headline: 'Insufficient data to name the number, but the cost is rarely below Rs. 1.5 Cr annually. Here is what we need to make that case undeniable.', revenueAtRisk: {}, signal: { impact: {} }, bcInputs: null };
 applyBusinessCaseEngine(r, THIN); ok(/^No rupee figure can be named yet/.test(r.headline) && !/Here is what we need/.test(r.headline), 'partly stripped headline fully replaced: ' + r.headline);
-// no engine: model figures untouched, check still runs against the user text, note says not system-checked
-r = mk(); r.bcInputs = { model: 'attrition', exits: 99, avgCtc: 1 }; ok(applyBusinessCaseEngine(r, TXT) === false && r.revenueAtRisk.figure === 'Rs.1.2Cr' && r.bcCheck.engine === false && /not system-checked/.test(r.bcCheck.note), 'engine off: model figure kept, honestly labelled');
+// no engine (v128): unsupported model figures are removed and marked Not computed
+r = mk(); r.bcInputs = { model: 'attrition', exits: 99, avgCtc: 1 }; ok(applyBusinessCaseEngine(r, TXT) === false && r.revenueAtRisk.figure === 'Not computed' && r.bcCheck.engine === false && /not in your data were removed/.test(r.bcCheck.note), 'engine off (v128): unsupported model figure now marked Not computed, honestly labelled: ' + JSON.stringify(r.revenueAtRisk) + r.bcCheck.note);
 r = { wrongTool: true }; ok(applyBusinessCaseEngine(r, TXT) === false && r.bcCheck === undefined, 'wrong tool untouched');
 // v113: L&D programme engine (stakeholder flow)
 const LD = new Function(code + ';return {ldCalc, ldPromptBlock, applyBusinessCaseStakeholder, bcFigureCheck};')();
@@ -257,6 +257,18 @@ let g2 = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.9L', context: 'T
 WT.applyBusinessCaseStakeholder(g2, 'We want Rs.8L for a hiring programme.');
 const g2j = JSON.stringify(g2);
 ok(!/Gallup|SHRM|Panopto|YouGov|25-35|multiplier/i.test(g2j) && /^Not computed/.test(g2.stack.dataAnchor.humacBasis) && /not computed because the input/.test(g2.stack.dataAnchor.context) && /team is stretched/.test(g2j), 'generic no-engine: research and percentages stripped, basis and context replaced: ' + g2j.slice(0, 400));
+// v128: process-ask exemption, headline orphan, general-flow strip
+ok(WT.bcIsIndividualCase('We are about to terminate a senior engineer. He has been absent for six days. I want legal to review the process first.', 'Agree to loop in legal before the termination proceeds.') === false, 'the form example (loop in legal before termination) is not redirected');
+ok(WT.bcIsIndividualCase('Ramesh has been absent for 6 days. HR wants to terminate him.', 'Approve terminating Ramesh for repeated absenteeism.') === true, 'direct termination approval still redirected');
+let g3 = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.9L', headline: 'Not stated.', context: 'c', humacBasis: 'Attrition multiplier 0.8x per Gallup' }, riskMirror: { revenueAtRisk: 'x', revenueAtRiskBasis: 'y' }, credibility: { statement: 'The team is stretched.' } } };
+WT.applyBusinessCaseStakeholder(g3, 'We want Rs.8L for a hiring programme.');
+ok(g3.stack.dataAnchor.headline !== 'Not stated.' && /No calculation applies/.test(g3.stack.dataAnchor.headline), 'orphan headline replaced: ' + g3.stack.dataAnchor.headline);
+const GE = new Function(code + ';return {applyBusinessCaseEngine};')();
+let ge = { headline: 'Three joiners lost: the cost of repeating this is Rs.7.2L to Rs.19.5L against a one-time fix of Rs.8L.', signal: { impact: { financialImpact: 'Rs.7.2L-Rs.19.5L', breakdown: ['Replacement cost Rs.6L per Gallup', 'Productivity gap is large'] } }, revenueAtRisk: { figure: 'Rs.7.2L-Rs.19.5L', basis: 'assumed', confidence: 'Medium' }, humac: { range: 'Rs.7.2L - Rs.19.5L' } };
+GE.applyBusinessCaseEngine(ge, 'Three new joiners left within 90 days. Approve Rs.8L to redesign onboarding.');
+const gej = JSON.stringify(ge);
+ok(!/7\.2L|19\.5L|Gallup/.test(gej) && ge.revenueAtRisk.figure === 'Not computed' && ge.signal.impact.financialImpact === 'Not computed' && ge.humac.range === 'Not computed' && /Productivity gap is large/.test(gej) && /Rs\.8L/.test(ge.headline || '') === false || /No rupee figure beyond/.test(ge.headline), 'general flow strips model estimates, keeps neutral text: ' + gej.slice(0, 500));
+ok(ge.bcCheck.stripped >= 1 && /figures or research claims/.test(ge.bcCheck.note), 'general flow note: ' + ge.bcCheck.note);
 // generic stakeholder with no engine: unsupported figures removed, note accurate
 let gs = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.42L' }, riskMirror: { revenueAtRisk: 'Rs.1.2Cr', revenueAtRiskBasis: 'b' }, credibility: { statement: 'The budget is Rs.8L. A similar firm lost Rs.90L last year.' } } };
 PX.applyBusinessCaseStakeholder(gs, 'We want Rs.8L for a hiring programme.');

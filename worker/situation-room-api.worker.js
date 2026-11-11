@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v127'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v128'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4666,7 +4666,8 @@ function bcIsIndividualCase(situation, ask) {
   var verb = /\b(terminat(?:e|es|ed|ing|ion)|dismiss(?:ed|ing|al)?|sack(?:ed|ing)?|fir(?:e|ed|ing)|show[- ]cause|disciplin\w+|absconding)\b/i.test(text);
   var person = /\b(?:he|she|him|his|her)\b/i.test(text) || /\b(?:terminat\w*|dismiss\w*|sack\w*|fir(?:e|ing)|disciplin\w*)\s+(?:of\s+)?[A-Z][a-z]{2,}\b/.test(text) || /\bemployee\b/i.test(text);
   var orgLevel = /\b(policy|policies|programme|program|framework|attrition rate|company-wide|across the (?:company|organisation|organization))\b/i.test(text);
-  return verb && person && !orgLevel;
+  var processAsk = /\b(?:loop(?:ing)? in|involve|bring in|engage|consult)\b[^.]*\b(?:legal|counsel|lawyer|compliance)\b|\blegal review\b|\bbefore the (?:termination|dismissal|exit) proceeds\b/i.test(String(ask || ''));
+  return verb && person && !orgLevel && !processAsk;
 }
 function applyPoshStakeholder(result, userText) {
   var okNums = bcFigureNums(userText).concat([0.5], bcUserFractions(userText));
@@ -4773,10 +4774,20 @@ function applyBusinessCaseEngine(result, userText) {
   }
   var stripped = 0;
   if (!c && !bondAmountsIn(userText).length) { stripped = bcStripInvented(result); }
+  var strippedF = 0;
+  if (!c && bondAmountsIn(userText).length) {
+    var okG2 = bcFigureNums(userText).concat(bcUserFractions(userText));
+    var badG2 = function (s) { return bcFigureNums(s).some(function (v) { return !bcOk(okG2, v); }) || BC_RESEARCH_RE.test(s) || bcPctBad(s, userText); };
+    strippedF = bcScrub(result, badG2, ['figure', 'financialImpact', 'revenueAtRisk']);
+    if (result.revenueAtRisk && typeof result.revenueAtRisk === 'object' && result.revenueAtRisk.figure === 'Not computed') { result.revenueAtRisk.basis = BC_NOT_COMPUTED; result.revenueAtRisk.confidence = 'Low'; }
+    if (result.humac && badG2(String(result.humac.range || ''))) { result.humac.range = 'Not computed'; }
+    if (!result.headline || result.headline === 'Not stated.') { result.headline = 'No rupee figure beyond those you gave can be named yet.'; }
+  }
   var flagged = bcFigureCheck(result, c, userText);
   result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged, stripped: stripped,
     note: c ? (flagged.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flagged.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.')
             : ((inp && inp.model === 'attrition' ? 'The system could not compute the attrition figures from your data (it needs the number of exits and the average CTC, both stated as numbers). ' : 'The system has no calculation for this kind of analysis, or could not compute it from your data. ') + 'The rupee figures below are the model\'s own estimates and are not system-checked.' + (flagged.length ? ' Not in your data: ' + flagged.join(', ') + '.' : '')) };
+  if (strippedF) { result.bcCheck.stripped = strippedF; result.bcCheck.note = 'The system has no calculation for this kind of analysis, or could not compute it from your data. ' + strippedF + ' sentence(s) with figures or research claims that are not in your data were removed and the figure fields were marked Not computed. The figures that remain come from your input.'; }
   if (stripped) { result.bcCheck.note = 'The system could not compute attrition figures because your input has no exit count or average CTC, and it contains no rupee amounts. Every rupee figure the model wrote was removed (' + stripped + ' sentences). Add the number of exits and the average CTC to get a computed figure.'; }
   return !!c;
 }
@@ -4831,6 +4842,7 @@ function applyBusinessCaseStakeholder(result, userText) {
     var gda = result.stack && result.stack.dataAnchor;
     if (gda) {
       if (!gda.humacBasis || gda.humacBasis === 'Not stated.' || BC_HBASIS_RE.test(String(gda.humacBasis))) { gda.humacBasis = 'Not computed: the system has no calculation for this kind of analysis.'; }
+      if (!gda.headline || gda.headline === 'Not stated.') { gda.headline = 'No calculation applies to this decision with the numbers given.'; }
       if (gda.figure === 'Not computed') { gda.context = 'The figure for this decision is not computed because the input does not contain the numbers a calculation needs.'; }
     }
   }

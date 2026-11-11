@@ -887,10 +887,11 @@
       showView(flow === 'stakeholder' ? 'intake-view-stakeholder' : 'intake-view-general');
     }
 
-    function showError(msg) {
+    function showError(msg, flow) {
+      window.__errFlow = flow || 'general';
       document.getElementById('vantage-error-msg').textContent = msg;
       document.getElementById('vantage-error').style.display = 'block';
-      showView('intake-view-general');
+      showView(window.__errFlow === 'stakeholder' ? 'intake-view-stakeholder' : 'intake-view-general');
       setTimeout(function(){ var el=document.getElementById('vantage-error'); if(el)el.style.display='none'; }, 10000);
     }
     var BASE = 'https://vantage.virorah.com/';
@@ -1486,11 +1487,11 @@
           activeFlow = 'stakeholder';
           renderOutputStakeholder();
         } else {
-          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You\u2019ve reached your daily limit for The Business Case. Resets tomorrow.') : 'Analysis failed. ' + (data.error || 'Please try again.'));
+          showError(data.error === 'USAGE_LIMIT' ? (data.message || 'You\u2019ve reached your daily limit for The Business Case. Resets tomorrow.') : 'Analysis failed. ' + (data.error || 'Please try again.'), 'stakeholder');
         }
       } catch(err) {
         clearInterval(loadInterval);
-        showError((err && err.name === 'AbortError') ? 'This is taking much longer than usual, so we stopped waiting. Your details are still here. Please try again in a minute.' : 'Connection error. Please check your network and try again.');
+        showError((err && err.name === 'AbortError') ? 'This is taking much longer than usual, so we stopped waiting. Your details are still here. Please try again in a minute.' : 'Connection error. Please check your network and try again.', 'stakeholder');
       }
     }
 
@@ -1712,7 +1713,7 @@
       <span style="font-size:16px;flex-shrink:0;margin-top:1px">&#x26A0;&#xFE0F;</span>
       <div style="flex:1">
         <div id="vantage-error-msg" style="font-family:var(--font), sans-serif;font-size:13px;color:rgba(244,243,255,.85);line-height:1.55"></div>
-        <button onclick="document.getElementById('vantage-error').style.display='none';showView('intake-view-general')" style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:#a5b4fc;background:transparent;border:1px solid rgba(99,102,241,.3);border-radius:6px;padding:5px 12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(99,102,241,.6)'" onmouseout="this.style.borderColor='rgba(99,102,241,.3)'">&#x2190; Try again</button>
+        <button onclick="document.getElementById('vantage-error').style.display='none';showView(window.__errFlow==='stakeholder'?'intake-view-stakeholder':'intake-view-general')" style="margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.06em;color:#a5b4fc;background:transparent;border:1px solid rgba(99,102,241,.3);border-radius:6px;padding:5px 12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(99,102,241,.6)'" onmouseout="this.style.borderColor='rgba(99,102,241,.3)'">&#x2190; Try again</button>
       </div>
       <button onclick="document.getElementById('vantage-error').style.display='none'" style="background:none;border:none;color:rgba(244,243,255,.3);cursor:pointer;font-size:16px;padding:0;line-height:1;flex-shrink:0">&#x2715;</button>
     </div>
