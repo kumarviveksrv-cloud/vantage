@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v151'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v152'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4923,8 +4923,8 @@ function applyBusinessCaseStakeholder0(result, userText) {
     var gda = result.stack && result.stack.dataAnchor;
     if (gda) {
       if (!gda.humacBasis || gda.humacBasis === 'Not stated.' || BC_HBASIS_RE.test(String(gda.humacBasis))) { gda.humacBasis = 'Not computed: the system has no calculation for this kind of analysis.'; }
-      if (!gda.headline || gda.headline === 'Not stated.') { gda.headline = 'No calculation applies to this decision with the numbers given.'; }
-      if (gda.figure === 'Not computed') { gda.context = 'The figure for this decision is not computed because the input does not contain the numbers a calculation needs.'; }
+      if (!gda.headline || gda.headline === 'Not stated.') { gda.headline = 'No calculation applies yet. Add headcount affected, average CTC and the number of exits or vacancies to get a computed range.'; }
+      if (gda.figure === 'Not computed') { gda.context = 'Not computed because the input has no numbers to calculate from. Add them and run it again.'; }
     }
   }
   var flagged = bcFigureCheck(result, c, userText);
@@ -4969,14 +4969,14 @@ function applyBusinessCaseStakeholder(result, userText, profileText) {
     var empty = function (v) { return !v || v === 'Not stated.'; };
     var st = result.stack, fixO = function (o, k, txt) { if (o && typeof o === 'object' && empty(o[k]) && k in o) { o[k] = txt; } };
     if (st) {
-      fixO(st.credibility, 'evidence', 'The evidence is the figures and facts you gave in your input.');
+      fixO(st.credibility, 'evidence', 'Add the evidence you can show: the metric, where it comes from and the period it covers.');
       fixO(st.credibility, 'deliveryNote', 'Say it plainly and put the figures you gave on the table before you speak.');
-      fixO(st.narrativeBridge, 'story', 'The story is the situation you described in your input.');
+      fixO(st.narrativeBridge, 'story', 'The story is the situation you described. Add one concrete example from the team to make it land.');
       fixO(st.narrativeBridge, 'connection', 'This connects to the decision you are asking for.');
       fixO(st.narrativeBridge, 'emotionalHook', 'Behind the numbers are the people and the work your input describes.');
-      fixO(st.riskMirror, 'scenario', 'Not computed: the cost of not acting cannot be priced from the data given.');
-      fixO(st.riskMirror, 'timeline', 'Not stated: no timeline was given.');
-      fixO(st.decisionRunway, 'successMetric', 'The target and measure will be agreed with the stakeholder before the programme begins.');
+      fixO(st.riskMirror, 'scenario', 'Not computed. To price the cost of not acting, add the number of exits or open roles, the average CTC and how long a role stays unfilled.');
+      fixO(st.riskMirror, 'timeline', 'Not stated. Add the date by which the decision is needed.');
+      fixO(st.decisionRunway, 'successMetric', 'Add the measure you will report against and when you will report it.');
       if (st.decisionRunway && Array.isArray(st.decisionRunway.alternatives)) { st.decisionRunway.alternatives = st.decisionRunway.alternatives.map(function (a) { return empty(a) ? 'Not computed: no further alternative can be priced from the data given.' : a; }); }
     }
     if (noEng && st && st.riskMirror && typeof st.riskMirror === 'object') {
@@ -4988,7 +4988,7 @@ function applyBusinessCaseStakeholder(result, userText, profileText) {
     if (empty(result.stakeholderProfile)) { result.stakeholderProfile = 'This audience decides on numbers and risk, so lead with the figures you gave and the decision you are asking for.'; }
     if (st) { fixO(st.credibility, 'statement', 'HR is bringing you a decision request based on the facts in the situation described.'); }
     if (empty(result.openingLine)) { result.openingLine = 'I am here to ask for one decision, and I will stay with the facts I have.'; }
-    if (st) { fixO(st.decisionRunway, 'ask', 'The ask is the decision stated in your input.'); fixO(st.dataAnchor, 'headline', 'No calculation applies to this decision with the numbers given.'); }
+    if (st) { fixO(st.decisionRunway, 'ask', 'The ask is the decision stated in your input.'); fixO(st.dataAnchor, 'headline', 'No calculation applies yet. Add headcount affected, average CTC and the number of exits or vacancies to get a computed range.'); }
     if (empty(result.closingLine)) { result.closingLine = 'The decision I am asking for is on the table, and I will take your questions now.'; }
     if (provN && result.bcCheck) { result.bcCheck.note = String(result.bcCheck.note || '') + ' ' + provN + ' sentence(s) were removed because they were not backed by your input, your profile or a system figure.'; }
     if (n && result.bcCheck) { result.bcCheck.stripped = (result.bcCheck.stripped || 0) + n; result.bcCheck.note = String(result.bcCheck.note || '') + ' ' + n + ' sentence(s) promising an action by a stated time were removed because the system cannot know your commitments.'; }
