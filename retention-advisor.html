@@ -292,15 +292,17 @@
               <label class="form-label">Current CTC <span class="hint">annual, gross</span></label>
               <div class="ctc-wrap">
                 <span class="ctc-prefix">₹</span>
-                <input type="number" id="co-current-ctc" class="form-input ctc-input" placeholder="e.g. 1800000" min="0" />
+                <input type="text" inputmode="decimal" autocomplete="off" id="co-current-ctc" class="form-input ctc-input" placeholder="e.g. 18L or 1800000" />
               </div>
+              <div class="ctc-echo" id="co-current-ctc-echo" aria-live="polite" style="min-height:16px;margin-top:4px;font-size:12px;color:#c4b5fd"></div>
             </div>
             <div class="form-group">
               <label class="form-label">Competing Offer CTC <span class="hint">headline number</span></label>
               <div class="ctc-wrap">
                 <span class="ctc-prefix">₹</span>
-                <input type="number" id="co-offer-ctc" class="form-input ctc-input" placeholder="e.g. 2400000" min="0" />
+                <input type="text" inputmode="decimal" autocomplete="off" id="co-offer-ctc" class="form-input ctc-input" placeholder="e.g. 24L or 2400000" />
               </div>
+              <div class="ctc-echo" id="co-offer-ctc-echo" aria-live="polite" style="min-height:16px;margin-top:4px;font-size:12px;color:#c4b5fd"></div>
             </div>
             <div class="form-group">
               <label class="form-label">Tenure <span class="hint">years in this role/company</span></label>
@@ -350,8 +352,9 @@
               <label class="form-label">Current CTC <span class="hint">annual, gross</span></label>
               <div class="ctc-wrap">
                 <span class="ctc-prefix">₹</span>
-                <input type="number" id="pr-current-ctc" class="form-input ctc-input" placeholder="e.g. 1800000" min="0" />
+                <input type="text" inputmode="decimal" autocomplete="off" id="pr-current-ctc" class="form-input ctc-input" placeholder="e.g. 18L or 1800000" />
               </div>
+              <div class="ctc-echo" id="pr-current-ctc-echo" aria-live="polite" style="min-height:16px;margin-top:4px;font-size:12px;color:#c4b5fd"></div>
             </div>
             <div class="form-group">
               <label class="form-label">Tenure <span class="hint">years in this role/company</span></label>
@@ -575,13 +578,35 @@
       checkSubmitOffer(hiddenId.indexOf('co-') === 0 ? 'counter_offer' : 'proactive');
     }
 
+    // CTC parsing. Accepts 18L, 18 lakh, 18 LPA, 18,00,000 or 1800000. A plain number up to 1000 is read as lakh
+    // (18 means 18 lakh); 50,000 and above is read as rupees; 1,000 to 50,000 without a unit is unclear and is refused.
+    // Returns rupees, or NaN when the value cannot be read safely.
+    function parseCtc(v) {
+      var raw = String(v == null ? '' : v).toLowerCase().replace(/[\s,\u20b9]/g, '');
+      var hasUnit = /(lakhs?|lacs?|lpa|l)$/.test(raw);
+      var t = raw.replace(/(lakhs?|lacs?|lpa|l)$/, '');
+      if (!/^\d+(\.\d+)?$/.test(t)) return NaN;
+      var n = parseFloat(t);
+      if (hasUnit || n <= 1000) return n > 0 ? Math.round(n * 100000) : NaN;
+      return n >= 50000 ? Math.round(n) : NaN;
+    }
+    function indianGroupCtc(d) { if (d.length <= 3) return d; var l3 = d.slice(-3), r = d.slice(0, -3); return r.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + l3; }
+    function updateCtcEcho(id) {
+      var el = document.getElementById(id), echo = document.getElementById(id + '-echo');
+      if (!el || !echo) return;
+      var raw = el.value.trim();
+      if (!raw) { echo.textContent = ''; return; }
+      var r = parseCtc(raw);
+      echo.textContent = isFinite(r) ? 'Read as \u20b9' + indianGroupCtc(String(r)) + ' a year' : 'Not clear. Type it like 18L or 1800000 (rupees).';
+    }
+
     // Enables the run button only when the required inputs are present, and says what is missing.
     // quiet = true updates the button only and leaves the hint text alone (used when a flow is first opened).
     function checkSubmitOffer(flow, quiet) {
       var btn, hint, ok, msg = '';
       if (flow === 'counter_offer') {
-        var cur = parseFloat(document.getElementById('co-current-ctc').value);
-        var off = parseFloat(document.getElementById('co-offer-ctc').value);
+        var cur = parseCtc(document.getElementById('co-current-ctc').value);
+        var off = parseCtc(document.getElementById('co-offer-ctc').value);
         var hasFig = cur > 0 && off > 0;
         var hasBand = !!document.getElementById('co-band').value;
         var hasCrit = !!document.getElementById('co-crit').value;
@@ -595,7 +620,7 @@
           else { msg = 'Choose the role criticality to continue.'; }
         }
       } else {
-        var cur2 = parseFloat(document.getElementById('pr-current-ctc').value);
+        var cur2 = parseCtc(document.getElementById('pr-current-ctc').value);
         var hasCtc = cur2 > 0;
         var hasBand2 = !!document.getElementById('pr-band').value;
         var hasCrit2 = !!document.getElementById('pr-crit').value;
@@ -653,8 +678,8 @@
       var payload = { flow: flow, meridian: meridianData || {} };
 
       if (flow === 'counter_offer') {
-        var cur = parseFloat(document.getElementById('co-current-ctc').value);
-        var off = parseFloat(document.getElementById('co-offer-ctc').value);
+        var cur = parseCtc(document.getElementById('co-current-ctc').value);
+        var off = parseCtc(document.getElementById('co-offer-ctc').value);
         var ten = parseFloat(document.getElementById('co-tenure').value);
         var not = parseFloat(document.getElementById('co-notice').value);
         var band = document.getElementById('co-band').value;
@@ -663,7 +688,7 @@
         payload.currentCTC = cur; payload.offerCTC = off; payload.tenureYears = ten || 1;
         payload.noticePeriodMonths = not || 2; payload.performanceBand = band; payload.roleCriticality = crit;
       } else {
-        var cur2 = parseFloat(document.getElementById('pr-current-ctc').value);
+        var cur2 = parseCtc(document.getElementById('pr-current-ctc').value);
         var ten2 = parseFloat(document.getElementById('pr-tenure').value);
         var band2 = document.getElementById('pr-band').value;
         var crit2 = document.getElementById('pr-crit').value;
@@ -944,9 +969,9 @@
 
     // Keep the run buttons in step with the form fields.
     ['co-current-ctc','co-offer-ctc'].forEach(function(id) {
-      document.getElementById(id).addEventListener('input', function() { checkSubmitOffer('counter_offer'); });
+      document.getElementById(id).addEventListener('input', function() { updateCtcEcho(id); checkSubmitOffer('counter_offer'); });
     });
-    document.getElementById('pr-current-ctc').addEventListener('input', function() { checkSubmitOffer('proactive'); });
+    document.getElementById('pr-current-ctc').addEventListener('input', function() { updateCtcEcho('pr-current-ctc'); checkSubmitOffer('proactive'); });
 
     // Load MERIDIAN on page init
     (function waitForClerk() {
