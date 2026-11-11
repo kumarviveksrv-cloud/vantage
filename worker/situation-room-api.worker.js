@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v145'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v146'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1550,7 +1550,7 @@ ARIA HANDOFF: Specific coaching offer — who ARIA plays, what specific pushback
 
 ${greenCategoryBlock}
 
-PROVENANCE: for every sentence you write in these fields: stakeholderProfile, openingLine, closingLine, stack.credibility.statement, stack.credibility.evidence, stack.credibility.deliveryNote, stack.dataAnchor.context, stack.narrativeBridge.story, stack.narrativeBridge.connection, stack.narrativeBridge.emotionalHook, stack.riskMirror.scenario, stack.riskMirror.timeline, stack.decisionRunway.ask, stack.decisionRunway.successMetric, add one entry in the provenance object under that field path. s is the first eight or more words of that sentence, copied exactly. t is "user" when the sentence restates something the user wrote (q must be an exact phrase copied from the user's input), "profile" when it restates a MERIDIAN profile fact (q copied from the profile), "figure" when it quotes a system-computed figure, or "advice" when it is a recommendation or request containing no new numbers, no named study and no claim about what the organisation has or has not done (q is empty). A sentence without a valid entry is deleted from your output, so state only what the user gave, what the profile says, the system figures, or plain advice.
+PROVENANCE: for every sentence you write in these fields: stakeholderProfile, openingLine, closingLine, stack.credibility.statement, stack.credibility.evidence, stack.credibility.deliveryNote, stack.dataAnchor.headline, stack.dataAnchor.context, stack.narrativeBridge.story, stack.narrativeBridge.connection, stack.narrativeBridge.emotionalHook, stack.riskMirror.scenario, stack.riskMirror.timeline, stack.decisionRunway.ask, stack.decisionRunway.successMetric, add one entry in the provenance object under that field path. s is the first eight or more words of that sentence, copied exactly. t is "user" when the sentence restates something the user wrote (q must be an exact phrase copied from the user's input), "profile" when it restates a MERIDIAN profile fact (q copied from the profile), "figure" when it quotes a system-computed figure, or "advice" only when the sentence is an instruction, request or question that starts with a verb or with "I need", "I am asking", "We should" or similar, and contains no new numbers, no named study, no prediction and no claim about what is true of the organisation or its clients (q is empty). A sentence that describes how things are, what will happen or what people think must be tagged "user" or "profile" and must stay close to the user's own words. A sentence without a valid entry is deleted from your output, so state only what the user gave, what the profile says, the system figures, or plain advice.
 
 OUTPUT FORMAT — STRICT JSON ONLY:
 {
@@ -4960,10 +4960,10 @@ function applyBusinessCaseStakeholder(result, userText, profileText) {
   if (result && result.stack && result.wrongTool !== true) {
     var pre0 = 0;
     if (result.humac && typeof result.humac.trajectorySignal === 'string' && /^\s*(?:negative|worsening|declining)|self-correct|worsen|deteriorat/i.test(result.humac.trajectorySignal) && !/\b(?:trend|rising|increas\w*|declin\w*|worsen\w*|falling|dropp\w*|growing)\b/i.test(String(userText || ''))) { result.humac.trajectorySignal = 'neutral: no trend data was given for this decision.'; pre0 += 1; }
-    var noEng = !result.bcEngine, hasRev = /revenue/i.test(String(userText || ''));
-    if (noEng && provSnap) { var pv = bcProvDrops(provSnap, userText, profileText, true); if (pv.applied) { pre0 += bcProvApplyDrops(result, pv.drops); } }
+    var provN = 0, noEng = !result.bcEngine, hasRev = /revenue/i.test(String(userText || ''));
+    if (noEng && provSnap) { var pv = bcProvDrops(provSnap, userText, profileText, true); if (pv.applied) { provN = bcProvApplyDrops(result, pv.drops); pre0 += provN; } }
     delete result.provenance;
-    var n = pre0 + bcScrub(result, function (s) { return BC_PROMISE_RE.test(s) || BC_PREDICT_RE.test(s) || BC_TIME_RE.test(s) || (noEng && (BC_MODEL_CLAIM_RE.test(s) || BC_NOENG_CLAIM_RE.test(s) || bcDurationBad(s, userText) || bcRatioBad(s, userText) || (/revenue[- ]per[- ](?:employee|head)/i.test(s) && !hasRev))); }, null);
+    var n = pre0 - provN + bcScrub(result, function (s) { return BC_PROMISE_RE.test(s) || BC_PREDICT_RE.test(s) || BC_TIME_RE.test(s) || (noEng && (BC_MODEL_CLAIM_RE.test(s) || BC_NOENG_CLAIM_RE.test(s) || bcDurationBad(s, userText) || bcRatioBad(s, userText) || (/revenue[- ]per[- ](?:employee|head)/i.test(s) && !hasRev))); }, null);
     var empty = function (v) { return !v || v === 'Not stated.'; };
     var st = result.stack, fixO = function (o, k, txt) { if (o && typeof o === 'object' && empty(o[k]) && k in o) { o[k] = txt; } };
     if (st) {
@@ -4977,7 +4977,10 @@ function applyBusinessCaseStakeholder(result, userText, profileText) {
       fixO(st.decisionRunway, 'successMetric', 'The target and measure will be agreed with the stakeholder before the programme begins.');
       if (st.decisionRunway && Array.isArray(st.decisionRunway.alternatives)) { st.decisionRunway.alternatives = st.decisionRunway.alternatives.map(function (a) { return empty(a) ? 'Not computed: no further alternative can be priced from the data given.' : a; }); }
     }
+    if (empty(result.openingLine)) { result.openingLine = 'I am here to ask for one decision, and I will stay with the facts I have.'; }
+    if (st) { fixO(st.decisionRunway, 'ask', 'The ask is the decision stated in your input.'); fixO(st.dataAnchor, 'headline', 'No calculation applies to this decision with the numbers given.'); }
     if (empty(result.closingLine)) { result.closingLine = 'The decision I am asking for is on the table, and I will take your questions now.'; }
+    if (provN && result.bcCheck) { result.bcCheck.note = String(result.bcCheck.note || '') + ' ' + provN + ' sentence(s) were removed because they were not backed by your input, your profile or a system figure.'; }
     if (n && result.bcCheck) { result.bcCheck.stripped = (result.bcCheck.stripped || 0) + n; result.bcCheck.note = String(result.bcCheck.note || '') + ' ' + n + ' sentence(s) promising an action by a stated time were removed because the system cannot know your commitments.'; }
   }
   if (result && result.provenance) { delete result.provenance; }
@@ -4985,11 +4988,19 @@ function applyBusinessCaseStakeholder(result, userText, profileText) {
 }
 // Provenance filter (dark in v144): the model returns, next to its prose, a provenance map of path -> [{s, t, q}] where s is the start of a sentence,
 // t is figure | user | profile | advice and q is the supporting quote. Code checks every tag. A sentence with no valid tag is removed.
-var BC_PROV_PATHS = ['stakeholderProfile', 'openingLine', 'closingLine', 'stack.credibility.statement', 'stack.credibility.evidence', 'stack.credibility.deliveryNote', 'stack.dataAnchor.context', 'stack.narrativeBridge.story', 'stack.narrativeBridge.connection', 'stack.narrativeBridge.emotionalHook', 'stack.riskMirror.scenario', 'stack.riskMirror.timeline', 'stack.decisionRunway.ask', 'stack.decisionRunway.successMetric'];
+var BC_PROV_PATHS = ['stakeholderProfile', 'openingLine', 'closingLine', 'stack.credibility.statement', 'stack.credibility.evidence', 'stack.credibility.deliveryNote', 'stack.dataAnchor.headline', 'stack.dataAnchor.context', 'stack.narrativeBridge.story', 'stack.narrativeBridge.connection', 'stack.narrativeBridge.emotionalHook', 'stack.riskMirror.scenario', 'stack.riskMirror.timeline', 'stack.decisionRunway.ask', 'stack.decisionRunway.successMetric'];
 var BC_ORGFACT_RE = /\b(?:has|have|had|is|are|was|were|does|do|did)\s+(?:not|never|already|still|yet)\b|\bcurrently\b|\balready\b|\bno one\b|\bnobody\b/i;
 function bcProvNorm(x) { return String(x || '').toLowerCase().replace(/[^a-z0-9₹.%]+/g, ' ').replace(/\s+/g, ' ').trim(); }
 function bcProvGet(o, path) { var parts = path.split('.'), n = o; for (var i = 0; i < parts.length; i++) { if (!n || typeof n !== 'object') { return undefined; } n = n[parts[i]]; } return n; }
 function bcProvSet(o, path, v) { var parts = path.split('.'), n = o; for (var i = 0; i < parts.length - 1; i++) { n = n[parts[i]]; } n[parts[parts.length - 1]] = v; }
+var BC_PROV_STOP = /^(?:that|this|with|from|have|will|they|them|their|there|these|those|what|when|where|which|while|would|could|should|about|into|than|then|been|being|were|your|ours|also|just|only|some|such|very|over|more|most|much|many|each|both|here|because|since|until|does|done|make|made)$/;
+function bcProvStems(x) { var out = {}; String(x || '').toLowerCase().split(/[^a-z0-9₹]+/).forEach(function (w) { if (w.length >= 4 && !BC_PROV_STOP.test(w)) { out[w.slice(0, 5)] = 1; } }); return out; }
+function bcProvOverlap(sentence, srcNorm, min) {
+  var st = Object.keys(bcProvStems(sentence)); if (!st.length) { return true; }
+  var have = bcProvStems(srcNorm), hit = st.filter(function (k) { return have[k]; }).length;
+  return hit / st.length >= min;
+}
+var BC_ADVICE_FORM_RE = /^(?:i|we)\s+(?:need|ask|am asking|are asking|would like|want|recommend|propose|suggest|should|will take|am here)\b|^(?:please|let'?s|approve|agree|confirm|decide|review|start|begin|consider|put|set|schedule|share|take|treat|keep|focus|ask|make|give|use|move|hold|name|agree|sign|release|fund|open|close|pause|test|measure|track|compare|bring|send|walk|state|show|say|open)\b|\?\s*$/i;
 function bcProvOk(sentence, e, ctx) {
   if (!e || typeof e !== 'object') { return false; }
   var t = String(e.t || '').toLowerCase(), q = bcProvNorm(e.q);
@@ -4997,9 +5008,9 @@ function bcProvOk(sentence, e, ctx) {
   var numsOk = bcFigureNums(sentence).every(function (v) { return bcOk(ctx.okNums, v); }) && !bcPctBad(sentence, ctx.userText) && !bcDurationBad(sentence, ctx.userText) && !bcRatioBad(sentence, ctx.userText);
   if (!numsOk) { return false; }
   if (t === 'figure') { return true; }
-  if (t === 'user') { return q.length >= 4 && ctx.userNorm.indexOf(q) !== -1; }
-  if (t === 'profile') { return q.length >= 3 && ctx.profileNorm.indexOf(q) !== -1; }
-  if (t === 'advice') { return !BC_ORGFACT_RE.test(sentence) && !(ctx.noEng && (BC_NOENG_CLAIM_RE.test(sentence) || BC_MODEL_CLAIM_RE.test(sentence))); }
+  if (t === 'user') { return q.length >= 4 && ctx.userNorm.indexOf(q) !== -1 && bcProvOverlap(sentence, ctx.userNorm, 0.6); }
+  if (t === 'profile') { return q.length >= 3 && ctx.profileNorm.indexOf(q) !== -1 && bcProvOverlap(sentence, ctx.profileNorm, 0.5); }
+  if (t === 'advice') { return BC_ADVICE_FORM_RE.test(sentence.trim()) && !BC_ORGFACT_RE.test(sentence) && !(ctx.noEng && (BC_NOENG_CLAIM_RE.test(sentence) || BC_MODEL_CLAIM_RE.test(sentence))); }
   return false;
 }
 function bcProvFilter(result, userText, profileText, extraNums, noEng) {
