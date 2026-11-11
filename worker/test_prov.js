@@ -48,4 +48,8 @@ ok(/not computed/.test(w.stack.dataAnchor.context) && w.openingLine === "I need 
 r = { stack: { dataAnchor: { headline: 'h', figure: 'Rs.7L', context: 'c' }, credibility: {}, riskMirror: {}, decisionRunway: {} }, humac: {} };
 applyBusinessCaseStakeholder(r, 'Hire two analysts at Rs.14L each. I need approval.', PROFILE);
 ok(r.stack.dataAnchor.figure === 'Not computed', 'half of a salary is not a figure: ' + r.stack.dataAnchor.figure);
+// no-engine risk mirror: basis and probability text are system-controlled
+const rq = { stack: { credibility: {}, dataAnchor: { headline: 'h', figure: 'Not computed', context: 'c' }, riskMirror: { scenario: 's', revenueAtRisk: 'Not computed', revenueAtRiskBasis: 'Computed across two components.', timeline: 't', probability: 'High, a documented signal already visible to leadership.' }, decisionRunway: {} }, humac: {} };
+applyBusinessCaseStakeholder(rq, 'Hire two analysts at Rs.14L each. I need approval.', PROFILE);
+ok(/^Not computed/.test(rq.stack.riskMirror.revenueAtRiskBasis) && /^High: a judgement/.test(rq.stack.riskMirror.probability) && !/leadership/.test(rq.stack.riskMirror.probability), 'risk mirror neutralised: ' + rq.stack.riskMirror.probability + ' | ' + rq.stack.riskMirror.revenueAtRiskBasis);
 if (fails) { console.log(fails + ' FAILED'); process.exit(1); } else { console.log('PROVENANCE TESTS PASSED'); }

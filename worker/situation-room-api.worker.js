@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v149'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v150'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4978,6 +4978,12 @@ function applyBusinessCaseStakeholder(result, userText, profileText) {
       fixO(st.riskMirror, 'timeline', 'Not stated: no timeline was given.');
       fixO(st.decisionRunway, 'successMetric', 'The target and measure will be agreed with the stakeholder before the programme begins.');
       if (st.decisionRunway && Array.isArray(st.decisionRunway.alternatives)) { st.decisionRunway.alternatives = st.decisionRunway.alternatives.map(function (a) { return empty(a) ? 'Not computed: no further alternative can be priced from the data given.' : a; }); }
+    }
+    if (noEng && st && st.riskMirror && typeof st.riskMirror === 'object') {
+      var rmk = st.riskMirror;
+      if (/^not computed/i.test(String(rmk.revenueAtRisk || ''))) { rmk.revenueAtRiskBasis = 'Not computed: the system has no calculation for this decision with the numbers given.'; }
+      var pm = /^(high|medium|low)\b/i.exec(String(rmk.probability || ''));
+      rmk.probability = pm ? pm[1].charAt(0).toUpperCase() + pm[1].slice(1).toLowerCase() + ': a judgement from the facts you gave, not a computed probability.' : '';
     }
     if (empty(result.stakeholderProfile)) { result.stakeholderProfile = 'This audience decides on numbers and risk, so lead with the figures you gave and the decision you are asking for.'; }
     if (st) { fixO(st.credibility, 'statement', 'HR is bringing you a decision request based on the facts in the situation described.'); }
