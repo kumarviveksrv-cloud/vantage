@@ -366,5 +366,9 @@ ok(!/3x|exceeds the hiring|6 weeks|45 days/.test(h3j) && !/Not stated\.?"/.test(
 let h4 = { openingLine: 'x', closingLine: 'c', stack: { credibility: { statement: 'The Rs.8L hiring cost is a fraction of either figure. Five roles are open. Frame it with a cost-per-day of delay.', evidence: 'e', deliveryNote: 'd' }, dataAnchor: { figure: 'Rs.8L', headline: 'h', context: 'c', humacBasis: 'b' }, narrativeBridge: { story: 's', connection: 'c', emotionalHook: 'e' }, riskMirror: { scenario: 's', revenueAtRisk: 'x', revenueAtRiskBasis: 'y', timeline: 't' }, decisionRunway: { ask: 'a', deadline: 'd', alternatives: ['a1', 'a2'], successMetric: 'm' } } };
 PX.applyBusinessCaseStakeholder(h4, 'We have 5 open sales roles. Approve Rs.8L. Targets are behind plan.');
 ok(!/either figure|cost-per-day/.test(JSON.stringify(h4.stack)) && /Five roles are open/.test(h4.stack.credibility.statement), 'dangling figure references removed: ' + h4.stack.credibility.statement);
+// v139: recurrence and direction-of-travel predictions removed
+let b4 = mkA(); b4.stack.riskMirror.scenario = 'The probability of the cost recurring at the same level is high. The direction of travel is upward. HR owns the data.';
+AT.applyBusinessCaseStakeholder(b4, ATT);
+ok(!/probability of the cost|direction of travel/.test(b4.stack.riskMirror.scenario), 'predictions removed: ' + b4.stack.riskMirror.scenario);
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);
