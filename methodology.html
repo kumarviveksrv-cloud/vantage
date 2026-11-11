@@ -281,7 +281,7 @@
       <span class="mth-pillar mth-p-l1">L1 VALUE LEDGER</span>
     </div>
     <h2>Replacement Cost<br><em>by Role Level</em></h2>
-    <p class="mth-section-desc">When Vantage estimates the cost of losing an employee, it applies a tiered replacement multiplier (not a single flat number) because cost scales sharply with role seniority. These tiers are grounded in converging research across five independent sources. In the Humac Score's Value Ledger, replacement cost is booked as a saving only for the share of high performers expected to leave in a year (the midpoint of your industry's attrition range from MERIDIAN, 16 to 17% nationally if unset), so the figure is probability-weighted, and the whole Value Ledger is then multiplied by an HR attribution share (25%, 50% or 75%, your own judgement, 50% by default). This follows the isolation step in the Phillips ROI method: line managers, pay, brand and the market also drive these outcomes, so only part of the value is credited to HR. The share is a self-chosen dial, not a measured quantity, and the score screen states which one was used. The Human P&amp;L compares that return with your own annual HR spend when you enter it, or with an assumed 7.5% of payroll when you do not.</p>
+    <p class="mth-section-desc">When Vantage estimates the cost of losing an employee, it applies a tiered replacement multiplier (not a single flat number) because cost scales sharply with role seniority. These tiers are grounded in converging research across five independent sources. In the Humac Score's Value Ledger, replacement cost is booked as a saving only for the share of high performers expected to leave in a year (the midpoint of your industry's attrition range from MERIDIAN, 16 to 17% nationally if unset), so the figure is probability-weighted, and the whole Value Ledger is then multiplied by an HR attribution share (25%, 50% or 75%, your own judgement, 50% by default). This follows the isolation step in the Phillips ROI method: line managers, pay, brand and the market also drive these outcomes, so only part of the value is credited to HR. The share is a self-chosen dial, not a measured quantity, and the score screen states which one was used. In the Humac Score the replacement multiplier is 0.5x, 1.0x or 2.0x of salary for the Low, Base and High planning case, and no more than 20% of headcount is counted as high performers. The Human P&amp;L compares that return with your own annual HR spend when you enter it, or with an assumed 7.5% of payroll when you do not.</p>
     <div class="mth-source-list">
       <div class="mth-source-row">
         <div>
@@ -395,7 +395,7 @@
       <span class="mth-pillar mth-p-l3">L3 ORG VITALS</span>
     </div>
     <h2>Engagement Scores &amp;<br><em>Manager Effectiveness</em></h2>
-    <p class="mth-section-desc">Two separate financial coefficients (one for engagement-linked productivity loss, one for manager effectiveness drag) both derive from the same foundational Gallup research program.</p>
+    <p class="mth-section-desc">The Humac Score's Org Vitals pillar (L3) scores 25 yes/no organisational signals and applies no financial coefficient. Separately, where a user enters engagement or manager-effectiveness data, Vantage applies two <strong>assumed planning coefficients</strong> (0.15 and 0.08). The Gallup research below is context for why the topic matters. It does not derive or validate those two numbers.</p>
     <div class="mth-source-list">
       <div class="mth-source-row">
         <div>
@@ -403,9 +403,9 @@
           <span class="mth-source-pub">State of the Global Workplace<br>2.7 million workers tracked</span>
         </div>
         <div>
-          <p class="mth-source-finding"><strong>Finding 1 (engagement):</strong> Top-quartile engaged teams are <strong>14–18% more productive</strong> than bottom-quartile disengaged teams. Vantage applies <strong>0.15×</strong> disengaged headcount × salary; this sits inside that real 14–18% range.</p>
-          <p class="mth-source-finding"><strong>Finding 2 (manager effectiveness):</strong> Managers account for <strong>70% of the variance in team engagement</strong>. A below-average manager driving roughly 50% of their team toward low engagement produces an expected drag of 50% × 17% = <strong>8.5% ≈ 0.08×</strong> of team salary. Vantage cites this as a Gallup-derived inference, not a direct Gallup statistic.</p>
-          <span class="mth-source-applied">APPLIED TO → engagement coefficient (0.15×) and manager drag (0.08×)</span>
+          <p class="mth-source-finding"><strong>Finding 1 (engagement):</strong> Top-quartile engaged teams are <strong>14–18% more productive</strong> than bottom-quartile disengaged teams. Vantage applies an assumed <strong>0.15×</strong> to disengaged headcount × salary. That figure is a planning assumption, not a Gallup statistic. It is mentioned here only because the published 14–18% productivity gap points the same way.</p>
+          <p class="mth-source-finding"><strong>Finding 2 (manager effectiveness):</strong> Managers account for <strong>70% of the variance in team engagement</strong>. A below-average manager driving roughly 50% of their team toward low engagement is a context finding only. Vantage's <strong>0.08×</strong> manager-drag coefficient is an assumed planning figure, not derived from this statistic and not a Gallup number.</p>
+          <span class="mth-source-applied">APPLIED TO → context only. The 0.15× and 0.08× coefficients are assumed planning figures.</span>
         </div>
       </div>
     </div>
@@ -415,7 +415,6 @@
   <section class="mth-section" id="s4-talent">
     <div class="mth-section-meta">
       <span class="mth-section-label">4.</span>
-      <span class="mth-pillar mth-p-l2">L2 TALENT PREMIUM</span>
       <span class="mth-pillar mth-p-l5">L5 HUMAN BALANCE SHEET</span>
     </div>
     <h2>HiPo Concentration<br><em>Risk</em></h2>
@@ -448,7 +447,7 @@
   <section class="mth-section" id="s5-knowledge">
     <div class="mth-section-meta">
       <span class="mth-section-label">5.</span>
-      <span class="mth-pillar mth-p-l1">L1 VALUE LEDGER</span>
+      <span class="mth-pillar mth-p-l5">L5 HUMAN BALANCE SHEET</span>
     </div>
     <h2>Institutional<br><em>Knowledge Risk</em></h2>
     <p class="mth-section-desc">No published research maps tenure-years to a salary multiplier reliably. The Humac Score's Human Balance Sheet nevertheless values senior institutional knowledge at 8% of salary per year of average senior tenure, capped at 60%, as a planning assumption. Treat it as an assumption you can test, not a research finding.</p>
@@ -524,12 +523,16 @@
       <span class="mth-honesty-eyebrow">SOURCED VS. ESTIMATED</span>
       <h3>Where Vantage estimates, it says so.</h3>
       <p>Not every benchmark Vantage applies is independently verified by published survey data. Some are <strong>reasoned estimates</strong>, grounded in sector logic and structural arguments, but not yet corroborated by a citable study. Vantage applies two explicit tiers:</p>
-      <p><strong>Sourced:</strong> Independently verified by multiple published datasets. Every source cited on this page falls in this tier. Outputs using sourced figures can state them with higher confidence.</p>
+      <p><strong>Sourced:</strong> Backed by published data, such as the India attrition benchmarks and the statutory text. Even sourced inputs have limits, for example some replacement-cost studies are US figures and the high-potential survey measures intent, not exits. Each source above says so where it applies. Outputs using sourced figures can state them with higher confidence.</p>
       <p><strong>Estimated:</strong> Reasoned from sector logic (e.g. "capital-intensive, low-mobility sectors behave like Manufacturing") but not independently verified. Outputs using estimated figures explicitly say so: they are surfaced with Medium confidence, not High, and the reasoning is shown rather than hidden.</p>
       <p>Current examples of estimated benchmarks in Vantage:</p>
       <ul class="mth-est-list">
         <li>Attrition rates for 12 of the 20 industry categories, including Telecom, Aviation, Oil &amp; Gas, Healthcare, Education, and Consulting, are estimated from sector-logic comparisons to sourced industries, not independently verified.</li>
         <li>Union tribunal escalation probability (25–65% range by union type) is reasoned from industrial relations structure: a recognised union already has standing grievance machinery while an individual employee does not. The specific ranges are not backed by a published statistic. Outputs say so explicitly.</li>
+        <li><strong>The Humac Score is a provisional planning index (v0.9).</strong> Its pillar weights (L1 25%, L2 15%, L3 30%, L4 20%, L5 10%), its 0 to 100 scales and its band cut-offs are placeholders. They will be recalibrated once at least 30 organisations have computed scores. Use it to track your own direction over time, not to compare organisations.</li>
+        <li>The HR attribution share (25%, 50% or 75%) is your own judgement. The Human Confidence Index (1.00x with two or more stability flags clear, 0.85x with one, 0.70x with none) is a stability discount whose sizes are assumptions. No published coefficient exists for it, and its four questions also count inside L3.</li>
+        <li>In the Human Balance Sheet (L5), relationship capital (50% of revenue-linked or client-facing pay), the 5% and 1% of payroll capability-gap liabilities, the 8% per year knowledge value (capped at 60%) and the 25% high-potential attrition rate are all planning assumptions, not research findings.</li>
+        <li>The L1 ceiling (15% of payroll as a very strong organisation) and the L4 ceiling (1.5x return on HR spend) are placeholder scales, not published benchmarks.</li>
       </ul>
     </div>
   </div>
