@@ -54,7 +54,7 @@
     .stat-mini-val{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--muted);letter-spacing:-0.5px;margin-bottom:4px}
     .stat-mini-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
 
-    /* HDC BANNER: Phase 2 addition */
+    /* RECORD SUMMARY BANNER (class names kept from an earlier version) */
     .hdc-banner{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(124,58,237,.06));border:1px solid rgba(99,102,241,.28);border-radius:14px;padding:22px 28px;margin-bottom:20px;position:relative;overflow:hidden;animation:fadeIn .4s ease .1s both;display:none}
     .hdc-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(196,181,253,.45),transparent)}
     .hdc-banner-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap}
@@ -236,44 +236,23 @@
       </div>
 
       <!-- ═══════════════════════════════════════════
-           HR DECISION CAPITAL BANNER
-           Shows once loadCases() has run and at least one
-           case has a parseable modelled figure. Hidden by
-           default, revealed by JS after computation.
-           Value stored in sessionStorage as vantage_hdc_exposure
-           so dashboard.html can read it without a second API call.
-           Component chips reflect ACTUAL presence of data for
-           each field (set dynamically in computeAndRenderHDC),
-           not a hardcoded claim — a component with no saved
-           cases yet shows "not yet recorded", not "coming soon"
-           dressed up as a roadmap promise, and not "live" until
-           it genuinely has something to show.
+           VANTAGE RECORD SUMMARY
+           A plain count of saved cases: how many, since when, open or
+           closed, and which tools they came from. No rupee total: the
+           modelled figures on each case are separate models that can
+           overlap, so they are shown per case and never added together.
+           Filled by computeAndRenderSummary() after loadCases().
            ═══════════════════════════════════════════ -->
-      <div class="hdc-banner" id="hdc-banner">
+      <div class="hdc-banner" id="hdc-banner" style="display:block">
         <div class="hdc-banner-inner">
           <div class="hdc-banner-left">
-            <div class="hdc-banner-eyebrow">HR Decision Capital</div>
-            <div class="hdc-banner-sublabel">Modelled Exposure Recorded</div>
-            <div class="hdc-banner-number" id="hdc-total">&#x20B9;-</div>
-            <div class="hdc-banner-count" id="hdc-case-count">Computing from your case record&hellip;</div>
-            <div class="hdc-banner-components">
-              <div class="hdc-comp pending" id="hdc-comp-1">
-                <div class="hdc-comp-dot pending" id="hdc-comp-dot-1"></div>
-                <span class="hdc-comp-text" id="hdc-comp-text-1">EXPOSURE &middot; NOT YET RECORDED</span>
-              </div>
-              <div class="hdc-comp pending" id="hdc-comp-2">
-                <div class="hdc-comp-dot pending" id="hdc-comp-dot-2"></div>
-                <span class="hdc-comp-text" id="hdc-comp-text-2">MODELLED REPLACEMENT COST &middot; NOT YET RECORDED</span>
-              </div>
-              <div class="hdc-comp pending" id="hdc-comp-3">
-                <div class="hdc-comp-dot pending" id="hdc-comp-dot-3"></div>
-                <span class="hdc-comp-text" id="hdc-comp-text-3">BUSINESS CASES &middot; NOT YET RECORDED</span>
-              </div>
-            </div>
+            <div class="hdc-banner-eyebrow">Your Vantage Record</div>
+            <div class="hdc-banner-number" id="hdc-total" style="background:none;-webkit-text-fill-color:#f4f3ff;color:#f4f3ff;font-size:1.8rem">Loading&hellip;</div>
+            <div class="hdc-banner-count" id="hdc-case-count"></div>
+            <div class="hdc-banner-components" id="hdc-mix"></div>
           </div>
           <div class="hdc-banner-right">
-            <div class="hdc-banner-desc">The running INR total of the modelled exposure, replacement cost, and business case figures you've recorded through Vantage. Each figure is the midpoint of a saved range, not a verified or audited total. It grows as you record more cases.</div>
-            <a href="about.html#capital" class="hdc-banner-link">How HR Decision Capital works &#8594;</a>
+            <div class="hdc-banner-desc">A plain count of the cases you have saved from your tools, so you can see what you handled and when. The modelled rupee figure on each case is a separate model for that case and can overlap with others, so Vantage never adds them together.</div>
           </div>
         </div>
       </div>
@@ -460,113 +439,48 @@
       } catch(e) { btn.textContent = '⚠ Error'; btn.disabled = false; }
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // HR DECISION CAPITAL: PARSER
-    // Parses a stored financial range string (e.g. "₹8L–₹14L",
-    // "₹11.2L", "₹8–14 lakhs") and returns a number in lakhs at the
-    // midpoint of any range. Falls back to 0 if the string is
-    // unparseable: never throws. Every figure this produces is a
-    // midpoint of a modelled range, never a verified or audited total.
-    // ─────────────────────────────────────────────────────────────
-    function parseExposureLakhs(str) {
-      if (!str) return 0;
-      // Detect whether the string already uses L/lakh notation.
-      // If not and the parsed value is ≥ 1000, assume raw rupees and convert (÷1,00,000).
-      var hasLakhUnit = /[Ll]|lakh/i.test(str);
-      // Strip ₹, commas, whitespace, "lakhs"/"lakh", "cr"/"crore" (not expected but safe)
-      var s = str.replace(/[₹,\s]/g, '').replace(/lakhs?/gi, '').replace(/[–—]/g, '-');
-      // Range pattern: "8L-14L" or "8-14L" or "8-14" or "8.5L-12L"
-      var range = s.match(/(\d+(?:\.\d+)?)[Ll]?-(\d+(?:\.\d+)?)[Ll]?/);
-      if (range) {
-        var mid = (parseFloat(range[1]) + parseFloat(range[2])) / 2;
-        return (!hasLakhUnit && mid >= 1000) ? mid / 100000 : mid;
-      }
-      // Single value: "11.2L" or "11L" or "11.2"
-      var single = s.match(/(\d+(?:\.\d+)?)[Ll]?/);
-      if (single) {
-        var n = parseFloat(single[1]);
-        return (!hasLakhUnit && n >= 1000) ? n / 100000 : n;
-      }
-      return 0;
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // HDC: COMPUTE AND RENDER
-    // Called after allCases is populated. Sums midpoint modelled
-    // figures across all cases, shows the HDC banner, stores the
-    // result in sessionStorage so dashboard.html can read it on
-    // next load without a second API round-trip.
-    //   Component 1 = financial_exposure         (Employee Case Advisor)
-    //   Component 2 = modelled_replacement_cost   (Retention Advisor)
-    //   Component 3 = business_case_value          (The Business Case)
-    // Each component's chip is set to "live"/"not yet recorded" based
-    // on whether that field actually has any saved data — never
-    // hardcoded, so the chip never claims a status the data doesn't
-    // back up.
-    // ─────────────────────────────────────────────────────────────
-    function setChipState(idx, has) {
-      var labels = { 1: 'EXPOSURE', 2: 'MODELLED REPLACEMENT COST', 3: 'BUSINESS CASES' };
-      var wrap = document.getElementById('hdc-comp-' + idx);
-      var dot  = document.getElementById('hdc-comp-dot-' + idx);
-      var text = document.getElementById('hdc-comp-text-' + idx);
-      if (!wrap || !dot || !text) return;
-      if (has) {
-        wrap.classList.remove('pending'); wrap.classList.add('live');
-        dot.classList.remove('pending'); dot.classList.add('live');
-        text.textContent = labels[idx] + ' \u00b7 RECORDED';
-      } else {
-        wrap.classList.remove('live'); wrap.classList.add('pending');
-        dot.classList.remove('live'); dot.classList.add('pending');
-        text.textContent = labels[idx] + ' \u00b7 NOT YET RECORDED';
-      }
-    }
-
-    function computeAndRenderHDC() {
-      var comp1 = 0, comp2 = 0, comp3 = 0;
-      var comp1Cases = 0, comp2Cases = 0, comp3Cases = 0;
-
-      allCases.forEach(function(c) {
-        var fields = c.fields || {};
-        var v1 = parseExposureLakhs(fields['financial_exposure'] || '');
-        if (v1 > 0) { comp1 += v1; comp1Cases++; }
-        var v2 = parseExposureLakhs(fields['modelled_replacement_cost'] || '');
-        if (v2 > 0) { comp2 += v2; comp2Cases++; }
-        var v3 = parseExposureLakhs(fields['business_case_value'] || '');
-        if (v3 > 0) { comp3 += v3; comp3Cases++; }
-      });
-
-      var total = comp1 + comp2 + comp3;
-
-      setChipState(1, comp1Cases > 0);
-      setChipState(2, comp2Cases > 0);
-      setChipState(3, comp3Cases > 0);
-
-      if (total <= 0) return;
-
-      function fmtL(n) { return window.vantageFmtL(n); }
-
-      var formatted = fmtL(total);
-      var banner  = document.getElementById('hdc-banner');
-      var numEl   = document.getElementById('hdc-total');
+    // ─────────────────────────────────────────
+    // RECORD SUMMARY: counts only. Called after allCases is populated.
+    // Shows how many cases are saved, since when, how many are open or
+    // closed, and which tool each came from. Never sums rupee figures.
+    // ─────────────────────────────────────────
+    function computeAndRenderSummary() {
+      var numEl = document.getElementById('hdc-total');
       var countEl = document.getElementById('hdc-case-count');
-
-      if (numEl) numEl.textContent = formatted;
-
-      var parts = [];
-      if (comp1 > 0) parts.push('Exposure ' + fmtL(comp1));
-      if (comp2 > 0) parts.push('Modelled replacement cost ' + fmtL(comp2));
-      if (comp3 > 0) parts.push('Business case value ' + fmtL(comp3));
-      var totalCases = comp1Cases + comp2Cases + comp3Cases;
-      if (countEl) countEl.textContent = totalCases + (totalCases === 1 ? ' entry' : ' entries') + ' \u00b7 ' + parts.join(' \u00b7 ') + ' \u00b7 midpoint of saved ranges, not a verified total';
-      if (banner) banner.style.display = 'block';
-
-      try {
-        sessionStorage.setItem('vantage_hdc_exposure', JSON.stringify({
-          value: total, display: formatted, cases: totalCases,
-          comp1: comp1, comp2: comp2, comp3: comp3,
-          updated: new Date().toISOString()
-        }));
-      } catch(e) {}
+      var mixEl = document.getElementById('hdc-mix');
+      if (!numEl) return;
+      var n = allCases.length;
+      if (!n) {
+        numEl.textContent = 'Nothing recorded yet';
+        if (countEl) countEl.textContent = 'Cases you save from the tools will appear here.';
+        if (mixEl) mixEl.innerHTML = '';
+        return;
+      }
+      var open = 0, closed = 0, firstMs = null, mix = {};
+      allCases.forEach(function(c) {
+        var f = c.fields || {};
+        if ((f.status || 'Open').toLowerCase() === 'closed') closed++; else open++;
+        var t = f.date_created ? Date.parse(f.date_created) : NaN;
+        if (!isNaN(t) && (firstMs === null || t < firstMs)) firstMs = t;
+        var ct = String(f.case_type || '').trim();
+        var kind = ct.indexOf(':') > 0 ? ct.slice(0, ct.indexOf(':')).trim() : 'Employee case';
+        mix[kind] = (mix[kind] || 0) + 1;
+      });
+      numEl.textContent = n + (n === 1 ? ' case recorded' : ' cases recorded');
+      var since = firstMs === null ? '' : 'Since ' + new Date(firstMs).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + ' \u00b7 ';
+      if (countEl) countEl.textContent = since + open + ' open \u00b7 ' + closed + ' closed';
+      if (mixEl) {
+        mixEl.innerHTML = '';
+        Object.keys(mix).sort(function(x, y) { return mix[y] - mix[x]; }).forEach(function(k) {
+          var d = document.createElement('div');
+          d.className = 'hdc-comp live';
+          var sp = document.createElement('span');
+          sp.className = 'hdc-comp-text';
+          sp.textContent = k + ' \u00b7 ' + mix[k];
+          d.appendChild(sp);
+          mixEl.appendChild(d);
+        });
+      }
     }
 
     async function loadCases() {
@@ -598,16 +512,17 @@
           document.getElementById('stat-closed').innerText   = closed;
           renderCases(allCases);
 
-          // Compute and surface HR Decision Capital
-          computeAndRenderHDC();
+          computeAndRenderSummary();
         } else {
           renderCases([]);
+          computeAndRenderSummary();
         }
       } catch(err) {
         document.getElementById('loading-view').style.display = 'none';
         document.getElementById('main-content').style.display = 'block';
         checkPolicyGap();
         renderCases([]);
+        var _he = document.getElementById('hdc-total'); if (_he) _he.textContent = 'Could not load your record';
       }
     }
 

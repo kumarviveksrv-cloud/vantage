@@ -486,8 +486,7 @@
       entries.forEach(e=>e.classList.add('dos-visible'));
       if(progress)progress.style.width='73%';
       if(percent)percent.textContent='73%';
-      if(total)total.textContent='\u20b918.4L';
-      dossier.style.position='relative';dossier.style.overflow='hidden';
+            dossier.style.position='relative';dossier.style.overflow='hidden';
       if(!dossier.querySelector('.dos-scanline')){const sc=document.createElement('div');sc.className='dos-scanline';dossier.appendChild(sc);}
       return;
     }
@@ -512,7 +511,6 @@
     });
 
     /* Career capital — once */
-    setTimeout(()=>{if(total)D.num(total,18.4,1800,'\u20b9','L',1);},300+entries.length*480+200);
 
     /* Live dot */
     const header=dossier.querySelector('.record-dossier-wrap')||dossier;
@@ -1362,7 +1360,7 @@
          text:'The previous manager remembers the outcome, not the reasoning behind each step. Relying on their account risks reproducing a decision without reproducing the judgment that made it defensible.',
          aria:'Would you want your successor learning your judgment secondhand, or from the actual record?'},
        OC:{verdict:'DOCUMENTED RECORD',vclass:'ok',num:'47',
-         text:'47 decisions documented. 12 policy calls. \u20b918.4L in modelled figures recorded (illustrative). The sequencing, templates, and reasoning from the first case are available immediately, not reconstructed from memory.',
+         text:'47 decisions documented. 12 policy calls. 9 retention models. The sequencing, templates, and reasoning from the first case are available immediately, not reconstructed from memory.',
          aria:'A future organisation could see 9 months of documented intelligence instead of a blank resume. That is what a career record is meant to do.'},
        OD:{verdict:'UNNECESSARY OVERHEAD',vclass:'warn',num:'+3 weeks',
          text:'Escalating a routine, already-precedented matter to legal every time slows the organisation down and signals HR doesn\u2019t trust its own established process. Legal\u2019s time is better spent on genuinely novel questions.',
@@ -1544,7 +1542,7 @@
          aria:'The restructuring you ran 18 months ago saved \u20b91.1Cr net. That case study is worth more than any consulting deck you could buy now.'},
        OB:{verdict:'DEPLOYED',vclass:'ok',num:'23',
          text:'23 restructuring decisions documented. Communication templates, CFO models, town hall scripts, adapted to this company\u2019s specific headcount, industry, and state jurisdiction, then deployed in 48 hours instead of 30 days.',
-         aria:'Your previous restructuring playbook just saved this company 3 weeks of planning time. That\u2019s what career capital actually does.'},
+         aria:'Your previous restructuring playbook just saved this company 3 weeks of planning time. That\u2019s what a documented record is for.'},
        OC:{verdict:'CONTEXT MISMATCH',vclass:'warn',num:'\u20b98L (rework)',
          text:'Applying the exact same plan without adapting for this company\u2019s different headcount mix, state jurisdiction, and workman classification risks reproducing decisions that don\u2019t fit the new context, and discovering the gap mid-execution is costlier than adapting upfront.',
          aria:'The last restructuring had a different proportion of workmen-classified roles. Does this plan account for that difference, or assume it away?'},
@@ -1636,7 +1634,7 @@
          aria:'The PIP you ran last year was textbook. That process is worth replicating exactly. Can you, without the record?'},
        OB:{verdict:'MASTERED',vclass:'ok',num:'8',
          text:'8 performance management decisions documented. PIP templates, data frameworks, delivery scripts, legally precise language, adapted to this role and deployed in hours instead of days.',
-         aria:'Your Vantage Record shows you\u2019ve navigated 8 PIPs with zero tribunal challenges. That track record is your career capital.'},
+         aria:'Your Vantage Record shows you\u2019ve navigated 8 PIPs with zero tribunal challenges. That track record is in your record.'},
        OC:{verdict:'TEMPLATE MISMATCH',vclass:'warn',num:'\u20b93L (rework)',
          text:'The prior PIP was calibrated for a different role, seniority level, and set of performance metrics. Applying it unchanged risks targets that don\u2019t actually fit this employee\u2019s function, weakening the PIP\u2019s defensibility if challenged.',
          aria:'Does this employee\u2019s role even have the same measurable outputs as the one the original template was built for?'},
