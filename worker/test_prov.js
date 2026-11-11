@@ -64,4 +64,9 @@ ok(r.stack.dataAnchor.figure === 'Not computed', 'half of a salary is not a figu
 const rq = { stack: { credibility: {}, dataAnchor: { headline: 'h', figure: 'Not computed', context: 'c' }, riskMirror: { scenario: 's', revenueAtRisk: 'Not computed', revenueAtRiskBasis: 'Computed across two components.', timeline: 't', probability: 'High, a documented signal already visible to leadership.' }, decisionRunway: {} }, humac: {} };
 applyBusinessCaseStakeholder(rq, 'Hire two analysts at Rs.14L each. I need approval.', PROFILE);
 ok(/^Not computed/.test(rq.stack.riskMirror.revenueAtRiskBasis) && /^High: a judgement/.test(rq.stack.riskMirror.probability) && !/leadership/.test(rq.stack.riskMirror.probability), 'risk mirror neutralised: ' + rq.stack.riskMirror.probability + ' | ' + rq.stack.riskMirror.revenueAtRiskBasis);
+// deadline: model advice never survives; duplicate alternatives collapse
+const dq = { stack: { credibility: {}, dataAnchor: { headline: 'h', figure: 'Not computed', context: 'c' }, riskMirror: {}, decisionRunway: { ask: 'Approve two analysts.', deadline: 'I recommend setting a decision by the end of this month so that sourcing can begin.', alternatives: ['Not computed: no further alternative can be priced from the data given.', 'Not computed: no further alternative can be priced from the data given.'] } }, humac: {}, provenance: { 'stack.decisionRunway.deadline': [{ s: 'I recommend setting a decision by the end', t: 'advice', q: '' }] } };
+applyBusinessCaseStakeholder(dq, 'Hire two analysts at Rs.14L each. I need approval.', PROFILE);
+ok(dq.stack.decisionRunway.deadline === 'Not stated. Add the date you need the decision by.', 'model deadline replaced: ' + dq.stack.decisionRunway.deadline);
+ok(dq.stack.decisionRunway.alternatives.length === 1, 'duplicate alternatives collapsed');
 if (fails) { console.log(fails + ' FAILED'); process.exit(1); } else { console.log('PROVENANCE TESTS PASSED'); }

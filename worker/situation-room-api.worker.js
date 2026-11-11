@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v154'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v155'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1550,7 +1550,7 @@ ARIA HANDOFF: Specific coaching offer — who ARIA plays, what specific pushback
 
 ${greenCategoryBlock}
 
-PROVENANCE: for every sentence you write in these fields: stakeholderProfile, openingLine, closingLine, stack.credibility.statement, stack.credibility.evidence, stack.credibility.deliveryNote, stack.dataAnchor.headline, stack.dataAnchor.context, stack.narrativeBridge.story, stack.narrativeBridge.connection, stack.narrativeBridge.emotionalHook, stack.riskMirror.scenario, stack.riskMirror.timeline, stack.decisionRunway.ask, stack.decisionRunway.deadline, stack.decisionRunway.successMetric, add one entry in the provenance object under that field path. s is the first eight or more words of that sentence, copied exactly. t is "user" when the sentence restates something the user wrote (q must be an exact phrase copied from the user's input), "profile" when it restates a MERIDIAN profile fact (q copied from the profile), "figure" when it quotes a system-computed figure, or "advice" only when the sentence is an instruction, request or question that starts with a verb or with "I need", "I am asking", "We should" or similar, and contains no new numbers, no named study, no prediction and no claim about what is true of the organisation or its clients (q is empty). A sentence that describes how things are, what will happen or what people think must be tagged "user" or "profile" and must stay close to the user's own words. A sentence without a valid entry is deleted from your output, so state only what the user gave, what the profile says, the system figures, or plain advice.
+PROVENANCE: for every sentence you write in these fields: stakeholderProfile, openingLine, closingLine, stack.credibility.statement, stack.credibility.evidence, stack.credibility.deliveryNote, stack.dataAnchor.headline, stack.dataAnchor.context, stack.narrativeBridge.story, stack.narrativeBridge.connection, stack.narrativeBridge.emotionalHook, stack.riskMirror.scenario, stack.riskMirror.timeline, stack.decisionRunway.ask, stack.decisionRunway.deadline, stack.decisionRunway.successMetric, add one entry in the provenance object under that field path. s is the first eight or more words of that sentence, copied exactly. t is "user" when the sentence restates something the user wrote (q must be an exact phrase copied from the user's input), "profile" when it restates a MERIDIAN profile fact (q copied from the profile), "figure" when it quotes a system-computed figure, or "advice" only when the sentence is an instruction, request or question that starts with a verb or with "I need", "I am asking", "We should" or similar, and contains no new numbers, no named study, no prediction and no claim about what is true of the organisation or its clients (q is empty). A sentence that describes how things are, what will happen or what people think must be tagged "user" or "profile" and must stay close to the user's own words. A sentence without a valid entry is deleted from your output, so state only what the user gave, what the profile says, the system figures, or plain advice. Never propose a deadline or decision date yourself: write stack.decisionRunway.deadline only when the user gave a date, and then restate it in the user's words.
 
 OUTPUT FORMAT — STRICT JSON ONLY:
 {
@@ -4980,6 +4980,11 @@ function applyBusinessCaseStakeholder(result, userText, profileText) {
       fixO(st.decisionRunway, 'successMetric', 'Add the measure you will report against and when you will report it.');
       if (st.decisionRunway && Array.isArray(st.decisionRunway.alternatives)) { st.decisionRunway.alternatives = st.decisionRunway.alternatives.map(function (a) { return empty(a) ? 'Not computed: no further alternative can be priced from the data given.' : a; }); }
     }
+    if (noEng && st && st.decisionRunway && typeof st.decisionRunway === 'object') {
+      var dlv = String(st.decisionRunway.deadline || '');
+      if (!dlv || /^not stated/i.test(dlv)) { st.decisionRunway.deadline = 'Not stated. Add the date you need the decision by.'; }
+      if (Array.isArray(st.decisionRunway.alternatives)) { st.decisionRunway.alternatives = st.decisionRunway.alternatives.filter(function (a, i, arr) { return arr.indexOf(a) === i; }); }
+    }
     if (noEng && st && st.riskMirror && typeof st.riskMirror === 'object') {
       var rmk = st.riskMirror;
       if (/^not computed/i.test(String(rmk.revenueAtRisk || ''))) { rmk.revenueAtRiskBasis = 'Not computed: the system has no calculation for this decision with the numbers given.'; }
@@ -5024,6 +5029,7 @@ function bcProvWhy(sentence, e, ctx, path) {
   if (t === 'user') { if (q.length < 4 || ctx.userNorm.indexOf(q) === -1) { return 'quote-missing'; } if (!bcProvOverlap(sentence, ctx.userNorm, 0.5)) { return 'user-overlap'; } var cl = sentence.split(/[,;]\s+/).filter(function (c) { return Object.keys(bcProvStems(c)).length >= 3; }); return cl.every(function (c) { return bcProvOverlap(c, ctx.userNorm, 0.34); }) ? '' : 'user-clause'; }
   if (t === 'profile') { if (q.length < 3 || ctx.profileNorm.indexOf(q) === -1) { return 'quote-missing'; } return bcProvOverlap(sentence, ctx.profileNorm, 0.5) ? '' : 'profile-overlap'; }
   if (t === 'advice') {
+    if (path === 'stack.decisionRunway.deadline') { return 'deadline-advice'; }
     if (BC_ORGFACT_RE.test(sentence)) { return 'orgfact'; }
     if (ctx.noEng && (BC_NOENG_CLAIM_RE.test(sentence) || BC_MODEL_CLAIM_RE.test(sentence))) { return 'noeng-claim'; }
     if (path !== 'stakeholderProfile' && path !== 'stack.decisionRunway.alternatives' && !BC_ADVICE_FORM_RE.test(sentence.trim())) { return 'advice-form'; }
