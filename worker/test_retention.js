@@ -139,6 +139,12 @@ ok(x4.employeeProfile.flightRisk === 'Medium', 'Low raised to Medium with resign
 const x5 = { employeeProfile: { flightRisk: 'Low', estimatedTimeToLeave: 'Unknown' } };
 lib.retentionScrub(x5, 'Steady performance, quiet week.');
 ok(x5.employeeProfile.flightRisk === 'Low', 'Low kept without exit signal');
+const x6 = { employeeProfile: { flightRisk: 'Low', flightRiskRationale: 'They stated intent to resign. This places this at Low risk by the criteria.' } };
+lib.retentionScrub(x6, 'She is thinking about resigning.');
+ok(x6.employeeProfile.flightRisk === 'Medium' && !/low risk/i.test(x6.employeeProfile.flightRiskRationale) && /resign/.test(x6.employeeProfile.flightRiskRationale), 'low-risk sentence removed on raise: ' + x6.employeeProfile.flightRiskRationale);
+const x7 = { employeeProfile: { flightRisk: 'Low', flightRiskRationale: 'Low risk overall.' } };
+lib.retentionScrub(x7, 'She resigned verbally.');
+ok(/Medium/.test(x7.employeeProfile.flightRiskRationale) && x7.employeeProfile.flightRisk === 'Medium', 'fallback rationale when all sentences dropped');
 // no-premium ceiling card
 const r3b = { recommendation: { primary: 'Walk Away', figure: 'x' }, financialModel: {}, humac: {} };
 lib.retentionApply(r3b, 'counter_offer', r3);
