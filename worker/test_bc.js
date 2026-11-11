@@ -345,5 +345,17 @@ ok(MX.bcMixedIndividual('We are about to terminate a senior engineer. I want leg
 let b2 = mkA(); b2.stack.credibility.statement = 'Manager A is weak. The case of Employee B is separate. HR owns the data.';
 AT.applyBusinessCaseStakeholder(b2, ATT);
 ok(!/Manager A|Employee B/.test(b2.stack.credibility.statement) && /^The manager is weak/.test(b2.stack.credibility.statement) && /HR owns the data/.test(b2.stack.credibility.statement), 'person placeholders replaced: ' + b2.stack.credibility.statement);
+// v135: no-engine path removes invented durations, payback and pipeline claims; user-given durations kept
+let h1 = { openingLine: 'x', closingLine: 'Let us reconnect tomorrow morning before the week closes.', stack: { dataAnchor: { figure: 'Rs.8L' }, riskMirror: { revenueAtRisk: 'x', revenueAtRiskBasis: 'y', scenario: 'A delay of even ten days risks a full hiring restart that adds six to eight weeks. Five roles are open.' }, credibility: { statement: 'The Rs.8L spend is recoverable in the first month from a single hire. Offers go out at day 60. Targets are behind plan this quarter.' } } };
+PX.applyBusinessCaseStakeholder(h1, 'We have 5 open sales roles. Approve Rs.8L. We have been hiring for 3 months and targets are behind plan.');
+const h1j = JSON.stringify(h1.stack);
+ok(!/ten days|six to eight|recoverable|day 60|restart/.test(h1j) && /Five roles are open/.test(h1j) && /Targets are behind plan/.test(h1j) && !/tomorrow|Not stated/.test(h1.closingLine), 'no-engine invented durations and payback removed: ' + h1j + ' | ' + h1.closingLine);
+let h2 = { openingLine: 'x', closingLine: 'c', stack: { dataAnchor: { figure: 'Rs.8L' }, riskMirror: { revenueAtRisk: 'x', revenueAtRiskBasis: 'y' }, credibility: { statement: 'You said hiring has taken 3 months. That is long.' } } };
+PX.applyBusinessCaseStakeholder(h2, 'We have 5 open sales roles. Approve Rs.8L. We have been hiring for 3 months and targets are behind plan.');
+ok(/hiring has taken 3 months/.test(h2.stack.credibility.statement), 'user-given duration kept: ' + h2.stack.credibility.statement);
+// v136: more invented org and sector claims in the attrition stakeholder path
+let b3 = mkA(); b3.stack.credibility.statement = 'This is a cost that is not captured in any current budget line. Finance is currently not measuring it. Sales teams in insurance are a known flight-risk segment given commission portability. There is no active mechanism to hold the rate. HR owns the data.';
+AT.applyBusinessCaseStakeholder(b3, ATT);
+ok(!/budget line|not measuring|flight-risk|commission portability|no active mechanism/.test(b3.stack.credibility.statement) && /HR owns the data/.test(b3.stack.credibility.statement), 'more invented claims removed: ' + b3.stack.credibility.statement);
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);
