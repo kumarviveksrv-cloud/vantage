@@ -4,7 +4,7 @@ const src = fs.readFileSync(path.join(__dirname, 'situation-room-api.worker.js')
 const sl = (a, b) => src.slice(src.indexOf(a), src.indexOf(b));
 const tb = fs.readFileSync(path.join(__dirname, 'test_bc.js'), 'utf8').split('\n')[4];
 const code = eval(tb.replace(/^const code = /, '').replace(/;\s*$/, ''));
-const { bcProvFilter } = new Function(code + ';return {bcProvFilter};')();
+const { bcProvFilter, applyBusinessCaseStakeholder } = new Function(code + ';return {bcProvFilter, applyBusinessCaseStakeholder};')();
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('FAIL', m); } };
 const USER = 'We lost 40 employees out of 250 last year. Average CTC is ₹8L. We want a retention programme with a budget of ₹15L.';
 const PROFILE = 'Industry: Insurance. Size: 250 employees. Location: Haryana.';
@@ -31,4 +31,11 @@ ok(r.openingLine === 'Not stated.', 'quote not in input removed');
 // advice with a duration not in input fails; plain advice passes
 r = { openingLine: 'Review the exits within 45 days. Start with exit interviews.', provenance: { openingLine: [{ s: 'Review the exits within 45 days', t: 'advice', q: '' }, { s: 'Start with exit interviews', t: 'advice', q: '' }] } }; bcProvFilter(r, USER, PROFILE, [], false);
 ok(r.openingLine === 'Start with exit interviews.', 'invented duration removed, plain advice kept: ' + r.openingLine);
+// wired through the stakeholder wrapper on the no-engine path
+const SIT = 'We want to hire two analysts for the claims team. The vacancy is slowing claims. I need approval from the CFO.';
+const w = { stack: { credibility: { statement: 'The claims team needs two analysts.', evidence: 'Studies show analyst gaps cost money.', deliveryNote: 'Say it plainly.' }, dataAnchor: { headline: 'h', figure: 'Not computed', context: 'The vacancy is slowing claims.' }, riskMirror: { scenario: 's', revenueAtRisk: 'Not computed', revenueAtRiskBasis: 'b', timeline: 't', probability: '' }, decisionRunway: { ask: 'Approve two analysts.', deadline: 'd', alternatives: ['a'], successMetric: 'm' } }, openingLine: 'I need approval from the CFO.', closingLine: 'Thank you.', stakeholderProfile: 'CFO.', humac: {}, provenance: { 'stack.credibility.statement': [{ s: 'The claims team needs two analysts', t: 'user', q: 'hire two analysts for the claims team' }], 'stack.credibility.evidence': [{ s: 'Studies show analyst gaps cost money', t: 'advice', q: '' }], 'stack.dataAnchor.context': [{ s: 'The vacancy is slowing claims', t: 'user', q: 'The vacancy is slowing claims' }], openingLine: [{ s: 'I need approval from the CFO', t: 'user', q: 'I need approval from the CFO' }] } };
+applyBusinessCaseStakeholder(w, SIT, PROFILE);
+ok(w.provenance === undefined, 'provenance not shipped');
+ok(/^Not stated|Evidence|evidence/.test(w.stack.credibility.evidence) && !/Studies show/.test(w.stack.credibility.evidence), 'unsupported studies sentence removed on the wire: ' + w.stack.credibility.evidence);
+ok(/not computed/.test(w.stack.dataAnchor.context) && w.openingLine === "I need approval from the CFO.", "sourced sentences kept: " + w.stack.dataAnchor.context + " | " + w.openingLine);
 if (fails) { console.log(fails + ' FAILED'); process.exit(1); } else { console.log('PROVENANCE TESTS PASSED'); }

@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v144'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v145'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1550,6 +1550,8 @@ ARIA HANDOFF: Specific coaching offer — who ARIA plays, what specific pushback
 
 ${greenCategoryBlock}
 
+PROVENANCE: for every sentence you write in these fields: stakeholderProfile, openingLine, closingLine, stack.credibility.statement, stack.credibility.evidence, stack.credibility.deliveryNote, stack.dataAnchor.context, stack.narrativeBridge.story, stack.narrativeBridge.connection, stack.narrativeBridge.emotionalHook, stack.riskMirror.scenario, stack.riskMirror.timeline, stack.decisionRunway.ask, stack.decisionRunway.successMetric, add one entry in the provenance object under that field path. s is the first eight or more words of that sentence, copied exactly. t is "user" when the sentence restates something the user wrote (q must be an exact phrase copied from the user's input), "profile" when it restates a MERIDIAN profile fact (q copied from the profile), "figure" when it quotes a system-computed figure, or "advice" when it is a recommendation or request containing no new numbers, no named study and no claim about what the organisation has or has not done (q is empty). A sentence without a valid entry is deleted from your output, so state only what the user gave, what the profile says, the system figures, or plain advice.
+
 OUTPUT FORMAT — STRICT JSON ONLY:
 {
   "stakeholderProfile": "text",
@@ -1568,7 +1570,8 @@ OUTPUT FORMAT — STRICT JSON ONLY:
     "primary": "Revenue Growth|Cost Efficiency|Risk Mitigation",
     "secondary": "Revenue Growth|Cost Efficiency|Risk Mitigation|null",
     "primaryRationale": "one sentence — the specific business outcome this influence situation most directly affects"
-  }
+  },
+  "provenance": { "stakeholderProfile": [ { "s": "first eight or more words of one sentence", "t": "user|profile|figure|advice", "q": "exact supporting quote, empty for advice" } ], "openingLine": [], "stack.credibility.statement": [] }
 }`;
   }
 
@@ -4951,12 +4954,15 @@ function bcRatioBad(s, userText) {
   return false;
 }
 var BC_PROMISE_RE = /\bI will (?:send|share|have|bring|get|circulate|email|forward)\b|\bby (?:end of (?:the )?day|eod|tonight|tomorrow)\b|\bwithin (?:the next )?(?:24|48) hours\b/i;
-function applyBusinessCaseStakeholder(result, userText) {
+function applyBusinessCaseStakeholder(result, userText, profileText) {
+  var provSnap = (result && result.provenance && typeof result.provenance === 'object') ? JSON.parse(JSON.stringify(result)) : null;
   var r = applyBusinessCaseStakeholder0(result, userText);
   if (result && result.stack && result.wrongTool !== true) {
     var pre0 = 0;
     if (result.humac && typeof result.humac.trajectorySignal === 'string' && /^\s*(?:negative|worsening|declining)|self-correct|worsen|deteriorat/i.test(result.humac.trajectorySignal) && !/\b(?:trend|rising|increas\w*|declin\w*|worsen\w*|falling|dropp\w*|growing)\b/i.test(String(userText || ''))) { result.humac.trajectorySignal = 'neutral: no trend data was given for this decision.'; pre0 += 1; }
     var noEng = !result.bcEngine, hasRev = /revenue/i.test(String(userText || ''));
+    if (noEng && provSnap) { var pv = bcProvDrops(provSnap, userText, profileText, true); if (pv.applied) { pre0 += bcProvApplyDrops(result, pv.drops); } }
+    delete result.provenance;
     var n = pre0 + bcScrub(result, function (s) { return BC_PROMISE_RE.test(s) || BC_PREDICT_RE.test(s) || BC_TIME_RE.test(s) || (noEng && (BC_MODEL_CLAIM_RE.test(s) || BC_NOENG_CLAIM_RE.test(s) || bcDurationBad(s, userText) || bcRatioBad(s, userText) || (/revenue[- ]per[- ](?:employee|head)/i.test(s) && !hasRev))); }, null);
     var empty = function (v) { return !v || v === 'Not stated.'; };
     var st = result.stack, fixO = function (o, k, txt) { if (o && typeof o === 'object' && empty(o[k]) && k in o) { o[k] = txt; } };
@@ -4974,6 +4980,7 @@ function applyBusinessCaseStakeholder(result, userText) {
     if (empty(result.closingLine)) { result.closingLine = 'The decision I am asking for is on the table, and I will take your questions now.'; }
     if (n && result.bcCheck) { result.bcCheck.stripped = (result.bcCheck.stripped || 0) + n; result.bcCheck.note = String(result.bcCheck.note || '') + ' ' + n + ' sentence(s) promising an action by a stated time were removed because the system cannot know your commitments.'; }
   }
+  if (result && result.provenance) { delete result.provenance; }
   return r;
 }
 // Provenance filter (dark in v144): the model returns, next to its prose, a provenance map of path -> [{s, t, q}] where s is the start of a sentence,
@@ -5014,6 +5021,29 @@ function bcProvFilter(result, userText, profileText, extraNums, noEng) {
     if (keep.length !== parts.length) { bcProvSet(result, path, keep.length ? keep.join(' ') : 'Not stated.'); }
   });
   return { applied: true, removed: removed };
+}
+function bcProvDrops(snap, userText, profileText, noEng) {
+  // Runs the filter on a copy taken before the system wrote its own neutral text, and returns the model sentences that failed, per path.
+  var before = {};
+  BC_PROV_PATHS.forEach(function (p) { var v = bcProvGet(snap, p); if (typeof v === 'string') { before[p] = v.split(/(?<=[.!?])\s+(?=[A-Z(])/); } });
+  var res = bcProvFilter(snap, userText, profileText, [], noEng), drops = {};
+  if (!res.applied) { return { applied: false, removed: 0, drops: drops }; }
+  Object.keys(before).forEach(function (p) {
+    var after = bcProvGet(snap, p), keepSet = typeof after === 'string' ? after.split(/(?<=[.!?])\s+(?=[A-Z(])/) : [];
+    var gone = before[p].filter(function (x) { return keepSet.indexOf(x) === -1; });
+    if (gone.length) { drops[p] = gone; }
+  });
+  return { applied: true, removed: res.removed, drops: drops };
+}
+function bcProvApplyDrops(result, drops) {
+  var n = 0;
+  Object.keys(drops).forEach(function (p) {
+    var txt = bcProvGet(result, p); if (typeof txt !== 'string') { return; }
+    var parts = txt.split(/(?<=[.!?])\s+(?=[A-Z(])/), keep = parts.filter(function (x) { return drops[p].indexOf(x) === -1; });
+    n += parts.length - keep.length;
+    if (keep.length !== parts.length) { bcProvSet(result, p, keep.length ? keep.join(' ') : 'Not stated.'); }
+  });
+  return n;
 }
 // ── BUSINESS CASE ENGINE END ─────────────────────────────────────────────────
 
@@ -5680,7 +5710,7 @@ if (actContext) {
         }
       }
       if (result && bcPre && bcPre.inputs) { result.bcInputs = bcPre.inputs; }
-      if (result && flow === 'stakeholder') { try { if (applyBusinessCaseStakeholder(result, String(body.situation || '') + ' ' + String(body.ask || '') + ' ' + String(body.context || ''))) { console.log('Business Case stakeholder engine applied'); } } catch (bcS) { console.error('applyBusinessCaseStakeholder failed: ' + bcS.message); if (result) { delete result.bcInputs; } } }
+      if (result && flow === 'stakeholder') { try { if (applyBusinessCaseStakeholder(result, String(body.situation || '') + ' ' + String(body.ask || '') + ' ' + String(body.context || ''), JSON.stringify(meridian || {}))) { console.log('Business Case stakeholder engine applied'); } } catch (bcS) { console.error('applyBusinessCaseStakeholder failed: ' + bcS.message); if (result) { delete result.bcInputs; } } }
       if (result && flow === 'general') { try { if (applyBusinessCaseEngine(result, String(body.metrics || '') + ' ' + String(body.context || '') + ' ' + String(body.ask || ''))) { console.log('Business Case engine applied'); } } catch (bcE) { console.error('applyBusinessCaseEngine failed: ' + bcE.message); if (result) { delete result.bcInputs; } } }
       if (result && result.wrongTool === true) { if (await settleWrongTool(clerkUserId, 'business_case', usageCheck, trialCharged)) { _trialLastCall = false; } } else { queueUsage(clerkUserId, 'business_case', usageCheck); }
       return new Response(JSON.stringify(_trialLastCall ? { success: true, data: result, trial_calls_remaining: 0 } : { success: true, data: result }), {
