@@ -1017,11 +1017,11 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
                 '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.72rem;color:rgba(244,243,255,.60);margin-bottom:2px">Humac</div>' +
                 '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:3.4rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (data.humac || 0) + '</div>' +
               '</div>' +
-              '<div style="color:rgba(99,102,241,.25);font-size:1.6rem;align-self:center">|</div>' +
+              ((data.hciAdj==null||data.hciAdj===data.humac)?'':'<div style="color:rgba(99,102,241,.25);font-size:1.6rem;align-self:center">|</div>' +
               '<div>' +
                 '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.72rem;color:rgba(244,243,255,.60);margin-bottom:2px">HCI-adjusted</div>' +
                 '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:2.4rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#a5b4fc,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (data.hciAdj || 0) + '</div>' +
-              '</div>' +
+              '</div>') +
             '</div>' +
           '</div>' +
           '<div style="text-align:right">' +

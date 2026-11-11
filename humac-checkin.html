@@ -185,8 +185,8 @@
             <div class="score-label">Humac, provisional</div>
             <div class="score-num" id="score-humac">—</div>
           </div>
-          <div class="score-sep">|</div>
-          <div class="score-block">
+          <div class="score-sep" id="score-adj-sep">|</div>
+          <div class="score-block" id="score-adj-block">
             <div class="score-label">HCI-adjusted</div>
             <div class="score-num adj" id="score-hci-adj">—</div>
           </div>
@@ -289,6 +289,7 @@
     // Numbers
     document.getElementById('score-humac').innerText   = data.humac   || 0;
     document.getElementById('score-hci-adj').innerText = data.hciAdj  || 0;
+    if(data.hciAdj==null||data.hciAdj===data.humac){var _b=document.getElementById('score-adj-block'),_s=document.getElementById('score-adj-sep');if(_b)_b.style.display='none';if(_s)_s.style.display='none';}
 
     // Band chip — "Provisional band" is deliberately printed here, not just
     // implied: this chip is the one element on this page a screenshot

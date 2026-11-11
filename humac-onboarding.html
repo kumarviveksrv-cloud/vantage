@@ -627,9 +627,9 @@ function buildScoreGuideHTML(humac,hci,hciAdj,currentBandName){
     var isCurrent=b.name===currentBandName;
     return '<div class="band-legend-row'+(isCurrent?' current':'')+'"><div class="band-legend-name"><span class="band-legend-dot" style="background:'+b.color+'"></span>'+b.name+(isCurrent?'<span class="band-legend-tag">Your score</span>':'')+'</div><div class="band-legend-range">'+b.range+'</div><div class="band-legend-desc">'+b.desc+'</div></div>';
   }).join('');
-  var hciExample=(humac!=null&&hci!=null&&hciAdj!=null)
+  var hciExample=(humac!=null&&hci!=null&&hciAdj!=null&&hciAdj!==humac)
     ?'In your case: raw score <b>'+humac+'</b> \xd7 HCI <b>'+hci.toFixed(2)+'x</b> = <b>'+hciAdj+'</b> HCI-adjusted.'
-    :'Once your score is generated, this line will show your own numbers worked through.';
+    :(humac!=null&&hciAdj===humac?'In your case: raw score <b>'+humac+'</b> \xd7 HCI <b>'+(hci!=null?hci.toFixed(2):'1.00')+'x</b> = <b>'+humac+'</b>. Your organisation scored full stability, so no adjustment was applied.':'Once your score is generated, this line will show your own numbers worked through.');
   return '<div class="score-guide" id="score-guide"><div class="score-guide-head" onclick="toggleScoreGuide()"><div class="score-guide-title">What do these numbers mean? \xb7 Band definitions &amp; HCI explained</div><div class="score-guide-chevron" id="score-guide-chev">\u25BC</div></div><div class="score-guide-body" id="score-guide-body">'+
     '<div class="band-legend">'+rows+'</div>'+
     '<div class="score-guide-note">Pillar pages (L1, L2, L4, L5) show their own band label \u2014 Minimum, Emerging, Value Active, Value Engine \u2014 on a <b>separate four-tier scale</b> specific to that one pillar\u2019s score. A pillar reading \u201c68 \xb7 Value Active\u201d and this page\u2019s overall \u201c68 \xb7 Value Generating\u201d are not the same classification, even when the numbers happen to match.</div>'+
@@ -1128,6 +1128,9 @@ function renderScoreReveal(){
   var copyBtn=document.getElementById('rv-copy');
   if(copyBtn)copyBtn.onclick=function(){navigator.clipboard.writeText(board).then(function(){copyBtn.textContent='Copied';}).catch(function(){copyBtn.textContent='Select the box above';});};
   var hciBtn=document.getElementById('rv-hci-toggle');
+  var _same=(hciAdj==null||hciAdj===humac);
+  if(hciBtn&&_same){hciBtn.style.display='none';var _c0=document.getElementById('rv-adj-col'),_d0=document.getElementById('rv-adj-divider');if(_c0)_c0.style.display='none';if(_d0)_d0.style.display='none';}
+  else if(hciBtn){hciBtn.style.display='';}
   if(hciBtn)hciBtn.onclick=function(){
     var col=document.getElementById('rv-adj-col');
     var div=document.getElementById('rv-adj-divider');
@@ -1311,7 +1314,7 @@ function generateReport(){
     '<div><div class="hero-score-num">'+humac+'</div><div class="hero-score-label">Humac Score</div></div>' +
     '<div class="hero-right">' +
     '<div class="hero-band">'+bandObj.name+'</div>' +
-    '<div class="hero-adj">HCI-adjusted score: <strong style="color:#e2e8f0;font-family:monospace">'+(hciAdj!=null?hciAdj:'\u2014')+'</strong> &nbsp;\xb7&nbsp; Stability coefficient: <strong style="color:#e2e8f0;font-family:monospace">'+(hci!=null?hci.toFixed(2)+'x':'\u2014')+'</strong></div>' +
+    (hciAdj===humac?'<div class="hero-adj">Stability coefficient: <strong style="color:#e2e8f0;font-family:monospace">'+(hci!=null?hci.toFixed(2)+'x':'\u2014')+'</strong> (no adjustment applied)</div>':'<div class="hero-adj">HCI-adjusted score: <strong style="color:#e2e8f0;font-family:monospace">'+(hciAdj!=null?hciAdj:'\u2014')+'</strong> &nbsp;\xb7&nbsp; Stability coefficient: <strong style="color:#e2e8f0;font-family:monospace">'+(hci!=null?hci.toFixed(2)+'x':'\u2014')+'</strong></div>') +
     '<div class="hero-conf"><span style="width:6px;height:6px;border-radius:50%;background:'+confColor+';display:inline-block;flex-shrink:0"></span>'+confLevel.charAt(0).toUpperCase()+confLevel.slice(1)+' input coverage</div>' +
     '</div></div>' +
 
@@ -1332,7 +1335,7 @@ function generateReport(){
     '<div class="hci-grid">' +
     '<div class="hci-cell"><div class="hci-cell-label">Stability Coefficient</div><div class="hci-cell-val">'+(hci!=null?hci.toFixed(2)+'x':'\u2014')+'</div><div class="hci-cell-sub">Range: 0.70\u20131.00\xd7 (can only lower)</div></div>' +
     '<div class="hci-cell"><div class="hci-cell-label">Input Coverage</div><div class="hci-cell-val" style="color:'+confColor+'">'+confLevel.charAt(0).toUpperCase()+confLevel.slice(1)+'</div><div class="hci-cell-sub">Based on measured vs estimated pillars</div></div>' +
-    '<div class="hci-cell"><div class="hci-cell-label">HCI-adjusted Score</div><div class="hci-cell-val">'+(hciAdj!=null?hciAdj:'\u2014')+'</div><div class="hci-cell-sub">Raw \xd7 HCI</div></div>' +
+    (hciAdj===humac?'':'<div class="hci-cell"><div class="hci-cell-label">HCI-adjusted Score</div><div class="hci-cell-val">'+(hciAdj!=null?hciAdj:'\u2014')+'</div><div class="hci-cell-sub">Raw \xd7 HCI</div></div>') +
     '</div>' +
     '<div style="margin-top:14px;font-size:12px;color:#475569;line-height:1.65">The Human Confidence Index reflects how stable the organisation was at time of scoring: leadership stability, absence of major restructuring, culture/morale health, and strategic alignment. It can only hold the score or lower it: each \'No\' applies a discount, and two or more \'Yes\' answers leave it unchanged.</div>' +
     '</div>' +

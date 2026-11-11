@@ -492,11 +492,11 @@
             '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:rgba(244,243,255,.60);margin-bottom:2px">Humac</div>' +
             '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:3rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (humac==null?'&mdash;':humac) + '</div>' +
           '</div>' +
-          '<div style="color:rgba(99,102,241,.25);font-size:1.4rem;align-self:center">|</div>' +
+          ((hciAdj==null||hciAdj===humac)?'':'<div style="color:rgba(99,102,241,.25);font-size:1.4rem;align-self:center">|</div>' +
           '<div>' +
             '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:rgba(244,243,255,.60);margin-bottom:2px">HCI-adjusted</div>' +
             '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:2.2rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#a5b4fc,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (hciAdj==null?'&mdash;':hciAdj) + '</div>' +
-          '</div>' +
+          '</div>') +
         '</div>' +
         '<div style="display:flex;align-items:center;gap:10px">' +
           '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:4px;border:1px solid ' + bc + '33;background:' + bc + '12">' +
