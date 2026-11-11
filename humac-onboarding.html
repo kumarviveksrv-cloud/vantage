@@ -318,6 +318,7 @@ input[type=number]{-moz-appearance:textfield}
         <div class="band-dot" id="rv-dot"></div>
         <div><div class="band-name" id="rv-band"></div><div class="band-desc" id="rv-desc"></div></div>
       </div>
+      <div id="rv-meaning" style="display:none;margin-top:16px;padding:14px 16px;border-left:3px solid #6366f1;background:rgba(99,102,241,.08);border-radius:0 10px 10px 0;font-size:.9rem;line-height:1.65;color:#f4f3ff"></div>
       <div id="rv-board" style="margin-top:16px;padding:14px 16px;border:1px solid rgba(99,102,241,.3);border-radius:10px;background:rgba(99,102,241,.06);font-size:.86rem;line-height:1.6;color:#f4f3ff"></div>
       <button type="button" id="rv-copy" style="margin-top:8px;background:transparent;border:1px solid rgba(165,180,252,.35);color:#a5b4fc;border-radius:7px;padding:7px 12px;font-family:inherit;font-size:.72rem;cursor:pointer">Copy for the room</button>
       <button type="button" id="rv-hci-toggle" style="margin-top:8px;margin-left:8px;background:transparent;border:1px solid rgba(165,180,252,.2);color:rgba(244,243,255,.55);border-radius:7px;padding:7px 12px;font-family:inherit;font-size:.72rem;cursor:pointer">Show HCI adjustment</button>
@@ -966,7 +967,7 @@ function computeL4Real(a){
 }
 var L5_BENCH={min:-0.12,max:0.35}; /* Placeholder calibration — not yet derived from real data. Revisit once N>30 organisations have computed scores. Reviewed 2026-10-05. */
 function minMaxL5(raw){var scaled=100*(raw-L5_BENCH.min)/(L5_BENCH.max-L5_BENCH.min);return Math.round(Math.max(0,Math.min(100,scaled))*10)/10;}
-function computeL5Real(a,l2,l3){
+function computeL5Parts(a,l2,l3){
   var headcount=a.cq1_headcount||0,compBase=a.cq1_compbase||0;
   if(!(compBase>0))return null;
   var avgSalary=headcount>0?compBase/headcount:0;
@@ -981,8 +982,9 @@ function computeL5Real(a,l2,l3){
   /* An org that states it has no revenue or client-facing roles cannot earn the relationship asset, so its attainable maximum is lowered by that asset's weight. */
   var maxAdj=(a.cq5_revemployees===0)?0.20:0;
   var sc=100*(((totalAssets-totalLiab)/compBase)-L5_BENCH.min)/((L5_BENCH.max-maxAdj)-L5_BENCH.min);
-  return Math.round(Math.max(0,Math.min(100,sc))*10)/10;
+  return {score:Math.round(Math.max(0,Math.min(100,sc))*10)/10,nhw:totalAssets-totalLiab,assets:totalAssets,liab:totalLiab,compBase:compBase};
 }
+function computeL5Real(a,l2,l3){var r=computeL5Parts(a,l2,l3);return r==null?null:r.score;}
 function clampL2(n,lo,hi){return Math.max(lo,Math.min(hi,n));}
 function computeL2Real(a){
   var scores=[];
@@ -1015,6 +1017,41 @@ function showScoreReveal(){
       renderScoreReveal();
     }
   },1000);
+}
+function fmtRs(n){var abs=Math.abs(n);if(abs>=10000000)return '\u20b9'+(abs/10000000).toFixed(2)+'Cr';if(abs>=100000)return '\u20b9'+(abs/100000).toFixed(1)+'L';if(abs>=1000)return '\u20b9'+Math.round(abs/1000)+'K';return '\u20b9'+Math.round(abs);}
+/* Plain-language reading of the score, in the same terms as the pillar pages: rupees, percent of payroll, days of payroll. */
+function buildMeaning(sd){
+  if(!sd||sd.humac==null)return '';
+  var a=sd.rawAnswers||{};
+  var pn={l1:'Value Ledger',l2:'Talent Premium',l3:'Org Vitals',l4:'Human P&L',l5:'Human Balance Sheet'};
+  var keys=['l1','l2','l3','l4','l5'].filter(function(k){return sd[k]!=null;});
+  if(!keys.length)return '';
+  var lo=keys.reduce(function(x,k){return sd[k]<sd[x]?k:x;},keys[0]);
+  var hi=keys.reduce(function(x,k){return sd[k]>sd[x]?k:x;},keys[0]);
+  var t='<b>What this score means.</b> '+sd.humac+' out of 100 ('+sd.band+') on a provisional scale. It is a planning index for tracking your own direction from one quarter to the next, not a grade against other companies. It blends five pillars. Your strongest is '+pn[hi]+' ('+sd[hi]+') and your weakest is '+pn[lo]+' ('+sd[lo]+'), so that is the first place to look.';
+  var bits=[];
+  try{
+    if(sd.l1Mode==='computed'){
+      var b=buildL1Book(a);
+      if(!b.insufficient&&b.compBase>0){
+        var pct=b.totalRet/b.compBase*100;
+        bits.push('your Value Ledger credits HR with about '+fmtRs(b.totalRet)+' a year ('+pct.toFixed(1)+'% of payroll, roughly '+Math.round(pct/100*365)+' days of payroll)');
+        if(sd.l4Mode==='computed'){
+          var actual=Number(a.cq4_hrspend)||0;var cost=actual>0?actual:b.compBase*0.075;
+          bits.push('against HR spend of '+fmtRs(cost)+(actual>0?'':' (assumed)')+' that is \u20b9'+(b.totalRet/cost).toFixed(2)+' back for every \u20b91');
+        }
+      }
+    }
+    if(sd.l5Mode==='computed'){
+      var p5=computeL5Parts(a,sd.l2,sd.l3);
+      if(p5&&p5.compBase>0){
+        var pc=p5.nhw/p5.compBase*100;
+        bits.push(p5.nhw>=0?'your people position leaves a cushion of '+fmtRs(p5.nhw)+' (roughly '+Math.round(Math.abs(pc)/100*365)+' days of payroll)':'the gaps in your people position outweigh the value held by '+fmtRs(-p5.nhw)+' (roughly '+Math.round(Math.abs(pc)/100*365)+' days of payroll)');
+      }
+    }
+  }catch(e){}
+  if(bits.length)t+=' In rupees: '+bits.join('; ')+'.';
+  return t;
 }
 function renderScoreReveal(){
   var l3Ids=['q7','q8','q9','q10','q11','q12','q13','q14','q19','q20','q21','q22','q23','q24','q25','q26','q27','q28','q29','q30','q31','q32','q33','q34','q35'];
@@ -1070,6 +1107,7 @@ function renderScoreReveal(){
   document.getElementById('rv-adj').textContent=hciAdj==null?'—':hciAdj;
   document.getElementById('rv-band').textContent='Provisional band: '+band.name;
   document.getElementById('rv-band').style.color=band.color;
+  var _mEl=document.getElementById('rv-meaning');if(_mEl){var _m=buildMeaning(scoreData);_mEl.innerHTML=_m;_mEl.style.display=_m?'block':'none';}
   document.getElementById('rv-desc').textContent=band.desc+' Computed scores are normalized against a provisional range, not a published benchmark. That scale will be recalibrated once at least 30 organisations have computed scores.';
   if(!document.getElementById('rv-method')){var n=document.createElement('a'); n.id='rv-method'; n.href='https://humacity.com/humacity-method.html'; n.target='_blank'; n.rel='noopener'; n.textContent='Method note · Humac Score v0.9'; n.style.cssText='display:inline-block;margin-top:10px;font-family:monospace;font-size:12px;color:#a5b4fc'; document.getElementById('rv-desc').insertAdjacentElement('afterend', n);}
   var book=window.__l1book||null;
