@@ -1,0 +1,20 @@
+// v163: busy signals from Anthropic/Airtable map to the polite high-demand reply
+const fs = require('fs');
+const src = fs.readFileSync(__dirname + '/situation-room-api.worker.js', 'utf8');
+const m = /function isHighDemandError\(msg\) \{[\s\S]*?\n\}/.exec(src);
+const f = new Function(m[0] + '; return isHighDemandError;')();
+let fails = 0, n = 0; const check = (nm, ok) => { n++; if (!ok) { fails++; console.log('FAIL ' + nm); } };
+check('claude 429', f('Claude API error: 429 — {"type":"error"}'));
+check('claude 529', f('Claude API error: 529 — overloaded'));
+check('claude 503', f('Claude API error: 503 — x'));
+check('stream overloaded', f('Claude API error: stream — {"type":"overloaded_error"}'));
+check('rate limit', f('x rate_limit_error y'));
+check('airtable 429', f('Airtable update error: 429'));
+check('claude 400 is not demand', !f('Claude API error: 400 — bad'));
+check('claude 500 is not demand', !f('Claude API error: 500 — x'));
+check('airtable 422 is not demand', !f('Airtable update error: 422'));
+check('empty', !f('') && !f(undefined));
+check('handler wired', /isHighDemandError\(error\.message\)/.test(src) && /status: 503, headers: \{ \.\.\.CORS_HEADERS, 'Content-Type': 'application\/json', 'Retry-After'/.test(src));
+check('version', /WORKER_VERSION = 'v163'/.test(src));
+console.log(fails ? fails + ' FAILED of ' + n : 'PASSED ' + n);
+process.exit(fails ? 1 : 0);

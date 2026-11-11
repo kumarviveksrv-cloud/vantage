@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v162'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v163'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -2180,6 +2180,10 @@ const JWKS_TIMEOUT_MS = 8000;         // Clerk JWKS
 
 // Calls Anthropic with stream:true and returns the same shape the non-streamed API returns
 // ({ content:[{type:'text',text}], stop_reason, usage }), so every caller stays unchanged.
+// High demand: Anthropic or Airtable answering "too many requests / overloaded" is a busy signal, not a bug in the user's case. The user gets a polite retry message (503), and run() refunds the trial call once.
+function isHighDemandError(msg) {
+  return /Claude API error: (?:429|503|529)\b|overloaded_error|rate_limit_error|Airtable[^\n]{0,40}\b429\b/i.test(String(msg || ''));
+}
 async function claudeStreamCall(body, extraHeaders, totalMs, onChunk) {
   const t0 = Date.now();
   const ctrl = new AbortController();
@@ -6973,6 +6977,12 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
 
   } catch (error) {
     console.error('Handler error:', error.message);
+    if (isHighDemandError(error.message)) {
+      console.error('High demand: telling the user to retry; the 503 refund in run() returns the trial call');
+      return new Response(JSON.stringify({ success: false, error: 'We are seeing high demand right now. This run was not counted. Please try again in a minute.' }), {
+        status: 503, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json', 'Retry-After': '60' }
+      });
+    }
     if (trialCharged) { await refundTrialCall(clerkUserId); }
     return new Response(JSON.stringify({ success: false, error: 'Something went wrong. Please try again.' }), {
       status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
