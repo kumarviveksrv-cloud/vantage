@@ -362,5 +362,9 @@ let h3 = { openingLine: 'x', closingLine: 'c', stack: { credibility: { statement
 PX.applyBusinessCaseStakeholder(h3, 'We have 5 open sales roles. Approve Rs.8L. Targets are behind plan.');
 const h3j = JSON.stringify(h3.stack);
 ok(!/3x|exceeds the hiring|6 weeks|45 days/.test(h3j) && !/Not stated\.?"/.test(h3j.replace(/Not stated: no/g, '')) && /Approve 2 roles now/.test(h3j) && /agreed with the stakeholder/.test(h3.stack.decisionRunway.successMetric), 'multiples removed, no orphan Not stated: ' + h3j);
+// v138: dangling references to stripped figures removed in the no-engine path
+let h4 = { openingLine: 'x', closingLine: 'c', stack: { credibility: { statement: 'The Rs.8L hiring cost is a fraction of either figure. Five roles are open. Frame it with a cost-per-day of delay.', evidence: 'e', deliveryNote: 'd' }, dataAnchor: { figure: 'Rs.8L', headline: 'h', context: 'c', humacBasis: 'b' }, narrativeBridge: { story: 's', connection: 'c', emotionalHook: 'e' }, riskMirror: { scenario: 's', revenueAtRisk: 'x', revenueAtRiskBasis: 'y', timeline: 't' }, decisionRunway: { ask: 'a', deadline: 'd', alternatives: ['a1', 'a2'], successMetric: 'm' } } };
+PX.applyBusinessCaseStakeholder(h4, 'We have 5 open sales roles. Approve Rs.8L. Targets are behind plan.');
+ok(!/either figure|cost-per-day/.test(JSON.stringify(h4.stack)) && /Five roles are open/.test(h4.stack.credibility.statement), 'dangling figure references removed: ' + h4.stack.credibility.statement);
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);

@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v137'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v138'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4919,7 +4919,7 @@ function applyBusinessCaseStakeholder0(result, userText) {
 var BC_PREDICT_RE = /\bself-correct\w*|\bmore likely to worsen\b|\btoward a more expensive problem\b|\bwill only (?:get|grow|become) (?:worse|bigger|costlier)\b|\bgets? worse (?:on its own|without)\b|\bwill (?:certainly|inevitably) (?:worsen|deteriorate)\b/i;
 var BC_MODEL_CLAIM_RE = /\b(?:vacancy cost|cost of vacancy|vacancy) model\b|\bthe (?:cost )?model used here\b|\bno external research body\b|\bnot (?:on|from) industry averages or vendor claims\b|\b(?:the|this) range is wide\b|\bfor this range\b|\bmodelled (?:range|estimate) (?:is|was) (?:built|based)\b/i;
 var BC_TIME_RE = /\btomorrow\b|\bbefore the (?:week|month|quarter) (?:closes|ends)\b|\b(?:on|by|this) (?:monday|tuesday|wednesday|thursday|friday)\b|\bthis week\b|\bnext week\b/i;
-var BC_NOENG_CLAIM_RE = /\b(?:recoverable|recoup\w*|pays? (?:for itself|back)|payback|pays itself back)\b|\bprobability of\b|\b(?:increases?|raises?) the (?:risk|probability|likelihood)\b|\bevery (?:week|day|month) of delay\b|\bcurrently in or near\b|\bfinal[- ]stage pipeline\b|\bpipeline (?:loss|collapse)\b|\bfull hiring restart\b|\bmaterially (?:increases?|reduces?)\b|\bexceeds? the (?:hiring |programme |recruitment )?cost\b|\bwithin the first (?:quarter|month|year|week)\b|\bany reasonable\b[^.]*\bassumption\b|\bcost of (?:inaction|doing nothing|delay) is\b|\b(?:revenue|vacancy) (?:drag|cost) (?:from|of) (?:open|vacant)\b/i;
+var BC_NOENG_CLAIM_RE = /\b(?:recoverable|recoup\w*|pays? (?:for itself|back)|payback|pays itself back)\b|\bprobability of\b|\b(?:increases?|raises?) the (?:risk|probability|likelihood)\b|\bevery (?:week|day|month) of delay\b|\bcurrently in or near\b|\bfinal[- ]stage pipeline\b|\bpipeline (?:loss|collapse)\b|\bfull hiring restart\b|\bmaterially (?:increases?|reduces?)\b|\bexceeds? the (?:hiring |programme |recruitment )?cost\b|\bwithin the first (?:quarter|month|year|week)\b|\bany reasonable\b[^.]*\bassumption\b|\bcost of (?:inaction|doing nothing|delay) is\b|\b(?:revenue|vacancy) (?:drag|cost) (?:from|of) (?:open|vacant)\b|\b(?:either|both) (?:of the )?figures?\b|\bfraction of (?:either|both|that|those|the (?:vacancy|revenue))\b|\bcost[- ]per[- ]day\b|\bthat produces the direct revenue\b|\bdoes not create a new cost\b/i;
 var BC_NUMWORDS = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, fifteen: 15, twenty: 20, thirty: 30, forty: 40, sixty: 60, ninety: 90 };
 function bcDurationBad(s, userText) {
   var ut = String(userText || '').toLowerCase(), nums = (ut.match(/\d+(?:\.\d+)?/g) || []).map(parseFloat);
