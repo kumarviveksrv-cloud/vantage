@@ -235,6 +235,17 @@ PX.applyBusinessCaseStakeholder(p6, PT);
 const p6j = JSON.stringify(p6);
 ok(!/costs more|cost of delay|cost of action|in breach of both|visible to anyone/i.test(p6j), 'comparative-cost and dangling both stripped: ' + (p6j.match(/costs more|cost of delay|cost of action|in breach of both|visible to anyone/i) || []));
 ok(/Rs\.3L closes the gap/.test(p6.stack.dataAnchor.context), 'user-figure sentence kept: ' + p6.stack.dataAnchor.context);
+// v126: BC6 v125 residue
+let p7 = posh();
+p7.openingLine = 'The one scenario that costs us nothing to prevent is the one we left open.';
+p7.stakeholderProfile = 'The CEO listens. The ask of Rs.3L is modest relative to the organisation payroll and must be framed that way. Lead with exposure.';
+p7.stack.credibility.statement = 'I am raising this to protect you personally as the accountable employer. The duty sits in s.4(1).';
+p7.closingLine = 'I will send you the one-page plan today. Let us confirm the approval.';
+p7.stack.dataAnchor.context = 'The ceiling for a first finding under s.26(1) is Rs.50,000.';
+PX.applyBusinessCaseStakeholder(p7, PT);
+const p7j = JSON.stringify(p7);
+ok(!/costs us nothing|modest relative|protect you personally|I will send|first finding/i.test(p7j), 'v125 residue stripped: ' + (p7j.match(/costs us nothing|modest relative|protect you personally|I will send|first finding/i) || []));
+ok(/first contravention under s\.26\(1\)/.test(p7.stack.dataAnchor.context) && /Lead with exposure/.test(p7.stakeholderProfile) && /The duty sits in s\.4\(1\)/.test(p7.stack.credibility.statement), 'neighbouring good sentences kept: ' + p7.stakeholderProfile);
 // generic stakeholder with no engine: unsupported figures removed, note accurate
 let gs = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.42L' }, riskMirror: { revenueAtRisk: 'Rs.1.2Cr', revenueAtRiskBasis: 'b' }, credibility: { statement: 'The budget is Rs.8L. A similar firm lost Rs.90L last year.' } } };
 PX.applyBusinessCaseStakeholder(gs, 'We want Rs.8L for a hiring programme.');
