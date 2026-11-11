@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v158'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v159'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4824,6 +4824,39 @@ function bcFigureCheck(result, c, userText, extra) {
   });
   return flagged.slice(0, 8);
 }
+// B5: on the engine paths, any rupee figure the model wrote that the system did not compute (and the user did not give) is removed, together with its sentence, then the check runs again. What was removed is reported in bcCheck.
+var BC_STRIP_SKIP = { bcCheck: 1, bcEngine: 1, figure: 1, revenueAtRisk: 1, financialImpact: 1, revenueAtRiskBasis: 1, basis: 1, humacBasis: 1, range: 1, breakdown: 1 };
+function bcStripFlagged(result, flagged, fallbackHeadline) {
+  var norm = function (x) { return String(x).replace(/\s+/g, '').toLowerCase(); };
+  var bad = flagged.map(norm).filter(Boolean), removed = 0;
+  if (!bad.length) { return 0; }
+  var hasBad = function (sent) { var n = norm(sent); return bad.some(function (b) { return n.indexOf(b) !== -1; }); };
+  var scrub = function (str, key) {
+    if (!hasBad(str)) { return str; }
+    var parts = str.split(/(?<=[.!?])\s+(?=[A-Z(])/), keep = parts.filter(function (x) { return !hasBad(x); });
+    removed += parts.length - keep.length;
+    if (keep.length) { return keep.join(' '); }
+    if (key === 'headline' && fallbackHeadline) { return fallbackHeadline; }
+    return key === 'deadline' ? 'Not stated. Add the date you need the decision by.' : 'Not stated.';
+  };
+  var walk = function (n) {
+    if (Array.isArray(n)) { n.forEach(function (x, i) { if (typeof x === 'string') { n[i] = scrub(x, ''); } else { walk(x); } }); }
+    else if (n && typeof n === 'object') { Object.keys(n).forEach(function (k) { if (BC_STRIP_SKIP[k]) { return; } if (typeof n[k] === 'string') { n[k] = scrub(n[k], k); } else { walk(n[k]); } }); }
+  };
+  walk(result);
+  return removed;
+}
+function bcCheckAndStrip(result, c, userText, extra, fallbackHeadline) {
+  var flagged = bcFigureCheck(result, c, userText, extra), removed = 0;
+  for (var pass = 0; pass < 3 && flagged.length; pass++) {
+    var r = bcStripFlagged(result, flagged, fallbackHeadline);
+    if (!r) { break; }
+    removed += r;
+    flagged = bcFigureCheck(result, c, userText, extra);
+  }
+  return { flagged: flagged, removed: removed };
+}
+function bcStripNote(removed) { return removed ? ' ' + removed + ' sentence(s) stating a rupee figure the system did not compute and you did not give were removed.' : ''; }
 var BC_RUPEE_SRC = '(?:₹|\\b(?:rs\\.?|inr))\\s*[\\d,]+(?:\\.\\d+)?\\s*(?:crore|cr|lakhs?|lacs?|lpa|l|k)?\\b|\\b[\\d,]+(?:\\.\\d+)?\\s*(?:crore|cr|lakhs?|lacs?|lpa)\\b';
 var BC_NOT_COMPUTED = 'Not computed: the number of exits (or the attrition rate with the headcount) and the average CTC are needed.';
 function bcStripInvented(result) {
@@ -4880,10 +4913,12 @@ function applyBusinessCaseEngine(result, userText) {
     if (result.humac && badG2(String(result.humac.range || ''))) { result.humac.range = 'Not computed'; }
     if (!result.headline || result.headline === 'Not stated.') { result.headline = 'No rupee figure beyond those you gave can be named yet.'; }
   }
-  var flagged = bcFigureCheck(result, c, userText);
-  result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged, stripped: stripped,
+  var csG = c ? bcCheckAndStrip(result, c, userText, null, 'The modelled cost of doing nothing is ' + bcRange(c.total) + ', computed by the system from your figures.') : { flagged: bcFigureCheck(result, c, userText), removed: 0 };
+  var flagged = csG.flagged;
+  result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged, stripped: stripped + csG.removed,
     note: c ? (flagged.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flagged.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.')
             : ((inp && inp.model === 'attrition' ? 'The system could not compute the attrition figures from your data (it needs the number of exits and the average CTC, both stated as numbers). ' : 'The system has no calculation for this kind of analysis, or could not compute it from your data. ') + 'The rupee figures below are the model\'s own estimates and are not system-checked.' + (flagged.length ? ' Not in your data: ' + flagged.join(', ') + '.' : '')) };
+  if (csG.removed && c) { result.bcCheck.note += bcStripNote(csG.removed); }
   if (strippedF) { result.bcCheck.stripped = strippedF; result.bcCheck.note = 'The system has no calculation for this kind of analysis, or could not compute it from your data. ' + strippedF + ' sentence(s) with figures or research claims that are not in your data were removed and the figure fields were marked Not computed. The figures that remain come from your input.'; }
   if (claimsG) { result.bcCheck.stripped = (result.bcCheck.stripped || 0) + claimsG; result.bcCheck.note += ' ' + claimsG + ' sentence(s) stating facts about your organisation that you did not give (for example that costs were unbudgeted), or contradicting the benchmark direction, were removed.'; }
   if (stripped) { result.bcCheck.note = 'The system could not compute attrition figures because your input has no exit count or average CTC, and it contains no rupee amounts. Every rupee figure the model wrote was removed (' + stripped + ' sentences). Add the number of exits and the average CTC to get a computed figure.'; }
@@ -4906,8 +4941,10 @@ function applyBusinessCaseStakeholder0(result, userText) {
     if (openBad) { result.openingLine = 'The ' + engineLakh(r2(l.spendL)) + ' on the table pays for itself if it lifts the output of the ' + engineLakh(r2(l.payrollL)) + ' payroll it covers by ' + pctL + ' percent.'; }
     var claimsRemoved = ldStripClaims(result, LD_OVERSTATE_RE);
     result.bcEngine = { model: 'ld-v1', breakEvenPct: pctL, payroll: r2(l.payrollL) };
-    var fl = bcFigureCheck(result, null, userText, ldAllowed(l).concat(bcUserFractions(userText)));
+    var csL = bcCheckAndStrip(result, null, userText, ldAllowed(l).concat(bcUserFractions(userText)), 'The ' + engineLakh(r2(l.spendL)) + ' on the table breaks even at a ' + pctL + ' percent uplift on the ' + engineLakh(r2(l.payrollL)) + ' payroll it covers.');
+    var fl = csL.flagged;
     result.bcCheck = { ok: fl.length === 0, engine: true, flagged: fl, note: fl.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + fl.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.' };
+    if (csL.removed) { result.bcCheck.note += bcStripNote(csL.removed); }
     if (claimsRemoved) { result.bcCheck.note += ' ' + claimsRemoved + ' sentence(s) citing industry benchmarks or studies were removed because the system cannot verify them.'; result.bcCheck.claimsRemoved = claimsRemoved; }
     return true;
   }
@@ -4920,8 +4957,10 @@ function applyBusinessCaseStakeholder0(result, userText) {
     if (openBadE) { result.openingLine = 'The productivity drag on this group is about ' + dragFig + ' a year, at an assumed ' + cPct + ' percent of the ' + engineLakh(r2(er.baseL)) + ' payroll it affects.'; }
     var claimsE = ldStripClaims(result, LD_OVERSTATE_RE);
     result.bcEngine = { model: 'er-v1', kind: er.kind, drag: r2(er.dragL), base: r2(er.baseL) };
-    var flE = bcFigureCheck(result, null, userText, erAllowed(er).concat(bcUserFractions(userText)));
+    var csE = bcCheckAndStrip(result, null, userText, erAllowed(er).concat(bcUserFractions(userText)), 'The productivity drag on this group is about ' + dragFig + ' a year, at an assumed ' + cPct + ' percent of the payroll it affects.');
+    var flE = csE.flagged;
     result.bcCheck = { ok: flE.length === 0, engine: true, flagged: flE, note: flE.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flE.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.' };
+    if (csE.removed) { result.bcCheck.note += bcStripNote(csE.removed); }
     if (claimsE) { result.bcCheck.note += ' ' + claimsE + ' sentence(s) citing industry benchmarks or studies were removed because the system cannot verify them.'; result.bcCheck.claimsRemoved = claimsE; }
     return true;
   }
@@ -4946,11 +4985,13 @@ function applyBusinessCaseStakeholder0(result, userText) {
       if (gda.figure === 'Not computed') { gda.context = 'Not computed because the input has no numbers to calculate from. Add them and run it again.'; }
     }
   }
-  var flagged = bcFigureCheck(result, c, userText);
+  var csA = c ? bcCheckAndStrip(result, c, userText, null, 'The modelled cost of doing nothing is ' + bcRange(c.total) + ', computed by the system from your figures.') : { flagged: bcFigureCheck(result, c, userText), removed: 0 };
+  var flagged = csA.flagged;
   var attHint = (inp && inp.model === 'attrition') ? ' An attrition calculation needs the number of exits and the average CTC, both stated as numbers.' : '';
-  result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged, stripped: strippedS,
+  result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged, stripped: strippedS + csA.removed,
     note: c ? (flagged.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flagged.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.')
             : (strippedS ? 'The system has no calculation for this kind of analysis. ' + strippedS + ' sentence(s) with figures or research claims that are not in your data were removed and the figure fields were marked Not computed. The figures that remain come from your input.' + attHint : 'The system has no calculation for this kind of analysis. It found no rupee figure that is absent from your data.' + attHint) };
+  if (csA.removed && c) { result.bcCheck.note += bcStripNote(csA.removed); }
   if (claimsA) { result.bcCheck.stripped = (result.bcCheck.stripped || 0) + claimsA; result.bcCheck.note += ' ' + claimsA + ' sentence(s) stating facts about your organisation that you did not give (for example that costs were unbudgeted), or contradicting the benchmark direction, were removed.'; }
   return !!c;
 }

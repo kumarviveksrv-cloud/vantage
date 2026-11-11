@@ -29,8 +29,14 @@ ok(r.revenueAtRisk.figure === 'Rs.3.36Cr to Rs.5.76Cr' && r.signal.impact.financ
 ok(r.headline === 'Attrition is costing Rs.3.36Cr to Rs.5.76Cr a year', 'headline figure replaced: ' + r.headline);
 ok(r.humac.range === 'Rs.3.36Cr – Rs.5.76Cr', 'humac range: ' + r.humac.range);
 ok(r.signal.impact.breakdown.length >= 6, 'breakdown rebuilt');
-ok(r.bcCheck.engine === true && r.bcCheck.ok === false && r.bcCheck.flagged.some(f => /9Cr/i.test(f)) && !r.bcCheck.flagged.some(f => /15L/i.test(f)), 'flags Rs.9Cr, not the user budget: ' + JSON.stringify(r.bcCheck));
-ok(r.bcCheck.flagged.some(f => /7Cr/i.test(f)), 'flags 7Cr in situation narrative: ' + JSON.stringify(r.bcCheck.flagged));
+ok(r.bcCheck.engine === true && r.bcCheck.ok === true && r.bcCheck.stripped > 0 && !/9Cr/i.test(JSON.stringify(Object.assign({}, r, { bcCheck: null }))), 'strips Rs.9Cr sentences, check clean after: ' + JSON.stringify(r.bcCheck));
+ok(r.bcCheck.stripped > 0 && !/7Cr/i.test(JSON.stringify(Object.assign({}, r, { bcCheck: null }))), 'strips 7Cr in situation narrative: ' + JSON.stringify(r.bcCheck));
+// v159 B5: strip keeps what the system computed and what the user gave, and says what it removed
+ok(r.revenueAtRisk.figure === 'Rs.3.36Cr to Rs.5.76Cr' && /3\.36Cr/.test(r.headline), 'computed figure and headline survive the strip');
+ok(/removed/.test(r.bcCheck.note) && /did not compute/.test(r.bcCheck.note), 'strip is reported in the note: ' + r.bcCheck.note);
+{ let q = mk(); q.signal.situation.narrative = 'Nine exits have already cost this organisation between Rs.1.13 crore and Rs.1.94 crore. We lost 20 of 80 people at 8L average CTC.'; applyBusinessCaseEngine(q, TXT);
+  ok(!/1\.13/.test(q.signal.situation.narrative) && /We lost 20 of 80 people/.test(q.signal.situation.narrative), 'live-case sentence removed, neighbouring sentence kept: ' + q.signal.situation.narrative); }
+{ let q = mk(); q.signal.situation.narrative = 'Cost is Rs.7Cr.'; q.signal.narrative.cfoVersion = 'Fine.'; applyBusinessCaseEngine(q, TXT); ok(q.signal.situation.narrative === 'Not stated.', 'a field that is only a bad figure becomes Not stated: ' + q.signal.situation.narrative); }
 // headline already inside the range is kept
 r = mk(); r.headline = 'Attrition costs Rs.4Cr a year'; applyBusinessCaseEngine(r, TXT); ok(r.headline === 'Attrition costs Rs.4Cr a year', 'in-range headline kept');
 // clean narrative gives ok
@@ -40,11 +46,11 @@ applyBusinessCaseEngine(r, TXT); ok(r.bcCheck.ok === true && /comes from your da
 r = mk(); r.headline = 'A Rs.15L retention programme against Rs.3.36Cr to Rs.5.76Cr at risk'; applyBusinessCaseEngine(r, TXT); ok(/Rs\.15L/.test(r.headline) && !/Rs\.3\.36Cr to Rs\.5\.76Cr to/.test(r.headline), 'budget kept in headline: ' + r.headline);
 r = mk(); r.headline = 'Rs.15L budget'; r.signal.situation.narrative = 'Cohort payroll Rs.3.2Cr; avoiding 10 exits saves Rs.1.44Cr to Rs.1.04Cr'.replace('Rs.1.44Cr to Rs.1.04Cr', 'Rs.84L to Rs.1.44Cr'); r.signal.narrative.cfoVersion = 'Preventing 8 exits saves Rs.64L to Rs.1.15Cr.';
 applyBusinessCaseEngine(r, TXT); ok(r.bcCheck.ok === true, 'cohort payroll and k-multiples allowed: ' + JSON.stringify(r.bcCheck.flagged));
-r = mk(); r.signal.situation.narrative = 'Assume Rs.37L at 50 percent productivity.'; r.signal.narrative.cfoVersion = 'x'; applyBusinessCaseEngine(r, TXT); ok(r.bcCheck.flagged.some(f => /37L/i.test(f)), 'model own assumption still flagged');
+r = mk(); r.signal.situation.narrative = 'Assume Rs.37L at 50 percent productivity.'; r.signal.narrative.cfoVersion = 'x'; applyBusinessCaseEngine(r, TXT); ok(r.bcCheck.stripped > 0 && !/37L/i.test(JSON.stringify(Object.assign({}, r, { bcCheck: null }))), 'model own assumption now removed');
 // v106: model's wrong Rs.1.04Cr to Rs.1.69Cr is now flagged; range headline replaced whole; prompt block carries system figures
 r = mk(); r.headline = 'A 16% attrition rate is costing Rs.1.04Cr–1.69Cr annually, the Rs.15L programme costs less'; r.signal.situation.narrative = 'It sits at Rs.1.04Cr–1.69Cr when annualised.'; r.signal.narrative.cfoVersion = 'x';
 applyBusinessCaseEngine(r, TXT); ok(r.headline === 'A 16% attrition rate is costing Rs.3.36Cr to Rs.5.76Cr annually, the Rs.15L programme costs less', 'range headline replaced whole: ' + r.headline);
-ok(r.bcCheck.ok === false && r.bcCheck.flagged.some(f => /1\.04Cr/.test(f)), 'wrong Rs.1.04Cr flagged: ' + JSON.stringify(r.bcCheck.flagged));
+ok(r.bcCheck.stripped > 0 && !/1\.04Cr/.test(JSON.stringify(Object.assign({}, r, { bcCheck: null }))), 'wrong Rs.1.04Cr removed: ' + JSON.stringify(r.bcCheck));
 r = mk(); r.headline = 'Rs.15L'; r.signal.situation.narrative = 'Preventing 8 exits saves Rs.67L to Rs.1.15Cr.'; r.signal.narrative.cfoVersion = 'x'; applyBusinessCaseEngine(r, TXT); ok(r.bcCheck.ok === true, 'k stated in same sentence allowed: ' + JSON.stringify(r.bcCheck.flagged));
 const { bcPromptBlock } = new Function(code + ';return {bcPromptBlock};')();
 const pb = bcPromptBlock(bcCalc(bcRead(IN, TXT))); ok(/Rs\.3\.36Cr to Rs\.5\.76Cr/.test(pb) && /Never annualise/.test(pb) && /1 to 1\.8 exits/.test(pb), 'prompt block: ' + pb);
@@ -54,7 +60,7 @@ const { applyBusinessCaseStakeholder } = new Function(code + ';return {applyBusi
 let st = { stack: { dataAnchor: { figure: 'Rs.2,56,00,000' }, riskMirror: { revenueAtRisk: 'Rs.3,36,00,000', revenueAtRiskBasis: 'x' }, credibility: { statement: 'Saves Rs.96,00,000 to Rs.1,04,00,000 if 12 to 13 exits are avoided.' } }, bcInputs: IN };
 ok(applyBusinessCaseStakeholder(st, TXT) === true && st.bcInputs === undefined, 'stakeholder applied');
 ok(st.stack.dataAnchor.figure === 'Rs.3.36Cr to Rs.5.76Cr' && st.stack.riskMirror.revenueAtRisk === 'Rs.3.36Cr to Rs.5.76Cr' && /Computed by the system/.test(st.stack.riskMirror.revenueAtRiskBasis), 'stakeholder anchors overwritten: ' + st.stack.dataAnchor.figure);
-ok(st.bcCheck.ok === false && st.bcCheck.flagged.some(f => /96,00,000/.test(f)), 'salary-as-cost figure flagged: ' + JSON.stringify(st.bcCheck.flagged));
+ok(st.bcCheck.stripped > 0 && !/96,00,000/.test(JSON.stringify(Object.assign({}, st, { bcCheck: null }))), 'salary-as-cost figure removed: ' + JSON.stringify(st.bcCheck));
 st = { stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Each exit costs Rs.8.4L to Rs.14.4L.' } }, bcInputs: IN };
 applyBusinessCaseStakeholder(st, TXT); ok(st.bcCheck.ok === true, 'clean stakeholder passes: ' + JSON.stringify(st.bcCheck.flagged));
 ok(applyBusinessCaseStakeholder({ wrongTool: true, stack: {} }, TXT) === false, 'stakeholder wrong tool untouched');
@@ -91,7 +97,7 @@ ok(LD.applyBusinessCaseStakeholder(ls, LDT) === true && ls.bcInputs === undefine
 ok(/Break-even at a 1\.8 percent uplift on Rs\.14Cr payroll/.test(ls.stack.dataAnchor.figure), 'ld anchor: ' + ls.stack.dataAnchor.figure);
 ok(ls.stack.riskMirror.revenueAtRisk === 'Not computed' && /Not computed/.test(ls.stack.riskMirror.revenueAtRiskBasis), 'ld risk mirror not computed');
 ok(/pays for itself/.test(ls.openingLine) && !/1\.4Cr/.test(ls.openingLine), 'invented opening line replaced: ' + ls.openingLine);
-ok(ls.bcCheck.ok === false && ls.bcCheck.flagged.some(f => /8L/.test(f)), 'ld invented pilot flagged: ' + JSON.stringify(ls.bcCheck.flagged));
+ok(!/\bRs\.?8L\b/.test(JSON.stringify(Object.assign({}, ls, { bcCheck: null }))) , 'ld invented pilot removed: ' + JSON.stringify(ls.bcCheck));
 ls = { openingLine: 'Rs.25L covers Rs.14Cr of payroll.', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Planning return Rs.25L to Rs.50L, about Rs.12,500 per head, half is Rs.12.5L.' } }, bcInputs: LDIN };
 LD.applyBusinessCaseStakeholder(ls, LDT); ok(ls.bcCheck.ok === true && ls.openingLine === 'Rs.25L covers Rs.14Cr of payroll.', 'clean ld passes: ' + JSON.stringify(ls.bcCheck.flagged));
 // v114: "rs" inside a word is not a rupee prefix
@@ -132,7 +138,7 @@ ok(/Rs\.72L a year of productivity drag at an assumed 15 percent/.test(es.stack.
 ok(/assumed planning coefficient/.test(es.stack.riskMirror.revenueAtRiskBasis) && es.stack.riskMirror.probability === '', 'basis labelled assumed, likelihood cleared');
 ok(!/1\.2Cr/.test(es.openingLine) && /Rs\.72L/.test(es.openingLine), 'invented opening figure replaced: ' + es.openingLine);
 ok(es.stack.credibility.statement === 'The drag is Rs.72L.', 'Gallup derivation removed: ' + es.stack.credibility.statement);
-ok(es.bcCheck.ok === false && es.bcCheck.flagged.some(f => /40L/.test(f)), 'invented Rs.40L attrition flagged: ' + JSON.stringify(es.bcCheck.flagged));
+ok(!/40L/.test(JSON.stringify(Object.assign({}, es, { bcCheck: null }))), 'invented Rs.40L attrition removed: ' + JSON.stringify(es.bcCheck));
 es = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'The drag is Rs.61.44L on Rs.7.68Cr of team payroll.' } }, bcInputs: MIN };
 ER.applyBusinessCaseStakeholder(es, MT); ok(es.bcCheck.ok === true && es.stack.riskMirror.revenueAtRisk === 'Rs.61.44L a year', 'manager clean case passes: ' + JSON.stringify(es.bcCheck.flagged) + ' ' + es.stack.riskMirror.revenueAtRisk);
 ok(/NO INVENTED FACTS RULE/.test(src) && (src.match(/NO INVENTED FACTS RULE/g) || []).length === 2, 'no-invented-facts rule in both prompts');
@@ -143,14 +149,14 @@ ok(es.bcCheck.ok === true, 'half and 60/40 of the stated spend allowed: ' + JSON
 ok(es.stack.decisionRunway.deadline === 'Not stated: no decision date was given.', 'deadline fallback is about the date: ' + es.stack.decisionRunway.deadline);
 ok(!/at least Rs\.72L/.test(es.stack.riskMirrorExtra.t) && !/not a projection/.test(es.openingLine), 'floor and not-a-projection claims removed: ' + es.stack.riskMirrorExtra.t + ' | ' + es.openingLine);
 es = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Pilot at Rs.9L first.' } }, bcInputs: EIN };
-ER.applyBusinessCaseStakeholder(es, ET); ok(es.bcCheck.ok === false && es.bcCheck.flagged.some(f => /9L/.test(f)), 'Rs.9L is not a fraction of the spend: flagged');
+ER.applyBusinessCaseStakeholder(es, ET); ok(!/\b9L\b/.test(JSON.stringify(Object.assign({}, es, { bcCheck: null }))), 'Rs.9L is not a fraction of the spend: removed');
 ok(/never call it a floor/.test(ER.erPromptBlock(e)) && /Never state numeric targets/.test(ER.erPromptBlock(e)), 'er prompt forbids floor claims and numeric targets');
 // v118: quarterly and monthly slices of the system drag allowed; ranking and disclosure-avoidance claims stripped
 es = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Every quarter without intervention is approximately Rs.18L, or Rs.6L a month.' }, narrativeBridge: { story: 'Fixing this is one of the highest-return interventions available. The group has no active programme in place. Rehearse your answer without retreating to the coefficient.' } }, bcInputs: EIN };
 ER.applyBusinessCaseStakeholder(es, ET);
 ok(es.bcCheck.ok === true && es.bcCheck.claimsRemoved === 3 && /^The story is the situation you described\./.test(es.stack.narrativeBridge.story), 'quarter and month slices allowed, three claims removed: ' + JSON.stringify(es.bcCheck) + ' | ' + es.stack.narrativeBridge.story);
 es = { openingLine: 'x', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' }, credibility: { statement: 'Every quarter costs Rs.19L.' } }, bcInputs: EIN };
-ER.applyBusinessCaseStakeholder(es, ET); ok(es.bcCheck.ok === false && es.bcCheck.flagged.some(f => /19L/.test(f)), 'Rs.19L is not a slice of the drag: flagged');
+ER.applyBusinessCaseStakeholder(es, ET); ok(!/\b19L\b/.test(JSON.stringify(Object.assign({}, es, { bcCheck: null }))), 'Rs.19L is not a slice of the drag: removed');
 ok(/hide, downplay or avoid saying/.test(ER.erPromptBlock(e)), 'prompt forbids coaching to avoid the disclosure');
 // v119: fully stripped meridianCalibration becomes empty; model note about obeying the rule is cut from the ARIA line
 es = { openingLine: 'x', humac: { pillarRationale: 'Maps to L3.', meridianCalibration: 'Attrition of 20 to 24 percent is the industry norm here.' }, aria: 'ARIA plays the CEO: \'Why Rs.20L on a planning figure?\' -- the rehearsal keeps the disclosure in place and coaches you to hold the argument.', stack: { dataAnchor: { figure: 'x' }, riskMirror: { revenueAtRisk: 'x' } }, bcInputs: EIN };
