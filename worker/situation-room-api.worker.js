@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v166'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v167'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1113,13 +1113,12 @@ INSIGHTS WELL (3 bullets): Specific, named moments from the cases. If no cases, 
 
 INSIGHTS SHARPEN (2 bullets): Honest, specific gaps. If no cases, use Humac pillar scores.
 
-CAREER RECORD VALUE — the FOMO section (this is the most important part):
-Do not be subtle. Be direct. State clearly what ${totalMonths} month${totalMonths > 1 ? 's' : ''} of documented HR decisions on Vantage actually means:
-- At their next appraisal: most HR professionals bring opinions. This person brings documented recommendations and modelled exposure — case types, financial ranges estimated at the time, frameworks applied. Not proof the outcomes were right, proof the thinking happened before anyone knew how it would turn out.
-- CV value: every case documented is a line in a professional CV being written in real time, with financial context most CVs never have.
-- The annual synthesis: at 12 months, Vantage generates one comprehensive career narrative across every decision, pattern, and financial moment of the year — a single document that no other tool produces.
-- The cost of stopping: this record cannot be rebuilt from memory. Every month not on Vantage is a month that does not exist in the record.
-State this plainly and directly, grounded in what has actually been documented this month — not as a marketing pitch, and never with more certainty than the record and the Humac Score (a provisional index) actually support.
+YOUR RECORD SO FAR (factual, calm, no urgency):
+State plainly what ${totalMonths} month${totalMonths > 1 ? 's' : ''} of documented HR decisions on Vantage hold:
+- What the record contains: the number of cases since the first month, what was handled, how the thinking was reasoned, and what is still open. Use only counts and facts that appear above.
+- Where it is useful: this person can open it before an appraisal or an interview and show dated, documented reasoning. Modelled figures are planning estimates made at the time, not proof the outcomes were right.
+- Do not describe any consequence of stopping or of missing a month. Do not use urgency, fear or loss language. Do not mention any feature that is not described in this prompt, including any annual summary.
+Never claim more certainty than the record and the Humac Score (a provisional index) actually support.
 
 NEXT MONTH (2 actions): Specific to their patterns and MERIDIAN context.
 
@@ -1157,7 +1156,7 @@ RETURN STRICT JSON ONLY. No prose outside the JSON object.
     ]
   },
   "nextMonth": ["specific action 1 tied to MERIDIAN context", "specific action 2 tied to patterns observed"],
-  "fomoBlock": "2-3 sentences. The most direct, honest statement of what this record is worth and what it costs to stop building it. Reference the annual synthesis. Reference appraisals. This is not a sales pitch, and it should not overstate what a provisional record and planning index can prove — but most HR professionals never see this written down at all, and that gap is real."
+  "fomoBlock": "2 sentences. A factual statement of what the record holds so far (case count, since which month, what is still open) and where it is useful (appraisals, interviews). No urgency, no consequences of stopping, no feature promises. Planning figures are models, not verified savings.",
 }`;
 }
 
@@ -1190,7 +1189,7 @@ function buildDebriefEmail(debrief, month, year) {
       <div style="font-size:9px;color:rgba(244,243,255,0.45);text-transform:uppercase;letter-spacing:0.1em;margin-top:2px">Resolved</div>
     </div>
   </div>
-  <div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.18);border-left:3px solid #6366f1;border-radius:8px;padding:20px;margin:0 0 24px;font-size:13px;color:rgba(244,243,255,0.70);line-height:1.75;font-style:italic">${debrief.fomoBlock || 'Your career record on Vantage grows every month. This data is yours, and it compounds.'}</div>
+  <div style="background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.18);border-left:3px solid #6366f1;border-radius:8px;padding:20px;margin:0 0 24px;font-size:13px;color:rgba(244,243,255,0.70);line-height:1.75;font-style:italic">${debrief.fomoBlock || 'Your record on Vantage holds the cases you have saved. It is yours to open before an appraisal or an interview.'}</div>
   <a href="https://vantage.virorah.com/debrief.html" style="display:block;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:700;font-size:14px;text-align:center;margin-bottom:24px">Read Your Full ${month} Debrief →</a>
   <div style="font-size:11px;color:rgba(244,243,255,0.25);border-top:1px solid rgba(99,102,241,0.1);padding-top:16px;line-height:1.6">
     Virorah Vantage · People decisions are financial decisions.<br>
@@ -6481,7 +6480,7 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
           narrative: 'Your debrief narrative is being generated.',
           insightsWell: [], insightsSharpen: [],
           humacity: { assets: [] }, nextMonth: [],
-          fomoBlock: 'Your career record on Vantage grows every month.'
+          fomoBlock: 'Your record on Vantage holds the cases you have saved.'
         };
       }
 
