@@ -294,7 +294,7 @@ input[type=number]{-moz-appearance:textfield}
       <div style="font-family:var(--font);font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:4px">Have your organisation's real numbers already?</div>
       <div style="font-family:var(--mono);font-size:.72rem;color:var(--text-dim);line-height:1.6">Download the template, fill in one row with your own data, and upload it back &mdash; every Computed field across all four pillars populates in one step.</div>
     </div>
-    <div style="display:flex;gap:10px;flex-shrink:0;align-items:center">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;max-width:100%">
       <a href="Vantage_Humac_Data_Template.xlsx" download style="padding:10px 20px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:var(--font), sans-serif;font-weight:700;font-size:13px;border:none;border-radius:8px;flex-shrink:0;box-shadow:0 4px 20px rgba(99,102,241,0.4);text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;transition:all .15s">Download Template</a>
       <label style="padding:10px 20px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;font-family:var(--font), sans-serif;font-weight:700;font-size:13px;border:none;border-radius:8px;cursor:pointer;flex-shrink:0;box-shadow:0 4px 20px rgba(99,102,241,0.4);white-space:nowrap;display:inline-flex;align-items:center;transition:all .15s">Upload Filled Template<input type="file" id="upload-input" accept=".xlsx,.xls" style="display:none" onchange="handleTemplateUpload(this.files[0])"/></label>
     </div>
