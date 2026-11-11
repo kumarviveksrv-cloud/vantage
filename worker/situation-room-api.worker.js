@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v157'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v158'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -2977,7 +2977,11 @@ function usageLimitResponse(check) {
 const TRIAL_CALL_CAP = 10;
 const TRIAL_DAYS = 7;
 
-async function chargeTrialCallAtomic(clerkUserId, cap) { const row = await TRIAL_COUNTER_DB.prepare(`INSERT INTO trial_counters (clerk_user_id, trial_calls_used, updated_at) VALUES (?1, 1, datetime('now')) ON CONFLICT(clerk_user_id) DO UPDATE SET trial_calls_used = trial_calls_used + 1, updated_at = datetime('now') WHERE trial_calls_used < ?2 RETURNING trial_calls_used`).bind(clerkUserId, cap).first(); if (row) return { allowed: true, used: row.trial_calls_used }; const cur = await TRIAL_COUNTER_DB.prepare(`SELECT trial_calls_used FROM trial_counters WHERE clerk_user_id = ?1`).bind(clerkUserId).first(); return { allowed: false, used: cur ? cur.trial_calls_used : cap }; } async function refundTrialCallAtomic(clerkUserId) { const row = await TRIAL_COUNTER_DB.prepare(`UPDATE trial_counters SET trial_calls_used = MAX(trial_calls_used - 1, 0), updated_at = datetime('now') WHERE clerk_user_id = ?1 RETURNING trial_calls_used`).bind(clerkUserId).first(); return row ? row.trial_calls_used : null; } async function checkTrialAccess(clerkUserId, charge = true) {
+// A1: every charge also leaves a pending marker (pending_n, pending_at). run() clears it when the request finishes in any way the Worker can see. If the platform kills the request (Free plan CPU limit), the marker stays and the next call from that user gives the charge back once it is older than PENDING_CHARGE_STALE_MIN minutes. If the two pending columns are missing, charging falls back to the old query so nothing breaks.
+const PENDING_CHARGE_STALE_MIN = 6;
+async function chargeTrialCallAtomic(clerkUserId, cap) { let row; try { row = await TRIAL_COUNTER_DB.prepare(`INSERT INTO trial_counters (clerk_user_id, trial_calls_used, updated_at, pending_n, pending_at) VALUES (?1, 1, datetime('now'), 1, datetime('now')) ON CONFLICT(clerk_user_id) DO UPDATE SET trial_calls_used = trial_calls_used + 1, updated_at = datetime('now'), pending_n = pending_n + 1, pending_at = datetime('now') WHERE trial_calls_used < ?2 RETURNING trial_calls_used`).bind(clerkUserId, cap).first(); } catch (e) { row = await TRIAL_COUNTER_DB.prepare(`INSERT INTO trial_counters (clerk_user_id, trial_calls_used, updated_at) VALUES (?1, 1, datetime('now')) ON CONFLICT(clerk_user_id) DO UPDATE SET trial_calls_used = trial_calls_used + 1, updated_at = datetime('now') WHERE trial_calls_used < ?2 RETURNING trial_calls_used`).bind(clerkUserId, cap).first(); } if (row) return { allowed: true, used: row.trial_calls_used }; const cur = await TRIAL_COUNTER_DB.prepare(`SELECT trial_calls_used FROM trial_counters WHERE clerk_user_id = ?1`).bind(clerkUserId).first(); return { allowed: false, used: cur ? cur.trial_calls_used : cap }; } async function refundTrialCallAtomic(clerkUserId) { const row = await TRIAL_COUNTER_DB.prepare(`UPDATE trial_counters SET trial_calls_used = MAX(trial_calls_used - 1, 0), updated_at = datetime('now') WHERE clerk_user_id = ?1 RETURNING trial_calls_used`).bind(clerkUserId).first(); return row ? row.trial_calls_used : null; } async function settleTrialCharge(clerkUserId) { try { await TRIAL_COUNTER_DB.prepare(`UPDATE trial_counters SET pending_n = MAX(pending_n - 1, 0), pending_at = CASE WHEN pending_n - 1 <= 0 THEN NULL ELSE pending_at END WHERE clerk_user_id = ?1 AND pending_n > 0`).bind(clerkUserId).run(); } catch (e) { console.error('settleTrialCharge failed:', e.message); } }
+async function recoverStaleTrialCharges(clerkUserId, airtableRecordId) { try { const row = await TRIAL_COUNTER_DB.prepare(`UPDATE trial_counters SET trial_calls_used = MAX(trial_calls_used - pending_n, 0), pending_n = 0, pending_at = NULL, updated_at = datetime('now') WHERE clerk_user_id = ?1 AND pending_n > 0 AND pending_at < datetime('now', ?2) RETURNING trial_calls_used`).bind(clerkUserId, '-' + PENDING_CHARGE_STALE_MIN + ' minutes').first(); if (row && airtableRecordId) { await updateAirtable('Users', airtableRecordId, { trial_calls_used: row.trial_calls_used }); } return row ? row.trial_calls_used : null; } catch (e) { console.error('recoverStaleTrialCharges failed:', e.message); return null; } }
+async function checkTrialAccess(clerkUserId, charge = true) {
   const userRecord = await ensureUserRow(clerkUserId);
   if (!userRecord) {
     return { allowed: false, reason: 'no_profile' };
@@ -3006,6 +3010,7 @@ async function chargeTrialCallAtomic(clerkUserId, cap) { const row = await TRIAL
 
   if (!charge) { return { allowed: true }; }
 
+  await recoverStaleTrialCharges(clerkUserId, userRecord.id);
   const d1Result = await chargeTrialCallAtomic(clerkUserId, TRIAL_CALL_CAP); if (!d1Result.allowed) { await updateAirtable('Users', userRecord.id, { subscription_status: 'trial_expired' }); return { allowed: false, reason: 'trial_cap_reached', used: d1Result.used, cap: TRIAL_CALL_CAP }; } await updateAirtable('Users', userRecord.id, { trial_calls_used: d1Result.used }); return { allowed: true, used: d1Result.used, cap: TRIAL_CALL_CAP, callsRemaining: TRIAL_CALL_CAP - d1Result.used }; }
 
 function trialBlockedResponse(gate) {
@@ -7240,10 +7245,16 @@ export default {
     CLAUDE_MODEL_DEFAULT = env.CLAUDE_MODEL_DEFAULT || 'claude-sonnet-4-6';
     CLAUDE_MODEL_FAST = env.CLAUDE_MODEL_FAST || 'claude-haiku-4-5-20251001'; TRIAL_COUNTER_DB = env.TRIAL_COUNTER_DB;
     const run = async function () {
-      const resp = await handleRequest(request, env);
-      const _st = _trialState.get(request);
-      if (_st && _st.charged && _st.tool !== 'pact' && (resp.status === 503 || resp.status === 429 || resp.status === 400)) {
-        await refundTrialCall(_st.userId);
+      let resp;
+      try {
+        resp = await handleRequest(request, env);
+        const _st = _trialState.get(request);
+        if (_st && _st.charged && _st.tool !== 'pact' && (resp.status === 503 || resp.status === 429 || resp.status === 400)) {
+          await refundTrialCall(_st.userId);
+        }
+      } finally {
+        const _st2 = _trialState.get(request);
+        if (_st2 && _st2.charged) { await settleTrialCharge(_st2.userId); }
       }
       return cleanResponseDashes(resp);
     };
