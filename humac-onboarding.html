@@ -1114,8 +1114,12 @@ function renderScoreReveal(){
   var excludedCount=5-parts.length;
   var board;
   if(book&&!book.insufficient&&book.compBase>0){
-    var per=Math.round((book.totalRet/book.compBase)*1000)/10;
-    var lo=Math.round((book.lowRet/book.compBase)*1000)/10, hi=Math.round((book.highRet/book.compBase)*1000)/10; board='For every ₹100 of salary, the planning range is ₹'+lo+' to ₹'+hi+', base ₹'+per+'. That range is the result. The 0–100 score only places the base case on a provisional scale. Replacement savings are weighted by an annual leave probability of '+Math.round((book.leaveP||0)*1000)/10+'%. HR attribution share used: '+Math.round((book.attribution||0.5)*100)+'%'+((book.attribution||0.5)>0.5?' (above the 50% default, which raises the score)':(book.attribution||0.5)<0.5?' (below the 50% default, which lowers the score)':'')+'.'+((window.__l4cost&&window.__l4cost.source==='assumed')?' L4 used an assumed HR cost of 7.5% of payroll, not your actual spend.':'')+' '+excludedCount+' pillar'+(excludedCount===1?' is':'s are')+' excluded. Not a validated measure.';
+    var _pct=book.totalRet/book.compBase*100, _days=Math.round(_pct/100*365);
+    var _lo=book.lowRet/book.compBase*100, _hi=book.highRet/book.compBase*100;
+    board='Our people-planning model credits HR with about '+fmtRs(book.totalRet)+' a year, which is '+_pct.toFixed(1)+'% of annual payroll, roughly '+_days+' days of payroll. The planning range is '+fmtRs(book.lowRet)+' to '+fmtRs(book.highRet)+' ('+_lo.toFixed(1)+'% to '+_hi.toFixed(1)+'% of payroll). '+
+      'That already allows for the share of high performers who would realistically leave in a year ('+Math.round((book.leaveP||0)*1000)/10+'%) and credits HR with '+Math.round((book.attribution||0.5)*100)+'% of the outcomes, since line managers, pay and the market also drive them. '+
+      ((confidence.D==='computed'&&window.__l4cost&&window.__l4cost.amount>0)?'Against HR spend of '+fmtRs(window.__l4cost.amount)+(window.__l4cost.source==='actual'?'':' (assumed at 7.5% of payroll)')+', that is \u20b9'+(book.totalRet/window.__l4cost.amount).toFixed(2)+' of credited value for every \u20b91 spent. ':'')+
+      'The Humac Score is '+(humac==null?'not available':humac+' out of 100 ('+band.name+')')+' on a provisional scale. It is a planning index built from our own headcounts and assumptions, not an audited or validated measure.'+(excludedCount>0?' '+excludedCount+' pillar'+(excludedCount===1?' was':'s were')+' not scored for lack of data.':'');
   } else {
     board='This run did not compute a rupee return. '+excludedCount+' pillar'+(excludedCount===1?' is':'s are')+' excluded. The score is a provisional index, v0.9, not a validated measure.';
   }
