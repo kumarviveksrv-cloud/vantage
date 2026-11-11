@@ -222,11 +222,11 @@ function buildActions(per,largestLiabName){
   if(per==null)return [
     {title:'Enter a compensation base first',body:'Net Human Worth needs a total comp base to compute a per-\u20b9100 figure against. Everything else on this page is ready to run once that\u2019s in.'},
     {title:'Complete the Value Ledger (L1)',body:'This page reads the L1 book to show what\u2019s already priced for stars, emerging talent, tenure, and at-risk people, so it isn\u2019t repriced here. Complete L1 first for the full picture.'},
-    {title:'Capture senior tenure and revenue-facing relationships',body:'Institutional Knowledge and Relationship Capital \u2014 the two asset lines this page can price \u2014 need senior headcount, average senior tenure, and revenue-facing employee count from your Humac inputs.'},
+    {title:'Capture senior tenure and revenue-facing relationships',body:'Institutional Knowledge, Relationship Capital and the HiPo bench \u2014 the asset lines this page prices \u2014 need senior headcount, average senior tenure, revenue-facing or client-facing employee count and HiPo count from your Humac inputs.'},
     {title:'Return once the inputs are in',body:'With a comp base and at least one asset-side cohort entered, this page produces a modelled Net Human Worth ratio to work with.'}
   ];
   return [
-    {title:'Address your largest liability first',body:'Of HiPo Concentration, Skill Debt, Growth-Readiness Gap, and Culture Liability, '+largestLiabName+' is currently the largest line on the liabilities side. That\u2019s the highest-leverage place to act.'},
+    {title:'Address your largest liability first',body:'Of Skill Debt, Growth-Readiness Gap, and Culture Liability, '+largestLiabName+' is currently the largest line on the liabilities side. That\u2019s the highest-leverage place to act.'},
     {title:'Build institutional knowledge documentation',body:'Institutional knowledge walks out with every senior exit. Before your next departure: run a knowledge-transfer session and document the top 10 things that person knows that no one else does. Three sessions a year is your institutional knowledge programme.'},
     {title:'Run a relationship-capital check',body:'For your most revenue-critical accounts or relationships, confirm there is more than one person at the org who holds that relationship. A single point of failure there is exactly what the Relationship Capital line is trying to surface.'},
     {title:'Take the ratio into your next review, rates named',body:'Net Human Worth per \u20b9100 of payroll is modelled at '+(per>=0?'+':'')+'\u20b9'+per.toFixed(1)+' under the '+scenario+' case. Take it into the room with the planning rates behind it named \u2014 institutional knowledge, relationship capital, and the three liability assumptions \u2014 not as a finding on its own.'}
@@ -236,9 +236,9 @@ function buildActions(per,largestLiabName){
 function intelText(per,nhw){
   var ctx=industry?' in the '+industry+' sector':'';
   if(per==null)return'An L5 score of <b>'+l5+'</b>'+ctx+' has no Net Human Worth to report yet \u2014 a compensation base is needed before the ratio can be computed.';
-  if(per<0)return'An L5 score of <b>'+l5+'</b>'+ctx+' is modelled at <b>\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll, under the '+scenario+' case \u2014 liabilities currently exceed assets in this model. HiPo concentration, skill debt, or the growth-readiness gap \u2014 or some mix of the three \u2014 are outweighing institutional knowledge and relationship capital. The actions below address the largest of these first.';
+  if(per<0)return'An L5 score of <b>'+l5+'</b>'+ctx+' is modelled at <b>\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll, under the '+scenario+' case \u2014 liabilities currently exceed assets in this model. The capability gap (sized by L2) or the culture gap (sized by L3) is outweighing institutional knowledge, relationship capital and the HiPo bench. The actions below address the largest of these first.';
   if(per<20)return'An L5 score of <b>'+l5+'</b>'+ctx+' is modelled at <b>+\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll, under the '+scenario+' case \u2014 positive but modest. Assets narrowly exceed liabilities in this model \u2014 deepening senior tenure or revenue-facing relationships is the fastest way to widen that margin.';
-  return'An L5 score of <b>'+l5+'</b>'+ctx+' is modelled at <b>+\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll, under the '+scenario+' case. Take the ratio, with the four planning rates behind it named, into your next review \u2014 it is a modelled read, not an audited balance sheet.';
+  return'An L5 score of <b>'+l5+'</b>'+ctx+' is modelled at <b>+\u20b9'+per.toFixed(1)+'</b> per \u20b9100 of payroll, under the '+scenario+' case. Take the ratio, with the planning rates behind it named, into your next review \u2014 it is a modelled read, not an audited balance sheet.';
 }
 
 // ── Findings — three-card synthesis: the pillar's weight, the single
@@ -250,7 +250,7 @@ function buildFindings(know,rel,largestLiab){
   return '<div class="findings-grid">'+
     '<div class="finding-card"><div class="finding-eyebrow">L5 Weight</div><div class="finding-headline">10% of Humac Score</div><div class="finding-body">The <b>smallest pillar weight</b> of the five \u2014 deliberately, since this sheet only prices what can be attributed to real cohorts without duplicating L1.</div></div>'+
     '<div class="finding-card"><div class="finding-eyebrow">Largest Single Line</div><div class="finding-headline">'+largestOverall.name+' ('+(largestOverall.side==='asset'?'asset':'liability')+')</div><div class="finding-body">The single biggest line on the sheet right now is a <b>'+largestOverall.side+'</b>. That\u2019s the line most worth checking first if the Net Human Worth figure looks off.</div></div>'+
-    '<div class="finding-card"><div class="finding-eyebrow">What This Sheet Prices</div><div class="finding-headline">Two assets, four liabilities</div><div class="finding-body">Only Institutional Knowledge and Relationship Capital are priced as assets. <b>This is not a full measure of culture</b> \u2014 it\u2019s the two things this sheet can attribute to real cohorts without duplicating what L1 already prices.</div></div>'+
+    '<div class="finding-card"><div class="finding-eyebrow">What This Sheet Prices</div><div class="finding-headline">Three assets, three liabilities</div><div class="finding-body">Institutional Knowledge, Relationship Capital and the HiPo bench are priced as assets; the capability gap (from L2) and culture gap (from L3) are the liabilities. <b>This is a management analogy, not an audited balance sheet</b> \u2014 it prices only what can be attributed without duplicating what L1 already prices.</div></div>'+
   '</div>';
 }
 
@@ -274,10 +274,12 @@ function render(){
 
   var know=(ra.cq5_seniorcount||0)*avg*Math.min((ra.cq5_seniortenure||0)*0.08,0.6);
   var rel=(ra.cq5_revemployees||0)*avg*m('rel');
-  var assets=know+rel;
-  var hipoLiab=(ra.cq5_hipo||0)*avg*0.25;
-  var skill=comp*m('skill'), growth=comp*m('growth'), cliab=comp*m('cliab');
-  var liab=hipoLiab+skill+growth+cliab;
+  var assets=know+rel+hipoBench;
+  var hipoN=HumacShared.cappedHipo(ra.cq5_hipo||0,headcount);
+  var hipoBench=hipoN*avg*(1-HumacShared.HIPO_P);
+  var g2=HumacShared.gap(l2), g3=HumacShared.gap(l3);
+  var skill=comp*m('skill')*g2, growth=comp*m('growth')*g2, cliab=comp*m('cliab')*g3;
+  var liab=skill+growth+cliab;
   var nhw=assets-liab;
   var per=comp>0?(nhw/comp)*100:null;
   var nhwPos=per!=null&&per>=0;
@@ -293,10 +295,9 @@ function render(){
   var assumptionBar='<div class="assumption-bar"><div class="assumption-note"><b>'+scenario+' case.</b> Asset and liability rates below are L5-original assumptions and never touch an L1 cohort.</div><div><button class="sc-btn'+(scenario==='low'?' active':'')+'" onclick="setScenario(\'low\')">Low</button> <button class="sc-btn'+(scenario==='base'?' active':'')+'" onclick="setScenario(\'base\')">Base</button> <button class="sc-btn'+(scenario==='high'?' active':'')+'" onclick="setScenario(\'high\')">High</button></div></div>';
 
   var liabItems=[
-    {name:'HiPo Concentration',val:hipoLiab,desc:'HiPo count \xd7 salary \xd7 25% \u2014 concentration risk if these individuals leave. Fixed rate.'},
-    {name:'Skill Debt',val:skill,desc:(m('skill')*100).toFixed(1)+'% of total comp base \xb7 '+scenario+' case'},
-    {name:'Growth-Readiness Gap',val:growth,desc:(m('growth')*100).toFixed(1)+'% of total comp base \xb7 '+scenario+' case'},
-    {name:'Culture Liability',val:cliab,desc:(m('cliab')*100).toFixed(1)+'% of total comp base \xb7 '+scenario+' case'}
+    {name:'Skill Debt',val:skill,desc:(m('skill')*100).toFixed(1)+'% of comp base \xd7 '+g2.toFixed(2)+' gap factor from your L2 score ('+(l2==null?'not scored, counted as 50':l2)+') \xb7 '+scenario+' case'},
+    {name:'Growth-Readiness Gap',val:growth,desc:(m('growth')*100).toFixed(1)+'% of comp base \xd7 '+g2.toFixed(2)+' gap factor from your L2 score \xb7 '+scenario+' case'},
+    {name:'Culture Liability',val:cliab,desc:(m('cliab')*100).toFixed(1)+'% of comp base \xd7 '+g3.toFixed(2)+' gap factor from your L3 score ('+(l3==null?'not scored, counted as 50':l3)+') \xb7 '+scenario+' case'}
   ];
   var largestLiab=liabItems.reduce(function(a,b){return b.val>a.val?b:a;});
   var findingsHtml=buildFindings(know,rel,largestLiab);
@@ -307,7 +308,8 @@ function render(){
       '<div>'+
         '<div class="bs-col-head assets"><span>Human Assets</span></div>'+
         bsAsset('Institutional Knowledge',know,'Senior/leadership count \xd7 salary \xd7 tenure-scaled premium, capped at 60%.')+
-        bsAsset('Relationship Capital',rel,'Revenue-facing employees \xd7 salary \xd7 '+(m('rel')*100).toFixed(0)+'% \xb7 '+scenario+' case.')+
+        bsAsset('Relationship Capital',rel,'Revenue-facing or client-facing employees \xd7 salary \xd7 '+(m('rel')*100).toFixed(0)+'% \xb7 '+scenario+' case.')+
+        bsAsset('High Potential Bench',hipoBench,'HiPo count ('+hipoN+(hipoN<(ra.cq5_hipo||0)?' counted, 15% cap':'')+') \xd7 salary \xd7 75% (one year of pay less 25% expected attrition). Fixed rate.')+
         '<div class="bs-total"><div class="bs-total-label">TOTAL HUMAN ASSETS</div><div class="bs-total-val asset">'+fmtINR(assets)+'</div></div>'+
       '</div>'+
       '<div class="bs-col-divider"></div>'+
@@ -331,7 +333,7 @@ function render(){
      certain than the lines that do carry a Low/Base/High range. */
   var fixedRows=
     '<tr><td>Institutional knowledge premium</td><td>8.0%/yr (cap 60%)</td><td>8.0%/yr (cap 60%)</td><td>8.0%/yr (cap 60%)</td><td>Fixed rate, not scenario-adjustable. Planning rate, not already in the L1 book.<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s5-knowledge" target="_blank" rel="noopener">?</a></td></tr>'+
-    '<tr><td>HiPo concentration risk</td><td>25.0%</td><td>25.0%</td><td>25.0%</td><td>Fixed rate, not scenario-adjustable. Planning rate.<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s4-talent" target="_blank" rel="noopener">?</a></td></tr>';
+    '<tr><td>HiPo expected attrition</td><td>25.0%</td><td>25.0%</td><td>25.0%</td><td>Fixed rate, not scenario-adjustable. Stated-intent survey figure used as a planning rate.<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s4-talent" target="_blank" rel="noopener">?</a></td></tr>';
   var assumptionsTable='<table class="assumptions"><tr><th>Line</th><th>Low</th><th>Base</th><th>High</th><th>Status</th></tr>'+assumptionRows+fixedRows+'</table>';
 
   var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L5 Human Balance Sheet</div><div class="stmt-txt">'+intelText(per,nhw)+'</div></div>';
@@ -349,6 +351,7 @@ function printReport(){var prev=document.title;document.title='L5 Human Balance 
 function setScenario(s){scenario=s;render();}
 render();
 </script>
+<script src="humac-shared.js?v=20261111a"></script>
 <script src="clerk-auth.js?v=20261105a"></script>
 <script src="sidebar-shared.js?v=20261105b"></script>
 </body>

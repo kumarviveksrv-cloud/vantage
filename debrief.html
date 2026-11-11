@@ -450,7 +450,7 @@
       var l2 = stored.l2;
       var l3 = stored.l3;
       var l4 = stored.l4;
-      var l5 = Math.round(calcL5(raw.q16, raw.q17, raw.q18));
+      var l5 = stored.l5Mode === 'computed' ? stored.l5 : Math.round(calcL5(raw.q16, raw.q17, raw.q18));
       var hciYes = countYes(raw, hciIds4);
       var hci = Math.min(1, Math.round((0.70 + hciYes * 0.15) * 100) / 100);
 

@@ -300,7 +300,8 @@ function render(){
   }
 
   var comp=book.compBase||ra.cq1_compbase||0;
-  var hr=comp*m('hrFunc'), compliance=comp*m('compliance'), culture=comp*m('culture');
+  var actualSpend=Number(ra.cq4_hrspend)||0;
+  var hr=actualSpend>0?actualSpend:comp*m('hrFunc'), compliance=actualSpend>0?0:comp*m('compliance'), culture=actualSpend>0?0:comp*m('culture');
   var invest=hr+compliance+culture;
   var totalRev=book.totalRet;
   var netProfit=totalRev-invest;
@@ -324,11 +325,11 @@ function render(){
     plRow('Value Ledger Return (L1)','Retention Savings + Quality of Hire + Development Return + Engagement Premium + Risk Management Value \u2014 computed once in the Value Ledger, not re-priced here.',totalRev,true)+
     '<div class="pl-subtotal"><div class="pl-subtotal-label">GROSS HUMAN REVENUE</div><div class="pl-subtotal-val pos">+'+fmtINR(totalRev)+'</div></div>'+
     '<div class="pl-section-head"><span>Human COGS</span><span>\u20b9</span></div>'+
-    plRow('HR Function Cost',(m('hrFunc')*100).toFixed(1)+'% of total comp base \xb7 '+scenario+' case',hr,false)+
+    plRow(actualSpend>0?'Actual annual HR spend (entered)':'HR Function Cost',actualSpend>0?'Your own all-in figure (HR team, tools, training, recruitment, compliance, culture). Not scenario-adjusted.':(m('hrFunc')*100).toFixed(1)+'% of total comp base \xb7 '+scenario+' case',hr,false)+
     '<div class="pl-subtotal"><div class="pl-subtotal-label">TOTAL HUMAN COGS</div><div class="pl-subtotal-val neg">-'+fmtINR(hr)+'</div></div>'+
     '<div class="pl-section-head"><span>Human OpEx</span><span>\u20b9</span></div>'+
-    plRow('Compliance &amp; Admin',(m('compliance')*100).toFixed(1)+'% of total comp base',compliance,false)+
-    plRow('Culture &amp; Engagement Spend',(m('culture')*100).toFixed(1)+'% of total comp base',culture,false)+
+    plRow('Compliance &amp; Admin',actualSpend>0?'Included in the actual HR spend above':(m('compliance')*100).toFixed(1)+'% of total comp base',compliance,false)+
+    plRow('Culture &amp; Engagement Spend',actualSpend>0?'Included in the actual HR spend above':(m('culture')*100).toFixed(1)+'% of total comp base',culture,false)+
     '<div class="pl-subtotal"><div class="pl-subtotal-label">TOTAL HUMAN OPEX</div><div class="pl-subtotal-val neg">-'+fmtINR(compliance+culture)+'</div></div>'+
     '<div class="pl-net-row"><div class="pl-net-label">HR Net Profit</div><div class="pl-net-val '+(netProfit>=0?'pos':'neg')+'">'+(netProfit>=0?'+':'')+fmtINR(netProfit)+'</div></div>'+
     '<div class="pl-ratio-row"><div class="pl-ratio-desc">\u201cModelled margin, under the '+scenario+' case: '+q4Ratio+' \u2014 return from the L1 book divided by L4 planning costs.\u201d</div><div class="pl-ratio-val">'+q4Ratio+'</div></div>'+
