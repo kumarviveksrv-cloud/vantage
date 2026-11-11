@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v148'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v149'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -5012,7 +5012,7 @@ function bcProvWhy(sentence, e, ctx, path) {
   var nums = bcFigureNums(sentence);
   if (!(nums.every(function (v) { return bcOk(bcOkFor(sentence, ctx.userNums, ctx.okNums), v); }) && !bcPctBad(sentence, ctx.userText) && !bcDurationBad(sentence, ctx.userText) && !bcRatioBad(sentence, ctx.userText))) { return 'number'; }
   if (t === 'figure') { return nums.length ? '' : 'figure-no-number'; }
-  if (t === 'user') { if (q.length < 4 || ctx.userNorm.indexOf(q) === -1) { return 'quote-missing'; } return bcProvOverlap(sentence, ctx.userNorm, 0.6) ? '' : 'user-overlap'; }
+  if (t === 'user') { if (q.length < 4 || ctx.userNorm.indexOf(q) === -1) { return 'quote-missing'; } return bcProvOverlap(sentence, ctx.userNorm, 0.5) ? '' : 'user-overlap'; }
   if (t === 'profile') { if (q.length < 3 || ctx.profileNorm.indexOf(q) === -1) { return 'quote-missing'; } return bcProvOverlap(sentence, ctx.profileNorm, 0.5) ? '' : 'profile-overlap'; }
   if (t === 'advice') {
     if (BC_ORGFACT_RE.test(sentence)) { return 'orgfact'; }
@@ -5031,10 +5031,11 @@ function bcProvFilter(result, userText, profileText, extraNums, noEng) {
   BC_PROV_PATHS.forEach(function (path) {
     var txt = bcProvGet(result, path);
     if (typeof txt !== 'string' || !txt.trim() || txt === 'Not stated.') { return; }
-    var entries = Array.isArray(prov[path]) ? prov[path] : [];
+    var entries = Array.isArray(prov[path]) ? prov[path] : (Array.isArray(prov[path.replace(/^stack\./, '')]) ? prov[path.replace(/^stack\./, '')] : []);
     var parts = txt.split(/(?<=[.!?])\s+(?=[A-Z(])/);
-    var keep = parts.filter(function (sent) {
+    var keep = parts.filter(function (sent, idx) {
       var ns = bcProvNorm(sent), e = entries.filter(function (x) { var k = bcProvNorm(x && x.s); return k.length >= 8 && (ns.indexOf(k) !== -1 || k.indexOf(ns) !== -1); })[0];
+      if (!e && entries.length === parts.length) { e = entries[idx]; }
       var why = bcProvWhy(sent, e, ctx, path);
       if (why) { ctx.debug.push({ p: path, w: why, t: e ? String(e.t || '') : '', s: sent.slice(0, 110) }); }
       return !why;
