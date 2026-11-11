@@ -133,6 +133,12 @@ ok(x2.employeeProfile.estimatedTimeToLeave === '1-3 months', 'exit window kept w
 const x3 = { employeeProfile: { estimatedTimeToLeave: '1-3 months' } };
 lib.retentionScrub(x3, 'They mentioned an offer from a competitor.');
 ok(x3.employeeProfile.estimatedTimeToLeave === '1-3 months', 'exit window kept with offer');
+const x4 = { employeeProfile: { flightRisk: 'Low', estimatedTimeToLeave: '1-3 months' } };
+lib.retentionScrub(x4, 'She is thinking about resigning next month because of the commute.');
+ok(x4.employeeProfile.flightRisk === 'Medium', 'Low raised to Medium with resignation talk');
+const x5 = { employeeProfile: { flightRisk: 'Low', estimatedTimeToLeave: 'Unknown' } };
+lib.retentionScrub(x5, 'Steady performance, quiet week.');
+ok(x5.employeeProfile.flightRisk === 'Low', 'Low kept without exit signal');
 // no-premium ceiling card
 const r3b = { recommendation: { primary: 'Walk Away', figure: 'x' }, financialModel: {}, humac: {} };
 lib.retentionApply(r3b, 'counter_offer', r3);
