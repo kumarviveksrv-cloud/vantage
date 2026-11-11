@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v152'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v153'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -5018,7 +5018,7 @@ function bcProvWhy(sentence, e, ctx, path) {
   var nums = bcFigureNums(sentence);
   if (!(nums.every(function (v) { return bcOk(bcOkFor(sentence, ctx.userNums, ctx.okNums), v); }) && !bcPctBad(sentence, ctx.userText) && !bcDurationBad(sentence, ctx.userText) && !bcRatioBad(sentence, ctx.userText))) { return 'number'; }
   if (t === 'figure') { return nums.length ? '' : 'figure-no-number'; }
-  if (t === 'user') { if (q.length < 4 || ctx.userNorm.indexOf(q) === -1) { return 'quote-missing'; } return bcProvOverlap(sentence, ctx.userNorm, 0.5) ? '' : 'user-overlap'; }
+  if (t === 'user') { if (q.length < 4 || ctx.userNorm.indexOf(q) === -1) { return 'quote-missing'; } if (!bcProvOverlap(sentence, ctx.userNorm, 0.5)) { return 'user-overlap'; } var cl = sentence.split(/[,;]\s+/).filter(function (c) { return Object.keys(bcProvStems(c)).length >= 3; }); return cl.every(function (c) { return bcProvOverlap(c, ctx.userNorm, 0.34); }) ? '' : 'user-clause'; }
   if (t === 'profile') { if (q.length < 3 || ctx.profileNorm.indexOf(q) === -1) { return 'quote-missing'; } return bcProvOverlap(sentence, ctx.profileNorm, 0.5) ? '' : 'profile-overlap'; }
   if (t === 'advice') {
     if (BC_ORGFACT_RE.test(sentence)) { return 'orgfact'; }
