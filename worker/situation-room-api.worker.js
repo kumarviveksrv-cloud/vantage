@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v126'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v127'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4652,6 +4652,22 @@ function bcFixPlaceholders(result, userText) {
   walk(result);
 }
 var BC_FIG_KEYS = ['figure', 'revenueAtRisk', 'financialImpact'];
+var BC_RESEARCH_RE = /\b(gallup|shrm|panopto|yougov|deloitte|mckinsey|gartner|forrester|kpmg|pwc|bain|harvard|lintels?|work institute)\b/i;
+var BC_HBASIS_RE = /multiplier|attrition|replacement cost|gallup|shrm|panopto|yougov|\d\s*%|percent/i;
+function bcPctBad(s, userText) {
+  var nums = String(userText || '').match(/\d+(?:\.\d+)?/g) || [], bad = false, m, re = /(\d+(?:\.\d+)?)(?:\s*(?:-|–|to)\s*(\d+(?:\.\d+)?))?\s*(?:%|percent|per cent)/gi;
+  var has = function (n) { return nums.some(function (x) { return parseFloat(x) === parseFloat(n); }); };
+  while ((m = re.exec(String(s || ''))) !== null) { if (!has(m[1]) || (m[2] && !has(m[2]))) { bad = true; } }
+  return bad;
+}
+// Live individual termination or disciplinary case: belongs in the Employee Case Advisor, not a stakeholder pitch.
+function bcIsIndividualCase(situation, ask) {
+  var text = String(situation || '') + ' ' + String(ask || '');
+  var verb = /\b(terminat(?:e|es|ed|ing|ion)|dismiss(?:ed|ing|al)?|sack(?:ed|ing)?|fir(?:e|ed|ing)|show[- ]cause|disciplin\w+|absconding)\b/i.test(text);
+  var person = /\b(?:he|she|him|his|her)\b/i.test(text) || /\b(?:terminat\w*|dismiss\w*|sack\w*|fir(?:e|ing)|disciplin\w*)\s+(?:of\s+)?[A-Z][a-z]{2,}\b/.test(text) || /\bemployee\b/i.test(text);
+  var orgLevel = /\b(policy|policies|programme|program|framework|attrition rate|company-wide|across the (?:company|organisation|organization))\b/i.test(text);
+  return verb && person && !orgLevel;
+}
 function applyPoshStakeholder(result, userText) {
   var okNums = bcFigureNums(userText).concat([0.5], bcUserFractions(userText));
   var bad = function (s) { return bcFigureNums(s).some(function (v) { return !bcOk(okNums, v); }) || POSH_CLAIM_RE.test(s) || LD_CLAIM_RE.test(s) || poshBadSection(s); };
@@ -4811,13 +4827,18 @@ function applyBusinessCaseStakeholder(result, userText) {
   var strippedS = 0;
   if (!c) {
     var okG = bcFigureNums(userText).concat(bcUserFractions(userText));
-    strippedS = bcScrub(result, function (s) { return bcFigureNums(s).some(function (v) { return !bcOk(okG, v); }); }, BC_FIG_KEYS);
+    strippedS = bcScrub(result, function (s) { return bcFigureNums(s).some(function (v) { return !bcOk(okG, v); }) || BC_RESEARCH_RE.test(s) || bcPctBad(s, userText); }, BC_FIG_KEYS);
+    var gda = result.stack && result.stack.dataAnchor;
+    if (gda) {
+      if (!gda.humacBasis || gda.humacBasis === 'Not stated.' || BC_HBASIS_RE.test(String(gda.humacBasis))) { gda.humacBasis = 'Not computed: the system has no calculation for this kind of analysis.'; }
+      if (gda.figure === 'Not computed') { gda.context = 'The figure for this decision is not computed because the input does not contain the numbers a calculation needs.'; }
+    }
   }
   var flagged = bcFigureCheck(result, c, userText);
   var attHint = (inp && inp.model === 'attrition') ? ' An attrition calculation needs the number of exits and the average CTC, both stated as numbers.' : '';
   result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged, stripped: strippedS,
     note: c ? (flagged.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flagged.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.')
-            : (strippedS ? 'The system has no calculation for this kind of analysis. ' + strippedS + ' sentence(s) with rupee figures that are not in your data were removed and the figure fields were marked Not computed. The figures that remain come from your input.' + attHint : 'The system has no calculation for this kind of analysis. It found no rupee figure that is absent from your data.' + attHint) };
+            : (strippedS ? 'The system has no calculation for this kind of analysis. ' + strippedS + ' sentence(s) with figures or research claims that are not in your data were removed and the figure fields were marked Not computed. The figures that remain come from your input.' + attHint : 'The system has no calculation for this kind of analysis. It found no rupee figure that is absent from your data.' + attHint) };
   return !!c;
 }
 // ── BUSINESS CASE ENGINE END ─────────────────────────────────────────────────
@@ -5439,6 +5460,13 @@ if (actContext) {
         userMessage = `HR METRICS / DATA: ${anonymizedMetrics}\n${anonymizedContext ? `ADDITIONAL CONTEXT: ${anonymizedContext}` : ''}\n${anonymizedGenAsk ? `THE ASK (what the requester wants approved or decided): ${anonymizedGenAsk}` : ''}\n${audience ? `PRIMARY AUDIENCE: ${truncateInput(audience, 200)}` : ''}\n\nBuild the complete SIGNAL narrative including Revenue at Risk and Humac financial translation. Return the complete JSON response as specified.`;
       }
 
+      if (flow === 'stakeholder' && bcIsIndividualCase(body.situation, body.ask)) {
+        const bcRedirect = { wrongTool: true, suggestedTool: 'Employee Case Advisor', reason: 'This describes a live termination or disciplinary decision about an individual employee. That needs the Employee Case Advisor diagnostic (process, evidence and exposure) before any case is made to a stakeholder.' };
+        if (await settleWrongTool(clerkUserId, 'business_case', usageCheck, trialCharged)) { _trialLastCall = false; }
+        return new Response(JSON.stringify(_trialLastCall ? { success: true, data: bcRedirect, trial_calls_remaining: 0 } : { success: true, data: bcRedirect }), {
+          headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
+        });
+      }
       let bcPre = null;
       { try { bcPre = await bcFiguresBlock(bcAnonText, flow === 'stakeholder' ? (String(body.situation || '') + ' ' + String(body.ask || '') + ' ' + String(body.context || '')) : (String(body.metrics || '') + ' ' + String(body.context || '') + ' ' + String(body.ask || '')), flow); if (bcPre && bcPre.block) { userMessage = bcPre.block + '\n' + userMessage; } } catch (bcPreE) { console.error('bc pre-extract failed: ' + bcPreE.message); } }
       const systemPrompt = getBusinessCasePrompt(meridian, flow, humacContext);

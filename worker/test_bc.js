@@ -246,6 +246,17 @@ PX.applyBusinessCaseStakeholder(p7, PT);
 const p7j = JSON.stringify(p7);
 ok(!/costs us nothing|modest relative|protect you personally|I will send|first finding/i.test(p7j), 'v125 residue stripped: ' + (p7j.match(/costs us nothing|modest relative|protect you personally|I will send|first finding/i) || []));
 ok(/first contravention under s\.26\(1\)/.test(p7.stack.dataAnchor.context) && /Lead with exposure/.test(p7.stakeholderProfile) && /The duty sits in s\.4\(1\)/.test(p7.stack.credibility.statement), 'neighbouring good sentences kept: ' + p7.stakeholderProfile);
+// v127: BC7 wrong-tool pre-check and generic no-engine strip
+const WT = new Function(code + ';return {bcIsIndividualCase, bcPctBad, applyBusinessCaseStakeholder};')();
+ok(WT.bcIsIndividualCase('Ramesh has been absent without notice for 6 days. HR wants to terminate him next week. Need the CEO to sign off.', 'Approve terminating Ramesh for repeated absenteeism.') === true, 'live termination is an individual case');
+ok(WT.bcIsIndividualCase('We have 180 employees and no Internal Committee.', 'Approve Rs.3L to set up POSH compliance.') === false, 'POSH is not an individual case');
+ok(WT.bcIsIndividualCase('Our attrition is high and we want a retention programme.', 'Approve Rs.20L for a retention programme.') === false, 'attrition programme is not');
+ok(WT.bcIsIndividualCase('We want the CEO to approve a new termination policy for the company.', 'Approve the policy.') === false, 'org-level termination policy is not');
+ok(WT.bcPctBad('Attrition runs at 20-24%.', 'We want Rs.8L for hiring.') === true && WT.bcPctBad('We want a 20 percent uplift.', 'Target is 20 percent uplift') === false, 'percentages not in the text are flagged, user percentages are not');
+let g2 = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.9L', context: 'The range reflects uncertainty about the salary.', humacBasis: 'Replacement cost multiplier 0.8x to 1.3x from Gallup and SHRM; Panopto and YouGov say 42%.' }, riskMirror: { revenueAtRisk: 'x', revenueAtRiskBasis: 'y', scenario: 'A 25-35% probability of a claim. The team is stretched.' }, credibility: { statement: 'Gallup finds disengagement is costly. Our team is stretched.' } } };
+WT.applyBusinessCaseStakeholder(g2, 'We want Rs.8L for a hiring programme.');
+const g2j = JSON.stringify(g2);
+ok(!/Gallup|SHRM|Panopto|YouGov|25-35|multiplier/i.test(g2j) && /^Not computed/.test(g2.stack.dataAnchor.humacBasis) && /not computed because the input/.test(g2.stack.dataAnchor.context) && /team is stretched/.test(g2j), 'generic no-engine: research and percentages stripped, basis and context replaced: ' + g2j.slice(0, 400));
 // generic stakeholder with no engine: unsupported figures removed, note accurate
 let gs = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.42L' }, riskMirror: { revenueAtRisk: 'Rs.1.2Cr', revenueAtRiskBasis: 'b' }, credibility: { statement: 'The budget is Rs.8L. A similar firm lost Rs.90L last year.' } } };
 PX.applyBusinessCaseStakeholder(gs, 'We want Rs.8L for a hiring programme.');
