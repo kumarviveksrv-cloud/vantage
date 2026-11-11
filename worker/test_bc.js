@@ -292,5 +292,14 @@ ok(a1.bcCheck.stripped >= 3 && /did not give/.test(a1.bcCheck.note), 'note recor
 let a3 = { bcInputs: { model: 'attrition', exits: 18, headcount: 120, avgCtc: 900000, periodMonths: 12 }, headline: 'Exits cost money.', signal: { impact: { financialImpact: 'x', breakdown: ['x'] }, summary: 'None of it was budgeted. Exits are rising.' }, revenueAtRisk: { figure: 'x', basis: 'y', confidence: 'Low' }, humac: { range: 'x' } };
 AT.applyBusinessCaseEngine(a3, ATT);
 ok(!/budgeted/.test(JSON.stringify(a3.signal)) && /Exits are rising/.test(JSON.stringify(a3.signal)), 'general flow strips invented org fact: ' + JSON.stringify(a3).slice(0, 400));
+// v130: exits derived from a stated attrition percentage and headcount (exact integers only)
+const TD = 'Our engineering team has 200 employees. Attrition has been 18 percent over the last 12 months. Average CTC is Rs.12 lakh.';
+let td = bcRead({ model: 'attrition', headcount: 200, attritionPct: 18, avgCtc: 1200000, periodMonths: 12 }, TD);
+ok(td.exits === 36 && td.derivedFromPct === 18, 'exits derived 18% of 200 = 36: ' + JSON.stringify(td));
+let tdc = bcCalc(td);
+ok(Math.abs(tdc.total[0] - 453.6) < 0.01 && Math.abs(tdc.total[1] - 777.6) < 0.01 && Math.abs(tdc.rate - 18) < 0.001, '36 x (9.6+3) to (15.6+6) = 453.6 to 777.6L: ' + tdc.total);
+ok(bcLines(tdc).some(l => /Exits derived from your data: 18 percent of 200 = 36 exits/.test(l)), 'derivation shown');
+ok(bcRead({ model: 'attrition', headcount: 175, attritionPct: 18, avgCtc: 1200000 }, 'We have 175 employees, attrition 18 percent, CTC Rs.12 lakh.').exits === null, 'non-integer derivation (31.5) not used');
+ok(bcRead({ model: 'attrition', headcount: 200, attritionPct: 22, avgCtc: 1200000 }, TD).exits === null, 'percentage not in the text is rejected');
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);

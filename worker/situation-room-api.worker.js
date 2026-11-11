@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v130'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v131'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -2310,7 +2310,7 @@ async function anonymizeLargeDocument(text, maxChunkSize = 6000) {
 
 async function bcPreExtract(text) {
   try {
-    var prompt = 'You copy numbers out of text. Return strict JSON only: {"model":"attrition" or "ld" or "engagement" or "manager" or "other","disengaged":number or null,"belowAvgManagers":number or null,"teamSize":number or null,"ldSpend":rupees as a plain number or null,"employees":number or null,"exits":number or null,"headcount":number or null,"avgCtc":rupees as a plain number or null,"periodMonths":number or null,"rampMonths":number or null,"roleTier":"junior"|"senior"|"default","programmeBudget":rupees as a plain number or null}. model is attrition only if the text is about employees leaving. model is ld only if the text is about spending on a learning, training, leadership or development programme; then ldSpend is that programme budget and employees is the number of employees it covers. model is engagement only if the text is about disengaged or low-engagement employees and lost productivity; then disengaged is the count of disengaged employees. model is manager only if the text is about below-average or ineffective managers; then belowAvgManagers is their count and teamSize is the number of people in an average team. Copy numbers exactly as written (Rs 8L = 800000, 15L = 1500000). If a number is not stated, use null. Never calculate or invent anything. exits must be the count of people who left.';
+    var prompt = 'You copy numbers out of text. Return strict JSON only: {"model":"attrition" or "ld" or "engagement" or "manager" or "other","disengaged":number or null,"belowAvgManagers":number or null,"teamSize":number or null,"ldSpend":rupees as a plain number or null,"employees":number or null,"exits":number or null,"attritionPct":the attrition or turnover percentage as written or null,"headcount":number or null,"avgCtc":rupees as a plain number or null,"periodMonths":number or null,"rampMonths":number or null,"roleTier":"junior"|"senior"|"default","programmeBudget":rupees as a plain number or null}. model is attrition only if the text is about employees leaving. model is ld only if the text is about spending on a learning, training, leadership or development programme; then ldSpend is that programme budget and employees is the number of employees it covers. model is engagement only if the text is about disengaged or low-engagement employees and lost productivity; then disengaged is the count of disengaged employees. model is manager only if the text is about below-average or ineffective managers; then belowAvgManagers is their count and teamSize is the number of people in an average team. Copy numbers exactly as written (Rs 8L = 800000, 15L = 1500000). If a number is not stated, use null. Never calculate or invent anything. exits must be the count of people who left.';
     var resp = await callClaude(prompt, [{ role: 'user', content: String(text).slice(0, 6000) }], 600, CLAUDE_MODEL_FAST, CLAUDE_FAST_TIMEOUT_MS);
     var raw = resp.content[0].text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     return JSON.parse(raw);
@@ -4484,6 +4484,14 @@ function bcRupees(v, text) {
   return bondAmountsIn(text).some(function (a) { return Math.abs(a - n) <= Math.max(1, n * 0.005); }) ? Math.round(n) : null;
 }
 function bcRead(inp, text) {
+  var T = bcRead0(inp, text), pct = parseFloat((inp || {}).attritionPct);
+  if (T.model === 'attrition' && !T.exits && T.headcount && isFinite(pct) && pct > 0 && pct < 100 && bcNumbersIn(text).indexOf(pct) !== -1) {
+    var e = pct * T.headcount / 100;
+    if (Math.round(e) > 0 && Math.abs(e - Math.round(e)) < 0.01) { T.exits = Math.round(e); T.derivedFromPct = pct; }
+  }
+  return T;
+}
+function bcRead0(inp, text) {
   var i = inp || {}, ramp = parseFloat(i.rampMonths);
   return { model: i.model === 'attrition' ? 'attrition' : 'other', exits: bcCount(i.exits, text, 100000), headcount: bcCount(i.headcount, text, 1000000),
     ctc: bcRupees(i.avgCtc, text), months: (function () { var m = parseInt(i.periodMonths, 10); return (isFinite(m) && m >= 1 && m <= 36 && bcNumbersIn(text).indexOf(m) !== -1) ? m : null; })(),
@@ -4507,6 +4515,7 @@ function bcRange(a) { return engineLakh(r2(a[0])) + ' to ' + engineLakh(r2(a[1])
 function bcLines(c) {
   var T = c.T, tierName = T.tier === 'default' ? 'typical professional role' : (T.tier === 'junior' ? 'entry level or easy to backfill role' : 'senior or hard to backfill role');
   var L = [];
+  if (T.derivedFromPct) { L.push('Exits derived from your data: ' + T.derivedFromPct + ' percent of ' + T.headcount + ' = ' + T.exits + ' exits.'); }
   L.push('Inputs read from your data: ' + T.exits + ' exits' + (T.headcount ? ' from a headcount of ' + T.headcount : '') + (T.months ? ' over ' + T.months + ' months' : '') + ', average CTC ' + engineLakh(r2(c.ctcL)) + (T.budget ? ', programme budget ' + engineLakh(r2(c.budgetL)) : '') + '.');
   if (T.months && T.months !== 12) { L.push('Exits annualised to ' + r2(c.annualExits) + ' a year (' + T.exits + ' x 12 / ' + T.months + ') because the data covers ' + T.months + ' months.'); }
   if (c.rate !== null) { L.push('Annualised attrition rate: ' + (Math.round(c.rate * 10) / 10) + ' percent (' + T.exits + (T.months && T.months !== 12 ? ' x 12 / ' + T.months : '') + ' / ' + T.headcount + ').'); }
