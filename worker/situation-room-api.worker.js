@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v159'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v160'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -447,7 +447,7 @@ function selectActsForCase(caseType = '', narrative = '') {
   const acts = new Set([LEGAL_ACT_KEYS.IR_CODE]); // always include
 
   // POSH signals beyond the obvious words, so a wrong case-type tile does not hide the Act
-  const poshSignals = ['posh', 'harass', 'sexual', 'internal committee', 'unwelcome', 'touched', 'touching', 'groped', 'molest', 'stalk', 'lewd', 'modesty', 'obscene', 'pornograph', 'sexist', 'hostile work', 'comments about her', 'comments on her'];
+  const poshSignals = ['posh', 'harass', 'sexual', 'internal committee', 'internal complaints', 'local committee', 'local complaints', 'unwelcome', 'touched', 'touching', 'groped', 'molest', 'stalk', 'lewd', 'modesty', 'obscene', 'pornograph', 'sexist', 'hostile work', 'comments about her', 'comments on her'];
   if (poshSignals.some(function (w) { return text.indexOf(w) !== -1; })) {
     acts.add(LEGAL_ACT_KEYS.POSH);
   }
@@ -485,7 +485,7 @@ function selectActsForPolicy(question = '', context = '') {
   const text = `${question} ${context}`.toLowerCase();
   const acts = new Set([LEGAL_ACT_KEYS.IR_CODE]); // always include
 
-  if (/posh|harassment|sexual|internal\s*committee/.test(text)) {
+  if (/posh|harassment|sexual|internal\s*(?:complaints?\s*)?committee|local\s*(?:complaints?\s*)?committee|\bicc\b|\blcc\b/.test(text)) {
     acts.add(LEGAL_ACT_KEYS.POSH);
   }
 
@@ -1690,6 +1690,7 @@ WORDING GUARDS (apply to every section):
 15. Never suggest withholding a relieving letter, experience certificate or any other document as leverage over an employee who is leaving or has resigned.
 16. IR Code s.2(zr): the wage limit applies only to a person employed in a supervisory capacity. A person employed mainly in a managerial or administrative capacity is outside the definition whatever the pay. Never say that salary alone takes a person outside the definition of worker.
 17. Do not predict from the MERIDIAN profile whether a dispute will be collective or individual or whether escalation is likely. You may quote the labelled estimate in the profile once, exactly as given. Never say that a type of case is a "disproportionate source" of claims or give any other claim about how often disputes arise.
+18. Where the supplied text shows the law places no obligation on the employer (for example no gratuity is payable below the service threshold), say that the law does not require the payment. Do not tell the employer that it must not or cannot pay, and do not open the recommendation with a bare "Do not pay"; a voluntary or ex gratia payment is the employer's business decision, which may be recorded as such and applied consistently. Do not present a close eligibility question as settled beyond the plain wording of the section; name the one fact that would change the answer.
 FORM AND REGISTER ATTRIBUTION: when mapping an old form or register to a section of a Code, claim only what that section's supplied text says. Name a specific register (for example a fines register or an accident register) only if the section's text names it; otherwise describe the obligation at the level the section states it and label the exact register or form as "to be confirmed in the notified Rules". Do not say a section governs a subject (such as fines) unless the supplied text of that section says so. Never say what the Rules or a Code "may permit" or allow (for example a unified or consolidated register), and never state how common, frequent or likely an inspection trigger, penalty or enforcement action is, because no supplied text says these things. The Recommended Path must stay consistent with the Legal Position: do not map an old form to a section in the Recommended Path if the Legal Position leaves that register to the Rules. Do not suggest checking whether a unified or consolidated register is allowed.
 SCOPE CHECK — before answering: this tool is for a policy or compliance question. If what is described is not really that, for example a live employee relations case about a named person needing a full diagnostic, a request to translate metrics into a financial narrative, a stakeholder-persuasion problem, a retention or counter-offer decision, or a request to rehearse a conversation, do not force the three-section format onto it. Instead, return only this object and nothing else, naming whichever of Employee Case Advisor, The Business Case, Retention Advisor, or Difficult Conversations actually fits:
 {"wrongTool": true, "suggestedTool": "<tool name>", "reason": "<one sentence, specific to what was described>"}

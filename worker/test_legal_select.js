@@ -14,6 +14,9 @@ ok(!sel('How do I handle a notice period dispute?').some(a => a.startsWith('extr
 ok(sel('An employee has an offer from another company and her contract has a 90-day notice period. Can we make her serve all 90 days, and can we deduct from her final settlement if she leaves earlier?').includes('wages-code-2019'), 'deduction from final settlement loads the Wages Code');
 ok(sel('Can we withhold the last salary until she returns the laptop?').includes('wages-code-2019'), 'withholding loads the Wages Code');
 ok(sel('Can we recover notice pay from an employee who resigns?').includes('wages-code-2019'), 'notice pay recovery loads the Wages Code');
+ok(sel('One of our offices has 8 employees. Do we need an Internal Complaints Committee there?').includes('posh-act-2013'), 'Internal Complaints Committee loads the POSH Act');
+ok(sel('Who handles complaints if there is no ICC, the Local Committee?').includes('posh-act-2013'), 'ICC and Local Committee load the POSH Act');
+ok(!sel('Can we deduct notice pay from her final settlement?').includes('posh-act-2013'), 'a notice pay question does not load the POSH Act');
 const need = { 'hours-overtime-leave': ['14. Wages for overtime work', '27. Extra wages for overtime', '25. Daily and weekly working hours'],
   'contract-labour-licensing': ['47. Licensing of contractors', '45. Applicability of this Part', '79. Approval and licensing of factories'],
   'registers-returns-savings': ['50. Records, returns and notices', '69. Repeal and savings', '143. Repeal and Savings', '33. Maintenance of registers', '35. Powers of Inspector-cum-Facilitators'] };
