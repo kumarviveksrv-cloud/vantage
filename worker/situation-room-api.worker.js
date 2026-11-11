@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v146'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v147'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4961,7 +4961,7 @@ function applyBusinessCaseStakeholder(result, userText, profileText) {
     var pre0 = 0;
     if (result.humac && typeof result.humac.trajectorySignal === 'string' && /^\s*(?:negative|worsening|declining)|self-correct|worsen|deteriorat/i.test(result.humac.trajectorySignal) && !/\b(?:trend|rising|increas\w*|declin\w*|worsen\w*|falling|dropp\w*|growing)\b/i.test(String(userText || ''))) { result.humac.trajectorySignal = 'neutral: no trend data was given for this decision.'; pre0 += 1; }
     var provN = 0, noEng = !result.bcEngine, hasRev = /revenue/i.test(String(userText || ''));
-    if (noEng && provSnap) { var pv = bcProvDrops(provSnap, userText, profileText, true); if (pv.applied) { provN = bcProvApplyDrops(result, pv.drops); pre0 += provN; } }
+    if (noEng && provSnap) { var pv = bcProvDrops(provSnap, userText, profileText, true); if (pv.applied) { provN = bcProvApplyDrops(result, pv.drops); pre0 += provN; if (result.bcCheck) { result.bcCheck.provDebug = pv.debug.slice(0, 40); } } }
     delete result.provenance;
     var n = pre0 - provN + bcScrub(result, function (s) { return BC_PROMISE_RE.test(s) || BC_PREDICT_RE.test(s) || BC_TIME_RE.test(s) || (noEng && (BC_MODEL_CLAIM_RE.test(s) || BC_NOENG_CLAIM_RE.test(s) || bcDurationBad(s, userText) || bcRatioBad(s, userText) || (/revenue[- ]per[- ](?:employee|head)/i.test(s) && !hasRev))); }, null);
     var empty = function (v) { return !v || v === 'Not stated.'; };
@@ -5001,23 +5001,28 @@ function bcProvOverlap(sentence, srcNorm, min) {
   return hit / st.length >= min;
 }
 var BC_ADVICE_FORM_RE = /^(?:i|we)\s+(?:need|ask|am asking|are asking|would like|want|recommend|propose|suggest|should|will take|am here)\b|^(?:please|let'?s|approve|agree|confirm|decide|review|start|begin|consider|put|set|schedule|share|take|treat|keep|focus|ask|make|give|use|move|hold|name|agree|sign|release|fund|open|close|pause|test|measure|track|compare|bring|send|walk|state|show|say|open)\b|\?\s*$/i;
-function bcProvOk(sentence, e, ctx) {
-  if (!e || typeof e !== 'object') { return false; }
+function bcProvWhy(sentence, e, ctx, path) {
+  if (!e || typeof e !== 'object') { return 'no-entry'; }
   var t = String(e.t || '').toLowerCase(), q = bcProvNorm(e.q);
-  if (BC_RESEARCH_RE.test(sentence) || LD_CLAIM_RE.test(sentence) || BC_PREDICT_RE.test(sentence) || BC_PROMISE_RE.test(sentence) || BC_TIME_RE.test(sentence)) { return false; }
-  var numsOk = bcFigureNums(sentence).every(function (v) { return bcOk(ctx.okNums, v); }) && !bcPctBad(sentence, ctx.userText) && !bcDurationBad(sentence, ctx.userText) && !bcRatioBad(sentence, ctx.userText);
-  if (!numsOk) { return false; }
-  if (t === 'figure') { return true; }
-  if (t === 'user') { return q.length >= 4 && ctx.userNorm.indexOf(q) !== -1 && bcProvOverlap(sentence, ctx.userNorm, 0.6); }
-  if (t === 'profile') { return q.length >= 3 && ctx.profileNorm.indexOf(q) !== -1 && bcProvOverlap(sentence, ctx.profileNorm, 0.5); }
-  if (t === 'advice') { return BC_ADVICE_FORM_RE.test(sentence.trim()) && !BC_ORGFACT_RE.test(sentence) && !(ctx.noEng && (BC_NOENG_CLAIM_RE.test(sentence) || BC_MODEL_CLAIM_RE.test(sentence))); }
-  return false;
+  if (BC_RESEARCH_RE.test(sentence) || LD_CLAIM_RE.test(sentence) || BC_PREDICT_RE.test(sentence) || BC_PROMISE_RE.test(sentence) || BC_TIME_RE.test(sentence)) { return 'blocklist'; }
+  var nums = bcFigureNums(sentence);
+  if (!(nums.every(function (v) { return bcOk(ctx.okNums, v); }) && !bcPctBad(sentence, ctx.userText) && !bcDurationBad(sentence, ctx.userText) && !bcRatioBad(sentence, ctx.userText))) { return 'number'; }
+  if (t === 'figure') { return nums.length ? '' : 'figure-no-number'; }
+  if (t === 'user') { if (q.length < 4 || ctx.userNorm.indexOf(q) === -1) { return 'quote-missing'; } return bcProvOverlap(sentence, ctx.userNorm, 0.6) ? '' : 'user-overlap'; }
+  if (t === 'profile') { if (q.length < 3 || ctx.profileNorm.indexOf(q) === -1) { return 'quote-missing'; } return bcProvOverlap(sentence, ctx.profileNorm, 0.5) ? '' : 'profile-overlap'; }
+  if (t === 'advice') {
+    if (BC_ORGFACT_RE.test(sentence)) { return 'orgfact'; }
+    if (ctx.noEng && (BC_NOENG_CLAIM_RE.test(sentence) || BC_MODEL_CLAIM_RE.test(sentence))) { return 'noeng-claim'; }
+    if (path !== 'stakeholderProfile' && !BC_ADVICE_FORM_RE.test(sentence.trim())) { return 'advice-form'; }
+    return '';
+  }
+  return 'bad-tag';
 }
 function bcProvFilter(result, userText, profileText, extraNums, noEng) {
   var prov = result && result.provenance;
   if (result) { delete result.provenance; }
   if (!prov || typeof prov !== 'object') { return { applied: false, removed: 0 }; }
-  var ctx = { userText: userText, userNorm: bcProvNorm(userText), profileNorm: bcProvNorm(profileText), noEng: !!noEng, okNums: bcFigureNums(userText).concat(bcUserFractions(userText)).concat(extraNums || []) };
+  var ctx = { userText: userText, userNorm: bcProvNorm(userText), profileNorm: bcProvNorm(profileText), noEng: !!noEng, okNums: bcFigureNums(userText).concat(bcUserFractions(userText)).concat(extraNums || []), debug: [] };
   var removed = 0;
   BC_PROV_PATHS.forEach(function (path) {
     var txt = bcProvGet(result, path);
@@ -5026,12 +5031,14 @@ function bcProvFilter(result, userText, profileText, extraNums, noEng) {
     var parts = txt.split(/(?<=[.!?])\s+(?=[A-Z(])/);
     var keep = parts.filter(function (sent) {
       var ns = bcProvNorm(sent), e = entries.filter(function (x) { var k = bcProvNorm(x && x.s); return k.length >= 8 && (ns.indexOf(k) !== -1 || k.indexOf(ns) !== -1); })[0];
-      return bcProvOk(sent, e, ctx);
+      var why = bcProvWhy(sent, e, ctx, path);
+      if (why) { ctx.debug.push({ p: path, w: why, t: e ? String(e.t || '') : '', s: sent.slice(0, 110) }); }
+      return !why;
     });
     removed += parts.length - keep.length;
     if (keep.length !== parts.length) { bcProvSet(result, path, keep.length ? keep.join(' ') : 'Not stated.'); }
   });
-  return { applied: true, removed: removed };
+  return { applied: true, removed: removed, debug: ctx.debug };
 }
 function bcProvDrops(snap, userText, profileText, noEng) {
   // Runs the filter on a copy taken before the system wrote its own neutral text, and returns the model sentences that failed, per path.
@@ -5044,7 +5051,7 @@ function bcProvDrops(snap, userText, profileText, noEng) {
     var gone = before[p].filter(function (x) { return keepSet.indexOf(x) === -1; });
     if (gone.length) { drops[p] = gone; }
   });
-  return { applied: true, removed: res.removed, drops: drops };
+  return { applied: true, removed: res.removed, drops: drops, debug: res.debug };
 }
 function bcProvApplyDrops(result, drops) {
   var n = 0;
