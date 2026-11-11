@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v161'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v162'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -2188,12 +2188,13 @@ async function claudeStreamCall(body, extraHeaders, totalMs, onChunk) {
   const arm = function () { clearTimeout(idleTimer); idleTimer = setTimeout(function () { reason = 'went silent for ' + Math.round(idleMs / 1000) + 's'; ctrl.abort(); }, idleMs); };
   const totalTimer = setTimeout(function () { reason = 'hit the ' + Math.round(totalMs / 1000) + 's limit'; ctrl.abort(); }, totalMs);
   arm();
-  console.log('Claude call start: model ' + body.model + ', cap ' + Math.round(totalMs / 1000) + 's, request ' + JSON.stringify(body).length + ' chars');
+  const reqJson = JSON.stringify(Object.assign({}, body, { stream: true }));
+  console.log('Claude call start: model ' + body.model + ', cap ' + Math.round(totalMs / 1000) + 's, request ' + reqJson.length + ' chars');
   try {
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: Object.assign({ 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' }, extraHeaders || {}),
-      body: JSON.stringify(Object.assign({}, body, { stream: true })),
+      body: reqJson,
       signal: ctrl.signal,
     });
     console.log('Claude call first response after ' + Math.round((Date.now() - t0) / 1000) + 's, status ' + resp.status + ' (model ' + body.model + ')');
@@ -2209,31 +2210,46 @@ async function claudeStreamCall(body, extraHeaders, totalMs, onChunk) {
     }
     const reader = resp.body.getReader();
     const dec = new TextDecoder();
-    let buf = '', text = '', stop = null, lastEmit = 0;
+    // CPU-light reading (Workers Free allows 10 ms of CPU per request): the text deltas are collected still JSON-escaped with one regex per network chunk and decoded once at the end, instead of JSON.parse on every event. Only the few non-text events are parsed. If a chunk holds delta events the regex does not recognise, that chunk falls back to the old per-event parse.
+    let buf = '', raw = '', stop = null, lastEmit = 0;
     const usage = {};
+    const reDelta = /"type":"text_delta","text":"((?:[^"\\]|\\.)*)"/g;
+    const reOther = /event: (?:message_start|message_delta|error)\ndata: ([^\n]*)/g;
+    const applyOther = function (data) {
+      let ev;
+      try { ev = JSON.parse(data); } catch (pe) { return; }
+      if (ev.type === 'message_delta') { if (ev.delta && ev.delta.stop_reason) stop = ev.delta.stop_reason; if (ev.usage) Object.assign(usage, ev.usage); }
+      else if (ev.type === 'message_start' && ev.message && ev.message.usage) { Object.assign(usage, ev.message.usage); }
+      else if (ev.type === 'error') { throw new Error('Claude API error: stream — ' + JSON.stringify(ev.error || ev)); }
+    };
     for (;;) {
       const step = await reader.read();
       if (step.done) break;
       arm();
       buf += dec.decode(step.value, { stream: true });
-      buf = buf.replace(/\r\n/g, '\n');
-      let idx;
-      while ((idx = buf.indexOf('\n\n')) !== -1) {
-        const block = buf.slice(0, idx);
-        buf = buf.slice(idx + 2);
-        let data = '';
-        block.split('\n').forEach(function (ln) { if (ln.indexOf('data:') === 0) data += ln.slice(5).trim(); });
-        if (!data) continue;
-        let ev;
-        try { ev = JSON.parse(data); } catch (pe) { continue; }
-        if (ev.type === 'content_block_delta' && ev.delta && ev.delta.type === 'text_delta') { text += ev.delta.text || ''; }
-        else if (ev.type === 'message_delta') { if (ev.delta && ev.delta.stop_reason) stop = ev.delta.stop_reason; if (ev.usage) Object.assign(usage, ev.usage); }
-        else if (ev.type === 'message_start' && ev.message && ev.message.usage) { Object.assign(usage, ev.message.usage); }
-        else if (ev.type === 'error') { throw new Error('Claude API error: stream — ' + JSON.stringify(ev.error || ev)); }
+      if (buf.indexOf('\r') !== -1) { buf = buf.replace(/\r\n/g, '\n'); }
+      const cut = buf.lastIndexOf('\n\n');
+      if (cut === -1) continue;
+      const part = buf.slice(0, cut + 2);
+      buf = buf.slice(cut + 2);
+      let m, hits = 0;
+      reDelta.lastIndex = 0;
+      while ((m = reDelta.exec(part)) !== null) { raw += m[1]; hits++; }
+      if (!hits && part.indexOf('content_block_delta') !== -1) {
+        part.split('\n\n').forEach(function (blk) {
+          let d = '';
+          blk.split('\n').forEach(function (ln) { if (ln.indexOf('data:') === 0) d += ln.slice(5).trim(); });
+          if (!d) return;
+          try { const e2 = JSON.parse(d); if (e2.type === 'content_block_delta' && e2.delta && e2.delta.type === 'text_delta') { raw += JSON.stringify(e2.delta.text || '').slice(1, -1); } } catch (pe2) {}
+        });
       }
-      if (onChunk && Date.now() - lastEmit > 1000) { lastEmit = Date.now(); try { onChunk(text.length); } catch (ce) {} }
+      reOther.lastIndex = 0;
+      while ((m = reOther.exec(part)) !== null) { applyOther(m[1]); }
+      if (onChunk && Date.now() - lastEmit > 1000) { lastEmit = Date.now(); try { onChunk(raw.length); } catch (ce) {} }
     }
-    if (onChunk) { try { onChunk(text.length); } catch (ce) {} }
+    if (onChunk) { try { onChunk(raw.length); } catch (ce) {} }
+    let text = '';
+    try { text = JSON.parse('"' + raw + '"'); } catch (de) { throw new Error('Claude stream text could not be decoded: ' + de.message); }
     console.log('Claude call done in ' + Math.round((Date.now() - t0) / 1000) + 's, stop ' + stop + ', output ' + text.length + ' chars (model ' + body.model + ')');
     return { content: [{ type: 'text', text: text }], stop_reason: stop, usage: usage };
   } catch (e) {
