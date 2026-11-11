@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v129'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v130'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -4524,7 +4524,7 @@ function bcPromptBlock(c) {
   s += '- Replacement multiple used: ' + c.mult[0] + ' to ' + c.mult[1] + ' times annual salary, and ramp-up of ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] : c.ramp[0] + ' to ' + c.ramp[1]) + ' months. State no other multiple, blended multiple or per-exit multiple anywhere, including in the calculation basis.\n';
   if (c.rate !== null) { s += '- Annualised attrition rate: ' + (Math.round(c.rate * 10) / 10) + ' percent.\n'; }
   if (c.breakEven) { s += '- Programme budget ' + engineLakh(r2(c.budgetL)) + ' breaks even if it prevents ' + (Math.round(c.breakEven[0] * 10) / 10) + ' to ' + (Math.round(c.breakEven[1] * 10) / 10) + ' exits. Use this break-even, not a return ratio you calculate yourself.\n'; }
-  s += 'Every rupee figure you write about the cost of the exits, including any Data Anchor and Revenue at Risk figure, must be this total range, or the replacement or productivity part above, or a whole number of exits multiplied by the per-exit cost with that number of exits stated in the same sentence. Never use salary alone as the cost of an exit. Describe decision alternatives such as phasing as fractions or percentages of the stated budget, not as new rupee amounts. Any other rupee figure you write must be a whole number of exits multiplied by the per-exit cost above, with the number of exits stated in the same sentence. Do not invent other rupee amounts or percentages of productivity. Do not write hypothetical alternative rupee amounts anywhere, for example other budget sizes in a rehearsal prompt; refer to the stated budget only. When you quote avoided cost for a number of exits, call it avoided cost, not return, because it is before the programme spend.\n';
+  s += 'Every rupee figure you write about the cost of the exits, including any Data Anchor and Revenue at Risk figure, must be this total range, or the replacement or productivity part above, or a whole number of exits multiplied by the per-exit cost with that number of exits stated in the same sentence. Never use salary alone as the cost of an exit. Describe decision alternatives such as phasing as fractions or percentages of the stated budget, not as new rupee amounts. Any other rupee figure you write must be a whole number of exits multiplied by the per-exit cost above, with the number of exits stated in the same sentence. Do not invent other rupee amounts or percentages of productivity. Do not state facts about the organisation that the user did not give: never say the cost was unbudgeted, unmeasured, unapproved, never presented to Finance, preventable, or that conditions have not changed. When comparing the attrition rate with a benchmark, state the direction correctly (a rate below the low end of a range is below it). Do not write hypothetical alternative rupee amounts anywhere, for example other budget sizes in a rehearsal prompt; refer to the stated budget only. When you quote avoided cost for a number of exits, call it avoided cost, not return, because it is before the programme spend.\n';
   return s;
 }
 var LD_CLAIM_RE = /commonly cited|widely (?:cited|acknowledged|accepted|used|recogni[sz]ed)|industry'?s?\s+(?:own|standard|norm|benchmark|average|typical)|industry[- ](?:standard|benchmark|average|norm)|\bbenchmarks?\b|\btypical(?:ly)?\b|\bnormally\b|\boutlier\b|modest but credible|well within the range|\bresearch (?:shows|suggests)|\bstudies (?:show|suggest)|generally accepted|rule of thumb|\b(?:gallup|shrm|deloitte|mckinsey|kirkpatrick)\b|\bnorms?\b|variance in (?:team )?engagement|2\.7 million|17(?:%| percent) more productive|gallup-derived/i;
@@ -4651,6 +4651,29 @@ function bcFixPlaceholders(result, userText) {
   };
   walk(result);
 }
+var BC_ATTR_CLAIM_RE = /\bnone of (?:it|that|this)\b[^.]*\b(?:budget\w*|consolidated|measured|presented|approved)|\bno (?:line item|budget line|approval)\b|\bnot one rupee\b|\bany budget line\b|\bunbudgeted\b|\bnot budgeted\b|\ball of it real\b|\bnever (?:been )?(?:measured|consolidated|presented|budgeted|costed|tracked)\b|\b(?:has|have|had) not (?:been )?(?:measured|consolidated|presented|budgeted|costed|tracked)\b|\bpreventable\b|\bno structural change\b|\bself-correcting\b|\babsorbed silently\b|\bno return\b|\bnever (?:been )?approved\b|\bwithout (?:a|any) (?:line item|approval|budget)\b/i;
+function bcAttrBenchBad(s, rate) {
+  if (rate === null || rate === undefined) { return false; }
+  var str = String(s || ''), m = /(\d+(?:\.\d+)?)\s*(?:-|–|to)\s*(\d+(?:\.\d+)?)\s*(?:%|percent|per cent)/i.exec(str);
+  if (!m || !/benchmark|midpoint|sector|industry/i.test(str)) { return false; }
+  var lo = parseFloat(m[1]), hi = parseFloat(m[2]), mid = (lo + hi) / 2;
+  var above = /\b(above|exceed\w*|higher than|worse than|over)\b/i.test(str), below = /\b(below|under|lower than|less than|better than)\b/i.test(str);
+  var midRef = /midpoint|middle/i.test(str);
+  if (above && !below) { return midRef ? rate <= mid : rate < lo; }
+  if (below && !above) { return midRef ? rate >= mid : rate > hi; }
+  return false;
+}
+function bcAttrClaims(result, c) {
+  var rate = (c && c.rate !== null && c.rate !== undefined) ? c.rate : null, fig = bcRange(c.total);
+  var removed = bcScrub(result, function (s) { return BC_ATTR_CLAIM_RE.test(s) || bcAttrBenchBad(s, rate); }, null, function (s) { return s.replace(/\b(\d+) or more (exits|departures|resignations)\b/gi, '$1 $2'); });
+  var empty = function (v) { return !v || v === 'Not stated.'; };
+  if (empty(result.openingLine)) { result.openingLine = 'At this rate, the exits you described cost the organisation ' + fig + ' a year if nothing changes.'; }
+  if (empty(result.closingLine)) { result.closingLine = 'The decision I am asking for is on the table, and the cost of the exits is ' + fig + ' a year if nothing changes.'; }
+  var da = result.stack && result.stack.dataAnchor;
+  if (da && empty(da.context)) { da.context = 'This is the system-computed annual cost of the exits described, if nothing changes.'; }
+  if (da && empty(da.headline)) { da.headline = 'The exits described cost ' + fig + ' a year if nothing changes.'; }
+  return removed;
+}
 var BC_FIG_KEYS = ['figure', 'revenueAtRisk', 'financialImpact'];
 var BC_RESEARCH_RE = /\b(gallup|shrm|panopto|yougov|deloitte|mckinsey|gartner|forrester|kpmg|pwc|bain|harvard|lintels?|work institute)\b/i;
 var BC_HBASIS_RE = /multiplier|attrition|replacement cost|gallup|shrm|panopto|yougov|\d\s*%|percent/i;
@@ -4757,7 +4780,7 @@ function applyBusinessCaseEngine(result, userText) {
   if (!result) { return false; }
   var inp = result.bcInputs; delete result.bcInputs;
   if (result.wrongTool === true || !result.signal) { return false; }
-  var T = bcRead(inp, userText), c = bcCalc(T);
+  var T = bcRead(inp, userText), c = bcCalc(T), claimsG = 0;
   if (c) {
     var fig = bcRange(c.total);
     result.revenueAtRisk = { figure: fig, basis: 'Computed by the system: ' + r2(c.annualExits) + ' exits a year x ' + engineLakh(r2(c.ctcL)) + ' x (replacement multiple ' + c.mult[0] + ' to ' + c.mult[1] + ' plus ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] : c.ramp[0] + ' to ' + c.ramp[1]) + ' months of ramp-up productivity gap).', confidence: (T.headcount && T.ramp) ? 'High' : 'Medium' };
@@ -4771,6 +4794,7 @@ function applyBusinessCaseEngine(result, userText) {
       if (offending) { result.headline = result.headline.replace(new RegExp(fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\s*(?:to|-|–)\\s*' + fig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')+', 'g'), fig); }
     }
     result.bcEngine = { model: 'attrition-v1', total: [r2(c.total[0]), r2(c.total[1])], perExit: [r2(c.perExit[0]), r2(c.perExit[1])] };
+    claimsG = bcAttrClaims(result, c);
   }
   var stripped = 0;
   if (!c && !bondAmountsIn(userText).length) { stripped = bcStripInvented(result); }
@@ -4788,6 +4812,7 @@ function applyBusinessCaseEngine(result, userText) {
     note: c ? (flagged.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flagged.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.')
             : ((inp && inp.model === 'attrition' ? 'The system could not compute the attrition figures from your data (it needs the number of exits and the average CTC, both stated as numbers). ' : 'The system has no calculation for this kind of analysis, or could not compute it from your data. ') + 'The rupee figures below are the model\'s own estimates and are not system-checked.' + (flagged.length ? ' Not in your data: ' + flagged.join(', ') + '.' : '')) };
   if (strippedF) { result.bcCheck.stripped = strippedF; result.bcCheck.note = 'The system has no calculation for this kind of analysis, or could not compute it from your data. ' + strippedF + ' sentence(s) with figures or research claims that are not in your data were removed and the figure fields were marked Not computed. The figures that remain come from your input.'; }
+  if (claimsG) { result.bcCheck.stripped = (result.bcCheck.stripped || 0) + claimsG; result.bcCheck.note += ' ' + claimsG + ' sentence(s) stating facts about your organisation that you did not give (for example that costs were unbudgeted), or contradicting the benchmark direction, were removed.'; }
   if (stripped) { result.bcCheck.note = 'The system could not compute attrition figures because your input has no exit count or average CTC, and it contains no rupee amounts. Every rupee figure the model wrote was removed (' + stripped + ' sentences). Add the number of exits and the average CTC to get a computed figure.'; }
   return !!c;
 }
@@ -4798,6 +4823,7 @@ function applyBusinessCaseStakeholder(result, userText) {
   bcFixPlaceholders(result, userText);
   if (POSH_RE.test(String(userText || ''))) { return applyPoshStakeholder(result, userText); }
   var T = bcRead(inp, userText), c = bcCalc(T), l = c ? null : ldCalc(inp, userText), er = (c || l) ? null : erCalc(inp, userText);
+  var claimsA = 0;
   if (l) {
     var pctL = Math.round(l.pct * 10) / 10, notC = 'Not computed: no exit, vacancy or performance data was given, so the cost of not acting cannot be priced.';
     if (result.stack.dataAnchor) { result.stack.dataAnchor.figure = 'Break-even at a ' + pctL + ' percent uplift on ' + engineLakh(r2(l.payrollL)) + ' payroll'; }
@@ -4834,6 +4860,7 @@ function applyBusinessCaseStakeholder(result, userText) {
       result.stack.riskMirror.revenueAtRiskBasis = 'Computed by the system: ' + r2(c.annualExits) + ' exits a year x ' + engineLakh(r2(c.ctcL)) + ' x (replacement multiple ' + c.mult[0] + ' to ' + c.mult[1] + ' plus ' + (c.ramp[0] === c.ramp[1] ? c.ramp[0] : c.ramp[0] + ' to ' + c.ramp[1]) + ' months of ramp-up productivity gap).';
     }
     result.bcEngine = { model: 'attrition-v1', total: [r2(c.total[0]), r2(c.total[1])], perExit: [r2(c.perExit[0]), r2(c.perExit[1])] };
+    claimsA = bcAttrClaims(result, c);
   }
   var strippedS = 0;
   if (!c) {
@@ -4851,6 +4878,7 @@ function applyBusinessCaseStakeholder(result, userText) {
   result.bcCheck = { ok: flagged.length === 0, engine: !!c, flagged: flagged, stripped: strippedS,
     note: c ? (flagged.length ? 'These rupee figures in the narrative were not computed by the system and are not in your data. Check them before you use them: ' + flagged.join(', ') + '.' : 'Every rupee figure in this analysis comes from your data or from the system calculation.')
             : (strippedS ? 'The system has no calculation for this kind of analysis. ' + strippedS + ' sentence(s) with figures or research claims that are not in your data were removed and the figure fields were marked Not computed. The figures that remain come from your input.' + attHint : 'The system has no calculation for this kind of analysis. It found no rupee figure that is absent from your data.' + attHint) };
+  if (claimsA) { result.bcCheck.stripped = (result.bcCheck.stripped || 0) + claimsA; result.bcCheck.note += ' ' + claimsA + ' sentence(s) stating facts about your organisation that you did not give (for example that costs were unbudgeted), or contradicting the benchmark direction, were removed.'; }
   return !!c;
 }
 // ── BUSINESS CASE ENGINE END ─────────────────────────────────────────────────

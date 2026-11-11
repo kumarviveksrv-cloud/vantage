@@ -278,5 +278,19 @@ let gs = { openingLine: 'x', stack: { dataAnchor: { figure: 'Rs.42L' }, riskMirr
 PX.applyBusinessCaseStakeholder(gs, 'We want Rs.8L for a hiring programme.');
 ok(gs.stack.dataAnchor.figure === 'Not computed' && gs.stack.riskMirror.revenueAtRisk === 'Not computed' && gs.stack.credibility.statement === 'The budget is Rs.8L.', 'no-engine: unsupported figures removed, user figure kept: ' + JSON.stringify(gs.stack));
 ok(gs.bcCheck.stripped === 1 && /no calculation for this kind of analysis/.test(gs.bcCheck.note) && !/attrition figures/.test(gs.bcCheck.note), 'no-engine note accurate: ' + gs.bcCheck.note);
+// v130: attrition engine strips invented org facts and wrong-direction benchmark claims (both flows)
+const AT = new Function(code + ';return {applyBusinessCaseStakeholder, applyBusinessCaseEngine};')();
+const ATT = 'We have 120 employees. 18 people left in the last 12 months. Average CTC is 9 lakh per year.';
+const mkA = () => ({ bcInputs: { model: 'attrition', exits: 18, headcount: 120, avgCtc: 900000, periodMonths: 12 }, openingLine: 'Eighteen people walked out, and not one rupee of that cost appeared on any budget line you approved.', closingLine: 'Please approve.', stack: { dataAnchor: { figure: 'x', headline: 'h', context: 'At 15% attrition on 120 employees, this organisation is running above the midpoint of the 20-24% insurance sector benchmark. None of it was budgeted, all of it real.', humacBasis: 'b' }, riskMirror: { revenueAtRisk: 'x', revenueAtRiskBasis: 'y', scenario: 'The organisation will absorb another 18 or more exits. These exits were preventable. The team is stretched.' }, credibility: { statement: 'None of it was consolidated and presented to Finance as a single figure. HR owns the data.' } } });
+let a1 = mkA(); AT.applyBusinessCaseStakeholder(a1, ATT);
+const a1j = JSON.stringify(a1);
+ok(!/budget line|None of it|running above the midpoint|preventable|consolidated|or more exits/i.test(a1j) && /another 18 exits/.test(a1j) && /team is stretched/.test(a1j) && /HR owns the data/.test(a1j), 'stakeholder attrition claims stripped, good text kept: ' + a1j.slice(0, 700));
+ok(/Rs\.1\.7Cr to Rs\.2\.92Cr/.test(a1.openingLine) && !/Not stated/.test(a1.openingLine), 'opening line fallback uses computed range: ' + a1.openingLine);
+let a2 = mkA(); a2.stack.dataAnchor.context = 'At 15% attrition we sit below the 20-24% benchmark. The cost is real.'; AT.applyBusinessCaseStakeholder(a2, ATT);
+ok(/below the 20-24% benchmark/.test(a2.stack.dataAnchor.context), 'correct-direction benchmark sentence kept: ' + a2.stack.dataAnchor.context);
+ok(a1.bcCheck.stripped >= 3 && /did not give/.test(a1.bcCheck.note), 'note records removals: ' + a1.bcCheck.note);
+let a3 = { bcInputs: { model: 'attrition', exits: 18, headcount: 120, avgCtc: 900000, periodMonths: 12 }, headline: 'Exits cost money.', signal: { impact: { financialImpact: 'x', breakdown: ['x'] }, summary: 'None of it was budgeted. Exits are rising.' }, revenueAtRisk: { figure: 'x', basis: 'y', confidence: 'Low' }, humac: { range: 'x' } };
+AT.applyBusinessCaseEngine(a3, ATT);
+ok(!/budgeted/.test(JSON.stringify(a3.signal)) && /Exits are rising/.test(JSON.stringify(a3.signal)), 'general flow strips invented org fact: ' + JSON.stringify(a3).slice(0, 400));
 console.log(fails ? fails + ' FAILED' : 'business case: all passed');
 process.exit(fails ? 1 : 0);
