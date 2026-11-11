@@ -15,7 +15,7 @@ check('claude 500 is not demand', !f('Claude API error: 500 — x'));
 check('airtable 422 is not demand', !f('Airtable update error: 422'));
 check('empty', !f('') && !f(undefined));
 check('handler wired', /isHighDemandError\(error\.message\)/.test(src) && /status: 503, headers: \{ \.\.\.CORS_HEADERS, 'Content-Type': 'application\/json', 'Retry-After'/.test(src));
-check('version', /WORKER_VERSION = 'v165'/.test(src));
+check('version', /WORKER_VERSION = 'v166'/.test(src));
 check('on-demand debrief subject has no doubled year', /to: verifiedEmail,\s*subject: `Your \$\{month\} Vantage Debrief is ready`/.test(src));
 console.log(fails ? fails + ' FAILED of ' + n : 'PASSED ' + n);
 process.exit(fails ? 1 : 0);

@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v165'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v166'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -1142,7 +1142,7 @@ RETURN STRICT JSON ONLY. No prose outside the JSON object.
       {
         "name": "Career Record",
         "value": "${totalMonths} month${totalMonths > 1 ? 's' : ''}",
-        "description": "Documented HR decisions on Vantage — a professional record that compounds in value every month"
+        "description": "Documented HR decisions on Vantage: a dated record of what was handled"
       },
       {
         "name": "Cases Documented",
@@ -1150,9 +1150,9 @@ RETURN STRICT JSON ONLY. No prose outside the JSON object.
         "description": "Every case is a line in a career CV being written in real time, with financial context attached"
       },
       {
-        "name": "This Month's Exposure",
-        "value": "calculate from the cases listed above — sum the financial_exposure ranges or estimate from case types and risk levels",
-        "description": "Total HR financial exposure navigated and documented this month"
+        "name": "Modelled Figures Saved",
+        "value": "quote only figures that appear in the cases listed above, each with its tool name, for example exposure range or replacement cost. Never add figures from different tools together, because they can describe the same person. Never estimate a figure from case types or risk levels. If no case above carries a figure, write: None saved this month",
+        "description": "Separate modelled figures saved this month. Planning models, not verified savings, and not added together"
       }
     ]
   },
