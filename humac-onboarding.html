@@ -401,12 +401,13 @@ function applyCheckinMode(score){
 var BLOCKS=[
   {id:'A',title:'Value Ledger',pillar:'L1',weight:'25% weight',
    desc:'What return does the Value Ledger price from your Stars, Emerging Talent, 5+ year tenure, recent revenue-role hires, and at-risk performers \u2014 relative to total salaries paid?',
-   formula:'<b>Precise formula:</b><br><code>L1 ratio = Total HR Program Value &divide; Total Compensation</code><br><br><b>Provisional scale:</b> the 0–100 score is normalized against a placeholder range, not a published benchmark or a user percentile. Thirty paise of attributed return per rupee of salary sits at the top of the scale. It will be recalibrated once at least 30 organisations have computed scores.<br><br><b>Total HR Program Value includes</b> (role-mix planning ranges, base case shown):<br>&bull; High Performers currently active (counted up to 20% of headcount) &times; salary &times; <code>1.0</code> replacement cost &times; your industry&rsquo;s annual leave probability (MERIDIAN attrition midpoint; 16&ndash;17% if unset). Only the share who would otherwise have left is a saving. Range 0.5&ndash;2.0&times;<br>&bull; New joiners in revenue-generating roles (hired last 12 months) &times; salary &times; <code>1.0</code> (range 0.5&ndash;1.5)<br>&bull; Emerging Talent &times; salary &times; <code>2%</code> (development return at base; range 0&ndash;6%, not 2.8&times; on an assumed 4% spend)<br>&bull; Stable employees ('+window._tenureLabel+') &times; salary &times; <code>3%</code> (tenure premium; range 2&ndash;6%, not 8%)<br>&bull; Below-expectation contributors &times; salary &times; <code>0.30</code> (risk exposure contained; range 0.15&ndash;0.50, not 0.60)<br><br><b>Data to pull:</b> Payroll, HRIS (talent classifications, tenure), Performance system.',
+   formula:'<b>Precise formula:</b><br><code>L1 ratio = Total HR Program Value &divide; Total Compensation</code><br><br><b>Provisional scale:</b> the 0–100 score is normalized against a placeholder range, not a published benchmark or a user percentile. Fifteen paise of HR-attributed return per rupee of salary sits at the top of the scale. It will be recalibrated once at least 30 organisations have computed scores.<br><br><b>Total HR Program Value includes</b> (role-mix planning ranges, base case shown):<br>&bull; <b>The whole total is then multiplied by an HR attribution share</b> (25%, 50% or 75%, your own judgement; 50% if left blank), because line managers, pay and the market also drive these outcomes.<br>&bull; High Performers currently active (counted up to 20% of headcount) &times; salary &times; <code>1.0</code> replacement cost &times; your industry&rsquo;s annual leave probability (MERIDIAN attrition midpoint; 16&ndash;17% if unset). Only the share who would otherwise have left is a saving. Range 0.5&ndash;2.0&times;<br>&bull; New joiners in revenue-generating roles (hired last 12 months) &times; salary &times; <code>1.0</code> (range 0.5&ndash;1.5)<br>&bull; Emerging Talent &times; salary &times; <code>2%</code> (development return at base; range 0&ndash;6%, not 2.8&times; on an assumed 4% spend)<br>&bull; Stable employees ('+window._tenureLabel+') &times; salary &times; <code>3%</code> (tenure premium; range 2&ndash;6%, not 8%)<br>&bull; Below-expectation contributors &times; salary &times; <code>0.30</code> (risk exposure contained; range 0.15&ndash;0.50, not 0.60)<br><br><b>Data to pull:</b> Payroll, HRIS (talent classifications, tenure), Performance system.',
    questions:[{id:'q1',type:'pct',text:'For every \u20B9100 of total salaries, roughly what percentage does your HR function generate in measurable financial value?',sub:'Include: retention savings, quality-of-hire returns, development ROI, engagement productivity, and risk management outcomes.'}],
    computedQuestions:[
      {id:'cq1_headcount',type:'num',text:'Total current headcount',sub:'Your full active employee count today.',unit:'people',placeholder:'e.g. 120'},
      {id:'cq1_compbase',type:'num',text:'Total annual compensation base (\u20B9)',sub:'Sum of annual CTC across all employees.',unit:'\u20B9/year',placeholder:'e.g. 18000000'},
      {id:'cq1_stars',type:'num',text:'Number of Star / top performers',sub:'Employees rated consistently in your top performance band.',unit:'people',placeholder:'e.g. 15'},
+     {id:'cq1_attr',type:'select',optional:true,text:'How much of these outcomes would you credit to HR\u2019s own work, as opposed to line managers, pay, brand and the market? (optional)',options:['','Low (25%)','Moderate (50%)','High (75%)'],placeholder:'Moderate (50%) if left blank'},
      {id:'cq1_emerging',type:'num',text:'Number of Emerging Talent',sub:'High-potential employees still early in development.',unit:'people',placeholder:'e.g. 10'},
      {id:'cq1_tenured5',type:'num',text:'Number of employees with 5+ years tenure',sub:'',unit:'people',placeholder:'e.g. 20'},
      {id:'cq1_revhires',type:'num',text:'New hires in revenue-generating roles, last 12 months',sub:'Sales, Business Development, Customer Success, or equivalent revenue-facing roles.',unit:'people',placeholder:'e.g. 8'},
@@ -473,7 +474,7 @@ var BLOCKS=[
   },
   {id:'D',title:'Human P&L',pillar:'L4',weight:'20% weight',
    desc:'For every rupee spent running HR, how much comes back?',
-   formula:'<b>The Human P&L &mdash; precise formula:</b><br><code>L4 ratio = L1 attributed return &divide; annual HR spend</code>. If you enter your actual annual HR spend, that is the cost side. If you leave it blank, a planning assumption of 7.5% of the compensation base is used (4% HR function, 1.5% compliance, 2% culture) and the result is marked as assumed. L4 shares its return side with L1, so the two pillars move together; they differ only in what they compare it against.<br><br><b>Provisional scale:</b> the 0–100 score is normalized against a placeholder range, not a published benchmark or a user percentile. It will be recalibrated once at least 30 organisations have computed scores.<br><br><b>Return:</b> taken from the L1 Value Ledger book. L4 does not reprice stars, hires, tenure, or at-risk people. <b>Investment:</b> HR function, compliance, and culture cost, assumed as a share of the compensation base',
+   formula:'<b>The Human P&L &mdash; precise formula:</b><br><code>L4 ratio = L1 HR-attributed return &divide; annual HR spend</code> (scaled so 1.5 rupees of return per rupee spent is full marks). If you enter your actual annual HR spend, that is the cost side. If you leave it blank, a planning assumption of 7.5% of the compensation base is used (4% HR function, 1.5% compliance, 2% culture) and the result is marked as assumed. L4 shares its return side with L1, so the two pillars move together; they differ only in what they compare it against.<br><br><b>Provisional scale:</b> the 0–100 score is normalized against a placeholder range, not a published benchmark or a user percentile. It will be recalibrated once at least 30 organisations have computed scores.<br><br><b>Return:</b> taken from the L1 Value Ledger book. L4 does not reprice stars, hires, tenure, or at-risk people. <b>Investment:</b> HR function, compliance, and culture cost, assumed as a share of the compensation base',
    questions:[{id:'q15',type:'pct',text:'For every \u20B9100 your HR function spends on running HR \u2014 hiring costs, training, HR team salaries, tools, compliance \u2014 roughly how much measurable value does it generate?',sub:'Include: retention savings, productivity gains, avoided legal costs, and quality-of-hire outcomes. Exclude base salaries from the \u20B9100.'}],
    computedQuestions:[
      {id:'cq1_headcount',type:'num',text:'Total current headcount',sub:'Same figure as L1, if you already entered it there \u2014 no need to re-enter.',unit:'people',placeholder:'e.g. 120'},
@@ -807,7 +808,7 @@ function validateBlock(idx){
   activeQuestions.forEach(function(q){
     var val=answers[q.id];
     if(q.type==='yn'){if(val!=='yes'&&val!=='no'&&val!=='na')missingIds.push(q.id);}
-    else if(q.type==='select'){if(!val)missingIds.push(q.id);}
+    else if(q.type==='select'){if(!q.optional&&!val)missingIds.push(q.id);}
     else{if(!q.optional&&(val===undefined||val===null))missingIds.push(q.id);}
   });
   return missingIds;
@@ -913,8 +914,8 @@ function restartOnboarding(){
   window.scrollTo(0,0);
 }
 
-var /* Scale: 0 to 0.30 attributed return per rupee of payroll. 0.30 is roughly a very strong organisation on base-case planning rates (star share at the 20% cap, a high revenue-hire share, broad tenure). Placeholder, not a published benchmark. */
-L1_BENCH={min:0,max:0.30};
+var /* Scale: 0 to 0.15 HR-attributed return per rupee of payroll. 0.15 is roughly a very strong organisation on base-case planning rates after a 50% HR attribution share. Placeholder, not a published benchmark. */
+L1_BENCH={min:0,max:0.15};
 function minMaxL1(raw){var scaled=100*(raw-L1_BENCH.min)/(L1_BENCH.max-L1_BENCH.min);return Math.round(Math.max(0,Math.min(100,scaled))*10)/10;}
 /* Planning ranges for a mixed workforce, not a senior-only book.
    Replacement avoided: stars × pay × (0.5–2.0, base 1.0) × annual leave probability. Only the share who would otherwise have left is a saving; probability = industry attrition midpoint from MERIDIAN (national 16–17% if unset). Stars above 20% of headcount are not counted.
@@ -930,6 +931,7 @@ function buildL1Book(a){
   var stars=HumacShared.cappedStars(starsEntered,headcount);
   var _ind='';try{_ind=(JSON.parse(sessionStorage.getItem('sr_meridian')||'{}').industry)||'';}catch(e){}
   var leaveP=HumacShared.leaveP(_ind);
+  var attr=HumacShared.attribution(a.cq1_attr);
   var emerging=a.cq1_emerging||0,tenured5=a.cq1_tenured5||0,revHires=a.cq1_revhires||0,atRisk=a.cq1_atrisk||0;
   if(!(headcount>0&&compBase>0))return {insufficient:true,totalRet:0,compBase:compBase,reason:'Headcount and compensation base are required.'};
   function side(i){
@@ -939,10 +941,10 @@ function buildL1Book(a){
     if(emerging>0){n+=emerging*avgSalary*L1_MULT.dev[i];rows++;}
     if(tenured5>0){n+=tenured5*avgSalary*L1_MULT.tenure[i];rows++;}
     if(atRisk>0){n+=atRisk*avgSalary*L1_MULT.risk[i];rows++;}
-    return {n:n,rows:rows};
+    return {n:n*attr,rows:rows};
   }
   var low=side(0),base=side(1),high=side(2);
-  return {canonical:true,insufficient:base.rows===0,totalRet:base.n,lowRet:low.n,highRet:high.n,compBase:compBase,avgSalary:avgSalary,rows:base.rows,scenario:'base',leaveP:leaveP,starsEntered:starsEntered,starsCounted:stars,note:'Mixed-workforce planning range. Not a measured return. Replacement savings are weighted by annual leave probability. L4 and L5 must not reprice these cohorts.'};
+  return {canonical:true,insufficient:base.rows===0,totalRet:base.n,lowRet:low.n,highRet:high.n,compBase:compBase,avgSalary:avgSalary,rows:base.rows,scenario:'base',leaveP:leaveP,attribution:attr,starsEntered:starsEntered,starsCounted:stars,note:'Mixed-workforce planning range. Not a measured return. Replacement savings are weighted by annual leave probability, and the whole book by an HR attribution share. L4 and L5 must not reprice these cohorts.'};
 }
 function computeL1Real(a){
   var book=buildL1Book(a);
@@ -950,7 +952,7 @@ function computeL1Real(a){
   if(book.insufficient)return null;
   return minMaxL1(book.totalRet/book.compBase);
 }
-var L4_BENCH={min:0,max:3}; /* 0 to 3 rupees of L1 return per rupee of HR spend. Placeholder scale, matched to the mixed-workforce book. */
+var L4_BENCH={min:0,max:1.5}; /* 0 to 1.5 rupees of HR-attributed L1 return per rupee of HR spend. Placeholder scale; the L1 return is already discounted by the attribution share. */
 function minMaxL4(raw){var scaled=100*(raw-L4_BENCH.min)/(L4_BENCH.max-L4_BENCH.min);return Math.round(Math.max(0,Math.min(100,scaled))*10)/10;}
 function computeL4Real(a){
   var book=window.__l1book||buildL1Book(a);
@@ -1075,7 +1077,7 @@ function renderScoreReveal(){
   var board;
   if(book&&!book.insufficient&&book.compBase>0){
     var per=Math.round((book.totalRet/book.compBase)*1000)/10;
-    var lo=Math.round((book.lowRet/book.compBase)*1000)/10, hi=Math.round((book.highRet/book.compBase)*1000)/10; board='For every ₹100 of salary, the planning range is ₹'+lo+' to ₹'+hi+', base ₹'+per+'. That range is the result. The 0–100 score only places the base case on a provisional scale. Replacement savings are weighted by an annual leave probability of '+Math.round((book.leaveP||0)*1000)/10+'%.'+((window.__l4cost&&window.__l4cost.source==='assumed')?' L4 used an assumed HR cost of 7.5% of payroll, not your actual spend.':'')+' '+excludedCount+' pillar'+(excludedCount===1?' is':'s are')+' excluded. Not a validated measure.';
+    var lo=Math.round((book.lowRet/book.compBase)*1000)/10, hi=Math.round((book.highRet/book.compBase)*1000)/10; board='For every ₹100 of salary, the planning range is ₹'+lo+' to ₹'+hi+', base ₹'+per+'. That range is the result. The 0–100 score only places the base case on a provisional scale. Replacement savings are weighted by an annual leave probability of '+Math.round((book.leaveP||0)*1000)/10+'%. HR attribution share used: '+Math.round((book.attribution||0.5)*100)+'%'+((book.attribution||0.5)>0.5?' (above the 50% default, which raises the score)':(book.attribution||0.5)<0.5?' (below the 50% default, which lowers the score)':'')+'.'+((window.__l4cost&&window.__l4cost.source==='assumed')?' L4 used an assumed HR cost of 7.5% of payroll, not your actual spend.':'')+' '+excludedCount+' pillar'+(excludedCount===1?' is':'s are')+' excluded. Not a validated measure.';
   } else {
     board='This run did not compute a rupee return. '+excludedCount+' pillar'+(excludedCount===1?' is':'s are')+' excluded. The score is a provisional index, v0.9, not a validated measure.';
   }

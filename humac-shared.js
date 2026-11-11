@@ -23,6 +23,9 @@
     /* Cross-pillar gap factor: 1.0 at a pillar score of 50, 0 at 100, 2.0 at 0. Missing score counts as 50. */
     gap:function(score){var s=(score==null||isNaN(score))?50:score;return Math.max(0,Math.min(2,2*(1-s/100)));},
     cappedHipo:function(n,headcount){var cap=Math.floor((headcount||0)*0.15);return Math.max(0,Math.min(n||0,cap>0?cap:(n||0)));},
+    /* HR attribution share (Phillips-style isolation): the portion of the modelled outcomes credited to HR's own work,
+       as opposed to line managers, the market, brand and pay. Three discrete choices, default Moderate. */
+    attribution:function(ans){var m=/(\d+)\s*%/.exec(String(ans||''));var v=m?parseInt(m[1],10)/100:0.5;return Math.max(0.25,Math.min(0.75,v));},
     HIPO_P:0.25
   };
 })(window);

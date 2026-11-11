@@ -294,9 +294,11 @@ function computeRealLedger(a){
   if(emerging>0){var dc=emerging*avgSalary*ASSUMPTIONS.dri.spend;rows.push({id:'E003',key:'dri',action:'Development Return',note:emerging+' Emerging Talent \xd7 2% dev spend \xd7 '+m('dri').toFixed(1)+' DRI',pill:'Development',pillCls:'p-dev',cost:dc,ret:dc*m('dri'),formula:'Emerging Talent ('+emerging+') \xd7 avg salary \xd7 2% \xd7 '+m('dri').toFixed(1)+' DRI',working:ASSUMPTIONS.dri.note});}
   if(tenured5>0){var ts=tenured5*avgSalary;rows.push({id:'E004',key:'engage',action:'Engagement Premium',note:tenured5+' employee'+(tenured5!==1?'s':'')+' at 5+ yrs tenure \xd7 '+(m('engage')*100).toFixed(0)+'% premium assumption',pill:'Culture & Engagement',pillCls:'p-culture',cost:ts*ASSUMPTIONS.engage.cost,ret:ts*m('engage'),formula:'Tenured 5+ yrs ('+tenured5+') \xd7 avg salary \xd7 '+(m('engage')*100).toFixed(0)+'%',working:ASSUMPTIONS.engage.note});}
   if(atRisk>0){var as2=atRisk*avgSalary;rows.push({id:'E005',key:'risk',action:'Risk Management Value',note:atRisk+' at-risk performer'+(atRisk!==1?'s':'')+' \xd7 '+(m('risk')*100).toFixed(0)+'% exposure assumed contained',pill:'Risk & Compliance',pillCls:'p-risk',cost:as2*ASSUMPTIONS.risk.cost,ret:as2*m('risk'),formula:'At-risk performers ('+atRisk+') \xd7 avg salary \xd7 '+(m('risk')*100).toFixed(0)+'%',working:ASSUMPTIONS.risk.note});}
+  var attr=HumacShared.attribution(a.cq1_attr);
+  rows.forEach(function(r){r.ret=r.ret*attr;r.formula=r.formula+' \xd7 '+Math.round(attr*100)+'% HR attribution share';});
   var totalCost=rows.reduce(function(s,r){return s+r.cost;},0);
   var totalRet=rows.reduce(function(s,r){return s+r.ret;},0);
-  return {rows:rows, totalCost:totalCost, totalRet:totalRet, totalNet:totalRet-totalCost, compBase:compBase, avgSalary:avgSalary, insufficient:rows.length===0, reason:rows.length?'':'Cohort counts are zero. Missing cohorts are not scored as average.'};
+  return {rows:rows, totalCost:totalCost, totalRet:totalRet, totalNet:totalRet-totalCost, attribution:attr, leaveP:leaveP, compBase:compBase, avgSalary:avgSalary, insufficient:rows.length===0, reason:rows.length?'':'Cohort counts are zero. Missing cohorts are not scored as average.'};
 }
 var hci=hd.hci||1,conf=hd.confidence||'medium';
 var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
