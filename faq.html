@@ -9,14 +9,14 @@
 <meta property="og:type"        content="website">
 <meta property="og:url"         content="https://vantage.virorah.com/faq.html">
 <meta property="og:site_name"   content="Virorah Vantage">
-<meta property="og:title"       content="FAQ — Vantage">
+<meta property="og:title"       content="FAQ | Vantage">
 <meta property="og:description" content="Everything you want to know before you start: what Vantage is, who it's for, how your data is handled, what it costs, and what it doesn't do.">
 <meta property="og:image"       content="https://vantage.virorah.com/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="627">
 <meta property="og:locale"      content="en_IN">
 <meta name="twitter:card"       content="summary_large_image">
-<meta name="twitter:title"      content="FAQ — Vantage">
+<meta name="twitter:title"      content="FAQ | Vantage">
 <meta name="twitter:description" content="Everything you want to know before you start: what Vantage is, who it's for, how your data is handled, what it costs, and what it doesn't do.">
 <meta name="twitter:image"      content="https://vantage.virorah.com/og-image.png">
 <link rel="icon" type="image/png" href="favicon.png"/>
@@ -116,7 +116,7 @@ a{color:inherit;text-decoration:none}
   <div class="faq-hero-content">
     <span class="faq-eyebrow">VIRORAH VANTAGE &middot; FREQUENTLY ASKED</span>
     <h1>Before you start,<br><em>the real answers.</em></h1>
-    <p class="faq-hero-sub">What Vantage actually is, who it's built for, what happens to your data, and what it costs. No marketing gloss &mdash; if something's a limitation, we say so here.</p>
+    <p class="faq-hero-sub">What Vantage actually is, who it's built for, what happens to your data, and what it costs. No marketing gloss, if something's a limitation, we say so here.</p>
   </div>
 </section>
 
@@ -199,7 +199,7 @@ a{color:inherit;text-decoration:none}
           <p><strong>Data storage:</strong> Your case records, MERIDIAN profile, and Humac Score are stored in Airtable, which is SOC 2 Type II certified and GDPR compliant. Data is hosted on servers in the United States.</p>
           <p><strong>API and traffic layer:</strong> All traffic between your browser and Vantage&rsquo;s backend runs through Cloudflare Workers. Cloudflare is SOC 2 Type II and ISO 27001 certified.</p>
           <p><strong>AI processing:</strong> Anthropic, the AI provider powering Vantage&rsquo;s tools, does not use API data to train its models by default. This is documented in their usage policy.</p>
-          <p><strong>Anonymisation &mdash; a two-step process:</strong> When you submit a case narrative, your original text first reaches Anthropic&rsquo;s Claude Haiku model, which identifies and replaces person names, company names, and specific locations with role-consistent placeholders. Only the anonymised output then reaches Claude for the actual analysis &mdash; your original text reaches Anthropic once, for anonymisation only. This step fails closed: if anonymisation cannot complete safely, the request is blocked rather than sent unredacted.</p>
+          <p><strong>Anonymisation (a two-step process):</strong> When you submit a case narrative, your original text first reaches Anthropic&rsquo;s Claude Haiku model, which identifies and replaces person names, company names, and specific locations with role-consistent placeholders. Only the anonymised output then reaches Claude for the actual analysis, your original text reaches Anthropic once, for anonymisation only. This step fails closed: if anonymisation cannot complete safely, the request is blocked rather than sent unredacted.</p>
           <p><strong>Encryption:</strong> All data is encrypted in transit over TLS. Your case content is never shared with advertisers or used for any purpose outside your account.</p>
           <p><strong>Your control:</strong> You can export all your data or delete it permanently at any time from within your account.</p>
         </div>

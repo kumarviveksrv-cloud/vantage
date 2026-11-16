@@ -45,7 +45,7 @@ function geoBlockedPage() {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vantage — Coming Soon to Your Region</title>
+<title>Vantage | Coming Soon to Your Region</title>
 <link rel="icon" href="/favicon.png">
 <style>
   :root {
@@ -132,7 +132,7 @@ function geoBlockedPage() {
   <div class="badge"><div class="dot"></div>Vantage by Virorah</div>
   <h1>Currently available<br>in <span>India only</span></h1>
   <p>
-    Vantage is live and growing fast — but right now we're focused on
+    Vantage is live and growing fast, but right now we're focused on
     building the best possible experience for the Indian market.<br><br>
     Global access is on the roadmap. We'll reach you soon.
   </p>

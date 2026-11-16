@@ -211,7 +211,7 @@
         <div class="section-title">Monthly Narrative</div>
         <div class="narrative-card">
           <div class="narrative-label">What your month says about you</div>
-          <div class="narrative-text" id="monthly-narrative">&#8212;</div>
+          <div class="narrative-text" id="monthly-narrative">-</div>
         </div>
 
         <div class="section-title">Key Insights</div>
@@ -490,12 +490,12 @@
         '<div style="display:flex;align-items:baseline;gap:14px;margin-bottom:12px;flex-wrap:wrap">' +
           '<div>' +
             '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:rgba(244,243,255,.60);margin-bottom:2px">Humac</div>' +
-            '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:3rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (humac==null?'&mdash;':humac) + '</div>' +
+            '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:3rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (humac==null?'-':humac) + '</div>' +
           '</div>' +
           ((hciAdj==null||hciAdj===humac)?'':'<div style="color:rgba(99,102,241,.25);font-size:1.4rem;align-self:center">|</div>' +
           '<div>' +
             '<div style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:rgba(244,243,255,.60);margin-bottom:2px">HCI-adjusted</div>' +
-            '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:2.2rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#a5b4fc,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (hciAdj==null?'&mdash;':hciAdj) + '</div>' +
+            '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:2.2rem;font-weight:700;line-height:1;background:linear-gradient(135deg,#a5b4fc,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">' + (hciAdj==null?'-':hciAdj) + '</div>' +
           '</div>') +
         '</div>' +
         '<div style="display:flex;align-items:center;gap:10px">' +
@@ -582,7 +582,7 @@
       document.getElementById('dh-critical').innerText = d.stats ? d.stats.criticalCases || 0 : 0;
       document.getElementById('dh-resolved').innerText = d.stats ? d.stats.resolvedCases || 0 : 0;
       document.getElementById('dh-tools').innerText = d.stats ? d.stats.toolsUsed || 0 : 0;
-      document.getElementById('monthly-narrative').innerText = d.narrative || '\u2014';
+      document.getElementById('monthly-narrative').innerText = d.narrative || '-';
 
       document.getElementById('insights-well').innerHTML = (d.insightsWell||[]).map(function(i){
         return '<div class="insight-item"><div class="insight-dot"></div><div class="insight-text">'+i+'</div></div>';
@@ -604,7 +604,7 @@
 
       if (d.humacity && d.humacity.assets) {
         document.getElementById('hs-assets-grid').innerHTML = d.humacity.assets.map(function(a){
-          return '<div class="hs-asset"><div class="hs-asset-name">'+(a.name||'')+'</div><div class="hs-asset-val">'+(a.value||'\u2014')+'</div><div class="hs-asset-desc">'+(a.description||'')+'</div></div>';
+          return '<div class="hs-asset"><div class="hs-asset-name">'+(a.name||'')+'</div><div class="hs-asset-val">'+(a.value||'-')+'</div><div class="hs-asset-desc">'+(a.description||'')+'</div></div>';
         }).join('');
       }
 
@@ -636,7 +636,7 @@
       }
     })();
   </script>
-  <script src="clerk-auth.js?v=20261105a"></script>
-  <script src="sidebar-shared.js?v=20261105b"></script>
+  <script src="clerk-auth.js?v=20261116a"></script>
+  <script src="sidebar-shared.js?v=20261116a"></script>
 </body>
 </html>

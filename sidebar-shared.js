@@ -1575,7 +1575,7 @@
       return;
     }
     var s = document.createElement('script');
-    s.src = '/vantage-intro-modal.js?v=20261103b';
+    s.src = '/vantage-intro-modal.js?v=20261116a';
     s.onload = function(){ setTimeout(function(){ window.VantageIntro.show(key); }, 800); };
     document.head.appendChild(s);
   }
@@ -1666,7 +1666,7 @@ async function vfSubmit() {
     });
     var data = await res.json();
     if (data.success) {
-      vfShowMsg('✓ Thank you—noted!', 'ok');
+      vfShowMsg('✓ Thanks, noted!', 'ok');
       btn.style.display = 'none';
       setTimeout(function() { document.getElementById('vf-overlay').style.display = 'none'; }, 1800);
     } else {

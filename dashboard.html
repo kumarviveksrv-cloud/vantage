@@ -15,7 +15,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard | Virorah Vantage</title>
-  <meta property="og:title" content="Virorah Vantage — HR Decision Intelligence">
+  <meta property="og:title" content="Virorah Vantage | HR Decision Intelligence">
   <meta property="og:description" content="AI-powered tools for Indian HR professionals. Employee case analysis, business cases, policy guidance, and more.">
   <meta property="og:image" content="https://vantage.virorah.com/og-image.png">
   <meta property="og:url" content="https://vantage.virorah.com">
@@ -578,7 +578,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
         <div>
           <div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:rgba(244,243,255,.78);letter-spacing:-.01em;margin-bottom:6px">Your Vantage Record</div>
-          <div id="rec-dash-number" style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;letter-spacing:-.03em;color:#f4f3ff;line-height:1.15">&mdash;</div>
+          <div id="rec-dash-number" style="font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;letter-spacing:-.03em;color:#f4f3ff;line-height:1.15">-</div>
           <div id="rec-dash-sub" style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:rgba(244,243,255,.5);margin-top:6px"></div>
           <div id="rec-dash-mix" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(244,243,255,.38);margin-top:4px"></div>
         </div>
@@ -786,9 +786,9 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
       {key:'meridian',done:hasMeridian,icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>',name:'Set up MERIDIAN',
        desc:'Your professional context. Without this, every tool gives generic advice. Sets your state, industry, org size, and authority depth.',href:'onboarding.html',cta:'Set up \u2192'},
       {key:'humac',done:hasHumac,icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>',name:'Generate your Humac Score',
-       desc:'18 questions. A provisional index. What The Business Case uses to model Revenue at Risk \u2014 not a sector estimate, a figure built from your org\u2019s own inputs.',href:'humac-onboarding.html',cta:'Start \u2192'},
+       desc:'18 questions. A provisional index. What The Business Case uses to model Revenue at Risk, not a sector estimate, a figure built from your org\u2019s own inputs.',href:'humac-onboarding.html',cta:'Start \u2192'},
       {key:'case',done:hasSavedCase,icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h8L10 22l10-12h-8L13 2z"/></svg>',
-       name:'Navigate your first case',desc:'Now calibrated to your context and your org\u2019s baseline. Describe a real situation \u2014 get legal position, financial exposure, and exact next steps.',href:'employee-case-advisor.html',cta:'Go \u2192'}
+       name:'Navigate your first case',desc:'Now calibrated to your context and your org\u2019s baseline. Describe a real situation, get legal position, financial exposure, and exact next steps.',href:'employee-case-advisor.html',cta:'Go \u2192'}
     ];
 
     function renderSetupCard() {
@@ -909,14 +909,14 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
         0:['Annual goal-setting and increment season.','Fresh financial year planning, goal-setting conversations, and increment letters are in motion. Campus hiring pipelines need to be live. Use The Business Case to present workforce plans to leadership before Q1 budgets freeze.'],
         1:['Pre-appraisal period and increment conversations.','Increment communication is the highest-stakes HR conversation of Q4. Calibration sessions, exception handling, and manager readiness are your focus this month. Difficult Conversations is your most critical tool right now.'],
         2:['Financial year-end close and statutory compliance.','PF and gratuity settlements, headcount sign-off, and exit formalities must clear before March 31. Statutory compliance queries are at their peak. The Policy Advisor is essential for FY-end compliance questions your managers will be raising this week.'],
-        3:['New financial year and appraisal completion.','Promotions, lateral moves, and performance letters go live. Fresher onboarding season begins \u2014 campus joiners arrive through June. Onboarding quality in the first 90 days sets your regretted attrition curve for the entire year.'],
-        4:['Retention risk season and internship peaks.','Post-increment attrition risk peaks in May-June as market offers accelerate. Watch for early signals in your high performers. Internship cohorts need structured programmes. ER cases surfacing post-appraisal need immediate triage \u2014 delays become liability.'],
-        5:['H1 close and POSH annual reporting deadline.','ICC annual reports are due by June 30 under the POSH Act \u2014 confirm your IC has filed or face \u20b950,000 exposure. Mid-year business reviews need HR metrics ready. The Business Case converts your H1 data into the CFO narrative the room needs to act.'],
-        6:['H2 kickoff and succession conversations.','H2 goal-setting, succession nominations, and leadership pipeline reviews. High-performer retention risk resurfaces after mid-year reviews. Watch for engagement dips in your top talent \u2014 losing a Star or HiPo in H2 carries a replacement cost of 1.8x salary at minimum.'],
-        7:['Second half performance planning season.','Talent reviews, succession shortlisting, and H2 goal alignment are the priority. Watch for flight risk signals in high-performer cohorts \u2014 attrition risk peaks in August-September. The Employee Case Advisor and The Business Case are your most critical tools right now.'],
-        8:['Appraisal season preparation begins.','Q3 performance data collection, manager calibration preparation, and goal progress reviews. Festival season staffing conversations begin \u2014 Dussehra and Diwali are 4-6 weeks away. Unresolved ER cases now become liability in the year-end appraisal cycle. Clear the backlog this month.'],
-        9:['Festival season and Q3 headcount conversations.','Diwali leave surge, bonus declarations, and statutory bonus compliance under the Payment of Bonus Act are live. Q3 headcount plans need sign-off before November. Post-Diwali attrition peaks \u2014 retention conversations this week prevent regretted exits next month.'],
-        10:['Year-end calibration and December pipeline.','Post-Diwali market is active \u2014 counter-offer situations will surface. Year-end calibration meetings begin for December-cycle companies. Increment planning for January needs to be ready by month-end. Difficult Conversations is critical for calibration conversation preparation right now.'],
+        3:['New financial year and appraisal completion.','Promotions, lateral moves, and performance letters go live. Fresher onboarding season begins, campus joiners arrive through June. Onboarding quality in the first 90 days sets your regretted attrition curve for the entire year.'],
+        4:['Retention risk season and internship peaks.','Post-increment attrition risk peaks in May-June as market offers accelerate. Watch for early signals in your high performers. Internship cohorts need structured programmes. ER cases surfacing post-appraisal need immediate triage, delays become liability.'],
+        5:['H1 close and POSH annual reporting deadline.','ICC annual reports are due by June 30 under the POSH Act, confirm your IC has filed or face \u20b950,000 exposure. Mid-year business reviews need HR metrics ready. The Business Case converts your H1 data into the CFO narrative the room needs to act.'],
+        6:['H2 kickoff and succession conversations.','H2 goal-setting, succession nominations, and leadership pipeline reviews. High-performer retention risk resurfaces after mid-year reviews. Watch for engagement dips in your top talent, losing a Star or HiPo in H2 carries a replacement cost of 1.8x salary at minimum.'],
+        7:['Second half performance planning season.','Talent reviews, succession shortlisting, and H2 goal alignment are the priority. Watch for flight risk signals in high-performer cohorts, attrition risk peaks in August-September. The Employee Case Advisor and The Business Case are your most critical tools right now.'],
+        8:['Appraisal season preparation begins.','Q3 performance data collection, manager calibration preparation, and goal progress reviews. Festival season staffing conversations begin, Dussehra and Diwali are 4-6 weeks away. Unresolved ER cases now become liability in the year-end appraisal cycle. Clear the backlog this month.'],
+        9:['Festival season and Q3 headcount conversations.','Diwali leave surge, bonus declarations, and statutory bonus compliance under the Payment of Bonus Act are live. Q3 headcount plans need sign-off before November. Post-Diwali attrition peaks, retention conversations this week prevent regretted exits next month.'],
+        10:['Year-end calibration and December pipeline.','Post-Diwali market is active, counter-offer situations will surface. Year-end calibration meetings begin for December-cycle companies. Increment planning for January needs to be ready by month-end. Difficult Conversations is critical for calibration conversation preparation right now.'],
         11:['Year-end reviews and January onboarding pipeline.','Annual performance reviews, increment finalisation, and January fresher joining pipeline. Full-year statutory compliance should be audited before December 31. The Policy Advisor is your fastest route to year-end compliance questions across PF, gratuity, bonus, and POSH annual reporting.']
       };
       var entry = CALENDAR[month] || CALENDAR[7];
@@ -947,7 +947,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
             '<div>' +
               '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px">Humac Score</div>' +
               '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;font-weight:600;color:#f4f3ff;margin-bottom:6px">Your financial baseline is not set</div>' +
-              '<div style="font-size:.86rem;color:rgba(244,243,255,.70);line-height:1.5;max-width:420px">Generate your Humac Score \u2014 a provisional planning index, version 0.9, not a completed measure.</div>' +
+              '<div style="font-size:.86rem;color:rgba(244,243,255,.70);line-height:1.5;max-width:420px">Generate your Humac Score, a provisional planning index, version 0.9, not a completed measure.</div>' +
             '</div>' +
             '<a href="humac-onboarding.html" style="display:inline-flex;align-items:center;gap:8px;font-family:\'JetBrains Mono\',monospace;font-size:.68rem;background:#6366f1;color:#fff;padding:10px 20px;border-radius:8px;text-decoration:none;flex-shrink:0;transition:all .15s" onmouseover="this.style.background=\'#5254d4\'" onmouseout="this.style.background=\'#6366f1\'">' +
               'Generate baseline score \u2192' +
@@ -1249,8 +1249,8 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
     })();
   </script>
 
-    <script src="clerk-auth.js?v=20261105a"></script>
-  <script src="sidebar-shared.js?v=20261105b"></script>
+    <script src="clerk-auth.js?v=20261116a"></script>
+  <script src="sidebar-shared.js?v=20261116a"></script>
 
   <script>
   (function(){

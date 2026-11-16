@@ -259,7 +259,7 @@
       /* Dispose immediately — this was only ever about warming the
          shader cache, not producing anything visible. */
       geo.dispose(); mat.dispose(); rdr.dispose();
-    }catch(e){ /* non-fatal — worst case, ta-da just compiles live as before */ }
+    }catch(e){ /* non-fatal: worst case, ta-da just compiles live as before */ }
   }
   /* Fire once the prologue is actually active (canvas + THREE are
      guaranteed available by then), giving up to ~13 seconds of idle
@@ -1139,7 +1139,7 @@
     if(!ctx){cv.style.display='none';cb();return;}
 
     const W=cv.width, H=cv.height, cx=W/2, cy=H/2;
-    const FL=W*0.45; /* focal length — controls perspective strength */
+    const FL=W*0.45; /* focal length, controls perspective strength */
     const maxZ=1200;  /* far plane */
 
     ctx.fillStyle='#050410';

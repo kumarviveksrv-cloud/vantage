@@ -54,7 +54,7 @@
         '<defs><radialGradient id="_cg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#c4b5fd"/><stop offset="60%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#6366f1" stop-opacity="0"/></radialGradient></defs>' +
       '</svg>' +
       '<div style="font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:#a5b4fc;margin-top:24px">ARIA</div>' +
-      '<div style="font-family:sans-serif;font-size:14px;color:rgba(244,243,255,0.8);margin-top:6px">Preparing Vantage...</div>';
+      '<div style="font-family:DM Sans,sans-serif;font-size:14px;color:rgba(244,243,255,0.8);margin-top:6px">Preparing Vantage...</div>';
     _ldr.setAttribute('style','position:fixed;top:0;left:0;width:100%;height:100%;background:#050410;z-index:99999;visibility:visible;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .35s ease');
     document.documentElement.appendChild(_ldr);
   }
@@ -83,10 +83,10 @@
     var el = document.getElementById('vantage-auth-loader');
     if (!el) { return; } // returning-user fast path: no loader exists, nothing to swap
     el.innerHTML =
-      '<div style="font-family:sans-serif;font-size:14px;color:rgba(244,243,255,0.85);text-align:center;max-width:300px;line-height:1.6;padding:0 24px">' +
+      '<div style="font-family:DM Sans,sans-serif;font-size:14px;color:rgba(244,243,255,0.85);text-align:center;max-width:300px;line-height:1.6;padding:0 24px">' +
         'Sign-in is temporarily unavailable.<br>Please check your connection and try again.' +
       '</div>' +
-      '<button type="button" onclick="window.location.reload()" style="margin-top:20px;padding:10px 22px;border-radius:8px;border:none;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#f4f3ff;font-family:sans-serif;font-size:13px;font-weight:600;cursor:pointer">Retry</button>';
+      '<button type="button" onclick="window.location.reload()" style="margin-top:20px;padding:10px 22px;border-radius:8px;border:none;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#f4f3ff;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Retry</button>';
     el.style.opacity = '1';
   }
 
@@ -340,7 +340,7 @@
   });
 
   s.addEventListener('error', function () {
-    console.error('[Clerk] SDK failed to load — auth unavailable');
+    console.error('[Clerk] SDK failed to load, auth unavailable');
     _releaseHold();
     if (isAccessPage) {
       // access.html handles its own UI for a failed Clerk load; just unblock it.

@@ -236,26 +236,26 @@ function plRow(label,desc,val,isRev){
 
 function buildActions(margin){
   if(margin==null||margin<1)return [
-    {title:'Check your L4 cost assumptions against reality',body:'The HR Function Cost, Compliance, and Culture percentages above are planning assumptions. Pull your actual HR operating spend from finance and compare it to what the Low/Base/High toggle shows — the gap often explains a negative margin more than the revenue side does.'},
-    {title:'Confirm the L1 Value Ledger is current',body:'This P&L\u2019s entire revenue line is the L1 book\u2019s total return. If L1 is still in estimate mode or missing cohorts, the margin here will understate the real picture — go complete L1 first.'},
-    {title:'Present both sides of the ratio, not just the number',body:'\u201cOur HR investment this period was '+(book?fmtINR((book.compBase||0)*(m('hrFunc')+m('compliance')+m('culture'))):'—')+', against a Value Ledger return of '+(book?fmtINR(book.totalRet):'—')+'.\u201d Naming the source of each side is what makes the ratio credible in a room.'},
+    {title:'Check your L4 cost assumptions against reality',body:'The HR Function Cost, Compliance, and Culture percentages above are planning assumptions. Pull your actual HR operating spend from finance and compare it to what the Low/Base/High toggle shows, the gap often explains a negative margin more than the revenue side does.'},
+    {title:'Confirm the L1 Value Ledger is current',body:'This P&L\u2019s entire revenue line is the L1 book\u2019s total return. If L1 is still in estimate mode or missing cohorts, the margin here will understate the real picture, go complete L1 first.'},
+    {title:'Present both sides of the ratio, not just the number',body:'\u201cOur HR investment this period was '+(book?fmtINR((book.compBase||0)*(m('hrFunc')+m('compliance')+m('culture'))):'-')+', against a Value Ledger return of '+(book?fmtINR(book.totalRet):'-')+'.\u201d Naming the source of each side is what makes the ratio credible in a room.'},
     {title:'Build a biannual HR P&L report',body:'A standing 6-month deliverable alongside the business P&L. Two data points, same time each year, is what turns this into a managed metric instead of a one-off exercise.'}
   ];
   if(margin<2)return [
     {title:'Review the cost side first',body:'The fastest lever on a modest margin is usually cost, not revenue: review whether the Compliance and Culture assumptions reflect what you actually spend, rather than a generic planning range.'},
     {title:'Keep the L1 book current',body:'This margin is only as current as the Value Ledger behind it. Re-run L1 whenever cohort counts change materially.'},
-    {title:'Document the ratio\u2019s components',body:'Revenue side: the L1 book total. Cost side: HR Function Cost + Compliance + Culture. Keep both visible when you share the margin \u2014 it\u2019s what separates a named assumption from a headline number.'},
+    {title:'Document the ratio\u2019s components',body:'Revenue side: the L1 book total. Cost side: HR Function Cost + Compliance + Culture. Keep both visible when you share the margin, it\u2019s what separates a named assumption from a headline number.'},
     {title:'Re-check this margin quarterly',body:'A positive but modest margin can move in either direction quickly. A quarterly check-in catches drift before it becomes a budget conversation.'}
   ];
   if(margin<3)return [
-    {title:'Take the ratio into your next review, both sides named',body:'A '+margin.toFixed(2)+'x modelled margin is strong under the '+scenario+' case. Take it into the room as what it is: revenue from the Value Ledger assumption, cost from L4\u2019s own planning assumptions \u2014 both named, not a single confident number.'},
+    {title:'Take the ratio into your next review, both sides named',body:'A '+margin.toFixed(2)+'x modelled margin is strong under the '+scenario+' case. Take it into the room as what it is: revenue from the Value Ledger assumption, cost from L4\u2019s own planning assumptions, both named, not a single confident number.'},
     {title:'Document your top value-generating initiatives',body:'The L1 book already breaks down which components (retention, hiring, development, engagement, risk) are driving the return. Lead with whichever is largest.'},
     {title:'Build a biannual HR P&L report',body:'A standing 6-month deliverable alongside the business P&L turns this into a tracked planning ratio, not a one-time calculation.'},
     {title:'Re-run at your next Humac check-in',body:'Re-run this after your next quarterly check-in to confirm the margin is holding, not drifting on stale L1 data.'}
   ];
   return [
-    {title:'State both sides of the ratio before it leaves this page',body:'The modelled margin under the '+scenario+' case is '+margin.toFixed(2)+'x. State the revenue source (the L1 Value Ledger assumption) and the cost basis (L4\u2019s own planning assumptions) in the same breath \u2014 a ratio without its sources reads as more confirmed than it is.'},
-    {title:'Keep the assumption attached wherever this ratio travels',body:'If this margin gets shared beyond this page, the scenario and the L1 book it depends on should travel with it \u2014 stripped of that context, it reads as a measured result instead of a modelled one.'},
+    {title:'State both sides of the ratio before it leaves this page',body:'The modelled margin under the '+scenario+' case is '+margin.toFixed(2)+'x. State the revenue source (the L1 Value Ledger assumption) and the cost basis (L4\u2019s own planning assumptions) in the same breath, a ratio without its sources reads as more confirmed than it is.'},
+    {title:'Keep the assumption attached wherever this ratio travels',body:'If this margin gets shared beyond this page, the scenario and the L1 book it depends on should travel with it, stripped of that context, it reads as a measured result instead of a modelled one.'},
     {title:'Re-check the underlying L1 cohort counts',body:'A margin this high is worth a sanity check before it goes further: confirm the Stars, hire, and tenure figures behind the L1 book are current, not stale from an earlier quarter.'},
     {title:'Re-verify the assumptions behind it',body:'A result this strong is worth a sanity check: confirm the L4 cost assumptions (hrFunc/compliance/culture) reflect real spend, not an underestimate that is flattering the ratio.'}
   ];
@@ -274,11 +274,11 @@ function intelText(margin){
       :'The fastest step is to enter your actual annual HR spend, which replaces the 7.5% assumption. Pull it from finance: HR team cost, tools, training, recruitment, compliance and culture spend.';
     return s1+' '+s2+' '+s3+' '+lever;
   }
-  if(margin==null)return 'An L4 score of <b>'+l4+'</b>'+ctx+' has no margin to report yet \u2014 the Value Ledger (L1) hasn\u2019t produced a return to divide against L4\u2019s HR operating costs.';
-  if(margin<1)return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+margin.toFixed(2)+'x modelled margin means the P&L is currently negative under the '+scenario+' case \u2014 HR is modelled as consuming more in operating cost than the L1 book currently models as return. This does not mean HR is not generating value; it means the L1 book or the L4 cost assumptions need review. The actions below cover both.';
+  if(margin==null)return 'An L4 score of <b>'+l4+'</b>'+ctx+' has no margin to report yet, the Value Ledger (L1) hasn\u2019t produced a return to divide against L4\u2019s HR operating costs.';
+  if(margin<1)return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+margin.toFixed(2)+'x modelled margin means the P&L is currently negative under the '+scenario+' case: HR is modelled as consuming more in operating cost than the L1 book currently models as return. This does not mean HR is not generating value; it means the L1 book or the L4 cost assumptions need review. The actions below cover both.';
   if(margin<2)return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+margin.toFixed(2)+'x modelled margin is positive under the '+scenario+' case. The return side is already discounted by the leave probability and your HR attribution share, so 1.0x is break-even. The gap to a stronger reading is usually precision on the cost side, not the revenue side: reviewing the L4 assumptions against real spend often closes it.';
-  if(margin<3)return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+margin.toFixed(2)+'x modelled margin is strong under the '+scenario+' case. It is still a planning ratio \u2014 the L1 book\u2019s modelled return divided by L4\u2019s own cost assumptions \u2014 worth taking into the next review with both sides named, not presented as an audited result.';
-  return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+margin.toFixed(2)+'x modelled margin sits at the top of this provisional scale under the '+scenario+' case. Worth checking the L1 cohort counts and the L4 cost assumptions behind it before it travels anywhere \u2014 a ratio this high is exactly the kind worth a sanity check first.';
+  if(margin<3)return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+margin.toFixed(2)+'x modelled margin is strong under the '+scenario+' case. It is still a planning ratio, the L1 book\u2019s modelled return divided by L4\u2019s own cost assumptions, worth taking into the next review with both sides named, not presented as an audited result.';
+  return'An L4 score of <b>'+l4+'</b>'+ctx+' with a '+margin.toFixed(2)+'x modelled margin sits at the top of this provisional scale under the '+scenario+' case. Worth checking the L1 cohort counts and the L4 cost assumptions behind it before it travels anywhere, a ratio this high is exactly the kind worth a sanity check first.';
 }
 
 // ── Findings — three-card synthesis: the pillar's weight, which side
@@ -293,7 +293,7 @@ function buildFindings(hr,compliance,culture){
   return '<div class="findings-grid">'+
     '<div class="finding-card"><div class="finding-eyebrow">L4 Weight</div><div class="finding-headline">20% of Humac Score, after L3 and L1</div><div class="finding-body">The third-largest pillar weight, after L3 (30%) and L1 (25%). Because the revenue side is fixed by the canonical L1 book, the <b>cost assumptions below are the only lever</b> this page actually gives you.</div></div>'+
     '<div class="finding-card"><div class="finding-eyebrow">Cost Composition</div><div class="finding-headline">'+largest.name+'</div><div class="finding-body">The largest of the three cost lines, at <b>'+share+'%</b> of total HR operating cost under the current scenario. If the margin reads low, this is the line most worth checking against real spend first.</div></div>'+
-    '<div class="finding-card"><div class="finding-eyebrow">What This Page Never Does</div><div class="finding-headline">No cohort re-pricing</div><div class="finding-body">Stars, emerging talent, tenure, revenue hires, and at-risk people are <b>priced once, in the Value Ledger</b>. This page only adds L4-original operating costs on top \u2014 it never touches those cohorts again.</div></div>'+
+    '<div class="finding-card"><div class="finding-eyebrow">What This Page Never Does</div><div class="finding-headline">No cohort re-pricing</div><div class="finding-body">Stars, emerging talent, tenure, revenue hires, and at-risk people are <b>priced once, in the Value Ledger</b>. This page only adds L4-original operating costs on top, it never touches those cohorts again.</div></div>'+
   '</div>';
 }
 
@@ -302,11 +302,11 @@ function render(){
   var sb=band(l4);
   var w=document.getElementById('main-wrap');
   var pdots=[{label:'L1',score:l1,href:'pillar-l1.html'},{label:'L2',score:l2,href:'pillar-l2.html'},{label:'L3',score:l3,href:'pillar-l3.html'},{label:'L4',score:l4,href:'pillar-l4.html',active:true},{label:'L5',score:l5,href:'pillar-l5.html'}];
-  var nav='<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+(p.score!=null?p.score:'—')+'</span></a>';}).join('')+'</div><a href="pillar-l5.html" class="pillar-forward">L5 Balance Sheet \u2192</a></div>';
+  var nav='<div class="pillar-nav-strip"><a href="humac-onboarding.html" class="pillar-back">\u2190 Humac Score</a><div class="pillar-dots">'+pdots.map(function(p){return '<a href="'+p.href+'" class="pd'+(p.active?' active':'')+'"><span class="pd-label">'+p.label+'</span><span class="pd-score">'+(p.score!=null?p.score:'-')+'</span></a>';}).join('')+'</div><a href="pillar-l5.html" class="pillar-forward">L5 Balance Sheet \u2192</a></div>';
   var header='<div class="eyebrow">Vantage \xb7 Humac Score \xb7 L4 \xb7 20% weight \xb7 ratio of the L1 book</div><h1 class="page-title">The Human P&L</h1><p class="page-sub">'+(industry?industry+' \xb7 ':'')+(state?state+' \xb7 ':'')+(scoreDate?'Baseline from '+scoreDate+' \xb7 ':'')+'Human Revenue is the L1 Value Ledger return; Human COGS and OpEx are L4\u2019s own operating costs.</p>';
 
   if(blocked){
-    w.innerHTML=nav+header+'<div class="gate"><b style="color:#f4f3ff">Complete the Value Ledger first.</b> L4 reads vantage_l1_book and will not reprice stars, emerging talent, tenure, revenue hires, or at-risk people \u2014 it simply divides that total by L4\u2019s own HR operating costs.</div>';
+    w.innerHTML=nav+header+'<div class="gate"><b style="color:#f4f3ff">Complete the Value Ledger first.</b> L4 reads vantage_l1_book and will not reprice stars, emerging talent, tenure, revenue hires, or at-risk people, it simply divides that total by L4\u2019s own HR operating costs.</div>';
     return;
   }
 
@@ -322,7 +322,7 @@ function render(){
 
   try{sessionStorage.setItem('vantage_l4_book', JSON.stringify({source:'vantage_l1_book',scenario:scenario,totalRet:book.totalRet,hrInvestment:invest,margin:margin,netProfit:netProfit,forbidden:['cq1_stars','cq1_emerging','cq1_tenured5','cq1_revhires','cq4_revhires24','cq1_atrisk']}));}catch(e){}
 
-  var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L4 Score</div><div class="ratio-num">'+l4+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">Provisional band: '+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+(margin!=null?q4Ratio+' modelled margin, under the '+scenario+' case, from L1 return \xf7 L4 planning costs':'HR modelled margin not yet computed')+'</div><div class="context">'+'Break-even is 1.00x: HR-attributed return equal to HR spend.<br>Return from the L1 Value Ledger divided by L4\u2019s own HR operating costs \u2014 not a second valuation of the people already priced in L1.<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' input coverage \xb7 '+scenario+' case \xb7 L4 carries 20% of Humac Score</div></div></div></div>';
+  var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L4 Score</div><div class="ratio-num">'+l4+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">Provisional band: '+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+(margin!=null?q4Ratio+' modelled margin, under the '+scenario+' case, from L1 return \xf7 L4 planning costs':'HR modelled margin not yet computed')+'</div><div class="context">'+'Break-even is 1.00x: HR-attributed return equal to HR spend.<br>Return from the L1 Value Ledger divided by L4\u2019s own HR operating costs, not a second valuation of the people already priced in L1.<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' input coverage \xb7 '+scenario+' case \xb7 L4 carries 20% of Humac Score</div></div></div></div>';
 
   var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l4+'/100</div><div class="sl">L4 Score</div></div><div class="stat"><div class="sv '+(margin==null?'sv-dim':isPos?'sv-green':'sv-red')+'">'+q4Ratio+'</div><div class="sl">Margin (L1 return \xf7 L4 cost)</div></div><div class="stat"><div class="sv sv-cobalt">1.00x</div><div class="sl">Break-even margin<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s6-legal" target="_blank" rel="noopener">?</a></div></div><div class="stat"><div class="sv sv-dim">'+hci.toFixed(2)+'x</div><div class="sl">HCI coefficient</div></div></div>';
 
@@ -333,7 +333,7 @@ function render(){
   var plWrap='<div class="pl-wrap">'+
     '<div class="pl-header"><div class="pl-header-title">Human P&amp;L Statement</div><div class="pl-header-sub">'+q4Ratio+' margin \xb7 '+scoreDate+' baseline \xb7 '+scenario+' case</div></div>'+
     '<div class="pl-section-head"><span>Human Revenue</span><span>\u20b9</span></div>'+
-    plRow('Value Ledger Return (L1)','Retention Savings + Quality of Hire + Development Return + Engagement Premium + Risk Management Value \u2014 computed once in the Value Ledger, not re-priced here.',totalRev,true)+
+    plRow('Value Ledger Return (L1)','Retention Savings + Quality of Hire + Development Return + Engagement Premium + Risk Management Value, computed once in the Value Ledger, not re-priced here.',totalRev,true)+
     '<div class="pl-subtotal"><div class="pl-subtotal-label">GROSS HUMAN REVENUE</div><div class="pl-subtotal-val pos">+'+fmtINR(totalRev)+'</div></div>'+
     '<div class="pl-section-head"><span>Human COGS</span><span>\u20b9</span></div>'+
     plRow(actualSpend>0?'Actual annual HR spend (entered)':'HR Function Cost',actualSpend>0?'Your own all-in figure (HR team, tools, training, recruitment, compliance, culture). Not scenario-adjusted.':(m('hrFunc')*100).toFixed(1)+'% of total comp base \xb7 '+scenario+' case',hr,false)+
@@ -343,13 +343,13 @@ function render(){
     plRow('Culture &amp; Engagement Spend',actualSpend>0?'Included in the actual HR spend above':(m('culture')*100).toFixed(1)+'% of total comp base',culture,false)+
     '<div class="pl-subtotal"><div class="pl-subtotal-label">TOTAL HUMAN OPEX</div><div class="pl-subtotal-val neg">-'+fmtINR(compliance+culture)+'</div></div>'+
     '<div class="pl-net-row"><div class="pl-net-label">HR Net Profit</div><div class="pl-net-val '+(netProfit>=0?'pos':'neg')+'">'+(netProfit>=0?'+':'')+fmtINR(netProfit)+'</div></div>'+
-    '<div class="pl-ratio-row"><div class="pl-ratio-desc">\u201cModelled margin, under the '+scenario+' case: '+q4Ratio+' \u2014 return from the L1 book divided by L4 planning costs.\u201d</div><div class="pl-ratio-val">'+q4Ratio+'</div></div>'+
+    '<div class="pl-ratio-row"><div class="pl-ratio-desc">\u201cModelled margin, under the '+scenario+' case: '+q4Ratio+' (return from the L1 book divided by L4 planning costs).\u201d</div><div class="pl-ratio-val">'+q4Ratio+'</div></div>'+
   '</div>';
 
   var assumptionRows=Object.keys(ASSUMPTIONS).map(function(k){var a=ASSUMPTIONS[k];return '<tr><td>'+a.label+'</td><td>'+(a.low*100).toFixed(1)+'%</td><td>'+(a.base*100).toFixed(1)+'%</td><td>'+(a.high*100).toFixed(1)+'%</td><td>'+a.note+'</td></tr>';}).join('');
   var assumptionsTable='<table class="assumptions"><tr><th>Line</th><th>Low</th><th>Base</th><th>High</th><th>Status</th></tr>'+assumptionRows+'</table>';
 
-  var bookNote='<p class="book-note">cq1_revhires is a 12-month count used by L1. cq4_revhires24 is a 24-month count. They are not the same question, so L4 does not merge or price either \u2014 L4\u2019s only revenue input is the L1 book total above.</p>';
+  var bookNote='<p class="book-note">cq1_revhires is a 12-month count used by L1. cq4_revhires24 is a 24-month count. They are not the same question, so L4 does not merge or price either, L4\u2019s only revenue input is the L1 book total above.</p>';
 
   var stmt='<div class="statement"><div class="stmt-lbl">Intelligence Statement \xb7 L4 Human P&amp;L</div><div class="stmt-txt">'+intelText(margin,{invest:invest,totalRev:totalRev,actual:actualSpend>0})+'</div></div>';
 
@@ -364,6 +364,6 @@ function printReport(){var prev=document.title;document.title='L4 Human P\x26L \
 function setScenario(s){scenario=s;render();}
 render();
 </script>
-<script src="clerk-auth.js?v=20261105a"></script>
-<script src="sidebar-shared.js?v=20261105b"></script>
+<script src="clerk-auth.js?v=20261116a"></script>
+<script src="sidebar-shared.js?v=20261116a"></script>
 </body></html>

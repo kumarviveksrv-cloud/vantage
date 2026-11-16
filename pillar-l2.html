@@ -193,8 +193,8 @@ function metric(name, num, den){
 function hipoMetric(){
   var hipo=ra.cq5_hipo;
   if(hipo==null) return {name:'HiPo identification', status:'missing', score:null, detail:'Not answered. Unmeasured, not average.'};
-  if(hipo>0) return {name:'HiPo identification', status:'passing', score:100, detail:hipo+' HiPo'+(hipo===1?'':'s')+' named \u2014 presence, not a rate.'};
-  return {name:'HiPo identification', status:'measured', score:0, detail:'No named HiPo list entered \u2014 presence, not a rate.'};
+  if(hipo>0) return {name:'HiPo identification', status:'passing', score:100, detail:hipo+' HiPo'+(hipo===1?'':'s')+' named: presence, not a rate.'};
+  return {name:'HiPo identification', status:'measured', score:0, detail:'No named HiPo list entered: presence, not a rate.'};
 }
 function compute(){
   var rows;
@@ -237,7 +237,7 @@ var CONTENT=[
   {name:'Promotion accuracy',
    pass:function(mode){return mode==='computed'?'Your entered rate is at or above the 60 line you set.':'You answered yes for this signal.';},
    fail:function(mode){return mode==='computed'?'Your entered rate is below the 60 line you set.':'You answered no for this signal.';},
-   howto:'Post-promotion tracking: at 3 and 6 months, ask the manager — above, at, or below grade expectations? Track the running %. That is your Promotion Accuracy number.'},
+   howto:'Post-promotion tracking: at 3 and 6 months, ask the manager, above, at, or below grade expectations? Track the running %. That is your Promotion Accuracy number.'},
   {name:'Manager quality',
    pass:function(mode){return mode==='computed'?'Your entered rate is at or above the 60 line you set.':'You answered yes for this signal.';},
    fail:function(mode){return mode==='computed'?'Your entered rate is below the 60 line you set.':'You answered no for this signal.';},
@@ -245,14 +245,14 @@ var CONTENT=[
   {name:'Hiring quality',
    pass:function(mode){return mode==='computed'?'Your entered rate is at or above the 60 line you set.':'You answered yes for this signal.';},
    fail:function(mode){return mode==='computed'?'Your entered rate is below the 60 line you set.':'You answered no for this signal.';},
-   howto:'Six months after each joining date, have the manager rate: above, at, or below grade baseline. Build a running spreadsheet — the % above baseline is your Hiring Quality number.'},
+   howto:'Six months after each joining date, have the manager rate: above, at, or below grade baseline. Build a running spreadsheet, the % above baseline is your Hiring Quality number.'},
   {name:'Selective retention',
    pass:function(mode){return mode==='computed'?'Your entered rate is at or above the 60 line you set.':'You answered yes for this signal.';},
-   fail:function(mode){return mode==='computed'?'Your entered rate is below the 60 line you set. Retention is inverted: the exits counted so far are concentrated among people rated above expectation, rather than the reverse.':'You answered no for this signal \u2014 retention is inverted right now: the exits you have in mind are concentrated among people you wanted to keep.';},
+   fail:function(mode){return mode==='computed'?'Your entered rate is below the 60 line you set. Retention is inverted: the exits counted so far are concentrated among people rated above expectation, rather than the reverse.':'You answered no for this signal, retention is inverted right now: the exits you have in mind are concentrated among people you wanted to keep.';},
    howto:'In every exit interview, note the person\u2019s last performance rating. Compare top performers vs below-expectation exits over 12 months. If top performers are leaving faster, that\u2019s a selective retention gap worth tracking.'},
   {name:'HiPo identification',
-   pass:function(mode){return mode==='computed'?'A named HiPo list is on file for this count.':'You answered yes for this signal \u2014 a named HiPo pipeline exists.';},
-   fail:function(mode){return mode==='computed'?'No named HiPo list is on file yet.':'You answered no for this signal \u2014 no formal HiPo identification exists yet.';},
+   pass:function(mode){return mode==='computed'?'A named HiPo list is on file for this count.':'You answered yes for this signal, a named HiPo pipeline exists.';},
+   fail:function(mode){return mode==='computed'?'No named HiPo list is on file yet.':'You answered no for this signal, no formal HiPo identification exists yet.';},
    howto:'Create a shared document with 10\u201315 names, reviewed twice a year. Each person gets one concrete investment: a mentoring assignment, stretch project, or leadership exposure.'}
 ];
 
@@ -279,9 +279,9 @@ var passingRows=measuredRows.filter(function(r){return r.score>=60;});
 var gapRows=measuredRows.filter(function(r){return r.score<60;});
 var strongest=measuredRows.length?measuredRows.reduce(function(a,b){return b.score>a.score?b:a;}):null;
 var weakest=measuredRows.length?measuredRows.reduce(function(a,b){return b.score<a.score?b:a;}):null;
-var statsHtml='<div class="stats"><div class="stat"><div class="sv sv-teal">'+(result.score==null?'—':result.score)+'/100</div><div class="sl">L2 Score</div></div>'+
+var statsHtml='<div class="stats"><div class="stat"><div class="sv sv-teal">'+(result.score==null?'-':result.score)+'/100</div><div class="sl">L2 Score</div></div>'+
 '<div class="stat"><div class="sv '+(passingRows.length>=3?'sv-green':passingRows.length>=1?'sv-cobalt':'sv-red')+'">'+passingRows.length+'/'+measuredRows.length+'</div><div class="sl">Signals passing</div></div>'+
-'<div class="stat"><div class="sv '+(strongest?'sv-gold':'sv-dim')+'">'+(strongest?strongest.name.split(' ')[0]:'—')+'</div><div class="sl">Strongest signal</div></div>'+
+'<div class="stat"><div class="sv '+(strongest?'sv-gold':'sv-dim')+'">'+(strongest?strongest.name.split(' ')[0]:'-')+'</div><div class="sl">Strongest signal</div></div>'+
 '<div class="stat"><div class="sv '+(gapRows.length>0?'sv-red':'sv-green')+'">'+(gapRows.length>0?weakest.name.split(' ')[0]:'✓ All')+'</div><div class="sl">Priority gap</div></div></div>';
 
 // ── Findings — three-card synthesis: the pillar's weight, how
@@ -300,12 +300,12 @@ function buildFindings(){
   var outlierBody=outlier
     ?(outlierKind==='strong'
       ?'<b>'+outlier.name+'</b> is the clearest strength among the five signals, at '+outlier.score+'. It\u2019s the strongest of the signals you entered.'
-      :'<b>'+outlier.name+'</b> is the clearest gap among the five signals, at '+outlier.score+'. It\u2019s the one most worth closing first \u2014 see its "How this is measured" note above.')
+      :'<b>'+outlier.name+'</b> is the clearest gap among the five signals, at '+outlier.score+'. It\u2019s the one most worth closing first, see its "How this is measured" note above.')
     :'No signal has enough data yet to stand out as a clear strength or gap.';
   return '<div class="findings-grid">'+
     '<div class="finding-card"><div class="finding-eyebrow">L2 Weight</div><div class="finding-headline">15% of Humac Score</div><div class="finding-body">Smaller than L1 (25%) and L3 (30%), larger than L5 (10%). A shift here moves the overall Humac Score, but less than an equivalent shift in L1 or L3.</div></div>'+
     '<div class="finding-card"><div class="finding-eyebrow">Clearest Outlier</div><div class="finding-headline">'+outlierHeadline+'</div><div class="finding-body">'+outlierBody+'</div></div>'+
-    '<div class="finding-card"><div class="finding-eyebrow">Reliability of This Score</div><div class="finding-headline">'+measuredRows.length+' of 5 signals measured</div><div class="finding-body">Unmeasured signals are <b>excluded, not scored as average</b> \u2014 the number above reflects only what\u2019s actually been captured. Below 3 measured signals, L2 doesn\u2019t enter the weighted Humac Score at all.</div></div>'+
+    '<div class="finding-card"><div class="finding-eyebrow">Reliability of This Score</div><div class="finding-headline">'+measuredRows.length+' of 5 signals measured</div><div class="finding-body">Unmeasured signals are <b>excluded, not scored as average</b>, the number above reflects only what\u2019s actually been captured. Below 3 measured signals, L2 doesn\u2019t enter the weighted Humac Score at all.</div></div>'+
   '</div>';
 }
 var findingsHtml=buildFindings();
@@ -315,13 +315,13 @@ var gate=result.insufficient?'<div class="gate"><b style="color:#f4f3ff">Insuffi
 // ── Intelligence Statement — now names the actual weakest signal ──
 function intelText(){
   if(result.insufficient){
-    return 'This is not an average Talent Premium. <b>It is an unmeasured pillar</b> — only '+result.measured+' of 5 signals have data, and L2 needs at least '+MIN+' before it can responsibly produce a score.';
+    return 'This is not an average Talent Premium. <b>It is an unmeasured pillar</b>, only '+result.measured+' of 5 signals have data, and L2 needs at least '+MIN+' before it can responsibly produce a score.';
   }
   var base='An L2 score of <b>'+result.score+'</b> reflects '+passingRows.length+' of '+measuredRows.length+' measured signals passing.';
   if(gapRows.length>0){
-    return base+' The clearest opportunity is <b>'+weakest.name+'</b> — the "How this is measured" note on that signal above is the fastest way to close it, and closing it would lift the overall score.';
+    return base+' The clearest opportunity is <b>'+weakest.name+'</b>, the "How this is measured" note on that signal above is the fastest way to close it, and closing it would lift the overall score.';
   }
-  return base+' Every measured signal is reading strong. Keep tracking it and compare it at your next check-in \u2014 the trend across check-ins is the real signal, not this single reading.';
+  return base+' Every measured signal is reading strong. Keep tracking it and compare it at your next check-in, the trend across check-ins is the real signal, not this single reading.';
 }
 
 // ── Actions — two branches, same as before ──
@@ -332,26 +332,26 @@ var baseActs=[
   {title:'Name your HiPo list within 30 days',body:'Ten to fifteen names, reviewed twice a year, each with one concrete development investment attached. The discipline of maintaining the list matters more than who is on it first.'}
 ];
 var highActs=[
-  {title:'Take the measured signals into your next review',body:passingRows.length+' of '+measuredRows.length+' signals passing is a strong reading. Take the measured signals, named as self-report or as a ratio, into the next review \u2014 as what was actually entered, not as a verdict.'},
-  {title:'Set up a quarterly talent quality review',body:'L2 scores can drift when measurement stops. Check at least two signals every quarter with hard data \u2014 Selective Retention and HiPo Identification are the easiest to let go stale.'},
-  {title:'Use Talent Premium as a recruitment differentiator',body:'Where promotions land, managers raise the bar, and hires succeed, that becomes part of your employer brand narrative in senior conversations \u2014 framed as what you track, not as a guarantee.'},
-  {title:'Benchmark against your next Humac check-in',body:'A strong L2 is a baseline, not a destination. Re-run it next check-in and compare \u2014 that comparison is the actual signal, not this single reading.'}
+  {title:'Take the measured signals into your next review',body:passingRows.length+' of '+measuredRows.length+' signals passing is a strong reading. Take the measured signals, named as self-report or as a ratio, into the next review, as what was actually entered, not as a verdict.'},
+  {title:'Set up a quarterly talent quality review',body:'L2 scores can drift when measurement stops. Check at least two signals every quarter with hard data, Selective Retention and HiPo Identification are the easiest to let go stale.'},
+  {title:'Use Talent Premium as a recruitment differentiator',body:'Where promotions land, managers raise the bar, and hires succeed, that becomes part of your employer brand narrative in senior conversations, framed as what you track, not as a guarantee.'},
+  {title:'Benchmark against your next Humac check-in',body:'A strong L2 is a baseline, not a destination. Re-run it next check-in and compare, that comparison is the actual signal, not this single reading.'}
 ];
 var acts=(result.score!=null && result.score>60)?highActs:baseActs;
 var actionsHtml='<div class="section-eyebrow">What to do next</div><div class="section-title">Moving your Talent Premium forward</div>'+acts.map(function(a,i){return '<div class="action-item"><div class="action-num">'+(i+1)+'</div><div><div class="action-title">'+a.title+'</div><div class="action-body">'+a.body+'</div></div></div>';}).join('');
 
 document.getElementById('main-wrap').innerHTML=
 '<div class="print-header"><span class="ph-brand">Vantage \xb7 Virorah</span><span class="ph-meta">L2 Talent Premium'+((md&&md.industry)?' \xb7 '+md.industry:'')+'</span></div>'+
-'<div class="pillar-nav-strip"><a href="pillar-l1.html" class="pillar-back">← L1</a><div class="pillar-dots"><a class="pd" href="pillar-l1.html"><span class="pd-label">L1</span></a><a class="pd active" href="pillar-l2.html"><span class="pd-label">L2</span><span class="pd-score">'+(result.score==null?'—':result.score)+'</span></a><a class="pd" href="pillar-l3.html"><span class="pd-label">L3</span></a><a class="pd" href="pillar-l4.html"><span class="pd-label">L4</span></a><a class="pd" href="pillar-l5.html"><span class="pd-label">L5</span></a></div><a href="pillar-l3.html" class="pillar-forward">L3 →</a></div>'+
-'<div class="eyebrow">Vantage · Humac Score · L2 · 15% weight</div><h1 class="page-title">The Talent Premium</h1><p class="page-sub">Are the people you have performing above what their role and cost would predict? Five signals, averaged \u2014 not a rupee value. '+l2Mode+' mode.</p>'+
-'<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L2 from measured signals</div><div class="ratio-num">'+(result.score==null?'—':result.score)+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">Provisional band: '+sb.name+' <a class="src-chip" href="https://vantage.virorah.com/methodology.html#s4-talent" target="_blank" rel="noopener">?</a></div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+(result.insufficient?'Not enough measured signals to score talent quality.':'Average of measured signals only.')+'</div><div class="context">'+result.measured+' of 5 measured. HCI for this pillar <b>'+hci.toFixed(2)+'x</b> ('+Math.round(result.hciFactor*100)+'% of profile HCI, because partial data is less trustworthy).</div></div></div></div>'+
+'<div class="pillar-nav-strip"><a href="pillar-l1.html" class="pillar-back">← L1</a><div class="pillar-dots"><a class="pd" href="pillar-l1.html"><span class="pd-label">L1</span></a><a class="pd active" href="pillar-l2.html"><span class="pd-label">L2</span><span class="pd-score">'+(result.score==null?'-':result.score)+'</span></a><a class="pd" href="pillar-l3.html"><span class="pd-label">L3</span></a><a class="pd" href="pillar-l4.html"><span class="pd-label">L4</span></a><a class="pd" href="pillar-l5.html"><span class="pd-label">L5</span></a></div><a href="pillar-l3.html" class="pillar-forward">L3 →</a></div>'+
+'<div class="eyebrow">Vantage · Humac Score · L2 · 15% weight</div><h1 class="page-title">The Talent Premium</h1><p class="page-sub">Are the people you have performing above what their role and cost would predict? Five signals, averaged, not a rupee value. '+l2Mode+' mode.</p>'+
+'<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L2 from measured signals</div><div class="ratio-num">'+(result.score==null?'-':result.score)+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">Provisional band: '+sb.name+' <a class="src-chip" href="https://vantage.virorah.com/methodology.html#s4-talent" target="_blank" rel="noopener">?</a></div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+(result.insufficient?'Not enough measured signals to score talent quality.':'Average of measured signals only.')+'</div><div class="context">'+result.measured+' of 5 measured. HCI for this pillar <b>'+hci.toFixed(2)+'x</b> ('+Math.round(result.hciFactor*100)+'% of profile HCI, because partial data is less trustworthy).</div></div></div></div>'+
 statsHtml+
 findingsHtml+
-gate+(l2Mode!=='computed'?'<div class="assumption-note" style="margin-bottom:16px;padding:12px 14px;background:rgba(99,102,241,.05);border-radius:8px;border-left:2px solid rgba(99,102,241,.25)">These five scores come from yes/no answers mapped onto a 0\u2013100 scale (yes = 100, no = 0) \u2014 not measured rates. Switch to computed mode once you have real ratios to enter.</div>':'')+'<div class="verdicts-section"><div class="sec-head"><h2><span class="step">1</span>Five Verdict Areas · Talent Quality Signals</h2></div>'+cards+'</div>'+
+gate+(l2Mode!=='computed'?'<div class="assumption-note" style="margin-bottom:16px;padding:12px 14px;background:rgba(99,102,241,.05);border-radius:8px;border-left:2px solid rgba(99,102,241,.25)">These five scores come from yes/no answers mapped onto a 0\u2013100 scale (yes = 100, no = 0), not measured rates. Switch to computed mode once you have real ratios to enter.</div>':'')+'<div class="verdicts-section"><div class="sec-head"><h2><span class="step">1</span>Five Verdict Areas · Talent Quality Signals</h2></div>'+cards+'</div>'+
 '<div class="statement"><div class="stmt-lbl">Intelligence Statement · L2</div><div class="stmt-txt">'+intelText()+'</div></div>'+
 actionsHtml+
 '<div class="bottom-nav"><a href="pillar-l1.html" class="btn-back">← L1</a><button onclick="printReport()" class="btn-back" style="cursor:pointer">⬇ Download PDF</button><a href="pillar-l3.html" class="btn-next">L3 Org Vitals →</a></div>';
 </script>
-<script src="clerk-auth.js?v=20261105a"></script>
-<script src="sidebar-shared.js?v=20261105b"></script>
+<script src="clerk-auth.js?v=20261116a"></script>
+<script src="sidebar-shared.js?v=20261116a"></script>
 </body></html>

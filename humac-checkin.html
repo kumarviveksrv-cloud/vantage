@@ -183,17 +183,17 @@
         <div class="score-nums">
           <div class="score-block">
             <div class="score-label">Humac, provisional</div>
-            <div class="score-num" id="score-humac">—</div>
+            <div class="score-num" id="score-humac">-</div>
           </div>
           <div class="score-sep" id="score-adj-sep">|</div>
           <div class="score-block" id="score-adj-block">
             <div class="score-label">HCI-adjusted</div>
-            <div class="score-num adj" id="score-hci-adj">—</div>
+            <div class="score-num adj" id="score-hci-adj">-</div>
           </div>
         </div>
         <div class="score-meta">
-          <div class="band-chip" id="band-chip">—</div>
-          <div class="score-date" id="score-date">—</div>
+          <div class="band-chip" id="band-chip">-</div>
+          <div class="score-date" id="score-date">-</div>
         </div>
       </div>
       <div class="pillars-row" id="pillars-row"></div>
@@ -211,15 +211,15 @@
       <div class="expect-list">
         <div class="expect-item">
           <span class="expect-icon">⏱</span>
-          <span>Same 18 questions as your baseline — takes about 5 minutes. Most answers won't have changed.</span>
+          <span>Same 18 questions as your baseline, takes about 5 minutes. Most answers won't have changed.</span>
         </div>
         <div class="expect-item">
           <span class="expect-icon">📊</span>
-          <span>Your new score is compared question-by-question against your last answer. The Trajectory Index is the delta between your two scores — a change in the provisional index, measured only where the same pillars were scored both times.</span>
+          <span>Your new score is compared question-by-question against your last answer. The Trajectory Index is the delta between your two scores, a change in the provisional index, measured only where the same pillars were scored both times.</span>
         </div>
         <div class="expect-item">
           <span class="expect-icon">🧭</span>
-          <span>L3 Org Vitals answers are the most meaningful to update — it carries 30% of the overall score, the largest single weight of the five pillars, so signal flips there move the Trajectory reading more than any other pillar.</span>
+          <span>L3 Org Vitals answers are the most meaningful to update, it carries 30% of the overall score, the largest single weight of the five pillars, so signal flips there move the Trajectory reading more than any other pillar.</span>
         </div>
         <div class="expect-item">
           <span class="expect-icon">💾</span>
@@ -243,15 +243,15 @@
   <div id="no-score-state" style="display:none">
     <div class="no-score-card">
       <div class="no-score-title">No baseline score found</div>
-      <div class="no-score-sub">You need to establish a Humac Score baseline before running a check-in. The baseline is your starting point — the check-in measures how the provisional index has moved from it, only where the same pillars were scored both times.</div>
+      <div class="no-score-sub">You need to establish a Humac Score baseline before running a check-in. The baseline is your starting point, the check-in measures how the provisional index has moved from it, only where the same pillars were scored both times.</div>
       <a href="humac-onboarding.html" class="btn-primary">Establish your baseline →</a>
     </div>
   </div>
 
 </div><!-- /wrap -->
 
-<script src="clerk-auth.js?v=20261105a"></script>
-<script src="sidebar-shared.js?v=20261105b"></script>
+<script src="clerk-auth.js?v=20261116a"></script>
+<script src="sidebar-shared.js?v=20261116a"></script>
 <script>
 (function() {
   var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
@@ -300,7 +300,7 @@
     var chip  = document.getElementById('band-chip');
     chip.innerHTML =
       '<span style="width:7px;height:7px;border-radius:50%;background:' + bstyle.color +
-      ';display:inline-block;margin-right:6px"></span>Provisional band: ' + (band || '—');
+      ';display:inline-block;margin-right:6px"></span>Provisional band: ' + (band || '-');
     chip.style.cssText += ';color:' + bstyle.color + ';background:' + bstyle.bg +
       ';border:1px solid ' + bstyle.border;
 
@@ -319,7 +319,7 @@
     if (daysSince !== null) {
       if (daysSince < 1)       sub.innerText = 'Your baseline was set today. Run your first check-in when a quarter has passed.';
       else if (daysSince < 80) sub.innerText = 'Your baseline was set ' + daysSince + ' day' + (daysSince !== 1 ? 's' : '') + ' ago. Check-ins are most meaningful after a quarter.';
-      else                     sub.innerText = 'Your baseline was set ' + daysSince + ' days ago. A quarter or more has passed — this is a good time to check in.';
+      else                     sub.innerText = 'Your baseline was set ' + daysSince + ' days ago. A quarter or more has passed, this is a good time to check in.';
     } else {
       sub.innerText = 'Review your current position and update what has changed.';
     }
@@ -337,7 +337,7 @@ document.getElementById('pillars-row').innerHTML = pillars.map(function(p, i) {
   return '<div class="pillar-cell">' +
     '<div class="pillar-code">' + p.code + '</div>' +
     '<div class="pillar-bar-track">' + (scored ? '<div class="pillar-bar-fill" style="width:' + p.score + '%"></div>' : '') + '</div>' +
-    '<div class="pillar-score">' + (scored ? p.score : '—') + '</div>' +
+    '<div class="pillar-score">' + (scored ? p.score : '-') + '</div>' +
     '</div>';
 }).join('');
 
@@ -366,11 +366,11 @@ if (trajComparable && traj.delta !== 0) {
       trajEl.innerHTML =
         '<div class="traj-none">Not comparable this time' +
         (traj.checkInNumber ? ' (check-in #' + traj.checkInNumber + ')' : '') +
-        ' — one or more pillars weren\'t scored the same way in both check-ins, ' +
+        ', one or more pillars weren\'t scored the same way in both check-ins, ' +
         'so no reliable delta can be shown. Your next comparable check-in will pick up from here.</div>';
     } else {
       trajEl.innerHTML =
-        '<div class="traj-none">No Trajectory Index yet — this is your baseline. ' +
+        '<div class="traj-none">No Trajectory Index yet, this is your baseline. ' +
         'After this check-in, your Trajectory establishes. Every subsequent check-in ' +
         'measures the delta from the one before it.</div>';
     }

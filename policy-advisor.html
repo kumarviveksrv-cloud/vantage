@@ -290,9 +290,9 @@
         <div class="form-section">
           <label class="form-label">What's the situation? What are you considering doing? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic</span></label>
           <div class="qb-section">
-            <span class="qb-label">Quick start — pick a scenario or type your own below</span>
+            <span class="qb-label">Quick start: pick a scenario or type your own below</span>
             <div class="qb-grid" id="qb-policy-grid">
-              <div class="qb-chip" onclick="qbFill('query',this)">Employee absent 10+ days with zero communication — can we terminate?</div>
+              <div class="qb-chip" onclick="qbFill('query',this)">Employee absent 10+ days with zero communication, can we terminate?</div>
               <div class="qb-chip" onclick="qbFill('query',this)">Employee caught sharing confidential data with a competitor. Options?</div>
               <div class="qb-chip" onclick="qbFill('query',this)">Building a PIP. What must it include to hold up legally in India?</div>
               <div class="qb-chip" onclick="qbFill('query',this)">POSH complaint raised informally against a manager. What are we required to do now?</div>
@@ -302,13 +302,13 @@
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">What does a legally sound domestic enquiry process look like?</div>
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee claims constructive dismissal after a reporting line change. How real is this risk?</div>
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Can we claw back a joining bonus if they leave before the 6-month lock-in?</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee on long-term sick leave — can we hire a permanent replacement?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee on long-term sick leave, can we hire a permanent replacement?</div>
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee refuses to relocate per their appointment letter. Is that treated as resignation?</div>
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Can we monitor employee emails and devices? What disclosures are legally required?</div>
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee found drinking at work. What's a proportionate disciplinary response?</div>
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Planning redundancies in a restructuring. What's the legally mandated process in India?</div>
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee claims we underpaid overtime. What's our Wages Code exposure?</div>
-              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Non-compete clause in a departing employee's F&amp;F settlement — is it enforceable in India?</div>
+              <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Non-compete clause in a departing employee's F&amp;F settlement: is it enforceable in India?</div>
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee back from maternity leave found her role substantially changed. What's our risk?</div>
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">We want a moonlighting policy. What are the legal limits under Indian law?</div>
               <div class="qb-chip" style="display:none" data-extra onclick="qbFill('query',this)">Employee is serving notice but appears to have already joined a competitor.</div>
@@ -488,7 +488,7 @@
       var shortQ = currentQuery ? (currentQuery.length > 60 ? currentQuery.substring(0, 57) + '...' : currentQuery) : '';
       if (ql) ql.textContent = shortQ;
       var orig = document.title;
-      document.title = 'Vantage — Policy Guidance — ' + dateStr;
+      document.title = 'Vantage: Policy Guidance' + dateStr;
       window.print();
       document.title = orig;
     }
@@ -521,12 +521,12 @@
           btn.disabled = true;
         } else {
           btn.disabled = false;
-          btn.textContent = '⚠ Save failed — try again';
+          btn.textContent = '⚠ Save failed: try again';
         }
       })
       .catch(function() {
         btn.disabled = false;
-        btn.textContent = '⚠ Connection error — try again';
+        btn.textContent = '⚠ Connection error: try again';
       });
     }
 
@@ -660,7 +660,7 @@
         }
 
         var statusEl = document.getElementById('doc-status');
-        statusEl.textContent = '\u2713 ' + file.name + ' \u2014 read successfully' +
+        statusEl.textContent = '\u2713 ' + file.name + ': read successfully' +
           (text.length >= 99999 ? ' (truncated to the first ~35 pages, the maximum supported).' : ' (~' + Math.max(1, Math.round(text.length/500)) + ' pages).');
         statusEl.className = 'doc-status show ready';
         var removeBtn = document.createElement('button');
@@ -769,7 +769,7 @@
       var recMatch    = text.match(/🎯\s*RECOMMENDED PATH\s*([\s\S]*?)(?=💰|$)/i);
       /* Tolerant of how the model dresses the header: "## 💰 **COMPLIANCE EXPOSURE:** ₹4L-₹8L", a bare
          header with the figure on the next line, colon or dash separators. */
-      var compMatch   = text.match(/💰[\s*#_]*COMPLIANCE\s+EXPOSURE[\s*#_:\u2013\u2014-]*([^\n\r]*(?:\r?\n[ \t]*[^\s\r\n][^\n\r]*)?)/i);
+      var compMatch   = text.match(/💰[\s*#_]*COMPLIANCE\s+EXPOSURE[\s*#_:\u2013, -]*([^\n\r]*(?:\r?\n[ \t]*[^\s\r\n][^\n\r]*)?)/i);
 
       var basisMatch = text.match(/💰[\s\S]*?\bBasis\s*:\s*\**\s*([\s\S]*?)(?:\n\s*\n|$)/i);
       if (basisMatch) sections.exposureBasis = basisMatch[1].replace(/[*_#]+/g, '').replace(/\s*\n\s*/g, ' ').trim();
@@ -777,7 +777,7 @@
       if (legalMatch)  sections.legal      = legalMatch[1].trim();
       if (recMatch)    sections.recommended = recMatch[1].trim();
       if (compMatch) {
-        var _cv = compMatch[1].split(/\r?\n/).map(function (x) { return x.replace(/[*#_]+/g, '').replace(/^[\s:\u2013\u2014-]+|[\s]+$/g, ''); }).filter(Boolean);
+        var _cv = compMatch[1].split(/\r?\n/).map(function (x) { return x.replace(/[*#_]+/g, '').replace(/^[\s:\u2013: -]+|[\s]+$/g, ''); }).filter(Boolean);
         sections.complianceExposure = _cv.length ? _cv[0] : '';
       }
 
@@ -911,8 +911,8 @@
     // to know which case this actually is.
   </script>
 
-  <script src="clerk-auth.js?v=20261105a"></script>
-  <script src="sidebar-shared.js?v=20261105b"></script>
+  <script src="clerk-auth.js?v=20261116a"></script>
+  <script src="sidebar-shared.js?v=20261116a"></script>
 
   <!-- Vantage inline error banner: replaces alert() calls -->
   <div id="vantage-error" style="display:none;position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:999;background:#11102a;border:1px solid rgba(224,92,58,0.35);border-left:3px solid #E05C3A;border-radius:10px;padding:16px 20px;max-width:480px;width:calc(100% - 48px);box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:fadeIn .25s ease">

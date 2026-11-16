@@ -245,7 +245,7 @@
     <p>We do not use your data for advertising. We do not sell your data to any third party. We do not use your individual case narratives or outputs to train AI models.</p>
 
     <h2 id="anonymisation">4. Anonymisation Before AI Processing</h2>
-    <p>Anonymisation is a two-step process. The Platform first sends your text to Anthropic's Claude Haiku model, which identifies person names, company names, and specific locations and replaces them with role-consistent placeholders — for example, "Manager A" and "Employee B" rather than real names, inferred from context so the underlying diagnostic still makes sense. Only the anonymised output of that step is then sent to Anthropic's Claude model for the actual analysis. This means your original text reaches Anthropic — solely for the purpose of anonymisation by Claude Haiku, and once in the normal course (the exceptions are described below) — before the placeholder version reaches Claude for analysis. This applies across every AI-powered tool on the Platform: the Employee Case Advisor, The Business Case, Policy Advisor, Retention Advisor, Difficult Conversations, and ARIA. It also applies to the case notes used to generate your monthly Debrief.</p>
+    <p>Anonymisation is a two-step process. The Platform first sends your text to Anthropic's Claude Haiku model, which identifies person names, company names, and specific locations and replaces them with role-consistent placeholders, for example, "Manager A" and "Employee B" rather than real names, inferred from context so the underlying diagnostic still makes sense. Only the anonymised output of that step is then sent to Anthropic's Claude model for the actual analysis. This means your original text reaches Anthropic, solely for the purpose of anonymisation by Claude Haiku, and once in the normal course (the exceptions are described below), before the placeholder version reaches Claude for analysis. This applies across every AI-powered tool on the Platform: the Employee Case Advisor, The Business Case, Policy Advisor, Retention Advisor, Difficult Conversations, and ARIA. It also applies to the case notes used to generate your monthly Debrief.</p>
     <div class="highlight">
       <strong style="display:block;margin-bottom:6px;color:#6366f1;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase">What happens if anonymisation cannot be completed</strong>
       This step fails closed: if the anonymisation process cannot produce a safe result after a brief automatic retry, the Platform blocks that request entirely rather than sending your original text unredacted. You will see an error asking you to try again, not a silent fallback.
@@ -423,7 +423,7 @@
       <div class="footer-brand">
         <img src="virorah-vantage-logo.png" alt="Virorah Vantage">
         <p class="footer-tagline">Your HR Decisions, Quantified.</p>
-        <p class="footer-desc">Private decision intelligence for Indian HR professionals &mdash; context-aware guidance, financial quantification, and a career record that&rsquo;s yours, not your company&rsquo;s.</p>
+        <p class="footer-desc">Private decision intelligence for Indian HR professionals, context-aware guidance, financial quantification, and a career record that&rsquo;s yours, not your company&rsquo;s.</p>
       </div>
       <div class="footer-col">
         <span class="footer-col-h">PRODUCT</span>

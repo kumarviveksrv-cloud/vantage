@@ -185,7 +185,7 @@
 
     <div class="pending-banner" id="pending-banner">
       <div class="pending-banner-text">
-        <strong>Deletion scheduled.</strong> Your account and all data will be permanently deleted on <span id="pending-date">—</span>. Logging in here at any time before then cancels it.
+        <strong>Deletion scheduled.</strong> Your account and all data will be permanently deleted on <span id="pending-date">-</span>. Logging in here at any time before then cancels it.
       </div>
       <button class="action-btn btn-teal" onclick="cancelDeletion()" id="cancel-deletion-btn">Cancel Deletion</button>
     </div>
@@ -201,17 +201,17 @@
     <div class="data-stats">
       <div class="data-stat">
         <div class="data-stat-label">Cases stored</div>
-        <div class="data-stat-value" id="stat-cases">&#8212;</div>
+        <div class="data-stat-value" id="stat-cases">-</div>
         <div class="data-stat-sub">In your Vantage Record</div>
       </div>
       <div class="data-stat">
         <div class="data-stat-label">Debrief this month</div>
-        <div class="data-stat-value" id="stat-debriefs">&#8212;</div>
+        <div class="data-stat-value" id="stat-debriefs">-</div>
         <div class="data-stat-sub">Monthly reflection</div>
       </div>
       <div class="data-stat">
         <div class="data-stat-label">Your account</div>
-        <div class="data-stat-value" style="font-size:12px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.4);margin-top:4px" id="stat-userid">&#8212;</div>
+        <div class="data-stat-value" style="font-size:12px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.4);margin-top:4px" id="stat-userid">-</div>
         <div class="data-stat-sub">Signed in via Clerk</div>
       </div>
     </div>
@@ -240,12 +240,12 @@
       </div>
       <div class="section-text">This is what Vantage knows about your professional context. It calibrates every tool output to your organisation context, not a generic default.</div>
       <div class="profile-grid" id="profile-grid">
-        <div class="profile-field"><div class="profile-field-label">State</div><div class="profile-field-value" id="p-state">&#8212;</div></div>
-        <div class="profile-field"><div class="profile-field-label">Industry</div><div class="profile-field-value" id="p-industry">&#8212;</div></div>
-        <div class="profile-field"><div class="profile-field-label">Organisation Type</div><div class="profile-field-value" id="p-org-type">&#8212;</div></div>
-        <div class="profile-field"><div class="profile-field-label">Organisation Size</div><div class="profile-field-value" id="p-org-size">&#8212;</div></div>
-        <div class="profile-field"><div class="profile-field-label">Seniority Level</div><div class="profile-field-value" id="p-seniority">&#8212;</div></div>
-        <div class="profile-field"><div class="profile-field-label">HR Function</div><div class="profile-field-value" id="p-function">&#8212;</div></div>
+        <div class="profile-field"><div class="profile-field-label">State</div><div class="profile-field-value" id="p-state">-</div></div>
+        <div class="profile-field"><div class="profile-field-label">Industry</div><div class="profile-field-value" id="p-industry">-</div></div>
+        <div class="profile-field"><div class="profile-field-label">Organisation Type</div><div class="profile-field-value" id="p-org-type">-</div></div>
+        <div class="profile-field"><div class="profile-field-label">Organisation Size</div><div class="profile-field-value" id="p-org-size">-</div></div>
+        <div class="profile-field"><div class="profile-field-label">Seniority Level</div><div class="profile-field-value" id="p-seniority">-</div></div>
+        <div class="profile-field"><div class="profile-field-label">HR Function</div><div class="profile-field-value" id="p-function">-</div></div>
       </div>
     </div>
 
@@ -358,7 +358,7 @@
     async function loadEverything() {
       await waitForClerk();
       var user = window.Clerk.user;
-      var shortId = user && user.id ? (user.id.length > 24 ? user.id.substring(0, 24) + '...' : user.id) : '—';
+      var shortId = user && user.id ? (user.id.length > 24 ? user.id.substring(0, 24) + '...' : user.id) : '-';
       document.getElementById('stat-userid').innerText = shortId;
 
       // MERIDIAN profile — fetched fresh from the real backend, not trusted
@@ -370,12 +370,12 @@
         if (meridianRes.success && meridianRes.data) {
           var m = meridianRes.data;
           document.getElementById('meridian-chip-val').innerText = (m.state || 'Not set') + ' \xb7 ' + (m.industry || 'Not set');
-          document.getElementById('p-state').innerText = m.state || '\u2014';
-          document.getElementById('p-industry').innerText = m.industry || '\u2014';
-          document.getElementById('p-org-type').innerText = m.orgType || '\u2014';
-          document.getElementById('p-org-size').innerText = m.orgSize || '\u2014';
-          document.getElementById('p-seniority').innerText = m.seniority || '\u2014';
-          document.getElementById('p-function').innerText = m.hrFunction || '\u2014';
+          document.getElementById('p-state').innerText = m.state || '-';
+          document.getElementById('p-industry').innerText = m.industry || '-';
+          document.getElementById('p-org-type').innerText = m.orgType || '-';
+          document.getElementById('p-org-size').innerText = m.orgSize || '-';
+          document.getElementById('p-seniority').innerText = m.seniority || '-';
+          document.getElementById('p-function').innerText = m.hrFunction || '-';
         }
       } catch(e) { /* leave fields at placeholder dashes */ }
 
@@ -383,13 +383,13 @@
       try {
         var casesRes = await callWorker({ tool: 'get_cases' });
         document.getElementById('stat-cases').innerText = casesRes.success ? casesRes.data.length : '0';
-      } catch(e) { document.getElementById('stat-cases').innerText = '\u2014'; }
+      } catch(e) { document.getElementById('stat-cases').innerText = '-'; }
 
       // Debrief this month — the real field is hasDebrief, not exists
       try {
         var debriefRes = await callWorker({ tool: 'get_debrief' });
         document.getElementById('stat-debriefs').innerText = (debriefRes.success && debriefRes.data && debriefRes.data.hasDebrief) ? 'Ready' : 'Not yet';
-      } catch(e) { document.getElementById('stat-debriefs').innerText = '\u2014'; }
+      } catch(e) { document.getElementById('stat-debriefs').innerText = '-'; }
 
       // Pending deletion check
       try {
@@ -398,7 +398,7 @@
           document.getElementById('pending-date').innerText = delStatus.data.scheduledPurgeDate;
           document.getElementById('pending-banner').style.display = 'flex';
         }
-      } catch(e) { /* non-fatal — banner just won't show */ }
+      } catch(e) { /* non-fatal, banner just won't show */ }
     }
 
     async function exportData() {
@@ -493,7 +493,7 @@
     loadEverything();
   </script>
 
-  <script src="clerk-auth.js?v=20261105a"></script>
-  <script src="sidebar-shared.js?v=20261105b"></script>
+  <script src="clerk-auth.js?v=20261116a"></script>
+  <script src="sidebar-shared.js?v=20261116a"></script>
 </body>
 </html>

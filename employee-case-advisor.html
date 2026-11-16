@@ -404,7 +404,7 @@
         <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f4f3ff;margin-bottom:12px">Something's landed on your desk.</div>
         <div style="font-size:14px;color:rgba(244,243,255,0.72);line-height:1.75">
           <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.2);padding:3px 8px;border-radius:3px;margin-right:8px">PACT + PROTOCOL</span>
-          Two layers, always. The <strong style="color:rgba(244,243,255,0.8)">PACT diagnostic</strong> scans across Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation. The <strong style="color:rgba(244,243,255,0.8)">Unified Decision Protocol</strong> translates that scan into assessment, legal position, financial exposure, one clear recommendation, and suggested wording for the room — a draft to adapt, not a script to read verbatim.
+          Two layers, always. The <strong style="color:rgba(244,243,255,0.8)">PACT diagnostic</strong> scans across Process Integrity, Accountability Clarity, Consequence Mapping, and Trust Preservation. The <strong style="color:rgba(244,243,255,0.8)">Unified Decision Protocol</strong> translates that scan into assessment, legal position, financial exposure, one clear recommendation, and suggested wording for the room, a draft to adapt, not a script to read verbatim.
         </div>
       </div>
 
@@ -412,7 +412,7 @@
         <div class="form-section">
           <label class="form-label">What's happening? <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(165,180,252,0.5);font-weight:400;margin-left:8px;letter-spacing:.04em">or tap the mic to speak</span></label>
           <div class="qb-section">
-            <span class="qb-label">Quick start — pick a scenario or describe your own below</span>
+            <span class="qb-label">Quick start: pick a scenario or describe your own below</span>
             <span class="qb-note">The following questions are sample ones to just give you a starting point. Ideally, type your own actual situation below.</span>
             <div class="qb-grid" id="qb-eca-grid">
               <div class="qb-chip" onclick="qbFill('narrative',this)">Senior engineer absent 7 days, two prior verbal warnings, manager wants to terminate.</div>
@@ -595,7 +595,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
             <div class="risk-title" id="risk-title">Assessing...</div>
             <div class="risk-narrative" id="risk-narrative"></div>
           </div>
-          <div class="risk-badge-lg" id="risk-badge">&mdash;</div>
+          <div class="risk-badge-lg" id="risk-badge">-</div>
         </div>
 
         <!-- Spatial Mode strip (laptop-class screens only, toggled by script) -->
@@ -612,22 +612,22 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
         <!-- PACT grid -->
         <div class="pact-grid">
           <div class="pact-card">
-            <div class="pact-dimension">P &mdash; Process Integrity <span class="pact-score" id="score-process">&mdash;</span></div>
+            <div class="pact-dimension">P: Process Integrity <span class="pact-score" id="score-process">-</span></div>
             <div class="pact-status" id="status-process"></div>
             <div class="pact-points" id="points-process"></div>
           </div>
           <div class="pact-card">
-            <div class="pact-dimension">A &mdash; Accountability Clarity <span class="pact-score" id="score-accountability">&mdash;</span></div>
+            <div class="pact-dimension">A: Accountability Clarity <span class="pact-score" id="score-accountability">-</span></div>
             <div class="pact-status" id="status-accountability"></div>
             <div class="pact-points" id="points-accountability"></div>
           </div>
           <div class="pact-card">
-            <div class="pact-dimension">C &mdash; Consequence Mapping <span class="pact-score" id="score-consequence">&mdash;</span></div>
+            <div class="pact-dimension">C: Consequence Mapping <span class="pact-score" id="score-consequence">-</span></div>
             <div class="pact-status" id="status-consequence"></div>
             <div class="pact-points" id="points-consequence"></div>
           </div>
           <div class="pact-card">
-            <div class="pact-dimension">T &mdash; Trust Preservation <span class="pact-score" id="score-trust">&mdash;</span></div>
+            <div class="pact-dimension">T: Trust Preservation <span class="pact-score" id="score-trust">-</span></div>
             <div class="pact-status" id="status-trust"></div>
             <div class="pact-points" id="points-trust"></div>
           </div>
@@ -815,7 +815,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       var ct = document.getElementById('print-case-type');
       if (ct) ct.textContent = selectedCaseType ? 'Case Type: ' + caseTypeText() : '';
       var orig = document.title;
-      document.title = 'Vantage — Employee Case' + (selectedCaseType ? ' — ' + caseTypeText() : '') + ' — ' + dateStr;
+      document.title = 'Vantage: Employee Case' + (selectedCaseType ? '-' + caseTypeText() : '') + '-' + dateStr;
       window.print();
       document.title = orig;
     }
@@ -1487,8 +1487,8 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
 
   <script src="vantage-voice.js"></script>
   <script src="vantage-voice-field.js"></script>
-  <script src="clerk-auth.js?v=20261105a"></script>
-  <script src="sidebar-shared.js?v=20261105b"></script>
+  <script src="clerk-auth.js?v=20261116a"></script>
+  <script src="sidebar-shared.js?v=20261116a"></script>
 
   <!-- Vantage inline error banner: replaces alert() calls -->
   <div id="vantage-wrongtool" style="display:none;position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:999;background:#11102a;border:1px solid rgba(99,102,241,0.35);border-left:3px solid #6366f1;border-radius:10px;padding:16px 20px;max-width:480px;width:calc(100% - 48px);box-shadow:0 8px 32px rgba(0,0,0,0.5);animation:fadeIn .25s ease">
