@@ -1290,6 +1290,8 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-compare-table th:first-child, .rf-compare-table td:first-child { width: 62%; }
 .rf-compare-table th:not(:first-child), .rf-compare-table td:not(:first-child) { width: 19%; }
 .rf-compare-short { display: none; }
+.rf-compare-table thead th { vertical-align: middle; }
+.rf-compare-sub { display: block; margin-top: 4px; font: 400 10px var(--font); letter-spacing: .02em; text-transform: none; color: rgba(244,243,255,.4); }
 @media (max-width: 680px) {
   .rf-compare-table th:first-child, .rf-compare-table td:first-child { width: 60%; }
   .rf-compare-table th:not(:first-child), .rf-compare-table td:not(:first-child) { width: 20%; }
@@ -2185,7 +2187,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
         <div class="rf-tool-row">
           <p class="rf-tool-name">Employee Case Advisor</p>
-          <p class="rf-tool-desc">Describe the situation. Get the exact process, financial exposure, and documentation needed before you walk into the room.</p>
+          <p class="rf-tool-desc">Describe the situation. Get the process to follow, the financial exposure, and the documentation needed before you walk into the room.</p>
         </div>
 
         <div class="rf-tool-row">
@@ -2204,8 +2206,8 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
         <div class="rf-tool-row rf-tool-row--last">
           <p class="rf-tool-name">Policy Advisor</p>
-          <p class="rf-tool-desc">Describe the gap. Get the applicable Acts, the rules, and the compliance requirements for your exact state, cited to BNS, BNSS, and BSA, not the repealed IPC.</p>
-          <p class="rf-tool-note">✓ Every citation carries a verification date, so you know it isn't pre-code law</p>
+          <p class="rf-tool-desc">Describe the gap. Get the applicable Acts, the rules, and the compliance requirements for your state, cited to BNS, BNSS, and BSA, not the repealed IPC.</p>
+          <p class="rf-tool-note">✓ Every section number is checked against the statute text, and anything not found is flagged</p>
         </div>
       </div>
 
@@ -2304,7 +2306,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
         <div class="rf-tile">
           <span class="rf-tile-label">2. Know the law</span>
           <h3 class="rf-tile-title">The Acts that apply, for your state</h3>
-          <p class="rf-tile-desc">Policy Advisor names the applicable Acts, rules and compliance requirements for your state, cited to BNS, BNSS and BSA. Every citation carries a verification date.</p>
+          <p class="rf-tile-desc">Policy Advisor names the applicable Acts, rules and compliance requirements for your state, cited to BNS, BNSS and BSA. Every section number is checked against the statute text, and anything not found is flagged.</p>
         </div>
 
         <div class="rf-tile">
@@ -2351,13 +2353,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
     <div class="rf-compare-inner">
       <span class="rf-section-label">How Vantage is different</span>
       <h2 class="rf-section-headline">Built on the law. Calibrated to you.</h2>
-      <p class="rf-compare-tagline">Every answer starts from the Act that applies and is calibrated to your state, industry and organisation. Vantage is built to carry the weight a real HR call needs.</p>
+      <p class="rf-compare-tagline">A generic AI answers from memory. Vantage answers from the Act text, with the amounts computed by fixed rules and every section number checked.</p>
       <div class="rf-compare-scroll">
         <table class="rf-compare-table">
           <thead>
             <tr>
               <th></th>
-              <th>Generic LLM</th>
+              <th>Generic LLM<span class="rf-compare-sub">out of the box</span></th>
               <th class="rf-compare-win-head">Vantage</th>
             </tr>
           </thead>
