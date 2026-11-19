@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v167'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v168'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -2392,8 +2392,38 @@ async function bcFiguresBlock(anonText, rawText, flow) {
   if (!c) { return { inputs: null, block: '' }; }
   return { inputs: inp, block: bcPromptBlock(c) };
 }
+// ── IDENTIFIER MASK START ────────────────────────────────────────────────────
+// Deterministic pass that runs before the model anonymiser and again on its output. The model step finds names, companies and
+// places; this finds identifiers with a fixed shape (email, mobile, PAN, Aadhaar or UAN, long account-like numbers, labelled
+// employee IDs). Money is protected: a digit run right after Rs, INR or the rupee sign is left alone, and so are digit runs
+// with Indian comma grouping, so a salary is never masked.
+const ID_MASK_RULES = [
+  { tag: '[EMAIL]', re: /[A-Za-z0-9._%+\-]+@[A-Za-z0-9\-]+(?:\.[A-Za-z0-9\-]+)*\.[A-Za-z]{2,}/g },
+  { tag: '[PAN]', re: /\b[A-Za-z]{5}[0-9]{4}[A-Za-z]\b/g },
+  { tag: '[ID NUMBER]', re: /(?<!\d|\d[,.])[2-9]\d{3}[\s\-]\d{4}[\s\-]\d{4}(?!\d|,\d|\.\d)/g },
+  { tag: '[ID NUMBER]', label: true, re: /\b((?:employee|emp|staff|payroll|badge|uan|aadhaar|aadhar|account|a\/c|acct)\s*(?:id|no\.?|number|code|#)?\s*[:#\-]?\s*)(?=[A-Za-z0-9\-\/]*\d)[A-Za-z0-9][A-Za-z0-9\-\/]{3,}\b/gi },
+  { tag: '[PHONE]', re: /(?<!\d|\d[,.])(?:\+?91[\s\-]?|0)?[6-9]\d{4}[\s\-]?\d{5}(?!\d|,\d|\.\d)/g },
+  { tag: '[ID NUMBER]', re: /(?<!\d|\d[,.])\d{9,18}(?!\d|,\d|\.\d)/g }
+];
+const ID_MONEY_BEFORE = /(?:rs\.?|inr|₹|rupees?)\s*$/i;
+function maskIdentifiers(text) {
+  if (typeof text !== 'string' || !text) { return { text: text, count: 0 }; }
+  let out = text, count = 0;
+  ID_MASK_RULES.forEach(function (rule) {
+    out = out.replace(rule.re, function (m, ...args) {
+      const offset = args[args.length - 2];
+      if (ID_MONEY_BEFORE.test(out.slice(Math.max(0, offset - 8), offset))) { return m; }
+      count++;
+      return rule.label ? args[0] + rule.tag : rule.tag;
+    });
+  });
+  return { text: out, count: count };
+}
+// ── IDENTIFIER MASK END ──────────────────────────────────────────────────────
+
 async function anonymizeNarrative(text, attempt = 1, context = '') {
   if (!text || typeof text !== 'string' || text.trim().length === 0) return '';
+  { const masked = maskIdentifiers(text); text = masked.text; if (masked.count > 0) { console.log('Identifier mask: ' + masked.count + ' value(s) masked before anonymisation'); } }
   // Later turns of a conversation are anonymised one at a time. Showing the model the
   // already-anonymised earlier turns keeps placeholders consistent (the same person stays
   // "Employee A" and a new person does not reuse that letter). Context is already anonymised.
@@ -2432,7 +2462,10 @@ ${text}`;
     if (typeof parsed.anonymized !== 'string' || parsed.anonymized.trim().length === 0) {
       throw new Error('Malformed anonymisation response');
     }
-    return parsed.anonymized;
+    // Output scan: the model must not hand back an identifier. Anything that survives is masked here, which is as safe as blocking.
+    const scanned = maskIdentifiers(parsed.anonymized);
+    if (scanned.count > 0) { console.error('Identifier scan: model output still held ' + scanned.count + ' identifier(s); masked'); }
+    return scanned.text;
   } catch(e) {
     console.error(`Anonymisation error (attempt ${attempt}):`, e.message);
     if (attempt < 2) {
