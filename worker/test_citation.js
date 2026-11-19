@@ -37,6 +37,13 @@ ok(r.flags.length === 1, 'Maternity Benefit Act not supplied flagged');
 r = policyCitationCheck('Under the Code on Wages, deductions are limited by section 18. Section 18(1) lists them.', parts, '');
 ok(r.flags.length === 0, 'carry-forward Act across sentences: ' + JSON.stringify(r.flags));
 
+// Regression: a bare section after a citation of another Act must not be pinned on that other Act.
+r = policyCitationCheck('Deductions are limited by the Code on Wages s.18. Retrenchment notice is under s.70.', parts, '');
+ok(r.flags.length === 0, 'bare IR section after a Wages citation is not blamed on Wages: ' + JSON.stringify(r.flags));
+
+r = policyCitationCheck('Deductions are limited by the Code on Wages s.18. The penalty is in s.999.', parts, '');
+ok(r.flags.length === 1 && r.flags[0].item === 's.999' && !/Wages/.test(r.flags[0].item) && /not in any supplied text/.test(r.flags[0].reason), 'invented bare section still flagged, with no guessed Act name: ' + JSON.stringify(r.flags));
+
 r = policyCitationCheck('Fine up to fifty thousand rupees applies. The back pay is ₹1,23,456 in total.', parts, '');
 ok(r.flags.some(f => f.kind === 'figure' && /1,23,456/.test(f.item)), 'invented rupee figure flagged');
 

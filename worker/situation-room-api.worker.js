@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v168'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v169'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -684,7 +684,7 @@ function policyCitationCheck(text, parts, userText) {
     var i = m.index, j = i + m[0].length, num = m[2];
     var paraStart = src.lastIndexOf('\n\n', i);
     if (paraStart !== lastPara) { lastPara = paraStart; lastAct = null; }
-    var act = null;
+    var act = null, inferred = false;
     var after = src.slice(j, j + 90).match(/^[\s,)]*(?:of|under|in)\s+(?:the\s+)?([^.;\n]{0,70})/i);
     if (after) {
       var s1 = citeSupplied(after[1]);
@@ -694,11 +694,18 @@ function policyCitationCheck(text, parts, userText) {
       var before = src.slice(Math.max(0, i - 70), i);
       var cut = before.search(/[.!?]\s+[A-Z][^.!?]*$/);
       if (cut > -1) { before = before.slice(cut + 1); }
-      act = citeLastAlias(before) || lastAct;
+      act = citeLastAlias(before);
+      if (!act && lastAct) { act = lastAct; inferred = true; }
     }
     cites++;
     var reason = null;
-    if (act === 'outside') { reason = 'cites an Act that was not supplied'; }
+    if (inferred && act && act !== 'outside') {
+      // No Act is named beside this citation, so the Act carried over from an earlier citation is only a guess.
+      // Accept the section if it exists in any supplied Act, and never name a guessed Act in a warning.
+      var anyAct = Object.keys(idx.sections).some(function (k) { return idx.sections[k][num]; });
+      if (!anyAct) { reason = 'section ' + num + ' is not in any supplied text'; }
+      act = null;
+    } else if (act === 'outside') { reason = 'cites an Act that was not supplied'; }
     else if (act) {
       if (!idx.sections[act]) { reason = 'the text of that Act was not supplied for this answer'; }
       else if (!idx.sections[act][num]) { reason = 'section ' + num + ' is not in the supplied text of that Act'; }
