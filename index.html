@@ -366,6 +366,23 @@ html, body { overflow-x: hidden; background: var(--bg); }
   font-weight: 600;
 }
 
+.rf-hero-example {
+  display: block;
+  max-width: 480px;
+  margin: 28px auto 0;
+  text-align: center;
+  padding: 16px 18px;
+  border: 1px solid rgba(165,180,252,.25);
+  border-radius: 12px;
+  background: rgba(99,102,241,.08);
+}
+.rf-hero-first-cta { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 22px; }
+.rf-hero-first-cue { font: 400 13px/1.4 var(--font); color: rgba(244,243,255,.65); }
+.rf-hero-example-label { display: block; font: 400 11px/1.5 'JetBrains Mono', monospace; letter-spacing: .06em; text-transform: uppercase; color: rgba(244,243,255,.6); }
+.rf-hero-example-num { display: block; margin: 8px 0 6px; font: 500 clamp(24px, 3.2vw, 32px)/1.2 'Space Grotesk', sans-serif; color: #f4f3ff; }
+.rf-hero-example-sum { display: block; font: 400 13px/1.5 var(--font); color: rgba(244,243,255,.7); }
+@media (max-width: 900px) { .rf-hero-example { margin-left: auto; margin-right: auto; text-align: center; } }
+
 .rf-actions {
   display: flex;
   align-items: center;
@@ -1957,7 +1974,16 @@ html, body { overflow-x: hidden; background: var(--bg); }
     </div>
     <div class="rf-hero-headline">
       <div class="rf-for-badge">For Individual HR Professionals · Not Enterprise</div>
-      <h1>Your HR decisions already have a financial outcome. <span class="rf-accent">Vantage proves it.</span></h1>
+      <h1>What is your HR work worth <span class="rf-accent">in rupees?</span></h1>
+      <div class="rf-hero-example" role="note" aria-label="Illustrative example">
+      <span class="rf-hero-example-label">Illustrative scenario &middot; 75 people, 18 exits, &#8377;15L average CTC</span>
+      <span class="rf-hero-example-num">&#8377;2.84 Cr to &#8377;4.86 Cr</span>
+      <span class="rf-hero-example-sum">18 exits &times; &#8377;15L &times; 1.05 to 1.8 (replacing each person plus 3 to 6 months of lost output). A modelled planning range, not a published study.</span>
+      </div>
+      <div class="rf-hero-first-cta">
+        <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html">Start Free Trial <span>&rarr;</span></a>
+        <span class="rf-hero-first-cue">7 days free &middot; No credit card required</span>
+      </div>
     </div>
   </section>
 
@@ -1968,10 +1994,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
   <div class="rf-hero-split">
   <!-- Deck copy + CTA -->
   <div class="rf-hero-copy">
-    <p class="rf-hero-statement">Vantage is HR financial intelligence software, which quantifies the business value of HR decisions.</p>
-    <p class="rf-hero-deck">It translates your decisions into financial figures, documents your professional impact, and follows you across every role you'll ever hold.</p>
-    <p class="rf-hero-deck">It is built for the HR professional who wants to speak the language of the business and leave every role with tangible records of value delivered.</p>
-    <p class="rf-hero-close"><strong>This is your personal subscription, not a platform your company buys or deploys.</strong></p>
+    <p class="rf-hero-statement">Vantage turns your HR decisions into rupee figures you can show the CFO, with the working shown.</p>
     <div class="rf-actions">
       <a class="btn-rf-primary" href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html">
         Start Free Trial <span>→</span>
@@ -2079,6 +2102,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
     <p>HR doesn't, and that silence is costing us <em>the seat at the table.</em></p>
     <p>You can change that.</p>
     <p>To be business fluent, HR first has to speak in more than what it prevented. Most HR tools stop at the cost avoided, the risk reduced. That's not wrong, it's incomplete: you also need to speak to what you protected and what you created, not just what you stopped.</p>
+    <p>Every figure you build stays in your Vantage Record, and it follows you across every role you hold.</p>
     <p class="rf-gap-tagline">That's what Humacity measures: five pillars, one Humac Score.</p>
   </div>
 
