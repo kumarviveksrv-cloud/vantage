@@ -1120,10 +1120,23 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
 .rf-tiles {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 16px;
 }
-@media (max-width: 680px) { .rf-tiles { grid-template-columns: 1fr; } }
+/* Five tiles: three on the first row, two centred beneath. */
+.rf-tiles .rf-tile { grid-column: span 2; }
+.rf-tiles .rf-tile:nth-child(4) { grid-column: 2 / span 2; }
+.rf-tiles .rf-tile:nth-child(5) { grid-column: 4 / span 2; }
+@media (max-width: 900px) {
+  .rf-tiles { grid-template-columns: repeat(2, 1fr); }
+  .rf-tiles .rf-tile,
+  .rf-tiles .rf-tile:nth-child(4) { grid-column: auto; }
+  .rf-tiles .rf-tile:nth-child(5) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 8px); }
+}
+@media (max-width: 680px) {
+  .rf-tiles { grid-template-columns: 1fr; }
+  .rf-tiles .rf-tile:nth-child(5) { grid-column: auto; width: auto; justify-self: stretch; }
+}
 
 .rf-tile {
   background: linear-gradient(165deg, rgba(139,92,246,.12) 0%, rgba(17,14,36,.62) 55%, rgba(13,11,30,.78) 100%);
@@ -2249,19 +2262,19 @@ html, body { overflow-x: hidden; background: var(--bg); }
   <section class="rf-tiles-section rf-reveal">
     <div class="rf-tiles-inner">
       <span class="rf-section-label">What being business fluent looks like</span>
-      <h2 class="rf-section-headline">Four outputs. One language.</h2>
+      <h2 class="rf-section-headline">Five outputs. One language.</h2>
       <div class="rf-tiles">
 
         <div class="rf-tile">
-          <span class="rf-tile-label">1. Financial Exposure</span>
-          <h3 class="rf-tile-title">The financial cost of every case</h3>
-          <p class="rf-tile-desc">Before a situation escalates, Vantage calculates what it's worth: legally, financially, and in organizational risk. You walk in prepared, not exposed.</p>
+          <span class="rf-tile-label">1. Know your exposure</span>
+          <h3 class="rf-tile-title">Your exposure, before you walk in</h3>
+          <p class="rf-tile-desc">Describe the situation. Vantage gives you the process to follow, the financial exposure and the documentation you need, before it escalates. You walk in prepared, not exposed.</p>
         </div>
 
         <div class="rf-tile">
-          <span class="rf-tile-label">2. HR P&L</span>
-          <h3 class="rf-tile-title">What your decisions cost and protect</h3>
-          <p class="rf-tile-desc">Every attrition event, case closure, and retention save mapped to a number: the cost of what you lost, and the value of what you protected. Your Human P&L makes the invisible visible, line by line.</p>
+          <span class="rf-tile-label">2. Know the law</span>
+          <h3 class="rf-tile-title">The Acts that apply, for your state</h3>
+          <p class="rf-tile-desc">Policy Advisor names the applicable Acts, rules and compliance requirements for your state, cited to BNS, BNSS and BSA. Every citation carries a verification date.</p>
         </div>
 
         <div class="rf-tile">
@@ -2271,9 +2284,15 @@ html, body { overflow-x: hidden; background: var(--bg); }
         </div>
 
         <div class="rf-tile">
-          <span class="rf-tile-label">4. Your Vantage Record</span>
-          <h3 class="rf-tile-title">What you have handled, in one place</h3>
-          <p class="rf-tile-desc">A dated record of the cases you have saved from the tools: how many, since when, open or closed. A plain list of the work you handled, with no made-up total. Every figure you build stays here, and it follows you across every role you hold.</p>
+          <span class="rf-tile-label">4. Your Humac Score</span>
+          <h3 class="rf-tile-title">Your people-financial health, in rupees</h3>
+          <p class="rf-tile-desc">Answer once across five pillars, including your Human P&amp;L, and get a provisional planning index of your organisation's people-financial health, with the rupee range behind it.</p>
+        </div>
+
+        <div class="rf-tile">
+          <span class="rf-tile-label">5. Your Vantage Record</span>
+          <h3 class="rf-tile-title">Proof of the work you handled</h3>
+          <p class="rf-tile-desc">Standpoint timestamps your position before the outcome is known, and the monthly Debrief writes itself from your work. Your Vantage Record keeps all of it, and it follows you across every role you hold.</p>
         </div>
 
       </div>
