@@ -748,7 +748,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
       if (!el) return;
       el.value = chipEl.getAttribute('data-text') || chipEl.textContent.trim();
       el.dispatchEvent(new Event('input', {bubbles: true}));
-      if (el.tagName === 'TEXTAREA') { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight + 4, 460) + 'px'; }
+      if (el.tagName === 'TEXTAREA') { el.style.height = 'auto'; if (el.scrollHeight > 60) { el.style.height = Math.min(el.scrollHeight + 4, 460) + 'px'; } }
       var grid = chipEl.closest('.qb-grid');
       if (grid) grid.querySelectorAll('.qb-chip').forEach(function(c){c.classList.remove('qb-selected')});
       chipEl.classList.add('qb-selected');
