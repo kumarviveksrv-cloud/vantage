@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v170'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v171'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -2482,6 +2482,55 @@ ${text}`;
   }
 }
 
+// v171: short-lived copy of each person's Users row in D1, so the sign-in gate, the plan lookup and the ARIA check stop reading Airtable on every request.
+// Rules that keep it safe:
+//  - It is only ever a copy. Every write to the Users table (updateAirtable, saveToAirtable) replaces the copy with Airtable's own answer straight away,
+//    so a payment, a cancellation or a trial change shows up at once. Only an edit made by hand inside Airtable can lag, for at most USER_CACHE_TTL_SEC.
+//  - A read that finds nothing is never cached, so a new user is not hidden.
+//  - A read-through copy never overwrites a newer write-through copy.
+//  - Any D1 problem falls back to Airtable; the cache can slow nothing down and break nothing.
+//  - Account deletion removes the copy (see the purge below), because it holds the email address.
+const USER_CACHE_TTL_SEC = 120;
+let _userCacheReady = false;
+function _nowSec() { return Math.floor(Date.now() / 1000); }
+async function userCacheInit() {
+  if (_userCacheReady) return;
+  await TRIAL_COUNTER_DB.prepare('CREATE TABLE IF NOT EXISTS user_cache (clerk_user_id TEXT PRIMARY KEY, record_json TEXT NOT NULL, cached_at INTEGER NOT NULL)').run();
+  _userCacheReady = true;
+}
+async function userCacheGet(userId) {
+  if (!TRIAL_COUNTER_DB || !userId) return null;
+  try {
+    await userCacheInit();
+    const row = await TRIAL_COUNTER_DB.prepare('SELECT record_json FROM user_cache WHERE clerk_user_id = ?1 AND cached_at > ?2').bind(userId, _nowSec() - USER_CACHE_TTL_SEC).first();
+    return row ? JSON.parse(row.record_json) : null;
+  } catch (e) { return null; }
+}
+async function userCachePut(rec, fromWrite) {
+  if (!TRIAL_COUNTER_DB || !rec || !rec.fields || !rec.fields.user_id) return;
+  try {
+    await userCacheInit();
+    const id = String(rec.fields.user_id), json = JSON.stringify(rec), now = _nowSec();
+    if (fromWrite) {
+      await TRIAL_COUNTER_DB.prepare('INSERT OR REPLACE INTO user_cache (clerk_user_id, record_json, cached_at) VALUES (?1, ?2, ?3)').bind(id, json, now).run();
+    } else {
+      await TRIAL_COUNTER_DB.prepare('DELETE FROM user_cache WHERE clerk_user_id = ?1 AND cached_at <= ?2').bind(id, now - USER_CACHE_TTL_SEC).run();
+      await TRIAL_COUNTER_DB.prepare('INSERT OR IGNORE INTO user_cache (clerk_user_id, record_json, cached_at) VALUES (?1, ?2, ?3)').bind(id, json, now).run();
+    }
+  } catch (e) { /* the copy is optional */ }
+}
+async function userCacheDelete(userId) {
+  if (!TRIAL_COUNTER_DB || !userId) return;
+  try { await userCacheInit(); await TRIAL_COUNTER_DB.prepare('DELETE FROM user_cache WHERE clerk_user_id = ?1').bind(String(userId)).run(); } catch (e) {}
+}
+async function getUserRowCached(userId) {
+  const hit = await userCacheGet(userId);
+  if (hit) return hit;
+  const rec = await getFromAirtable('Users', `{user_id}="${escapeAirtableString(userId)}"`);
+  if (rec) { await userCachePut(rec, false); }
+  return rec;
+}
+
 async function saveToAirtable(tableName, fields) {
   const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(tableName)}`, {
     method: 'POST',
@@ -2493,7 +2542,9 @@ async function saveToAirtable(tableName, fields) {
     const error = await response.text();
     throw new Error(`Airtable error: ${response.status} — ${error}`);
   }
-  return response.json();
+  const saved = await response.json();
+  if (tableName === 'Users') { await userCachePut(saved, true); }
+  return saved;
 }
 
 async function getFromAirtable(tableName, filterFormula) {
@@ -2546,7 +2597,9 @@ async function updateAirtable(tableName, recordId, fields) {
     signal: AbortSignal.timeout(AT_TIMEOUT_MS),
   });
   if (!response.ok) throw new Error(`Airtable update error: ${response.status}`);
-  return response.json();
+  const updated = await response.json();
+  if (tableName === 'Users') { await userCachePut(updated, true); }
+  return updated;
 }
 
 // Deletes every record in a table matching a user's identity. Airtable's
@@ -3383,6 +3436,7 @@ async function ensureUserRow(clerkUserId) {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${AIRTABLE_API_KEY}` },
           });
+          await userCachePut(keep, true); /* the copy made when the duplicate was saved points at the row just deleted */
           return keep;
         }
       }
@@ -3394,7 +3448,7 @@ async function ensureUserRow(clerkUserId) {
 }
 
 async function ensureUserRowInner(clerkUserId) {
-  const existing = await getFromAirtable('Users', `{user_id}="${escapeAirtableString(clerkUserId)}"`);
+  const existing = await getUserRowCached(clerkUserId);
   if (existing) return existing;
 
   let email = '';
@@ -5681,7 +5735,7 @@ async function handleRequest(request, env) {
 
   // ── GET_PLAN (no trial gate — reads plan data only) ──────────────────────
   if (tool === 'get_plan') {
-    const gpRecord = await getFromAirtable('Users', `{user_id}="${escapeAirtableString(clerkUserId)}"`);
+    const gpRecord = await getUserRowCached(clerkUserId);
     if (!gpRecord) {
       return new Response(JSON.stringify({ success: false, error: 'User not found' }), {
         status: 404, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
@@ -5714,7 +5768,7 @@ async function handleRequest(request, env) {
   // until subscription_status is active. A separate read is deliberate: putting aria
   // in TRIAL_GATED_TOOLS would incorrectly start or decrement the trial counter.
   if (tool === 'aria') {
-    const ariaUserRecord = await getFromAirtable('Users', `{user_id}="${escapeAirtableString(clerkUserId)}"`);
+    const ariaUserRecord = await getUserRowCached(clerkUserId);
     const ariaStatus = ariaUserRecord ? (ariaUserRecord.fields.subscription_status || null) : null;
     if (ariaStatus !== 'active') {
       const reason = ariaStatus === 'trial_expired' ? 'trial_expired'
@@ -7218,6 +7272,9 @@ async function handleScheduled(env) {
   CLAUDE_MODEL_DEFAULT = env.CLAUDE_MODEL_DEFAULT || 'claude-sonnet-4-6';
   CLAUDE_MODEL_FAST = env.CLAUDE_MODEL_FAST || 'claude-haiku-4-5-20251001'; TRIAL_COUNTER_DB = env.TRIAL_COUNTER_DB;
 
+  // Sweep the Users-row copies: nothing older than an hour stays in D1, so the email addresses in it never outlive their use.
+  try { await userCacheInit(); await TRIAL_COUNTER_DB.prepare('DELETE FROM user_cache WHERE cached_at < ?1').bind(_nowSec() - 3600).run(); } catch (e) { console.error('user_cache sweep failed:', e && e.message); }
+
   // ── LEDGER REMINDER CHECK — runs every cron trigger, independent of debrief timing ──
   try {
     const todayStr = new Date().toISOString().split('T')[0];
@@ -7270,6 +7327,7 @@ async function handleScheduled(env) {
         totalDeleted += await deleteAllRecordsForUser('Humac_Mode_Changes', 'clerk_user_id', uid);
         totalDeleted += await deleteAllRecordsForUser('Feedback', 'clerk_user_id', uid);
         totalDeleted += await deleteAllRecordsForUser('Users', 'user_id', uid);
+        await userCacheDelete(uid); /* the cached Users row holds the email address, so it goes with the account */
 
         const clerkResult = await deleteClerkUser(uid, CLERK_SECRET_KEY);
 
