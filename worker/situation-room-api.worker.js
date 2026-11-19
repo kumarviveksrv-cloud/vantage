@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v169'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v170'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -2188,7 +2188,7 @@ const JWKS_TIMEOUT_MS = 8000;         // Clerk JWKS
 // ({ content:[{type:'text',text}], stop_reason, usage }), so every caller stays unchanged.
 // High demand: Anthropic or Airtable answering "too many requests / overloaded" is a busy signal, not a bug in the user's case. The user gets a polite retry message (503), and run() refunds the trial call once.
 function isHighDemandError(msg) {
-  return /Claude API error: (?:429|503|529)\b|overloaded_error|rate_limit_error|Airtable[^\n]{0,40}\b429\b/i.test(String(msg || ''));
+  return /Claude API error: (?:429|503|529)\b|overloaded_error|rate_limit_error|Airtable[^\n]{0,40}\b429\b|Airtable read error: (?:429|5\d\d)\b/i.test(String(msg || ''));
 }
 // v165: real cost of every Claude call, so cost per run comes from data and not from estimates.
 // One row per UTC day, model and max_tokens (4000 = anonymise, 600 = fast checks, 8000 = main analysis) in the D1 table claude_cost_daily.
@@ -2499,9 +2499,21 @@ async function saveToAirtable(tableName, fields) {
 async function getFromAirtable(tableName, filterFormula) {
   const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(tableName)}?filterByFormula=${encodeURIComponent(filterFormula)}&maxRecords=1`;
   const response = await fetch(url, { headers: { 'Authorization': `Bearer ${AIRTABLE_API_KEY}` }, signal: AbortSignal.timeout(AT_TIMEOUT_MS) });
+  airtableReadGuard(response);
   if (!response.ok) return null;
   const data = await response.json();
   return (data.records && data.records.length > 0) ? data.records[0] : null;
+}
+
+// v170: a rate limit (429) or an Airtable outage (5xx) on a READ must never look like "no such record".
+// Before this, those answers came back as null or [], so an existing user could be treated as new (a duplicate trial row and a second
+// welcome email), a usage limit could read as zero, and a payment webhook could be acknowledged without ever activating the account.
+// Now a busy or failing Airtable throws, and run() turns it into a polite 503 that refunds the trial call and makes Razorpay retry.
+// Other statuses (404, 422 for a table or field that does not exist yet) keep the old behaviour.
+function airtableReadGuard(response) {
+  if (response.status === 429 || response.status >= 500) {
+    throw new Error('Airtable read error: ' + response.status);
+  }
 }
 
 // Fetches a single record directly by its Airtable record ID, so callers can
@@ -2510,6 +2522,7 @@ async function getFromAirtable(tableName, filterFormula) {
 async function getAirtableRecordById(tableName, recordId) {
   const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(tableName)}/${encodeURIComponent(recordId)}`;
   const response = await fetch(url, { headers: { 'Authorization': `Bearer ${AIRTABLE_API_KEY}` }, signal: AbortSignal.timeout(AT_TIMEOUT_MS) });
+  airtableReadGuard(response);
   if (!response.ok) return null;
   return response.json();
 }
@@ -2519,6 +2532,7 @@ async function listFromAirtable(tableName, filterFormula, maxRecords = 100, sort
   let url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(tableName)}?filterByFormula=${encodeURIComponent(filterFormula)}&maxRecords=${maxRecords}`;
   if (sortField) url += `&sort[0][field]=${encodeURIComponent(sortField)}&sort[0][direction]=desc`;
   const response = await fetch(url, { headers: { 'Authorization': `Bearer ${AIRTABLE_API_KEY}` }, signal: AbortSignal.timeout(AT_TIMEOUT_MS) });
+  airtableReadGuard(response);
   if (!response.ok) return [];
   const data = await response.json();
   return data.records || [];
@@ -2925,6 +2939,8 @@ async function checkUsage(userId, tool, isRegenerate) {
     }
     return { allowed: true, record, count, period };
   } catch(e) {
+    // A busy or failing Airtable is not "no usage yet": let run() answer with the polite 503 instead of waving the call through.
+    if (/Airtable read error/.test(String(e && e.message))) { throw e; }
     // If Usage table doesn't exist yet — allow and log
     console.error('Usage check error:', e.message);
     return { allowed: true };
@@ -7384,7 +7400,17 @@ export default {
     const run = async function () {
       let resp;
       try {
-        resp = await handleRequest(request, env);
+        try {
+          resp = await handleRequest(request, env);
+        } catch (e) {
+          // Airtable rate limit or outage on a read that ran outside a handler's own try block (sign-in gate, plan lookup, payment webhook).
+          if (isHighDemandError(e && e.message)) {
+            console.error('High demand (outer): ' + e.message);
+            resp = new Response(JSON.stringify({ success: false, error: 'We are seeing high demand right now. This run was not counted. Please try again in a minute.' }), {
+              status: 503, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json', 'Retry-After': '60' }
+            });
+          } else { throw e; }
+        }
         const _st = _trialState.get(request);
         if (_st && _st.charged && _st.tool !== 'pact' && (resp.status === 503 || resp.status === 429 || resp.status === 400)) {
           await refundTrialCall(_st.userId);
