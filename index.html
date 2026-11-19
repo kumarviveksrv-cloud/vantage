@@ -1286,17 +1286,22 @@ html, body { overflow-x: hidden; background: var(--bg); }
   margin: -36px auto 48px;
 }
 .rf-compare-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.rf-compare-table { width: 100%; min-width: 600px; border-collapse: collapse; table-layout: fixed; }
-.rf-compare-table th:first-child, .rf-compare-table td:first-child { width: 46%; }
-.rf-compare-table th:not(:first-child), .rf-compare-table td:not(:first-child) { width: 18%; }
+.rf-compare-table { width: 100%; min-width: 0; border-collapse: collapse; table-layout: fixed; }
+.rf-compare-table th:first-child, .rf-compare-table td:first-child { width: 62%; }
+.rf-compare-table th:not(:first-child), .rf-compare-table td:not(:first-child) { width: 19%; }
 .rf-compare-short { display: none; }
 @media (max-width: 680px) {
-  .rf-compare-table { min-width: 480px; }
-  .rf-compare-table th:first-child, .rf-compare-table td:first-child { width: 44%; }
+  .rf-compare-table th:first-child, .rf-compare-table td:first-child { width: 60%; }
+  .rf-compare-table th:not(:first-child), .rf-compare-table td:not(:first-child) { width: 20%; }
 }
 @media (max-width: 560px) {
   .rf-compare-full { display: none; }
   .rf-compare-short { display: inline; }
+  .rf-compare-table th:first-child, .rf-compare-table td:first-child { width: 56%; }
+  .rf-compare-table th:not(:first-child), .rf-compare-table td:not(:first-child) { width: 22%; }
+  .rf-compare-table thead th { font-size: 10px; letter-spacing: .04em; padding: 8px 4px 14px; }
+  .rf-compare-table td { padding: 14px 4px; }
+  .rf-compare-table td:first-child { padding-right: 10px; }
 }
 .rf-compare-table thead th {
   font: 700 12px var(--mono);
@@ -2352,69 +2357,48 @@ html, body { overflow-x: hidden; background: var(--bg); }
           <thead>
             <tr>
               <th></th>
-              <th><span class="rf-compare-full">Traditional HRIS</span><span class="rf-compare-short">HRIS</span></th>
               <th>Generic LLM</th>
               <th class="rf-compare-win-head">Vantage</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>Stores employee records</td>
-              <td><span class="rf-compare-check">✓</span></td>
-              <td><span class="rf-compare-dash">–</span></td>
-              <td class="rf-compare-win"><span class="rf-compare-dash">–</span></td>
-            </tr>
-            <tr>
-              <td>Generates answers instantly</td>
-              <td><span class="rf-compare-dash">–</span></td>
+              <td>Answers instantly</td>
               <td><span class="rf-compare-check">✓</span></td>
               <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
             </tr>
             <tr>
-              <td>Grounds answers in the applicable Act, not general knowledge</td>
-              <td><span class="rf-compare-dash">–</span></td>
-              <td><span class="rf-compare-dash">–</span></td>
-              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
-            </tr>
-            <tr>
-              <td>Calibrated to your exact state, industry, org size, seniority, union status</td>
-              <td><span class="rf-compare-dash">–</span></td>
+              <td>Answers from the Act text supplied for your case, not from general knowledge</td>
               <td><span class="rf-compare-dash">–</span></td>
               <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
             </tr>
             <tr>
-              <td>Separates the legal floor from best-practice convention</td>
-              <td><span class="rf-compare-dash">–</span></td>
-              <td><span class="rf-compare-dash">–</span></td>
-              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
-            </tr>
-            <tr>
-              <td>Remembers your organisation's context across every session</td>
-              <td><span class="rf-compare-dash">–</span></td>
+              <td>Checks every section number and rupee figure against that text, and flags what it cannot find</td>
               <td><span class="rf-compare-dash">–</span></td>
               <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
             </tr>
             <tr>
-              <td>Files a timestamped, defensible record of your call, before the outcome is known</td>
-              <td><span class="rf-compare-dash">–</span></td>
-              <td><span class="rf-compare-dash">–</span></td>
-              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
-            </tr>
-            <tr>
-              <td>Quantifies the financial exposure and value behind your decisions</td>
-              <td><span class="rf-compare-dash">–</span></td>
+              <td>Calculates statutory amounts from fixed rules, not model estimates</td>
               <td><span class="rf-compare-dash">–</span></td>
               <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
             </tr>
             <tr>
-              <td>Builds a searchable professional record that's yours, not your employer's</td>
+              <td>Calibrated to your saved profile: state, industry, org size, seniority, union status</td>
               <td><span class="rf-compare-dash">–</span></td>
-              <td><span class="rf-compare-check">✓</span></td>
               <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
             </tr>
             <tr>
-              <td>Synthesises your month into a narrative automatically</td>
+              <td>Separates what the law requires from best-practice convention</td>
               <td><span class="rf-compare-dash">–</span></td>
+              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Files a timestamped record of your call before the outcome is known</td>
+              <td><span class="rf-compare-dash">–</span></td>
+              <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Writes your monthly Debrief from your work, automatically</td>
               <td><span class="rf-compare-dash">–</span></td>
               <td class="rf-compare-win"><span class="rf-compare-check">✓</span></td>
             </tr>
