@@ -1275,6 +1275,29 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-framework-body p:last-child { margin: 0; }
 .rf-framework-body strong { color: #c4b5fd; font-weight: 700; }
 
+/* ── WHY I BUILT VANTAGE (founder voice, directly under the hero) ──────── */
+.rf-why { padding: 90px 24px 30px; }
+.rf-why-inner { max-width: 760px; margin: 0 auto; }
+.rf-why .rf-section-headline { margin-bottom: 40px; }
+.rf-why .rf-section-headline .rf-accent { color: #8b5cf6; text-shadow: 0 0 22px rgba(139,92,246,.4); }
+.rf-why-body { font: 400 18px/1.8 var(--font); color: rgba(244,243,255,.84); max-width: 680px; margin: 0 auto; }
+.rf-why-body p { margin: 0 0 20px; }
+.rf-why-body strong { color: #c4b5fd; font-weight: 700; }
+.rf-why-body .rf-why-line {
+  font: 700 clamp(20px, 2.6vw, 26px)/1.35 var(--display);
+  letter-spacing: -.01em;
+  color: var(--white);
+  margin: 34px 0 18px;
+}
+.rf-why-body .rf-why-sign {
+  font: 600 12px var(--mono);
+  letter-spacing: .08em;
+  color: rgba(244,243,255,.5);
+  text-transform: uppercase;
+  margin: 0;
+}
+@media (max-width: 720px) { .rf-why { padding: 70px 20px 20px; } .rf-why-body { font-size: 17px; } }
+
 /* ── COMPARISON SECTION ──────────────────────────────────────────────── */
 .rf-compare { padding: 100px 24px; }
 .rf-compare-inner { max-width: 900px; margin: 0 auto; }
@@ -2120,6 +2143,21 @@ html, body { overflow-x: hidden; background: var(--bg); }
   </section>
   </div>
   <!-- /.rf-hero-split -->
+
+  <!-- ── WHY I BUILT IT: the moment every HR professional has lived (founder voice) ── -->
+  <section class="rf-why rf-reveal" id="rf-why">
+    <div class="rf-why-inner">
+      <span class="rf-section-label">Why I built Vantage</span>
+      <h2 class="rf-section-headline">Being right was never the problem. <span class="rf-accent">Proving it was.</span></h2>
+      <div class="rf-why-body">
+        <p>For years I walked into leadership rooms sure of my call. The exit was risky. The retention offer was worth it. The extra hire was justified. Then someone asked the question that decides every room: <strong>what's the number?</strong></p>
+        <p>I had experience and instinct. I rarely had a rupee figure I could defend, and experience loses to a slide. So I spent a lot of my career on the back foot, defending decisions I already knew were right.</p>
+        <p>I built Vantage so you can walk in differently. Describe the situation, and get your exposure, the law that applies and the business case in rupees, with the working shown. Every call you make stays in a private record that is yours, so the next time someone asks what HR delivered, you can answer with a number.</p>
+        <p class="rf-why-line">Now when they ask what's the number, you have it.</p>
+        <p class="rf-why-sign">Kumar Vivek &middot; Founder, Virorah</p>
+      </div>
+    </div>
+  </section>
 
   <!-- ── TICKER ───────────────────────────────────────────────────────── -->
   <div class="rf-ticker">
