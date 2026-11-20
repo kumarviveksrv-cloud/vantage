@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v171'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v172'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -2965,6 +2965,31 @@ function getUsagePeriod(type) {
   return now.toISOString().split('T')[0]; // "2026-09-04"
 }
 
+// v172: the per-tool counters live in D1 (table usage_counts) instead of the Airtable Usage table. One row per person, tool and period; the
+// increment is a single atomic upsert, so two calls at the same moment can no longer both read N and both write N+1. This removes two Airtable
+// calls from every tool run (the count read and the count write). If D1 is missing or fails, checkUsage falls back to the old Airtable path.
+// Counters hold only the id (or IP for the waitlist and demo), tool name, period and count. They are removed on account deletion and swept after 40 days.
+let _usageTableReady = false;
+async function usageTableInit() {
+  if (_usageTableReady) return;
+  await TRIAL_COUNTER_DB.prepare('CREATE TABLE IF NOT EXISTS usage_counts (clerk_user_id TEXT NOT NULL, tool TEXT NOT NULL, period TEXT NOT NULL, used INTEGER NOT NULL DEFAULT 0, last_used TEXT, PRIMARY KEY (clerk_user_id, tool, period))').run();
+  _usageTableReady = true;
+}
+async function d1UsageCount(userId, tool, period) {
+  await usageTableInit();
+  const row = await TRIAL_COUNTER_DB.prepare('SELECT used FROM usage_counts WHERE clerk_user_id = ?1 AND tool = ?2 AND period = ?3').bind(String(userId), tool, period).first();
+  return row ? (row.used || 0) : 0;
+}
+async function d1UsageIncrement(userId, tool, period) {
+  await usageTableInit();
+  await TRIAL_COUNTER_DB.prepare('INSERT INTO usage_counts (clerk_user_id, tool, period, used, last_used) VALUES (?1, ?2, ?3, 1, ?4) ON CONFLICT (clerk_user_id, tool, period) DO UPDATE SET used = used + 1, last_used = ?4').bind(String(userId), tool, period, new Date().toISOString()).run();
+}
+async function d1UsageSweep() {
+  await usageTableInit();
+  const d = new Date(Date.now() - 40 * 86400000), day = d.toISOString().split('T')[0], month = day.substring(0, 7);
+  await TRIAL_COUNTER_DB.prepare('DELETE FROM usage_counts WHERE (length(period) = 10 AND period < ?1) OR (length(period) = 7 AND period < ?2)').bind(day, month).run();
+}
+
 async function checkUsage(userId, tool, isRegenerate) {
   // Only cap get_debrief when it's a regeneration (forceRegenerate=true)
   // Initial loads are free
@@ -2974,6 +2999,19 @@ async function checkUsage(userId, tool, isRegenerate) {
   if (!config) return { allowed: true }; // Unknown tool — allow
 
   const period = getUsagePeriod(config.period);
+
+  if (TRIAL_COUNTER_DB) {
+    try {
+      const count = await d1UsageCount(userId, tool, period);
+      if (count >= config.limit) {
+        return { allowed: false, count, limit: config.limit, label: config.label, period: config.period, resetInfo: config.period === 'monthly' ? 'Resets next month' : 'Resets tomorrow' };
+      }
+      return { allowed: true, record: null, count, period, store: 'd1' };
+    } catch (e) {
+      console.error('D1 usage check failed, using Airtable:', e && e.message);
+    }
+  }
+
   const filter = `AND({clerk_user_id}="${escapeAirtableString(userId)}", {tool}="${escapeAirtableString(tool)}", {period}="${escapeAirtableString(period)}")`;
 
   try {
@@ -3004,6 +3042,12 @@ async function incrementUsage(userId, tool, usageCheck) {
   const config = USAGE_LIMITS[tool];
   if (!config) return;
   if (!usageCheck || !usageCheck.allowed) return;
+
+  if (usageCheck.store === 'd1') {
+    try { await d1UsageIncrement(userId, tool, usageCheck.period); }
+    catch (e) { console.error('D1 usage increment error:', e && e.message); }
+    return;
+  }
 
   try {
     if (usageCheck.record) {
@@ -7275,6 +7319,8 @@ async function handleScheduled(env) {
   // Sweep the Users-row copies: nothing older than an hour stays in D1, so the email addresses in it never outlive their use.
   try { await userCacheInit(); await TRIAL_COUNTER_DB.prepare('DELETE FROM user_cache WHERE cached_at < ?1').bind(_nowSec() - 3600).run(); } catch (e) { console.error('user_cache sweep failed:', e && e.message); }
 
+  try { await d1UsageSweep(); } catch (e) { console.error('usage_counts sweep failed:', e && e.message); }
+
   // ── LEDGER REMINDER CHECK — runs every cron trigger, independent of debrief timing ──
   try {
     const todayStr = new Date().toISOString().split('T')[0];
@@ -7324,6 +7370,7 @@ async function handleScheduled(env) {
         totalDeleted += await deleteAllRecordsForUser('Debriefs', 'clerk_user_id', uid);
         totalDeleted += await deleteAllRecordsForUser('Ledger', 'clerk_user_id', uid);
         totalDeleted += await deleteAllRecordsForUser('Usage', 'clerk_user_id', uid);
+        try { await usageTableInit(); await TRIAL_COUNTER_DB.prepare('DELETE FROM usage_counts WHERE clerk_user_id = ?1').bind(String(uid)).run(); } catch (e) { console.error('usage_counts purge failed:', e && e.message); }
         totalDeleted += await deleteAllRecordsForUser('Humac_Mode_Changes', 'clerk_user_id', uid);
         totalDeleted += await deleteAllRecordsForUser('Feedback', 'clerk_user_id', uid);
         totalDeleted += await deleteAllRecordsForUser('Users', 'user_id', uid);
