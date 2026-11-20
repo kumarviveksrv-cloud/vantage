@@ -1560,8 +1560,8 @@ a{color:inherit;text-decoration:none}
 
   <div class="humacity-grid">
     <div class="humacity-copy">
-      <p>Five pillars feed the score: <strong>Value Ledger</strong> (modelled return per rupee invested in people), <strong>Talent Premium</strong> (performance above market for the pay you're giving), <strong>Org Vitals</strong> (an organisational health index), <strong>Human P&amp;L</strong> (modelled margin), and <strong>Human Balance Sheet</strong> (total human capital position).</p>
-      <p>The Humac Score is a provisional index, currently version 0.9. It's built to run on all five pillars, but what you see is computed only from the pillars your case history actually supports. Pillars without enough data yet are marked out, not estimated to make the number look complete.</p>
+      <p>Five pillars feed the score: <strong>Value Ledger</strong> (the return your HR work is credited with, as a share of payroll, after leave probability and an HR-attribution share you choose), <strong>Talent Premium</strong> (five talent-quality signals: promotion accuracy, manager quality, hiring quality, selective retention and HiPo identification), <strong>Org Vitals</strong> (a 25-signal self-report on organisational health), <strong>Human P&amp;L</strong> (that attributed return against what you spend on HR, per rupee), and <strong>Human Balance Sheet</strong> (human assets less human liabilities, as a share of payroll).</p>
+      <p>The Humac Score is a provisional index, currently version 0.9. You build it from the answers you give in onboarding and the quarterly check-in, not from your saved cases. A pillar you have not answered is marked out and left out of the score. Where an input is assumed, for example HR spend taken as 7.5% of payroll when you don't enter it, the score screen says so.</p>
       <p>It exists because HR has never had a single number the boardroom already trusts the way a revenue or EBITDA figure is trusted. The Humac Score is Vantage's attempt at building that number, not a finished claim that it already is one.</p>
     </div>
 
@@ -1569,22 +1569,22 @@ a{color:inherit;text-decoration:none}
       <div class="hs-intro">
         <span class="hs-eyebrow">HOW THE HUMAC SCORE IS BUILT</span>
         <p class="hs-subtitle">Five forces. One number. <em>The language the boardroom already trusts.</em></p>
-        <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:rgba(196,181,253,.4);margin:10px 0 0">ILLUSTRATIVE EXAMPLE &middot; YOUR OWN HUMAC SCORE IS CALCULATED FROM YOUR ACTUAL CASES</p>
+        <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:rgba(196,181,253,.4);margin:10px 0 0">ILLUSTRATIVE EXAMPLE &middot; YOUR OWN HUMAC SCORE IS CALCULATED FROM YOUR OWN ANSWERS</p>
       </div>
       <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;color:rgba(196,181,253,.6);margin:0 0 12px;font-weight:600">EXAMPLE ORGANISATION &middot; NOT YOUR SCORE</p>
       <div class="hs-forces-grid">
         <div class="hs-force" data-index="0">
           <div class="hsf-top"><span class="hsf-id">L1</span><span class="hsf-pts">+18 pts</span></div>
           <div class="hsf-name">VALUE LEDGER</div>
-          <div class="hsf-metric">&#8377;3.8x</div>
-          <div class="hsf-desc">Return per &#8377; invested in people</div>
+          <div class="hsf-metric">11%</div>
+          <div class="hsf-desc">HR-attributed return, share of payroll</div>
           <div class="hsf-bar"><div class="hsf-fill" data-w="76"></div></div>
         </div>
         <div class="hs-force" data-index="1">
           <div class="hsf-top"><span class="hsf-id">L2</span><span class="hsf-pts">+18 pts</span></div>
           <div class="hsf-name">TALENT PREMIUM</div>
-          <div class="hsf-metric">+22%</div>
-          <div class="hsf-desc">Above-market performance premium</div>
+          <div class="hsf-metric">4 of 5</div>
+          <div class="hsf-desc">Talent-quality signals measured</div>
           <div class="hsf-bar"><div class="hsf-fill" data-w="80"></div></div>
         </div>
         <div class="hs-force" data-index="2">
@@ -1597,15 +1597,15 @@ a{color:inherit;text-decoration:none}
         <div class="hs-force" data-index="3">
           <div class="hsf-top"><span class="hsf-id">L4</span><span class="hsf-pts">+16 pts</span></div>
           <div class="hsf-name">HUMAN P&amp;L</div>
-          <div class="hsf-metric">&#8377;18.4L</div>
-          <div class="hsf-desc">Modelled margin, example</div>
+          <div class="hsf-metric">&#8377;1.1</div>
+          <div class="hsf-desc">Attributed return per &#8377;1 of HR spend</div>
           <div class="hsf-bar"><div class="hsf-fill" data-w="72"></div></div>
         </div>
         <div class="hs-force hs-force--wide" data-index="4">
           <div class="hsf-top"><span class="hsf-id">L5</span><span class="hsf-pts">+14 pts</span></div>
           <div class="hsf-name">HUMAN BALANCE SHEET</div>
-          <div class="hsf-metric">&#8377;81.7L</div>
-          <div class="hsf-desc">Total human capital position</div>
+          <div class="hsf-metric">20%</div>
+          <div class="hsf-desc">Net human worth, share of payroll</div>
           <div class="hsf-bar"><div class="hsf-fill" data-w="68"></div></div>
         </div>
       </div>
@@ -1631,7 +1631,7 @@ a{color:inherit;text-decoration:none}
               <span class="hsp-num hsp-num--adj" id="humacHCI">0</span>
             </div>
             <span class="hsp-mdesc">Human Confidence Index: <span id="humacHCIx">0.00x</span></span>
-            <span class="hsp-mfooter">3 of 5 pillars computed</span>
+            <span class="hsp-mfooter">5 of 5 pillars computed</span>
           </div>
 
           <div class="hsp-divider-v"></div>
@@ -1652,7 +1652,7 @@ a{color:inherit;text-decoration:none}
       </div>
     </div>
   </div>
-  <p style="font-size:12px;color:var(--grey);margin-top:16px;line-height:1.7">A provisional index (v0.9), scored from whichever pillars your case history actually supports. Pillars without enough data yet are marked out, not estimated. This is a snapshot of current organisational state, recalculated over time, not a running record like your Vantage Record above.</p>
+  <p style="font-size:12px;color:var(--grey);margin-top:16px;line-height:1.7">A provisional index (v0.9) and a planning estimate, not an audited figure. The attribution share is a dial you set yourself, and the scales are placeholders until about 30 organisations allow calibration, so track your own direction over time and do not compare across companies. The Human Confidence Index is a stability discount: it can hold your score or lower it, never raise it, and it is shown only when it differs from the raw score. This is a snapshot of current organisational state, recalculated over time, not a running record like your Vantage Record above.</p>
 </section>
 
 <!-- WHO IT'S FOR -->
@@ -2078,12 +2078,12 @@ a{color:inherit;text-decoration:none}
       if(scorePnl)scorePnl.classList.add('hsp-visible');
       if(fillEl)fillEl.style.width='84%';
       if(numEl)numEl.textContent='84';
-      const v=document.getElementById('humacVerdict');if(v)v.textContent='Value Generating';
-      const hci=document.getElementById('humacHCI');if(hci)hci.textContent='79';
-      const hcix=document.getElementById('humacHCIx');if(hcix)hcix.textContent='0.94x';
+      const v=document.getElementById('humacVerdict');if(v)v.textContent='Value Compounding';
+      const hci=document.getElementById('humacHCI');if(hci)hci.textContent='71';
+      const hcix=document.getElementById('humacHCIx');if(hcix)hcix.textContent='0.85x';
       const tNum=document.getElementById('humacTrajNum');if(tNum)tNum.textContent='+6';
       const tSt=document.getElementById('humacTrajStatus');if(tSt)tSt.textContent='Improving';
-      const tag=document.getElementById('humacTagline');if(tag){tag.style.visibility='hidden';tag.textContent='84 is modelled as value-generating territory in this example: the people investment is shown returning more than it costs. The +6 trajectory is the figure that would walk into the next budget conversation ahead of you.';const _h=tag.offsetHeight;tag.style.minHeight=_h+'px';tag.style.visibility='';}
+      const tag=document.getElementById('humacTagline');if(tag){tag.style.visibility='hidden';tag.textContent='84 sits in Value Compounding on this provisional scale, and the app itself says to check a score this high before showing it outside. The +6 trajectory is the figure to watch: your own direction over time.';const _h=tag.offsetHeight;tag.style.minHeight=_h+'px';tag.style.visibility='';}
       panel.style.position='relative';panel.style.overflow='hidden';
       if(!panel.querySelector('.humac-scanline')){const sc=document.createElement('div');sc.className='humac-scanline';panel.appendChild(sc);}
       return;
@@ -2108,17 +2108,17 @@ a{color:inherit;text-decoration:none}
       if(scorePnl)scorePnl.classList.add('hsp-visible');
       if(fillEl)setTimeout(()=>D.bar(fillEl,84,1800),200);
       if(numEl)setTimeout(()=>D.num(numEl,84,2000,'',''),200);
-      setTimeout(()=>{const v=document.getElementById('humacVerdict');if(v)v.textContent='Value Generating';},2200);
+      setTimeout(()=>{const v=document.getElementById('humacVerdict');if(v)v.textContent='Value Compounding';},2200);
       setTimeout(()=>{
         const hci=document.getElementById('humacHCI');const hcix=document.getElementById('humacHCIx');
-        if(hci)D.num(hci,79,1400,'','');
-        if(hcix){const s=performance.now();(function f(now){const t=Math.min(1,(now-s)/1400);hcix.textContent=(0.50+t*.44).toFixed(2)+'x';if(t<1)requestAnimationFrame(f);else hcix.textContent='0.94x';})(s);}
+        if(hci)D.num(hci,71,1400,'','');
+        if(hcix){const s=performance.now();(function f(now){const t=Math.min(1,(now-s)/1400);hcix.textContent=(0.50+t*.35).toFixed(2)+'x';if(t<1)requestAnimationFrame(f);else hcix.textContent='0.85x';})(s);}
       },350);
       setTimeout(()=>{const tNum=document.getElementById('humacTrajNum');const tSt=document.getElementById('humacTrajStatus');if(tNum)D.num(tNum,6,1200,'+','');setTimeout(()=>{if(tSt)tSt.textContent='Improving';},1300);},600);
       setTimeout(()=>{
         const tag=document.getElementById('humacTagline');
         if(tag){
-          const fullText='84 is modelled as value-generating territory in this example: the people investment is shown returning more than it costs. The +6 trajectory is the figure that would walk into the next budget conversation ahead of you.';
+          const fullText='84 sits in Value Compounding on this provisional scale, and the app itself says to check a score this high before showing it outside. The +6 trajectory is the figure to watch: your own direction over time.';
           tag.style.visibility='hidden';
           tag.textContent=fullText;
           const h=tag.offsetHeight;
