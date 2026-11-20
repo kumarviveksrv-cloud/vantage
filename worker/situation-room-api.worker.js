@@ -2968,7 +2968,7 @@ function getUsagePeriod(type) {
 // v172: the per-tool counters live in D1 (table usage_counts) instead of the Airtable Usage table. One row per person, tool and period; the
 // increment is a single atomic upsert, so two calls at the same moment can no longer both read N and both write N+1. This removes two Airtable
 // calls from every tool run (the count read and the count write). If D1 is missing or fails, checkUsage falls back to the old Airtable path.
-// Counters hold only the id (or IP for the waitlist and demo), tool name, period and count. They are removed on account deletion and swept after 40 days.
+// Counters hold only the id (or IP for the waitlist and demo), tool name, period and count. They are removed on account deletion and swept after 30 days, the same window as the backups and the deletion timeline in the privacy policy.
 let _usageTableReady = false;
 async function usageTableInit() {
   if (_usageTableReady) return;
@@ -2986,7 +2986,7 @@ async function d1UsageIncrement(userId, tool, period) {
 }
 async function d1UsageSweep() {
   await usageTableInit();
-  const d = new Date(Date.now() - 40 * 86400000), day = d.toISOString().split('T')[0], month = day.substring(0, 7);
+  const d = new Date(Date.now() - 30 * 86400000), day = d.toISOString().split('T')[0], month = day.substring(0, 7);
   await TRIAL_COUNTER_DB.prepare('DELETE FROM usage_counts WHERE (length(period) = 10 AND period < ?1) OR (length(period) = 7 AND period < ?2)').bind(day, month).run();
 }
 

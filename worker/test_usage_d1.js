@@ -69,11 +69,11 @@ function build(opts = {}) {
   t = build(); await t.fns.usageTableInit();
   const ins = t.sqlite.prepare('INSERT INTO usage_counts (clerk_user_id, tool, period, used) VALUES (?, ?, ?, 1)');
   const day = n => new Date(Date.now() - n * 86400000).toISOString().split('T')[0];
-  ins.run('u', 'pact', day(0)); ins.run('u', 'pact', day(10)); ins.run('u', 'pact', day(45)); ins.run('u', 'pact', day(90));
+  ins.run('u', 'pact', day(0)); ins.run('u', 'pact', day(10)); ins.run('u', 'pact', day(25)); ins.run('u', 'pact', day(35)); ins.run('u', 'pact', day(45)); ins.run('u', 'pact', day(90));
   ins.run('u', 'get_debrief', day(0).substring(0, 7)); ins.run('u', 'get_debrief', day(120).substring(0, 7));
   await t.fns.d1UsageSweep();
   const left = t.sqlite.prepare('SELECT period FROM usage_counts ORDER BY period').all().map(r => r.period);
-  ok(left.includes(day(0)) && left.includes(day(10)) && !left.includes(day(45)) && !left.includes(day(90)), 'sweep removes daily rows older than 40 days only');
+  ok(left.includes(day(0)) && left.includes(day(10)) && left.includes(day(25)) && !left.includes(day(35)) && !left.includes(day(45)) && !left.includes(day(90)), 'sweep removes daily rows older than 30 days only');
   ok(left.includes(day(0).substring(0, 7)) && !left.includes(day(120).substring(0, 7)), 'sweep keeps the current month row and drops old months');
 
   // D1 broken -> Airtable path still works
