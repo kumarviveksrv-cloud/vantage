@@ -153,7 +153,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   text-align: center;
   padding: 94px 24px 60px;
   overflow: hidden;
@@ -162,38 +162,19 @@ html, body { overflow-x: hidden; background: var(--bg); }
 @media (max-width: 700px) {
   .rf-hero { padding-top: 84px; }
 }
-/* The fixed mobile sticky-CTA bar (.rf-sticky-cta, ~89px incl. its
-   safe-area padding) shows as soon as the real hero CTA scrolls out of
-   view, which now happens immediately since the headline moved to the
-   bottom of the hero instead of the middle (24 Nov 2026). Without this,
-   the bar sits directly on top of the headline's last line. 768px
-   matches .rf-sticky-cta's own breakpoint. */
-@media (max-width: 768px) {
-  .rf-hero { padding-bottom: 130px; }
-}
-/* Desktop orb is a fixed 810px (see #rfOrbCanvas below) -- at a plain
-   100vh that's nearly the whole hero, leaving no room for the headline
-   underneath it. Raising the floor (not shrinking the orb, which has
-   room to stay full-size here unlike on phones) gives enough height
-   for orb + clear gap + headline to all fit without the headline
-   climbing back into the circle. */
-@media (min-width: 901px) {
-  .rf-hero { min-height: max(100vh, 1250px); }
-}
 
-
-/* Headline sits below the orb (24 Nov 2026 -- was overlaid directly on
-   it; Kumar flagged overlaid text on a moving 3D visual as harder to
-   read than text on a plain background). .rf-hero now anchors its one
-   flow child to the bottom via justify-content: flex-end instead of
-   center, so the headline renders under the orb's circle instead of
-   across its middle. Costs some scroll on phones, where the orb alone
-   can fill most of the first viewport -- accepted trade, see chat. */
+/* Headline overlaid directly on the orb, inside the first viewport —
+   the only thing a visitor should have to scroll past to reach it
+   is nothing. Deck copy and CTA still live below in .rf-hero-copy.
+   (Tried moving this below the orb on 24 Nov 2026 -- reverted same
+   day: Kumar felt the below-orb placement looked disconnected from
+   the visual rather than clearer. Back to the original overlay.) */
 .rf-hero-headline {
   position: relative;
   z-index: 5;
   max-width: 600px;
   padding: 0 16px;
+  margin-top: -60px;
 }
 
 .rf-hero-orb {
@@ -220,13 +201,6 @@ html, body { overflow-x: hidden; background: var(--bg); }
   height: min(1000px, 115vw);
   opacity: .92;
   z-index: 1;
-}
-/* Headline moved below the orb (24 Nov 2026): on phones the orb's
-   bottom edge and the sticky-CTA bar's top edge leave only ~109px
-   clear, less than the headline needs. Trimmed to 100vw (~13%
-   smaller) to open enough room without the globe reading as small. */
-@media (max-width: 700px) {
-  #rfOrbCanvas { width: min(1000px, 80vw); height: min(1000px, 80vw); }
 }
 /* Laptop/desktop only (mobile keeps the 115vw-driven scaling above) --
    two successive 10% cuts from the original 1000px desktop cap
