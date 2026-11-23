@@ -651,7 +651,7 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
             <div class="proto-text" id="proto-legal"></div>
             <div class="legal-disclaimer"><strong>Not legal advice.</strong> This is a reading of the statute wording, and courts and authorities may interpret it differently. Consult a qualified attorney before you act on anything generated here.</div>
           </div>
-          <div class="protocol-section">
+          <div class="protocol-section meridian-section">
             <div class="proto-label"><span class="proto-icon">🧭</span> MERIDIAN Context</div>
             <div class="proto-text" id="proto-context"></div>
           </div>
@@ -1304,7 +1304,9 @@ Don&apos;t worry about structure or length. Write it the way it happened.' rows=
             else if (c.head && c.head.contains(e.target)) { setColl(el, true); syncCollAll(); }
           });
         }
-        setColl(el, true);
+        // MERIDIAN Context stays open by default -- hidden, it reads as missing
+        // and causes confusion. Every other card keeps the collapsed default.
+        setColl(el, !el.classList.contains('meridian-section'));
       });
       syncCollAll();
     }
