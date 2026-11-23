@@ -2994,10 +2994,16 @@ html, body { overflow-x: hidden; background: var(--bg); }
 (function(){
   var bar=document.getElementById('rfStickyCta'); if(!bar||!('IntersectionObserver' in window)) return;
   var hide={}; var signedIn=false;
+  // The hero is taller than one phone screen, so .rf-actions (the real
+  // hero CTA) is "not intersecting" even at scroll position 0 -- without
+  // a scroll gate the bar used to flash in on first paint, before the
+  // visitor had scrolled past anything. Require an actual scroll first.
+  var scrolled=window.scrollY>40;
+  window.addEventListener('scroll',function(){ if(!scrolled && window.scrollY>40){ scrolled=true; update(); } },{passive:true});
   function update(){
     var a=document.querySelector('.vantage-auth-link');
     signedIn=!!(a&&a.textContent.trim()==='Dashboard');
-    var blocked=signedIn||hide.hero||hide.price||hide.final;
+    var blocked=signedIn||!scrolled||hide.hero||hide.price||hide.final;
     bar.classList.toggle('show',!blocked);
   }
   [['hero','.rf-actions'],['price','#rf-pricing .rf-price-cta, #rf-pricing a.btn-rf-primary'],['final','.rf-final']].forEach(function(p){
