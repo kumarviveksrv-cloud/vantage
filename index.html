@@ -1285,8 +1285,14 @@ html, body { overflow-x: hidden; background: var(--bg); }
 /* ── WHY I BUILT VANTAGE (founder voice, directly under the hero) ──────── */
 .rf-why { padding: 90px 24px 30px; }
 .rf-why-inner { max-width: 760px; margin: 0 auto; }
-/* This label is the section's title, so it carries more weight than the 12px eyebrow other sections use. */
-.rf-why .rf-section-label { font-size: 17px; letter-spacing: .24em; color: #a78bfa; margin-bottom: 22px; text-shadow: 0 0 18px rgba(139,92,246,.35); }
+/* This label is the section's title, so it carries more weight than the
+   12px eyebrow other sections use. Scoped to #rf-why by id, not the
+   shared .rf-why class, on purpose: #rf-standpoint also carries the
+   .rf-why class (reused for its layout/spacing only) but is a feature
+   section like any other in the roster/proof/compare/faq family, not
+   the page's one personal-voice beat -- it should match their 12px
+   eyebrow, not borrow this section's weight. */
+#rf-why .rf-section-label { font-size: 17px; letter-spacing: .24em; color: #a78bfa; margin-bottom: 22px; text-shadow: 0 0 18px rgba(139,92,246,.35); }
 .rf-why .rf-section-headline { margin-bottom: 40px; }
 .rf-why .rf-section-headline .rf-accent { color: #8b5cf6; text-shadow: 0 0 22px rgba(139,92,246,.4); }
 .rf-why-body { font: 400 clamp(17px, 2.2vw, 22px)/1.7 var(--font); color: rgba(244,243,255,.8); max-width: 700px; margin: 0 auto; }
@@ -1305,7 +1311,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
   text-transform: uppercase;
   margin: 0;
 }
-@media (max-width: 720px) { .rf-why { padding: 70px 20px 20px; } .rf-why .rf-section-label { font-size: 14px; letter-spacing: .2em; } }
+@media (max-width: 720px) { .rf-why { padding: 70px 20px 20px; } #rf-why .rf-section-label { font-size: 14px; letter-spacing: .2em; } }
 
 /* ── COMPARISON SECTION ──────────────────────────────────────────────── */
 .rf-compare { padding: 100px 24px; }
