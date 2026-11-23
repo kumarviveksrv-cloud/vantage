@@ -1008,31 +1008,6 @@ html, body { overflow-x: hidden; background: var(--bg); }
   margin: 0 0 60px;
 }
 
-/* ── Mobile pinned trial button ─────────────────────────────────────
-   Phones only. Appears once the prologue is done and the hero buttons
-   are off screen; hides again where the page already shows a trial
-   button (pricing, final CTA) or for signed-in visitors. */
-.rf-sticky-cta { display: none; }
-@media (max-width: 768px) {
-  .rf-sticky-cta {
-    display: block;
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
-    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-    background: linear-gradient(180deg, rgba(8,6,22,0) 0%, rgba(8,6,22,.92) 38%);
-    transform: translateY(110%); opacity: 0; pointer-events: none;
-    transition: transform .3s ease, opacity .3s ease;
-  }
-  body.prologue-complete .rf-sticky-cta.show { transform: none; opacity: 1; pointer-events: auto; }
-  .rf-sticky-cta a {
-    display: block; text-align: center; text-decoration: none;
-    padding: 14px; border-radius: 10px;
-    font: 600 15px var(--font); color: #fff;
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-    box-shadow: 0 8px 28px rgba(99,102,241,.45);
-  }
-  .rf-sticky-cta small { display: block; margin-top: 6px; text-align: center; font: 400 11.5px var(--font); color: rgba(244,243,255,.7); }
-}
-
 .rf-tiles {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -2985,45 +2960,5 @@ html, body { overflow-x: hidden; background: var(--bg); }
 </script>
 
 
-<div class="rf-sticky-cta" id="rfStickyCta">
-  <a href="https://accounts.vantage.virorah.com/sign-up?redirect_url=https%3A%2F%2Fvantage.virorah.com%2Faccess.html">Start Free Trial →</a>
-  <small>7 days free · No debit card, credit card or UPI AutoPay needed</small>
-</div>
-
-<script>
-(function(){
-  var bar=document.getElementById('rfStickyCta'); if(!bar||!('IntersectionObserver' in window)) return;
-  // .rf-actions (the real hero CTA) lives in .rf-hero-copy, well below
-  // the one-viewport-tall .rf-hero -- so it's "not intersecting" from
-  // the very first frame, before the visitor has scrolled at all or
-  // even reached it. Gating on "not currently intersecting" alone (the
-  // old logic) or on a scroll distance (the first attempted fix, which
-  // a single swipe cleared) both show the bar too early. What should
-  // actually gate it: whether .rf-actions has ever been seen. Start
-  // blocked, flip to eligible only the first time it's seen passing
-  // out of view having been in view -- never before it's been reached.
-  var hide={hero:true}; var signedIn=false; var heroSeen=false;
-  function update(){
-    var a=document.querySelector('.vantage-auth-link');
-    signedIn=!!(a&&a.textContent.trim()==='Dashboard');
-    var blocked=signedIn||hide.hero||hide.price||hide.final;
-    bar.classList.toggle('show',!blocked);
-  }
-  (function(){
-    var el=document.querySelector('.rf-actions'); if(!el) return;
-    new IntersectionObserver(function(e){
-      var intersecting=e[0].isIntersecting;
-      if(intersecting) heroSeen=true;
-      hide.hero=intersecting||!heroSeen;
-      update();
-    },{threshold:0.15}).observe(el);
-  })();
-  [['price','#rf-pricing .rf-price-cta, #rf-pricing a.btn-rf-primary'],['final','.rf-final']].forEach(function(p){
-    var el=document.querySelector(p[1]); if(!el) return;
-    new IntersectionObserver(function(e){hide[p[0]]=e[0].isIntersecting;update();},{threshold:0.15}).observe(el);
-  });
-  setInterval(update,1500); update();
-})();
-</script>
 </body>
 </html>
