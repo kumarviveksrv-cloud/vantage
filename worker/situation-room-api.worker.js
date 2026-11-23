@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v174'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v175'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -6409,13 +6409,18 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
     // that save_user already created on signup. Keyed on user_id, same as
     // every other Users table operation in this file.
     if (tool === 'save_profile') {
-      const { orgName, designation, city, state: profileState, phone } = body;
+      const { orgName, designation, city, state: profileState, phone, fullName } = body;
       const profileUserRecord = await ensureUserRow(clerkUserId);      if (!profileUserRecord) {
         return new Response(JSON.stringify({ success: false, error: 'Account not found. Please sign out and sign in again.' }), {
           status: 404, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
         });
       }
       await updateAirtable('Users', profileUserRecord.id, {
+        // Only overwrite Name when a real one is submitted -- at signup it was
+        // set to Clerk's name (Google OAuth) or, for OTP-only signups, to the
+        // email address as a placeholder. This form is where every user,
+        // regardless of sign-in method, is asked for their actual name.
+        'Name': (fullName && fullName.trim()) || profileUserRecord.fields.Name || '',
         'org_name': orgName || '',
         'designation': designation || '',
         'city': city || '',

@@ -298,6 +298,15 @@
       <div id="status-bar" class="status-bar"></div>
 
       <form id="profile-form" novalidate>
+        <!-- Full name -- the one field every sign-in method doesn't guarantee.
+             Google OAuth users arrive with this prefilled from their Google
+             profile; email-code (OTP) users see it blank and must fill it in. -->
+        <div class="form-group">
+          <label for="full-name">Full name <span class="req">*</span></label>
+          <input type="text" id="full-name" name="fullName"
+            placeholder="e.g. Aprajita Singh" autocomplete="name" required>
+        </div>
+
         <!-- Row 1: Designation + Organisation -->
         <div class="form-row">
           <div class="form-group">
@@ -495,6 +504,11 @@
       const phone = Clerk.user.primaryPhoneNumber?.phoneNumber || '';
       if (phone) document.getElementById('phone').value = phone;
 
+      // Google OAuth hands us a name directly; OTP sign-ins have none, so this
+      // stays blank and the field's own required-ness forces them to enter it.
+      const clerkFullName = (Clerk.user.fullName || '').trim();
+      if (clerkFullName) document.getElementById('full-name').value = clerkFullName;
+
       document.getElementById('sign-out-link').addEventListener('click', async () => {
         /* Use the shared sign-out so the landing-page flag and cached local data are cleared too. */
         if (typeof window.clerkSignOut === 'function') { window.clerkSignOut(); return; }
@@ -507,12 +521,14 @@
         e.preventDefault();
         clearStatus();
 
+        const fullName    = document.getElementById('full-name').value.trim();
         const designation = document.getElementById('designation').value.trim();
         const orgName     = document.getElementById('org-name').value.trim();
         const city        = document.getElementById('city').value.trim();
         const state       = document.getElementById('state').value;
         const phoneVal    = document.getElementById('phone').value.trim();
 
+        if (!fullName)    { showError('Please enter your full name.'); return; }
         if (!designation) { showError('Please enter your designation.'); return; }
         if (!orgName)     { showError('Please enter your organisation name.'); return; }
         if (!city)        { showError('Please enter your city.'); return; }
@@ -533,6 +549,7 @@
             },
             body: JSON.stringify({
               tool: 'save_profile',
+              fullName,
               designation,
               orgName,
               city,
