@@ -1017,8 +1017,26 @@
   // risk classification are genuinely calibrated to what they typed -- but
   // stop rendering the actual reasoning/consequences/next-step text for an
   // anonymous visitor at all. Sign-in is a real wall now, not styling.
+  // GA4 funnel events for this gated flow (added 24 Nov 2026, alongside the
+  // gating fix above). Nothing on demo.html fired a single custom event
+  // before this -- just the default GA pageview -- so there was no way to
+  // know whether this feature feeds the trial or competes with it. These
+  // three cover the funnel end to end: served (got a real answer, saw the
+  // lock) -> cta_click (clicked through from it) -> and blocked/error so
+  // "served" has an honest denominator instead of just counting successes.
+  // No situation text or any model output goes into these, only outcome
+  // labels and the risk classification, which is already shown on screen.
+  function trackLivePreview(eventName, params) {
+    if (typeof gtag === 'function') gtag('event', eventName, params || {});
+  }
+
   function renderLiveResult(result, alreadyUsed) {
     var riskClass = mapVclass(result.vclass);
+
+    trackLivePreview('live_preview_served', {
+      outcome: alreadyUsed ? 'replay' : 'fresh',
+      risk_class: result.vclass || ''
+    });
 
     var alreadyUsedNote = alreadyUsed
       ? '<div class="scenario-note" style="margin-bottom:14px">This is the classification from your earlier free preview. Sign in to see the full reading or ask a new one.</div>'
@@ -1034,7 +1052,7 @@
         '<div style="font-size:26px;margin-bottom:8px">\uD83D\uDD12</div>' +
         '<div class="demo-cta-title">This was a real answer, not a script.</div>' +
         '<div class="demo-cta-sub">Sign in free to see the full legal position, what this actually costs if handled poorly, and what ARIA would ask you next, saved as the first entry in your Vantage Record.</div>' +
-        '<div class="cta-btns"><a href="access.html" class="btn-p">Unlock Full Answer \u2192</a><a href="index.html" class="btn-g" onclick="return vantageGoHome()">See what else is inside</a></div></div>';
+        '<div class="cta-btns"><a href="access.html" class="btn-p" onclick="trackLivePreview(\'live_preview_cta_click\',{cta:\'unlock\'})">Unlock Full Answer \u2192</a><a href="index.html" class="btn-g" onclick="trackLivePreview(\'live_preview_cta_click\',{cta:\'explore\'});return vantageGoHome()">See what else is inside</a></div></div>';
     document.getElementById('pact-output').style.display = 'block';
   }
 
@@ -1074,6 +1092,7 @@
       btn.disabled = false;
 
       if (!resp.ok && !data.already_used) {
+        trackLivePreview('live_preview_blocked', { reason: 'server_error', status: resp.status });
         document.getElementById('pact-output').innerHTML =
           '<div class="scenario-note" style="color:#FF4D6D">' + (data.error || 'Something went wrong. Please try again.') + '</div>';
         document.getElementById('pact-output').style.display = 'block';
@@ -1083,6 +1102,7 @@
       if (data.already_used && data.result) {
         renderLiveResult(data.result, true);
       } else if (data.already_used) {
+        trackLivePreview('live_preview_blocked', { reason: 'quota_no_stored_result' });
         document.getElementById('pact-output').innerHTML =
           '<div class="scenario-note">' + (data.message || 'You\u2019ve already used your free preview.') + ' <a href="access.html" style="color:var(--muted)">Sign in to continue \u2192</a></div>';
         document.getElementById('pact-output').style.display = 'block';
@@ -1090,6 +1110,7 @@
         renderLiveResult(data.result, false);
       }
     } catch (err) {
+      trackLivePreview('live_preview_blocked', { reason: 'network_error' });
       document.getElementById('pact-loading').style.display = 'none';
       btn.disabled = false;
       document.getElementById('pact-output').innerHTML =
