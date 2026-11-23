@@ -1287,11 +1287,9 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-why-inner { max-width: 760px; margin: 0 auto; }
 /* This label is the section's title, so it carries more weight than the
    12px eyebrow other sections use. Scoped to #rf-why by id, not the
-   shared .rf-why class, on purpose: #rf-standpoint also carries the
-   .rf-why class (reused for its layout/spacing only) but is a feature
-   section like any other in the roster/proof/compare/faq family, not
-   the page's one personal-voice beat -- it should match their 12px
-   eyebrow, not borrow this section's weight. */
+   shared .rf-why class, so any future section that reuses .rf-why for
+   its layout/spacing only doesn't inherit this section's heavier
+   treatment -- that's reserved for the page's one personal-voice beat. */
 #rf-why .rf-section-label { font-size: 17px; letter-spacing: .24em; color: #a78bfa; margin-bottom: 22px; text-shadow: 0 0 18px rgba(139,92,246,.35); }
 .rf-why .rf-section-headline { margin-bottom: 40px; }
 .rf-why .rf-section-headline .rf-accent { color: #8b5cf6; text-shadow: 0 0 22px rgba(139,92,246,.4); }
@@ -2366,23 +2364,6 @@ html, body { overflow-x: hidden; background: var(--bg); }
         </div>
       </div>
 
-    </div>
-  </section>
-
-  <!-- ── STANDPOINT: a dedicated narrative beat, same visual language as
-       .rf-why (reused classes, no new CSS). Pulled out of the roster's
-       "Your Record" bullet list because it answers a different question
-       than the rest of this page: not "what is my work worth," but "can
-       I prove I was right when I was overruled and blamed anyway." ── -->
-  <section class="rf-why rf-reveal" id="rf-standpoint">
-    <div class="rf-why-inner">
-      <span class="rf-section-label">The One Nobody Talks About</span>
-      <h2 class="rf-section-headline">You were right. <span class="rf-accent">Can you prove it?</span></h2>
-      <div class="rf-why-body">
-        <p>You've advised against something. Management overruled you. It went wrong exactly the way you said it would. And somehow, you're the one explaining yourself afterward, because there's nothing on paper showing you called it.</p>
-        <p>That's what <strong>Standpoint</strong> is for. File your professional position before the outcome is known: timestamped, permanent, yours. Not a complaint. Not CYA paperwork nobody reads. Evidence.</p>
-        <p class="rf-why-line">The next time you're right and it doesn't matter because you can't prove it, it will matter.</p>
-      </div>
     </div>
   </section>
 
