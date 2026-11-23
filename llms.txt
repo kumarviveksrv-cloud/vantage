@@ -1,0 +1,44 @@
+# Virorah Vantage
+
+> Vantage quantifies the business value of every HR decision you make, in rupees, with evidence. It is private decision-intelligence software for individual HR professionals in India, not an HRIS, ATS, or payroll system, and it is not licensed to or visible to the employer. It belongs to the HR professional personally and moves with them if they change jobs.
+
+## What it is
+
+Vantage is built for one HR professional at a time, from HR Executives and HR Associates to HR Managers, HRBPs, HR Directors, CHROs, and independent/fractional HR consultants working across multiple organisations. Every output is calibrated by MERIDIAN to India's current labour codes (BNS, BNSS, BSA), the user's state, industry, org size, and seniority.
+
+## Pricing
+
+₹799/month, one plan, billed monthly. No annual contracts, no enterprise procurement. 7-day free trial, up to 10 uses across four tools, no card required to start. Cancel anytime; access continues until the end of the current billing period.
+
+## Core tools
+
+- **Employee Case Advisor**: describe an employee situation, get the process to follow, the modelled financial exposure, and the documentation needed, via a PACT diagnostic and a 7-section Decision Protocol.
+- **The Business Case**: builds the case for a decision, either a SIGNAL narrative for a room or a 5-layer INFLUENCE Stack for one stakeholder, with modelled Revenue at Risk.
+- **Policy Advisor**: names the applicable Acts, rules and compliance requirements for the user's state, cited to BNS, BNSS and BSA (not the repealed IPC), with every section number checked against the statute text and anything not found flagged.
+- **Retention Advisor**: models flight risk, replacement cost, productivity loss, and what a counteroffer actually costs, including a break-even ceiling.
+- **ARIA**: a counsel-and-rehearsal mode for practicing difficult conversations (paid plan only, not part of the trial).
+- **MERIDIAN**: the 8-parameter calibration profile that every tool reads from.
+- **Humac Score**: a provisional organisational index (Raw Humac and a stability-adjusted version, 0-100) built from five pillars: Value Ledger, Talent Premium, Org Vitals, Human P&L, and Human Balance Sheet.
+- **Vantage Record**: the user's own private case history, owned by them, not their employer.
+
+## Key pages
+
+- Homepage: https://vantage.virorah.com/
+- Live demo (no sign-up required): https://vantage.virorah.com/demo.html
+- Pricing: https://vantage.virorah.com/pricing.html
+- FAQ: https://vantage.virorah.com/faq.html
+- About: https://vantage.virorah.com/about.html
+- Methodology (sourcing for every financial figure): https://vantage.virorah.com/methodology.html
+- Privacy: https://vantage.virorah.com/privacy.html
+
+## Data and privacy, in brief
+
+Authentication via Clerk (SOC 2 Type II). Data stored in Airtable (SOC 2 Type II, GDPR compliant). API traffic through Cloudflare Workers (SOC 2 Type II, ISO 27001). Case narratives are anonymised (names, companies, locations replaced with role-consistent placeholders) before reaching the AI model for analysis; this step fails closed. Case data is never used to train AI models. Users can export or permanently delete their data at any time.
+
+## Scope
+
+Built specifically for Indian employment law and the Indian HR context; not currently serving other geographies. Vantage is a decision-intelligence aid, not legal advice or a substitute for qualified legal counsel.
+
+## Company
+
+Built by Virorah Private Limited. https://virorah.com
