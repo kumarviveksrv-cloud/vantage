@@ -42,6 +42,10 @@
     .step-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(99,102,241,0.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
     .step-title{font-family:var(--font), sans-serif;font-size:20px;font-weight:700;margin-bottom:6px;color:#f4f3ff}
     .step-sub{font-size:13px;color:var(--grey);margin-bottom:24px;line-height:1.6}
+    .city-hint-box{font-size:12px;line-height:1.5;color:var(--amber,#FFB547);background:rgba(255,181,71,.08);border:1px solid rgba(255,181,71,.25);border-radius:8px;padding:10px 12px;margin:-12px 0 20px}
+    .city-hint-box b{color:var(--white)}
+    .city-hint-box button{margin-left:4px;padding:3px 10px;font-size:11px;font-weight:600;font-family:var(--font),sans-serif;color:var(--amber,#FFB547);background:transparent;border:1px solid rgba(255,181,71,.4);border-radius:6px;cursor:pointer}
+    .city-hint-box button:hover{background:rgba(255,181,71,.12)}
     .form-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:block}
 
     .options-grid{display:grid;gap:8px}
@@ -129,6 +133,7 @@
     </div>
   </div>
 
+  <script src="city-state-map.js?v=20261123a"></script>
   <script>
     var BASE = 'https://vantage.virorah.com/';
     var WORKER = 'https://situation-room-api.kumarvivek-srv.workers.dev';
@@ -137,6 +142,7 @@
 
     var profile = {};
     var currentStep = 0;
+    var cityHint = null; // { city, state } in this page's own state-grid vocabulary, once known
 
     var STEPS = [
       {
@@ -297,7 +303,60 @@
             }).join('') +
           '</div>' +
         '</div>';
+
+      if (step.id === 'state') injectCityHint();
     }
+
+    // ── City/state cross-check (23 Nov 2026) ──────────────────────────────
+    // This state grid is the one field every legal prompt actually reads
+    // (meridian.state), so a mis-click here, unlike on profile-setup.html,
+    // silently points the whole account at the wrong jurisdiction. Advisory
+    // only: never blocks the Next button, since a genuinely multi-state org
+    // (or a city this file doesn't recognise) is a real, legitimate answer.
+    function injectCityHint() {
+      var sub = document.querySelector('.step-sub');
+      if (!sub) return;
+      var old = document.getElementById('city-hint-box');
+      if (old) old.remove();
+      if (!cityHint) return;
+
+      var chosen = profile.state;
+      var box = document.createElement('div');
+      box.id = 'city-hint-box';
+      box.className = 'city-hint-box';
+      if (!chosen) {
+        box.innerHTML = 'Your profile lists your city as <b>' + mvEsc(cityHint.city) + '</b>, usually in <b>' + mvEsc(cityHint.state) + '</b>. ' +
+          '<button type="button" id="city-hint-fix">Use ' + mvEsc(cityHint.state) + '</button>';
+      } else if (chosen !== cityHint.state) {
+        box.innerHTML = 'Your profile lists your city as <b>' + mvEsc(cityHint.city) + '</b>, usually in <b>' + mvEsc(cityHint.state) + '</b>, not ' + mvEsc(chosen) + '. ' +
+          '<button type="button" id="city-hint-fix">Use ' + mvEsc(cityHint.state) + '</button> if that was a mis-click.';
+      } else {
+        return; // matches -- nothing to flag
+      }
+      sub.insertAdjacentElement('afterend', box);
+      var fixBtn = document.getElementById('city-hint-fix');
+      if (fixBtn) fixBtn.addEventListener('click', function () {
+        profile.state = cityHint.state;
+        renderStep();
+      });
+    }
+    function fetchCityHint() {
+      // Runs after window 'load' so clerk-auth.js (which attaches the auth
+      // header to every fetch) has definitely finished setting up. Silent
+      // on any failure -- this only ever adds a suggestion, never blocks.
+      fetch(WORKER, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tool: 'get_profile' }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          var city = d && d.data && d.data.city;
+          if (!city) return;
+          var st = window.cityStateLookup ? window.cityStateLookup(city, 'meridian') : null;
+          if (!st) return;
+          cityHint = { city: city, state: st };
+          if (STEPS[currentStep] && STEPS[currentStep].id === 'state') injectCityHint();
+        })
+        .catch(function () {});
+    }
+    window.addEventListener('load', fetchCityHint);
 
     function selectOpt(field, value, el) {
       el.closest('.options-grid').querySelectorAll('.opt-btn').forEach(function(b){ b.classList.remove('selected'); });

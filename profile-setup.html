@@ -141,6 +141,37 @@
       margin-top: 2px;
     }
 
+    /* City/state cross-check hint (23 Nov 2026). Advisory only -- never
+       blocks submission. Reuses the amber token so it reads as a notice,
+       not an error (that's --red, used by .status-bar.error). */
+    .city-state-hint {
+      display: none;
+      grid-column: 1 / -1;
+      margin-top: -8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--amber, #FFB547);
+      background: rgba(255,181,71,0.08);
+      border: 1px solid rgba(255,181,71,0.25);
+      border-radius: 8px;
+    }
+    .city-state-hint.show { display: block; }
+    .city-state-hint b { color: var(--white); }
+    .city-state-hint button {
+      margin-left: 4px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--font), sans-serif;
+      color: var(--amber, #FFB547);
+      background: transparent;
+      border: 1px solid rgba(255,181,71,0.4);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .city-state-hint button:hover { background: rgba(255,181,71,0.12); }
+
     /* ── DIVIDER ── */
     .divider {
       height: 1px;
@@ -334,6 +365,7 @@
               </optgroup>
             </select>
           </div>
+          <div class="city-state-hint" id="city-state-hint"></div>
         </div>
 
         <!-- Mobile — optional -->
@@ -359,6 +391,7 @@
     </div>
   </div>
 
+  <script src="city-state-map.js?v=20261123a"></script>
   <script>
     // ── DEFENSIVE: ensure clerk-auth.js sr_access check never blocks this page ──
     // New users arrive here directly after signup before sr_access is set.
@@ -378,6 +411,54 @@
       bar.className = 'status-bar';
       bar.textContent = '';
     }
+
+    // ── City/state cross-check (23 Nov 2026) ──────────────────────────────
+    // Advisory only: these two fields aren't read by any tool today, but a
+    // self-contradicting form (city in one state, state field set to
+    // another) is exactly the kind of thing that makes someone distrust the
+    // rest of the product. Never blocks submission.
+    function escHtml(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    function checkCityState() {
+      const cityEl = document.getElementById('city');
+      const stateEl = document.getElementById('state');
+      const hint = document.getElementById('city-state-hint');
+      if (!cityEl || !stateEl || !hint || typeof window.cityStateLookup !== 'function') return;
+
+      const city = cityEl.value.trim();
+      const expected = window.cityStateLookup(city, 'profile');
+      if (!expected) { hint.classList.remove('show'); hint.innerHTML = ''; return; }
+
+      if (!stateEl.value) {
+        // State not yet touched -- suggest rather than silently auto-fill,
+        // so the user still makes the choice themselves.
+        hint.innerHTML = `${escHtml(city)} is usually in <b>${escHtml(expected)}</b>. ` +
+          `<button type="button" id="city-state-fix">Use ${escHtml(expected)}</button>`;
+        hint.classList.add('show');
+      } else if (stateEl.value !== expected) {
+        hint.innerHTML = `${escHtml(city)} is usually in <b>${escHtml(expected)}</b>, not ${escHtml(stateEl.value)}. ` +
+          `<button type="button" id="city-state-fix">Use ${escHtml(expected)}</button> if that was a slip.`;
+        hint.classList.add('show');
+      } else {
+        hint.classList.remove('show'); hint.innerHTML = '';
+        return;
+      }
+
+      const fixBtn = document.getElementById('city-state-fix');
+      if (fixBtn) fixBtn.addEventListener('click', () => {
+        stateEl.value = expected;
+        checkCityState();
+      });
+    }
+    (function wireCityStateCheck() {
+      const cityEl = document.getElementById('city');
+      const stateEl = document.getElementById('state');
+      if (!cityEl || !stateEl) return;
+      cityEl.addEventListener('input', checkCityState);
+      cityEl.addEventListener('blur', checkCityState);
+      stateEl.addEventListener('change', checkCityState);
+    })();
 
     async function waitForClerk() {
       return new Promise(resolve => {

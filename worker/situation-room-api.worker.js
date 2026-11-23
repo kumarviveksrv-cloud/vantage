@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v172'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v173'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -6439,7 +6439,10 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
       }
       const pf = profileRow.fields || {};
       const profileComplete = !!(pf.designation && pf.org_name && pf.city && pf.state);
-      return new Response(JSON.stringify({ success: true, data: { profileComplete } }), {
+      // city is returned so onboarding.html (MERIDIAN) can advise when the
+      // state picked there doesn't match the city given at profile-setup --
+      // the state field there, unlike this one, feeds every legal prompt.
+      return new Response(JSON.stringify({ success: true, data: { profileComplete, city: pf.city || '' } }), {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
       });
     }
