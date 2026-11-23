@@ -1609,23 +1609,31 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 .rf-price-daily {
   display: block;
-  font: 400 12px var(--mono);
-  letter-spacing: .05em;
-  color: rgba(244,243,255,.3);
+  font: 600 13px var(--mono);
+  letter-spacing: .06em;
+  color: rgba(199,185,255,.72);
   text-align: center;
-  margin: 0 0 22px;
+  margin: -2px 0 24px;
   position: relative;
   z-index: 1;
 }
 .rf-pricing-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
   font: 400 13px var(--mono);
-  letter-spacing: .08em;
+  letter-spacing: .06em;
   color: rgba(196,181,253,.38);
   margin: 0 0 36px;
   position: relative;
   z-index: 1;
 }
-.rf-pricing-sub span { margin: 0 8px; opacity: .45; }
+.rf-pricing-sub-dot { margin: 0 10px; opacity: .45; }
+@media (max-width: 560px) {
+  .rf-pricing-sub { flex-direction: column; gap: 8px; }
+  .rf-pricing-sub-dot { display: none; }
+}
 .rf-pricing-lock {
   display: block;
   font: 600 11px var(--mono);
@@ -2574,7 +2582,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
       </div>
       <span class="rf-price-daily">~₹27 a day</span>
       <p class="rf-pricing-sub">
-        7-day free trial, up to 10 uses <span>·</span> No debit card, credit card or UPI AutoPay needed <span>·</span> Cancel anytime
+        <span class="rf-pricing-sub-item">7-day free trial, up to 10 uses</span><span class="rf-pricing-sub-dot">·</span><span class="rf-pricing-sub-item">No debit card, credit card or UPI AutoPay needed</span><span class="rf-pricing-sub-dot">·</span><span class="rf-pricing-sub-item">Cancel anytime</span>
       </p>
       <span class="rf-pricing-lock">Founding price during beta. If it changes afterwards, you will be told before your next charge.</span>
       <div class="rf-pricing-features-label">What's included</div>
