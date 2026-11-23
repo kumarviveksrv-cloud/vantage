@@ -1,6 +1,6 @@
 let ANTHROPIC_API_KEY, AIRTABLE_API_KEY, AIRTABLE_BASE_ID, RESEND_API_KEY, CLERK_SECRET_KEY, CLAUDE_MODEL_DEFAULT, CLAUDE_MODEL_FAST, TRIAL_COUNTER_DB;
 const MAX_TOKENS = 8000;
-const WORKER_VERSION = 'v173'; // shown at /health so a deploy can be confirmed without guessing
+const WORKER_VERSION = 'v174'; // shown at /health so a deploy can be confirmed without guessing
 const ANALYST_TEMPERATURE = 0; // Policy Advisor, The Business Case, Retention Advisor: same question, same answer
 const PACT_TEMPERATURE = 0; // only the Employee Case Advisor call uses it; the others keep the API default
 
@@ -7188,7 +7188,7 @@ result = { response: _tb ? _tb.text : '', panelShared: ariaTurn.panelUsed, anony
 // scheduled() at the bottom of this file), separate from the 09:00 UTC
 // debrief/reminder cron. Prunes anything in the bucket older than
 // BACKUP_RETENTION_DAYS so storage never grows unbounded.
-const BACKUP_TABLES = ['Profiles', 'Cases', 'Debriefs', 'MERIDIAN_Profiles', 'Humac_Scores', 'Usage', 'Ledger', 'Humac_Mode_Changes', 'Deletion_Requests', 'Users', 'Feedback'];
+const BACKUP_TABLES = ['Cases', 'Debriefs', 'MERIDIAN_Profiles', 'Humac_Scores', 'Usage', 'Ledger', 'Humac_Mode_Changes', 'Deletion_Requests', 'Users', 'Feedback'];
 const BACKUP_RETENTION_DAYS = 30;
 async function fetchAllRecordsPaginated(tableName) {
 let records = [];

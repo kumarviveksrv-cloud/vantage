@@ -353,7 +353,7 @@ const badResp = { ok: false, status: 500, json: async function () { return {}; }
   check('v39: failed table is retried three times', casesTries === 3, String(casesTries));
   check('v39: failed read saved as incomplete, never as a complete file', Object.keys(env.store).join() === 'airtable-backups/' + today + '.incomplete.json', Object.keys(env.store).join());
   check('v39: alert email sent once', globalThis.__calls.filter(u => /resend/.test(u)).length === 1);
-  check('v39: other tables still captured in the incomplete file', JSON.parse(env.store['airtable-backups/' + today + '.incomplete.json']).tables.Profiles.length === 1);
+  check('v39: other tables still captured in the incomplete file', JSON.parse(env.store['airtable-backups/' + today + '.incomplete.json']).tables.Debriefs.length === 1);
   // fails once, then recovers
   let n = 0; globalThis.__calls = []; mockFetch((u) => { if (/\/Cases\?/.test(u) && n++ === 0) { return badResp; } return okResp; });
   env = globalThis.__mkEnv(); await run('runAirtableBackup')(env);
