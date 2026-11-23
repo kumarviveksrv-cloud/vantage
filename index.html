@@ -843,9 +843,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
    already scrolled past this section (or looks at a static
    screenshot) sees nothing different. Added a static top/bottom
    rail pair so the section reads as deliberately framed at rest too,
-   not just during the one-time scroll-in. Same violet rail language
-   as the .rf-framework-inner accent rail below it, so the two
-   sections Kumar flagged together stay visually related. */
+   not just during the one-time scroll-in. */
 .rf-gap::before, .rf-gap::after {
   content: '';
   display: block;
@@ -1210,77 +1208,6 @@ html, body { overflow-x: hidden; background: var(--bg); }
   color: rgba(244,243,255,.8);
   margin: 0;
 }
-
-/* ── FRAMEWORK SECTION ───────────────────────────────────────────────── */
-.rf-framework {
-  padding: 100px 24px;
-  background: rgba(9,7,22,.6);
-  border-top: 1px solid rgba(99,102,241,.08);
-  border-bottom: 1px solid rgba(99,102,241,.08);
-  position: relative;
-  overflow: hidden;
-}
-.rf-framework-grid, .rf-framework-glow { display: none; }
-.rf-framework-inner {
-  max-width: 820px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1.4fr;
-  gap: 60px;
-  align-items: start;
-  position: relative;
-  z-index: 2;
-  /* Quiet-emphasis treatment (22 Oct 2026) -- Kumar flagged this section
-     as reading too plain against the rest of the page. Static accent
-     rail along the left edge, same gradient idea .rf-gap::before
-     already uses above its own text, so it reads as this page's
-     established "important copy" marker rather than a new motif. No
-     motion, no glow layer -- deliberately restrained after today's
-     pulsing-glow back-and-forth on the card sections. */
-  padding-left: 28px;
-}
-.rf-framework-inner::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 4px;
-  bottom: 4px;
-  width: 2px;
-  border-radius: 2px;
-  background: linear-gradient(180deg,
-    rgba(139,92,246,0) 0%,
-    rgba(139,92,246,.55) 18%,
-    rgba(139,92,246,.55) 82%,
-    rgba(139,92,246,0) 100%);
-}
-@media (max-width: 720px) { .rf-framework-inner { grid-template-columns: 1fr; gap: 36px; } }
-
-.rf-framework-label {
-  font: 700 11px var(--mono);
-  letter-spacing: .18em;
-  color: #8b5cf6;
-  text-transform: uppercase;
-  margin-bottom: 16px;
-  display: block;
-}
-.rf-framework-title {
-  font: 700 clamp(26px, 3.8vw, 40px)/1.16 var(--display);
-  letter-spacing: -.03em;
-  color: var(--white);
-  margin: 0;
-}
-.rf-framework-title em {
-  font-style: normal;
-  color: #8b5cf6;
-  text-shadow: 0 0 22px rgba(139,92,246,.4);
-}
-.rf-framework-body {
-  font: 400 17px/1.78 var(--font);
-  color: rgba(244,243,255,.82);
-}
-.rf-framework-body p { margin: 0 0 18px; }
-.rf-framework-body p:last-child { margin: 0; }
-.rf-framework-body strong { color: #c4b5fd; font-weight: 700; }
 
 /* ── WHY I BUILT VANTAGE (founder voice, directly under the hero) ──────── */
 .rf-why { padding: 90px 24px 30px; }
@@ -2461,23 +2388,6 @@ html, body { overflow-x: hidden; background: var(--bg); }
           <p class="rf-tile-desc">Standpoint timestamps your position before the outcome is known, and the monthly Debrief writes itself from your work. Your Vantage Record keeps all of it, and it follows you across every role you hold.</p>
         </div>
 
-      </div>
-    </div>
-  </section>
-
-  <!-- ── THE GAP IN NUMBERS ───────────────────────────────────────────── -->
-  <section class="rf-framework rf-reveal">
-    <div class="rf-framework-grid" aria-hidden="true"></div>
-    <div class="rf-framework-glow" aria-hidden="true"></div>
-    <div class="rf-framework-inner">
-      <div class="rf-framework-left">
-        <span class="rf-framework-label">The Gap in Numbers</span>
-        <h2 class="rf-framework-title">What HR is leaving <em>uncalculated.</em></h2>
-      </div>
-      <div class="rf-framework-body">
-        <p>Every HR decision you make has a financial dimension. The cost of an unresolved case. The value of a retained employee. The risk exposure behind a policy call. Most HR professionals never put a number on any of it, not because they can't, but because no one built the model for it.</p>
-        <p>That's the <strong>HR Financial Model</strong> gap: the layer of financial thinking that HR decisions deserve but rarely get. <strong>HR Financial Value</strong> is what comes out the other side: the financial impact of what you do, finally calculated.</p>
-        <p>When you can calculate it, walk in with it, and defend it, you're business fluent. That's what Vantage is built for.</p>
       </div>
     </div>
   </section>
