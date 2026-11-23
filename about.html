@@ -2015,7 +2015,7 @@ a{color:inherit;text-decoration:none}
 
     const calEl=document.getElementById('msCalibrate');
     if(calEl){
-      setTimeout(()=>calEl.classList.add('ms-cal-active'),200);
+      setTimeout(()=>calEl.classList.add('ms-cal-active'),120);
     }
 
     const D=window._vDash;
@@ -2023,27 +2023,31 @@ a{color:inherit;text-decoration:none}
       setTimeout(()=>{
         layer.classList.add('msl-active');
         const label=layer.querySelector('.msl-label');
-        if(label&&D){const orig=label.textContent.trim();D.str(label,orig,450);}
+        if(label&&D){const orig=label.textContent.trim();D.str(label,orig,280);}
         const desc=layer.querySelector('.msl-desc');
         if(desc){
           desc.style.opacity='0';
           setTimeout(()=>{
             desc.style.opacity='1';
-            if(D){const orig=desc.textContent.trim();D.str(desc,orig,600);}
-          },200);
+            if(D){const orig=desc.textContent.trim();D.str(desc,orig,380);}
+          },120);
         }
-      },200+i*520);
+      },150+i*260);
     });
 
     setTimeout(()=>{
       if(output)output.classList.add('mso-active');
       if(outputText)outputText.classList.add('advice-burst');
-    },200+layers.length*520+320);
+    },150+layers.length*260+200);
   }
 
+  /* SR-fix: first-play pre-animation pause cut from 3000ms to 400ms --
+     3s of a static, unlabelled section reads as broken/stuck, not
+     cinematic, especially this far down a page someone is skimming.
+     400ms still reads as a deliberate beat, not a jump-cut. */
   const section=document.getElementById('meridian');
   if(!section)return;
-  new IntersectionObserver(es=>{if(es[0].isIntersecting){var d=sessionStorage.getItem('vantage_dash_animated')?0:3000;setTimeout(run,d);}},{threshold:0.15}).observe(section);
+  new IntersectionObserver(es=>{if(es[0].isIntersecting){var d=sessionStorage.getItem('vantage_dash_animated')?0:400;setTimeout(run,d);}},{threshold:0.15}).observe(section);
 })();
 </script>
 
@@ -2109,32 +2113,32 @@ a{color:inherit;text-decoration:none}
       return;
     }
 
-    const GAP=460;
+    const GAP=230;
     forces.forEach((fc,i)=>{
       setTimeout(()=>{
         fc.classList.add('hf-visible');
-        if(statusEl)D.str(statusEl,STATUS[i]||STATUS[STATUS.length-1],320);
+        if(statusEl)D.str(statusEl,STATUS[i]||STATUS[STATUS.length-1],220);
         const bar=fc.querySelector('.hsf-fill');
-        if(bar){const target=parseFloat(bar.dataset.w)||60;bar.style.width='0%';setTimeout(()=>D.bar(bar,target,900),80);}
+        if(bar){const target=parseFloat(bar.dataset.w)||60;bar.style.width='0%';setTimeout(()=>D.bar(bar,target,550),50);}
         const numSpan=fc.querySelector('.hs-val');
-        if(numSpan){const orig=numSpan.textContent.trim();numSpan.textContent='';setTimeout(()=>D.str(numSpan,orig,600),200);}
+        if(numSpan){const orig=numSpan.textContent.trim();numSpan.textContent='';setTimeout(()=>D.str(numSpan,orig,380),120);}
         const pts=fc.querySelector('.hs-pts');
-        if(pts){pts.style.opacity='0';pts.style.transform='scale(.3)';setTimeout(()=>{pts.classList.add('badge-pop');pts.style.opacity='1';},700);}
-      },180+i*GAP);
+        if(pts){pts.style.opacity='0';pts.style.transform='scale(.3)';setTimeout(()=>{pts.classList.add('badge-pop');pts.style.opacity='1';},420);}
+      },110+i*GAP);
     });
 
-    const scoreAt=180+forces.length*GAP+280;
+    const scoreAt=110+forces.length*GAP+150;
     setTimeout(()=>{
       if(scorePnl)scorePnl.classList.add('hsp-visible');
-      if(fillEl)setTimeout(()=>D.bar(fillEl,84,1800),200);
-      if(numEl)setTimeout(()=>D.num(numEl,84,2000,'',''),200);
-      setTimeout(()=>{const v=document.getElementById('humacVerdict');if(v)v.textContent='Value Compounding';},2200);
+      if(fillEl)setTimeout(()=>D.bar(fillEl,84,1000),120);
+      if(numEl)setTimeout(()=>D.num(numEl,84,1100,'',''),120);
+      setTimeout(()=>{const v=document.getElementById('humacVerdict');if(v)v.textContent='Value Compounding';},1150);
       setTimeout(()=>{
         const hci=document.getElementById('humacHCI');const hcix=document.getElementById('humacHCIx');
-        if(hci)D.num(hci,71,1400,'','');
-        if(hcix){const s=performance.now();(function f(now){const t=Math.min(1,(now-s)/1400);hcix.textContent=(0.50+t*.35).toFixed(2)+'x';if(t<1)requestAnimationFrame(f);else hcix.textContent='0.85x';})(s);}
-      },350);
-      setTimeout(()=>{const tNum=document.getElementById('humacTrajNum');const tSt=document.getElementById('humacTrajStatus');if(tNum)D.num(tNum,6,1200,'+','');setTimeout(()=>{if(tSt)tSt.textContent='Improving';},1300);},600);
+        if(hci)D.num(hci,71,800,'','');
+        if(hcix){const s=performance.now();(function f(now){const t=Math.min(1,(now-s)/800);hcix.textContent=(0.50+t*.35).toFixed(2)+'x';if(t<1)requestAnimationFrame(f);else hcix.textContent='0.85x';})(s);}
+      },200);
+      setTimeout(()=>{const tNum=document.getElementById('humacTrajNum');const tSt=document.getElementById('humacTrajStatus');if(tNum)D.num(tNum,6,700,'+','');setTimeout(()=>{if(tSt)tSt.textContent='Improving';},750);},350);
       setTimeout(()=>{
         const tag=document.getElementById('humacTagline');
         if(tag){
@@ -2155,19 +2159,22 @@ a{color:inherit;text-decoration:none}
           });
           void tag.offsetHeight;
           spans.forEach((span,i)=>{
-            setTimeout(()=>{ span.style.opacity='1'; span.style.transform='translateY(0)'; }, i*55);
+            setTimeout(()=>{ span.style.opacity='1'; span.style.transform='translateY(0)'; }, i*30);
           });
         }
-      },2400);
+      },1300);
     },scoreAt);
 
     panel.style.position='relative';panel.style.overflow='hidden';
     const scan=document.createElement('div');scan.className='humac-scanline';panel.appendChild(scan);
   }
 
+  /* SR-fix: first-play pre-animation pause cut from 3000ms to 400ms,
+     same rationale as initMeridianStack() above -- a static 3s pause
+     this far down the page reads as stuck, not cinematic. */
   const section=document.getElementById('humac');
   if(!section)return;
-  new IntersectionObserver(es=>{if(es[0].isIntersecting){var d=sessionStorage.getItem('vantage_dash_animated')?0:3000;setTimeout(run,d);}},{threshold:0.15}).observe(section);
+  new IntersectionObserver(es=>{if(es[0].isIntersecting){var d=sessionStorage.getItem('vantage_dash_animated')?0:400;setTimeout(run,d);}},{threshold:0.15}).observe(section);
 })();
 </script>
 
