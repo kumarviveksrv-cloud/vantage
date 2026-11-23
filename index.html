@@ -2993,20 +2993,32 @@ html, body { overflow-x: hidden; background: var(--bg); }
 <script>
 (function(){
   var bar=document.getElementById('rfStickyCta'); if(!bar||!('IntersectionObserver' in window)) return;
-  var hide={}; var signedIn=false;
-  // The hero is taller than one phone screen, so .rf-actions (the real
-  // hero CTA) is "not intersecting" even at scroll position 0 -- without
-  // a scroll gate the bar used to flash in on first paint, before the
-  // visitor had scrolled past anything. Require an actual scroll first.
-  var scrolled=window.scrollY>40;
-  window.addEventListener('scroll',function(){ if(!scrolled && window.scrollY>40){ scrolled=true; update(); } },{passive:true});
+  // .rf-actions (the real hero CTA) lives in .rf-hero-copy, well below
+  // the one-viewport-tall .rf-hero -- so it's "not intersecting" from
+  // the very first frame, before the visitor has scrolled at all or
+  // even reached it. Gating on "not currently intersecting" alone (the
+  // old logic) or on a scroll distance (the first attempted fix, which
+  // a single swipe cleared) both show the bar too early. What should
+  // actually gate it: whether .rf-actions has ever been seen. Start
+  // blocked, flip to eligible only the first time it's seen passing
+  // out of view having been in view -- never before it's been reached.
+  var hide={hero:true}; var signedIn=false; var heroSeen=false;
   function update(){
     var a=document.querySelector('.vantage-auth-link');
     signedIn=!!(a&&a.textContent.trim()==='Dashboard');
-    var blocked=signedIn||!scrolled||hide.hero||hide.price||hide.final;
+    var blocked=signedIn||hide.hero||hide.price||hide.final;
     bar.classList.toggle('show',!blocked);
   }
-  [['hero','.rf-actions'],['price','#rf-pricing .rf-price-cta, #rf-pricing a.btn-rf-primary'],['final','.rf-final']].forEach(function(p){
+  (function(){
+    var el=document.querySelector('.rf-actions'); if(!el) return;
+    new IntersectionObserver(function(e){
+      var intersecting=e[0].isIntersecting;
+      if(intersecting) heroSeen=true;
+      hide.hero=intersecting||!heroSeen;
+      update();
+    },{threshold:0.15}).observe(el);
+  })();
+  [['price','#rf-pricing .rf-price-cta, #rf-pricing a.btn-rf-primary'],['final','.rf-final']].forEach(function(p){
     var el=document.querySelector(p[1]); if(!el) return;
     new IntersectionObserver(function(e){hide[p[0]]=e[0].isIntersecting;update();},{threshold:0.15}).observe(el);
   });
