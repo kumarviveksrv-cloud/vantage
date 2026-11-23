@@ -180,11 +180,10 @@ a{color:inherit;text-decoration:none}
 .ab-aria-row-text{flex:1}
 .ab-aria-row-label{font:600 10px var(--mono);letter-spacing:.12em;color:var(--muted);display:block;margin-bottom:3px}
 .ab-aria-row-desc{font:13px var(--font);color:var(--grey);line-height:1.6}
-/* ARIA particle face — ported from index.html's aria-room/aria-figure,
-   scaled down to fit inside the ab-aria-card rather than a full-bleed
-   section. Markup/canvas ids/class names kept identical to index.html
-   on purpose so aria-volumetric.js and the extracted ambient-particle
-   script run completely unmodified. */
+/* ARIA particle face — markup/canvas ids/class names kept identical to
+   their original source so aria-volumetric.js and the extracted
+   ambient-particle script run completely unmodified. .aria-figure now
+   fills .aria-room edge to edge (see note below). */
 .aria-room{height:460px;position:relative;border:1px solid rgba(196,181,253,.1);border-radius:12px;overflow:hidden;margin-bottom:20px;background:radial-gradient(circle at 50% 45%,rgba(99,102,241,.16),transparent 55%),linear-gradient(180deg,#060511,#020207)}
 .aria-room canvas{position:absolute}
 #ariaAmbient{inset:0;width:100%;height:100%}
@@ -192,16 +191,19 @@ a{color:inherit;text-decoration:none}
 .aria-light.a1{width:130px;height:210px;background:rgba(99,102,241,.22);left:8%;top:8%}
 .aria-light.a2{width:110px;height:190px;background:rgba(196,181,253,.14);right:6%;top:24%}
 /* NOTE: gl_PointSize in aria-volumetric.js's shader is fixed in screen
-   pixels, not relative to canvas size — shrinking this box much further
+   pixels, not relative to canvas size — SHRINKING this box much further
    makes the same particle count overlap into solid noise instead of a
-   legible face. Keeping it close to index.html's original ~0.93 aspect
-   ratio (560x600) is what keeps the face actually readable. */
-.aria-figure{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:420px;height:450px;display:grid;place-items:center}
+   legible face. That only cuts one way: aria-volumetric.js's resize()
+   already reads .aria-figure's actual rendered rect via ResizeObserver
+   and feeds it straight into renderer.setSize()/camera.aspect, so
+   enlarging the box to fill the room is just a bigger render target —
+   the geometry is true 3D, not a stretched 2D image, so it doesn't
+   distort at a wider aspect ratio, it's just framed with more headroom. */
+.aria-figure{position:absolute;inset:0;display:grid;place-items:center}
 .aria-figure canvas{width:100%;height:100%;position:relative}
 .ab-aria-meet{margin-bottom:20px;padding:10px 20px;font-size:12px}
 @media(max-width:600px){
   .aria-room{height:320px}
-  .aria-figure{width:280px;height:300px}
 }
 /* TOOLS SECTION */
 .ab-tools-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
