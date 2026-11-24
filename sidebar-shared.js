@@ -359,7 +359,7 @@
     f.appendChild(ni('aria.html', '\u2736', 'ARIA', { cls: 'nav-item--aria' }));
 
     // YOUR CORE TOOLS
-    f.appendChild(ns('Revenue Fluency'));
+    f.appendChild(ns('Your Tools'));
     f.appendChild(ni('employee-case-advisor.html', '\u26A1', 'Employee Case Advisor'));
     f.appendChild(ni('business-case.html',       '\uD83D\uDCBC', 'The Business Case'));
     f.appendChild(ni('retention-advisor.html',       '\u2696\uFE0F', 'Retention Advisor'));
@@ -859,7 +859,7 @@
         ]
       },
       {
-        title: 'Revenue Fluency',
+        title: 'Your Tools',
         items: [
           { icon: IC.bolt, label: 'Employee Case Advisor', sub: 'Navigate any employee situation', href: 'employee-case-advisor.html', page: 'er-case-navigator' },
           { icon: IC.briefcase, label: 'The Business Case', sub: 'Numbers for the room, or one specific person', href: 'business-case.html', page: 'business-case' },
