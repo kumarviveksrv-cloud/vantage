@@ -3531,6 +3531,16 @@ async function ensureUserRowInner(clerkUserId) {
     });
     } catch(mailErr) { console.error('welcome email failed:', mailErr.message); }
     }
+    // Notify info@virorah.com on every new trial signup, so Vivek doesn't have to check
+    // Airtable or Clerk manually. Fires once per Clerk user, at the same moment the user's
+    // own welcome email goes out (see ensureUserRowInner's docstring for what "same moment" means).
+    try {
+    await sendResendEmail({
+    to: 'info@virorah.com',
+    subject: 'Vantage: new trial signup',
+    html: `<p>New trial signup.</p><p>Name: ${name || 'not provided'}</p><p>Email: ${email || 'not provided'}</p><p>Clerk user ID: ${clerkUserId}</p><p>Signed up: ${new Date().toISOString()}</p>`,
+    });
+    } catch(mailErr) { console.error('signup notification email failed:', mailErr.message); }
     return newRow;
   } catch(e) {
     console.error('ensureUserRow create failed:', e.message);
