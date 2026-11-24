@@ -52,9 +52,9 @@
   --muted: #a5b4fc;
   --lavender: #c4b5fd;
 
-  --grey: rgba(244,243,255,0.68);
-  --text-dim: rgba(244,243,255,0.68);
-  --grey-dim: rgba(244,243,255,0.50);
+  --grey: rgba(244,243,255,0.80);
+  --text-dim: rgba(244,243,255,0.80);
+  --grey-dim: rgba(244,243,255,0.60);
 
   --border: rgba(99,102,241,0.12);
   --red: #FF4D6D;
