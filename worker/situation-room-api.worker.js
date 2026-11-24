@@ -2952,7 +2952,6 @@ const USAGE_LIMITS = {
   save_case:           { limit: 30, period: 'daily',   label: 'Case Saves (30/day)' },
   file_position:       { limit: 30, period: 'daily',   label: 'Standpoint Filings (30/day)' },
   submit_feedback:     { limit: 10, period: 'daily',   label: 'Feedback (10/day)' },
-  notify:              { limit: 3,  period: 'daily',   label: 'Waitlist Signups (3/day)' },
   wrong_tool:          { limit: 10, period: 'daily',   label: 'Wrong-tool redirects (10/day)' },
   policy_document:     { limit: 3,  period: 'daily',   label: 'Policy Document Uploads (3/day)' },
   demo_pact:           { limit: 5,  period: 'daily',   label: 'Demo: PACT (5/day per visitor)' },
@@ -5543,52 +5542,6 @@ async function handleRequest(request, env) {
 
   const _reqUrl = new URL(request.url);
   const _emit = function (ev, data) { const f = _sinks.get(request); if (f) { try { f(ev, data); } catch (e) {} } };
-
-  // ── NOTIFY ENDPOINT ───────────────────────────────────────────────────────
-  if (_reqUrl.pathname === '/notify') {
-    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS_HEADERS });
-    try {
-      // This endpoint is deliberately unauthenticated — a waitlist signup has
-      // to work for anonymous visitors with no account. It reuses the same
-      // usage-cap infrastructure as every authenticated tool, keyed by
-      // Cloudflare's own CF-Connecting-IP header instead of a Clerk identity.
-      // That header is set by Cloudflare at the edge, not the client, so it
-      // can't be spoofed the way a client-supplied value could.
-      const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
-      const usageCheck = await checkUsage(clientIP, 'notify', false);
-      if (!usageCheck.allowed) return usageLimitResponse(usageCheck);
-
-      const data = await request.json();
-      const email = (data.email || '').trim().toLowerCase();
-      const name = (data.name || '').trim();
-
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!email || !emailPattern.test(email)) {
-        return new Response(JSON.stringify({ success: false, error: 'Please enter a valid email address' }), {
-          status: 400, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-        });
-      }
-
-      // Skip creating a duplicate row if this email already signed up —
-      // still a success from the visitor's point of view, since their intent
-      // (being on the waitlist) is already satisfied.
-      const existing = await getFromAirtable('Early_Access_Applications', `{email}="${escapeAirtableString(email)}"`);
-      if (!existing) {
-        await saveToAirtable('Early_Access_Applications', {
-          email, name, source: 'virorah.com', status: 'Waitlist', created: new Date().toISOString(),
-        });
-      }
-
-      queueUsage(clientIP, 'notify', usageCheck);
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
-    } catch(e) {
-      return new Response(JSON.stringify({ success: false }), {
-        status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' }
-      });
-    }
-  }
 
   // ── TRANSCRIPTION ENDPOINT ────────────────────────────────────────────────
   if (_reqUrl.pathname === '/transcribe') {
