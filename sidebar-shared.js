@@ -362,10 +362,8 @@
     f.appendChild(ns('Your Tools'));
     f.appendChild(ni('employee-case-advisor.html', '\u26A1', 'Employee Case Advisor'));
     f.appendChild(ni('business-case.html',       '\uD83D\uDCBC', 'The Business Case'));
-    f.appendChild(ni('retention-advisor.html',       '\u2696\uFE0F', 'Retention Advisor'));
-    // LEGAL INTELLIGENCE
-    f.appendChild(ns('Legal Intelligence'));
     f.appendChild(ni('policy-advisor.html', '\uD83D\uDCDA', 'Policy Advisor'));
+    f.appendChild(ni('retention-advisor.html',       '\u2696\uFE0F', 'Retention Advisor'));
 
 
     // YOUR RECORD
@@ -863,13 +861,8 @@
         items: [
           { icon: IC.bolt, label: 'Employee Case Advisor', sub: 'Navigate any employee situation', href: 'employee-case-advisor.html', page: 'er-case-navigator' },
           { icon: IC.briefcase, label: 'The Business Case', sub: 'Numbers for the room, or one specific person', href: 'business-case.html', page: 'business-case' },
-          { icon: IC.scale, label: 'Retention Advisor', sub: 'Stay or go: model the cost', href: 'retention-advisor.html', page: 'offer-intelligence' },
-        ]
-      },
-      {
-        title: 'Legal Intelligence',
-        items: [
           { icon: IC.book, label: 'Policy Advisor', sub: 'Applicable law, every time', href: 'policy-advisor.html', page: 'policy-compass' },
+          { icon: IC.scale, label: 'Retention Advisor', sub: 'Stay or go: model the cost', href: 'retention-advisor.html', page: 'offer-intelligence' },
         ]
       },
       {
