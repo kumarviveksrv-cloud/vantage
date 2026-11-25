@@ -1097,7 +1097,28 @@ function renderScoreReveal(){
      only the scored L3 percentage used in the Humac composite excludes them now. 21 items, not 25. */
   var l3Ids=['q11','q12','q13','q14','q19','q20','q21','q22','q23','q24','q25','q26','q27','q28','q29','q30','q31','q32','q33','q34','q35'];
   var l3Answered=l3Ids.filter(function(id){return answers[id]==='yes'||answers[id]==='no';}).length;
-  var l3Yes=countYes(l3Ids);
+  /* The 21 scored items are not evenly split across the 6 named categories (Leadership Pulse,
+     Fear Index, Middle Layer Health and Execution Fidelity have 3 each; HR Mirror has 5; Peer &
+     Recognition Culture has 4), so a flat pooled percentage over all 21 items gave HR Mirror
+     1.67x the influence of the four smaller categories on the scored L3 percentage, silently,
+     despite the product presenting L3 as organised into 6 named categories of equal standing.
+     Fixed by scoring each category's own yes-rate first, then averaging the categories equally,
+     the standard correction for unevenly-sized subgroups. No new magnitude: every category still
+     counts exactly as much as every other category, which is what the product already implied. */
+  var l3Categories={
+    'Leadership Pulse':['q19','q20','q21'],
+    'Fear Index':['q22','q23','q24'],
+    'Middle Layer Health':['q11','q25','q26'],
+    'Execution Fidelity':['q14','q27','q28'],
+    'HR Mirror':['q12','q13','q29','q30','q31'],
+    'Peer & Recognition Culture':['q32','q33','q34','q35']
+  };
+  var l3CatPcts=Object.keys(l3Categories).map(function(cat){
+    var ids=l3Categories[cat].filter(function(id){return answers[id]==='yes'||answers[id]==='no';});
+    if(!ids.length)return null;
+    var yes=ids.filter(function(id){return answers[id]==='yes';}).length;
+    return yes/ids.length*100;
+  }).filter(function(p){return p!=null;});
   var l1raw=(confidence.A==='computed')?computeL1Real(answers):(answers.q1==null||answers.q1==='')?null:calcL1(answers.q1);
   if(confidence.A!=='computed')window.__l1book={canonical:true,insufficient:true,mode:'estimate',note:'Estimate mode has no cohort book. L4 must not invent one.'};
   var l1=l1raw==null?null:Math.round(l1raw);
@@ -1108,7 +1129,7 @@ function renderScoreReveal(){
      mode's calcL2Estimate has no such component, so there's nothing to exclude there. */
   var l2ForL5raw=(confidence.B==='computed')?computeL2Real(answers,true):l2raw;
   var l2ForL5=l2ForL5raw==null?null:Math.round(l2ForL5raw);
-  var l3=l3Answered>=13?Math.round((l3Yes/l3Answered)*100):null;
+  var l3=(l3Answered>=13&&l3CatPcts.length)?Math.round(l3CatPcts.reduce(function(s,p){return s+p;},0)/l3CatPcts.length):null;
   var l4raw=(confidence.D==='computed')?computeL4Real(answers):(answers.q15==null||answers.q15==='')?null:calcL4(answers.q15);
   var l4=l4raw==null?null:Math.round(l4raw);
   var l5raw=(confidence.E==='computed')?computeL5Real(answers,l2ForL5,l3):((answers.q16==null&&answers.q17==null&&answers.q18==null)?null:calcL5(answers.q16,answers.q17,answers.q18));
@@ -1117,9 +1138,18 @@ function renderScoreReveal(){
   if((window.__l2measured||0)>0 && (window.__l2measured||0)<5)hci=Math.round(hci*(window.__l2measured/5)*100)/100;
   var parts=[{k:'l1',s:l1,w:0.25},{k:'l2',s:l2,w:0.15},{k:'l3',s:l3,w:0.30},{k:'l4',s:l4,w:0.20},{k:'l5',s:l5,w:0.10}].filter(function(p){return p.s!=null;});
   var wsum=parts.reduce(function(n,p){return n+p.w;},0);
-  var humac=wsum>0?Math.round(parts.reduce(function(n,p){return n+p.s*(p.w/wsum);},0)):null;
+  /* Renormalizing weights across whichever pillars have data is sound in itself (proportional
+     scaling, no invented coefficient), but it was previously gated only on wsum>0, meaning a
+     single low-weight pillar (e.g. L5 alone, 10% of the design) could still produce a full
+     composite number and a confident band label, with only a small footnote distinguishing it
+     from a genuine 5-pillar score. Fixed by requiring at least 60% of total pillar weight present
+     before showing a composite at all, below that the existing "Incomplete" band (already built
+     for the wsum===0 case) is used instead. 60% is not a new number: it matches the floor the
+     product already uses twice elsewhere (L2 requires 3 of 5 signals, L3 requires 13 of 21 items,
+     both ~60%), reused here rather than invented fresh for this gate. */
+  var humac=wsum>=0.60?Math.round(parts.reduce(function(n,p){return n+p.s*(p.w/wsum);},0)):null;
   var hciAdj=humac==null?null:Math.min(100,Math.round(humac*hci));
-  var band=getBand(humac==null?0:humac);if(humac==null)band={name:'Incomplete',color:'#E05C3A',desc:'Not enough measured pillars to score. Missing inputs were excluded, not filled in as average.'};
+  var band=getBand(humac==null?0:humac);if(humac==null)band={name:'Incomplete',color:'#E05C3A',desc:(wsum>0&&wsum<0.60)?'Only '+Math.round(wsum*100)+'% of the model’s pillar weight is scored, below the 60% floor needed to show a composite. Missing inputs were excluded, not filled in as average.':'Not enough measured pillars to score. Missing inputs were excluded, not filled in as average.'};
   var confLevel=getConfidenceLevel();
 
   var trajectory=humac==null?null:computeTrajectory(l1,l2,l3,l4,l5,humac,hciAdj);

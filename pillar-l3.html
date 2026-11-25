@@ -331,23 +331,47 @@ function countAnswered(){
   return c;
 }
 
-// Dynamic L3 recompute from ALL answered signals (pre + draft), including Peer &
-// Recognition Culture \u2014 it feeds the real score even though it never feeds DNA typing.
+// Dynamic L3 recompute from ALL answered signals, including Peer & Recognition Culture (it feeds
+// the real score even though it never feeds DNA typing). Mirrors humac-onboarding.html's
+// renderScoreReveal() exactly, both in WHICH signals score and HOW they're combined:
+//   - s1/s5/s9/s13 (q7/q8/q9/q10, the Leadership/Fear/Middle/Execution lead items) are excluded.
+//     They score once, through the Human Confidence Index, not here too. This preview used to pool
+//     all 25 signals including these four, the same double-count the real scorer fixed three rounds
+//     ago (commit 7728c7b) -- this copy was missed then. Fixed now so the live preview and the real
+//     scored composite can no longer disagree about what counts.
+//   - The 6 named categories are not equal in item count (4 have 3, HR Mirror has 5, Peer &
+//     Recognition has 4), so a flat pooled percentage gave HR Mirror 1.67x the influence of the
+//     smaller categories. Fixed by scoring each category's own yes-rate, then averaging the
+//     categories equally, same fix as the real scorer.
+//   - Eligibility is the same single threshold the real scorer uses (>=13 of 21 scored items), not
+//     a separately-invented local rule, so this preview and the real score can't disagree about
+//     whether there's enough data either.
+var L3_SCORE_GROUPS=[
+  {name:'Leadership Pulse',ids:['s2','s3','s4']},
+  {name:'Fear Index',ids:['s6','s7','s8']},
+  {name:'Middle Layer Health',ids:['s10','s11','s12']},
+  {name:'Execution Fidelity',ids:['s14','s15','s16']},
+  {name:'HR Mirror',ids:['s17','s18','s19','s20','s21']},
+  {name:'Peer & Recognition Culture',ids:['s22','s23','s24','s25']}
+];
 function l3Coverage(){
-  var groups=VITALS.concat([PEER_VITAL]);
-  var yes=0,total=0,thin=[];
-  groups.forEach(function(v){
-    var gYes=0,gTot=0;
-    v.signals.forEach(function(s){var val=getSignal(s.id);if(val!==null){gTot++;total++;if(val){gYes++;yes++;}}});
-    if(gTot<3) thin.push(v.name||v.id||'vital');
+  var total=0,catPcts=[];
+  L3_SCORE_GROUPS.forEach(function(g){
+    var answered=g.ids.filter(function(id){return getSignal(id)!==null;});
+    total+=answered.length;
+    if(answered.length){
+      var yes=answered.filter(function(id){return getSignal(id)===true;}).length;
+      catPcts.push(yes/answered.length*100);
+    }
   });
-  var eligible=total>=15 && thin.length===0;
-  return {yes:yes,total:total,thin:thin,eligible:eligible,score:eligible?Math.round((yes/total)*100):null};
+  var eligible=total>=13;
+  var score=eligible&&catPcts.length?Math.round(catPcts.reduce(function(s,p){return s+p;},0)/catPcts.length):null;
+  return {total:total,eligible:eligible,score:score};
 }
 function computeDraftL3(){
   var cov=l3Coverage();
   window.__l3cov=cov;
-  try{sessionStorage.setItem('vantage_l3_gate', JSON.stringify({eligible:cov.eligible,answered:cov.total,required:15,perVital:3,thin:cov.thin,score:cov.score,note:'Unanswered signals are not dropped from a live percentage. Below 15 answers, or below 3 in any vital, L3 does not enter the weighted Humac Score.'}));}catch(e){}
+  try{sessionStorage.setItem('vantage_l3_gate', JSON.stringify({eligible:cov.eligible,answered:cov.total,required:13,score:cov.score,note:'Scored from 21 of the 25 signals, averaged by category so no single category outweighs another. Below 13 of those 21 answered, L3 does not enter the weighted Humac Score.'}));}catch(e){}
   return cov.eligible?cov.score:(hd.l3||0);
 }
 
@@ -366,9 +390,12 @@ function computeDraftHumac(draftL3){
   ];
   var active=pillars.filter(function(p){return p.score!=null;});
   var totalW=active.reduce(function(s,p){return s+p.w;},0);
-  var raw=totalW>0?Math.round(active.reduce(function(s,p){return s+p.score*(p.w/totalW);},0)):0;
+  /* Same 60% weight floor as humac-onboarding.html's renderScoreReveal (reused, not reinvented:
+     matches L2's 3-of-5 and L3's 13-of-21 floors elsewhere in the product), so this draft preview
+     can't show a confident composite+band off one or two low-weight pillars either. */
+  var raw=totalW>=0.60?Math.round(active.reduce(function(s,p){return s+p.score*(p.w/totalW);},0)):0;
   var hciAdj=Math.round(raw*(hd.hci||1));
-  return {raw:raw,hciAdj:hciAdj,l3Excluded:false,l3Answered:cov.total,persisted:true};
+  return {raw:raw,hciAdj:hciAdj,l3Excluded:totalW<0.60,l3Answered:cov.total,persisted:totalW>=0.60};
 }
 function getBandL3(s){if(s<=30)return{name:'Low Attribution',color:'#E05C3A'};if(s<=50)return{name:'Value Neutral',color:'#a5b4fc'};if(s<=70)return{name:'Value Generating',color:'#6366f1'};if(s<=85)return{name:'Value Compounding',color:'#7c3aed'};return{name:'Value Exceptional',color:'#c4b5fd'};}
 
@@ -398,20 +425,27 @@ function renderPage(){
 
   var draftL3=computeDraftL3();
   var draftHumac=computeDraftHumac(draftL3);
-  var l3Gate=window.__l3cov||{eligible:false,total:0,thin:[]};
+  var l3Gate=window.__l3cov||{eligible:false,total:0};
   var hasChange=draftL3!==(hd.l3||0)&&answered>0;
   var deltaBar='';
   if(!l3Gate.eligible){
-    deltaBar='<div style="background:rgba(224,92,58,.08);border:1px solid rgba(224,92,58,.28);border-radius:12px;padding:16px 20px;margin-bottom:24px;font-size:.86rem;color:var(--text-dim);line-height:1.6"><b style="color:#f4f3ff">L3 is a partial reading, not a score.</b> '+l3Gate.total+' of 25 signals answered. It does not enter the weighted Humac until 15 answers and at least 3 per vital'+(l3Gate.thin&&l3Gate.thin.length?' (thin: '+l3Gate.thin.join(', ')+')':'')+'. Saving now keeps the existing Humac figure. It is not rewritten as if L3 scored zero.</div>';
+    deltaBar='<div style="background:rgba(224,92,58,.08);border:1px solid rgba(224,92,58,.28);border-radius:12px;padding:16px 20px;margin-bottom:24px;font-size:.86rem;color:var(--text-dim);line-height:1.6"><b style="color:#f4f3ff">L3 is a partial reading, not a score.</b> '+l3Gate.total+' of 21 scored signals answered (4 of the 25 questions feed the Human Confidence Index instead and don’t count here). It does not enter the weighted Humac until 13 of those 21 are answered. Saving now keeps the existing Humac figure. It is not rewritten as if L3 scored zero.</div>';
   }
   if(hasChange&&!deltaDiscarded){
     var l3Up=draftL3>=(hd.l3||0);
     var humacUp=draftHumac.raw>=(hd.humac||0);
+    /* draftHumac.raw is 0, not a real score, when fewer than 60% of total pillar weight is
+       present (same floor as renderScoreReveal in humac-onboarding.html). Showing that 0 as if
+       it were a dropped composite would be a false alarm, so the delta line is skipped and a
+       plain explanation shown instead in that case. */
+    var humacDelta=draftHumac.persisted
+      ? ('Overall Humac: <b style="color:'+(humacUp?'#4ade80':'#E05C3A')+'">'+(hd.humac||0)+' \u2192 '+draftHumac.raw+'</b>')
+      : 'Overall Humac: not enough pillars with data to show a composite yet.';
     deltaBar='<div style="background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.3);border-radius:12px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">'+
       '<div style="font-size:.86rem;color:var(--text-dim);line-height:1.6">'+
         '<b style="color:var(--text)">Your Org Vitals answers have changed.</b> These are draft answers, nothing is officially recorded yet.<br>'+
         'L3 score: <b style="color:'+(l3Up?'#4ade80':'#E05C3A')+'">'+(hd.l3||0)+' \u2192 '+draftL3+'</b> \xb7 '+
-        'Overall Humac: <b style="color:'+(humacUp?'#4ade80':'#E05C3A')+'">'+(hd.humac||0)+' \u2192 '+draftHumac.raw+'</b>'+
+        humacDelta+
       '</div>'+
       '<div style="display:flex;gap:10px;flex-shrink:0">'+
         '<button onclick="discardL3Update()" style="font-family:var(--mono);font-size:.68rem;padding:9px 18px;border-radius:8px;background:transparent;border:1px solid rgba(99,102,241,.25);color:var(--text-dim);cursor:pointer">Not Now</button>'+
