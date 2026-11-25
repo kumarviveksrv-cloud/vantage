@@ -307,7 +307,8 @@ function render(){
     return;
   }
 
-  var know=(ra.cq5_seniorcount||0)*avg*Math.min((ra.cq5_seniortenure||0)*0.08,0.6);
+  var leaveP5=HumacShared.leaveP(industry);
+  var know=(ra.cq5_seniorcount||0)*avg*Math.min((ra.cq5_seniortenure||0)*0.08,0.6)*(1-leaveP5);
   var rel=(ra.cq5_revemployees||0)*avg*m('rel');
   var hipoN=HumacShared.cappedHipo(ra.cq5_hipo||0,headcount);
   var hipoBench=hipoN*avg*(1-HumacShared.HIPO_P);
@@ -342,7 +343,7 @@ function render(){
     '<div class="bs-cols">'+
       '<div>'+
         '<div class="bs-col-head assets"><span>Human Assets</span></div>'+
-        bsAsset('Institutional Knowledge',know,'Senior/leadership count \xd7 salary \xd7 tenure-scaled premium, capped at 60%.')+
+        bsAsset('Institutional Knowledge',know,'Senior/leadership count \xd7 salary \xd7 tenure-scaled premium (capped at 60%) \xd7 '+((1-leaveP5)*100).toFixed(0)+'% ('+(leaveP5*100).toFixed(0)+'% '+(industry?industry:'national')+' leave probability already netted out, so a senior employee who leaves this year is not still carried at full value).')+
         bsAsset('Relationship Capital',rel,'Revenue-facing or client-facing employees \xd7 salary \xd7 '+(m('rel')*100).toFixed(0)+'% \xb7 '+scenario+' case.')+
         bsAsset('High Potential Bench',hipoBench,'HiPo count ('+hipoN+(hipoN<(ra.cq5_hipo||0)?' counted, 15% cap':'')+') \xd7 salary \xd7 75% (one year of pay less 25% expected attrition). Fixed rate.')+
         '<div class="bs-total"><div class="bs-total-label">TOTAL HUMAN ASSETS</div><div class="bs-total-val asset">'+fmtINR(assets)+'</div></div>'+
@@ -368,6 +369,7 @@ function render(){
      certain than the lines that do carry a Low/Base/High range. */
   var fixedRows=
     '<tr><td>Institutional knowledge premium</td><td>8.0%/yr (cap 60%)</td><td>8.0%/yr (cap 60%)</td><td>8.0%/yr (cap 60%)</td><td>Fixed rate, not scenario-adjustable. Planning rate, not already in the L1 book.<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s5-knowledge" target="_blank" rel="noopener">?</a></td></tr>'+
+    '<tr><td>Institutional knowledge attrition discount</td><td>'+(leaveP5*100).toFixed(1)+'%</td><td>'+(leaveP5*100).toFixed(1)+'%</td><td>'+(leaveP5*100).toFixed(1)+'%</td><td>Fixed rate, not scenario-adjustable. Same industry leave probability used in the Value Ledger (L1), netted out so this asset is not booked at full value for a senior employee who may leave this year.<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s5-knowledge" target="_blank" rel="noopener">?</a></td></tr>'+
     '<tr><td>HiPo expected attrition</td><td>25.0%</td><td>25.0%</td><td>25.0%</td><td>Fixed rate, not scenario-adjustable. Stated-intent survey figure used as a planning rate.<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s4-talent" target="_blank" rel="noopener">?</a></td></tr>';
   var assumptionsTable='<table class="assumptions"><tr><th>Line</th><th>Low</th><th>Base</th><th>High</th><th>Status</th></tr>'+assumptionRows+fixedRows+'</table>';
 

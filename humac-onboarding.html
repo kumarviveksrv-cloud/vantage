@@ -497,7 +497,7 @@ var BLOCKS=[
      {id:'cq1_headcount',type:'num',text:'Total current headcount',sub:'Same figure as L1, if you already entered it there, no need to re-enter.',unit:'people',placeholder:'e.g. 120'},
      {id:'cq1_compbase',type:'num',text:'Total annual compensation base (\u20B9)',sub:'Sum of annual CTC across all employees.',unit:'\u20B9/year',placeholder:'e.g. 18000000'},
      {id:'cq1_stars',type:'num',text:'Number of Star / top performers',sub:'Counted up to 20% of headcount; above that the extra labels are ignored.',unit:'people',placeholder:'e.g. 15'},
-     {id:'cq4_hrspend',type:'num',optional:true,text:'Annual HR spend (\u20B9), optional',sub:'HR team cost, HR tools, training, recruitment, compliance, and culture or engagement spend for the last 12 months. Leave blank to use a planning assumption of 7.5% of payroll.',unit:'\u20B9/year',placeholder:'e.g. 2700000'},
+     {id:'cq4_hrspend',type:'num',optional:true,text:'Annual HR spend (\u20B9), optional',sub:'HR team cost, HR tools, training, recruitment, compliance, and culture or engagement spend for the last 12 months. Leave blank to use a planning assumption of 7.5% of payroll \u2014 but note that with the assumption, Human P&amp;L (L4) is a fixed multiple of your Value Ledger (L1) and adds no independent signal of its own. Entering your real figure is what makes L4 an actual second measurement rather than a rescaling of L1.',unit:'\u20B9/year',placeholder:'e.g. 2700000'},
      {id:'cq4_revhires24',type:'num',text:'New hires in revenue-generating roles, last 24 months',sub:'Sales, Business Development, Customer Success, or equivalent revenue-facing roles. Note: L4 uses a 24-month window, L1 uses 12, these are intentionally different.',unit:'people',placeholder:'e.g. 12'},
      {id:'cq1_emerging',type:'num',text:'Number of Emerging Talent',sub:'',unit:'people',placeholder:'e.g. 10'},
      {id:'cq1_tenured5',type:'num',text:'Number of employees with 5+ years tenure',sub:'',unit:'people',placeholder:'e.g. 20'}
@@ -988,8 +988,13 @@ function computeL5Parts(a,l2,l3){
   if(!(compBase>0))return null;
   var avgSalary=headcount>0?compBase/headcount:0;
   var hipo=HumacShared.cappedHipo(a.cq5_hipo||0,headcount),seniorCount=a.cq5_seniorcount||0,seniorTenure=a.cq5_seniortenure||0,revEmployees=a.cq5_revemployees||0;
-  /* Assets: institutional knowledge (8%/yr cap 60%), relationship capital (50% of pay), HiPo bench carried at replacement cost net of expected attrition. */
-  var instKnowledge=seniorCount>0?seniorCount*avgSalary*Math.min(seniorTenure*0.08,0.6):0;
+  var _ind5='';try{_ind5=(JSON.parse(sessionStorage.getItem('sr_meridian')||'{}').industry)||'';}catch(e){}
+  var leaveP5=HumacShared.leaveP(_ind5);
+  /* Assets: institutional knowledge (8%/yr cap 60%, net of this industry's annual leave probability so a
+     senior employee who leaves this year does not still carry a full year of booked value — the same
+     attrition discount already applied to the HiPo bench below, reusing leaveP rather than inventing a
+     second rate), relationship capital (50% of pay), HiPo bench carried at replacement cost net of expected attrition. */
+  var instKnowledge=seniorCount>0?seniorCount*avgSalary*Math.min(seniorTenure*0.08,0.6)*(1-leaveP5):0;
   var relCapital=revEmployees>0?(revEmployees*avgSalary)*0.5:0;
   var hipoBench=hipo*avgSalary*(1-HumacShared.HIPO_P);
   var totalAssets=instKnowledge+relCapital+hipoBench;
@@ -1070,7 +1075,13 @@ function buildMeaning(sd){
   return t;
 }
 function renderScoreReveal(){
-  var l3Ids=['q7','q8','q9','q10','q11','q12','q13','q14','q19','q20','q21','q22','q23','q24','q25','q26','q27','q28','q29','q30','q31','q32','q33','q34','q35'];
+  /* q7-q10 (Leadership Pulse / Fear Index / Middle Layer / Execution Fidelity lead items) are
+     scored once, through the Human Confidence Index (see hci below), not here too. Before this
+     fix they counted in both places: inside the 30%-weighted Org Vitals percentage AND as the
+     separate HCI multiplier on the composite, so the same four answers moved the score twice.
+     They stay visible and answerable on the Org Vitals pillar page (diagnostic signal, unchanged);
+     only the scored L3 percentage used in the Humac composite excludes them now. 21 items, not 25. */
+  var l3Ids=['q11','q12','q13','q14','q19','q20','q21','q22','q23','q24','q25','q26','q27','q28','q29','q30','q31','q32','q33','q34','q35'];
   var l3Answered=l3Ids.filter(function(id){return answers[id]==='yes'||answers[id]==='no';}).length;
   var l3Yes=countYes(l3Ids);
   var l1raw=(confidence.A==='computed')?computeL1Real(answers):(answers.q1==null||answers.q1==='')?null:calcL1(answers.q1);
@@ -1078,7 +1089,7 @@ function renderScoreReveal(){
   var l1=l1raw==null?null:Math.round(l1raw);
   var l2raw=(confidence.B==='computed')?computeL2Real(answers):calcL2Estimate(answers);
   var l2=l2raw==null?null:Math.round(l2raw);
-  var l3=l3Answered>=15?Math.round((l3Yes/l3Answered)*100):null;
+  var l3=l3Answered>=13?Math.round((l3Yes/l3Answered)*100):null;
   var l4raw=(confidence.D==='computed')?computeL4Real(answers):(answers.q15==null||answers.q15==='')?null:calcL4(answers.q15);
   var l4=l4raw==null?null:Math.round(l4raw);
   var l5raw=(confidence.E==='computed')?computeL5Real(answers,l2,l3):((answers.q16==null&&answers.q17==null&&answers.q18==null)?null:calcL5(answers.q16,answers.q17,answers.q18));
