@@ -503,9 +503,9 @@ var BLOCKS=[
      {id:'cq1_tenured5',type:'num',text:'Number of employees with 5+ years tenure',sub:'',unit:'people',placeholder:'e.g. 20'}
    ]
   },
-  {id:'E',title:'Human Balance Sheet',pillar:'L5',weight:'10% weight',
+  {id:'E',title:'Human Balance Sheet',pillar:'L5',noEstimate:true,note:'This pillar requires the cohort figures below. There is no single-question estimate for L5: its estimate-mode model was never calibrated against this computed one, so the two could score the same real organisation differently with no way to tell which was right. Rather than publish an unreconciled guess, L5 is computed-only.',weight:'10% weight',
    desc:'What is the net human capital position, assets vs. liabilities?',
-   formula:'<b>3 assets modelled:</b> Institutional Knowledge (senior headcount × average salary × 8% per year of average senior tenure, capped at 60%), Relationship Capital (50% of the salaries of revenue-facing or client-facing staff), and the High Potential bench (counted up to 15% of headcount, carried at one year of pay less 25% expected attrition).<br><br><b>Provisional scale:</b> the 0–100 score is normalized against a placeholder range, not a published benchmark or a user percentile. It will be recalibrated once at least 30 organisations have computed scores.<br><b>2 liabilities modelled:</b> a capability gap of up to 10% of the compensation base, sized by your Talent Premium (L2) score, and a culture gap of up to 2% of the compensation base, sized by your Org Vitals (L3) score. Each is 1.0&times; its base rate at a pillar score of 50, zero at 100 and 2.0&times; at 0; a missing score counts as 50. An organisation that reports no revenue or client-facing roles has its scale maximum lowered by the relationship asset it cannot earn.<br><br><code>Net Human Worth = Assets &minus; Liabilities</code><br><code>Ratio = Net Human Worth &divide; Compensation base</code>, scaled 0&ndash;100 on a placeholder range. These are management-analogy planning assumptions, not accounting values.',
+   formula:'<b>3 assets modelled:</b> Institutional Knowledge (senior headcount × average salary × 8% per year of average senior tenure, capped at 60%), Relationship Capital (50% of the salaries of revenue-facing or client-facing staff), and the High Potential bench (counted up to 15% of headcount, carried at one year of pay less 25% expected attrition).<br><br><b>Provisional scale:</b> the 0–100 score is normalized against a placeholder range, not a published benchmark or a user percentile. It will be recalibrated once at least 30 organisations have computed scores.<br><b>2 liabilities modelled:</b> a capability gap of up to 10% of the compensation base, sized by your Talent Premium (L2) score with its HiPo/Star component excluded (your HiPo bench is already credited directly, above, so it is not used twice here), and a culture gap of up to 2% of the compensation base, sized by your Org Vitals (L3) score. Each is 1.0&times; its base rate at a pillar score of 50, zero at 100 and 2.0&times; at 0; a missing score counts as 50. An organisation that reports no revenue or client-facing roles has its scale maximum lowered by the relationship asset it cannot earn.<br><br><code>Net Human Worth = Assets &minus; Liabilities</code><br><code>Ratio = Net Human Worth &divide; Compensation base</code>, scaled 0&ndash;100 on a placeholder range. These are management-analogy planning assumptions, not accounting values.',
    questions:[
      {id:'q16',type:'yn',text:'Does your organisation invest more in developing talent than it loses to exits and skill gaps?'},
      {id:'q17',type:'num',text:'What is the average number of years your current employees have been with this organisation?',sub:'This is your average tenure. Add up the years each employee has been with you, divide by headcount. It is a direct proxy for institutional knowledge, the longer people stay, the more they carry about how things actually work here.',unit:'years',placeholder:'e.g. 4'},
@@ -792,7 +792,8 @@ function renderStepper(){
 }
 
 function renderBlock(idx){
-  var b=BLOCKS[idx];var isFirst=idx===0;var isLast=idx===BLOCKS.length-1;var conf=confidence[b.id]||(b.computedQuestions?'computed':'estimated');
+  var b=BLOCKS[idx];var isFirst=idx===0;var isLast=idx===BLOCKS.length-1;var conf=b.noEstimate?'computed':(confidence[b.id]||(b.computedQuestions?'computed':'estimated'));
+  if(b.noEstimate)confidence[b.id]='computed';
   var activeQuestions=(conf==='computed'&&b.computedQuestions)?b.computedQuestions:b.questions;
   var qHTMLParts=[];var lastCategory=null;
   activeQuestions.forEach(function(q){
@@ -810,7 +811,7 @@ function renderBlock(idx){
     '<button class="formula-toggle" id="ftoggle" onclick="toggleFormula()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6l4 4 4-4"/></svg>How do I calculate this precisely?</button>'+
     '<div class="formula-panel" id="fpanel">'+b.formula+'</div>'+
     (b.note?'<div class="block-note">&#x1F4A1; '+b.note+'</div>':'')+
-    (b.computedQuestions?
+    (b.computedQuestions&&!b.noEstimate?
       '<div class="confidence-row"><span class="confidence-label">These answers are</span><button class="conf-btn '+(conf==='computed'?'selected':'')+'" onclick="setConf(\''+b.id+'\',\'computed\')">Computed <span style="font-size:.62rem;opacity:.7">(Recommended)</span></button><button class="conf-btn '+(conf==='estimated'?'selected':'')+'" onclick="setConf(\''+b.id+'\',\'estimated\')">Estimated</button></div>'+
       '<div class="conf-explain"><span class="conf-explain-item computed-explain" style="'+(conf==='computed'?'':'opacity:.45')+'">\u2713 <b>Computed:</b> You have actual figures from HRIS or payroll. Input coverage: <b>High</b>.</span><span class="conf-explain-item estimated-explain" style="'+(conf==='estimated'?'':'opacity:.45')+'">\u007e <b>Estimated:</b> Not sure, or don\u2019t have the data on hand right now? No problem, go with Estimated and give your best ballpark. Input coverage: <b>Medium</b>, directional and still valuable. You can always come back and upgrade to Computed once you have the real numbers.</span></div>'
       :'')+
@@ -824,7 +825,7 @@ function renderBlock(idx){
 function toggleFormula(){var btn=document.getElementById('ftoggle');var panel=document.getElementById('fpanel');btn.classList.toggle('open');panel.classList.toggle('open');}
 function setYN(qId,val,btn){answers[qId]=val;var wrap=btn.closest('.yesno-wrap');wrap.querySelectorAll('.yn-btn').forEach(function(b){b.classList.remove('selected-yes','selected-no','selected-na');});var cls=val==='yes'?'selected-yes':val==='no'?'selected-no':'selected-na';btn.classList.add(cls);clearQError(qId);}
 function clearQError(qId){var el=document.getElementById('q-wrap-'+qId);if(el)el.classList.remove('question-error');}
-function setConf(blockId,val){confidence[blockId]=val;var blk=BLOCKS.filter(function(x){return x.id===blockId;})[0];if(blk&&blk.computedQuestions){renderBlock(currentBlock);return;}var card=document.querySelector('.block-card');if(card){var c=card.querySelector('.computed-explain');var e=card.querySelector('.estimated-explain');if(c)c.style.opacity=val==='computed'?'1':'.35';if(e)e.style.opacity=val==='estimated'?'1':'.35';}document.querySelectorAll('.conf-btn').forEach(function(b){b.classList.remove('selected');});event.target.classList.add('selected');}
+function setConf(blockId,val){var blk=BLOCKS.filter(function(x){return x.id===blockId;})[0];if(blk&&blk.noEstimate)val='computed';confidence[blockId]=val;if(blk&&blk.computedQuestions){renderBlock(currentBlock);return;}var card=document.querySelector('.block-card');if(card){var c=card.querySelector('.computed-explain');var e=card.querySelector('.estimated-explain');if(c)c.style.opacity=val==='computed'?'1':'.35';if(e)e.style.opacity=val==='estimated'?'1':'.35';}document.querySelectorAll('.conf-btn').forEach(function(b){b.classList.remove('selected');});event.target.classList.add('selected');}
 function validateBlock(idx){
   var b=BLOCKS[idx];var conf=confidence[b.id]||(b.computedQuestions?'computed':'estimated');
   var activeQuestions=(conf==='computed'&&b.computedQuestions)?b.computedQuestions:b.questions;
@@ -1014,15 +1015,21 @@ function computeL5Parts(a,l2,l3){
 }
 function computeL5Real(a,l2,l3){var r=computeL5Parts(a,l2,l3);return r==null?null:r.score;}
 function clampL2(n,lo,hi){return Math.max(lo,Math.min(hi,n));}
-function computeL2Real(a){
+/* excludeHipoStars=true drops the HiPo/Star-driven component below (used only to feed L5's
+   capability-gap liability, see computeL5Parts/l2ForL5). Without this, the same HiPo/Star
+   headcount moved L5 twice: once as a direct asset (hipoBench) and again by raising L2, which
+   shrinks L5's own liability via gap(l2). Excluding the component here, rather than damping the
+   liability by an invented coefficient, means L5's liability is sized only by the parts of L2 that
+   are genuinely independent of what L5 already credits directly -- no new magnitude introduced. */
+function computeL2Real(a,excludeHipoStars){
   var scores=[];
   if((a.cq2_promoted12mo||0)>0)scores.push((a.cq2_promotedexcelling||0)/a.cq2_promoted12mo*100);
   if((a.cq2_managers||0)>0)scores.push((a.cq2_managersoutperform||0)/a.cq2_managers*100);
   if((a.cq2_hired12mo||0)>0)scores.push((a.cq2_hiredmeeting||0)/a.cq2_hired12mo*100);
   if((a.cq2_tenureatrisk||0)>0)scores.push(clampL2(((a.cq2_tenuretop||0)/a.cq2_tenureatrisk)/2*100,0,100));
   else if((a.cq2_tenuretop||0)>0)scores.push(100);
-  if((a.cq1_headcount||0)>0){var _lab=((a.cq5_hipo||0)+(a.cq1_stars||0))/a.cq1_headcount;if(_lab<=0.40)scores.push(clampL2(_lab*100*4,0,100));}
-  window.__l2measured=scores.length;
+  if(!excludeHipoStars&&(a.cq1_headcount||0)>0){var _lab=((a.cq5_hipo||0)+(a.cq1_stars||0))/a.cq1_headcount;if(_lab<=0.40)scores.push(clampL2(_lab*100*4,0,100));}
+  if(!excludeHipoStars)window.__l2measured=scores.length;
   if(scores.length<3)return null;
   return Math.round(scores.reduce(function(s,n){return s+n;},0)/scores.length);
 }
@@ -1071,7 +1078,7 @@ function buildMeaning(sd){
       }
     }
     if(sd.l5Mode==='computed'){
-      var p5=computeL5Parts(a,sd.l2,sd.l3);
+      var p5=computeL5Parts(a,(sd.l2ForL5!=null||sd.l2==null)?sd.l2ForL5:sd.l2,sd.l3);
       if(p5&&p5.compBase>0){
         var pc=p5.nhw/p5.compBase*100;
         bits.push(p5.nhw>=0?'your people position leaves a cushion of '+fmtRs(p5.nhw)+' (roughly '+Math.round(Math.abs(pc)/100*365)+' days of payroll)':'the gaps in your people position outweigh the value held by '+fmtRs(-p5.nhw)+' (roughly '+Math.round(Math.abs(pc)/100*365)+' days of payroll)');
@@ -1096,10 +1103,15 @@ function renderScoreReveal(){
   var l1=l1raw==null?null:Math.round(l1raw);
   var l2raw=(confidence.B==='computed')?computeL2Real(answers):calcL2Estimate(answers);
   var l2=l2raw==null?null:Math.round(l2raw);
+  /* L2 figure used only to size L5's capability-gap liability: excludes the HiPo/Star component so
+     that count isn't credited to L5 twice (see computeL2Real's excludeHipoStars comment). Estimate
+     mode's calcL2Estimate has no such component, so there's nothing to exclude there. */
+  var l2ForL5raw=(confidence.B==='computed')?computeL2Real(answers,true):l2raw;
+  var l2ForL5=l2ForL5raw==null?null:Math.round(l2ForL5raw);
   var l3=l3Answered>=13?Math.round((l3Yes/l3Answered)*100):null;
   var l4raw=(confidence.D==='computed')?computeL4Real(answers):(answers.q15==null||answers.q15==='')?null:calcL4(answers.q15);
   var l4=l4raw==null?null:Math.round(l4raw);
-  var l5raw=(confidence.E==='computed')?computeL5Real(answers,l2,l3):((answers.q16==null&&answers.q17==null&&answers.q18==null)?null:calcL5(answers.q16,answers.q17,answers.q18));
+  var l5raw=(confidence.E==='computed')?computeL5Real(answers,l2ForL5,l3):((answers.q16==null&&answers.q17==null&&answers.q18==null)?null:calcL5(answers.q16,answers.q17,answers.q18));
   var l5=l5raw==null?null:Math.round(l5raw);
   var hci=calcHCI(countYes(['q7','q8','q9','q10']));
   if((window.__l2measured||0)>0 && (window.__l2measured||0)<5)hci=Math.round(hci*(window.__l2measured/5)*100)/100;
@@ -1112,7 +1124,7 @@ function renderScoreReveal(){
 
   var trajectory=humac==null?null:computeTrajectory(l1,l2,l3,l4,l5,humac,hciAdj);
 
-  var scoreData={l1:l1,l2:l2,l3:l3,l4:l4,l5:l5,hci:hci,humac:humac,hciAdj:hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers,trajectory:trajectory,l1Mode:(confidence.A==='computed')?'computed':'estimate',l2Mode:(confidence.B==='computed')?'computed':'estimate',l4Mode:(confidence.D==='computed')?'computed':'estimate',l5Mode:(confidence.E==='computed')?'computed':'estimate',l3Scope:answers.q_scope||'',l3Eligible:l3!=null,l3Answered:l3Answered,excluded:parts.length<5,weightsRenormalized:wsum>0&&wsum<0.999};
+  var scoreData={l1:l1,l2:l2,l2ForL5:l2ForL5,l3:l3,l4:l4,l5:l5,hci:hci,humac:humac,hciAdj:hciAdj,band:band.name,confidence:confLevel,timestamp:new Date().toISOString(),rawAnswers:answers,trajectory:trajectory,l1Mode:(confidence.A==='computed')?'computed':'estimate',l2Mode:(confidence.B==='computed')?'computed':'estimate',l4Mode:(confidence.D==='computed')?'computed':'estimate',l5Mode:(confidence.E==='computed')?'computed':'estimate',l3Scope:answers.q_scope||'',l3Eligible:l3!=null,l3Answered:l3Answered,excluded:parts.length<5,weightsRenormalized:wsum>0&&wsum<0.999};
 
   try{sessionStorage.setItem('vantage_humac',JSON.stringify(scoreData));sessionStorage.setItem('vantage_l1_book',JSON.stringify(window.__l1book||{insufficient:true}));}catch(e){}
 

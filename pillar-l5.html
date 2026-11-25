@@ -210,6 +210,11 @@ try{md=JSON.parse(sessionStorage.getItem('sr_meridian')||'null');}catch(e){}
 if(sessionStorage.getItem('sr_access')!=='true'){window.location.href='access.html';}
 if(!hd){window.location.href='humac-onboarding.html';}
 var l1=hd.l1??null,l2=hd.l2??null,l3=hd.l3??null,l4=hd.l4??null,l5=hd.l5??null;
+/* l2ForGap excludes L2's HiPo/Star-driven component when sizing L5's capability-gap liability, so
+   HiPo/Star headcount isn't credited to L5 twice (once as the direct HiPo bench asset below, again
+   by inflating L2 and shrinking this liability). Falls back to the plain l2 for any score saved
+   before this field existed, rather than breaking on old sessionStorage data. */
+var l2ForGap=(hd.l2ForL5!==undefined)?hd.l2ForL5:l2;
 var ra=hd.rawAnswers||{};
 var hci=hd.hci||1,conf=hd.confidence||'medium';
 var scoreDate=hd.timestamp?new Date(hd.timestamp).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'';
@@ -259,10 +264,10 @@ function intelText(per,nhw){
       :'The gaps outweigh that value by <b>'+fmtINR(-nhw)+'</b>, '+Math.abs(pct).toFixed(1)+'% of annual payroll, roughly '+days+' days of payroll.';
     var s3='On the placeholder 0 to 100 scale this is a score of <b>'+l5+'</b> ('+sbb.name+'), so use it to track direction from quarter to quarter, not to compare with other companies.';
     var capGap=d.skill+d.growth, lever;
-    if(capGap>=d.cliab&&capGap>0&&l2==null){
+    if(capGap>=d.cliab&&capGap>0&&l2ForGap==null){
       lever='Your Talent Premium pillar is not measured yet, so the capability gap is assumed at its midpoint. Measuring promotion quality, manager quality and hiring quality replaces that assumption with evidence.';
-    } else if(capGap>=d.cliab&&capGap>0&&l2<70){
-      lever='The biggest drag is the capability gap ('+fmtINR(capGap)+'), which is sized by your Talent Premium score of '+l2+'. Measuring promotion quality, manager quality and hiring quality properly is the fastest lever: at a Talent Premium score of 70 the gap would shrink by about '+fmtINR(capGap*(1-HumacShared.gap(70)/HumacShared.gap(l2)))+'.';
+    } else if(capGap>=d.cliab&&capGap>0&&l2ForGap<70){
+      lever='The biggest drag is the capability gap ('+fmtINR(capGap)+'), sized by the part of your Talent Premium score that excludes HiPo and Star headcount ('+l2ForGap+', your HiPo bench is already credited as a direct asset above, so it is not used twice here). Measuring promotion quality, manager quality and hiring quality properly is the fastest lever: at a score of 70 on that basis the gap would shrink by about '+fmtINR(capGap*(1-HumacShared.gap(70)/HumacShared.gap(l2ForGap)))+'.';
     } else if(d.cliab>capGap&&l3!=null&&l3<70){
       lever='The biggest drag is the culture gap ('+fmtINR(d.cliab)+'), which is sized by your Org Vitals score of '+l3+'. At an Org Vitals score of 70 it would shrink by about '+fmtINR(d.cliab*(1-HumacShared.gap(70)/HumacShared.gap(l3)))+'.';
     } else {
@@ -313,7 +318,7 @@ function render(){
   var hipoN=HumacShared.cappedHipo(ra.cq5_hipo||0,headcount);
   var hipoBench=hipoN*avg*(1-HumacShared.HIPO_P);
   var assets=know+rel+hipoBench;
-  var g2=HumacShared.gap(l2), g3=HumacShared.gap(l3);
+  var g2=HumacShared.gap(l2ForGap), g3=HumacShared.gap(l3);
   var skill=comp*m('skill')*g2, growth=comp*m('growth')*g2, cliab=comp*m('cliab')*g3;
   var liab=skill+growth+cliab;
   var nhw=assets-liab;
@@ -331,8 +336,8 @@ function render(){
   var assumptionBar='<div class="assumption-bar"><div class="assumption-note"><b>'+scenario+' case.</b> Asset and liability rates below are L5-original assumptions and never touch an L1 cohort.</div><div><button class="sc-btn'+(scenario==='low'?' active':'')+'" onclick="setScenario(\'low\')">Low</button> <button class="sc-btn'+(scenario==='base'?' active':'')+'" onclick="setScenario(\'base\')">Base</button> <button class="sc-btn'+(scenario==='high'?' active':'')+'" onclick="setScenario(\'high\')">High</button></div></div>';
 
   var liabItems=[
-    {name:'Skill Debt',val:skill,desc:(m('skill')*100).toFixed(1)+'% of comp base \xd7 '+g2.toFixed(2)+' gap factor from your L2 score ('+(l2==null?'not scored, counted as 50':l2)+') \xb7 '+scenario+' case'},
-    {name:'Growth-Readiness Gap',val:growth,desc:(m('growth')*100).toFixed(1)+'% of comp base \xd7 '+g2.toFixed(2)+' gap factor from your L2 score \xb7 '+scenario+' case'},
+    {name:'Skill Debt',val:skill,desc:(m('skill')*100).toFixed(1)+'% of comp base \xd7 '+g2.toFixed(2)+' gap factor from your L2 score excluding HiPo/Star headcount ('+(l2ForGap==null?'not scored, counted as 50':l2ForGap)+', so your HiPo bench asset above is not credited twice) \xb7 '+scenario+' case'},
+    {name:'Growth-Readiness Gap',val:growth,desc:(m('growth')*100).toFixed(1)+'% of comp base \xd7 '+g2.toFixed(2)+' gap factor from your L2 score excluding HiPo/Star headcount \xb7 '+scenario+' case'},
     {name:'Culture Liability',val:cliab,desc:(m('cliab')*100).toFixed(1)+'% of comp base \xd7 '+g3.toFixed(2)+' gap factor from your L3 score ('+(l3==null?'not scored, counted as 50':l3)+') \xb7 '+scenario+' case'}
   ];
   var largestLiab=liabItems.reduce(function(a,b){return b.val>a.val?b:a;});
