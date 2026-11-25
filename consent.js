@@ -1,8 +1,12 @@
 /* Consent and analytics loader for vantage.virorah.com (public marketing pages only).
  *
- * Google Analytics 4 and Microsoft Clarity are loaded from here and nowhere else, and only on the
- *  public marketing pages listed in PAGES below. The logged-in Platform (tools, dashboard, profile,
- *  billing, sign-in) never loads either, which is what the Privacy Policy promises.
+ * Google Analytics 4 and Microsoft Clarity are loaded from here and nowhere else. Three page kinds:
+ *   public   marketing pages: GA4 and Clarity as normal.
+ *   app      the logged-in Platform and the Demo (everything not listed below): GA4 with the query
+ *            string removed from the recorded address, and Clarity with ALL on-screen text and
+ *            input masked (data-clarity-mask on the page root), so case content is never captured.
+ *   ga-only  billing, subscribe, sign-in and 404: GA4 only (query string removed), no Clarity.
+ * The Privacy Policy (Sections 5 and 11) describes exactly this. Change it here and there together.
  *  - Visitors whose browser timezone is in Europe (EU, EEA, UK, Switzerland and other
  *    Europe/* zones), in an EU outermost region, or unknown: nothing loads until they
  *    press Accept. A choice is remembered for 12 months and can be changed from the
@@ -16,14 +20,13 @@
   var KEY = 'vr_consent';
   var MAX_AGE_MS = 365 * 24 * 60 * 60 * 1000;
 
-  var PAGES = {
-    '/': 'ga+clarity', '/index': 'ga+clarity', '/about': 'ga+clarity', '/pricing': 'ga+clarity',
-    '/faq': 'ga+clarity', '/methodology': 'ga+clarity', '/privacy': 'ga+clarity', '/terms': 'ga+clarity',
-    '/demo': 'ga'   /* the demo has a text box, so no session recording there */
-  };
+  var PUBLIC = { '/': 1, '/index': 1, '/about': 1, '/pricing': 1, '/faq': 1, '/methodology': 1, '/privacy': 1, '/terms': 1 };
+  var GA_ONLY = { '/billing': 1, '/subscribe': 1, '/access': 1, '/404': 1 };
   function pageMode() {
     var p = location.pathname.replace(/\.html$/, '').replace(/\/+$/, '') || '/';
-    return PAGES[p] || '';
+    if (PUBLIC[p]) return 'public';
+    if (GA_ONLY[p]) return 'ga-only';
+    return 'app';
   }
 
   function needsConsent() {
@@ -58,9 +61,16 @@
     } catch (e) { return true; }
   }
 
+  function maskPage(mode) {
+    if (mode !== 'app') return;
+    try {
+      document.documentElement.setAttribute('data-clarity-mask', 'true');
+      if (document.body) document.body.setAttribute('data-clarity-mask', 'true');
+    } catch (e) {}
+  }
+
   function loadAnalytics() {
     var mode = pageMode();
-    if (!mode) return;
     if (!window.__vrGaLoaded) {
       window.__vrGaLoaded = true;
       window.dataLayer = window.dataLayer || [];
@@ -70,9 +80,10 @@
       g.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
       document.head.appendChild(g);
       window.gtag('js', new Date());
-      window.gtag('config', GA_ID);
+      window.gtag('config', GA_ID, mode === 'public' ? {} : { page_location: location.origin + location.pathname });
     }
-    if (mode === 'ga+clarity' && !window.__vrClarityLoaded && !clarityOff()) {
+    if (mode !== 'ga-only' && !window.__vrClarityLoaded && !clarityOff()) {
+      maskPage(mode);
       window.__vrClarityLoaded = true;
       (function (c, l, a, r, i, t, y) {
         c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
@@ -152,14 +163,15 @@
       var t = e.target && e.target.closest ? e.target.closest('[data-consent-open]') : null;
       if (t) { e.preventDefault(); showBanner(); }
     });
-    if (!pageMode()) { if (!window.gtag) window.gtag = function () {}; }
+    if (!window.gtag) window.gtag = function () {};
+    maskPage(pageMode());
     var choice = readChoice();
     if (!needsConsent()) {
       if (choice !== 'denied') loadAnalytics();
       return;
     }
     if (choice === 'granted') loadAnalytics();
-    else if (choice === null && pageMode()) showBanner();
+    else if (choice === null) showBanner();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
