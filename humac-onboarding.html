@@ -815,6 +815,7 @@ function renderBlock(idx){
       '<div class="confidence-row"><span class="confidence-label">These answers are</span><button class="conf-btn '+(conf==='computed'?'selected':'')+'" onclick="setConf(\''+b.id+'\',\'computed\')">Computed <span style="font-size:.62rem;opacity:.7">(Recommended)</span></button><button class="conf-btn '+(conf==='estimated'?'selected':'')+'" onclick="setConf(\''+b.id+'\',\'estimated\')">Estimated</button></div>'+
       '<div class="conf-explain"><span class="conf-explain-item computed-explain" style="'+(conf==='computed'?'':'opacity:.45')+'">\u2713 <b>Computed:</b> You have actual figures from HRIS or payroll. Input coverage: <b>High</b>.</span><span class="conf-explain-item estimated-explain" style="'+(conf==='estimated'?'':'opacity:.45')+'">\u007e <b>Estimated:</b> Not sure, or don\u2019t have the data on hand right now? No problem, go with Estimated and give your best ballpark. Input coverage: <b>Medium</b>, directional and still valuable. You can always come back and upgrade to Computed once you have the real numbers.</span></div>'
       :'')+
+    (b.id==='A'&&conf==='computed'?renderRosterUploadBox():'')+
     '<div class="questions">'+qHTML+'</div>'+
     '<div class="validation-error" id="validation-error" style="display:none;color:#E05C3A;font-family:var(--mono);font-size:.72rem;margin-bottom:12px;padding:10px 14px;background:rgba(224,92,58,.08);border:1px solid rgba(224,92,58,.25);border-radius:8px"></div>'+
     '<div class="nav-row">'+(!isFirst?'<button class="nav-back" onclick="prevBlock()">\u2190 Back</button>':'<div></div>')+'<button class="nav-next" onclick="nextBlock()">'+(isLast?'Generate score \u2192':'Continue \u2192')+'</button></div></div>';
@@ -918,6 +919,182 @@ function nextBlock(){
   if(currentBlock<BLOCKS.length-1){currentBlock++;renderBlock(currentBlock);window.scrollTo(0,0);}else{showScoreReveal();}
 }
 function prevBlock(){if(currentBlock>0){currentBlock--;renderBlock(currentBlock);window.scrollTo(0,0);}}
+
+/* ---- Roster upload: computes headcount / comp base / 12-month hires from a CSV or
+   Excel roster entirely in the browser. The parsed rows (names, individual CTC figures,
+   dates) are never written to `answers`, sessionStorage, or sent anywhere, only the three
+   aggregate numbers are. Only cq1_headcount, cq1_compbase and cq2_hired12mo are
+   roster-derivable from the live onboarding question definitions; cq1_stars, cq5_hipo,
+   promotion/manager/hire-quality figures, and cq2_tenuretop/tenureatrisk (average tenure of
+   a performance-judged subgroup, not of the roster) are performance judgments the roster
+   cannot supply, so they stay on manual entry. */
+function renderRosterUploadBox(){
+  var consented=!!window.__rosterConsented;
+  return '<div class="roster-upload-box" style="border:1px solid rgba(99,102,241,.25);background:rgba(99,102,241,.05);border-radius:10px;padding:16px 18px;margin-bottom:18px">'+
+    '<div style="font-family:var(--mono);font-size:.72rem;letter-spacing:.02em;color:var(--text-mid);margin-bottom:4px">OR, UPLOAD YOUR ROSTER</div>'+
+    '<div style="font-size:.84rem;color:var(--text-mid);margin-bottom:10px;line-height:1.5">Upload a CSV or Excel file with name, CTC, hire date and exit date, and headcount, total compensation base and employees-hired-in-12-months below are filled in for you. The file is read in your browser and the individual rows are never uploaded to our servers, only the three totals are saved. Everything else on this page (performers, promotions, managers) still needs your own judgment, a roster can’t answer those.</div>'+
+    '<label style="display:flex;align-items:flex-start;gap:8px;font-size:.78rem;color:var(--text-mid);margin-bottom:10px;cursor:pointer;line-height:1.4"><input type="checkbox" id="roster-consent-chk" '+(consented?'checked':'')+' onchange="window.__rosterConsented=this.checked;document.getElementById(\'roster-upload-err\').style.display=\'none\'" style="margin-top:3px"/><span><b>I confirm my organisation authorises this export</b>, and that exporting this data is my organisation’s own decision and responsibility, not Vantage’s.</span></label>'+
+    '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">'+
+    '<button type="button" class="nav-back" style="padding:8px 16px" onclick="triggerRosterUpload()">Choose file…</button>'+
+    '<a href="#" onclick="downloadRosterTemplate();return false;" style="font-size:.76rem;color:var(--accent,#6366f1)">Download CSV template</a>'+
+    '</div>'+
+    '<input type="file" id="roster-file-input" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleRosterFile(this)"/>'+
+    '<div id="roster-upload-err" style="display:none;color:#E05C3A;font-size:.76rem;margin-top:8px"></div>'+
+    '<div id="roster-upload-status" style="font-size:.76rem;margin-top:8px"></div>'+
+    '</div>';
+}
+function triggerRosterUpload(){
+  var chk=document.getElementById('roster-consent-chk');
+  var err=document.getElementById('roster-upload-err');
+  if(!chk||!chk.checked){if(err){err.style.display='block';err.textContent='Please check the authorisation box above before uploading a roster.';}return;}
+  if(err)err.style.display='none';
+  document.getElementById('roster-file-input').click();
+}
+function downloadRosterTemplate(){
+  var csv='Name,CTC,Hire Date,Exit Date\nAsha Verma,1200000,2022-03-14,\nRahul Singh,900000,2024-06-01,2026-02-28\n';
+  var blob=new Blob([csv],{type:'text/csv'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='vantage-roster-template.csv';document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+}
+function setRosterStatus(msg,isError){
+  var el=document.getElementById('roster-upload-status');
+  if(el){el.style.color=isError?'#E05C3A':'var(--text-mid)';el.innerHTML=msg;}
+}
+function handleRosterFile(input){
+  var file=input.files&&input.files[0];
+  if(!file)return;
+  var name=file.name.toLowerCase();
+  setRosterStatus('Reading '+file.name+'…',false);
+  if(name.endsWith('.csv')){
+    var reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        var rows=parseRosterCSV(e.target.result);
+        finishRosterParse(rows,'csv');
+      }catch(err){setRosterStatus('Could not read that file. Make sure it matches the template columns.',true);}
+    };
+    reader.onerror=function(){setRosterStatus('Could not read that file.',true);};
+    reader.readAsText(file);
+  } else if(name.endsWith('.xlsx')||name.endsWith('.xls')){
+    loadSheetJS(function(ok){
+      if(!ok){setRosterStatus('Could not load the Excel reader. Try saving as CSV instead.',true);return;}
+      var reader=new FileReader();
+      reader.onload=function(e){
+        try{
+          var data=new Uint8Array(e.target.result);
+          var wb=XLSX.read(data,{type:'array'});
+          var sheet=wb.Sheets[wb.SheetNames[0]];
+          var json=XLSX.utils.sheet_to_json(sheet,{raw:false,defval:''});
+          var rows=json.map(function(r){return normaliseRosterRow(r);});
+          finishRosterParse(rows,'xlsx');
+        }catch(err){setRosterStatus('Could not read that file. Make sure it matches the template columns.',true);}
+      };
+      reader.onerror=function(){setRosterStatus('Could not read that file.',true);};
+      reader.readAsArrayBuffer(file);
+    });
+  } else {
+    setRosterStatus('Please upload a .csv or .xlsx file.',true);
+  }
+}
+var __sheetJSLoading=null;
+function loadSheetJS(cb){
+  if(window.XLSX){cb(true);return;}
+  if(__sheetJSLoading){__sheetJSLoading.push(cb);return;}
+  __sheetJSLoading=[cb];
+  var s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload=function(){var cbs=__sheetJSLoading;__sheetJSLoading=null;cbs.forEach(function(f){f(!!window.XLSX);});};
+  s.onerror=function(){var cbs=__sheetJSLoading;__sheetJSLoading=null;cbs.forEach(function(f){f(false);});};
+  document.head.appendChild(s);
+}
+function parseRosterCSV(text){
+  var lines=text.split(/\r\n|\n|\r/).filter(function(l){return l.trim()!=='';});
+  if(!lines.length)return [];
+  var splitLine=function(line){
+    var out=[],cur='',inQ=false;
+    for(var i=0;i<line.length;i++){
+      var c=line[i];
+      if(c==='"'){ if(inQ&&line[i+1]==='"'){cur+='"';i++;} else {inQ=!inQ;} }
+      else if(c===','&&!inQ){out.push(cur);cur='';}
+      else cur+=c;
+    }
+    out.push(cur);
+    return out.map(function(s){return s.trim();});
+  };
+  var headers=splitLine(lines[0]).map(function(h){return h.toLowerCase();});
+  var rows=[];
+  for(var i=1;i<lines.length;i++){
+    var cells=splitLine(lines[i]);
+    var obj={};
+    headers.forEach(function(h,idx){obj[h]=cells[idx]!==undefined?cells[idx]:'';});
+    rows.push(normaliseRosterRow(obj));
+  }
+  return rows;
+}
+function findRosterField(obj,candidates){
+  var keys=Object.keys(obj);
+  for(var c=0;c<candidates.length;c++){
+    for(var k=0;k<keys.length;k++){
+      if(keys[k].toLowerCase().trim()===candidates[c])return obj[keys[k]];
+    }
+  }
+  for(var c2=0;c2<candidates.length;c2++){
+    for(var k2=0;k2<keys.length;k2++){
+      if(keys[k2].toLowerCase().indexOf(candidates[c2])!==-1)return obj[keys[k2]];
+    }
+  }
+  return '';
+}
+function normaliseRosterRow(obj){
+  return {
+    name:findRosterField(obj,['name','employee','employee name','id','employee id']),
+    ctc:findRosterField(obj,['ctc','annual ctc','comp','compensation','salary','annual comp']),
+    hireDate:findRosterField(obj,['hire date','doj','date of joining','joining date','start date']),
+    exitDate:findRosterField(obj,['exit date','dol','last working day','lwd','relieving date','end date'])
+  };
+}
+function parseRosterDate(v){
+  if(!v)return null;
+  v=String(v).trim();
+  if(!v)return null;
+  var m=v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if(m)return new Date(+m[1],+m[2]-1,+m[3]);
+  m=v.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if(m)return new Date(+m[3],+m[2]-1,+m[1]); // day-first, matches Indian date conventions
+  var d=new Date(v);
+  return isNaN(d.getTime())?null:d;
+}
+function aggregateRosterRows(rows){
+  var today=new Date();
+  var cutoff=new Date(today.getFullYear()-1,today.getMonth(),today.getDate());
+  var headcount=0,compbase=0,hired12mo=0,skipped=0;
+  rows.forEach(function(r){
+    var ctc=parseFloat(String(r.ctc).replace(/[^0-9.\-]/g,''))||0;
+    var hire=parseRosterDate(r.hireDate);
+    var exit=parseRosterDate(r.exitDate);
+    if(!hire||!(ctc>0)){skipped++;return;}
+    var isActive=!exit||exit>today;
+    if(isActive){headcount++;compbase+=ctc;}
+    if(hire>=cutoff&&hire<=today)hired12mo++;
+  });
+  return {headcount:headcount,compbase:Math.round(compbase),hired12mo:hired12mo,rowsParsed:rows.length,skipped:skipped};
+}
+function finishRosterParse(rows,sourceType){
+  if(!rows.length){setRosterStatus('No rows found. Check the file matches the template.',true);return;}
+  var agg=aggregateRosterRows(rows);
+  if(agg.headcount===0){setRosterStatus('Could not find any valid rows (need a CTC figure and a hire date on each active employee). Check the template.',true);return;}
+  answers.cq1_headcount=agg.headcount;
+  answers.cq1_compbase=agg.compbase;
+  answers.cq2_hired12mo=agg.hired12mo;
+  answers.__rosterUpload={consented:true,consentedAt:new Date().toISOString(),source:sourceType,derivedFields:['cq1_headcount','cq1_compbase','cq2_hired12mo'],rowsParsed:agg.rowsParsed,rowsSkipped:agg.skipped};
+  rows.length=0; // drop the parsed roster, never persisted beyond this point
+  var msg='Filled in from your roster: <b>'+agg.headcount+'</b> active employees, <b>₹'+agg.compbase.toLocaleString('en-IN')+'</b> comp base, <b>'+agg.hired12mo+'</b> hired in the last 12 months.';
+  if(agg.skipped>0)msg+='<br>'+agg.skipped+' row(s) skipped (missing CTC or an unreadable hire date).';
+  msg+='<br>Review the numbers below, they’re pre-filled but still editable.';
+  renderBlock(currentBlock);
+  setRosterStatus(msg,false);
+}
 function restartOnboarding(){
   if(previousScore&&previousScore.humac){
     isCheckin=true;
