@@ -15,11 +15,11 @@
        .page-title and .intro-title only. All policy output sections
        (.policy-section-text, .rec-text) stay sans-serif. They're
        dense advisory prose, not headline moments. -->
-  <!-- PDF.js and mammoth.js for client-side document text extraction:
-       both loaded from cdnjs so nothing is uploaded to Vantage's own
-       servers before extraction happens. -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <!-- PDF.js and mammoth.js for client-side document text extraction.
+       Both are served from /vendor (no third-party CDN), and the document is read in the
+       browser, so nothing is uploaded to Vantage's own servers before extraction happens.
+       pdf.js 4.x is an ES module, so it is loaded on demand when a PDF is chosen. -->
+  <script src="/vendor/mammoth.1.6.0.browser.min.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#050410;color:#f4f3ff;font-family:var(--font), sans-serif;overflow:hidden}
@@ -628,8 +628,11 @@
         var ext = file.name.split('.').pop().toLowerCase();
 
         if (ext === 'pdf') {
+          if (!window.pdfjsLib) {
+            try { await import('/vendor/pdf.4.0.379.min.js'); } catch (e) { /* handled below */ }
+          }
           if (!window.pdfjsLib) throw new Error('PDF reader failed to load. Try refreshing the page.');
-          pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.js';
+          pdfjsLib.GlobalWorkerOptions.workerSrc = '/vendor/pdf.worker.4.0.379.min.js';
           var arrayBuffer = await file.arrayBuffer();
           var pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
           var pages = [];
