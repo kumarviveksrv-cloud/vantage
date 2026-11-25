@@ -28,6 +28,13 @@ const CRAWLER_AGENTS = [
   'Applebot',
   'ia_archiver',
   'Iframely',
+  // Non-crawler Google/third-party fetchers that need to see real HTML,
+  // not the geo-blocked page — site-ownership verification and page-speed
+  // auditing tools, none of which match 'Googlebot' in their UA string.
+  'Google-Site-Verification',
+  'Chrome-Lighthouse',
+  'PageSpeed',
+  'GTmetrix',
 ];
 
 function isStaticAsset(pathname) {
