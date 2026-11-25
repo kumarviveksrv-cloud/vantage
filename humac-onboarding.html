@@ -241,24 +241,6 @@ input[type=number]{-moz-appearance:textfield}
 .hci-explain-example b{color:#c4b5fd}
 @media(max-width:768px){.wrap{margin-left:0;padding:24px 20px 60px}.sidebar{display:none}.humac-hero{padding:24px 20px}.score-num{font-size:4rem}.score-num.adj{font-size:3rem}.traj-top{flex-direction:column}.band-legend-row{grid-template-columns:1fr;gap:4px}.step-label{display:none}.step-connector{width:12px;margin:0 3px}.pillar-card-v2{grid-template-columns:48px 1fr;grid-template-rows:auto auto;gap:10px 12px}.pillar-badge-v2{width:48px;height:48px;border-radius:10px}.pillar-cta-v2{grid-column:1/-1;justify-content:center;width:100%}}
 </style>
-<!-- GOOGLE ANALYTICS 4 ────────────────────────────────────────────── -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5JZR3EMJ5Q"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-5JZR3EMJ5Q');
-</script>
-
-<!-- MICROSOFT CLARITY ─────────────────────────────────────────────── -->
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "zi3kf4nbok");
-</script>
-
 </head>
 <body>
 <div class="sidebar">
@@ -1005,7 +987,7 @@ function loadSheetJS(cb){
   if(__sheetJSLoading){__sheetJSLoading.push(cb);return;}
   __sheetJSLoading=[cb];
   var s=document.createElement('script');
-  s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.src='/vendor/xlsx.0.18.5.full.min.js';
   s.onload=function(){var cbs=__sheetJSLoading;__sheetJSLoading=null;cbs.forEach(function(f){f(!!window.XLSX);});};
   s.onerror=function(){var cbs=__sheetJSLoading;__sheetJSLoading=null;cbs.forEach(function(f){f(false);});};
   document.head.appendChild(s);
@@ -1699,7 +1681,7 @@ function generateReport(){
   }
 })();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="/vendor/xlsx.0.18.5.full.min.js"></script>
 <script src="humac-shared.js?v=20261111b"></script>
 <script src="clerk-auth.js?v=20261116a"></script>
 <script src="sidebar-shared.js?v=20261124a"></script>

@@ -28,15 +28,6 @@
 <meta name="twitter:description" content="Vantage quantifies the business value of every HR decision you make. In rupees. With evidence.">
 <meta name="twitter:image"       content="https://vantage.virorah.com/og-image.png">
 
-<!-- ── GOOGLE ANALYTICS 4 ────────────────────────────────────────────── -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5JZR3EMJ5Q"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-5JZR3EMJ5Q');
-</script>
-
 <link href="/fonts/fonts.css" rel="stylesheet"/>
 <link rel="stylesheet" href="vantage-cinematic.css">
 <link rel="stylesheet" href="vantage-cinematic-v4.css">
@@ -1792,15 +1783,8 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 @keyframes initCursor { 0%,100%{opacity:1} 50%{opacity:0} }
 </style>
-<!-- MICROSOFT CLARITY ─────────────────────────────────────────────── -->
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "zi3kf4nbok");
-</script>
-
+<!-- consent.js loads GA4 and Clarity on public pages only, after consent in Europe -->
+<script src="/consent.js" defer></script>
 <!-- STRUCTURED DATA: who Virorah/Vantage are and what the product costs,
      so AI answer engines (ChatGPT, Grok, Perplexity, Gemini) and search
      engines can parse this without guessing from prose. ────────────── -->
@@ -2410,6 +2394,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
         <a href="faq.html">FAQ</a>
         <a href="methodology.html">Methodology</a>
         <a href="privacy.html">Privacy</a>
+        <a href="privacy.html#cookies" data-consent-open>Cookie choices</a>
         <a href="terms.html">Terms</a>
       </div>
       <div class="rf-footer-col">
@@ -2433,11 +2418,11 @@ html, body { overflow-x: hidden; background: var(--bg); }
 
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="/vendor/gsap.3.12.5.min.js"></script>
 <script src="vantage-prologue.js"></script>
 
 <!-- ── HERO ORB + STARFIELD — Three.js r128 (hero-only experiment) ─────── -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="/vendor/three.r128.min.js"></script>
 <script>
 // ── RF HERO ORB — Vantage-brand sphere, rings, particle clouds ──────────
 (function(){

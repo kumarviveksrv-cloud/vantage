@@ -85,24 +85,8 @@
 @media(max-width:800px){.footer-grid{grid-template-columns:1fr 1fr}.footer-bar{flex-direction:column;align-items:flex-start}}
   </style>
 <script src="vantage-page-fade.js"></script>
-<!-- GOOGLE ANALYTICS 4 ────────────────────────────────────────────── -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5JZR3EMJ5Q"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-5JZR3EMJ5Q');
-</script>
-
-<!-- MICROSOFT CLARITY ─────────────────────────────────────────────── -->
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "zi3kf4nbok");
-</script>
-
+<!-- consent.js loads GA4 and Clarity on public pages only, after consent in Europe -->
+<script src="/consent.js" defer></script>
 </head>
 <body>
 
@@ -129,7 +113,7 @@
 
     <div class="doc-eyebrow">Legal</div>
     <h1 class="doc-title">Privacy Policy</h1>
-    <div class="doc-meta">Virorah Private Limited &nbsp;&middot;&nbsp; Last updated: 16 November 2026 &nbsp;&middot;&nbsp; Effective: 16 November 2026</div>
+    <div class="doc-meta">Virorah Private Limited &nbsp;&middot;&nbsp; Last updated: 25 November 2026 &nbsp;&middot;&nbsp; Effective: 25 November 2026</div>
 
     <div class="commitment-banner">
       <strong>Our Privacy Commitment</strong>
@@ -263,7 +247,7 @@
       <li><strong>Monthly Debrief:</strong> To generate your monthly professional reflection from your case data</li>
       <li><strong>Trial and Fair-Use Limits:</strong> To apply the free trial and the daily limits on each tool, using the usage counts described in Section 2</li>
       <li><strong>Reminders:</strong> To email you when positions you filed in Standpoint are due for review, and when your monthly Debrief is ready</li>
-      <li><strong>Platform Improvement:</strong> Our public marketing website (the landing page) uses Google Analytics 4 to count visits and see how people find us. It is not used inside the logged-in Platform, and it never receives your case content, MERIDIAN profile, Humac Score or any other data you enter into the tools. We do not run any other analytics on the Platform.</li>
+      <li><strong>Platform Improvement:</strong> Our public marketing pages (the landing page, About, Pricing, FAQ, Methodology, Terms, this Policy and the Demo) can use Google Analytics 4 to count visits and see how people find us, and, on all of those pages except the Demo, Microsoft Clarity to record how pages are read (clicks, scrolling and mouse movement). Neither is loaded inside the logged-in Platform, and neither receives your case content, MERIDIAN profile, Humac Score or any other data you enter into the tools. If your browser is set to a European timezone, they load only after you accept the banner (see Section 11). We do not run any other analytics on the Platform.</li>
       <li><strong>Subscription Management:</strong> To manage your subscription, process payments (via Razorpay), and communicate about your account</li>
       <li><strong>Legal Compliance:</strong> To comply with applicable Indian law, including the DPDP Act 2023 and the IT Act 2000</li>
     </ul>
@@ -360,7 +344,7 @@
         </tr>
       </tbody>
     </table>
-    <p>Other than Google Analytics on the public marketing website, as described in Section 11, we do not share your data with any other third party, including advertisers, data brokers, analytics companies, or marketing platforms.</p>
+    <p>Other than Google Analytics and Microsoft Clarity on the public marketing pages, as described in Section 11, we do not share your data with any other third party, including advertisers, data brokers, analytics companies, or marketing platforms.</p>
 
     <h2 id="retention">8. Data Retention</h2>
     <p>We retain your data for as long as your account is active. Specifically:</p>
@@ -422,7 +406,10 @@
       <li><strong>Browser sessionStorage:</strong> To maintain your session (access status, current MERIDIAN profile). Cleared when you close your browser or sign out.</li>
       <li><strong>Browser localStorage and Clerk session storage:</strong> Clerk, our authentication provider, manages sign-in session data in your browser to keep you logged in. This is managed by Clerk directly, not by Virorah's own servers.</li>
     </ul>
-    <p>Our public marketing website uses Google Analytics 4 (Google LLC), which sets cookies and collects your IP address, device and browser details, and the pages you visit, to give us aggregate visit statistics. You can block it with your browser's cookie settings or a tracking blocker, and the Platform works the same either way. We do not use Meta Pixel or any other advertising or tracking technology. Google Analytics is not loaded inside the logged-in Platform.</p>
+    <p>Our public marketing pages use Google Analytics 4 (Google LLC), which sets cookies and collects your IP address, device and browser details, and the pages you visit, to give us aggregate visit statistics. They also use Microsoft Clarity (Microsoft), which sets cookies and records how you interact with a page (clicks, scrolling, mouse movement) for session recordings and heatmaps. Clarity is not used on the Demo. Neither tool is loaded inside the logged-in Platform, which includes the tools, dashboard, profile, billing and sign-in pages, and neither receives anything you type into the Platform.</p>
+    <p><strong>Consent in Europe.</strong> If your browser's timezone is in Europe, including the EU, the UK and Switzerland, Google Analytics and Microsoft Clarity do not load until you press Accept on the banner. Declining keeps them off. We remember your choice for 12 months in your browser. Region is judged from your browser's timezone, not your exact location, so you can reopen the choice at any time with the button below. Elsewhere, they load without a banner.</p>
+    <p><button type="button" data-consent-open style="font:600 13px 'DM Sans',system-ui,sans-serif;color:#f4f3ff;background:rgba(99,102,241,.18);border:1px solid rgba(165,180,252,.55);border-radius:8px;padding:10px 16px;cursor:pointer">Change your cookie choice</button></p>
+    <p><strong>Opting out.</strong> To switch Clarity off in any region, open any page of this site with <code>?noclarity=1</code> at the end of the address, for example <a href="index.html?noclarity=1">vantage.virorah.com/?noclarity=1</a>; your browser remembers the choice. You can block Google Analytics with your browser's cookie settings, a tracking blocker or Google's opt-out add-on, and the Platform works the same either way. We do not use Meta Pixel or any other advertising or tracking technology.</p>
 
     <h2 id="children">12. Children's Data</h2>
     <p>The Platform is intended for use by adults (18 years and above) in a professional capacity. We do not knowingly collect personal data from anyone under the age of 18. If you believe a minor has provided data to the Platform, please contact us at <a href="mailto:info@virorah.com" style="color:#6366f1;text-decoration:none">info@virorah.com</a> and we will delete it immediately.</p>
@@ -462,6 +449,7 @@
         <a href="faq.html">FAQ</a>
         <a href="methodology.html">Methodology</a>
         <a href="privacy.html">Privacy</a>
+        <a href="privacy.html#cookies" data-consent-open>Cookie choices</a>
         <a href="terms.html">Terms</a>
       </div>
       <div class="footer-col">
