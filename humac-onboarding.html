@@ -91,7 +91,7 @@ input[type=number]{-moz-appearance:textfield}
 .yn-btn.selected-no{background:rgba(224,92,58,.08);border-color:rgba(224,92,58,.3);color:#E05C3A}
 .yn-btn.yn-na{opacity:.55;font-size:.66rem;border-style:dashed}
 .yn-btn.selected-na{opacity:1;background:rgba(165,180,252,.08);border-color:rgba(165,180,252,.4);border-style:dashed;color:var(--text-mid)}
-.num-input{background:var(--bg3);border:1px solid var(--cobalt-border);color:var(--text);border-radius:8px;padding:10px 14px;font-family:var(--stat);font-size:1.0rem;width:100px;transition:border-color .15s;text-align:right;margin-top:4px}
+.num-input{background:var(--bg3);border:1px solid var(--cobalt-border);color:var(--text);border-radius:8px;padding:10px 14px;font-family:var(--stat);font-size:1.0rem;width:190px;transition:border-color .15s;text-align:right;margin-top:4px}
 .num-input:focus{outline:none;border-color:var(--cobalt)}
 .num-label{font-family:var(--mono);font-size:.78rem;color:var(--text-dim);display:inline-block;margin-left:8px}
 .risk-select{background:var(--bg3);border:1px solid var(--cobalt-border);color:var(--text);border-radius:8px;padding:10px 14px;font-family:var(--font);font-size:.9rem;cursor:pointer;margin-top:4px;min-width:180px;transition:border-color .15s}
@@ -782,6 +782,39 @@ function renderStepper(){
   });
 }
 
+/* Indian digit grouping (lakh/crore: 2,40,00,000, not 24,000,000) for the big rupee and
+   headcount figures typed into num-input boxes. Added 2026-11-26: a user typing 24 crore
+   (240000000) into an unformatted, unseparated box a few digits wide had no way to see what
+   they'd actually typed until they stopped and squinted. Keeps a single decimal point for
+   the handful of num fields that take fractional years (tenure), strips everything else. */
+function formatIN(raw){
+  var neg=raw.charAt(0)==='-';
+  if(neg)raw=raw.slice(1);
+  var parts=raw.split('.');
+  var intPart=parts[0].replace(/[^\d]/g,'');
+  var decPart=parts.length>1?'.'+parts[1].replace(/[^\d]/g,''):'';
+  if(!intPart)return (neg?'-':'')+decPart;
+  var lastThree=intPart.slice(-3);
+  var rest=intPart.slice(0,-3);
+  if(rest)lastThree=','+lastThree;
+  var formattedRest=rest.replace(/\B(?=(\d{2})+(?!\d))/g,',');
+  return (neg?'-':'')+formattedRest+lastThree+decPart;
+}
+/* oninput handler for every num-input: re-formats with commas as the user types, strips
+   anything that isn't a digit or the first decimal point, and stores the raw unformatted
+   number in answers[id] (never the comma-formatted display string). Known limitation: the
+   cursor moves to the end of the field after each keystroke, which is correct for the
+   overwhelmingly common case (typing new digits onto the end of the number) and wrong only
+   if someone edits a digit in the middle of an already-typed figure. */
+function handleNumInput(el,id){
+  var raw=el.value.replace(/[^0-9.]/g,'');
+  var firstDot=raw.indexOf('.');
+  if(firstDot!==-1)raw=raw.slice(0,firstDot+1)+raw.slice(firstDot+1).replace(/\./g,'');
+  el.value=formatIN(raw);
+  el.selectionStart=el.selectionEnd=el.value.length;
+  answers[id]=parseFloat(raw)||0;
+  clearQError(id);
+}
 function renderBlock(idx){
   var b=BLOCKS[idx];var isFirst=idx===0;var isLast=idx===BLOCKS.length-1;var conf=b.noEstimate?'computed':(confidence[b.id]||(b.computedQuestions?'computed':'estimated'));
   if(b.noEstimate)confidence[b.id]='computed';
@@ -794,7 +827,7 @@ function renderBlock(idx){
     }
     if(q.type==='pct'){var val=answers[q.id]||'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div class="pct-input-wrap"><input class="pct-input" type="number" id="'+q.id+'" min="0" max="500" value="'+val+'" placeholder="0" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0;clearQError(\''+q.id+'\')"/><span class="pct-unit">%</span><span class="pct-hint">of total salary bill</span></div></div>');}
     else if(q.type==='yn'){var val=answers[q.id];var hci=q.hci?'<span style="font-family:var(--mono);font-size:.68rem;color:rgba(99,102,241,.5);margin-left:6px">HCI</span>':'';var naBtn=q.allowNA?'<button class="yn-btn yn-na '+(val==='na'?'selected-na':'')+'" onclick="setYN(\''+q.id+'\',\'na\',this)">N/A: didn\u2019t happen this period</button>':'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+hci+'</div><div class="yesno-wrap"><button class="yn-btn '+(val==='yes'?'selected-yes':'')+'" onclick="setYN(\''+q.id+'\',\'yes\',this)">Yes</button><button class="yn-btn '+(val==='no'?'selected-no':'')+'" onclick="setYN(\''+q.id+'\',\'no\',this)">No</button>'+naBtn+'</div></div>');}
-    else if(q.type==='num'){var val=answers[q.id]||'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div><input class="num-input" type="number" id="'+q.id+'" min="0" max="'+(q.max||100000000)+'" value="'+val+'" placeholder="'+q.placeholder+'" oninput="answers[\''+q.id+'\']=parseFloat(this.value)||0;clearQError(\''+q.id+'\')"/><span class="num-label">'+q.unit+'</span></div></div>');}
+    else if(q.type==='num'){var val=answers[q.id]?formatIN(String(answers[q.id])):'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+'</div>'+(q.sub?'<div class="q-sub">'+q.sub+'</div>':'')+'<div><input class="num-input" type="text" inputmode="decimal" id="'+q.id+'" value="'+val+'" placeholder="'+q.placeholder+'" oninput="handleNumInput(this,\''+q.id+'\')"/><span class="num-label">'+q.unit+'</span></div></div>');}
     else if(q.type==='select'){var val=answers[q.id]||'';qHTMLParts.push('<div class="question" id="q-wrap-'+q.id+'"><div class="q-text">'+q.text+'</div><select class="risk-select" id="'+q.id+'" onchange="answers[\''+q.id+'\']=this.value.toLowerCase();clearQError(\''+q.id+'\')">'+q.options.map(function(o){return '<option value="'+o.toLowerCase()+'" '+(val===o.toLowerCase()?'selected':'')+'>'+(o||q.placeholder)+'</option>';}).join('')+'</select></div>');}
   });
   var qHTML=qHTMLParts.join('');
