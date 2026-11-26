@@ -65,6 +65,7 @@ const engineSrc = read('humac-onboarding.html');
 
 const metricFn = extractFunction(pillarL2Src, 'metric');
 const hipoMetricFn = extractFunction(pillarL2Src, 'hipoMetric');
+const retentionMetricFn = extractFunction(pillarL2Src, 'retentionMetric');
 const computeL2RealFn = extractFunction(engineSrc, 'computeL2Real');
 const clampL2Fn = extractFunction(engineSrc, 'clampL2');
 
@@ -127,14 +128,14 @@ const fixtures = [
 ];
 
 // --- run pillar-l2.html's math (the real metric()/hipoMetric(), live) ---------
-const pillarCtx = sandboxWith([metricFn, hipoMetricFn]);
+const pillarCtx = sandboxWith([metricFn, hipoMetricFn, retentionMetricFn]);
 function pillarL2SubScores(ra) {
   pillarCtx.ra = ra;
   return {
     promo: pillarCtx.metric('Promotion accuracy', ra.cq2_promotedexcelling || 0, ra.cq2_promoted12mo || 0),
     mgr: pillarCtx.metric('Manager quality', ra.cq2_managersoutperform || 0, ra.cq2_managers || 0),
     hire: pillarCtx.metric('Hiring quality', ra.cq2_hiredmeeting || 0, ra.cq2_hired12mo || 0),
-    retention: pillarCtx.metric('Selective retention', ra.cq2_tenuretop || 0, ra.cq2_tenureatrisk || 0),
+    retention: pillarCtx.retentionMetric(),
     hipo: pillarCtx.hipoMetric()
   };
 }

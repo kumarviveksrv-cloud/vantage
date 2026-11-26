@@ -1254,6 +1254,12 @@ function computeL2Real(a,excludeHipoStars){
   if((a.cq2_promoted12mo||0)>0)scores.push((a.cq2_promotedexcelling||0)/a.cq2_promoted12mo*100);
   if((a.cq2_managers||0)>0)scores.push((a.cq2_managersoutperform||0)/a.cq2_managers*100);
   if((a.cq2_hired12mo||0)>0)scores.push((a.cq2_hiredmeeting||0)/a.cq2_hired12mo*100);
+  /* Selective retention: top/at-risk tenure is a ratio of two independent
+     averages, not a share of one population, so it can exceed 1 — halved
+     and clamped so "retained twice as long" hits the ceiling. pillar-l2.html's
+     retentionMetric() was synced to this exact formula on 2026-11-26, after
+     a scan found it scoring the same inputs through the generic, uncapped
+     metric() helper instead and showing sub-scores above 100 as a result. */
   if((a.cq2_tenureatrisk||0)>0)scores.push(clampL2(((a.cq2_tenuretop||0)/a.cq2_tenureatrisk)/2*100,0,100));
   else if((a.cq2_tenuretop||0)>0)scores.push(100);
   if(!excludeHipoStars&&a.cq5_hipo!=null)scores.push(a.cq5_hipo>0?100:0);

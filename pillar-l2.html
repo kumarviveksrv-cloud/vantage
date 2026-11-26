@@ -195,6 +195,27 @@ function hipoMetric(){
   if(hipo>0) return {name:'HiPo identification', status:'passing', score:100, detail:hipo+' HiPo'+(hipo===1?'':'s')+' named: presence, not a rate.'};
   return {name:'HiPo identification', status:'measured', score:0, detail:'No named HiPo list entered: presence, not a rate.'};
 }
+/* Selective retention compares two independent tenure averages (top
+   performers' vs at-risk performers'), not a num/den share of one
+   population, so the ratio can and does exceed 1 — a top-performer
+   cohort naturally outlasts an at-risk one. The generic metric() helper
+   above assumes num <= den and scores this uncapped, which is why this
+   sub-score (and the page average built from it) could show above 100,
+   e.g. 4yr top vs 1.5yr at-risk scored 267. Fixed 2026-11-26 to match
+   computeL2Real() in humac-onboarding.html, which already halves the
+   ratio (so "retained twice as long" reaches the ceiling) and clamps
+   0-100; that formula is the one now treated as correct on both pages,
+   following a direct decision on the scoring logic itself, not a
+   propagation of an already-settled fix like the HiPo case above. */
+function retentionMetric(){
+  var top=ra.cq2_tenuretop||0, atrisk=ra.cq2_tenureatrisk||0;
+  if(atrisk>0){
+    var score=Math.round(Math.max(0,Math.min(100,(top/atrisk)/2*100)));
+    return {name:'Selective retention', status:score>=60?'passing':'measured', score:score, detail:top+'y top-performer tenure vs '+atrisk+'y at-risk tenure = '+score};
+  }
+  if(top>0) return {name:'Selective retention', status:'passing', score:100, detail:'No at-risk tenure on file; top-performer tenure present.'};
+  return {name:'Selective retention', status:'missing', score:null, detail:'No denominator. Unmeasured, not average.'};
+}
 function compute(){
   var rows;
   if(l2Mode==='computed'){
@@ -202,7 +223,7 @@ function compute(){
       metric('Promotion accuracy', ra.cq2_promotedexcelling||0, ra.cq2_promoted12mo||0),
       metric('Manager quality', ra.cq2_managersoutperform||0, ra.cq2_managers||0),
       metric('Hiring quality', ra.cq2_hiredmeeting||0, ra.cq2_hired12mo||0),
-      metric('Selective retention', ra.cq2_tenuretop||0, ra.cq2_tenureatrisk||0),
+      retentionMetric(),
       hipoMetric()
     ];
   } else {
