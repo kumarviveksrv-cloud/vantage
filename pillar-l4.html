@@ -238,7 +238,7 @@ function computeL4DisplayParts(book, ra, comp){
   var totalRev=book.totalRet;
   var netProfit=totalRev-invest;
   var margin=invest>0?totalRev/invest:null;
-  return {hr:hr,compliance:compliance,culture:culture,invest:invest,totalRev:totalRev,netProfit:netProfit,margin:margin};
+  return {hr:hr,compliance:compliance,culture:culture,invest:invest,totalRev:totalRev,netProfit:netProfit,margin:margin,actualSpend:actualSpend};
 }
 function fmtINR(n){var abs=Math.abs(n),sign=n<0?'-':'';if(abs>=10000000)return sign+'₹'+(abs/10000000).toFixed(2)+'Cr';if(abs>=100000)return sign+'₹'+(abs/100000).toFixed(1)+'L';if(abs>=1000)return sign+'₹'+Math.round(abs/1000)+'K';return sign+'₹'+Math.round(abs);}
 function band(s){if(s<=25)return{name:'Minimum',color:'#E05C3A'};if(s<=50)return{name:'Emerging',color:'#a5b4fc'};if(s<=72)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};}
@@ -326,7 +326,7 @@ function render(){
 
   var comp=book.compBase||ra.cq1_compbase||0;
   var _p4=computeL4DisplayParts(book, ra, comp);
-  var hr=_p4.hr, compliance=_p4.compliance, culture=_p4.culture, invest=_p4.invest, totalRev=_p4.totalRev, netProfit=_p4.netProfit, margin=_p4.margin;
+  var hr=_p4.hr, compliance=_p4.compliance, culture=_p4.culture, invest=_p4.invest, totalRev=_p4.totalRev, netProfit=_p4.netProfit, margin=_p4.margin, actualSpend=_p4.actualSpend;
   var q4Ratio=margin==null?'not measured':margin.toFixed(2)+'x';
   var isPos=margin!=null&&margin>=1;
 
