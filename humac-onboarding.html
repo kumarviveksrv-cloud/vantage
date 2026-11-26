@@ -212,8 +212,26 @@ input[type=number]{-moz-appearance:textfield}
 .pillar-card-v2:hover{transform:translateY(-4px) scale(1.005);border-color:var(--pillar-accent,rgba(99,102,241,.4));box-shadow:0 10px 32px var(--pillar-accent-glow,rgba(99,102,241,.2))}
 .pillar-card-v2::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pillar-accent,var(--cobalt))}
 @keyframes pillarPop{to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes pillarGlow{0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,0);border-color:rgba(99,102,241,.16)}50%{box-shadow:0 0 22px 6px rgba(99,102,241,.22),0 0 0 1px rgba(99,102,241,.28);border-color:rgba(99,102,241,.4)}}
-.pillar-card-v2.is-destruction{animation:pillarPop .55s cubic-bezier(.19,1,.22,1) var(--pop-delay,0s) forwards,pillarGlow 2.6s ease-in-out calc(var(--pop-delay,0s) + 0.65s) infinite}
+/* Pulsing glow removed from individual pillar-breakdown cards 2026-11-26 -
+   Vivek: glow belongs on the larger cards on this page, not inside the
+   breakdown, and having it fire only on whichever pillar happened to be
+   "Low Attribution" (Human Balance Sheet, in his screenshot) read as a
+   visual bug, not a signal, since nothing on the card explains why that
+   one pulses and the other four don't. See .glow-card below for where the
+   glow actually lives now. */
+
+/* Soft pulsing glow for this page's larger cards - exact box-shadow/timing
+   already established on pillar-l1.html's .hero (hero-pulse), reused here
+   so it reads as the same design language rather than a new one. Applied
+   to whole containers only (.humac-hero, #upload-card, .example-card,
+   .score-guide, .pillars) - never to the individual cards nested inside
+   any of them (pillar-card-v2, band-legend-row), per the same instruction
+   above. */
+@keyframes hero-pulse{
+  0%,100%{box-shadow:0 0 0 1px rgba(99,102,241,.2),0 0 16px rgba(99,102,241,.1),0 0 40px rgba(99,102,241,.05)}
+  50%{box-shadow:0 0 0 1px rgba(99,102,241,.45),0 0 32px rgba(99,102,241,.2),0 0 64px rgba(99,102,241,.1)}
+}
+.glow-card{animation:hero-pulse 3s ease-in-out infinite}
 .pillar-badge-v2{width:60px;height:60px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--pillar-accent-dim,rgba(99,102,241,.12));border:1px solid var(--pillar-accent,rgba(99,102,241,.3));flex-shrink:0}
 .pillar-badge-num-v2{font-family:var(--stat);font-size:1.4rem;font-weight:700;color:var(--pillar-accent,var(--cobalt));line-height:1}
 .pillar-badge-label-v2{font-family:var(--mono);font-size:.5rem;letter-spacing:.08em;color:var(--text-dim);margin-top:2px}
@@ -304,7 +322,7 @@ input[type=number]{-moz-appearance:textfield}
   <div class="page-eyebrow">Vantage &middot; Humac Score</div>
   <h1 class="page-title" id="page-title-main">Establish your baseline</h1>
   <p class="page-sub" id="page-sub-main">A set of questions across five blocks. Exact data improves precision, but professional judgment is equally valid. Estimates generate a score with Medium input coverage. As you build better processes and return with real data, your score gets sharper.</p>
-  <div class="upload-card" id="upload-card" style="background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(124,58,237,.04));border:1px solid rgba(99,102,241,.22);border-radius:14px;padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+  <div class="upload-card glow-card" id="upload-card" style="background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(124,58,237,.04));border:1px solid rgba(99,102,241,.22);border-radius:14px;padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
     <div style="max-width:520px">
       <div style="font-family:var(--font);font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:4px">Have your organisation's real numbers already?</div>
       <div style="font-family:var(--mono);font-size:.72rem;color:var(--text-dim);line-height:1.6">Download the template, fill in one row with your own data, and upload it back, every Computed field across all four pillars populates in one step.</div>
@@ -323,7 +341,7 @@ input[type=number]{-moz-appearance:textfield}
   </div>
   <div id="score-reveal">
     <div class="reveal-eyebrow" id="rv-eyebrow">Your Humac Baseline Score</div>
-    <div class="humac-hero">
+    <div class="humac-hero glow-card">
       <div class="hero-scores">
         <div class="score-col"><div class="score-label">Humac <span style="font-size:.62rem;letter-spacing:.04em;color:#a5b4fc">provisional v0.9</span></div><div class="score-num" id="rv-humac">-</div></div>
         <div class="score-divider" id="rv-adj-divider" style="display:none"></div>
@@ -339,7 +357,7 @@ input[type=number]{-moz-appearance:textfield}
       <button type="button" id="rv-hci-toggle" style="margin-top:8px;margin-left:8px;background:transparent;border:1px solid rgba(165,180,252,.2);color:rgba(244,243,255,.55);border-radius:7px;padding:7px 12px;font-family:inherit;font-size:.72rem;cursor:pointer">Show HCI adjustment</button>
       <div class="hci-note">Human Confidence Index: <span id="rv-hci"></span>&nbsp;<span class="conf-badge" id="rv-conf-badge"></span></div>
     </div>
-    <a class="example-card" href="humac-example.html" id="example-card-link">
+    <a class="example-card glow-card" href="humac-example.html" id="example-card-link">
       <div class="example-card-icon">&#128202;</div>
       <div class="example-card-body">
         <div class="example-card-title">Not sure what these numbers mean?</div>
@@ -348,7 +366,7 @@ input[type=number]{-moz-appearance:textfield}
       <span class="example-card-cta">See the example &rarr;</span>
     </a>
     <div id="score-guide-placeholder"></div>
-    <div class="pillars">
+    <div class="pillars glow-card">
       <div class="pillars-title">Pillar breakdown</div>
       <div id="rv-pillars"></div>
     </div>
@@ -680,7 +698,7 @@ function buildScoreGuideHTML(humac,hci,hciAdj,currentBandName){
   var hciExample=(humac!=null&&hci!=null&&hciAdj!=null&&hciAdj!==humac)
     ?'In your case: raw score <b>'+humac+'</b> \xd7 HCI <b>'+hci.toFixed(2)+'x</b> = <b>'+hciAdj+'</b> HCI-adjusted.'
     :(humac!=null&&hciAdj===humac?'In your case: raw score <b>'+humac+'</b> \xd7 HCI <b>'+(hci!=null?hci.toFixed(2):'1.00')+'x</b> = <b>'+humac+'</b>. Your organisation scored full stability, so no adjustment was applied.':'Once your score is generated, this line will show your own numbers worked through.');
-  return '<div class="score-guide" id="score-guide"><div class="score-guide-head" onclick="toggleScoreGuide()"><div class="score-guide-title">What do these numbers mean? \xb7 Band definitions &amp; HCI explained</div><div class="score-guide-chevron" id="score-guide-chev">\u25BC</div></div><div class="score-guide-body" id="score-guide-body">'+
+  return '<div class="score-guide glow-card" id="score-guide"><div class="score-guide-head" onclick="toggleScoreGuide()"><div class="score-guide-title">What do these numbers mean? \xb7 Band definitions &amp; HCI explained</div><div class="score-guide-chevron" id="score-guide-chev">\u25BC</div></div><div class="score-guide-body" id="score-guide-body">'+
     '<div class="band-legend">'+rows+'</div>'+
     '<div class="score-guide-note">Pillar pages (L1, L2, L4, L5) show their own band label, Minimum, Emerging, Value Active, Value Engine, on a <b>separate four-tier scale</b> specific to that one pillar\u2019s score. A pillar reading \u201c68 \xb7 Value Active\u201d and this page\u2019s overall \u201c68 \xb7 Value Generating\u201d are not the same classification, even when the numbers happen to match.</div>'+
     '<div class="hci-explain">'+
