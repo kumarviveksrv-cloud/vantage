@@ -328,6 +328,23 @@ html, body { overflow-x: hidden; background: var(--bg); }
   color: #8b5cf6;
   text-shadow: 0 0 24px rgba(139,92,246,.5);
 }
+/* The rupee sign has no glyph in either of this page's two webfonts
+   (Cormorant Garamond, Space Grotesk, self-hosted subsets) -- confirmed by
+   measuring canvas-rendered glyph widths, not assumed: requesting either
+   family for U+20B9 silently falls back to the OS's default sans font,
+   which is why it was rendering small, thin and visually dropped against
+   the bold serif headline around it. Styled explicitly as an intentional
+   accent instead of leaving that silent fallback to look like an
+   afterthought: sized up, bold, same glow treatment as the rest of the
+   accent line. 'Space Grotesk' kept first in the stack so this upgrades
+   automatically if a future font subset adds the glyph. */
+.rf-hero-headline h1 .rf-accent .rf-rupee {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 1.35em;
+  display: inline-block;
+  transform: translateY(0.05em);
+}
 
 .rf-hero-statement {
   font: 600 clamp(19px, 2.2vw, 22px)/1.5 var(--font);
@@ -1908,7 +1925,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
       <canvas id="rfOrbCanvas"></canvas>
     </div>
     <div class="rf-hero-headline">
-      <h1>HR&#39;s invisible work. <span class="rf-accent">What&#39;s it worth, in &#8377;?</span></h1>
+      <h1>HR&#39;s invisible work. <span class="rf-accent">What&#39;s it worth, in <span class="rf-rupee">&#8377;</span>?</span></h1>
     </div>
   </section>
 
