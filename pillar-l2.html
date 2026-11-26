@@ -267,9 +267,9 @@ var CONTENT=[
    fail:function(mode){return mode==='computed'?'Your entered rate is below the 60 line you set.':'You answered no for this signal.';},
    howto:'Six months after each joining date, have the manager rate: above, at, or below grade baseline. Build a running spreadsheet, the % above baseline is your Hiring Quality number.'},
   {name:'Selective retention',
-   pass:function(mode){return mode==='computed'?'Your entered rate is at or above the 60 line you set.':'You answered yes for this signal.';},
-   fail:function(mode){return mode==='computed'?'Your entered rate is below the 60 line you set. Retention is inverted: the exits counted so far are concentrated among people rated above expectation, rather than the reverse.':'You answered no for this signal, retention is inverted right now: the exits you have in mind are concentrated among people you wanted to keep.';},
-   howto:'In every exit interview, note the person\u2019s last performance rating. Compare top performers vs below-expectation exits over 12 months. If top performers are leaving faster, that\u2019s a selective retention gap worth tracking.'},
+   pass:function(mode){return mode==='computed'?'Your top performers\u2019 average tenure clears your at-risk performers\u2019 by enough to count as selective retention, not just retention.':'You answered yes for this signal.';},
+   fail:function(mode){return mode==='computed'?'Your top performers\u2019 average tenure isn\u2019t clearing your at-risk performers\u2019 by much, or at all. On these numbers, retention isn\u2019t selective yet.':'You answered no for this signal, retention is inverted right now: the exits you have in mind are concentrated among people you wanted to keep.';},
+   howto:'This one is measured by tenure, not by exits: pull today\u2019s average tenure for two groups \u2014 everyone you\u2019d call a top performer, and everyone flagged at-risk or inconsistent. Those two averages, in years, are the precise inputs. Top performers averaging meaningfully longer tenure than at-risk performers is the signal; tenures that are close, or inverted, mean selective retention isn\u2019t showing up yet.'},
   {name:'HiPo identification',
    pass:function(mode){return mode==='computed'?'A named HiPo list is on file for this count.':'You answered yes for this signal, a named HiPo pipeline exists.';},
    fail:function(mode){return mode==='computed'?'No named HiPo list is on file yet.':'You answered no for this signal, no formal HiPo identification exists yet.';},
@@ -347,7 +347,7 @@ function intelText(){
 // ── Actions — two branches, same as before ──
 var baseActs=[
   {title:'Build Promotion Accuracy tracking',body:'Pull your last 12 months of promotions. One manager rating per person at 6 months: above, at, or below grade. That ratio is your score going forward.'},
-  {title:'Run a selective retention audit',body:'List every exit from the last 12 months with a performance label attached. If more than 20% of your strongest performers are among the exits, selective retention is failing.'},
+  {title:'Start tracking top vs at-risk tenure',body:'Pull current average tenure for two groups: everyone you’d call a top performer, and everyone flagged at-risk or inconsistent. Those two averages, in years, are what actually feeds this score in computed mode. If top performers aren’t outlasting at-risk performers by a meaningful margin, that’s the gap to close.'},
   {title:'Add one manager-effectiveness question to your next survey',body:'"My manager actively raises the bar in our team." Aggregate by manager. Below 60% agreement = a development conversation this quarter.'},
   {title:'Name your HiPo list within 30 days',body:'Ten to fifteen names, reviewed twice a year, each with one concrete development investment attached. The discipline of maintaining the list matters more than who is on it first.'}
 ];

@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# Pre-push safety net. Added 2026-11-26 after a session that shipped one
+# display-vs-engine scoring drift (L2 HiPo/Star) and found a second one
+# (L2 Selective retention) by hand, the kind of bug that's invisible until
+# someone reads two files side by side. This runs automatically before any
+# push leaves this machine, so it does not depend on remembering to do it.
+#
+# This repo is tracked, but .git/hooks is not - a fresh clone (new machine,
+# new session, new container) won't pick this up by itself. Run once per
+# clone:
+#   git config core.hooksPath .githooks
+# (Already set in this working copy.)
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+status=0
+
+echo "[pre-push] Checking inline <script> syntax in all .html files..."
+node -e '
+const fs = require("fs");
+const path = require("path");
+const files = fs.readdirSync(".").filter((f) => f.endsWith(".html"));
+let failed = false;
+for (const f of files) {
+  const html = fs.readFileSync(f, "utf8");
+  const re = /<script([^>]*)>([\s\S]*?)<\/script>/g;
+  const jsType = (attrs) => {
+    const m = /type\s*=\s*["\x27]([^"\x27]*)["\x27]/i.exec(attrs);
+    if (!m) return true; // no type attribute = classic JS
+    const t = m[1].toLowerCase();
+    return t === "" || t === "text/javascript" || t === "application/javascript" || t === "module";
+  };
+  let m, all = "";
+  while ((m = re.exec(html))) {
+    const attrs = m[1];
+    if (/\bsrc\s*=/.test(attrs)) continue;
+    if (!jsType(attrs)) continue;
+    all += "\n//--block--\n" + m[2];
+  }
+  if (!all.trim()) continue;
+  try {
+    new Function(all);
+  } catch (e) {
+    console.log("  ✗ " + f + ": " + e.message);
+    failed = true;
+  }
+}
+if (failed) process.exit(1);
+console.log("  ✓ all inline scripts parse");
+' || status=1
+
+if [ -f scripts/verify-pillar-consistency.js ]; then
+  echo "[pre-push] Running pillar-vs-engine consistency check..."
+  node scripts/verify-pillar-consistency.js || status=1
+fi
+
+if [ "$status" -ne 0 ]; then
+  echo ""
+  echo "[pre-push] BLOCKED: one or more checks above failed."
+  echo "[pre-push] Fix the issue, or push with --no-verify if you are certain this push should bypass it."
+  exit 1
+fi
+
+echo "[pre-push] All checks passed."
+exit 0
