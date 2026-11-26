@@ -338,7 +338,7 @@ function render(){
 
   var findingsHtml=buildFindings(hr,compliance,culture);
 
-  var assumptionBar='<div class="assumption-bar"><div class="assumption-note"><b>'+scenario+' case.</b> These percentages are L4-original operating costs. Cohort value itself stays in the L1 book and is never repriced here.</div><div><button class="sc-btn'+(scenario==='low'?' active':'')+'" onclick="setScenario(\'low\')">Low</button> <button class="sc-btn'+(scenario==='base'?' active':'')+'" onclick="setScenario(\'base\')">Base</button> <button class="sc-btn'+(scenario==='high'?' active':'')+'" onclick="setScenario(\'high\')">High</button></div></div>';
+  var assumptionBar='<div class="assumption-bar"><div class="assumption-note"><b>'+scenario.charAt(0).toUpperCase()+scenario.slice(1)+' case.</b> These percentages are L4-original operating costs. Cohort value itself stays in the L1 book and is never repriced here.</div><div><button class="sc-btn'+(scenario==='low'?' active':'')+'" onclick="setScenario(\'low\')">Low</button> <button class="sc-btn'+(scenario==='base'?' active':'')+'" onclick="setScenario(\'base\')">Base</button> <button class="sc-btn'+(scenario==='high'?' active':'')+'" onclick="setScenario(\'high\')">High</button></div></div>';
 
   var plWrap='<div class="pl-wrap">'+
     '<div class="pl-header"><div class="pl-header-title">Human P&amp;L Statement</div><div class="pl-header-sub">'+q4Ratio+' margin \xb7 '+scoreDate+' baseline \xb7 '+scenario+' case</div></div>'+
