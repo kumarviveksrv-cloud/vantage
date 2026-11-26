@@ -11,6 +11,19 @@
 <style>
 :root { --sidebar: 220px; }
 
+/* Bug fixed 2026-11-26: every other Vantage page sets its own body
+   background/color/font locally (vantage-theme.css only defines the
+   --bg/--text/--font tokens, it never applies them to body itself - that's
+   each page's own job, despite the file's header comment implying
+   otherwise). This page never did, so <body> stayed browser-default white.
+   Every card with its own explicit dark background (.score-card, .traj-card)
+   still looked fine; everything relying on the page background underneath
+   it - the breadcrumb, page title/subtitle, and especially .expect-card
+   (background is a near-transparent rgba(99,102,241,.05) tint, so it mostly
+   just showed white through) rendered near-white-text-on-white, i.e. washed
+   out to the point of being unreadable. */
+body{background:var(--bg);color:var(--text);font-family:var(--font),sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+
 /* ── LAYOUT ─────────────────────────────────────────────── */
 .sidebar{width:var(--sidebar);flex-shrink:0;position:fixed;top:0;left:0;bottom:0;
   background:rgba(5,4,16,.98);border-right:1px solid rgba(99,102,241,.18);
@@ -109,8 +122,15 @@
   transition:all .2s;cursor:pointer;border:none}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(99,102,241,.45)}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+/* .btn-ghost is used on both an <a> (Back to Dashboard, no native chrome to
+   worry about) and a real <button> (Download PDF). Without background/
+   border/padding reset here, the <button> kept its default browser UI
+   chrome - a pale grey box - underneath this near-invisible text color,
+   which is the blank-looking rectangle that sat right next to "Start
+   check-in". */
 .btn-ghost{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.06em;
-  color:rgba(244,243,255,.35);text-decoration:none;transition:color .15s}
+  color:rgba(244,243,255,.35);text-decoration:none;transition:color .15s;
+  background:transparent;border:none;padding:0;cursor:pointer}
 .btn-ghost:hover{color:rgba(244,243,255,.65)}
 
 /* ── NO SCORE STATE ─────────────────────────────────────── */

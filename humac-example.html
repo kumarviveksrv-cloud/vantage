@@ -10,6 +10,13 @@
 <style>
 :root { --sidebar: 220px; }
 
+/* vantage-theme.css only defines the --bg/--text/--font tokens; applying
+   them to body is each page's own job (confirmed against how
+   humac-checkin.html's missing copy of this exact rule washed that page
+   out on 2026-11-26 - fixed there same day). Setting it here up front so
+   this page doesn't ship with the same bug nobody has hit yet. */
+body{background:var(--bg);color:var(--text);font-family:var(--font),sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+
 /* ── LAYOUT ─────────────────────────────────────────────── */
 .sidebar{width:var(--sidebar);flex-shrink:0;position:fixed;top:0;left:0;bottom:0;
   background:rgba(5,4,16,.98);border-right:1px solid rgba(99,102,241,.18);
