@@ -77,21 +77,27 @@
   const isPayingUser = localStorage.getItem('vantage_clerk_signed_in') === '1' ||
                        localStorage.getItem('vantage_returning_user') === '1';
 
-  /* SR20: non-paying visitors see the full intro on every page load.
-     Clear all session-level flags so prologue, boot, hero, and ta-da
-     all replay. LocalStorage is left untouched — paying-user flags
-     and the vantage_seen_ever timing hint are durable and must survive. */
-  if (!isPayingUser) {
-    try {
-      sessionStorage.removeItem('vantage_prologue_seen');
-      sessionStorage.removeItem('vantage_boot_seen');
-      sessionStorage.removeItem('vantage_hero_animated');
-      sessionStorage.removeItem('vantage_tada');
-    } catch(e) {}
-  }
+  /* ── ONCE-PER-DEVICE BYPASS, ANY VISITOR ─────────────────────────────────
+     Was: SR20 force-replayed the full ~13s prologue on every single load
+     for every non-paying visitor, forever, by clearing the session-level
+     flags below on every load so an in-session "already seen" never stuck.
+     Kumar's call (26 Nov 2026, after a friend said the landing page took
+     explaining to understand, and the prologue eats roughly half of the
+     "30 seconds" a cold visitor gives a page): a visitor who has already
+     sat through it once on this device shouldn't be shown it again
+     automatically, ever, paying or not. vantage_seen_ever is the durable,
+     cross-session flag for that (the name was already reserved for this in
+     a comment above that was never wired up); endPrologue() below sets it
+     the moment the sequence actually ends, whether by completing or by
+     hitting Skip. A visitor can still always rewatch deliberately — nothing
+     here removes the intro, it only stops it defaulting to on. */
+  const hasSeenPrologueOnDevice = (function () {
+    try { return localStorage.getItem('vantage_seen_ever') === '1'; }
+    catch (e) { return false; }
+  })();
 
   const cameFromDemo = /\/demo\.html/i.test(document.referrer || '');
-  if (cameFromDemo || isPayingUser) {
+  if (cameFromDemo || isPayingUser || hasSeenPrologueOnDevice) {
     pro.style.display = 'none';
     document.body.classList.add('prologue-complete');
     // Only swap auth links to "Dashboard" when the user has an ACTIVE Clerk
@@ -197,6 +203,10 @@
 
     sessionStorage.setItem('vantage_prologue_seen', '1');
     sessionStorage.setItem('vantage_tada', '1');
+    /* Durable, cross-session: this device has now sat through the
+       prologue once (naturally or via Skip). Never auto-show it again
+       here — see the once-per-device bypass above. */
+    try { localStorage.setItem('vantage_seen_ever', '1'); } catch (e) {}
 
     window.setTimeout(() => {
       pro.style.display = 'none';
@@ -307,13 +317,17 @@
        block them even with opacity:1). Opacity stays at 0 via curtain.js. */
     if (message) message.style.removeProperty('visibility');
     if (sub)     sub.style.removeProperty('visibility');
+    /* Skip button shown immediately, not after the old 2000ms delay. A
+       first-time visitor should be able to see and use the way out from
+       the first frame, not be made to wait before the option even
+       appears. Combined with the image-preload path (beginVisualReveal
+       fires within ~0-1200ms of load) and this element's own 0.5s CSS
+       fade, the button is fully visible well inside 2s of page load. */
+    if (skip) skip.classList.add('show');
     later(() => {
       revealText();
       pro.classList.add('phase-pressure');
     }, 1800);
-    later(() => {
-      if (skip) skip.classList.add('show');
-    }, 2000);
     later(() => {
       hideCopyForCountdown();
       pro.classList.add('countdown');
