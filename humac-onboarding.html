@@ -901,9 +901,32 @@ function validateDataIntegrity(a){
   if(a.cq2_managers!=null&&a.cq2_managersoutperform>a.cq2_managers)issues.push({severity:'error',message:'Managers whose teams "outperform" ('+a.cq2_managersoutperform+') cannot exceed total managers ('+a.cq2_managers+').'});
   if(a.cq2_hired12mo!=null&&a.cq2_hiredmeeting>a.cq2_hired12mo)issues.push({severity:'error',message:'Hires "meeting expectations" ('+a.cq2_hiredmeeting+') cannot exceed total hired ('+a.cq2_hired12mo+').'});
 
-  [['cq2_tenuretop','Average tenure of top performers'],['cq2_tenureatrisk','Average tenure of at-risk performers'],['cq5_seniortenure','Average tenure of senior/leadership']].forEach(function(c){
+  [['cq2_tenuretop','Average tenure of top performers'],['cq2_tenureatrisk','Average tenure of at-risk performers'],['cq5_seniortenure','Average tenure of senior/leadership'],['q17','Average tenure of your employees']].forEach(function(c){
     var v=a[c[0]];
     if(v!==undefined&&v!==null&&(v<0||v>40))issues.push({severity:'warning',message:c[1]+' ('+v+' years) looks unusual. Please double-check.'});
+  });
+
+  // Absolute magnitude sanity caps, independent of headcount or any other field.
+  // The relational checks above (sub-count <= headcount, ratios, etc.) only fire once
+  // headcount and the other side of the comparison are both entered. A single field typed
+  // with an extra digit or two, with nothing yet to compare it against, sailed straight
+  // through with no warning at all. These catch that case directly, at a ceiling no real
+  // Vantage customer would plausibly hit.
+  [['cq1_headcount','Total headcount'],['cq1_stars','Star / top performers'],['cq1_emerging','Emerging Talent'],
+   ['cq1_atrisk','at-risk / inconsistent performers'],['cq1_tenured5','employees with 5+ years tenure'],
+   ['cq1_revhires','revenue-role hires (12mo)'],['cq4_revhires24','revenue-role hires (24mo)'],
+   ['cq5_hipo','High Potential employees'],['cq5_seniorcount','senior/leadership employees'],
+   ['cq5_revemployees','revenue-role employees (2+ yrs tenure)'],['cq2_promoted12mo','employees promoted (12mo)'],
+   ['cq2_promotedexcelling','promoted employees excelling'],['cq2_managers','people managers'],
+   ['cq2_managersoutperform','managers whose teams outperform'],['cq2_hired12mo','employees hired (12mo)'],
+   ['cq2_hiredmeeting','hires meeting expectations']
+  ].forEach(function(c){
+    var v=a[c[0]];
+    if(v!==undefined&&v!==null&&v>500000)issues.push({severity:'warning',message:'"'+c[1]+'" ('+Math.round(v).toLocaleString('en-IN')+') is implausibly large for a single organisation. Please double-check you haven’t added an extra digit.'});
+  });
+  [['cq1_compbase','Total annual compensation base'],['cq4_hrspend','Annual HR spend']].forEach(function(c){
+    var v=a[c[0]];
+    if(v!==undefined&&v!==null&&v>1e10)issues.push({severity:'warning',message:'"'+c[1]+'" (₹'+Math.round(v).toLocaleString('en-IN')+') is implausibly large. Please double-check you haven’t added an extra digit.'});
   });
 
   return issues;
