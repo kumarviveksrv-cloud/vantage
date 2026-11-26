@@ -181,6 +181,21 @@ input[type=number]{-moz-appearance:textfield}
 .conf-badge.high{background:rgba(99,102,241,.1);color:var(--cobalt);border:1px solid rgba(99,102,241,.2)}
 .conf-badge.medium{background:rgba(165,180,252,.08);color:var(--muted);border:1px solid rgba(165,180,252,.2)}
 .conf-badge.low{background:rgba(224,92,58,.06);color:#E05C3A;border:1px solid rgba(224,92,58,.2)}
+/* Standalone "see the worked example" card. Deliberately NOT inside the
+   collapsed score-guide accordion (where a smaller text link lived first,
+   2026-11-26 AM) - Vivek opened that panel, scrolled to the bottom, and
+   still called it "barely visible," because two clicks and a scroll before
+   a reference is visible defeats being a reference. This sits in the open,
+   between the hero numbers and the pillar breakdown, so it's on screen
+   without clicking anything. */
+.example-card{display:flex;align-items:center;gap:20px;background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(124,58,237,.08));border:1px solid rgba(99,102,241,.35);border-radius:14px;padding:22px 26px;margin-bottom:24px;flex-wrap:wrap;text-decoration:none;color:inherit}
+.example-card-icon{width:44px;height:44px;border-radius:10px;background:rgba(99,102,241,.18);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.example-card-body{flex:1;min-width:240px}
+.example-card-title{font-family:var(--font), sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:4px}
+.example-card-sub{font-size:.84rem;color:var(--text-dim);line-height:1.6}
+.example-card-cta{flex-shrink:0;display:inline-flex;align-items:center;gap:8px;background:var(--cobalt);color:#fff;font-family:var(--font), sans-serif;font-size:.86rem;font-weight:700;padding:12px 22px;border-radius:9px;text-decoration:none;white-space:nowrap;box-shadow:0 4px 18px rgba(99,102,241,.3);transition:all .2s}
+.example-card-cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(99,102,241,.4)}
+@media(max-width:600px){.example-card{flex-direction:column;align-items:flex-start}.example-card-cta{width:100%;justify-content:center}}
 .pillars{background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:14px;padding:24px 28px;margin-bottom:24px}
 .pillars-title{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:16px}
 .pillar-row{display:grid;grid-template-columns:80px 1fr 40px;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(99,102,241,.04)}
@@ -240,8 +255,6 @@ input[type=number]{-moz-appearance:textfield}
 .hci-explain-text b{color:var(--text-mid);font-weight:500}
 .hci-explain-example{font-family:var(--mono);font-size:.78rem;color:#a5b4fc;background:rgba(99,102,241,.06);padding:10px 14px;border-radius:8px;line-height:1.7}
 .hci-explain-example b{color:#c4b5fd}
-.score-guide-example-link{display:inline-flex;align-items:center;gap:6px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(99,102,241,.1);font-family:var(--font), sans-serif;font-size:.83rem;color:#a5b4fc;text-decoration:none;transition:color .15s}
-.score-guide-example-link:hover{color:#c4b5fd}
 @media(max-width:768px){.wrap{margin-left:0;padding:24px 20px 60px}.sidebar{display:none}.humac-hero{padding:24px 20px}.score-num{font-size:4rem}.score-num.adj{font-size:3rem}.traj-top{flex-direction:column}.band-legend-row{grid-template-columns:1fr;gap:4px}.step-label{display:none}.step-connector{width:12px;margin:0 3px}.pillar-card-v2{grid-template-columns:48px 1fr;grid-template-rows:auto auto;gap:10px 12px}.pillar-badge-v2{width:48px;height:48px;border-radius:10px}.pillar-cta-v2{grid-column:1/-1;justify-content:center;width:100%}}
 </style>
 <script src="/consent.js" defer></script>
@@ -326,6 +339,14 @@ input[type=number]{-moz-appearance:textfield}
       <button type="button" id="rv-hci-toggle" style="margin-top:8px;margin-left:8px;background:transparent;border:1px solid rgba(165,180,252,.2);color:rgba(244,243,255,.55);border-radius:7px;padding:7px 12px;font-family:inherit;font-size:.72rem;cursor:pointer">Show HCI adjustment</button>
       <div class="hci-note">Human Confidence Index: <span id="rv-hci"></span>&nbsp;<span class="conf-badge" id="rv-conf-badge"></span></div>
     </div>
+    <a class="example-card" href="humac-example.html" id="example-card-link">
+      <div class="example-card-icon">&#128202;</div>
+      <div class="example-card-body">
+        <div class="example-card-title">Not sure what these numbers mean?</div>
+        <div class="example-card-sub">See the whole Humac Score worked through on two example companies, one strong HR function, one weak, same industry and payroll, so the contrast is the only thing that moves.</div>
+      </div>
+      <span class="example-card-cta">See the example &rarr;</span>
+    </a>
     <div id="score-guide-placeholder"></div>
     <div class="pillars">
       <div class="pillars-title">Pillar breakdown</div>
@@ -669,7 +690,6 @@ function buildScoreGuideHTML(humac,hci,hciAdj,currentBandName){
       '<div class="hci-explain-text">Your raw Humac Score reflects the five pillars alone. The HCI-adjusted score multiplies that raw score by the stability coefficient above: <code>Score \xd7 HCI = HCI-adjusted score</code>. It is not a penalty for poor performance, it flags how much caution to apply to the reading, given how stable the organisation was at the time.</div>'+
       '<div class="hci-explain-example">'+hciExample+'</div>'+
     '</div>'+
-    '<a class="score-guide-example-link" href="humac-example.html">See it worked through on two example companies, one strong, one weak, same industry and payroll →</a>'+
   '</div></div>';
 }
 function toggleScoreGuide(){var b=document.getElementById('score-guide-body');var c=document.getElementById('score-guide-chev');if(b)b.classList.toggle('open');if(c)c.classList.toggle('open');}
