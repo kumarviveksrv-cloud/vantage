@@ -414,3 +414,90 @@ if (l4Failures > 0) {
 } else {
   console.log('No drift found between pillar-l4.html and humac-onboarding.html for these fixtures.');
 }
+
+// ===============================================================================
+// L3: pillar-l3.html's l3Coverage() vs humac-onboarding.html's computeL3Real().
+// Structurally different from L1/L2/L4/L5 - not a reused financial/ratio formula,
+// but a category-weighted average over 21 yes/no signals (of 25; 4 score once
+// through HCI instead). Both sides already carried comments claiming they mirror
+// each other (the q7-q10 exclusion fix and the category-weighted-average fix),
+// written at different times by what reads like two different passes - exactly
+// the kind of claim that needs to be run, not read.
+// ===============================================================================
+console.log('\n' + '='.repeat(72));
+console.log('L3: pillar-l3.html vs humac-onboarding.html');
+console.log('='.repeat(72));
+
+const pillarL3Src = read('pillar-l3.html');
+
+const hbFn = extractFunction(pillarL3Src, 'hb');
+const preMapStmt = extractVarStatement(pillarL3Src, 'preMap');
+const getSignalFn = extractFunction(pillarL3Src, 'getSignal');
+const l3ScoreGroupsStmt = extractVarStatement(pillarL3Src, 'L3_SCORE_GROUPS');
+const l3CoverageFn = extractFunction(pillarL3Src, 'l3Coverage');
+const computeL3RealFn = extractFunction(engineSrc, 'computeL3Real');
+
+// preMap and hb() both read `ra` (pillar-l3.html's raw-answers global); getSignal()
+// falls back to `interMap`, which is only populated from a saved in-progress draft -
+// irrelevant here, an empty object reproduces "no draft" exactly as the real page
+// has it on a fresh load.
+function pillarL3Score(ra) {
+  const ctx = { console, ra: ra, interMap: {} };
+  vm.createContext(ctx);
+  vm.runInContext([hbFn, preMapStmt, getSignalFn, l3ScoreGroupsStmt, l3CoverageFn].join('\n'), ctx);
+  return ctx.l3Coverage();
+}
+
+const engineL3Ctx = sandboxWith([computeL3RealFn]);
+
+// Fixture answers are q-id yes/no strings, the same namespace computeL3Real() and
+// pillar-l3.html's preMap (via hb('qNN')) both read from - no translation needed,
+// which is itself part of what's being tested: if preMap's s-id-to-q-id wiring is
+// ever edited wrong, this harness will not silently mask it.
+function makeL3Answers(yesIds) {
+  const allIds = ['q11', 'q12', 'q13', 'q14', 'q19', 'q20', 'q21', 'q22', 'q23', 'q24', 'q25', 'q26', 'q27', 'q28', 'q29', 'q30', 'q31', 'q32', 'q33', 'q34', 'q35'];
+  const a = {};
+  for (const id of allIds) a[id] = yesIds.includes(id) ? 'yes' : 'no';
+  return a;
+}
+
+const l3Fixtures = [
+  { name: 'all 21 answered, mixed yes/no across categories', a: makeL3Answers(['q11', 'q19', 'q20', 'q22', 'q23', 'q25', 'q27', 'q12', 'q29', 'q30', 'q32', 'q33']) },
+  { name: 'all 21 answered, every category unanimous yes', a: makeL3Answers(['q11', 'q12', 'q13', 'q14', 'q19', 'q20', 'q21', 'q22', 'q23', 'q24', 'q25', 'q26', 'q27', 'q28', 'q29', 'q30', 'q31', 'q32', 'q33', 'q34', 'q35']) },
+  { name: 'every category unanimous no', a: makeL3Answers([]) },
+  {
+    name: 'only 12 of 21 answered (below the 13 eligibility floor)',
+    a: (() => { const a = makeL3Answers(['q11', 'q19', 'q20']); ['q27', 'q28', 'q29', 'q30', 'q31', 'q32', 'q33', 'q34', 'q35'].forEach((id) => { a[id] = ''; }); return a; })()
+  },
+  {
+    name: 'exactly 13 of 21 answered (at the eligibility floor)',
+    a: (() => { const a = makeL3Answers(['q11', 'q19', 'q20', 'q22']); ['q29', 'q30', 'q31', 'q32', 'q33', 'q34', 'q35', 'q27'].forEach((id) => { a[id] = ''; }); return a; })()
+  },
+  {
+    name: 'HR Mirror (5 items) all yes, every other category all no - the case the category-average fix exists for',
+    a: (() => { const a = makeL3Answers(['q12', 'q13', 'q29', 'q30', 'q31']); return a; })()
+  }
+];
+
+let l3Failures = 0;
+for (const f of l3Fixtures) {
+  const pillarResult = pillarL3Score(f.a);
+  const engineResult = engineL3Ctx.computeL3Real(f.a);
+
+  console.log('\n[' + f.name + ']');
+  console.log('  pillar-l3.html l3Coverage():   score=' + pillarResult.score + ' eligible=' + pillarResult.eligible + ' answered=' + pillarResult.total);
+  console.log('  engine computeL3Real():        score=' + engineResult.l3 + ' answered=' + engineResult.l3Answered);
+
+  if (pillarResult.eligible !== (engineResult.l3 != null)) { console.log('  ✗ DRIFT: eligibility gate disagrees.'); l3Failures++; }
+  if (pillarResult.total !== engineResult.l3Answered) { console.log('  ✗ DRIFT: answered-count disagrees.'); l3Failures++; }
+  if (pillarResult.score !== engineResult.l3) { console.log('  ✗ DRIFT: score disagrees.'); l3Failures++; }
+}
+
+console.log('\n' + '-'.repeat(72));
+if (l3Failures > 0) {
+  console.log(l3Failures + ' L3 drift(s) found between pillar-l3.html and the engine.');
+  process.exitCode = 1;
+} else {
+  console.log('No drift found between pillar-l3.html and humac-onboarding.html for these fixtures.');
+  console.log('All five pillars (L1-L5) are now covered by this harness.');
+}

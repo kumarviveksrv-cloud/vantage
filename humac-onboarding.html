@@ -1249,6 +1249,46 @@ function clampL2(n,lo,hi){return Math.max(lo,Math.min(hi,n));}
    scales with how many people are on it. That fix had landed on the pillar-l2.html drill-down
    page but never propagated to this function, the one that actually computes the composite
    Humac Score, so the two disagreed. Stars are no longer a factor in this component at all. */
+/* Extracted out of renderScoreReveal() on 2026-11-26, same reason and pattern as the L4/L5
+   display-side extractions: pure arithmetic over answers, no DOM access, so a consistency
+   harness can pull this exact function's source and run it against pillar-l3.html's
+   l3Coverage(), which already (per its own 2026-11-26 comment) mirrors this block's category
+   grouping and the 4-excluded-lead-items rule by hand. Behaviour unchanged from the inline
+   block this replaced. */
+function computeL3Real(answers){
+  /* q7-q10 (Leadership Pulse / Fear Index / Middle Layer / Execution Fidelity lead items) are
+     scored once, through the Human Confidence Index (see hci below), not here too. Before this
+     fix they counted in both places: inside the 30%-weighted Org Vitals percentage AND as the
+     separate HCI multiplier on the composite, so the same four answers moved the score twice.
+     They stay visible and answerable on the Org Vitals pillar page (diagnostic signal, unchanged);
+     only the scored L3 percentage used in the Humac composite excludes them now. 21 items, not 25. */
+  var l3Ids=['q11','q12','q13','q14','q19','q20','q21','q22','q23','q24','q25','q26','q27','q28','q29','q30','q31','q32','q33','q34','q35'];
+  var l3Answered=l3Ids.filter(function(id){return answers[id]==='yes'||answers[id]==='no';}).length;
+  /* The 21 scored items are not evenly split across the 6 named categories (Leadership Pulse,
+     Fear Index, Middle Layer Health and Execution Fidelity have 3 each; HR Mirror has 5; Peer &
+     Recognition Culture has 4), so a flat pooled percentage over all 21 items gave HR Mirror
+     1.67x the influence of the four smaller categories on the scored L3 percentage, silently,
+     despite the product presenting L3 as organised into 6 named categories of equal standing.
+     Fixed by scoring each category's own yes-rate first, then averaging the categories equally,
+     the standard correction for unevenly-sized subgroups. No new magnitude: every category still
+     counts exactly as much as every other category, which is what the product already implied. */
+  var l3Categories={
+    'Leadership Pulse':['q19','q20','q21'],
+    'Fear Index':['q22','q23','q24'],
+    'Middle Layer Health':['q11','q25','q26'],
+    'Execution Fidelity':['q14','q27','q28'],
+    'HR Mirror':['q12','q13','q29','q30','q31'],
+    'Peer & Recognition Culture':['q32','q33','q34','q35']
+  };
+  var l3CatPcts=Object.keys(l3Categories).map(function(cat){
+    var ids=l3Categories[cat].filter(function(id){return answers[id]==='yes'||answers[id]==='no';});
+    if(!ids.length)return null;
+    var yes=ids.filter(function(id){return answers[id]==='yes';}).length;
+    return yes/ids.length*100;
+  }).filter(function(p){return p!=null;});
+  var l3=(l3Answered>=13&&l3CatPcts.length)?Math.round(l3CatPcts.reduce(function(s,p){return s+p;},0)/l3CatPcts.length):null;
+  return {l3:l3,l3Answered:l3Answered};
+}
 function computeL2Real(a,excludeHipoStars){
   var scores=[];
   if((a.cq2_promoted12mo||0)>0)scores.push((a.cq2_promotedexcelling||0)/a.cq2_promoted12mo*100);
@@ -1323,36 +1363,8 @@ function buildMeaning(sd){
   return t;
 }
 function renderScoreReveal(){
-  /* q7-q10 (Leadership Pulse / Fear Index / Middle Layer / Execution Fidelity lead items) are
-     scored once, through the Human Confidence Index (see hci below), not here too. Before this
-     fix they counted in both places: inside the 30%-weighted Org Vitals percentage AND as the
-     separate HCI multiplier on the composite, so the same four answers moved the score twice.
-     They stay visible and answerable on the Org Vitals pillar page (diagnostic signal, unchanged);
-     only the scored L3 percentage used in the Humac composite excludes them now. 21 items, not 25. */
-  var l3Ids=['q11','q12','q13','q14','q19','q20','q21','q22','q23','q24','q25','q26','q27','q28','q29','q30','q31','q32','q33','q34','q35'];
-  var l3Answered=l3Ids.filter(function(id){return answers[id]==='yes'||answers[id]==='no';}).length;
-  /* The 21 scored items are not evenly split across the 6 named categories (Leadership Pulse,
-     Fear Index, Middle Layer Health and Execution Fidelity have 3 each; HR Mirror has 5; Peer &
-     Recognition Culture has 4), so a flat pooled percentage over all 21 items gave HR Mirror
-     1.67x the influence of the four smaller categories on the scored L3 percentage, silently,
-     despite the product presenting L3 as organised into 6 named categories of equal standing.
-     Fixed by scoring each category's own yes-rate first, then averaging the categories equally,
-     the standard correction for unevenly-sized subgroups. No new magnitude: every category still
-     counts exactly as much as every other category, which is what the product already implied. */
-  var l3Categories={
-    'Leadership Pulse':['q19','q20','q21'],
-    'Fear Index':['q22','q23','q24'],
-    'Middle Layer Health':['q11','q25','q26'],
-    'Execution Fidelity':['q14','q27','q28'],
-    'HR Mirror':['q12','q13','q29','q30','q31'],
-    'Peer & Recognition Culture':['q32','q33','q34','q35']
-  };
-  var l3CatPcts=Object.keys(l3Categories).map(function(cat){
-    var ids=l3Categories[cat].filter(function(id){return answers[id]==='yes'||answers[id]==='no';});
-    if(!ids.length)return null;
-    var yes=ids.filter(function(id){return answers[id]==='yes';}).length;
-    return yes/ids.length*100;
-  }).filter(function(p){return p!=null;});
+  var _l3r=computeL3Real(answers);
+  var l3Answered=_l3r.l3Answered;
   var l1raw=(confidence.A==='computed')?computeL1Real(answers):(answers.q1==null||answers.q1==='')?null:calcL1(answers.q1);
   if(confidence.A!=='computed')window.__l1book={canonical:true,insufficient:true,mode:'estimate',note:'Estimate mode has no cohort book. L4 must not invent one.'};
   var l1=l1raw==null?null:Math.round(l1raw);
@@ -1363,7 +1375,7 @@ function renderScoreReveal(){
      mode's calcL2Estimate has no such component, so there's nothing to exclude there. */
   var l2ForL5raw=(confidence.B==='computed')?computeL2Real(answers,true):l2raw;
   var l2ForL5=l2ForL5raw==null?null:Math.round(l2ForL5raw);
-  var l3=(l3Answered>=13&&l3CatPcts.length)?Math.round(l3CatPcts.reduce(function(s,p){return s+p;},0)/l3CatPcts.length):null;
+  var l3=_l3r.l3;
   var l4raw=(confidence.D==='computed')?computeL4Real(answers):(answers.q15==null||answers.q15==='')?null:calcL4(answers.q15);
   var l4=l4raw==null?null:Math.round(l4raw);
   var l5raw=(confidence.E==='computed')?computeL5Real(answers,l2ForL5,l3):((answers.q16==null&&answers.q17==null&&answers.q18==null)?null:calcL5(answers.q16,answers.q17,answers.q18));
