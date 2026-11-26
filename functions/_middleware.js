@@ -1,9 +1,43 @@
 /**
  * Geo-restriction middleware — Vantage / Virorah
- * Allows only India (IN) traffic to reach the app.
+ * Marketing/public pages are served globally (any country).
+ * App pages (behind auth) are restricted to India (IN) only.
  * Static assets and known social/search crawlers are always served
  * (needed for OG previews on LinkedIn, WhatsApp, Twitter, etc.)
  */
+
+// Public marketing pages — served to every country, no geo-check.
+// These are the pages a visitor from any country should be able to browse.
+// Everything NOT in this list is an app page and stays India-only.
+const PUBLIC_PATHS = new Set([
+  '/',
+  '/index',
+  '/index.html',
+  '/about',
+  '/about.html',
+  '/pricing',
+  '/pricing.html',
+  '/faq',
+  '/faq.html',
+  '/methodology',
+  '/methodology.html',
+  '/demo',
+  '/demo.html',
+  '/platform-tour',
+  '/platform-tour.html',
+  '/privacy',
+  '/privacy.html',
+  '/terms',
+  '/terms.html',
+  '/404',
+  '/404.html',
+]);
+
+function isPublicPage(pathname) {
+  // Normalise: strip trailing slashes, lowercase
+  const p = pathname.replace(/\/+$/, '').toLowerCase() || '/';
+  return PUBLIC_PATHS.has(p);
+}
 
 const STATIC_EXTENSIONS = [
   '.png', '.jpg', '.jpeg', '.webp', '.svg', '.ico',
@@ -161,6 +195,11 @@ export async function onRequest(context) {
     return next();
   }
 
+  // Public marketing pages are served globally — no geo-check needed.
+  if (isPublicPage(url.pathname)) {
+    return next();
+  }
+
   // Always serve known social/search crawlers so OG tags are readable.
   // LinkedIn, WhatsApp, Twitter bots are US-based and need the real HTML.
   const ua = request.headers.get('User-Agent') || '';
@@ -176,7 +215,7 @@ export async function onRequest(context) {
     return next();
   }
 
-  // Non-India: return branded restriction page
+  // Non-India app page: return branded restriction page
   return new Response(geoBlockedPage(), {
     status: 200,
     headers: {
