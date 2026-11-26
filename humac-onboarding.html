@@ -212,13 +212,18 @@ input[type=number]{-moz-appearance:textfield}
 .pillar-card-v2:hover{transform:translateY(-4px) scale(1.005);border-color:var(--pillar-accent,rgba(99,102,241,.4));box-shadow:0 10px 32px var(--pillar-accent-glow,rgba(99,102,241,.2))}
 .pillar-card-v2::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pillar-accent,var(--cobalt))}
 @keyframes pillarPop{to{opacity:1;transform:translateY(0) scale(1)}}
-/* Pulsing glow removed from individual pillar-breakdown cards 2026-11-26 -
-   Vivek: glow belongs on the larger cards on this page, not inside the
-   breakdown, and having it fire only on whichever pillar happened to be
-   "Low Attribution" (Human Balance Sheet, in his screenshot) read as a
-   visual bug, not a signal, since nothing on the card explains why that
-   one pulses and the other four don't. See .glow-card below for where the
-   glow actually lives now. */
+/* Pulsing glow on Low Attribution pillar cards, reintroduced 2026-11-26
+   with the fix the first version was missing: it now uses
+   var(--pillar-accent)/var(--pillar-accent-glow), the exact same
+   variables that already color this card's left stripe, badge and hover
+   state - and since getBand() above now gives Low Attribution its own
+   --amber color instead of sharing Value Generating's indigo, the glow,
+   the stripe and the badge are all the same color for the same reason.
+   A card that pulses amber because every other amber thing on it is also
+   amber reads as a signal; a card that pulsed the site's default indigo
+   for no visible reason read as a bug, which is what this replaces. */
+@keyframes pillarGlow{0%,100%{box-shadow:0 0 0 0 rgba(0,0,0,0);border-color:rgba(99,102,241,.16)}50%{box-shadow:0 0 22px 6px var(--pillar-accent-glow,rgba(255,181,71,.3)),0 0 0 1px var(--pillar-accent,rgba(255,181,71,.5));border-color:var(--pillar-accent,rgba(255,181,71,.5))}}
+.pillar-card-v2.is-destruction{animation:pillarPop .55s cubic-bezier(.19,1,.22,1) var(--pop-delay,0s) forwards,pillarGlow 2.6s ease-in-out calc(var(--pop-delay,0s) + 0.65s) infinite}
 
 /* Soft pulsing glow for this page's larger cards - exact box-shadow/timing
    already established on pillar-l1.html's .hero (hero-pulse), reused here
@@ -677,7 +682,16 @@ function calcL4(pct){return minMaxL4((pct||0)/100);}
 function calcL5(qA,qBYears,qC){var base=(qA==='yes')?2.0:1.2;var yrs=Math.min(parseFloat(qBYears)||0,10);var mult=1+(yrs/10)*0.30;var adj=base*mult;var div={low:1.0,medium:1.2,high:1.5}[(qC||'').toLowerCase()]||1.0;var ratio=adj/div;var idx=(ratio-1.0)*20;if(idx<0)return 0;if(idx>=50)return 100;if(idx<=20)return 10+(idx/20)*40;return 50+((idx-20)/30)*50;}
 function calcHCI(n){return Math.min(1,Math.round((0.70+n*0.15)*100)/100);}
 function countYes(ids){return ids.filter(function(id){return answers[id]==='yes';}).length;}
-function getBand(s){if(s<=30)return{name:'Low Attribution',color:'#6366f1',desc:'The planning model attributes little return to the cohorts entered. This is not a finding that people cost more than they return.'};if(s<=50)return{name:'Value Neutral',color:'#a5b4fc',desc:'Attributed return is modest against payroll. Read the range, not the band name.'};if(s<=70)return{name:'Value Generating',color:'#6366f1',desc:'Attributed return is material under the base case. The high case is still an assumption.'};if(s<=85)return{name:'Value Compounding',color:'#7c3aed',desc:'Base case is strong on this scale. A score this high should be checked against the cohort counts.'};return{name:'Value Exceptional',color:'#c4b5fd',desc:'At the top of a provisional scale. Treat as a planning ceiling, not a ranking.'};}
+/* Low Attribution's color changed from #6366f1 to the --amber token
+   2026-11-26: it was sharing the exact same indigo as Value Generating,
+   so the badge/stripe/dot never actually distinguished a bad pillar from
+   a good one by color - only the (then-unexplained) pulse on this one
+   band did, with a glow color that matched nothing else on the card.
+   Now the warning color is the single source of truth: badge, stripe,
+   dot AND the glow below all derive from this one value, so a Low
+   Attribution pillar reads as consistently flagged, not randomly
+   animated. */
+function getBand(s){if(s<=30)return{name:'Low Attribution',color:'#FFB547',desc:'The planning model attributes little return to the cohorts entered. This is not a finding that people cost more than they return.'};if(s<=50)return{name:'Value Neutral',color:'#a5b4fc',desc:'Attributed return is modest against payroll. Read the range, not the band name.'};if(s<=70)return{name:'Value Generating',color:'#6366f1',desc:'Attributed return is material under the base case. The high case is still an assumption.'};if(s<=85)return{name:'Value Compounding',color:'#7c3aed',desc:'Base case is strong on this scale. A score this high should be checked against the cohort counts.'};return{name:'Value Exceptional',color:'#c4b5fd',desc:'At the top of a provisional scale. Treat as a planning ceiling, not a ranking.'};}
 function getConfidenceLevel(){var e=Object.values(confidence).filter(function(v){return v==='estimated';}).length;if(e===0)return 'high';if(e<=2)return 'medium';return 'low';}
 
 /* ── Score guide — band legend + HCI explainer. Pure presentation,
