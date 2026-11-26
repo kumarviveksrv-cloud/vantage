@@ -1405,17 +1405,35 @@ function buildMeaning(sd){
   if(!keys.length)return '';
   var lo=keys.reduce(function(x,k){return sd[k]<sd[x]?k:x;},keys[0]);
   var hi=keys.reduce(function(x,k){return sd[k]>sd[x]?k:x;},keys[0]);
-  var t='<b>What this score means.</b> '+sd.humac+' out of 100 ('+sd.band+') on a provisional scale. It is a planning index for tracking your own direction from one quarter to the next, not a grade against other companies. It blends five pillars. Your strongest is '+pn[hi]+' ('+sd[hi]+') and your weakest is '+pn[lo]+' ('+sd[lo]+'), so that is the first place to look.';
+  /* Rewritten 2026-11-26: the previous version packed the band label, the
+     "not a benchmark" caveat, the pillar spread, and every pillar's rupee
+     detail into one run-on sentence joined by semicolons, including an
+     awkward double-negative on the L5 shortfall case ("the gaps... outweigh
+     the value held by..."). Vivek flagged it as genuinely hard to parse.
+     Split into short, separate sentences, one fact each, in the order a
+     reader actually needs them: the number, what it means, where to look,
+     then the rupee detail behind it. */
+  var t='<b>What this score means.</b> You scored '+sd.humac+'/100 ('+sd.band+'). This tracks your own direction over time, it is not a benchmark against other companies.';
+  t+=' Of your five pillars, '+pn[hi]+' is strongest at '+sd[hi]+' and '+pn[lo]+' is weakest at '+sd[lo]+' \u2014 start there.';
   var bits=[];
   try{
     if(sd.l1Mode==='computed'){
       var b=buildL1Book(a);
       if(!b.insufficient&&b.compBase>0){
         var pct=b.totalRet/b.compBase*100;
-        bits.push('your Value Ledger credits HR with about '+fmtRs(b.totalRet)+' a year ('+pct.toFixed(1)+'% of payroll, roughly '+Math.round(pct/100*365)+' days of payroll)');
+        bits.push('Your Value Ledger credits HR with about '+fmtRs(b.totalRet)+' a year, '+pct.toFixed(1)+'% of payroll (roughly '+Math.round(pct/100*365)+' days\u2019 worth).');
         if(sd.l4Mode==='computed'){
           var actual=Number(a.cq4_hrspend)||0;var cost=actual>0?actual:b.compBase*0.075;
-          bits.push('against HR spend of '+fmtRs(cost)+(actual>0?'':' (assumed)')+' that is \u20b9'+(b.totalRet/cost).toFixed(2)+' back for every \u20b91');
+          var ratio=b.totalRet/cost;
+          var l4Bit='Against HR spend of '+fmtRs(cost)+(actual>0?'':' (assumed)')+', that is \u20b9'+ratio.toFixed(2)+' credited for every \u20b91 spent.';
+          /* L4's own drill-down page already nudges toward this same check once
+             margin >= 3 (buildActions' top bracket), but only there, several
+             clicks deep. A ratio this far past the scale's own placeholder
+             ceiling (L4_BENCH.max = 1.5x) is worth flagging right here, on the
+             headline summary, since a score of 100 reads as "perfect" with no
+             hint that the scale saturated well before this number did. */
+          if(ratio>=3)l4Bit+=' A ratio this high is usually the HR spend figure being too low or incomplete, not HR being '+Math.round(ratio)+'x more efficient than planned \u2014 worth double-checking before this number leaves the room.';
+          bits.push(l4Bit);
         }
       }
     }
@@ -1423,11 +1441,12 @@ function buildMeaning(sd){
       var p5=computeL5Parts(a,(sd.l2ForL5!=null||sd.l2==null)?sd.l2ForL5:sd.l2,sd.l3);
       if(p5&&p5.compBase>0){
         var pc=p5.nhw/p5.compBase*100;
-        bits.push(p5.nhw>=0?'your people position leaves a cushion of '+fmtRs(p5.nhw)+' (roughly '+Math.round(Math.abs(pc)/100*365)+' days of payroll)':'the gaps in your people position outweigh the value held by '+fmtRs(-p5.nhw)+' (roughly '+Math.round(Math.abs(pc)/100*365)+' days of payroll)');
+        var days=Math.round(Math.abs(pc)/100*365);
+        bits.push(p5.nhw>=0?'Your Human Balance Sheet carries a surplus of about '+fmtRs(p5.nhw)+', roughly '+days+' days of payroll in reserve.':'Your Human Balance Sheet is short by about '+fmtRs(-p5.nhw)+' \u2014 what you\u2019re exposed to (institutional knowledge, key relationships) currently exceeds what\u2019s booked to offset it, by roughly '+days+' days of payroll.');
       }
     }
   }catch(e){}
-  if(bits.length)t+=' In rupees: '+bits.join('; ')+'.';
+  if(bits.length)t+=' '+bits.join(' ');
   return t;
 }
 function renderScoreReveal(){
