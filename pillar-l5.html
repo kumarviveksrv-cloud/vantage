@@ -56,6 +56,25 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .nhw-num.pos{background:linear-gradient(135deg,#60E8A0 0%,#6366f1 40%,#20A870 100%);-webkit-background-clip:text;background-clip:text}
 .nhw-num.neg{background:linear-gradient(135deg,#F08070 0%,#E05C3A 50%,#C04020 100%);-webkit-background-clip:text;background-clip:text}
 .score-band-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:5px;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;font-weight:500;margin-top:12px}
+@keyframes cobalt-pulse{
+  0%,100%{box-shadow:0 0 1px rgba(99,102,241,.3),0 0 8px rgba(99,102,241,.15),0 0 20px rgba(99,102,241,.06)}
+  50%{box-shadow:0 0 0 1px rgba(99,102,241,.6),0 0 20px rgba(99,102,241,.4),0 0 40px rgba(99,102,241,.18)}
+}
+.intro-panel{margin-bottom:28px}
+.intro-toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:12px;cursor:pointer;animation:cobalt-pulse 3s ease-in-out infinite}
+.intro-tl{display:flex;align-items:center;gap:12px}
+.intro-icon{width:26px;height:26px;border-radius:50%;background:var(--cobalt);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.66rem;font-weight:700;color:#fff;font-family:var(--mono)}
+.intro-title{font-size:.9rem;font-weight:500;color:#f4f3ff}
+.intro-sub{font-family:var(--mono);font-size:.64rem;color:#a5b4fc;margin-top:2px}
+.intro-chevron{font-family:var(--mono);font-size:.66rem;color:rgba(244,243,255,.25);transition:transform .2s}
+.intro-chevron.open{transform:rotate(180deg)}
+.intro-body{background:var(--bg2);border:1px solid var(--cobalt-border);border-top:none;border-radius:0 0 12px 12px;padding:28px;display:none;box-shadow:0 4px 24px rgba(99,102,241,.08)}
+.intro-body.open{display:block}
+.intro-sec{margin-bottom:20px}
+.intro-sec:last-child{margin-bottom:0}
+.intro-sec-lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px}
+.intro-sec-txt{font-size:.9rem;color:var(--text-dim);line-height:1.7}
+.intro-sec-txt b{color:#f4f3ff;font-weight:500}
 .story-rule{width:32px;height:2px;background:linear-gradient(90deg,var(--cobalt),#a5b4fc);margin-bottom:14px}
 .hook{font-style:italic;font-size:1.1rem;line-height:1.5;color:#f4f3ff;margin-bottom:10px}
 .context{font-size:.84rem;color:var(--text-dim);line-height:1.7}.context b{color:#f4f3ff;font-weight:500}
@@ -329,7 +348,9 @@ function render(){
 
   var shared=blocked?'<div class="gate"><b style="color:#f4f3ff">Shared cohorts are not repriced here.</b> Complete the Value Ledger to see the return already booked for stars, emerging talent, tenure, and at-risk people. Those lines are excluded from Net Human Worth.</div>':'<div class="assumption-note" style="margin-bottom:12px">L1 already books <b>'+fmtINR(book.totalRet||0)+'</b> for the shared cohorts. That figure is not added again here.</div>';
 
-  var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L5 Score</div><div class="ratio-num">'+l5+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">Provisional band: '+sb.name+'</div></div><div class="hero-divider"></div><div><div class="ratio-lbl">Net Human Worth per \u20b9100 payroll</div><div class="nhw-num '+(nhwPos?'pos':'neg')+'">'+(nhwPos?'+':'')+'\u20b9'+per.toFixed(1)+'</div><div class="context">Rupee stock, secondary: <b>'+(nhw>=0?'+':'')+fmtINR(nhw)+'</b>.<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' input coverage \xb7 '+scenario+' case \xb7 L5 carries 10% of Humac Score</div></div></div></div>';
+  var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L5 Score</div><div class="ratio-num">'+l5+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">Provisional band: '+sb.name+'</div></div><div class="hero-divider"></div><div><div class="ratio-lbl">Net Human Worth per \u20b9100 payroll</div><div class="nhw-num '+(nhwPos?'pos':'neg')+'">'+(nhwPos?'+':'')+'\u20b9'+per.toFixed(1)+'</div><div class="context">Rupee stock, secondary: <b>'+(nhw>=0?'+':'')+fmtINR(nhw)+'</b>.<br><br>HCI '+hci.toFixed(2)+'x applied \xb7 '+conf+' input coverage across your whole Humac Score, not L5-specific \xb7 '+scenario+' case \xb7 L5 carries 10% of Humac Score</div></div></div></div>';
+
+  var introPanel='<div class="intro-panel"><div class="intro-toggle" onclick="toggleIntro()"><div class="intro-tl"><div class="intro-icon">?</div><div><div class="intro-title">What is the Human Balance Sheet?</div><div class="intro-sub">What you hold vs what you\u2019re exposed to \xb7 L5 \xb7 10% of Humac Score</div></div></div><div class="intro-chevron" id="intro-chev">\u25bc</div></div><div class="intro-body" id="intro-body"><div class="intro-sec"><div class="intro-sec-lbl">What it is</div><div class="intro-sec-txt">Weighs two things against each other: assets, institutional knowledge and key relationships your senior and revenue-facing people carry, against liabilities, skill debt, growth-readiness gaps and culture risk implied by your L2 and L3 scores. Net Human Worth is assets minus liabilities, a rupee stock, not a flow like L1 or L4. It never re-prices the cohorts already booked in L1.</div></div><div class="intro-sec"><div class="intro-sec-lbl">What "'+sb.name+'" means</div><div class="intro-sec-txt">The badge above your score reads your L5 score, 0\u2013100, against four fixed tiers: Minimum (0\u201325), Emerging (26\u201350), Value Active (51\u201372), Value Engine (73\u2013100). These bounds are the same four tiers used on every pillar page, they are Vantage\u2019s own provisional placeholders, not an external benchmark.</div></div><div class="intro-sec"><div class="intro-sec-lbl">What is HCI?</div><div class="intro-sec-txt">The <b>Human Confidence Index</b> is a stability discount, not a performance score. It can only hold your score or lower it, never raise it, built from four yes/no stability questions about leadership, restructuring, culture and strategic priorities. Two or more "Yes" answers means no discount (1.00x). One "Yes" is 0.85x. Zero is 0.70x. The same coefficient applies everywhere in Vantage, it is not computed separately per pillar.</div></div><div class="intro-sec"><div class="intro-sec-lbl">What does "input coverage" mean here</div><div class="intro-sec-txt">This is not how complete your L5 answers are specifically. It is whether any of your five pillars (L1-L5) had to be filled in with an estimate because a question was skipped, checked once for your whole Humac Score. High means none were estimated, Medium means one or two were, Low means three or more were.</div></div></div></div>';
 
   var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l5+'/100</div><div class="sl">L5 Score</div></div><div class="stat"><div class="sv '+(nhwPos?'sv-green':'sv-red')+'">'+(nhwPos?'+':'')+'\u20b9'+per.toFixed(1)+'</div><div class="sl">NHW per \u20b9100 payroll</div></div><div class="stat"><div class="sv sv-cobalt">'+fmtINR(book?book.totalRet||0:0)+'</div><div class="sl">Shared L1 return (not repriced)</div></div><div class="stat"><div class="sv sv-dim">'+hci.toFixed(2)+'x</div><div class="sl">HCI coefficient</div></div></div>';
 
@@ -387,10 +408,11 @@ function render(){
 
   var bottomNav='<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><button onclick="printReport()" class="btn-back" style="cursor:pointer">\u2b07 Download PDF</button><a href="dashboard.html" class="btn-next">Dashboard \u2192</a></div>';
 
-  w.innerHTML='<div class="print-header"><span class="ph-brand">Vantage \xb7 Virorah</span><span class="ph-meta">L5 Human Balance Sheet \xb7 '+(industry?industry+' \xb7 ':'')+scoreDate+'</span></div>'+nav+header+shared+hero+stats+findingsHtml+assumptionBar+bsWrap+assumptionsTable+stmt+actions+complete+bottomNav;
+  w.innerHTML='<div class="print-header"><span class="ph-brand">Vantage \xb7 Virorah</span><span class="ph-meta">L5 Human Balance Sheet \xb7 '+(industry?industry+' \xb7 ':'')+scoreDate+'</span></div>'+nav+header+shared+hero+stats+findingsHtml+assumptionBar+introPanel+bsWrap+assumptionsTable+stmt+actions+complete+bottomNav;
 }
 function printReport(){var prev=document.title;document.title='L5 Human Balance Sheet \xb7 Vantage';window.print();document.title=prev;}
 function setScenario(s){scenario=s;render();}
+function toggleIntro(){var b=document.getElementById('intro-body');var c=document.getElementById('intro-chev');if(b){b.classList.toggle('open');if(c)c.classList.toggle('open');}}
 render();
 </script>
 <script src="clerk-auth.js?v=20261116a"></script>

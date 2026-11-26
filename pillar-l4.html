@@ -56,6 +56,25 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);font-weight:
 .ratio-num.pos{background:linear-gradient(135deg,#60E8A0 0%,#6366f1 40%,#20A870 100%);-webkit-background-clip:text;background-clip:text}
 .ratio-num.neg{background:linear-gradient(135deg,#F08070 0%,#E05C3A 50%,#C04020 100%);-webkit-background-clip:text;background-clip:text}
 .score-band-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:5px;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;font-weight:500;margin-top:12px}
+@keyframes cobalt-pulse{
+  0%,100%{box-shadow:0 0 1px rgba(99,102,241,.3),0 0 8px rgba(99,102,241,.15),0 0 20px rgba(99,102,241,.06)}
+  50%{box-shadow:0 0 0 1px rgba(99,102,241,.6),0 0 20px rgba(99,102,241,.4),0 0 40px rgba(99,102,241,.18)}
+}
+.intro-panel{margin-bottom:28px}
+.intro-toggle{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--bg2);border:1px solid var(--cobalt-border);border-radius:12px;cursor:pointer;animation:cobalt-pulse 3s ease-in-out infinite}
+.intro-tl{display:flex;align-items:center;gap:12px}
+.intro-icon{width:26px;height:26px;border-radius:50%;background:var(--cobalt);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.66rem;font-weight:700;color:#fff;font-family:var(--mono)}
+.intro-title{font-size:.9rem;font-weight:500;color:#f4f3ff}
+.intro-sub{font-family:var(--mono);font-size:.64rem;color:#a5b4fc;margin-top:2px}
+.intro-chevron{font-family:var(--mono);font-size:.66rem;color:rgba(244,243,255,.25);transition:transform .2s}
+.intro-chevron.open{transform:rotate(180deg)}
+.intro-body{background:var(--bg2);border:1px solid var(--cobalt-border);border-top:none;border-radius:0 0 12px 12px;padding:28px;display:none;box-shadow:0 4px 24px rgba(99,102,241,.08)}
+.intro-body.open{display:block}
+.intro-sec{margin-bottom:20px}
+.intro-sec:last-child{margin-bottom:0}
+.intro-sec-lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px}
+.intro-sec-txt{font-size:.9rem;color:var(--text-dim);line-height:1.7}
+.intro-sec-txt b{color:#f4f3ff;font-weight:500}
 .story-rule{width:32px;height:2px;background:linear-gradient(90deg,var(--cobalt),#a5b4fc);margin-bottom:14px}
 .hook{font-style:italic;font-size:1.1rem;line-height:1.5;color:#f4f3ff;margin-bottom:10px}
 .context{font-size:.84rem;color:var(--text-dim);line-height:1.7}.context b{color:#f4f3ff;font-weight:500}
@@ -332,7 +351,9 @@ function render(){
 
   try{sessionStorage.setItem('vantage_l4_book', JSON.stringify({source:'vantage_l1_book',scenario:scenario,totalRet:book.totalRet,hrInvestment:invest,margin:margin,netProfit:netProfit,forbidden:['cq1_stars','cq1_emerging','cq1_tenured5','cq1_revhires','cq4_revhires24','cq1_atrisk']}));}catch(e){}
 
-  var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L4 Score</div><div class="ratio-num">'+l4+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">Provisional band: '+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+(margin!=null?q4Ratio+' modelled margin, under the '+scenario+' case, from L1 return \xf7 L4 planning costs':'HR modelled margin not yet computed')+'</div><div class="context">'+'Break-even is 1.00x: HR-attributed return equal to HR spend.<br>Return from the L1 Value Ledger divided by L4\u2019s own HR operating costs, not a second valuation of the people already priced in L1.<br><br>HCI '+hci.toFixed(2)+'x \xb7 '+conf+' input coverage \xb7 '+scenario+' case \xb7 L4 carries 20% of Humac Score</div></div></div></div>';
+  var hero='<div class="hero"><div class="hero-grid"><div><div class="ratio-lbl">L4 Score</div><div class="ratio-num">'+l4+'</div><div class="score-band-badge" style="background:'+sb.color+'16;border:1px solid '+sb.color+'30;color:'+sb.color+'">Provisional band: '+sb.name+'</div></div><div class="hero-divider"></div><div><div class="story-rule"></div><div class="hook">'+(margin!=null?q4Ratio+' modelled margin, under the '+scenario+' case, from L1 return \xf7 L4 planning costs':'HR modelled margin not yet computed')+'</div><div class="context">'+'Break-even is 1.00x: HR-attributed return equal to HR spend.<br>Return from the L1 Value Ledger divided by L4\u2019s own HR operating costs, not a second valuation of the people already priced in L1.<br><br>HCI '+hci.toFixed(2)+'x applied \xb7 '+conf+' input coverage across your whole Humac Score, not L4-specific \xb7 '+scenario+' case \xb7 L4 carries 20% of Humac Score</div></div></div></div>';
+
+  var introPanel='<div class="intro-panel"><div class="intro-toggle" onclick="toggleIntro()"><div class="intro-tl"><div class="intro-icon">?</div><div><div class="intro-title">What is Human P&amp;L?</div><div class="intro-sub">HR spend measured as a margin \xb7 L4 \xb7 20% of Humac Score</div></div></div><div class="intro-chevron" id="intro-chev">\u25bc</div></div><div class="intro-body" id="intro-body"><div class="intro-sec"><div class="intro-sec-lbl">What it is</div><div class="intro-sec-txt">Takes the rupee return already booked in the L1 Value Ledger and divides it by what you actually spend running HR (your entered figure, or an assumed 7.5% of payroll if you haven\u2019t entered one). Above 1.00x means the L1 return outweighs what HR costs to run. It never re-prices the people themselves, that stays in L1.</div></div><div class="intro-sec"><div class="intro-sec-lbl">What "'+sb.name+'" means</div><div class="intro-sec-txt">The badge above your score reads your L4 score, 0\u2013100, against four fixed tiers: Minimum (0\u201325), Emerging (26\u201350), Value Active (51\u201372), Value Engine (73\u2013100). These bounds are the same four tiers used on every pillar page, they are Vantage\u2019s own provisional placeholders, not an external benchmark.</div></div><div class="intro-sec"><div class="intro-sec-lbl">What is HCI?</div><div class="intro-sec-txt">The <b>Human Confidence Index</b> is a stability discount, not a performance score. It can only hold your score or lower it, never raise it, built from four yes/no stability questions about leadership, restructuring, culture and strategic priorities. Two or more "Yes" answers means no discount (1.00x). One "Yes" is 0.85x. Zero is 0.70x. The same coefficient applies everywhere in Vantage, it is not computed separately per pillar.</div></div><div class="intro-sec"><div class="intro-sec-lbl">What does "input coverage" mean here</div><div class="intro-sec-txt">This is not how complete your L4 answers are specifically. It is whether any of your five pillars (L1-L5) had to be filled in with an estimate because a question was skipped, checked once for your whole Humac Score. High means none were estimated, Medium means one or two were, Low means three or more were.</div></div></div></div>';
 
   var stats='<div class="stats"><div class="stat"><div class="sv sv-teal">'+l4+'/100</div><div class="sl">L4 Score</div></div><div class="stat"><div class="sv '+(margin==null?'sv-dim':isPos?'sv-green':'sv-red')+'">'+q4Ratio+'</div><div class="sl">Margin (L1 return \xf7 L4 cost)</div></div><div class="stat"><div class="sv sv-cobalt">1.00x</div><div class="sl">Break-even margin<a class="src-chip" href="https://vantage.virorah.com/methodology.html#s6-legal" target="_blank" rel="noopener">?</a></div></div><div class="stat"><div class="sv sv-dim">'+hci.toFixed(2)+'x</div><div class="sl">HCI coefficient</div></div></div>';
 
@@ -368,10 +389,11 @@ function render(){
 
   var bottomNav='<div class="bottom-nav"><a href="humac-onboarding.html" class="btn-back">\u2190 Humac Score</a><button onclick="printReport()" class="btn-back" style="cursor:pointer">\u2b07 Download PDF</button><a href="pillar-l5.html" class="btn-next">L5 Balance Sheet \u2192</a></div>';
 
-  w.innerHTML='<div class="print-header"><span class="ph-brand">Vantage \xb7 Virorah</span><span class="ph-meta">L4 Human P&amp;L \xb7 '+(industry?industry+' \xb7 ':'')+scoreDate+'</span></div>'+nav+header+hero+stats+findingsHtml+assumptionBar+plWrap+assumptionsTable+bookNote+stmt+actions+bottomNav;
+  w.innerHTML='<div class="print-header"><span class="ph-brand">Vantage \xb7 Virorah</span><span class="ph-meta">L4 Human P&amp;L \xb7 '+(industry?industry+' \xb7 ':'')+scoreDate+'</span></div>'+nav+header+hero+stats+findingsHtml+assumptionBar+introPanel+plWrap+assumptionsTable+bookNote+stmt+actions+bottomNav;
 }
 function printReport(){var prev=document.title;document.title='L4 Human P\x26L \xb7 Vantage';window.print();document.title=prev;}
 function setScenario(s){scenario=s;render();}
+function toggleIntro(){var b=document.getElementById('intro-body');var c=document.getElementById('intro-chev');if(b){b.classList.toggle('open');if(c)c.classList.toggle('open');}}
 render();
 </script>
 <script src="clerk-auth.js?v=20261116a"></script>
