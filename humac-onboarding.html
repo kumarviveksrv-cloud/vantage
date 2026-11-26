@@ -578,6 +578,14 @@ function handleTemplateUpload(file){
       statusEl.style.background='rgba(74,222,128,.08)';statusEl.style.color='#4ade80';statusEl.style.border='1px solid rgba(74,222,128,.25)';
       statusEl.innerHTML=successMsg;
 
+      // On a returning-visit/check-in load, the init IIFE hides #block-container
+      // (display:none) and shows #score-reveal instead. renderBlock() only ever
+      // fills block-container's innerHTML, it never flips these display states back,
+      // so the Continue/Generate-score button rendered into the DOM invisibly on
+      // check-in sessions. Mirror restartOnboarding()'s own visibility toggle here.
+      var scoreRevealEl=document.getElementById('score-reveal');
+      if(scoreRevealEl)scoreRevealEl.style.display='none';
+      document.getElementById('block-container').style.display='block';
       renderBlock(0);
     }catch(err){
       statusEl.style.background='rgba(224,92,58,.08)';statusEl.style.color='#E05C3A';statusEl.style.border='1px solid rgba(224,92,58,.25)';
