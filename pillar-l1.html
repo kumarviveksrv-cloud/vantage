@@ -240,6 +240,13 @@ body{
   <div class="meridian-chip" id="meridian-chip"><div class="m-header"><div class="label">MERIDIAN Profile</div><div class="m-badge" id="meridian-badge">Incomplete</div></div><div class="val" id="meridian-summary">Not configured yet</div></div>
 </div>
 <div class="wrap" id="main-wrap"></div>
+<!-- Must load before the inline script below: render() calls HumacShared.* (via
+     computeRealLedger) synchronously on every page load where l1Mode is
+     'computed' - i.e. for any real computed-mode score. Script tags execute in
+     document order, so this was previously loaded AFTER the script that needed
+     it, throwing ReferenceError: HumacShared is not defined on first paint for
+     exactly that case. Found 2026-11-26 while building verify-pillar-render.js. -->
+<script src="humac-shared.js?v=20261111b"></script>
 <script>
 (function(){var raw=sessionStorage.getItem('sr_meridian');if(raw){try{var m=JSON.parse(raw);document.getElementById('meridian-summary').innerText=(m.state||'')+' · '+(m.industry||'');var b=document.getElementById('meridian-badge');b.innerText='Active';b.className='m-badge complete';}catch(e){}}})();
 var hd=null,md=null;
@@ -514,7 +521,6 @@ function toggleSW(id){var p=document.getElementById(id);var b=document.getElemen
 function setScenario(s){scenario=s;render();}
 render();
 </script>
-<script src="humac-shared.js?v=20261111b"></script>
 <script src="clerk-auth.js?v=20261116a"></script>
 <script src="sidebar-shared.js?v=20261124a"></script>
 </body>
