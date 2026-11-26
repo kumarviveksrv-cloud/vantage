@@ -343,6 +343,18 @@ input[type=number]{-moz-appearance:textfield}
   </div>
 </div>
 
+<!-- Must load before the inline script below: renderScoreReveal() calls HumacShared.*
+     (via computeL1Real/buildL1Book) as part of showing your existing score summary
+     whenever you land on this page with a saved score - which is the normal case for
+     anyone coming back from a pillar page or the sidebar. Script tags execute in
+     document order, so this was previously loaded AFTER the script that needed it:
+     renderScoreReveal() threw and aborted partway through, leaving block-container
+     hidden and #score-reveal empty - no questionnaire, no summary, just the static
+     CSV-template panel and stepper that don't depend on this. Same bug class already
+     fixed in pillar-l1.html/pillar-l5.html this session; found here the same way,
+     by actually running this page's script instead of only syntax-checking it.
+     2026-11-26. -->
+<script src="humac-shared.js?v=20261111b"></script>
 <script>
 (function(){
   try{var _m=JSON.parse(sessionStorage.getItem('sr_meridian')||'{}');var _ot=(_m.orgType||'').toLowerCase();if(_ot.includes('startup')||_ot.includes('series a')||_ot.includes('series b')||_ot.includes('seed')){window._tenureYrs='2';window._tenureLabel='2+ years (tenure line used for this run)';}else if(_ot.includes('large')||_ot.includes('enterprise')||_ot.includes('psu')||_ot.includes('government')){window._tenureYrs='5';window._tenureLabel='5+ years (tenure line used for this run)';}else{window._tenureYrs='3';window._tenureLabel='3+ years (tenure line used for this run)';}}catch(e){window._tenureYrs='3';window._tenureLabel='3+ years';}
@@ -1773,7 +1785,6 @@ function generateReport(){
 })();
 </script>
 <script src="/vendor/xlsx.0.18.5.full.min.js"></script>
-<script src="humac-shared.js?v=20261111b"></script>
 <script src="clerk-auth.js?v=20261116a"></script>
 <script src="sidebar-shared.js?v=20261124a"></script>
 </body>
