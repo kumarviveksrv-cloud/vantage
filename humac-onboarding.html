@@ -1235,12 +1235,20 @@ function computeL5Parts(a,l2,l3){
 }
 function computeL5Real(a,l2,l3){var r=computeL5Parts(a,l2,l3);return r==null?null:r.score;}
 function clampL2(n,lo,hi){return Math.max(lo,Math.min(hi,n));}
-/* excludeHipoStars=true drops the HiPo/Star-driven component below (used only to feed L5's
-   capability-gap liability, see computeL5Parts/l2ForL5). Without this, the same HiPo/Star
-   headcount moved L5 twice: once as a direct asset (hipoBench) and again by raising L2, which
-   shrinks L5's own liability via gap(l2). Excluding the component here, rather than damping the
-   liability by an invented coefficient, means L5's liability is sized only by the parts of L2 that
-   are genuinely independent of what L5 already credits directly -- no new magnitude introduced. */
+/* excludeHipoStars=true drops the HiPo-identification component below (used only to feed L5's
+   capability-gap liability, see computeL5Parts/l2ForL5). Without this, the same HiPo headcount
+   moved L5 twice: once as a direct asset (hipoBench) and again by raising L2, which shrinks L5's
+   own liability via gap(l2). Excluding the component here, rather than damping the liability by
+   an invented coefficient, means L5's liability is sized only by the parts of L2 that are
+   genuinely independent of what L5 already credits directly -- no new magnitude introduced.
+
+   HiPo identification is a presence check, not a rate (fixed 2026-11-26 to match pillar-l2.html's
+   own hipoMetric(), which was already corrected: this used to score (named HiPos + Stars) /
+   headcount, so an org that simply labelled 60% of people "HiPo" read as a strong signal here,
+   backwards -- a HiPo list is either maintained or it isn't, and nothing about whether it exists
+   scales with how many people are on it. That fix had landed on the pillar-l2.html drill-down
+   page but never propagated to this function, the one that actually computes the composite
+   Humac Score, so the two disagreed. Stars are no longer a factor in this component at all. */
 function computeL2Real(a,excludeHipoStars){
   var scores=[];
   if((a.cq2_promoted12mo||0)>0)scores.push((a.cq2_promotedexcelling||0)/a.cq2_promoted12mo*100);
@@ -1248,7 +1256,7 @@ function computeL2Real(a,excludeHipoStars){
   if((a.cq2_hired12mo||0)>0)scores.push((a.cq2_hiredmeeting||0)/a.cq2_hired12mo*100);
   if((a.cq2_tenureatrisk||0)>0)scores.push(clampL2(((a.cq2_tenuretop||0)/a.cq2_tenureatrisk)/2*100,0,100));
   else if((a.cq2_tenuretop||0)>0)scores.push(100);
-  if(!excludeHipoStars&&(a.cq1_headcount||0)>0){var _lab=((a.cq5_hipo||0)+(a.cq1_stars||0))/a.cq1_headcount;if(_lab<=0.40)scores.push(clampL2(_lab*100*4,0,100));}
+  if(!excludeHipoStars&&a.cq5_hipo!=null)scores.push(a.cq5_hipo>0?100:0);
   if(!excludeHipoStars)window.__l2measured=scores.length;
   if(scores.length<3)return null;
   return Math.round(scores.reduce(function(s,n){return s+n;},0)/scores.length);
