@@ -284,3 +284,133 @@ if (l5Failures > 0) {
 } else {
   console.log('No drift found between pillar-l5.html and humac-onboarding.html for these fixtures.');
 }
+
+// ===============================================================================
+// L1: pillar-l1.html's computeRealLedger() vs humac-onboarding.html's
+// buildL1Book() (the shared book that both computeL1Real() and computeL4Real()
+// read from). Tested at scenario='base' - the only scenario the engine computes;
+// Low/High on the display page are deliberate "what if" exploration, not
+// alternate canonical scores, same as L5's scenario toggle.
+// ===============================================================================
+console.log('\n' + '='.repeat(72));
+console.log('L1: pillar-l1.html vs humac-onboarding.html');
+console.log('='.repeat(72));
+
+const pillarL1Src = read('pillar-l1.html');
+
+const l1AssumptionsStmt = extractVarStatement(pillarL1Src, 'ASSUMPTIONS');
+const l1ScenarioStmt = extractVarStatement(pillarL1Src, 'scenario');
+const l1MFn = extractFunction(pillarL1Src, 'm');
+const computeRealLedgerFn = extractFunction(pillarL1Src, 'computeRealLedger');
+
+const l1MultStmt = extractVarStatement(engineSrc, 'L1_MULT');
+const buildL1BookFn = extractFunction(engineSrc, 'buildL1Book');
+
+const pillarL1Ctx = makeSelfWindowCtx();
+pillarL1Ctx.md = { industry: '' }; // computeRealLedger reads (md&&md.industry) directly
+vm.runInContext([humacSharedSrc, l1AssumptionsStmt, l1ScenarioStmt, l1MFn, computeRealLedgerFn].join('\n'), pillarL1Ctx);
+
+const engineL1Ctx = makeSelfWindowCtx();
+engineL1Ctx.sessionStorage = {
+  _industry: '',
+  getItem: function (k) { return k === 'sr_meridian' ? JSON.stringify({ industry: engineL1Ctx.sessionStorage._industry }) : null; }
+};
+vm.runInContext([humacSharedSrc, l1MultStmt, buildL1BookFn].join('\n'), engineL1Ctx);
+
+const l1Fixtures = [
+  { name: 'typical org, IT/SaaS', a: { cq1_headcount: 100, cq1_compbase: 50000000, cq1_stars: 8, cq1_emerging: 12, cq1_tenured5: 20, cq1_revhires: 10, cq1_atrisk: 5, cq1_attr: 'Moderate 50%' }, industry: 'IT / SaaS' },
+  { name: 'stars above 20% cap', a: { cq1_headcount: 50, cq1_compbase: 20000000, cq1_stars: 20, cq1_emerging: 0, cq1_tenured5: 10, cq1_revhires: 0, cq1_atrisk: 3, cq1_attr: 'Conservative 25%' }, industry: 'Manufacturing' },
+  { name: 'only one cohort entered, high-attrition industry', a: { cq1_headcount: 200, cq1_compbase: 80000000, cq1_stars: 0, cq1_emerging: 0, cq1_tenured5: 0, cq1_revhires: 15, cq1_atrisk: 0, cq1_attr: 'Aggressive 75%' }, industry: 'BPO / KPO' },
+  { name: 'no cohorts entered at all (insufficient)', a: { cq1_headcount: 30, cq1_compbase: 15000000, cq1_stars: 0, cq1_emerging: 0, cq1_tenured5: 0, cq1_revhires: 0, cq1_atrisk: 0, cq1_attr: '' }, industry: 'Startup' }
+];
+
+let l1Failures = 0;
+for (const f of l1Fixtures) {
+  pillarL1Ctx.md.industry = f.industry;
+  const pillarLedger = pillarL1Ctx.computeRealLedger(f.a);
+
+  engineL1Ctx.sessionStorage._industry = f.industry;
+  const engineBook = engineL1Ctx.buildL1Book(f.a);
+
+  console.log('\n[' + f.name + ']');
+  console.log('  pillar-l1.html computeRealLedger(): totalRet=' + pillarLedger.totalRet.toFixed(2) + ' insufficient=' + pillarLedger.insufficient);
+  console.log('  engine buildL1Book():                totalRet=' + engineBook.totalRet.toFixed(2) + ' insufficient=' + engineBook.insufficient);
+
+  if (pillarLedger.insufficient !== engineBook.insufficient) { console.log('  ✗ DRIFT: insufficient-data gate disagrees.'); l1Failures++; }
+  else if (!pillarLedger.insufficient && !close(pillarLedger.totalRet, engineBook.totalRet)) { console.log('  ✗ DRIFT: totalRet disagrees.'); l1Failures++; }
+}
+
+console.log('\n' + '-'.repeat(72));
+if (l1Failures > 0) {
+  console.log(l1Failures + ' L1 drift(s) found between pillar-l1.html and the engine.');
+  process.exitCode = 1;
+} else {
+  console.log('No drift found between pillar-l1.html and humac-onboarding.html for these fixtures.');
+}
+
+// ===============================================================================
+// L4: pillar-l4.html's computeL4DisplayParts() vs humac-onboarding.html's
+// computeL4Real(). Both consume an L1 book's totalRet rather than re-deriving
+// it, so the fixture passes in a matching book for each side directly instead
+// of routing through sessionStorage, isolating the L4-specific cost math
+// (hrFunc/compliance/culture vs the engine's combined 0.075 constant).
+// ===============================================================================
+console.log('\n' + '='.repeat(72));
+console.log('L4: pillar-l4.html vs humac-onboarding.html');
+console.log('='.repeat(72));
+
+const pillarL4Src = read('pillar-l4.html');
+const l4AssumptionsStmt = extractVarStatement(pillarL4Src, 'ASSUMPTIONS');
+const l4ScenarioStmt = extractVarStatement(pillarL4Src, 'scenario');
+const l4MFn = extractFunction(pillarL4Src, 'm');
+const computeL4DisplayPartsFn = extractFunction(pillarL4Src, 'computeL4DisplayParts');
+
+const l4BenchStmt = extractVarStatement(engineSrc, 'L4_BENCH');
+const minMaxL4Fn = extractFunction(engineSrc, 'minMaxL4');
+const computeL4RealFn = extractFunction(engineSrc, 'computeL4Real');
+
+const pillarL4Ctx = makeSelfWindowCtx();
+vm.runInContext([l4AssumptionsStmt, l4ScenarioStmt, l4MFn, computeL4DisplayPartsFn].join('\n'), pillarL4Ctx);
+
+const engineL4Ctx = makeSelfWindowCtx();
+vm.runInContext([humacSharedSrc, l1MultStmt, buildL1BookFn, l4BenchStmt, minMaxL4Fn, computeL4RealFn].join('\n'), engineL4Ctx);
+engineL4Ctx.sessionStorage = {
+  _industry: '',
+  getItem: function (k) { return k === 'sr_meridian' ? JSON.stringify({ industry: engineL4Ctx.sessionStorage._industry }) : null; }
+};
+
+const l4Fixtures = [
+  { name: 'no actual HR spend entered (assumed costs)', a: { cq1_headcount: 100, cq1_compbase: 50000000, cq1_stars: 8, cq1_emerging: 12, cq1_tenured5: 20, cq1_revhires: 10, cq1_atrisk: 5, cq1_attr: 'Moderate 50%', cq4_hrspend: 0 }, industry: 'IT / SaaS' },
+  { name: 'actual HR spend entered (overrides assumed costs)', a: { cq1_headcount: 100, cq1_compbase: 50000000, cq1_stars: 8, cq1_emerging: 12, cq1_tenured5: 20, cq1_revhires: 10, cq1_atrisk: 5, cq1_attr: 'Moderate 50%', cq4_hrspend: 3000000 }, industry: 'IT / SaaS' },
+  { name: 'small org, one cohort only', a: { cq1_headcount: 30, cq1_compbase: 15000000, cq1_stars: 0, cq1_emerging: 0, cq1_tenured5: 0, cq1_revhires: 4, cq1_atrisk: 0, cq1_attr: 'Conservative 25%', cq4_hrspend: 0 }, industry: 'Startup' }
+];
+
+let l4Failures = 0;
+for (const f of l4Fixtures) {
+  engineL4Ctx.sessionStorage._industry = f.industry;
+  const engineBook = engineL4Ctx.buildL1Book(f.a);
+  const comp = engineBook.compBase || f.a.cq1_compbase || 0;
+
+  const pillarParts = pillarL4Ctx.computeL4DisplayParts(engineBook, f.a, comp);
+  const engineScore = engineL4Ctx.computeL4Real(f.a);
+  // Reconstruct the engine's raw hrInvestment/margin the same way computeL4Real does,
+  // to compare against the pillar page's breakdown rather than just the final 0-100 score.
+  const actualSpend = Number(f.a.cq4_hrspend) || 0;
+  const engineHrInvestment = actualSpend > 0 ? actualSpend : comp * (0.04 + 0.015 + 0.02);
+  const engineMargin = engineBook.totalRet / engineHrInvestment;
+
+  console.log('\n[' + f.name + ']');
+  console.log('  pillar-l4.html computeL4DisplayParts(): invest=' + pillarParts.invest.toFixed(2) + ' margin=' + (pillarParts.margin == null ? 'null' : pillarParts.margin.toFixed(4)));
+  console.log('  engine computeL4Real() inputs:           invest=' + engineHrInvestment.toFixed(2) + ' margin=' + engineMargin.toFixed(4) + ' (score=' + engineScore + ')');
+
+  if (!close(pillarParts.invest, engineHrInvestment)) { console.log('  ✗ DRIFT: HR investment (cost side) disagrees.'); l4Failures++; }
+  if (pillarParts.margin != null && !close(pillarParts.margin, engineMargin)) { console.log('  ✗ DRIFT: margin disagrees.'); l4Failures++; }
+}
+
+console.log('\n' + '-'.repeat(72));
+if (l4Failures > 0) {
+  console.log(l4Failures + ' L4 drift(s) found between pillar-l4.html and the engine.');
+  process.exitCode = 1;
+} else {
+  console.log('No drift found between pillar-l4.html and humac-onboarding.html for these fixtures.');
+}

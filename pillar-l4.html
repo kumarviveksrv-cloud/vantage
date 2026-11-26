@@ -225,6 +225,21 @@ var ASSUMPTIONS={
   culture:{low:0.01,base:0.02,high:0.035,label:'Culture and engagement spend',note:'Planning range. Distinct from L1 tenure premium.'}
 };
 function m(k){return ASSUMPTIONS[k][scenario];}
+/* Extracted out of render() on 2026-11-26, same reason and pattern as
+   pillar-l5.html's computeL5DisplayParts(): pure arithmetic over the L1
+   book and an actual-spend override, no DOM access, so a consistency
+   harness can pull this exact function's source and run it against
+   computeL4Real() in humac-onboarding.html. Behaviour unchanged from the
+   inline block this replaced. */
+function computeL4DisplayParts(book, ra, comp){
+  var actualSpend=Number(ra.cq4_hrspend)||0;
+  var hr=actualSpend>0?actualSpend:comp*m('hrFunc'), compliance=actualSpend>0?0:comp*m('compliance'), culture=actualSpend>0?0:comp*m('culture');
+  var invest=hr+compliance+culture;
+  var totalRev=book.totalRet;
+  var netProfit=totalRev-invest;
+  var margin=invest>0?totalRev/invest:null;
+  return {hr:hr,compliance:compliance,culture:culture,invest:invest,totalRev:totalRev,netProfit:netProfit,margin:margin};
+}
 function fmtINR(n){var abs=Math.abs(n),sign=n<0?'-':'';if(abs>=10000000)return sign+'₹'+(abs/10000000).toFixed(2)+'Cr';if(abs>=100000)return sign+'₹'+(abs/100000).toFixed(1)+'L';if(abs>=1000)return sign+'₹'+Math.round(abs/1000)+'K';return sign+'₹'+Math.round(abs);}
 function band(s){if(s<=25)return{name:'Minimum',color:'#E05C3A'};if(s<=50)return{name:'Emerging',color:'#a5b4fc'};if(s<=72)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};}
 var benchStr=industry&&industry.toLowerCase().includes('tech')?'2.0–2.5x':industry&&industry.toLowerCase().includes('service')?'1.8–2.2x':'1.5–2.0x';
@@ -310,12 +325,8 @@ function render(){
   }
 
   var comp=book.compBase||ra.cq1_compbase||0;
-  var actualSpend=Number(ra.cq4_hrspend)||0;
-  var hr=actualSpend>0?actualSpend:comp*m('hrFunc'), compliance=actualSpend>0?0:comp*m('compliance'), culture=actualSpend>0?0:comp*m('culture');
-  var invest=hr+compliance+culture;
-  var totalRev=book.totalRet;
-  var netProfit=totalRev-invest;
-  var margin=invest>0?totalRev/invest:null;
+  var _p4=computeL4DisplayParts(book, ra, comp);
+  var hr=_p4.hr, compliance=_p4.compliance, culture=_p4.culture, invest=_p4.invest, totalRev=_p4.totalRev, netProfit=_p4.netProfit, margin=_p4.margin;
   var q4Ratio=margin==null?'not measured':margin.toFixed(2)+'x';
   var isPos=margin!=null&&margin>=1;
 
