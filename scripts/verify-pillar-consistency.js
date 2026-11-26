@@ -59,6 +59,26 @@ function sandboxWith(fnSources, extraGlobals) {
   return ctx;
 }
 
+// Extracts a top-level `var NAME = <value>;` statement, bracket-depth aware so
+// it handles a nested object literal (ASSUMPTIONS, L5_BENCH) as well as a
+// plain scalar (scenario='base'). Used for L5, where the shared arithmetic
+// lives in var declarations and a couple of small functions, not one single
+// function the way L2's does.
+function extractVarStatement(source, name) {
+  const re = new RegExp('var\\s+' + name + '\\s*=');
+  const m = re.exec(source);
+  if (!m) throw new Error('Could not find var ' + name + ' in source');
+  const start = m.index;
+  let i = start + m[0].length, depth = 0;
+  for (; i < source.length; i++) {
+    const c = source[i];
+    if (c === '{' || c === '(' || c === '[') depth++;
+    else if (c === '}' || c === ')' || c === ']') depth--;
+    else if (c === ';' && depth === 0) { i++; break; }
+  }
+  return source.slice(start, i);
+}
+
 // --- load sources -------------------------------------------------------------
 const pillarL2Src = read('pillar-l2.html');
 const engineSrc = read('humac-onboarding.html');
@@ -178,9 +198,89 @@ for (const f of fixtures) {
 
 console.log('\n' + '-'.repeat(72));
 if (failures > 0) {
-  console.log(failures + ' drift(s) found. Do not treat this as noise - this is exactly the class of bug');
+  console.log(failures + ' L2 drift(s) found. Do not treat this as noise - this is exactly the class of bug');
   console.log('that already shipped once this session (L2 HiPo/Star) before anyone caught it.');
   process.exitCode = 1;
 } else {
   console.log('No drift found between pillar-l2.html and humac-onboarding.html for these fixtures.');
+}
+
+// ===============================================================================
+// L5: pillar-l5.html's computeL5DisplayParts() vs humac-onboarding.html's
+// computeL5Parts(). Both were already pure/extractable or made so (the L5 display
+// math used to live inline inside render(), refactored out into its own function
+// on 2026-11-26 specifically so this harness could reach it the same safe way).
+// ===============================================================================
+console.log('\n' + '='.repeat(72));
+console.log('L5: pillar-l5.html vs humac-onboarding.html');
+console.log('='.repeat(72));
+
+const pillarL5Src = read('pillar-l5.html');
+const humacSharedSrc = read('humac-shared.js');
+
+const assumptionsStmt = extractVarStatement(pillarL5Src, 'ASSUMPTIONS');
+const scenarioStmt = extractVarStatement(pillarL5Src, 'scenario');
+const mFn = extractFunction(pillarL5Src, 'm');
+const computeL5DisplayPartsFn = extractFunction(pillarL5Src, 'computeL5DisplayParts');
+
+const l5BenchStmt = extractVarStatement(engineSrc, 'L5_BENCH');
+const computeL5PartsFn = extractFunction(engineSrc, 'computeL5Parts');
+
+// Both real functions reach for HumacShared as a bare global (they're loaded as
+// plain <script> tags in the browser, where window.X === the global X). Give each
+// sandbox a self-referencing `window` so `window.HumacShared = ...` inside
+// humac-shared.js's IIFE lands as a bare global here too, exactly like in the browser.
+function makeSelfWindowCtx() {
+  const ctx = { console };
+  ctx.window = ctx;
+  vm.createContext(ctx);
+  return ctx;
+}
+
+const pillarL5Ctx = makeSelfWindowCtx();
+vm.runInContext([humacSharedSrc, assumptionsStmt, scenarioStmt, mFn, computeL5DisplayPartsFn].join('\n'), pillarL5Ctx);
+
+const engineL5Ctx = makeSelfWindowCtx();
+// computeL5Parts() reads industry from sessionStorage itself rather than taking it
+// as a parameter, so fixtures drive it through a tiny stub the harness controls.
+engineL5Ctx.sessionStorage = {
+  _industry: '',
+  getItem: function (k) { return k === 'sr_meridian' ? JSON.stringify({ industry: engineL5Ctx.sessionStorage._industry }) : null; }
+};
+vm.runInContext([humacSharedSrc, l5BenchStmt, computeL5PartsFn].join('\n'), engineL5Ctx);
+
+const l5Fixtures = [
+  { name: 'typical org, IT/SaaS', a: { cq1_headcount: 100, cq1_compbase: 50000000, cq5_seniorcount: 10, cq5_seniortenure: 6, cq5_revemployees: 15, cq5_hipo: 5 }, l2: 65, l3: 70, industry: 'IT / SaaS' },
+  { name: 'no revenue-facing roles (relationship asset unreachable)', a: { cq1_headcount: 50, cq1_compbase: 20000000, cq5_seniorcount: 4, cq5_seniortenure: 9, cq5_revemployees: 0, cq5_hipo: 2 }, l2: 40, l3: 55, industry: 'Manufacturing' },
+  { name: 'high-attrition industry (BPO), long senior tenure', a: { cq1_headcount: 200, cq1_compbase: 80000000, cq5_seniorcount: 20, cq5_seniortenure: 12, cq5_revemployees: 30, cq5_hipo: 10 }, l2: null, l3: 50, industry: 'BPO / KPO' },
+  { name: 'missing l2 (counts as 50 in gap()), high l3', a: { cq1_headcount: 30, cq1_compbase: 15000000, cq5_seniorcount: 2, cq5_seniortenure: 3, cq5_revemployees: 5, cq5_hipo: 0 }, l2: null, l3: 90, industry: 'Startup' }
+];
+
+let l5Failures = 0;
+const close = (x, y) => Math.abs(x - y) < 0.01;
+
+for (const f of l5Fixtures) {
+  const headcount = f.a.cq1_headcount || 0, comp = f.a.cq1_compbase || 0, avg = headcount ? comp / headcount : 0;
+
+  pillarL5Ctx.sessionStorage = undefined; // not used on this side; industry passed directly
+  const pillarParts = pillarL5Ctx.computeL5DisplayParts(f.a, avg, headcount, comp, f.l2, f.l3, f.industry);
+
+  engineL5Ctx.sessionStorage._industry = f.industry;
+  const engineParts = engineL5Ctx.computeL5Parts(f.a, f.l2, f.l3);
+
+  console.log('\n[' + f.name + ']');
+  console.log('  pillar-l5.html computeL5DisplayParts(): assets=' + pillarParts.assets.toFixed(2) + ' liab=' + pillarParts.liab.toFixed(2) + ' nhw=' + pillarParts.nhw.toFixed(2));
+  console.log('  engine computeL5Parts():                 assets=' + engineParts.assets.toFixed(2) + ' liab=' + engineParts.liab.toFixed(2) + ' nhw=' + engineParts.nhw.toFixed(2) + ' (score=' + engineParts.score + ')');
+
+  if (!close(pillarParts.assets, engineParts.assets)) { console.log('  ✗ DRIFT: assets disagree.'); l5Failures++; }
+  if (!close(pillarParts.liab, engineParts.liab)) { console.log('  ✗ DRIFT: liabilities disagree.'); l5Failures++; }
+  if (!close(pillarParts.nhw, engineParts.nhw)) { console.log('  ✗ DRIFT: net human worth disagrees.'); l5Failures++; }
+}
+
+console.log('\n' + '-'.repeat(72));
+if (l5Failures > 0) {
+  console.log(l5Failures + ' L5 drift(s) found between pillar-l5.html and the engine.');
+  process.exitCode = 1;
+} else {
+  console.log('No drift found between pillar-l5.html and humac-onboarding.html for these fixtures.');
 }

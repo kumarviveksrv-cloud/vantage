@@ -216,6 +216,25 @@ var ASSUMPTIONS={
   cliab:{low:0.005,base:0.01,high:0.02,label:'Culture liability',note:'Planning range. L5-original.'}
 };
 function m(k){return ASSUMPTIONS[k][scenario];}
+/* Extracted out of render() on 2026-11-26 so a consistency harness can pull this exact
+   function's source and run it against computeL5Parts() in humac-onboarding.html with
+   shared fixtures, the same pattern used for pillar-l2.html's metric()/hipoMetric()/
+   retentionMetric(). Pure arithmetic, no DOM access, so it is safe to execute in isolation.
+   Behaviour is unchanged from the inline block this replaced. */
+function computeL5DisplayParts(ra,avg,headcount,comp,l2ForGap,l3,industry){
+  var leaveP5=HumacShared.leaveP(industry);
+  var know=(ra.cq5_seniorcount||0)*avg*Math.min((ra.cq5_seniortenure||0)*0.08,0.6)*(1-leaveP5);
+  var rel=(ra.cq5_revemployees||0)*avg*m('rel');
+  var hipoN=HumacShared.cappedHipo(ra.cq5_hipo||0,headcount);
+  var hipoBench=hipoN*avg*(1-HumacShared.HIPO_P);
+  var assets=know+rel+hipoBench;
+  var g2=HumacShared.gap(l2ForGap), g3=HumacShared.gap(l3);
+  var skill=comp*m('skill')*g2, growth=comp*m('growth')*g2, cliab=comp*m('cliab')*g3;
+  var liab=skill+growth+cliab;
+  var nhw=assets-liab;
+  var per=comp>0?(nhw/comp)*100:null;
+  return {leaveP5:leaveP5,know:know,rel:rel,hipoN:hipoN,hipoBench:hipoBench,assets:assets,g2:g2,g3:g3,skill:skill,growth:growth,cliab:cliab,liab:liab,nhw:nhw,per:per};
+}
 function fmtINR(n){var abs=Math.abs(n),sign=n<0?'-':'';if(abs>=10000000)return sign+'\u20b9'+(abs/10000000).toFixed(2)+'Cr';if(abs>=100000)return sign+'\u20b9'+(abs/100000).toFixed(1)+'L';if(abs>=1000)return sign+'\u20b9'+Math.round(abs/1000)+'K';return sign+'\u20b9'+Math.round(abs);}
 function band(s){if(s<=25)return{name:'Minimum',color:'#E05C3A'};if(s<=50)return{name:'Emerging',color:'#a5b4fc'};if(s<=72)return{name:'Value Active',color:'#6366f1'};return{name:'Value Engine',color:'#4ade80'};}
 
@@ -295,17 +314,8 @@ function render(){
     return;
   }
 
-  var leaveP5=HumacShared.leaveP(industry);
-  var know=(ra.cq5_seniorcount||0)*avg*Math.min((ra.cq5_seniortenure||0)*0.08,0.6)*(1-leaveP5);
-  var rel=(ra.cq5_revemployees||0)*avg*m('rel');
-  var hipoN=HumacShared.cappedHipo(ra.cq5_hipo||0,headcount);
-  var hipoBench=hipoN*avg*(1-HumacShared.HIPO_P);
-  var assets=know+rel+hipoBench;
-  var g2=HumacShared.gap(l2ForGap), g3=HumacShared.gap(l3);
-  var skill=comp*m('skill')*g2, growth=comp*m('growth')*g2, cliab=comp*m('cliab')*g3;
-  var liab=skill+growth+cliab;
-  var nhw=assets-liab;
-  var per=comp>0?(nhw/comp)*100:null;
+  var _p5=computeL5DisplayParts(ra,avg,headcount,comp,l2ForGap,l3,industry);
+  var leaveP5=_p5.leaveP5,know=_p5.know,rel=_p5.rel,hipoN=_p5.hipoN,hipoBench=_p5.hipoBench,assets=_p5.assets,g2=_p5.g2,g3=_p5.g3,skill=_p5.skill,growth=_p5.growth,cliab=_p5.cliab,liab=_p5.liab,nhw=_p5.nhw,per=_p5.per;
   var nhwPos=per!=null&&per>=0;
 
   try{sessionStorage.setItem('vantage_l5_book', JSON.stringify({scenario:scenario,nhw:nhw,per100:per,compBase:comp,assets:assets,liab:liab,insufficient:insufficient,blockedSharedLines:blocked,forbidden:['cq1_stars','cq1_emerging','cq1_tenured5','cq1_atrisk'],l1Return:book&&book.totalRet}));}catch(e){}
