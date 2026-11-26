@@ -28,56 +28,10 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { extractFunction, extractVarStatement, sandboxWith, makeSelfWindowCtx } = require('./lib/vm-extract');
 
 const ROOT = path.join(__dirname, '..');
 const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
-
-// --- generic, brace-matching function extractor -----------------------------
-// Robust to reordering/reformatting elsewhere in the file. Finds `function
-// name(` and walks forward counting braces to find the matching close, so it
-// doesn't depend on fragile line-number or end-marker assumptions that would
-// themselves rot as the files change.
-function extractFunction(source, name) {
-  const sigRe = new RegExp('function\\s+' + name + '\\s*\\(');
-  const m = sigRe.exec(source);
-  if (!m) throw new Error('Could not find function ' + name + '() in source');
-  const start = m.index;
-  const braceStart = source.indexOf('{', start);
-  if (braceStart === -1) throw new Error('No opening brace found for ' + name + '()');
-  let depth = 0, i = braceStart;
-  for (; i < source.length; i++) {
-    if (source[i] === '{') depth++;
-    else if (source[i] === '}') { depth--; if (depth === 0) { i++; break; } }
-  }
-  return source.slice(start, i);
-}
-
-function sandboxWith(fnSources, extraGlobals) {
-  const ctx = Object.assign({ console }, extraGlobals || {});
-  vm.createContext(ctx);
-  vm.runInContext(fnSources.join('\n'), ctx);
-  return ctx;
-}
-
-// Extracts a top-level `var NAME = <value>;` statement, bracket-depth aware so
-// it handles a nested object literal (ASSUMPTIONS, L5_BENCH) as well as a
-// plain scalar (scenario='base'). Used for L5, where the shared arithmetic
-// lives in var declarations and a couple of small functions, not one single
-// function the way L2's does.
-function extractVarStatement(source, name) {
-  const re = new RegExp('var\\s+' + name + '\\s*=');
-  const m = re.exec(source);
-  if (!m) throw new Error('Could not find var ' + name + ' in source');
-  const start = m.index;
-  let i = start + m[0].length, depth = 0;
-  for (; i < source.length; i++) {
-    const c = source[i];
-    if (c === '{' || c === '(' || c === '[') depth++;
-    else if (c === '}' || c === ')' || c === ']') depth--;
-    else if (c === ';' && depth === 0) { i++; break; }
-  }
-  return source.slice(start, i);
-}
 
 // --- load sources -------------------------------------------------------------
 const pillarL2Src = read('pillar-l2.html');
@@ -225,17 +179,6 @@ const computeL5DisplayPartsFn = extractFunction(pillarL5Src, 'computeL5DisplayPa
 
 const l5BenchStmt = extractVarStatement(engineSrc, 'L5_BENCH');
 const computeL5PartsFn = extractFunction(engineSrc, 'computeL5Parts');
-
-// Both real functions reach for HumacShared as a bare global (they're loaded as
-// plain <script> tags in the browser, where window.X === the global X). Give each
-// sandbox a self-referencing `window` so `window.HumacShared = ...` inside
-// humac-shared.js's IIFE lands as a bare global here too, exactly like in the browser.
-function makeSelfWindowCtx() {
-  const ctx = { console };
-  ctx.window = ctx;
-  vm.createContext(ctx);
-  return ctx;
-}
 
 const pillarL5Ctx = makeSelfWindowCtx();
 vm.runInContext([humacSharedSrc, assumptionsStmt, scenarioStmt, mFn, computeL5DisplayPartsFn].join('\n'), pillarL5Ctx);

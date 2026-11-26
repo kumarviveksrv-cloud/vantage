@@ -1,0 +1,11 @@
+{
+  "name": "vantage",
+  "private": true,
+  "description": "Virorah Vantage. No build step - the product is static HTML/JS served as-is. This file exists only to pin devDependencies for the pre-push verification scripts in scripts/.",
+  "scripts": {
+    "verify": "node scripts/verify-pillar-consistency.js && node scripts/verify-pillar-render.js"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.1"
+  }
+}

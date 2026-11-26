@@ -5,6 +5,17 @@
 # someone reads two files side by side. This runs automatically before any
 # push leaves this machine, so it does not depend on remembering to do it.
 #
+# Extended the same day to add a render check: the consistency check above
+# proves a pillar page's extracted scoring function agrees with the engine,
+# but never actually runs the page. That gap let two separate, real bugs
+# through on the same day - a ReferenceError in pillar-l4.html's render()
+# (a variable dropped during an extraction) and a script-load-order bug in
+# pillar-l1.html/pillar-l5.html (HumacShared referenced before its <script
+# src> tag had run) - both invisible to syntax checking (parses fine) and
+# to the consistency check (never calls render()). Both were only found by
+# actually loading each page in a DOM and watching what it does on first
+# paint, which is what verify-pillar-render.js now does before every push.
+#
 # This repo is tracked, but .git/hooks is not - a fresh clone (new machine,
 # new session, new container) won't pick this up by itself. Run once per
 # clone:
@@ -52,6 +63,15 @@ console.log("  ✓ all inline scripts parse");
 if [ -f scripts/verify-pillar-consistency.js ]; then
   echo "[pre-push] Running pillar-vs-engine consistency check..."
   node scripts/verify-pillar-consistency.js || status=1
+fi
+
+if [ -f scripts/verify-pillar-render.js ]; then
+  echo "[pre-push] Running pillar page render check (actually executes each page in a DOM)..."
+  if [ ! -d node_modules/jsdom ]; then
+    echo "  jsdom not installed yet in this clone - running 'npm install' once now."
+    npm install --no-fund --no-audit || true
+  fi
+  node scripts/verify-pillar-render.js || status=1
 fi
 
 if [ "$status" -ne 0 ]; then
