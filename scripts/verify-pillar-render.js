@@ -198,6 +198,18 @@ async function run() {
             window.sessionStorage.setItem('vantage_humac', JSON.stringify(hd));
             window.sessionStorage.setItem('sr_meridian', JSON.stringify({ industry: 'IT / SaaS', state: 'Karnataka' }));
             if (fixture.withL1Book) window.sessionStorage.setItem('vantage_l1_book', JSON.stringify(l1Book));
+            // humac-onboarding.html's "empty" fixture is testing that the
+            // questionnaire (renderStepper/renderBlock(0)) still renders
+            // cleanly for a brand-new user with no saved score - that's a
+            // different question from whether the one-time
+            // humac-example.html redirect fires correctly (jsdom doesn't
+            // support real navigation and isn't the right place to test a
+            // redirect anyway). Mark the example as already seen so this
+            // fixture exercises the actual questionnaire render, same as
+            // before the redirect was added.
+            if (page === 'humac-onboarding.html') {
+              window.localStorage.setItem('vantage_example_seen', '1');
+            }
             window.clerkSignOut = function () {};
             window.onerror = function (msg, src, line, col, err) {
               errors.push((err && err.stack) || msg + ' (line ' + line + ')');

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>/* profile-gate early hold: keep the page hidden until clerk-auth.js confirms the profile; self-releases after 8s */(function(){try{if(/(access|profile-setup|subscribe|pricing)(\.html)?$/.test(location.pathname))return;if(sessionStorage.getItem('vantage_profile_ok')==='1')return;var h=document.documentElement;h.style.visibility='hidden';setTimeout(function(){if(!window.__vantageProfileHold)h.style.visibility='visible';},8000);}catch(e){}})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>See a worked example | Virorah Vantage</title>
+<link rel="icon" href="favicon.png">
+<link rel="stylesheet" href="vantage-theme.css">
+<style>
+:root { --sidebar: 220px; }
+
+/* ── LAYOUT ─────────────────────────────────────────────── */
+.sidebar{width:var(--sidebar);flex-shrink:0;position:fixed;top:0;left:0;bottom:0;
+  background:rgba(5,4,16,.98);border-right:1px solid rgba(99,102,241,.18);
+  display:flex;flex-direction:column;padding:20px 12px;height:100vh;overflow-y:auto;z-index:200}
+.wrap{margin-left:var(--sidebar);padding:40px 48px 100px;max-width:1040px}
+
+/* ── BREADCRUMB ─────────────────────────────────────────── */
+.breadcrumb{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.06em;
+  color:rgba(99,102,241,.45);margin-bottom:28px;display:flex;align-items:center;gap:6px}
+.breadcrumb a{color:rgba(99,102,241,.45);text-decoration:none;transition:color .15s}
+.breadcrumb a:hover{color:#a5b4fc}
+.breadcrumb-sep{color:rgba(99,102,241,.22)}
+
+/* ── PAGE TITLE ─────────────────────────────────────────── */
+.page-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;
+  color:#f4f3ff;margin-bottom:8px}
+.page-sub{font-size:14px;color:rgba(244,243,255,.65);margin-bottom:12px;line-height:1.7;max-width:760px}
+.page-sub b{color:#f4f3ff;font-weight:500}
+
+.skip-row{margin-bottom:32px}
+.skip-link{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:rgba(165,180,252,.7);
+  text-decoration:none;border-bottom:1px dotted rgba(165,180,252,.35)}
+.skip-link:hover{color:#c4b5fd}
+
+/* ── SETUP STRIP ────────────────────────────────────────── */
+.setup-strip{display:flex;gap:24px;flex-wrap:wrap;background:rgba(13,11,30,.6);
+  border:1px solid rgba(99,102,241,.14);border-radius:12px;padding:16px 22px;margin-bottom:32px;
+  font-size:.82rem;color:rgba(244,243,255,.7)}
+.setup-strip b{color:#f4f3ff;font-weight:500}
+
+/* ── COMPANY GRID ───────────────────────────────────────── */
+.co-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px}
+@media(max-width:860px){.co-grid{grid-template-columns:1fr}}
+.co-card{background:rgba(13,11,30,.7);border-radius:16px;overflow:hidden;position:relative}
+.co-card.strong{border:1px solid rgba(74,222,128,.28)}
+.co-card.weak{border:1px solid rgba(224,92,58,.28)}
+.co-head{padding:22px 24px 18px;border-bottom:1px solid rgba(99,102,241,.12)}
+.co-card.strong .co-head{background:linear-gradient(180deg,rgba(74,222,128,.08),transparent)}
+.co-card.weak .co-head{background:linear-gradient(180deg,rgba(224,92,58,.08),transparent)}
+.co-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#f4f3ff;margin-bottom:4px}
+.co-tag{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase}
+.co-card.strong .co-tag{color:#4ade80}
+.co-card.weak .co-tag{color:#E05C3A}
+.co-humac{display:flex;align-items:baseline;gap:10px;margin-top:14px}
+.co-humac-num{font-family:'Space Grotesk',sans-serif;font-size:3rem;font-weight:700;line-height:1}
+.co-card.strong .co-humac-num{background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.co-card.weak .co-humac-num{background:linear-gradient(135deg,#f4f3ff,#c4b5fd,#E05C3A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.co-humac-band{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:rgba(244,243,255,.6)}
+.co-hci-note{font-size:.76rem;color:rgba(244,243,255,.55);margin-top:8px;line-height:1.5}
+.co-hci-note b{color:#f4f3ff}
+
+.pillar-row{padding:16px 24px;border-bottom:1px solid rgba(99,102,241,.08)}
+.pillar-row:last-child{border-bottom:none}
+.pillar-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+.pillar-name{font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:#a5b4fc}
+.pillar-score{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;color:#f4f3ff}
+.pillar-what{font-size:.72rem;color:rgba(244,243,255,.45);margin-bottom:6px;font-style:italic}
+.pillar-txt{font-size:.84rem;color:rgba(244,243,255,.78);line-height:1.6}
+.pillar-txt b{color:#f4f3ff;font-weight:500}
+
+/* ── TAKEAWAY ───────────────────────────────────────────── */
+.takeaway{background:rgba(13,11,30,.6);border:1px solid rgba(99,102,241,.18);border-radius:14px;
+  padding:24px 28px;margin-bottom:32px}
+.takeaway-title{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.14em;
+  text-transform:uppercase;color:#a5b4fc;margin-bottom:12px}
+.takeaway ul{margin:0;padding-left:20px;color:rgba(244,243,255,.8);font-size:.88rem;line-height:1.8}
+.takeaway li{margin-bottom:6px}
+.takeaway b{color:#f4f3ff}
+
+/* ── CTA ────────────────────────────────────────────────── */
+.cta-area{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.btn-primary{background:var(--cobalt);color:#fff;border:none;padding:13px 26px;border-radius:9px;
+  font-family:'JetBrains Mono',monospace;font-size:.76rem;cursor:pointer;text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;transition:all .15s}
+.btn-primary:hover{background:#5254d4}
+.btn-ghost{background:transparent;border:1px solid rgba(99,102,241,.3);color:#c4b5fd;
+  padding:12px 22px;border-radius:9px;font-family:'JetBrains Mono',monospace;font-size:.76rem;
+  cursor:pointer;text-decoration:none;transition:all .15s}
+.btn-ghost:hover{border-color:rgba(99,102,241,.55);background:rgba(99,102,241,.08)}
+</style>
+<script src="/consent.js" defer></script>
+</head>
+<body>
+
+<!-- SIDEBAR — rebuilt by sidebar-shared.js -->
+<div class="sidebar">
+  <div class="logo" onclick="window.location.href='dashboard.html'" style="cursor:pointer">
+    <img src="virorah-vantage-logo.png" alt="Virorah Vantage" style="height:32px;width:auto">
+  </div>
+  <div class="meridian-chip">
+    <div class="label">MERIDIAN</div>
+    <div class="val" id="meridian-chip-val">Loading...</div>
+  </div>
+  <nav id="sidebar-nav"></nav>
+</div>
+
+<div class="wrap">
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="dashboard.html">Dashboard</a>
+    <span class="breadcrumb-sep">&middot;</span>
+    Worked example
+  </div>
+
+  <!-- PAGE TITLE -->
+  <div class="page-title">Before you start: two companies, side by side</div>
+  <div class="page-sub">You're about to answer questions across five pillars and get a single <b>Humac Score</b>. Before you do that cold, here's what the output actually looks like: two fictional companies, <b>same industry, same size, same payroll</b>, run through the real scoring engine with different HR outcomes. Every number below is genuinely computed, not written by hand, so what you see here is exactly what your own data will produce.</div>
+
+  <div class="skip-row"><a href="humac-onboarding.html" class="skip-link" onclick="skipExample(event)">Skip this, I'll dive straight in &rarr;</a></div>
+
+  <div class="setup-strip">
+    <div><b>Industry</b><br>Insurance (both companies)</div>
+    <div><b>Headcount</b><br>150 employees (both companies)</div>
+    <div><b>Annual payroll</b><br>&#8377;13.5Cr (both companies, identical)</div>
+    <div><b>What differs</b><br>Retention, hiring quality, org health, HR spend discipline</div>
+  </div>
+
+  <div class="co-grid">
+
+    <!-- STRONG COMPANY -->
+    <div class="co-card strong">
+      <div class="co-head">
+        <div class="co-tag">Strong HR function</div>
+        <div class="co-name">Bright Peak Insurance</div>
+        <div class="co-humac">
+          <div class="co-humac-num">77</div>
+          <div class="co-humac-band">/100 &middot; Value Compounding</div>
+        </div>
+        <div class="co-hci-note">All four stability checks passed (stable leadership, no restructuring, no culture crisis, priorities on track) &rarr; <b>HCI 1.00x</b>, no discount applied.</div>
+      </div>
+
+      <div class="pillar-row">
+        <div class="pillar-top"><span class="pillar-name">L1 &middot; Value Ledger</span><span class="pillar-score">40</span></div>
+        <div class="pillar-what">What it measures: the rupee return HR creates from retention, hiring quality, development and tenure, as a share of payroll.</div>
+        <div class="pillar-txt">18 Star performers, 55 employees with 5+ years' tenure, modest at-risk exits. The model credits HR with about <b>&#8377;80.3L a year</b>, roughly 5.9% of payroll. That's genuinely good, but still well under this scale's own ceiling (15% of payroll = 100), which is why 40 isn't a low score so much as "meaningfully positive, with room above it."</div>
+      </div>
+
+      <div class="pillar-row">
+        <div class="pillar-top"><span class="pillar-name">L2 &middot; Talent Premium</span><span class="pillar-score">84</span></div>
+        <div class="pillar-what">What it measures: whether promotions, manager effectiveness and hiring quality are actually working.</div>
+        <div class="pillar-txt">Of 20 people promoted in 12 months, 15 are excelling in the new role. 16 of 25 managers have outperforming teams. 24 of 30 new hires are meeting expectations. High ratios across the board.</div>
+      </div>
+
+      <div class="pillar-row">
+        <div class="pillar-top"><span class="pillar-name">L3 &middot; Org Vitals</span><span class="pillar-score">100</span></div>
+        <div class="pillar-what">What it measures: 21 yes/no questions on leadership credibility, psychological safety, manager quality and peer culture.</div>
+        <div class="pillar-txt">Every question answered "yes", leadership communicates directly, bad news travels upward fast, managers advocate for their people. This is the single highest-weighted pillar (30%) and it's doing the heavy lifting on the overall score here.</div>
+      </div>
+
+      <div class="pillar-row">
+        <div class="pillar-top"><span class="pillar-name">L4 &middot; Human P&amp;L</span><span class="pillar-score">86</span></div>
+        <div class="pillar-what">What it measures: the L1 return divided by what the company actually spends running HR. Break-even is 1.00x.</div>
+        <div class="pillar-txt">Bright Peak spends <b>&#8377;62L a year on HR</b> (about 4.6% of payroll, above the typical 1.5&ndash;3% range, a deliberate investment), against the &#8377;80.3L return booked in L1. Margin: <b>1.30x</b>, comfortably above break-even without hitting this scale's ceiling of 1.5x.</div>
+      </div>
+
+      <div class="pillar-row">
+        <div class="pillar-top"><span class="pillar-name">L5 &middot; Human Balance Sheet</span><span class="pillar-score">74</span></div>
+        <div class="pillar-what">What it measures: institutional knowledge and key relationships held (assets) against skill, growth and culture gaps implied by L2/L3 (liabilities).</div>
+        <div class="pillar-txt">Assets of <b>&#8377;3.32Cr</b> (senior tenure, revenue relationships) against liabilities of just <b>&#8377;27L</b> (L2 and L3 are both strong, so the gap-driven liabilities stay small). Net Human Worth: <b>+&#8377;3.05Cr</b>, a real surplus.</div>
+      </div>
+    </div>
+
+    <!-- WEAK COMPANY -->
+    <div class="co-card weak">
+      <div class="co-head">
+        <div class="co-tag">Struggling HR function</div>
+        <div class="co-name">Oakridge Insurance</div>
+        <div class="co-humac">
+          <div class="co-humac-num">20</div>
+          <div class="co-humac-band">/100 &middot; Low Attribution</div>
+        </div>
+        <div class="co-hci-note">Only one of four stability checks passed &rarr; <b>HCI 0.85x</b>. Raw score 24 is discounted to 20, stability concerns shave real points off, they don't just sit as a footnote.</div>
+      </div>
+
+      <div class="pillar-row">
+        <div class="pillar-top"><span class="pillar-name">L1 &middot; Value Ledger</span><span class="pillar-score">30</span></div>
+        <div class="pillar-what">What it measures: the rupee return HR creates from retention, hiring quality, development and tenure, as a share of payroll.</div>
+        <div class="pillar-txt">Only 6 Star performers, 25 at-risk performers (more than four times Bright Peak's), low 5+ year tenure. Still credits HR with about <b>&#8377;61.3L a year</b>, roughly 4.5% of payroll, because some cohorts are always present. The model doesn't zero out, it just reflects a thinner base.</div>
+      </div>
+
+      <div class="pillar-row">
+        <div class="pillar-top"><span class="pillar-name">L2 &middot; Talent Premium</span><span class="pillar-score">44</span></div>
+        <div class="pillar-what">What it measures: whether promotions, manager effectiveness and hiring quality are actually working.</div>
+        <div class="pillar-txt">Only 2 of 5 promoted employees are excelling. 5 of 20 managers have outperforming teams. 35 people hired in 12 months, but only 12 meeting expectations, a hiring volume problem as much as a quality one.</div>
+      </div>
+
+      <div class="pillar-row">
+        <div class="pillar-top"><span class="pillar-name">L3 &middot; Org Vitals</span><span class="pillar-score">0</span></div>
+        <div class="pillar-what">What it measures: 21 yes/no questions on leadership credibility, psychological safety, manager quality and peer culture.</div>
+        <div class="pillar-txt">Every question answered "no". This is the extreme case shown deliberately: the highest-weighted pillar (30%) at its floor, which is why the overall score here is pulled down hard despite L1 and L4 both still showing some real return.</div>
+      </div>
+
+      <div class="pillar-row">
+        <div class="pillar-top"><span class="pillar-name">L4 &middot; Human P&amp;L</span><span class="pillar-score">38</span></div>
+        <div class="pillar-what">What it measures: the L1 return divided by what the company actually spends running HR. Break-even is 1.00x.</div>
+        <div class="pillar-txt">Oakridge spends <b>&#8377;1.08Cr a year on HR</b>, about 8% of payroll, nearly double Bright Peak's, mostly constant-rehiring overhead from high at-risk exits, against a smaller &#8377;61.3L return. Margin: <b>0.57x</b>, spending more and getting less back.</div>
+      </div>
+
+      <div class="pillar-row">
+        <div class="pillar-top"><span class="pillar-name">L5 &middot; Human Balance Sheet</span><span class="pillar-score">24</span></div>
+        <div class="pillar-what">What it measures: institutional knowledge and key relationships held (assets) against skill, growth and culture gaps implied by L2/L3 (liabilities).</div>
+        <div class="pillar-txt">Assets of <b>&#8377;1.09Cr</b> against liabilities of <b>&#8377;1.22Cr</b>, the weak L2 and L3 scores directly inflate the liability side. Net Human Worth: <b>&minus;&#8377;12.96L</b>, a genuine deficit, what the company is exposed to currently outweighs what's booked to offset it.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="takeaway">
+    <div class="takeaway-title">What this is meant to show you</div>
+    <ul>
+      <li>Same industry, same headcount, same payroll, <b>&#8377;19.3L apart on HR spend and a 57-point Humac Score apart</b>. The gap is entirely behavioural, not structural.</li>
+      <li>No pillar moves in isolation. Oakridge's weak L2 and L3 directly inflate its L5 liabilities, this is why L5 is described as secondary to L1, it depends on the other pillars rather than measuring something new.</li>
+      <li>L4's "break-even is 1.00x" only means something once you've seen a company land below it. Oakridge shows what that actually looks like: real return, exceeded by what it costs to generate it.</li>
+      <li>The HCI discount on Oakridge (0.85x) isn't decorative, it moved the final number from 24 to 20. It can only ever lower a score, never raise one.</li>
+      <li>Every figure above came from the same engine your own answers will run through. There's no separate "demo mode" math.</li>
+    </ul>
+  </div>
+
+  <div class="cta-area">
+    <a href="humac-onboarding.html" class="btn-primary" onclick="startReal(event)">Start my own Humac Score &rarr;</a>
+    <a href="dashboard.html" class="btn-ghost">Back to Dashboard</a>
+  </div>
+
+</div><!-- /wrap -->
+
+<script src="clerk-auth.js?v=20261116a"></script>
+<script src="sidebar-shared.js?v=20261124a"></script>
+<script>
+(function() {
+  if (sessionStorage.getItem('sr_access') !== 'true') {
+    window.location.href = 'access.html';
+    return;
+  }
+
+  try {
+    var m = JSON.parse(sessionStorage.getItem('sr_meridian') || '{}');
+    document.getElementById('meridian-chip-val').innerText =
+      (m.state || 'Not set') + ' \xb7 ' + (m.industry || 'Not set');
+  } catch(e) {}
+
+  // Mark the example as seen, whichever way the person leaves this page, so
+  // humac-onboarding.html's new-user redirect never loops back here again on
+  // this browser. Set on both buttons, not just the primary one, since
+  // "Skip" is still a valid way to have seen it.
+  window.skipExample = function(){ try{localStorage.setItem('vantage_example_seen','1');}catch(e){} };
+  window.startReal = function(){ try{localStorage.setItem('vantage_example_seen','1');}catch(e){} };
+})();
+</script>
+</body>
+</html>

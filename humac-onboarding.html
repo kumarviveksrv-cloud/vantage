@@ -1810,8 +1810,22 @@ function generateReport(){
     if(refineBtn){refineBtn.textContent='Update my score \u2192';refineBtn.style.marginLeft='auto';}
 
   }else{
-    renderStepper();
-    renderBlock(0);
+    /* First-time, brand-new user: no saved score, nothing in progress. Send them
+       to a worked example first (two fictional companies run through the real
+       scoring engine) so they see what the 5 blocks are building toward before
+       answering a single question cold. humac-example.html sets this same flag
+       before it links back here, so this redirect only ever fires once per
+       browser. A user resuming a half-finished attempt (currentBlock>0 or any
+       answers already set) skips straight to their blocks, same as before. */
+    var seenExample=false;
+    try{seenExample=localStorage.getItem('vantage_example_seen')==='1';}catch(e){seenExample=true;}
+    var hasProgress=currentBlock>0||Object.keys(answers||{}).length>0;
+    if(!seenExample&&!hasProgress&&!isCheckin){
+      window.location.href='humac-example.html';
+    }else{
+      renderStepper();
+      renderBlock(0);
+    }
   }
 })();
 </script>
