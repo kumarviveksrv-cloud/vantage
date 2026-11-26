@@ -13,21 +13,33 @@
  * ReferenceError, thrown mid-render, that left #main-wrap exactly as empty
  * as it started.
  *
+ * Same day, same gap, two more instances: pillar-l1.html, pillar-l5.html,
+ * and humac-onboarding.html itself all load <script src="humac-shared.js">
+ * AFTER their own inline <script>, but that inline script calls HumacShared.*
+ * synchronously, on first paint, for any real computed-mode user. Classic
+ * script tags run in document order, so this was a guaranteed
+ * ReferenceError on a cold load, not a maybe - and on humac-onboarding.html
+ * specifically it broke exactly the screen a user lands on after finishing
+ * a pillar deep-dive and clicking "Humac Score" to get back to their
+ * summary: renderScoreReveal() threw partway through, leaving
+ * #score-reveal empty with no questionnaire to fall back to either.
+ *
  * This script closes that gap the only way that actually proves it closed:
- * it loads each pillar-l*.html for real, in a DOM (jsdom), with realistic
+ * it loads each page for real, in a DOM (jsdom), with realistic
  * sessionStorage state, and checks that the page's own script runs to
- * completion without throwing and that the content area actually fills in.
- * Not a syntax check (parses but doesn't run) and not a unit test of one
- * extracted function (runs but isn't the real page) - the actual script,
- * actually executing, the way a browser would run it.
+ * completion without throwing and that the relevant content area actually
+ * fills in. Not a syntax check (parses but doesn't run) and not a unit test
+ * of one extracted function (runs but isn't the real page) - the actual
+ * script, actually executing, the way a browser would run it.
  *
  * Two fixtures per page:
- *   - "empty": nothing filled in yet. Every pillar page is expected to
- *     handle this (a gate/insufficient message), not throw.
+ *   - "empty": nothing filled in yet (pillar pages) / no saved score yet
+ *     (humac-onboarding.html). Expected to show a gate/insufficient message
+ *     or the fresh questionnaire, not throw.
  *   - "populated": a complete, realistic computed-mode org, L1 book
- *     included. This is the branch that was actually broken - the one a
- *     real user with a real score hits by clicking in from the score
- *     reveal page, which is exactly how Vivek found the L4 bug.
+ *     included. This is the branch that was actually broken three separate
+ *     times today - the one a real user with a real score hits by clicking
+ *     into a pillar, or back out to their summary.
  *
  * Requires jsdom (package.json devDependency - run `npm install` once per
  * clone before this will work; verify-pillar-consistency.js has no such
@@ -117,29 +129,59 @@ class LocalResourceLoader extends ResourceLoader {
   }
 }
 
-const PAGES = ['pillar-l1.html', 'pillar-l2.html', 'pillar-l3.html', 'pillar-l4.html', 'pillar-l5.html'];
+// Pillar pages all check one container (#main-wrap). humac-onboarding.html
+// is different: with no saved score it shows the questionnaire
+// (#block-container), with one it shows the summary (#score-reveal) - two
+// different elements depending on the fixture, not one.
+const PAGE_CONFIGS = [
+  { file: 'pillar-l1.html', resultId: () => 'main-wrap' },
+  { file: 'pillar-l2.html', resultId: () => 'main-wrap' },
+  { file: 'pillar-l3.html', resultId: () => 'main-wrap' },
+  { file: 'pillar-l4.html', resultId: () => 'main-wrap' },
+  { file: 'pillar-l5.html', resultId: () => 'main-wrap' },
+  { file: 'humac-onboarding.html', resultId: (fixture) => fixture.withL1Book ? 'score-reveal' : 'block-container' }
+];
+
+// jsdom logs a (non-fatal) "Not implemented: window.scrollTo" to its virtual
+// console whenever a page calls scrollIntoView/scrollTo, which
+// humac-onboarding.html's renderScoreReveal() does on a real error banner -
+// real browsers implement this fine, jsdom just doesn't, and it was never
+// routed through window.onerror so it never affected pass/fail. Silencing it
+// here so it doesn't read as a hook failure in the push output when it isn't
+// one.
+const { VirtualConsole } = require('jsdom');
+const virtualConsole = new VirtualConsole();
+virtualConsole.on('jsdomError', (e) => {
+  if (!/Not implemented: window\.scrollTo/.test(e.message)) console.error(e);
+});
 
 async function run() {
   let failures = 0;
 
-  for (const page of PAGES) {
+  for (const { file: page, resultId } of PAGE_CONFIGS) {
     const html = read(page);
     for (const fixture of fixtures) {
       const hd = {
         rawAnswers: fixture.rawAnswers,
         l1: 70, l2: 65, l3: 70, l4: 60, l5: 50,
         hci: 1.0, confidence: 'computed', timestamp: Date.now(),
-        // pillar-l1.html/pillar-l2.html gate their real compute() call on these
-        // per-block mode flags, not on hd.confidence - missing them here was a
-        // fixture gap that gave pillar-l1.html a false pass on the first run of
-        // this script: with no l1Mode, it silently fell back to 'estimate' and
-        // never touched computeRealLedger() (or HumacShared) at all, hiding
-        // exactly the class of bug this script exists to catch. Set them to
-        // 'computed' on the populated fixture so it actually exercises the
-        // path a real computed-mode user (which is what Vivek's own org is)
-        // takes.
+        // humac-onboarding.html's own reveal checks hd.humac/hd.band directly
+        // (applyCheckinMode/renderScoreReveal), separately from the l1..l5
+        // breakdown the pillar pages use.
+        humac: fixture.withL1Book ? 65 : null, band: 'Value Active',
+        // pillar-l1.html/pillar-l2.html/humac-onboarding.html gate their real
+        // compute() calls on these per-block mode flags, not on hd.confidence -
+        // missing them here was a fixture gap that gave pillar-l1.html a false
+        // pass on the first run of this script: with no l1Mode, it silently
+        // fell back to 'estimate' and never touched computeRealLedger() (or
+        // HumacShared) at all, hiding exactly the class of bug this script
+        // exists to catch. Set them to 'computed' on the populated fixture so
+        // it actually exercises the path a real computed-mode user (which is
+        // what Vivek's own org is) takes.
         l1Mode: fixture.withL1Book ? 'computed' : 'estimate',
-        l2Mode: fixture.withL1Book ? 'computed' : 'estimate'
+        l2Mode: fixture.withL1Book ? 'computed' : 'estimate',
+        l4Mode: fixture.withL1Book ? 'computed' : 'estimate',
+        l5Mode: fixture.withL1Book ? 'computed' : 'estimate'
       };
       const errors = [];
       let dom;
@@ -147,6 +189,7 @@ async function run() {
         dom = new JSDOM(html, {
           runScripts: 'dangerously',
           resources: new LocalResourceLoader(),
+          virtualConsole,
           // Real origin, not a file:// URL, so relative links/fetches behave the
           // way they do in production rather than throwing on their own.
           url: 'https://vantage.virorah.com/' + page,
@@ -181,7 +224,8 @@ async function run() {
         errors.push(e.stack || String(e));
       }
 
-      const wrap = dom && dom.window.document.getElementById('main-wrap');
+      const targetId = resultId(fixture);
+      const wrap = dom && dom.window.document.getElementById(targetId);
       const content = wrap ? wrap.innerHTML.trim() : '';
       const ok = errors.length === 0 && content.length > 50;
 
@@ -189,9 +233,9 @@ async function run() {
         failures++;
         console.log('  ✗ ' + page + ' [' + fixture.name + ']');
         if (errors.length) errors.forEach((e) => console.log('      ' + e.split('\n')[0]));
-        else console.log('      #main-wrap stayed empty (' + content.length + ' chars) - no error thrown, but nothing rendered either.');
+        else console.log('      #' + targetId + ' stayed empty (' + content.length + ' chars) - no error thrown, but nothing rendered either.');
       } else {
-        console.log('  ✓ ' + page + ' [' + fixture.name + '] - ' + content.length + ' chars rendered, no errors');
+        console.log('  ✓ ' + page + ' [' + fixture.name + '] - #' + targetId + ': ' + content.length + ' chars rendered, no errors');
       }
       if (dom) dom.window.close();
     }
@@ -202,7 +246,7 @@ async function run() {
     console.log('[verify-pillar-render] ' + failures + ' page/fixture combination(s) failed to render.');
     process.exitCode = 1;
   } else {
-    console.log('[verify-pillar-render] All five pillar pages render cleanly, empty and populated.');
+    console.log('[verify-pillar-render] All five pillar pages and humac-onboarding.html render cleanly, empty and populated.');
   }
 }
 
