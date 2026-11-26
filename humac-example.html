@@ -123,10 +123,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--font),sans-serif;-
   </div>
 
   <!-- PAGE TITLE -->
-  <div class="page-title">Before you start: two companies, side by side</div>
-  <div class="page-sub">You're about to answer questions across five pillars and get a single <b>Humac Score</b>. Before you do that cold, here's what the output actually looks like: two fictional companies, <b>same industry, same size, same payroll</b>, run through the real scoring engine with different HR outcomes. Every number below is genuinely computed, not written by hand, so what you see here is exactly what your own data will produce.</div>
+  <div class="page-title" id="page-title">Before you start: two companies, side by side</div>
+  <div class="page-sub" id="page-sub">You're about to answer questions across five pillars and get a single <b>Humac Score</b>. Before you do that cold, here's what the output actually looks like: two fictional companies, <b>same industry, same size, same payroll</b>, run through the real scoring engine with different HR outcomes. Every number below is genuinely computed, not written by hand, so what you see here is exactly what your own data will produce.</div>
 
-  <div class="skip-row"><a href="humac-onboarding.html" class="skip-link" onclick="skipExample(event)">Skip this, I'll dive straight in &rarr;</a></div>
+  <div class="skip-row" id="skip-row"><a href="humac-onboarding.html" class="skip-link" onclick="skipExample(event)">Skip this, I'll dive straight in &rarr;</a></div>
 
   <div class="setup-strip">
     <div><b>Industry</b><br>Insurance (both companies)</div>
@@ -237,7 +237,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font),sans-serif;-
   </div>
 
   <div class="cta-area">
-    <a href="humac-onboarding.html" class="btn-primary" onclick="startReal(event)">Start my own Humac Score &rarr;</a>
+    <a href="humac-onboarding.html" class="btn-primary" id="cta-primary" onclick="startReal(event)">Start my own Humac Score &rarr;</a>
     <a href="dashboard.html" class="btn-ghost">Back to Dashboard</a>
   </div>
 
@@ -264,6 +264,26 @@ body{background:var(--bg);color:var(--text);font-family:var(--font),sans-serif;-
   // "Skip" is still a valid way to have seen it.
   window.skipExample = function(){ try{localStorage.setItem('vantage_example_seen','1');}catch(e){} };
   window.startReal = function(){ try{localStorage.setItem('vantage_example_seen','1');}catch(e){} };
+
+  // This page now has two audiences: a brand-new user mid-onboarding
+  // (redirected here automatically, "Start my own Humac Score" and "Skip"
+  // both make sense), and a returning user with an existing score who
+  // clicked the explainer link from their own Humac Score page's band
+  // guide (2026-11-26) - for them, "Start my own" is wrong, they already
+  // have one, and "Skip" has nothing to skip. Detect which audience this
+  // is from whether a score already exists and adjust the CTA and skip
+  // link rather than showing either audience the other's copy.
+  var hasScore = false;
+  try {
+    var cached = JSON.parse(sessionStorage.getItem('vantage_humac') || 'null');
+    hasScore = !!(cached && cached.humac != null);
+  } catch(e) {}
+  if (hasScore) {
+    var skipRow = document.getElementById('skip-row');
+    if (skipRow) skipRow.style.display = 'none';
+    var cta = document.getElementById('cta-primary');
+    if (cta) cta.textContent = 'Back to your Humac Score →';
+  }
 })();
 </script>
 </body>
