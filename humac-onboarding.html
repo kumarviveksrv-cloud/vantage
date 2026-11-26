@@ -909,6 +909,18 @@ function validateDataIntegrity(a){
     }
   }
 
+  // HR spend plausibility vs payroll, independent of headcount. Added 2026-11-26 after
+  // a real case: HR spend entered too low relative to comp base saturated L4's margin
+  // scale straight to 100 with nothing on the entry screen to flag it, so the user only
+  // found out something was off by reading the drilled-down L4 report afterwards. The
+  // absolute-magnitude caps above catch a number that's too big; this catches one that's
+  // too small relative to payroll, which is the actual failure mode that happened.
+  if(a.cq1_compbase>0&&a.cq4_hrspend!=null&&a.cq4_hrspend>0){
+    var hrPct=a.cq4_hrspend/a.cq1_compbase*100;
+    if(hrPct<0.5)issues.push({severity:'warning',message:'Annual HR spend works out to '+hrPct.toFixed(2)+'% of your total comp base. Most organisations run HR spend at roughly 1.5–3% of payroll; a figure this low usually means the HR spend entered doesn’t cover the full HR function, or a digit is missing. Low HR spend relative to payroll inflates your Human P&L (L4) score — sometimes all the way to a saturated 100.'});
+    if(hrPct>25)issues.push({severity:'warning',message:'Annual HR spend works out to '+hrPct.toFixed(1)+'% of your total comp base: unusually high. Please double-check the comp base figure is annual and complete.'});
+  }
+
   if(a.cq2_promoted12mo!=null&&a.cq2_promotedexcelling>a.cq2_promoted12mo)issues.push({severity:'error',message:'Promoted employees "excelling" ('+a.cq2_promotedexcelling+') cannot exceed total promoted ('+a.cq2_promoted12mo+').'});
   if(a.cq2_managers!=null&&a.cq2_managersoutperform>a.cq2_managers)issues.push({severity:'error',message:'Managers whose teams "outperform" ('+a.cq2_managersoutperform+') cannot exceed total managers ('+a.cq2_managers+').'});
   if(a.cq2_hired12mo!=null&&a.cq2_hiredmeeting>a.cq2_hired12mo)issues.push({severity:'error',message:'Hires "meeting expectations" ('+a.cq2_hiredmeeting+') cannot exceed total hired ('+a.cq2_hired12mo+').'});
