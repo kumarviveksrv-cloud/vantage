@@ -1099,6 +1099,19 @@ html, body { overflow-x: hidden; background: var(--bg); }
 .rf-why-body { font: 400 clamp(17px, 2.2vw, 22px)/1.7 var(--font); color: rgba(244,243,255,.8); max-width: 700px; margin: 0 auto; }
 .rf-why-body p { margin: 0 0 20px; }
 .rf-why-body strong { color: #c4b5fd; font-weight: 700; }
+/* One tier below .rf-why-line: this gets real presence (color, size,
+   a left rule) so it reads as a pull-quote moment, but it must not
+   match the closing line's full bold-white weight -- that's reserved
+   for the section's one payoff beat, the callback to the opening
+   question. Two lines shouting at the same volume here would flatten
+   the ending instead of earning it. */
+.rf-why-body .rf-why-punch {
+  font: 600 clamp(18px, 2.4vw, 23px)/1.55 var(--font);
+  color: #c4b5fd;
+  border-left: 2px solid rgba(139,92,246,.45);
+  padding-left: 22px;
+  margin: 30px 0;
+}
 .rf-why-body .rf-why-line {
   font: 700 clamp(20px, 2.6vw, 26px)/1.35 var(--display);
   letter-spacing: -.01em;
@@ -2038,6 +2051,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
       <div class="rf-why-body">
         <p>Every HR person has been here. A senior person resigns, and the CEO asks the question that decides the room: <strong>what's the number?</strong> What will this cost us, in rupees, and how did you get there?</p>
         <p>The honest answer has parts - output lost during the notice period, the hours spent hiring, a replacement who may cost more, and months of training before they are fully productive. Added up from resignation to full productivity, that is a figure you can give. Most of us give instinct instead, and instinct loses to a figure on a slide.</p>
+        <p class="rf-why-punch">An LLM can hallucinate. It can sound certain about anything. Vantage isn't guessing. Every rupee figure runs through the same fixed calculation every time, built on the law as written and twelve years of watching these cases actually play out, not one lucky estimate in the mix.</p>
         <p>I built Vantage so you can answer. Describe the situation, and Vantage gives you what it could cost the company in rupees, the law that applies with the sections cited, and the business case, with the working shown.</p>
         <p class="rf-why-line">Now when they ask what's the number, you have it.</p>
         <p class="rf-why-sign">Kumar Vivek &middot; Founder, Virorah</p>
