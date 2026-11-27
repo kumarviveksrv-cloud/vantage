@@ -1398,7 +1398,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
   border-top: 1px solid rgba(255,255,255,.08);
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 16px;
   text-align: left;
 }
 .rf-pricing-features li {
@@ -1434,7 +1434,7 @@ html, body { overflow-x: hidden; background: var(--bg); }
   border-top: 1px solid rgba(255,255,255,.08);
   text-align: left;
 }
-.rf-pricing-features--detailed { margin: 0 0 24px; padding: 0; border-top: none; gap: 11px; }
+.rf-pricing-features--detailed { margin: 0 0 24px; padding: 0; border-top: none; gap: 14px; }
 .rf-pricing-features--detailed li { font-size: var(--fs-5); line-height: 1.55; }
 /* li's bold label + description text are two separate inline nodes;
    without wrapping them, flexbox on the <li> splits them into two
@@ -1507,7 +1507,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
      not a footnote, and given the same checkmark glyph the feature list
      below already uses so it reads as three points, not one grey caption. */
   color: rgba(226,221,255,.88);
-  margin: 0 0 36px;
+  /* row-gap, not just the >560px flex-wrap default: at most widths this
+     wraps to 2-3 lines (three full phrases plus dots rarely fit one row),
+     and with no gap of its own the wrapped lines sat flush against each
+     other. The <=560px override below still takes over for the fully
+     stacked column layout. */
+  gap: 10px 0;
+  margin: 0 0 28px;
   position: relative;
   z-index: 1;
 }
@@ -1533,7 +1539,11 @@ html, body { overflow-x: hidden; background: var(--bg); }
   letter-spacing: .06em;
   color: #a78bfa;
   text-transform: uppercase;
-  margin: -24px 0 32px;
+  /* Was -24px top -- a holdover from when .rf-pricing-sub above was a
+     single dim line and this pulled up to sit close under it. That line
+     is now brighter, bolder and usually wraps to 2-3 rows, so the same
+     -24px was dragging this straight into it with almost no gap. */
+  margin: 6px 0 32px;
   position: relative;
   z-index: 1;
 }
