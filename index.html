@@ -1450,11 +1450,27 @@ html, body { overflow-x: hidden; background: var(--bg); }
   align-items: center;
   justify-content: center;
   font: 400 13px var(--mono);
-  letter-spacing: .06em;
-  color: rgba(196,181,253,.38);
+  letter-spacing: .04em;
+  /* Was 38% opacity -- the dimmest text on the card, despite carrying the
+     three lines that actually remove trial friction (free trial length, no
+     card needed, cancel anytime). Brightened to read as reassurance copy,
+     not a footnote, and given the same checkmark glyph the feature list
+     below already uses so it reads as three points, not one grey caption. */
+  color: rgba(226,221,255,.88);
   margin: 0 0 36px;
   position: relative;
   z-index: 1;
+}
+.rf-pricing-sub-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+.rf-pricing-sub-item::before {
+  content: '✓';
+  color: #8b5cf6;
+  font-weight: 700;
 }
 .rf-pricing-sub-dot { margin: 0 10px; opacity: .45; }
 @media (max-width: 560px) {
