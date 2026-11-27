@@ -1323,12 +1323,21 @@ html, body { overflow-x: hidden; background: var(--bg); }
       inset 0 1px 0 rgba(255,255,255,.08);
   }
 }
+/* Deliberately a different duration and a phase offset from
+   rf-pulse-pricing-card's 5.2s, so the two glows don't breathe in sync -
+   that's what makes the per-day figure read as its own, separate point
+   of emphasis rather than part of the card's ambient pulse. */
+@keyframes rf-pulse-price-daily {
+  0%, 100% { text-shadow: 0 0 0 rgba(167,139,250,0); }
+  50% { text-shadow: 0 0 14px rgba(167,139,250,.8), 0 0 30px rgba(139,92,246,.45); }
+}
 @media (prefers-reduced-motion: no-preference) {
   .rf-hero-panel   { animation: rf-pulse-hero-panel 3.8s ease-in-out infinite; }
   .rf-tool-row     { animation: rf-pulse-tool-row 4s ease-in-out infinite; }
   .rf-tile         { animation: rf-pulse-tile 4.6s ease-in-out infinite; }
   .rf-pricing-card { animation: rf-pulse-pricing-card 5.2s ease-in-out infinite; }
   .rf-proof-card   { animation: rf-pulse-proof-card 4.4s ease-in-out infinite; }
+  .rf-price-daily  { animation: rf-pulse-price-daily 3.1s ease-in-out infinite; animation-delay: 1.3s; }
   .rf-tool-row:hover, .rf-tile:hover { animation: none; }
 }
 
@@ -1423,9 +1432,13 @@ html, body { overflow-x: hidden; background: var(--bg); }
 }
 .rf-price-daily {
   display: block;
-  font: 600 13px var(--mono);
-  letter-spacing: .06em;
-  color: rgba(199,185,255,.72);
+  /* Was --mono: a monospace label font sitting directly beneath the big
+     --stat price number read as two different numeral systems colliding
+     in a 20px gap. Matching the price's own font ties this to it as
+     "same number, smaller scale" instead of a stray caption. */
+  font: 700 17px var(--stat);
+  letter-spacing: .01em;
+  color: #c4b5fd;
   text-align: center;
   margin: -2px 0 24px;
   position: relative;
