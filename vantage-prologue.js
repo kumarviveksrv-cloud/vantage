@@ -109,6 +109,29 @@
     return;
   }
 
+  /* ── PROLOGUE DISABLED SITE-WIDE (28 Nov 2026) ──────────────────────────
+     Kumar's call, after several people separately said the landing page
+     "looked stuck" on first load. The 26 Nov once-per-device bypass above
+     only ever helped a RETURNING visitor on the same device/browser
+     profile; a first-time visitor — exactly who this feedback was about —
+     still sat through the full ~13s cinematic before anything moved, and
+     more than one read that pause as a broken page rather than an
+     intentional intro and left before the skip button registered.
+     This takes the identical, already-proven bypass path above (same one
+     paying/returning users have used safely since the 26th) and routes
+     every visitor through it, so nobody gets the prologue by default.
+     Nothing else in this file changed - to bring the prologue back for
+     everyone, flip this to false; to restore just the 26 Nov once-per-
+     device behaviour, delete this block instead. */
+  const PROLOGUE_DISABLED = true;
+  if (PROLOGUE_DISABLED) {
+    pro.style.display = 'none';
+    document.body.classList.add('prologue-complete');
+    if (localStorage.getItem('vantage_clerk_signed_in') === '1') swapAuthLinksForSignedIn();
+    if (window.VantageFade) { window.VantageFade.hide(500); }
+    return;
+  }
+
   const skip = $('#prologueSkip');
   const copy = $('.prologue-copy');
   const kicker = $('.prologue-kicker');
